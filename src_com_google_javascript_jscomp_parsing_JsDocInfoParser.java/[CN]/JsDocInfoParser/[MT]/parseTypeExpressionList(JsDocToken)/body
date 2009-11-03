@@ -1,0 +1,18 @@
+{
+  Node typeExpr=parseTopLevelTypeExpression(token);
+  if (typeExpr == null) {
+    return null;
+  }
+  Node typeList=new Node(Token.BLOCK);
+  typeList.addChildToBack(typeExpr);
+  while (match(JsDocToken.COMMA)) {
+    next();
+    skipEOLs();
+    typeExpr=parseTopLevelTypeExpression(next());
+    if (typeExpr == null) {
+      return null;
+    }
+    typeList.addChildToBack(typeExpr);
+  }
+  return typeList;
+}

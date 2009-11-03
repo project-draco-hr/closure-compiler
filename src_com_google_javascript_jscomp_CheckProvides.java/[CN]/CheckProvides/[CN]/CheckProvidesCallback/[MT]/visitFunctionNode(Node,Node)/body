@@ -1,0 +1,22 @@
+{
+  Node name=null;
+  JSDocInfo info=parent.getJSDocInfo();
+  if (info != null && info.isConstructor()) {
+    name=parent.getFirstChild();
+  }
+ else {
+    info=n.getJSDocInfo();
+    if (info != null && info.isConstructor()) {
+      name=n.getFirstChild();
+    }
+  }
+  if (name != null && name.isQualifiedName()) {
+    String qualifiedName=name.getQualifiedName();
+    if (!this.convention.isPrivate(qualifiedName)) {
+      Visibility visibility=info.getVisibility();
+      if (!visibility.equals(JSDocInfo.Visibility.PRIVATE)) {
+        ctors.put(qualifiedName,name);
+      }
+    }
+  }
+}

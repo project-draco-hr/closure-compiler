@@ -1,0 +1,20 @@
+{
+  final Compiler compiler=new Compiler();
+  final FunctionInjector injector=new FunctionInjector(compiler,compiler.getUniqueNameIdSupplier(),allowDecomposition);
+  final Node tree=parse(compiler,code);
+  Node externsRoot=new Node(Token.EMPTY);
+  Node mainRoot=tree;
+  final Node fnNode=findFunction(tree,fnName);
+  final Set<String> unsafe=FunctionArgumentInjector.findModifiedParameters(fnNode);
+  Method tester=new Method(){
+    public boolean call(    NodeTraversal t,    Node n,    Node parent){
+      CanInlineResult result=injector.canInlineReferenceToFunction(t,n,fnNode,unsafe,mode,NodeUtil.referencesThis(fnNode));
+      assertEquals(expectedResult,result);
+      return true;
+    }
+  }
+;
+  compiler.resetUniqueNameId();
+  TestCallback test=new TestCallback(fnName,tester);
+  NodeTraversal.traverse(compiler,tree,test);
+}

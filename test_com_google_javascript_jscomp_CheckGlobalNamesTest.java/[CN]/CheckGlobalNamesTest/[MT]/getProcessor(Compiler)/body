@@ -1,0 +1,14 @@
+{
+  final CheckGlobalNames checkGlobalNames=new CheckGlobalNames(compiler,CheckLevel.WARNING);
+  if (injectNamespace) {
+    return new CompilerPass(){
+      public void process(      Node externs,      Node js){
+        checkGlobalNames.injectNamespace(new GlobalNamespace(compiler,js)).process(externs,js);
+      }
+    }
+;
+  }
+ else {
+    return checkGlobalNames;
+  }
+}

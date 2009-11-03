@@ -1,0 +1,19 @@
+{
+  fold("{{foo()}}","foo()");
+  fold("{foo();{}}","foo()");
+  fold("{{foo()}{}}","foo()");
+  fold("{{foo()}{bar()}}","foo();bar()");
+  fold("{if(false)foo(); {bar()}}","bar()");
+  fold("{if(false)if(false)if(false)foo(); {bar()}}","bar()");
+  fold("{'hi'}","");
+  fold("{x==3}","");
+  fold("{ (function(){x++}) }","");
+  fold("function(){return;}","function(){return;}");
+  fold("function(){return 3;}","function(){return 3}");
+  fold("function(){if(x)return; x=3; return; }","function(){if(x)return; x=3; return; }");
+  fold("{x=3;;;y=2;;;}","x=3;y=2");
+  fold("while(x()){x}","while(x());");
+  fold("while(x()){x()}","while(x())x()");
+  fold("for(x=0;x<100;x++){x}","for(x=0;x<100;x++);");
+  fold("for(x in y){x}","for(x in y);");
+}

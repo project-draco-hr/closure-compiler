@@ -1,0 +1,29 @@
+{
+  if (left.getType() == Token.ARRAYLIT) {
+    if (right.getType() != Token.NUMBER) {
+      error(t,INVALID_GETELEM_INDEX_ERROR,right);
+      return;
+    }
+    double index=right.getDouble();
+    int intIndex=(int)index;
+    if (intIndex != index) {
+      t.getCompiler().report(JSError.make(t,right,INVALID_GETELEM_INDEX_ERROR,String.valueOf(index)));
+      return;
+    }
+    if (intIndex < 0) {
+      t.getCompiler().report(JSError.make(t,n,INDEX_OUT_OF_BOUNDS_ERROR,String.valueOf(intIndex)));
+      return;
+    }
+    Node elem=left.getFirstChild();
+    for (int i=0; elem != null && i < intIndex; i++) {
+      elem=elem.getNext();
+    }
+    if (elem == null) {
+      t.getCompiler().report(JSError.make(t,n,INDEX_OUT_OF_BOUNDS_ERROR,String.valueOf(intIndex)));
+      return;
+    }
+    left.removeChild(elem);
+    parent.replaceChild(n,elem);
+    t.getCompiler().reportCodeChange();
+  }
+}

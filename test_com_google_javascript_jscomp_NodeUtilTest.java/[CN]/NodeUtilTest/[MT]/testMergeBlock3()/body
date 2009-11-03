@@ -1,0 +1,11 @@
+{
+  Compiler compiler=new Compiler();
+  String code="foo:{a();boo()}";
+  Node actual=parse("foo:{a();boo()}");
+  Node parentLabel=actual.getFirstChild();
+  Node childBlock=parentLabel.getLastChild();
+  assertFalse(NodeUtil.tryMergeBlock(childBlock));
+  String expected=code;
+  String difference=parse(expected).checkTreeEquals(actual);
+  assertNull("Nodes do not match:\n" + difference,difference);
+}

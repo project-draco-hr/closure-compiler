@@ -1,0 +1,10 @@
+{
+  testSame("Extern.prototype.foo;" + "/** @constructor */ function Extern() {}","",null);
+  JSType e=globalScope.getVar("Extern").getType();
+  assertEquals("function (this:Extern): ?",e.toString());
+  ObjectType externProto=((FunctionType)e).getPrototype();
+  assertTrue(globalScope.getRootNode().toStringTree(),externProto.hasOwnProperty("foo"));
+  assertTrue(externProto.isPropertyTypeDeclared("foo"));
+  assertEquals("?",externProto.getPropertyType("foo").toString());
+  assertTrue(externProto.isPropertyInExterns("foo"));
+}

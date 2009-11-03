@@ -1,0 +1,20 @@
+{
+  String name=nameNode.getString();
+  Property prop=getProperty(name);
+  prop.writeCount++;
+  if (prop.readCount == 0 && !isExported(name)) {
+    if (checkWrites.isOn() && !objLit) {
+      if (prop.writes == null) {
+        prop.writes=new ArrayList<Node>(MAX_REPORTS_PER_PROPERTY);
+      }
+      if (prop.writes.size() < MAX_REPORTS_PER_PROPERTY) {
+        nameNode.putProp(Node.SOURCENAME_PROP,t.getSourceName());
+        prop.writes.add(nameNode);
+      }
+    }
+  }
+ else {
+    prop.writes=null;
+  }
+  prop.reads=null;
+}

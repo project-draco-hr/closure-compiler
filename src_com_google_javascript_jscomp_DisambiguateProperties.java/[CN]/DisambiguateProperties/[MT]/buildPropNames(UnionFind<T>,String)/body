@@ -1,0 +1,23 @@
+{
+  Map<T,String> names=Maps.newHashMap();
+  for (  Set<T> set : types.allEquivalenceClasses()) {
+    checkState(!set.isEmpty());
+    String typeName=null;
+    for (    T type : set) {
+      if (typeName == null || type.toString().compareTo(typeName) < 0) {
+        typeName=type.toString();
+      }
+    }
+    String newName;
+    if ("{...}".equals(typeName)) {
+      newName=name;
+    }
+ else {
+      newName=typeName.replaceAll("[^\\w$]","_") + "$" + name;
+    }
+    for (    T type : set) {
+      names.put(type,newName);
+    }
+  }
+  return names;
+}

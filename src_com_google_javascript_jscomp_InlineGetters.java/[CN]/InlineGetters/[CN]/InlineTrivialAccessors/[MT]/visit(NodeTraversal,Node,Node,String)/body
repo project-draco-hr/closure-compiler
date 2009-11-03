@@ -1,0 +1,32 @@
+{
+  if (externMethods.contains(callName) || nonMethodProperties.contains(callName)) {
+    return;
+  }
+  Collection<Node> definitions=methodDefinitions.get(callName);
+  if (definitions == null || definitions.size() == 0) {
+    return;
+  }
+  Node firstDefinition=definitions.iterator().next();
+  if (definitions.size() == 1 || allDefinitionsEquivalent(definitions)) {
+    if (!argsMayHaveSideEffects(callNode)) {
+      Node returned=returnedExpression(firstDefinition);
+      if (returned != null) {
+        if (isPropertyTree(returned)) {
+          logger.fine("Inlining property accessor: " + callName);
+          inlinePropertyReturn(parent,callNode,returned);
+        }
+ else         if (NodeUtil.isLiteralValue(returned) && !NodeUtil.mayHaveSideEffects(callNode.getFirstChild())) {
+          logger.fine("Inlining constant accessor: " + callName);
+          inlineConstReturn(parent,callNode,returned);
+        }
+      }
+ else       if (isEmptyMethod(firstDefinition) && !NodeUtil.mayHaveSideEffects(callNode.getFirstChild())) {
+        logger.fine("Inlining empty method: " + callName);
+        inlineEmptyMethod(t,parent,callNode);
+      }
+    }
+  }
+ else {
+    logger.fine("Method '" + callName + "' has conflicting definitions.");
+  }
+}

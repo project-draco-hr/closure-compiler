@@ -1,0 +1,28 @@
+{
+  JSType ownerType=getJSType(getprop.getFirstChild()).restrictByNotNullOrUndefined();
+  if (ownerType instanceof ObjectType) {
+    ObjectType objectType=(ObjectType)ownerType;
+    if (ensurePropertyDeclaredHelper(getprop,objectType)) {
+      return;
+    }
+    String propName=getprop.getLastChild().getString();
+    if (!objectType.isPropertyTypeDeclared(propName)) {
+      if (objectType.hasProperty(propName) || !objectType.isInstanceType()) {
+        if ("prototype".equals(propName)) {
+          objectType.defineDeclaredProperty(propName,rightType,false);
+        }
+ else {
+          objectType.defineInferredProperty(propName,rightType,false);
+        }
+      }
+ else {
+        if (getprop.getFirstChild().getType() == Token.THIS && getJSType(syntacticScope.getRootNode()).isConstructor()) {
+          objectType.defineInferredProperty(propName,rightType,false);
+        }
+ else {
+          registry.registerPropertyOnType(propName,objectType);
+        }
+      }
+    }
+  }
+}

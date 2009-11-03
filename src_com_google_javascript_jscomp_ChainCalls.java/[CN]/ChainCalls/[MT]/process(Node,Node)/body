@@ -1,0 +1,11 @@
+{
+  defFinder=new SimpleDefinitionFinder(compiler);
+  defFinder.process(externs,root);
+  NodeTraversal.traverse(compiler,root,new GatherCallSites());
+  for (  CallSite callSite : callSites) {
+    callSite.parent.removeChild(callSite.n);
+    callSite.n.removeChild(callSite.callNode);
+    callSite.nextGetPropNode.replaceChild(callSite.nextGetPropFirstChildNode,callSite.callNode);
+    compiler.reportCodeChange();
+  }
+}

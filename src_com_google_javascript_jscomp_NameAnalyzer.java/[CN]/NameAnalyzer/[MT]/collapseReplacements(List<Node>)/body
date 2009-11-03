@@ -1,0 +1,16 @@
+{
+  Node expr=null;
+  for (  Node rep : replacements) {
+    if (rep.getType() == Token.EXPR_RESULT) {
+      rep=rep.getFirstChild();
+      rep.detachFromParent();
+    }
+    if (expr == null) {
+      expr=rep;
+    }
+ else {
+      expr=new Node(Token.COMMA,expr,rep);
+    }
+  }
+  return expr;
+}

@@ -1,0 +1,35 @@
+{
+  Preconditions.checkNotNull(externs);
+  Preconditions.checkNotNull(root);
+  StringBuilder sb=new StringBuilder();
+  FunctionNames functionNames=new FunctionNames(compiler);
+  functionNames.process(null,externs);
+  functionNames.process(null,root);
+  sb.append("Pure functions:\n");
+  for (  Map.Entry<Node,FunctionInformation> entry : functionSideEffectMap.entrySet()) {
+    Node function=entry.getKey();
+    FunctionInformation functionInfo=entry.getValue();
+    boolean isPure=functionInfo.mayBePure() && !functionInfo.mayHaveSideEffects();
+    if (isPure) {
+      sb.append("  " + functionNames.getFunctionName(function) + "\n");
+    }
+  }
+  sb.append("\n");
+  for (  Map.Entry<Node,FunctionInformation> entry : functionSideEffectMap.entrySet()) {
+    Node function=entry.getKey();
+    FunctionInformation functionInfo=entry.getValue();
+    Set<String> depFunctionNames=Sets.newHashSet();
+    for (    Node callSite : functionInfo.getCallsInFunctionBody()) {
+      Collection<Definition> defs=getCallableDefinitions(definitionProvider,callSite.getFirstChild());
+      if (defs == null) {
+        depFunctionNames.add("<null def list>");
+        continue;
+      }
+      for (      Definition def : defs) {
+        depFunctionNames.add(functionNames.getFunctionName(def.getRValue()));
+      }
+    }
+    sb.append(functionNames.getFunctionName(function) + " " + functionInfo.toString()+ " Calls: "+ depFunctionNames+ "\n");
+  }
+  return sb.toString();
+}

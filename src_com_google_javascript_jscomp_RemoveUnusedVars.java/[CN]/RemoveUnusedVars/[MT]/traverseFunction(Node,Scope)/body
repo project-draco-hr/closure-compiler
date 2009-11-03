@@ -1,0 +1,10 @@
+{
+  Preconditions.checkState(n.getChildCount() == 3);
+  Preconditions.checkState(n.getType() == Token.FUNCTION);
+  final Node body=n.getLastChild();
+  Preconditions.checkState(body.getNext() == null && body.getType() == Token.BLOCK);
+  Scope fnScope=new SyntacticScopeCreator(compiler_).createScope(n,scope);
+  traverseNode(body,n,fnScope);
+  removeUnreferencedFunctionArgs(n,fnScope);
+  removeUnreferencedVars(fnScope);
+}

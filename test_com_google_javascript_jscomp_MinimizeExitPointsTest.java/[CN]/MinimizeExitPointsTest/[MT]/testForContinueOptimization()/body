@@ -1,0 +1,19 @@
+{
+  fold("for(x in y){if(x)continue; x=3; continue; }","for(x in y)if(x);else x=3");
+  foldSame("for(x in y){a();continue;b()}");
+  fold("for(x in y){if(true){a();continue;}else;b();}","for(x in y){if(true)a();else b();}");
+  fold("for(x in y){if(false){a();continue;}else;b();continue;}","for(x in y){if(false){a();}else{b()}}");
+  fold("for(x in y){if(a()){b();continue;}else;c();}","for(x in y){if(a()){b();}else{c();}}");
+  fold("for(x in y){if(a()){b();}else{c();continue;}}","for(x in y){if(a()){b();}else{c();}}");
+  fold("for(x=0;x<y;x++){if(a()){b();continue;}else;}","for(x=0;x<y;x++){if(a()){b();}else;}");
+  fold("for(x=0;x<y;x++){if(a()){continue;}else{continue;} continue;}","for(x=0;x<y;x++){if(a()){}else{}}");
+  fold("for(x=0;x<y;x++){if(a()){continue;}else{continue;} b();}","for(x=0;x<y;x++){if(a()){}else{continue; b();}}");
+  fold("for(x=0;x<y;x++)while(a())continue;","for(x=0;x<y;x++)while(a());");
+  fold("for(x=0;x<y;x++)for(x in a())continue","for(x=0;x<y;x++)for(x in a());");
+  fold("for(x=0;x<y;x++)while(a())break;","for(x=0;x<y;x++)while(a())break");
+  foldSame("for(x=0;x<y;x++)for(x in a())break");
+  fold("for(x=0;x<y;x++){try{continue;}catch(e){continue;}}","for(x=0;x<y;x++){try{}catch(e){}}");
+  fold("for(x=0;x<y;x++){try{if(a()){continue;}else{continue;}" + "continue;}catch(e){}}","for(x=0;x<y;x++){try{if(a()){}else{}}catch(e){}}");
+  fold("for(x=0;x<y;x++){g:continue}","for(x=0;x<y;x++){}");
+  fold("for(x=0;x<y;x++){g:if(a()){continue;}else{continue;} continue;}","for(x=0;x<y;x++){g:if(a());else;}");
+}

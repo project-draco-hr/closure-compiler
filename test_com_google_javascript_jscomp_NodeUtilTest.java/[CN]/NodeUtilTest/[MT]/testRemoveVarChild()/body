@@ -1,0 +1,39 @@
+{
+  Compiler compiler=new Compiler();
+  Node actual=parse("var foo, goo, hoo");
+  Node varNode=actual.getFirstChild();
+  Node nameNode=varNode.getFirstChild();
+  NodeUtil.removeChild(varNode,nameNode);
+  String expected="var goo, hoo";
+  String difference=parse(expected).checkTreeEquals(actual);
+  if (difference != null) {
+    assertTrue("Nodes do not match:\n" + difference,false);
+  }
+  actual=parse("var foo, goo, hoo");
+  varNode=actual.getFirstChild();
+  nameNode=varNode.getFirstChild().getNext();
+  NodeUtil.removeChild(varNode,nameNode);
+  expected="var foo, hoo";
+  difference=parse(expected).checkTreeEquals(actual);
+  if (difference != null) {
+    assertTrue("Nodes do not match:\n" + difference,false);
+  }
+  actual=parse("var foo, hoo");
+  varNode=actual.getFirstChild();
+  nameNode=varNode.getFirstChild().getNext();
+  NodeUtil.removeChild(varNode,nameNode);
+  expected="var foo";
+  difference=parse(expected).checkTreeEquals(actual);
+  if (difference != null) {
+    assertTrue("Nodes do not match:\n" + difference,false);
+  }
+  actual=parse("var hoo");
+  varNode=actual.getFirstChild();
+  nameNode=varNode.getFirstChild();
+  NodeUtil.removeChild(varNode,nameNode);
+  expected="";
+  difference=parse(expected).checkTreeEquals(actual);
+  if (difference != null) {
+    assertTrue("Nodes do not match:\n" + difference,false);
+  }
+}

@@ -1,0 +1,27 @@
+{
+  Node var=name.getParent();
+  Node parent=var.getParent();
+  if (parent.getType() == Token.FOR && parent.getChildCount() == 3) {
+    var.removeChild(name);
+    parent.replaceChild(var,name);
+  }
+ else   if (var.getChildCount() == 1) {
+    if (name.hasChildren()) {
+      Node value=name.removeFirstChild();
+      var.removeChild(name);
+      Node assign=new Node(Token.ASSIGN,name,value);
+      if (parent.getType() != Token.FOR) {
+        assign=NodeUtil.newExpr(assign);
+      }
+      parent.replaceChild(var,assign);
+    }
+ else {
+      NodeUtil.removeChild(parent,var);
+    }
+  }
+ else {
+    if (!name.hasChildren()) {
+      var.removeChild(name);
+    }
+  }
+}

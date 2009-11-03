@@ -1,0 +1,16 @@
+{
+  Node n=s.getRootNode();
+  if (n.getType() == Token.FUNCTION) {
+    sourceName=getSourceName(n);
+    curNode=n;
+    pushScope(s);
+    Node args=n.getFirstChild().getNext();
+    Node body=args.getNext();
+    traverseBranch(args,n);
+    traverseBranch(body,n);
+    popScope();
+  }
+ else {
+    traverseWithScope(n,s);
+  }
+}

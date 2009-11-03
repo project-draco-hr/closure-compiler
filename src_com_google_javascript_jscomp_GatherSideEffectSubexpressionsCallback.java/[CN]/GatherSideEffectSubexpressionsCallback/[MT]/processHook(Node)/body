@@ -1,0 +1,15 @@
+{
+  Preconditions.checkArgument(node.getType() == Token.HOOK,"Expected: HOOK, Got: " + Token.name(node.getType()));
+  Node condition=node.getFirstChild();
+  Node ifBranch=condition.getNext();
+  Node elseBranch=ifBranch.getNext();
+  boolean thenHasSideEffects=NodeUtil.mayHaveSideEffects(ifBranch);
+  boolean elseHasSideEffects=NodeUtil.mayHaveSideEffects(elseBranch);
+  if (thenHasSideEffects || elseHasSideEffects) {
+    accumulator.keepSimplifiedHookExpression(node,thenHasSideEffects,elseHasSideEffects);
+    return false;
+  }
+ else {
+    return true;
+  }
+}

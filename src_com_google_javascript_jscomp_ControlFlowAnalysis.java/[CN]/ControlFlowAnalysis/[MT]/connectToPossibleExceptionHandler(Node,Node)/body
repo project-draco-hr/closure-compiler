@@ -1,0 +1,30 @@
+{
+  if (mayThrowException(target) && !exceptionHandler.isEmpty()) {
+    Node lastJump=cfgNode;
+    for (    Node handler : exceptionHandler) {
+      if (NodeUtil.isFunction(handler)) {
+        return;
+      }
+      Preconditions.checkState(handler.getType() == Token.TRY);
+      Node catchBlock=NodeUtil.getCatchBlock(handler);
+      if (!NodeUtil.hasCatchHandler(catchBlock)) {
+        if (lastJump == cfgNode) {
+          createEdge(cfgNode,Branch.ON_EX,handler.getLastChild());
+        }
+ else {
+          finallyMap.put(lastJump,handler.getLastChild());
+        }
+      }
+ else {
+        if (lastJump == cfgNode) {
+          createEdge(cfgNode,Branch.ON_EX,catchBlock);
+          return;
+        }
+ else {
+          finallyMap.put(lastJump,catchBlock);
+        }
+      }
+      lastJump=handler;
+    }
+  }
+}

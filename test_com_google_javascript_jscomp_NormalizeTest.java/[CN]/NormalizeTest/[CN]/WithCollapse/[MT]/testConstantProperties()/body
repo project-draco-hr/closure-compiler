@@ -1,0 +1,9 @@
+{
+  test("var a={}; a.ACONST = 4;var b = a.ACONST;","var a$ACONST$$constant = 4; var b = a$ACONST$$constant;");
+  test("var a={b:{}}; a.b.ACONST = 4;var b = a.b.ACONST;","var a$b$ACONST$$constant = 4;var b = a$b$ACONST$$constant;");
+  test("var a = {FOO: 1};var b = a.FOO;","var a$FOO$$constant = 1; var b = a$FOO$$constant;");
+  test("var EXTERN; var ext; ext.FOO;","var b = EXTERN; var c = ext.FOO","var b = EXTERN; var c = ext.FOO",null,null);
+  test("var a={}; a.ACONST = 4; var b = a.ACONST;","var a$ACONST$$constant = 4; var b = a$ACONST$$constant;");
+  test("var a = {}; function foo() { var d = a.CONST; };" + "(function(){a.CONST=4})();","var a$CONST$$constant;function foo(){var d = a$CONST$$constant;};" + "(function(){a$CONST$$constant = 4})();");
+  test("var a = {}; a.ACONST = new Foo(); var b = a.ACONST;","var a$ACONST$$constant = new Foo(); var b = a$ACONST$$constant;");
+}

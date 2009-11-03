@@ -1,0 +1,12 @@
+{
+  String typedef=codingConvention.identifyTypeDefAssign(candidate);
+  if (typedef != null) {
+    typeRegistry.forwardDeclareType(typedef);
+    JSDocInfo info=candidate.getJSDocInfo();
+    JSType realType=info == null ? null : info.getType().evaluate(scope);
+    if (realType == null) {
+      compiler.report(JSError.make(t.getSourceName(),candidate,MALFORMED_TYPEDEF,typedef));
+    }
+    typeRegistry.declareType(typedef,realType);
+  }
+}

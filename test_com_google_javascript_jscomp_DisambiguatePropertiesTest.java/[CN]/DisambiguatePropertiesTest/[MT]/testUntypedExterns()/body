@@ -1,0 +1,7 @@
+{
+  String externs=BaseJSTypeTestCase.ALL_NATIVE_EXTERN_TYPES + "var window;" + "window.alert = function() {x};";
+  String js="" + "/** @constructor */ function Foo() {}\n" + "Foo.prototype.a = 0;\n"+ "Foo.prototype.alert = 0;\n"+ "Foo.prototype.window = 0;\n"+ "/** @constructor */ function Bar() {}\n"+ "Bar.prototype.a = 0;\n"+ "Bar.prototype.alert = 0;\n"+ "Bar.prototype.window = 0;\n"+ "window.alert();";
+  String output="" + "function Foo(){}" + "Foo.prototype.Foo_prototype$a=0;"+ "Foo.prototype.alert=0;"+ "Foo.prototype.Foo_prototype$window=0;"+ "function Bar(){}"+ "Bar.prototype.Bar_prototype$a=0;"+ "Bar.prototype.alert=0;"+ "Bar.prototype.Bar_prototype$window=0;"+ "window.alert();";
+  testSets(false,externs,js,output,"{a=[[Bar.prototype], [Foo.prototype]]" + ", window=[[Bar.prototype], [Foo.prototype]]}");
+  testSets(true,externs,js,output,"{a=[[Bar.prototype], [Foo.prototype]]," + " window=[[Bar.prototype], [Foo.prototype]]}");
+}

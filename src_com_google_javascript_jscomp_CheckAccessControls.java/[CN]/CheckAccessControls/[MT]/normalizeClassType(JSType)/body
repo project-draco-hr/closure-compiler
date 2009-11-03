@@ -1,0 +1,15 @@
+{
+  if (type == null || type.isUnknownType()) {
+    return type;
+  }
+ else   if (type.isConstructor()) {
+    return ((FunctionType)type).getInstanceType();
+  }
+ else   if (type.isFunctionPrototypeType()) {
+    FunctionType owner=((FunctionPrototypeType)type).getOwnerFunction();
+    if (owner.isConstructor()) {
+      return owner.getInstanceType();
+    }
+  }
+  return type;
+}

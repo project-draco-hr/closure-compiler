@@ -1,0 +1,21 @@
+{
+  Node nameNode=null;
+  if (NodeUtil.isFunction(node)) {
+    if (NodeUtil.isName(parent)) {
+      nameNode=parent;
+    }
+ else     if (NodeUtil.isAssign(parent)) {
+      nameNode=parent.getFirstChild();
+    }
+ else {
+      nameNode=node.getFirstChild();
+    }
+  }
+ else   if (NodeUtil.isCall(node) || NodeUtil.isNew(node)) {
+    nameNode=node.getFirstChild();
+  }
+  if (nameNode != null) {
+    JSType type=node.getJSType();
+    typeInformation.add(Join.join("",Token.name(node.getType())," ",nameNode.getQualifiedName()," = ",(type != null) ? type.toString() : "null"));
+  }
+}

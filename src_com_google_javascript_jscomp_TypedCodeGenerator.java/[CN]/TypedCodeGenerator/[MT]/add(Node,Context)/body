@@ -1,0 +1,15 @@
+{
+  if (n.getParent().getType() == Token.BLOCK || n.getParent().getType() == Token.SCRIPT) {
+    if (n.getType() == Token.FUNCTION) {
+      add(getFunctionAnnotation(n));
+    }
+ else     if (n.getType() == Token.EXPR_RESULT && n.getFirstChild().getType() == Token.ASSIGN) {
+      Node rhs=n.getFirstChild().getFirstChild();
+      add(getTypeAnnotation(rhs));
+    }
+ else     if (n.getType() == Token.VAR && n.getFirstChild().getFirstChild() != null && n.getFirstChild().getFirstChild().getType() == Token.FUNCTION) {
+      add(getFunctionAnnotation(n.getFirstChild().getFirstChild()));
+    }
+  }
+  super.add(n,context);
+}

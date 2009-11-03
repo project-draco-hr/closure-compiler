@@ -1,0 +1,10 @@
+{
+  String src="function f(x){ try{x; return x()} finally {} var y;}";
+  ControlFlowGraph<Node> cfg=createCfg(src);
+  assertCrossEdge(cfg,Token.EXPR_RESULT,Token.RETURN,Branch.UNCOND);
+  assertCrossEdge(cfg,Token.RETURN,Token.BLOCK,Branch.UNCOND);
+  assertCrossEdge(cfg,Token.BLOCK,Token.VAR,Branch.UNCOND);
+  assertReturnEdge(cfg,Token.VAR);
+  assertReturnEdge(cfg,Token.BLOCK);
+  assertNoReturnEdge(cfg,Token.RETURN);
+}

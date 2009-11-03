@@ -1,0 +1,20 @@
+{
+  new NodeTraversal(compiler,this).traverse(root);
+  for (  ProvidedNode pn : providedNodes.values()) {
+    if (pn != null) {
+      pn.maybeRemove();
+    }
+  }
+  if (requiresLevel.isOn()) {
+    for (    UnrecognizedRequire r : unrecognizedRequires) {
+      DiagnosticType error;
+      if (providedNodes.get(r.namespace) != null) {
+        error=LATE_PROVIDE_ERROR;
+      }
+ else {
+        error=MISSING_PROVIDE_ERROR;
+      }
+      compiler.report(JSError.make(r.inputName,r.requireNode,requiresLevel,error,r.namespace));
+    }
+  }
+}

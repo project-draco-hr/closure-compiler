@@ -1,0 +1,16 @@
+{
+  Node firstArg=callNode.getFirstChild().getNext();
+  if (firstArg.getType() != Token.STRING) {
+    t.report(callNode,BAD_CALL);
+    return;
+  }
+  for (  String name : firstArg.getString().split("[.]")) {
+    if (!TokenStream.isJSIdentifier(name)) {
+      t.report(callNode,BAD_ARG,name);
+      continue;
+    }
+    if (!externedNames.contains(name)) {
+      countPropertyOccurrence(name,t);
+    }
+  }
+}

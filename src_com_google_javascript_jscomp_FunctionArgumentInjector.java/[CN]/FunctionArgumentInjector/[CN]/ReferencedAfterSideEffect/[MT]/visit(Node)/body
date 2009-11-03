@@ -1,0 +1,21 @@
+{
+  if (NodeUtil.isLoopStructure(n)) {
+    loopsEntered--;
+    if (!inLoop() && !sideEffectSeen) {
+      parametersReferenced.clear();
+    }
+  }
+  if (!sideEffectSeen) {
+    if (hasNonLocalSideEffect(n)) {
+      sideEffectSeen=true;
+    }
+  }
+  if (inLoop() || sideEffectSeen) {
+    if (n.getType() == Token.NAME) {
+      String name=n.getString();
+      if (parameters.contains(name)) {
+        parametersReferenced.add(name);
+      }
+    }
+  }
+}

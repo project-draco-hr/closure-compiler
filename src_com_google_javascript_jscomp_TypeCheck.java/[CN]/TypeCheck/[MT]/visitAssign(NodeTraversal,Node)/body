@@ -1,0 +1,80 @@
+{
+  JSDocInfo info=assign.getJSDocInfo();
+  Node lvalue=assign.getFirstChild();
+  Node rvalue=assign.getLastChild();
+  if (lvalue.getType() == Token.GETPROP) {
+    Node object=lvalue.getFirstChild();
+    JSType objectJsType=getJSType(object);
+    String property=lvalue.getLastChild().getString();
+    if (object.getType() == Token.GETPROP) {
+      JSType jsType=getJSType(object.getFirstChild());
+      if (jsType.isInterface() && object.getLastChild().getString().equals("prototype")) {
+        visitInterfaceGetprop(t,assign,object,property,lvalue,rvalue);
+      }
+    }
+    if (info != null && info.hasType()) {
+      visitAnnotatedAssignGetprop(t,assign,info.getType().evaluate(t.getScope()),object,property,rvalue);
+      return;
+    }
+    if (info != null && info.hasEnumParameterType()) {
+      checkEnumInitializer(t,rvalue,info.getEnumParameterType().evaluate(t.getScope()));
+      return;
+    }
+    if (property.equals("prototype")) {
+      if (objectJsType instanceof FunctionType) {
+        FunctionType functionType=(FunctionType)objectJsType;
+        if (functionType.isConstructor()) {
+          JSType rvalueType=rvalue.getJSType();
+          validator.expectObject(t,rvalue,rvalueType,OVERRIDING_PROTOTYPE_WITH_NON_OBJECT);
+        }
+      }
+ else {
+      }
+      return;
+    }
+    if (object.getType() == Token.GETPROP) {
+      Node object2=object.getFirstChild();
+      String property2=NodeUtil.getStringValue(object.getLastChild());
+      if ("prototype".equals(property2)) {
+        JSType jsType=object2.getJSType();
+        if (jsType instanceof FunctionType) {
+          FunctionType functionType=(FunctionType)jsType;
+          if (functionType.isConstructor() || functionType.isInterface()) {
+            checkDeclaredPropertyInheritance(t,assign,functionType,property,info,getJSType(rvalue));
+          }
+        }
+ else {
+        }
+        return;
+      }
+    }
+    JSType type=objectJsType.restrictByNotNullOrUndefined();
+    if (type instanceof ObjectType) {
+      ObjectType objectType=(ObjectType)type;
+      if (objectType.hasProperty(property)) {
+        if (!objectType.isPropertyTypeInferred(property) && !propertyIsImplicitCast(objectType,property)) {
+          validator.expectCanAssignToPropertyOf(t,assign,getJSType(rvalue),objectType.getPropertyType(property),object,property);
+        }
+      }
+      return;
+    }
+  }
+ else   if (lvalue.getType() == Token.NAME) {
+    JSType rvalueType=getJSType(assign.getLastChild());
+    Var var=t.getScope().getVar(lvalue.getString());
+    if (var != null) {
+      if (var.isTypeInferred()) {
+        return;
+      }
+    }
+  }
+  JSType leftType=getJSType(lvalue);
+  Node rightChild=assign.getLastChild();
+  JSType rightType=getJSType(rightChild);
+  if (validator.expectCanAssignTo(t,assign,rightType,leftType,"assignment")) {
+    ensureTyped(t,assign,rightType);
+  }
+ else {
+    ensureTyped(t,assign);
+  }
+}

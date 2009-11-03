@@ -1,0 +1,7 @@
+{
+  Set<String> locals=Sets.newHashSet(parameters);
+  gatherLocalNames(root,locals);
+  ReferencedAfterSideEffect collector=new ReferencedAfterSideEffect(parameters,locals);
+  NodeUtil.visitPostOrder(root,collector,collector);
+  return collector.getResults();
+}

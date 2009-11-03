@@ -1,0 +1,13 @@
+{
+  if (!that.isRecordType()) {
+    return super.getLeastSupertype(that);
+  }
+  RecordType thatRecord=(RecordType)that;
+  RecordTypeBuilder builder=new RecordTypeBuilder(registry);
+  for (  String property : properties.keySet()) {
+    if (thatRecord.hasProperty(property) && thatRecord.getPropertyType(property).equals(getPropertyType(property))) {
+      builder.addProperty(property,getPropertyType(property));
+    }
+  }
+  return builder.build();
+}

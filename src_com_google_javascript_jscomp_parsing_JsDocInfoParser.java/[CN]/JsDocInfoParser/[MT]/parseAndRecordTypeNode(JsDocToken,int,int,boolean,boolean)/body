@@ -1,0 +1,15 @@
+{
+  Node typeNode=null;
+  if (onlyParseSimpleNames) {
+    typeNode=parseTypeNameAnnotation(token);
+  }
+ else {
+    typeNode=parseTypeExpressionAnnotation(token);
+  }
+  if (typeNode != null && !matchingLC) {
+    typeNode.putBooleanProp(Node.BRACELESS_TYPE,true);
+  }
+  int endCharno=stream.getCharno();
+  jsdocBuilder.markTypeNode(typeNode,lineno,startCharno,endCharno,matchingLC);
+  return typeNode;
+}

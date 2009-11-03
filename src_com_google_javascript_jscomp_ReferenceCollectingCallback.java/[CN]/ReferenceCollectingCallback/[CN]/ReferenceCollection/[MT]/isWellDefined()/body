@@ -1,0 +1,17 @@
+{
+  int size=references.size();
+  if (size == 0) {
+    return false;
+  }
+  Reference decl=references.get(0);
+  if (!decl.isInitializingDeclaration()) {
+    return false;
+  }
+  BasicBlock declBlock=decl.getBasicBlock();
+  for (int i=1; i < size; i++) {
+    if (!declBlock.provablyExecutesBefore(references.get(i).getBasicBlock())) {
+      return false;
+    }
+  }
+  return true;
+}

@@ -1,0 +1,13 @@
+{
+  Compiler compiler=new Compiler();
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,shouldTraverseFunctions);
+  Node root=compiler.parseSyntheticCode("cfgtest",input);
+  cfa.process(null,root);
+  ControlFlowGraph<Node> cfg=cfa.getCfg();
+  try {
+    assertEquals(expected,DotFormatter.toDot(root,cfg));
+  }
+ catch (  java.io.IOException e) {
+    fail("Tests failed with IOExceptions");
+  }
+}

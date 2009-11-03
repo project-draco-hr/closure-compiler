@@ -1,0 +1,18 @@
+{
+  ScopeCreator scopeCreator=compiler.getScopeCreator();
+  if (scopeCreator == null) {
+    scopeCreator=new TypedScopeCreator(compiler);
+  }
+  NodeTraversal externsTraversal=new NodeTraversal(compiler,new Traversal(true),scopeCreator);
+  NodeTraversal codeTraversal=new NodeTraversal(compiler,new Traversal(false),scopeCreator);
+  Scope topScope=compiler.getTopScope();
+  if (topScope != null) {
+    externsTraversal.traverseWithScope(externs,topScope);
+    codeTraversal.traverseWithScope(root,topScope);
+  }
+ else {
+    externsTraversal.traverse(externs);
+    codeTraversal.traverse(root);
+  }
+  connectUnknowns();
+}

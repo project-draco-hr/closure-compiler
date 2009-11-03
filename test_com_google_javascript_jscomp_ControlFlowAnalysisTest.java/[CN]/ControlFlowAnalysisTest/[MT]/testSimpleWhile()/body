@@ -1,0 +1,8 @@
+{
+  String src="var x; while (x) { x(); if (x) { break; } x() }";
+  ControlFlowGraph<Node> cfg=createCfg(src);
+  assertDownEdge(cfg,Token.WHILE,Token.BLOCK,Branch.ON_TRUE);
+  assertDownEdge(cfg,Token.BLOCK,Token.EXPR_RESULT,Branch.UNCOND);
+  assertDownEdge(cfg,Token.IF,Token.BLOCK,Branch.ON_TRUE);
+  assertReturnEdge(cfg,Token.BREAK);
+}

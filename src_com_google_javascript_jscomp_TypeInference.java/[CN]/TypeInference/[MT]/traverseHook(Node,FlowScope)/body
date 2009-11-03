@@ -1,0 +1,19 @@
+{
+  Node condition=n.getFirstChild();
+  Node trueNode=condition.getNext();
+  Node falseNode=n.getLastChild();
+  scope=traverse(condition,scope);
+  FlowScope trueScope=reverseInterpreter.getPreciserScopeKnowingConditionOutcome(condition,scope,true);
+  FlowScope falseScope=reverseInterpreter.getPreciserScopeKnowingConditionOutcome(condition,scope,false);
+  traverse(trueNode,trueScope.createChildFlowScope());
+  traverse(falseNode,falseScope.createChildFlowScope());
+  JSType trueType=trueNode.getJSType();
+  JSType falseType=falseNode.getJSType();
+  if (trueType != null && falseType != null) {
+    n.setJSType(trueType.getLeastSupertype(falseType));
+  }
+ else {
+    n.setJSType(null);
+  }
+  return scope.createChildFlowScope();
+}

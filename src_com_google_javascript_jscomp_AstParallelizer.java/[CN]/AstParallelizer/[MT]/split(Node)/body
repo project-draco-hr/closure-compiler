@@ -1,0 +1,26 @@
+{
+  Node c=n.getFirstChild();
+  Node before=null;
+  while (c != null) {
+    Node next=c.getNext();
+    if (shouldSplit.apply(c)) {
+      Node placeHolder=placeHolderProvider.get();
+      if (before == null) {
+        forest.add(n.removeFirstChild());
+        n.addChildToFront(placeHolder);
+      }
+ else {
+        n.addChildAfter(placeHolder,c);
+        n.removeChildAfter(before);
+        forest.add(c);
+      }
+      recordSplitPoint(placeHolder,before,c);
+      before=placeHolder;
+    }
+ else {
+      split(c);
+      before=c;
+    }
+    c=next;
+  }
+}

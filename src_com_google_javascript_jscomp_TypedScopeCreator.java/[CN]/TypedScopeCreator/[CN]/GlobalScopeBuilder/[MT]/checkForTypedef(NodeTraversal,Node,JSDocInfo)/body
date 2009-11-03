@@ -1,0 +1,18 @@
+{
+  if (info == null || !info.hasTypedefType()) {
+    return;
+  }
+  String typedef=candidate.getQualifiedName();
+  if (typedef == null) {
+    return;
+  }
+  typeRegistry.forwardDeclareType(typedef);
+  JSType realType=info.getTypedefType().evaluate(scope);
+  if (realType == null) {
+    compiler.report(JSError.make(t.getSourceName(),candidate,MALFORMED_TYPEDEF,typedef));
+  }
+  typeRegistry.declareType(typedef,realType);
+  if (candidate.getType() == Token.GETPROP) {
+    defineSlot(candidate,candidate.getParent(),typeRegistry.getNativeType(NO_TYPE),false);
+  }
+}

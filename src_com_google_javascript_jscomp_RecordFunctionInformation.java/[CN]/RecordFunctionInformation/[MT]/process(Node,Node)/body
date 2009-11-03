@@ -1,0 +1,17 @@
+{
+  NodeTraversal.traverse(compiler,root,this);
+  JSModuleGraph graph=compiler.getModuleGraph();
+  if (graph == null) {
+    addModuleInformation(null);
+  }
+ else {
+    for (    JSModule m : Sets.newTreeSet(new Comparator<JSModule>(){
+      public int compare(      JSModule o1,      JSModule o2){
+        return o1.getName().compareTo(o2.getName());
+      }
+    }
+,graph.getAllModules())) {
+      addModuleInformation(m);
+    }
+  }
+}

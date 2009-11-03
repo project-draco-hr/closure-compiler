@@ -1,0 +1,21 @@
+{
+  Node f=function(FunctionNode.FUNCTION_EXPRESSION);
+  if (f.getType() != Token.FUNCTION) {
+    reportError("msg.bad.prop");
+    return false;
+  }
+  int fnIndex=f.getExistingIntProp(Node.FUNCTION_PROP);
+  FunctionNode fn=currentScriptOrFn.getFunctionNode(fnIndex);
+  if (fn.getFunctionName().length() != 0) {
+    reportError("msg.bad.prop");
+    return false;
+  }
+  elems.add(nf.createName(property,lineno,charno));
+  if (isGetter) {
+    elems.add(nf.createUnary(Token.GET,f,lineno,charno));
+  }
+ else {
+    elems.add(nf.createUnary(Token.SET,f,lineno,charno));
+  }
+  return true;
+}

@@ -1,0 +1,26 @@
+{
+  Node value=name.getFirstChild();
+  if (value != null && value.getType() == Token.FUNCTION) {
+    String functionName=name.getString();
+    FunctionType functionType=getFunctionType(functionName,value,info,null);
+    defineSlot(name,var,functionType);
+  }
+ else {
+    JSType type=null;
+    if (info == null) {
+      CompilerInput input=compiler.getInput(sourceName);
+      Preconditions.checkNotNull(input,sourceName);
+      type=input.isExtern() ? typeRegistry.getNativeType(UNKNOWN_TYPE) : null;
+    }
+ else     if (info.hasEnumParameterType()) {
+      type=getEnumType(name.getString(),var,value,info.getEnumParameterType().evaluate(scope));
+    }
+ else     if (info.isConstructor()) {
+      type=getFunctionType(name.getString(),value,info,name);
+    }
+ else {
+      type=getDeclaredTypeInAnnotation(sourceName,name,info);
+    }
+    defineSlot(name,var,type);
+  }
+}

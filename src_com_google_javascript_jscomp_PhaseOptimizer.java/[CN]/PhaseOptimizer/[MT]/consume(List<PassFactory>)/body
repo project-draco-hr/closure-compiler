@@ -1,0 +1,21 @@
+{
+  Loop currentLoop=new LoopInternal();
+  boolean isCurrentLoopPopulated=false;
+  for (  PassFactory factory : factories) {
+    if (factory.isOneTimePass()) {
+      if (isCurrentLoopPopulated) {
+        passes.add(currentLoop);
+        currentLoop=new LoopInternal();
+        isCurrentLoopPopulated=false;
+      }
+      addOneTimePass(factory);
+    }
+ else {
+      currentLoop.addLoopedPass(factory);
+      isCurrentLoopPopulated=true;
+    }
+  }
+  if (isCurrentLoopPopulated) {
+    passes.add(currentLoop);
+  }
+}

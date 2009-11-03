@@ -1,0 +1,10 @@
+{
+  if (inputsByName_.containsKey(name)) {
+    throw new IllegalArgumentException("Conflicting externs name: " + name);
+  }
+  SourceAst ast=new SyntheticAst(name);
+  CompilerInput input=new CompilerInput(ast,name,true);
+  inputsByName_.put(name,input);
+  externsRoot.addChildToFront(ast.getAstRoot(this));
+  return input;
+}

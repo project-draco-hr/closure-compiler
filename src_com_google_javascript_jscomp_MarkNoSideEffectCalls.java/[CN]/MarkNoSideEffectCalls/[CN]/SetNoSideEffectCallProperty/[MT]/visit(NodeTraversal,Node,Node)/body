@@ -1,0 +1,17 @@
+{
+  if (!NodeUtil.isCall(node) && !NodeUtil.isNew(node)) {
+    return;
+  }
+  Collection<Definition> definitions=defFinder.getDefinitionsReferencedAt(node.getFirstChild());
+  if (definitions == null) {
+    return;
+  }
+  for (  Definition def : definitions) {
+    Node lValue=def.getLValue();
+    Preconditions.checkNotNull(lValue);
+    if (!noSideEffectFunctionNames.contains(lValue) && definitionTypeContainsFunctionType(def)) {
+      return;
+    }
+  }
+  node.setIsNoSideEffectsCall();
+}

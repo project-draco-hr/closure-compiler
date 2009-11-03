@@ -1,0 +1,26 @@
+{
+  Node initCode=null;
+  if (!initCodeSource.isEmpty()) {
+    Node initCodeRoot=compiler.parseSyntheticCode(templateFilename + ":init",initCodeSource);
+    if (initCodeRoot != null && initCodeRoot.getFirstChild() != null) {
+      initCode=initCodeRoot.removeChildren();
+    }
+ else {
+      return;
+    }
+  }
+  NodeTraversal.traverse(compiler,root,new RemoveCallback(declarationsToRemove));
+  NodeTraversal.traverse(compiler,root,new InstrumentCallback());
+  if (!appNameSetter.isEmpty()) {
+    Node call=new Node(Token.CALL,Node.newString(Token.NAME,appNameSetter),Node.newString(appNameStr));
+    Node expr=new Node(Token.EXPR_RESULT,call);
+    Node addingRoot=compiler.getNodeForCodeInsertion(null);
+    addingRoot.addChildrenToFront(expr);
+    compiler.reportCodeChange();
+  }
+  if (initCode != null) {
+    Node addingRoot=compiler.getNodeForCodeInsertion(null);
+    addingRoot.addChildrenToFront(initCode);
+    compiler.reportCodeChange();
+  }
+}

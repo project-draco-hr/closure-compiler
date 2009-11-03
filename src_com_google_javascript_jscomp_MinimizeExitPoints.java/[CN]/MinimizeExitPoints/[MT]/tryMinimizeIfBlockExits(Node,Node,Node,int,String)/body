@@ -1,0 +1,37 @@
+{
+  Node exitNodeParent=null;
+  Node exitNode=null;
+  if (srcBlock.getType() == Token.BLOCK) {
+    if (!srcBlock.hasChildren()) {
+      return;
+    }
+    exitNodeParent=srcBlock;
+    exitNode=exitNodeParent.getLastChild();
+  }
+ else {
+    exitNodeParent=ifNode;
+    exitNode=srcBlock;
+  }
+  if (!matchingExitNode(exitNode,exitType,labelName)) {
+    return;
+  }
+  if (ifNode.getNext() != null) {
+    Node newDestBlock=new Node(Token.BLOCK);
+    if (destBlock == null) {
+      ifNode.addChildToBack(newDestBlock);
+    }
+ else     if (destBlock.getType() == Token.EMPTY) {
+      ifNode.replaceChild(destBlock,newDestBlock);
+    }
+ else     if (destBlock.getType() == Token.BLOCK) {
+      newDestBlock=destBlock;
+    }
+ else {
+      ifNode.replaceChild(destBlock,newDestBlock);
+      newDestBlock.addChildToBack(destBlock);
+    }
+    moveAllFollowing(ifNode,ifNode.getParent(),newDestBlock);
+  }
+  NodeUtil.removeChild(exitNodeParent,exitNode);
+  compiler.reportCodeChange();
+}

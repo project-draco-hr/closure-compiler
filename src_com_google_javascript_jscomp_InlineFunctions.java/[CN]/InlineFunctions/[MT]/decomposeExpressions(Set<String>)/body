@@ -1,0 +1,12 @@
+{
+  ExpressionDecomposer decomposer=new ExpressionDecomposer(compiler,compiler.getUniqueNameIdSupplier(),fnNames);
+  for (  FunctionState fs : fns.values()) {
+    if (fs.canInline()) {
+      for (      Reference ref : fs.getReferences()) {
+        if (ref.requiresDecomposition) {
+          decomposer.maybeDecomposeExpression(ref.callNode);
+        }
+      }
+    }
+  }
+}

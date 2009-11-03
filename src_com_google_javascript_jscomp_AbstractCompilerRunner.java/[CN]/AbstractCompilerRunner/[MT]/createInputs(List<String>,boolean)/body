@@ -1,0 +1,20 @@
+{
+  List<JSSourceFile> inputs=new ArrayList<JSSourceFile>(files.size());
+  boolean usingStdin=false;
+  for (  String filename : files) {
+    if (!"-".equals(filename)) {
+      inputs.add(JSSourceFile.fromFile(filename));
+    }
+ else {
+      if (!allowStdIn) {
+        throw new FlagUsageException("Can't specify stdin.");
+      }
+      if (usingStdin) {
+        throw new FlagUsageException("Can't specify stdin twice.");
+      }
+      inputs.add(JSSourceFile.fromInputStream("stdin",System.in));
+      usingStdin=true;
+    }
+  }
+  return inputs;
+}

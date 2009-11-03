@@ -1,0 +1,20 @@
+{
+  boolean sideEffect=false;
+  int type=n.getType();
+  if (NodeUtil.isAssignmentOp(n) || type == Token.INC || type == Token.DEC) {
+    Node lhs=n.getFirstChild();
+    if (!isLocalName(lhs)) {
+      sideEffect=true;
+    }
+  }
+ else   if (type == Token.CALL) {
+    sideEffect=NodeUtil.functionCallHasSideEffects(n);
+  }
+ else   if (type == Token.NEW) {
+    sideEffect=NodeUtil.constructorCallHasSideEffects(n);
+  }
+ else   if (type == Token.DELPROP) {
+    sideEffect=true;
+  }
+  return sideEffect;
+}

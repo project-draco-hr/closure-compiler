@@ -1,0 +1,18 @@
+{
+  Preconditions.checkArgument(type.isConstructor() || type.isInterface());
+  Name symbol=graph.defineNameIfNotExists(name,isExtern);
+  if (rhs != null) {
+    symbol.setType(getType(rhs));
+    if (NodeUtil.isAssign(n)) {
+      symbol.addAssignmentDeclaration(n);
+    }
+ else {
+      symbol.addFunctionDeclaration(n);
+    }
+  }
+  ObjectType prototype=type.getPrototype();
+  for (  String prop : prototype.getOwnPropertyNames()) {
+    graph.defineNameIfNotExists(name + ".prototype." + prop,isExtern);
+  }
+  return symbol;
+}

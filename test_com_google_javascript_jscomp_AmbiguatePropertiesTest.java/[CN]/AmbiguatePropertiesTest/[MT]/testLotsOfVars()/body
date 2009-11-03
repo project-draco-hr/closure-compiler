@@ -1,0 +1,15 @@
+{
+  StringBuilder js=new StringBuilder();
+  StringBuilder output=new StringBuilder();
+  js.append("/** @constructor */ var Foo = function(){};\n");
+  js.append("/** @constructor */ var Bar = function(){};\n");
+  output.append(js.toString());
+  int vars=10;
+  for (int i=0; i < vars; i++) {
+    js.append("Foo.prototype.var" + i + " = 0;");
+    js.append("Bar.prototype.var" + (i + 10000) + " = 0;");
+    output.append("Foo.prototype." + (char)('a' + i) + "=0;");
+    output.append("Bar.prototype." + (char)('a' + i) + "=0;");
+  }
+  test(js.toString(),output.toString());
+}

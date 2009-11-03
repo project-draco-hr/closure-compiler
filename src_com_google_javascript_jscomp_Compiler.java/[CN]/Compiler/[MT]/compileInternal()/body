@@ -1,0 +1,28 @@
+{
+  parse();
+  if (hasErrors()) {
+    return;
+  }
+  if (!precheck()) {
+    return;
+  }
+  if (options_.nameAnonymousFunctionsOnly) {
+    nameAnonymousFunctions(options_.anonymousFunctionNaming);
+    return;
+  }
+  if (!options_.skipAllPasses) {
+    check();
+    if (hasErrors()) {
+      return;
+    }
+    if (options_.externExportsPath != null) {
+      externExports();
+    }
+    if (!options_.ideMode) {
+      optimize();
+    }
+  }
+  if (options_.recordFunctionInformation) {
+    recordFunctionInformation();
+  }
+}

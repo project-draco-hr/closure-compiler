@@ -1,0 +1,20 @@
+{
+  this.compiler=compiler;
+  this.allDefines=Maps.newHashMap();
+  assignableDefines=Maps.newHashMap();
+  assignAllowed=new IntStack();
+  assignAllowed.add(1);
+  allRefInfo=Maps.newHashMap();
+  for (  Name name : listOfDefines) {
+    if (name.declaration != null) {
+      allRefInfo.put(name.declaration.node,new RefInfo(name.declaration,name));
+    }
+    if (name.refs != null) {
+      for (      Ref ref : name.refs) {
+        if (ref.getTwin() == null || !ref.getTwin().isSet()) {
+          allRefInfo.put(ref.node,new RefInfo(ref,name));
+        }
+      }
+    }
+  }
+}

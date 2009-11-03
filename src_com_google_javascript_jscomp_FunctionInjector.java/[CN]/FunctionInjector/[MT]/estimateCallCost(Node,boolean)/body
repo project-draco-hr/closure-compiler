@@ -1,0 +1,12 @@
+{
+  Node argsNode=NodeUtil.getFnParameters(fnNode);
+  int numArgs=argsNode.getChildCount();
+  int callCost=NAME_COST_ESTIMATE + PAREN_COST;
+  if (numArgs > 0) {
+    callCost+=(numArgs * NAME_COST_ESTIMATE) + ((numArgs - 1) * COMMA_COST);
+  }
+  if (referencesThis) {
+    callCost+=5 + 5;
+  }
+  return callCost;
+}

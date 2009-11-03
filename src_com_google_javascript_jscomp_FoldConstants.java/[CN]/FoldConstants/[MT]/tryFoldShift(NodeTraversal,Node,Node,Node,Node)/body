@@ -1,0 +1,40 @@
+{
+  if (left.getType() == Token.NUMBER && right.getType() == Token.NUMBER) {
+    double result;
+    double lval=left.getDouble();
+    double rval=right.getDouble();
+    if (!(lval >= Integer.MIN_VALUE && lval <= Integer.MAX_VALUE)) {
+      error(t,BITWISE_OPERAND_OUT_OF_RANGE,left);
+      return;
+    }
+    if (!(rval >= 0 && rval < 32)) {
+      error(t,SHIFT_AMOUNT_OUT_OF_BOUNDS,right);
+      return;
+    }
+    int lvalInt=(int)lval;
+    if (lvalInt != lval) {
+      error(t,FRACTIONAL_BITWISE_OPERAND,left);
+      return;
+    }
+    int rvalInt=(int)rval;
+    if (rvalInt != rval) {
+      error(t,FRACTIONAL_BITWISE_OPERAND,right);
+      return;
+    }
+switch (n.getType()) {
+case Token.LSH:
+      result=lvalInt << rvalInt;
+    break;
+case Token.RSH:
+  result=lvalInt >> rvalInt;
+break;
+case Token.URSH:
+result=lvalInt >>> rvalInt;
+break;
+default :
+throw new AssertionError("Unknown shift operator: " + Node.tokenToName(n.getType()));
+}
+parent.replaceChild(n,Node.newNumber(result));
+t.getCompiler().reportCodeChange();
+}
+}

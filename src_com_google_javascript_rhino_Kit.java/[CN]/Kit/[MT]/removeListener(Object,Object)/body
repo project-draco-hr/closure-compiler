@@ -1,0 +1,35 @@
+{
+  if (listener == null)   throw new IllegalArgumentException();
+  if (listener instanceof Object[])   throw new IllegalArgumentException();
+  if (bag == listener) {
+    bag=null;
+  }
+ else   if (bag instanceof Object[]) {
+    Object[] array=(Object[])bag;
+    int L=array.length;
+    if (L < 2)     throw new IllegalArgumentException();
+    if (L == 2) {
+      if (array[1] == listener) {
+        bag=array[0];
+      }
+ else       if (array[0] == listener) {
+        bag=array[1];
+      }
+    }
+ else {
+      int i=L;
+      do {
+        --i;
+        if (array[i] == listener) {
+          Object[] tmp=new Object[L - 1];
+          System.arraycopy(array,0,tmp,0,i);
+          System.arraycopy(array,i + 1,tmp,i,L - (i + 1));
+          bag=tmp;
+          break;
+        }
+      }
+ while (i != 0);
+    }
+  }
+  return bag;
+}

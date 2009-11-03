@@ -1,0 +1,20 @@
+{
+  checkState(!skipRenaming,"Attempt to record skipped property: %s",name);
+  if (typeSystem.isInvalidatingType(top)) {
+    invalidate();
+    return false;
+  }
+ else {
+    if (typeSystem.isTypeToSkip(top)) {
+      addTypeToSkip(top);
+    }
+    if (relatedType == null) {
+      getTypes().add(top);
+    }
+ else {
+      getTypes().union(top,relatedType);
+    }
+    typeSystem.recordInterfaces(type,top,this);
+    return true;
+  }
+}

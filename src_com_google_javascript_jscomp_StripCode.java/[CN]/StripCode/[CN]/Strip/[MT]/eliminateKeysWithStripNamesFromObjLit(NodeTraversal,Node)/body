@@ -1,0 +1,16 @@
+{
+  Node key=n.getFirstChild();
+  while (key != null) {
+    if (key.getType() == Token.STRING && isStripName(key.getString())) {
+      Node value=key.getNext();
+      Node next=value.getNext();
+      n.removeChild(key);
+      n.removeChild(value);
+      key=next;
+      compiler.reportCodeChange();
+    }
+ else {
+      key=key.getNext().getNext();
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  JSType maybeThisType=null;
+  if (info != null && info.hasThisType()) {
+    maybeThisType=info.getThisType().evaluate(scope);
+  }
+  if (maybeThisType != null && maybeThisType instanceof ObjectType) {
+    thisType=(ObjectType)maybeThisType;
+  }
+ else   if (owner != null && (info == null || !info.hasType())) {
+    String ownerTypeName=owner.getQualifiedName();
+    JSType ownerType=typeRegistry.getType(scope,ownerTypeName,sourceName,owner.getLineno(),owner.getCharno());
+    if (ownerType instanceof ObjectType) {
+      thisType=(ObjectType)ownerType;
+    }
+  }
+  return this;
+}

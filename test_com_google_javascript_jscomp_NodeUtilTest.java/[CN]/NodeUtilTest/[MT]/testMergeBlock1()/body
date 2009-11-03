@@ -1,0 +1,10 @@
+{
+  Compiler compiler=new Compiler();
+  Node actual=parse("{{a();b();}}");
+  Node parentBlock=actual.getFirstChild();
+  Node childBlock=parentBlock.getFirstChild();
+  assertTrue(NodeUtil.tryMergeBlock(childBlock));
+  String expected="{a();b();}";
+  String difference=parse(expected).checkTreeEquals(actual);
+  assertNull("Nodes do not match:\n" + difference,difference);
+}

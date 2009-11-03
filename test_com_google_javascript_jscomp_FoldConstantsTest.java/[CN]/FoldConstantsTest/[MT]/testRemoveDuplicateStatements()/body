@@ -1,0 +1,9 @@
+{
+  fold("if (a) { x = 1; x++ } else { x = 2; x++ }","x=(a) ? 1 : 2; x++");
+  fold("if (a) { x = 1; x++; y += 1; z = pi; }" + " else  { x = 2; x++; y += 1; z = pi; }","x=(a) ? 1 : 2; x++; y += 1; z = pi;");
+  fold("function z() {" + "if (a) { foo(); return true } else { goo(); return true }" + "}","function z() {(a) ? foo() : goo(); return true}");
+  fold("function z() {if (a) { foo(); x = true; return true " + "} else { goo(); x = true; return true }}","function z() {(a) ? foo() : goo(); x = true; return true}");
+  fold("function z() {if (a) { return true }" + "else if (b) { return true }" + "else { return true }}","function z() {return true;}");
+  fold("function z() {if (a()) { return true }" + "else if (b()) { return true }" + "else { return true }}","function z() {if (!a()) { b() } return true;}");
+  fold("function z() {" + "  if (a) { bar(); foo(); return true }" + "    else { bar(); goo(); return true }"+ "}","function z() {" + "  if (a) { bar(); foo(); }" + "    else { bar(); goo(); }"+ "  return true;"+ "}");
+}

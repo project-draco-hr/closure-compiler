@@ -1,0 +1,17 @@
+{
+  List<Node> parts=Lists.newArrayList();
+  NodeTraversal.traverse(compiler,node,new GatherSideEffectSubexpressionsCallback(compiler,new CopySideEffectSubexpressions(compiler,parts)));
+  Node ret=null;
+  for (  Node part : parts) {
+    if (ret != null) {
+      ret=new Node(Token.COMMA,ret,part);
+    }
+ else {
+      ret=part;
+    }
+  }
+  if (ret == null) {
+    throw new IllegalArgumentException("expected at least one side effect subexpression in short " + "circuit branch.");
+  }
+  return ret;
+}

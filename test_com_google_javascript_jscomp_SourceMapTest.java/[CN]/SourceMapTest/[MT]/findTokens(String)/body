@@ -1,0 +1,35 @@
+{
+  Map<String,Token> tokens=Maps.newHashMap();
+  int currentLine=0;
+  int positionOffset=0;
+  for (int i=0; i < js.length(); ++i) {
+    char current=js.charAt(i);
+    if (current == '\n') {
+      positionOffset=i + 1;
+      currentLine++;
+      continue;
+    }
+    if (current == '_' && (i < js.length() - 5)) {
+      if (js.charAt(i + 1) != '_') {
+        continue;
+      }
+      String tokenName="";
+      int j=i + 2;
+      for (; j < js.length(); ++j) {
+        if (js.charAt(j) == '_') {
+          break;
+        }
+        tokenName+=js.charAt(j);
+      }
+      if (tokenName.length() > 0) {
+        Token token=new Token();
+        token.tokenName=tokenName;
+        int currentPosition=i - positionOffset;
+        token.position=new Position(currentLine,currentPosition);
+        tokens.put(tokenName,token);
+      }
+      i=j;
+    }
+  }
+  return tokens;
+}

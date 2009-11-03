@@ -1,0 +1,12 @@
+{
+  Node expressionRoot=findExpressionRoot(subExpression);
+  Preconditions.checkNotNull(expressionRoot);
+  Node injectionPoint=expressionRoot;
+  Node parent=injectionPoint.getParent();
+  while (parent.getType() == Token.LABEL) {
+    injectionPoint=parent;
+    parent=injectionPoint.getParent();
+  }
+  Preconditions.checkState(NodeUtil.isStatementBlock(injectionPoint.getParent()));
+  return injectionPoint;
+}

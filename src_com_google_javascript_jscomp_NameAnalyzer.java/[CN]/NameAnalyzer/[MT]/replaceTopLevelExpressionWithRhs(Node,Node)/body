@@ -1,0 +1,37 @@
+{
+switch (parent.getType()) {
+case Token.BLOCK:
+case Token.SCRIPT:
+case Token.FOR:
+case Token.LABEL:
+    break;
+default :
+  throw new IllegalArgumentException("Unsupported parent node type in replaceWithRhs " + Token.name(parent.getType()));
+}
+switch (n.getType()) {
+case Token.EXPR_RESULT:
+case Token.FUNCTION:
+case Token.VAR:
+break;
+case Token.ASSIGN:
+Preconditions.checkArgument(parent.getType() == Token.FOR,"Unsupported assignment in replaceWithRhs. parent: " + Token.name(parent.getType()));
+break;
+default :
+throw new IllegalArgumentException("Unsupported node type in replaceWithRhs " + Token.name(n.getType()));
+}
+List<Node> replacements=Lists.newArrayList();
+for (Node rhs : getRhsSubexpressions(n)) {
+replacements.addAll(getSideEffectNodes(rhs));
+}
+if (parent.getType() == Token.FOR) {
+if (replacements.isEmpty()) {
+replacements.add(new Node(Token.EMPTY));
+}
+ else {
+Node expr=collapseReplacements(replacements);
+replacements.clear();
+replacements.add(expr);
+}
+}
+changeProxy.replaceWith(parent,n,replacements);
+}

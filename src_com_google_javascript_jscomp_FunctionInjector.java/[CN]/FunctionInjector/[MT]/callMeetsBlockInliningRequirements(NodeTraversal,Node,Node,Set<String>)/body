@@ -1,0 +1,24 @@
+{
+  boolean fnContainsVars=NodeUtil.isNodeTypeReferenced(NodeUtil.getFunctionBody(fnNode),Token.VAR);
+  boolean callerContainsFunction=false;
+  if (!t.inGlobalScope()) {
+    Node fnCaller=t.getScopeRoot();
+    Node fnCallerBody=fnCaller.getLastChild();
+    callerContainsFunction=NodeUtil.containsFunctionDeclaration(fnCallerBody);
+  }
+  if (fnContainsVars && callerContainsFunction) {
+    return false;
+  }
+  if (callerContainsFunction) {
+    Map<String,Node> args=FunctionArgumentInjector.getFunctionCallParameterMap(fnNode,callNode,this.safeNameIdSupplier);
+    boolean hasArgs=!args.isEmpty();
+    if (hasArgs) {
+      Set<String> allNamesToAlias=Sets.newHashSet(namesToAlias);
+      FunctionArgumentInjector.maybeAddTempsForCallArguments(fnNode,args,allNamesToAlias,compiler.getCodingConvention());
+      if (!allNamesToAlias.isEmpty()) {
+        return false;
+      }
+    }
+  }
+  return true;
+}

@@ -1,0 +1,19 @@
+{
+  if (parent.getType() == Token.ASSIGN) {
+    String qname=parent.getFirstChild().getQualifiedName();
+    return qname != null && isIdName(qname);
+  }
+ else   if (parent.getType() == Token.NAME) {
+    Node grandParent=parent.getParent();
+    if (grandParent != null && grandParent.getType() == Token.VAR) {
+      String name=parent.getString();
+      return isIdName(name);
+    }
+ else {
+      return false;
+    }
+  }
+ else {
+    return false;
+  }
+}

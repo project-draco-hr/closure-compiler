@@ -1,0 +1,11 @@
+{
+  String src="var x; if (x) { x() } else { x() };";
+  ControlFlowGraph<Node> cfg=createCfg(src);
+  assertDownEdge(cfg,Token.SCRIPT,Token.VAR,Branch.UNCOND);
+  assertCrossEdge(cfg,Token.VAR,Token.IF,Branch.UNCOND);
+  assertDownEdge(cfg,Token.IF,Token.BLOCK,Branch.ON_TRUE);
+  assertDownEdge(cfg,Token.BLOCK,Token.EXPR_RESULT,Branch.UNCOND);
+  assertNoEdge(cfg,Token.EXPR_RESULT,Token.CALL);
+  assertDownEdge(cfg,Token.IF,Token.BLOCK,Branch.ON_FALSE);
+  assertReturnEdge(cfg,Token.EMPTY);
+}

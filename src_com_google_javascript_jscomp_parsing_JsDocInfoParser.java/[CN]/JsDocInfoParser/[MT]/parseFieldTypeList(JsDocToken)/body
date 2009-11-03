@@ -1,0 +1,19 @@
+{
+  Node fieldTypeList=newNode(Token.LB);
+  do {
+    Node fieldType=parseFieldType(token);
+    if (fieldType == null) {
+      return null;
+    }
+    fieldTypeList.addChildToBack(fieldType);
+    skipEOLs();
+    if (!match(JsDocToken.COMMA)) {
+      break;
+    }
+    next();
+    skipEOLs();
+    token=next();
+  }
+ while (true);
+  return fieldTypeList;
+}

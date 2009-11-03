@@ -1,0 +1,26 @@
+{
+switch (n.getType()) {
+case Token.GETPROP:
+    Node dest=n.getFirstChild().getNext();
+  Node parent=n.getParent();
+Node grandParent=parent.getParent();
+if (dest.getType() == Token.STRING && NodeUtil.isExprAssign(grandParent) && NodeUtil.isLhs(n,parent)) {
+String name=dest.getString();
+Property prop=new AssignmentProperty(grandParent,grandParent.getParent(),t.getModule());
+getNameInfoForName(name,PROPERTY).getDeclarations().add(prop);
+}
+break;
+case Token.ASSIGN:
+Node map=n.getFirstChild().getNext();
+if (map.getType() == Token.OBJECTLIT) {
+for (Node key=map.getFirstChild(); key != null; key=key.getNext().getNext()) {
+if (key.getType() == Token.STRING) {
+String name=key.getString();
+Property prop=new LiteralProperty(key,key.getNext(),map,n,t.getModule());
+getNameInfoForName(name,PROPERTY).getDeclarations().add(prop);
+}
+}
+}
+break;
+}
+}

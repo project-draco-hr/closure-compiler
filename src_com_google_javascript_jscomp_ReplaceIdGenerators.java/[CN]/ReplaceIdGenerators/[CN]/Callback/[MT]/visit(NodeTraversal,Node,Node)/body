@@ -1,0 +1,23 @@
+{
+  if (n.getType() != Token.CALL) {
+    return;
+  }
+  String callName=n.getFirstChild().getQualifiedName();
+  NameGenerator nameGenerator=nameGenerators.get(callName);
+  if (nameGenerator == null) {
+    return;
+  }
+  if (!t.inGlobalScope()) {
+    compiler.report(JSError.make(t,n,NON_GLOBAL_ID_GENERATOR_CALL));
+    return;
+  }
+  for (  Node ancestor : n.getAncestors()) {
+    if (NodeUtil.isControlStructure(ancestor)) {
+      compiler.report(JSError.make(t,n,CONDITIONAL_ID_GENERATOR_CALL));
+      return;
+    }
+  }
+  String nextName=nameGenerator.generateNextName();
+  parent.replaceChild(n,Node.newString(nextName));
+  compiler.reportCodeChange();
+}

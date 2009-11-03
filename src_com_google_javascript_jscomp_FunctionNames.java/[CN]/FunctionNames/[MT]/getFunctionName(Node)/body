@@ -1,0 +1,18 @@
+{
+  FunctionRecord record=functionMap.get(f);
+  if (record == null) {
+    return null;
+  }
+  String str=record.name;
+  if (str.isEmpty()) {
+    str="<anonymous>";
+  }
+  Node parent=record.parent;
+  if (parent != null) {
+    str=getFunctionName(parent) + "::" + str;
+  }
+  str=str.replaceAll("::this\\.",".");
+  str=str.replaceAll("\\.\\.",".");
+  str=str.replaceFirst("^(<anonymous>::)*","");
+  return str;
+}

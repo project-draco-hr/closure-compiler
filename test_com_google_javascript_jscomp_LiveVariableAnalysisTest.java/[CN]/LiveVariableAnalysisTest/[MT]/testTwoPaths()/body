@@ -1,0 +1,12 @@
+{
+  assertLiveBeforeX("var a,b;X:if(b){b(a)}else{b(a)};","a");
+  assertLiveBeforeX("var a,b;X:if(b){b(b)}else{b(a)};","a");
+  assertLiveBeforeX("var a,b;X:if(b){b(a)}else{b(b)};","a");
+  assertNotLiveAfterX("var a,b;X:if(b){b(b)}else{b(b)};","a");
+  assertLiveBeforeX("var a,b;X:if(b){b(b)}else{b(b)}a();","a");
+  assertLiveBeforeX("var a;X:while(param1){a()};","a");
+  assertLiveBeforeX("var a;X:while(param1){a=1};a()","a");
+  assertLiveBeforeX("var a;X:if(param1){a()};","a");
+  assertLiveBeforeX("var a;X:if(param1){a=1};a()","a");
+  assertNotLiveAfterX("X:var a;do{a=1}while(param1);a()","a");
+}

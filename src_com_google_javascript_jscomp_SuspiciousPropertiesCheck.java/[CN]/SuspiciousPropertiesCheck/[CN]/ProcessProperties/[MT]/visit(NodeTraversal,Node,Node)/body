@@ -1,0 +1,39 @@
+{
+switch (n.getType()) {
+case Token.GETPROP:
+    Node dest=n.getFirstChild().getNext();
+  if (dest.getType() == Token.STRING) {
+    if (parent.getType() == Token.ASSIGN && parent.getFirstChild() == n || NodeUtil.isExpressionNode(parent)) {
+      addWrite(dest,t,false);
+    }
+ else {
+      addRead(dest,t);
+    }
+  }
+break;
+case Token.OBJECTLIT:
+boolean isKey=true;
+for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+if (isKey && child.getType() == Token.STRING) {
+addWrite(child,t,true);
+}
+isKey=!isKey;
+}
+break;
+case Token.CALL:
+Node callee=n.getFirstChild();
+if (callee.getType() == Token.NAME && callee.getString().equals(RenameProperties.RENAME_PROPERTY_FUNCTION_NAME)) {
+Node argument=callee.getNext();
+if (argument.getType() == Token.STRING) {
+for (String name : DOT_PATTERN.split(argument.getString())) {
+Property prop=getProperty(name);
+prop.readCount++;
+prop.writeCount++;
+prop.reads=null;
+prop.writes=null;
+}
+}
+}
+break;
+}
+}

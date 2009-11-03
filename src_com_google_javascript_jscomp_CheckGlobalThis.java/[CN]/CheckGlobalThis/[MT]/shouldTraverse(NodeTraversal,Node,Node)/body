@@ -1,0 +1,29 @@
+{
+  if (n.getType() == Token.FUNCTION) {
+    JSDocInfo jsDoc=getFunctionJsDocInfo(n);
+    if (jsDoc != null && (jsDoc.isConstructor() || jsDoc.hasThisType())) {
+      return false;
+    }
+  }
+  if (parent != null && parent.getType() == Token.ASSIGN) {
+    Node lhs=parent.getFirstChild();
+    Node rhs=lhs.getNext();
+    if (n == lhs) {
+      if (assignLhsChild == null) {
+        assignLhsChild=lhs;
+      }
+    }
+ else {
+      if (lhs.getType() == Token.GETPROP) {
+        if (lhs.getLastChild().getString().equals("prototype")) {
+          return false;
+        }
+        String leftName=lhs.getQualifiedName();
+        if (leftName != null && leftName.contains(".prototype.")) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}

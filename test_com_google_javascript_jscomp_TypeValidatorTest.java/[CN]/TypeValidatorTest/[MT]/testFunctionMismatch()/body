@@ -1,0 +1,10 @@
+{
+  testSame("/** \n" + " * @param {function(string): number} x \n" + " * @return {function(boolean): string} \n"+ " */ function f(x) { return x; }",TYPE_MISMATCH_WARNING);
+  JSTypeRegistry registry=compiler.getTypeRegistry();
+  JSType string=registry.getNativeType(STRING_TYPE);
+  JSType bool=registry.getNativeType(BOOLEAN_TYPE);
+  JSType number=registry.getNativeType(NUMBER_TYPE);
+  JSType firstFunction=registry.createFunctionType(number,string);
+  JSType secondFunction=registry.createFunctionType(string,bool);
+  assertMismatches(Lists.newArrayList(new TypeMismatch(firstFunction,secondFunction),fromNatives(STRING_TYPE,BOOLEAN_TYPE),fromNatives(NUMBER_TYPE,STRING_TYPE)));
+}

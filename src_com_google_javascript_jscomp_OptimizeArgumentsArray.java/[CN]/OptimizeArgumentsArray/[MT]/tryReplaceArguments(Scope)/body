@@ -1,0 +1,47 @@
+{
+  Node parametersList=scope.getRootNode().getFirstChild().getNext();
+  Preconditions.checkState(parametersList.getType() == Token.LP);
+  boolean changed=false;
+  int numNamedParameter=parametersList.getChildCount();
+  int highestIndex=numNamedParameter - 1;
+  for (  Node ref : currentArgumentsAccess) {
+    if (ref.getParent().getType() != Token.GETELEM) {
+      return false;
+    }
+    Node index=ref.getNext();
+    if (index.getType() != Token.NUMBER) {
+      continue;
+    }
+    int value=(int)index.getDouble();
+    if (value > highestIndex) {
+      highestIndex=value;
+    }
+  }
+  int numExtraArgs=highestIndex - numNamedParameter + 1;
+  String[] argNames=new String[numExtraArgs];
+  for (int i=0; i < numExtraArgs; i++) {
+    String name=getNewName();
+    argNames[i]=name;
+    parametersList.addChildrenToBack(Node.newString(Token.NAME,name));
+    changed=true;
+  }
+  for (  Node ref : currentArgumentsAccess) {
+    Node index=ref.getNext();
+    if (index.getType() != Token.NUMBER) {
+      continue;
+    }
+    int value=(int)index.getDouble();
+    if (value >= numNamedParameter) {
+      ref.getParent().getParent().replaceChild(ref.getParent(),Node.newString(Token.NAME,argNames[value - numNamedParameter]));
+    }
+ else {
+      Node name=parametersList.getFirstChild();
+      for (int i=0; i < value; i++) {
+        name=name.getNext();
+      }
+      ref.getParent().getParent().replaceChild(ref.getParent(),Node.newString(Token.NAME,name.getString()));
+    }
+    changed=true;
+  }
+  return changed;
+}

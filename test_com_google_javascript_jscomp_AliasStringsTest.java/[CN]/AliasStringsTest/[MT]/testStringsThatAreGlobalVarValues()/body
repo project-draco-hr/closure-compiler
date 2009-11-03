@@ -1,0 +1,11 @@
+{
+  strings=ALL_STRINGS;
+  testSame("var foo='foo'; var bar='';");
+  testSame("var foo=['foo','bar'];");
+  testSame("var foo=['foo',['bar']];");
+  test("var foo=['foo', 'bar'];function bar() {return 'foo';}","var $$S_foo='foo';" + "var foo=[$$S_foo, 'bar'];function bar() {return $$S_foo;}");
+  testSame("var foo={'foo': 'bar'};");
+  testSame("var foo={'foo': {'bar': 'baz'}};");
+  test("var foo={'foo': 'bar'};function bar() {return 'foo';}","var foo={'foo': 'bar'};" + "var $$S_foo='foo';function bar() {return $$S_foo;}");
+  test("var foo={'foo': 'foo'};function bar() {return 'foo';}","var $$S_foo='foo';" + "var foo={'foo': $$S_foo};function bar() {return $$S_foo;}");
+}

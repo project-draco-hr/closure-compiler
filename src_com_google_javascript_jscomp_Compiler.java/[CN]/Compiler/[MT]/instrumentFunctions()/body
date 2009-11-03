@@ -1,0 +1,12 @@
+{
+  logger_.info("Instrumenting functions");
+  startPass("instrumentFunctions");
+  try {
+    FileReader templateFile=new FileReader(options_.instrumentationTemplate);
+    process(new InstrumentFunctions(this,functionNames_,options_.instrumentationTemplate,options_.appNameStr,templateFile));
+  }
+ catch (  IOException e) {
+    report(JSError.make(READ_ERROR,options_.instrumentationTemplate));
+  }
+  endPass();
+}

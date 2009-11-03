@@ -1,0 +1,11 @@
+{
+  ControlFlowGraph<Node> cfg=t.getControlFlowGraph();
+  for (  DiGraphEdge<Node,Branch> s : cfg.getImplicitReturn().getInEdges()) {
+    Node exitNode=s.getSource().getValue();
+    if (exitNode.getType() != Token.RETURN || exitNode.getFirstChild() == null || exitNode.getFirstChild().getType() != Token.THIS) {
+      badFunctionNodes.add(t.getScopeRoot());
+      return;
+    }
+  }
+  goodFunctionNodes.add(t.getScopeRoot());
+}

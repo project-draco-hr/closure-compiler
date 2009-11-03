@@ -1,0 +1,26 @@
+{
+  ConcreteType ret;
+  if (jsType == null || jsType.isUnknownType() || concreteType.isNone()) {
+    ret=concreteType;
+  }
+ else   if (concreteType.isUnion() || concreteType.isSingleton()) {
+    ret=concreteType.intersectWith(createTypeWithSubTypes(jsType));
+  }
+ else {
+    Preconditions.checkState(concreteType.isAll());
+    ret=createTypeWithSubTypes(jsType);
+  }
+  ret=ret.intersectWith(ConcreteType.createForTypes(allInstantiatedTypes));
+  for (  ConcreteFunctionType functionType : concreteType.getFunctions()) {
+    ret=ret.unionWith(functionType);
+  }
+  for (  ConcreteInstanceType prototype : concreteType.getPrototypeTypes()) {
+    ret=ret.unionWith(prototype);
+  }
+  for (  ConcreteInstanceType instance : concreteType.getInstances()) {
+    if (!instance.instanceType.isInstanceType() && !instance.isFunctionPrototype()) {
+      ret=ret.unionWith(instance);
+    }
+  }
+  return ret;
+}

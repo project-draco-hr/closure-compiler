@@ -1,0 +1,12 @@
+{
+  for (  FunctionState fs : fns.values()) {
+    if (fs.canRemove()) {
+      Function fn=fs.getFn();
+      Preconditions.checkState(fs.canInline());
+      Preconditions.checkState(fn != null);
+      verifyAllReferencesInlined(fs);
+      fn.remove();
+      compiler.reportCodeChange();
+    }
+  }
+}

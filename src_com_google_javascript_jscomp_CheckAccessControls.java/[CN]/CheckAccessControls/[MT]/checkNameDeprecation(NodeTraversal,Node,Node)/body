@@ -1,0 +1,15 @@
+{
+  if (parent.getType() == Token.FUNCTION || parent.getType() == Token.VAR || parent.getType() == Token.NEW) {
+    return;
+  }
+  Scope.Var var=t.getScope().getVar(n.getString());
+  JSDocInfo docInfo=var == null ? null : var.getJSDocInfo();
+  if (docInfo != null && docInfo.isDeprecated() && shouldEmitDeprecationWarning(t,n,parent)) {
+    if (docInfo.getDeprecationReason() != null) {
+      compiler.report(JSError.make(t,n,DEPRECATED_NAME_REASON,n.getString(),docInfo.getDeprecationReason()));
+    }
+ else {
+      compiler.report(JSError.make(t,n,DEPRECATED_NAME,n.getString()));
+    }
+  }
+}

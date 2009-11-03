@@ -1,0 +1,30 @@
+{
+  if (left.getType() == Token.NUMBER && right.getType() == Token.NUMBER) {
+    double result;
+    double lval=left.getDouble();
+    double rval=right.getDouble();
+    if (lval < Integer.MIN_VALUE || lval > Integer.MAX_VALUE || rval < Integer.MIN_VALUE || rval > Integer.MAX_VALUE) {
+      return;
+    }
+    int lvalInt=(int)lval;
+    if (lvalInt != lval) {
+      return;
+    }
+    int rvalInt=(int)rval;
+    if (rvalInt != rval) {
+      return;
+    }
+switch (n.getType()) {
+case Token.BITAND:
+      result=lvalInt & rvalInt;
+    break;
+case Token.BITOR:
+  result=lvalInt | rvalInt;
+break;
+default :
+throw new Error("Unknown bitwise operator");
+}
+parent.replaceChild(n,Node.newNumber(result));
+t.getCompiler().reportCodeChange();
+}
+}

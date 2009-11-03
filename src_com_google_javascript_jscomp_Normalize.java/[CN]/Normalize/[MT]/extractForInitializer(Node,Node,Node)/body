@@ -1,0 +1,27 @@
+{
+  for (Node next, c=n.getFirstChild(); c != null; c=next) {
+    next=c.getNext();
+    Node insertBefore=(before == null) ? c : before;
+    Node insertBeforeParent=(before == null) ? n : beforeParent;
+switch (c.getType()) {
+case Token.LABEL:
+      extractForInitializer(c,insertBefore,insertBeforeParent);
+    break;
+case Token.FOR:
+  if (c.getChildCount() == 4 && c.getFirstChild().getType() != Token.EMPTY) {
+    Node init=c.getFirstChild();
+    c.replaceChild(init,new Node(Token.EMPTY));
+    Node newStatement;
+    if (init.getType() == Token.VAR) {
+      newStatement=init;
+    }
+ else {
+      newStatement=NodeUtil.newExpr(init);
+    }
+    insertBeforeParent.addChildBefore(newStatement,insertBefore);
+    reportCodeChange("FOR initializer");
+  }
+break;
+}
+}
+}

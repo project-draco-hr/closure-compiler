@@ -1,0 +1,10 @@
+{
+  return new CompilerPass(){
+    public void process(    Node externs,    Node root){
+      new TypeCheck(compiler,new SemanticReverseAbstractInterpreter(compiler.getCodingConvention(),compiler.getTypeRegistry()),compiler.getTypeRegistry()).processForTesting(externs,root);
+      lastPass=new AmbiguateProperties(compiler,new char[]{'$'});
+      lastPass.process(externs,root);
+    }
+  }
+;
+}

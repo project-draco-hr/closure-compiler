@@ -1,0 +1,29 @@
+{
+  blocksWithDeclarations.clear();
+  boolean isDeclaredInScope=false;
+  for (  Reference reference : references) {
+    BasicBlock basicBlock=reference.getBasicBlock();
+    boolean isDeclaration=reference.isDeclaration();
+    if (isDeclaration) {
+      for (      BasicBlock declaredBlock : blocksWithDeclarations) {
+        if (declaredBlock.provablyExecutesBefore(basicBlock)) {
+          compiler.report(JSError.make(reference.getSourceName(),reference.getNameNode(),checkLevel,REDECLARED_VARIABLE,v.name));
+          break;
+        }
+      }
+    }
+    if (!isDeclaration && !isDeclaredInScope) {
+      Node grandparent=reference.getGrandparent();
+      if (grandparent.getType() == Token.NAME && grandparent.getString() == v.name) {
+        continue;
+      }
+      if (reference.getScope() == v.scope) {
+        compiler.report(JSError.make(reference.getSourceName(),reference.getNameNode(),checkLevel,UNDECLARED_REFERENCE,v.name));
+      }
+    }
+    if (isDeclaration) {
+      blocksWithDeclarations.add(basicBlock);
+      isDeclaredInScope=true;
+    }
+  }
+}

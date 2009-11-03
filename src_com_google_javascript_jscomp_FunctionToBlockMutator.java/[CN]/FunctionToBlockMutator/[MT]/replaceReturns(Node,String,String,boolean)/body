@@ -1,0 +1,28 @@
+{
+  Preconditions.checkNotNull(block);
+  Preconditions.checkNotNull(labelName);
+  Node root=block;
+  boolean hasReturnAtExit=false;
+  int returnCount=NodeUtil.getNodeTypeReferenceCount(block,Token.RETURN);
+  if (returnCount > 0) {
+    hasReturnAtExit=hasReturnAtExit(block);
+    if (hasReturnAtExit) {
+      convertLastReturnToStatement(block,resultName);
+      returnCount--;
+    }
+    if (returnCount > 0) {
+      replaceReturnWithBreak(block,null,resultName,labelName);
+      Node label=new Node(Token.LABEL);
+      Node name=Node.newString(Token.NAME,labelName);
+      label.addChildToFront(name);
+      label.addChildToBack(block);
+      Node newRoot=new Node(Token.BLOCK);
+      newRoot.addChildrenToBack(label);
+      root=newRoot;
+    }
+  }
+  if (resultMustBeSet && !hasReturnAtExit && resultName != null) {
+    addDummyAssignment(block,resultName);
+  }
+  return root;
+}

@@ -1,0 +1,25 @@
+{
+  Preconditions.checkState(compiler.isNormalized());
+  NodeTraversal.traverse(compiler,root,new FindCandidateFunctions());
+  if (inlineAnonymousFunctionExpressions) {
+    NodeTraversal.traverse(compiler,root,new FindAnonymousFunctionCalls());
+  }
+  if (fns.isEmpty()) {
+    return;
+  }
+  NodeTraversal.traverse(compiler,root,new FindCandidatesReferences(fns,anonFns));
+  trimCanidatesNotMeetingMinimumRequirements();
+  if (fns.isEmpty()) {
+    return;
+  }
+  Set<String> fnNames=Sets.newHashSet(fns.keySet());
+  injector.setKnownConstants(fnNames);
+  trimCanidatesUsingOnCost();
+  if (fns.isEmpty()) {
+    return;
+  }
+  resolveInlineConflicts();
+  decomposeExpressions(fnNames);
+  NodeTraversal.traverse(compiler,root,new CallVisitor(fns,anonFns,new Inline(injector)));
+  removeInlinedFunctions();
+}

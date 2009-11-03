@@ -1,0 +1,16 @@
+{
+  if (n.refs != null) {
+    String originalName=n.fullName();
+    for (    Ref r : n.refs) {
+      Node rParent=r.node.getParent();
+      if (!NodeUtil.isObjectLitKey(r.node,rParent) && (r.getTwin() == null || r.isSet())) {
+        flattenNameRef(alias,r.node,rParent,originalName);
+      }
+    }
+  }
+  if (n.props != null) {
+    for (    Name p : n.props) {
+      flattenPrefixes(alias,p,1);
+    }
+  }
+}

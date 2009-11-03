@@ -1,0 +1,20 @@
+{
+switch (n.getType()) {
+case Token.IF:
+case Token.WHILE:
+    return n.getFirstChild();
+case Token.DO:
+  return n.getLastChild();
+case Token.FOR:
+switch (n.getChildCount()) {
+case 3:
+  return null;
+case 4:
+return n.getFirstChild().getNext();
+}
+throw new IllegalArgumentException("malformed 'for' statement " + n);
+case Token.CASE:
+return null;
+}
+throw new IllegalArgumentException(n + " does not have a condition.");
+}

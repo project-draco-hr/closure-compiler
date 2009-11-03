@@ -1,0 +1,17 @@
+{
+  AstParallelizer splitter=AstParallelizer.createNewFileLevelAstParallelizer(root);
+  Supplier<Task> supplier=new Supplier<Task>(){
+    @Override public Task get(){
+      return new Task(){
+        @Override public Result processSubtree(        Node subtree){
+          RemoveConstantRValuesCallback cb=new RemoveConstantRValuesCallback();
+          NodeTraversal.traverse(null,subtree,cb);
+          return cb.getResult();
+        }
+      }
+;
+    }
+  }
+;
+  (new ParallelCompilerPass(compiler,splitter,supplier,numThreads)).process(externs,root);
+}

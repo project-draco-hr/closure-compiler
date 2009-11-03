@@ -1,0 +1,38 @@
+{
+  final int MAX_LIMIT=20;
+  final int length=s.length();
+  final int limit=Math.min(length,MAX_LIMIT);
+  StringBuilder sb=new StringBuilder();
+  sb.append(prefix);
+  boolean protectHex=false;
+  for (int i=0; i < limit; i++) {
+    char ch=s.charAt(i);
+    if (protectHex) {
+      if ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f')) {
+        sb.append('_');
+      }
+      protectHex=false;
+    }
+    if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')) {
+      sb.append(ch);
+    }
+ else {
+      sb.append('$');
+      sb.append(Integer.toHexString(ch));
+      protectHex=true;
+    }
+  }
+  if (length == limit) {
+    return sb.toString();
+  }
+  CRC32 crc32=new CRC32();
+  crc32.update(s.getBytes());
+  long hash=crc32.getValue() & unitTestHashReductionMask;
+  sb.append('_');
+  sb.append(Long.toHexString(hash));
+  String encoded=sb.toString();
+  if (!usedHashedAliases.add(encoded)) {
+    encoded+="_" + id;
+  }
+  return encoded;
+}

@@ -1,0 +1,20 @@
+{
+  if (roots.isEmpty()) {
+    return;
+  }
+  try {
+    Node scopeRoot=roots.get(0).getParent();
+    Preconditions.checkState(scopeRoot != null);
+    sourceName="";
+    curNode=scopeRoot;
+    pushScope(scopeRoot);
+    for (    Node root : roots) {
+      Preconditions.checkState(root.getParent() == scopeRoot);
+      traverseBranch(root,scopeRoot);
+    }
+    popScope();
+  }
+ catch (  Exception unexpectedException) {
+    throwUnexpectedException(unexpectedException);
+  }
+}

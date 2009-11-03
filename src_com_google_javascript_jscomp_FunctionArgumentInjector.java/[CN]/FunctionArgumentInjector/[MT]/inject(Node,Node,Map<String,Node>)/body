@@ -1,0 +1,15 @@
+{
+  if (node.getType() == Token.NAME) {
+    Node replacementTemplate=replacements.get(node.getString());
+    if (replacementTemplate != null) {
+      Preconditions.checkState(parent.getType() != Token.FUNCTION || parent.getType() != Token.VAR || parent.getType() != Token.CATCH);
+      Node replacement=replacementTemplate.cloneTree();
+      parent.replaceChild(node,replacement);
+      return replacement;
+    }
+  }
+  for (Node c=node.getFirstChild(); c != null; c=c.getNext()) {
+    c=inject(c,node,replacements);
+  }
+  return node;
+}

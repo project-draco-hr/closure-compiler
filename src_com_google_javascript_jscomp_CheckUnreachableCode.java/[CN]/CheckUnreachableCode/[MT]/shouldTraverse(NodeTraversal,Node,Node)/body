@@ -1,0 +1,11 @@
+{
+  GraphNode<Node,Branch> gNode=t.getControlFlowGraph().getNode(n);
+  if (gNode != null && gNode.getAnnotation() != GraphReachability.REACHABLE) {
+    if (n.getLineno() != -1 && n.getType() != Token.EMPTY && n.getType() != Token.BREAK) {
+      compiler.report(JSError.make(t,n,level,UNREACHABLE_CODE));
+      new GraphReachability<Node,ControlFlowGraph.Branch>(t.getControlFlowGraph()).recompute(n);
+      return false;
+    }
+  }
+  return true;
+}

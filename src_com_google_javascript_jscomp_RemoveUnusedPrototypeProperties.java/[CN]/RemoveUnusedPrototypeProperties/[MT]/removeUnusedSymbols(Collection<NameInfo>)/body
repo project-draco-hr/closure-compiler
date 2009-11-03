@@ -1,0 +1,15 @@
+{
+  boolean changed=false;
+  for (  NameInfo nameInfo : allNameInfo) {
+    if (!nameInfo.isReferenced()) {
+      for (      Symbol declaration : nameInfo.getDeclarations()) {
+        declaration.remove();
+        changed=true;
+      }
+      logger.fine("Removed unused prototype property: " + nameInfo.name);
+    }
+  }
+  if (changed) {
+    compiler.reportCodeChange();
+  }
+}

@@ -1,0 +1,22 @@
+{
+  int cycleCount=0;
+  long nodeCount=graph.getNodes().size();
+  long maxIterations=Math.max(nodeCount * nodeCount * nodeCount,100);
+  LinkedHashSet<DiGraphNode<N,E>> workSet=Sets.newLinkedHashSet();
+  for (  N n : entrySet) {
+    workSet.add(graph.getDirectedGraphNode(n));
+  }
+  for (; !workSet.isEmpty() && cycleCount < maxIterations; cycleCount++) {
+    DiGraphNode<N,E> source=workSet.iterator().next();
+    N sourceValue=source.getValue();
+    workSet.remove(source);
+    List<DiGraphEdge<N,E>> outEdges=source.getOutEdges();
+    for (    DiGraphEdge<N,E> edge : outEdges) {
+      N destNode=edge.getDestination().getValue();
+      if (callback.traverseEdge(sourceValue,edge.getValue(),destNode)) {
+        workSet.add(edge.getDestination());
+      }
+    }
+  }
+  Preconditions.checkState(cycleCount != maxIterations,NON_HALTING_ERROR_MSG);
+}

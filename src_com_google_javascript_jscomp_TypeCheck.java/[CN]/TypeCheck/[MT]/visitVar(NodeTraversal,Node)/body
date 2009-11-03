@@ -1,0 +1,25 @@
+{
+  JSDocInfo varInfo=n.hasOneChild() ? n.getJSDocInfo() : null;
+  for (  Node name : n.children()) {
+    Node value=name.getFirstChild();
+    Var var=t.getScope().getVar(name.getString());
+    if (value != null) {
+      JSType valueType=getJSType(value);
+      JSType nameType=var.getType();
+      nameType=(nameType == null) ? getNativeType(UNKNOWN_TYPE) : nameType;
+      JSDocInfo info=name.getJSDocInfo();
+      if (info == null) {
+        info=varInfo;
+      }
+      if (info != null && info.hasEnumParameterType()) {
+        checkEnumInitializer(t,value,info.getEnumParameterType().evaluate(t.getScope()));
+      }
+ else       if (var.isTypeInferred()) {
+        ensureTyped(t,name,valueType);
+      }
+ else {
+        validator.expectCanAssignTo(t,value,valueType,nameType,"initializing variable");
+      }
+    }
+  }
+}

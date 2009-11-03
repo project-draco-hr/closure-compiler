@@ -1,0 +1,13 @@
+{
+  if (NodeUtil.isVarDeclaration(n)) {
+    NameInformation ns=createNameInformation(t,n,parent);
+    Preconditions.checkNotNull(ns,"NameInformation is null");
+    createName(ns.name);
+  }
+ else   if (NodeUtil.isFunctionDeclaration(n)) {
+    Node nameNode=n.getFirstChild();
+    NameInformation ns=createNameInformation(t,nameNode,n);
+    Preconditions.checkNotNull(ns,"NameInformation is null");
+    createName(nameNode.getString());
+  }
+}

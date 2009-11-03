@@ -1,0 +1,12 @@
+{
+  Node thenBlock=node.getFirstChild().getNext();
+  Node elseBlock=thenBlock.getNext();
+  createEdge(node,Branch.ON_TRUE,computeFallThrough(thenBlock));
+  if (elseBlock == null) {
+    createEdge(node,Branch.ON_FALSE,computeFollowNode(node));
+  }
+ else {
+    createEdge(node,Branch.ON_FALSE,computeFallThrough(elseBlock));
+  }
+  connectToPossibleExceptionHandler(node,NodeUtil.getConditionExpression(node));
+}

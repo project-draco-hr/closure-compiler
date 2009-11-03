@@ -1,0 +1,21 @@
+{
+  Node node=new Node(Token.TRY,transform(statementNode.getTryBlock()));
+  Node block=new Node(Token.BLOCK);
+  boolean lineSet=false;
+  for (  CatchClause cc : statementNode.getCatchClauses()) {
+    if (lineSet == false) {
+      block.setLineno(cc.getLineno());
+      lineSet=true;
+    }
+    block.addChildToBack(transform(cc));
+  }
+  node.addChildToBack(block);
+  AstNode finallyBlock=statementNode.getFinallyBlock();
+  if (finallyBlock != null) {
+    node.addChildToBack(transform(finallyBlock));
+  }
+  if ((lineSet == false) && (finallyBlock != null)) {
+    block.setLineno(finallyBlock.getLineno());
+  }
+  return node;
+}

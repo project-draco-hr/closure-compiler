@@ -1,0 +1,15 @@
+{
+  if (type.isUnionType()) {
+    return ((UnionType)type).getAlternates();
+  }
+ else   if (type instanceof ObjectType && ((ObjectType)type).getConstructor() != null && ((ObjectType)type).getConstructor().isInterface()) {
+    List<JSType> list=Lists.newArrayList();
+    for (    FunctionType impl : registry.getDirectImplementors((ObjectType)type)) {
+      list.add(impl.getInstanceType());
+    }
+    return list;
+  }
+ else {
+    return null;
+  }
+}

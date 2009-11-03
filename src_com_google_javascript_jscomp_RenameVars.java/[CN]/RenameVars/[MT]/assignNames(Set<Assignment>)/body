@@ -1,0 +1,37 @@
+{
+  NameGenerator globalNameGenerator=new NameGenerator(reservedNames,prefix,reservedCharacters);
+  NameGenerator localNameGenerator=prefix.isEmpty() ? globalNameGenerator : new NameGenerator(reservedNames,"",reservedCharacters);
+  List<Assignment> pendingAssignments=new ArrayList<Assignment>();
+  List<String> generatedNamesForAssignments=new ArrayList<String>();
+  for (  Assignment a : varsToRename) {
+    if (a.newName != null) {
+      continue;
+    }
+    if (externNames.contains(a.oldName)) {
+      continue;
+    }
+    String newName;
+    if (a.oldName.startsWith(LOCAL_VAR_PREFIX)) {
+      newName=localNameGenerator.generateNextName();
+      finalizeNameAssignment(a,newName);
+    }
+ else {
+      newName=globalNameGenerator.generateNextName();
+      pendingAssignments.add(a);
+      generatedNamesForAssignments.add(newName);
+    }
+    reservedNames.add(newName);
+  }
+  int numPendingAssignments=generatedNamesForAssignments.size();
+  for (int i=0; i < numPendingAssignments; ) {
+    SortedSet<Assignment> varsByOrderOfOccurrence=new TreeSet<Assignment>(ORDER_OF_OCCURRENCE_COMPARATOR);
+    int len=generatedNamesForAssignments.get(i).length();
+    for (int j=i; j < numPendingAssignments && generatedNamesForAssignments.get(j).length() == len; j++) {
+      varsByOrderOfOccurrence.add(pendingAssignments.get(j));
+    }
+    for (    Assignment a : varsByOrderOfOccurrence) {
+      finalizeNameAssignment(a,generatedNamesForAssignments.get(i));
+      ++i;
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  for (  Name name : nameMap.values()) {
+    if (name.isNamespace() && name.refs != null && (name.aliasingGets > 0 || name.localSets + name.globalSets > 1)) {
+      boolean initialized=name.declaration != null;
+      for (      Ref ref : name.refs) {
+        if (ref.type == Ref.Type.SET_FROM_GLOBAL || ref.type == Ref.Type.SET_FROM_LOCAL) {
+          if (initialized) {
+            warnAboutNamespaceRedefinition(name,ref);
+          }
+          initialized=true;
+        }
+ else         if (ref.type == Ref.Type.ALIASING_GET) {
+          warnAboutNamespaceAliasing(name,ref);
+        }
+      }
+    }
+  }
+}

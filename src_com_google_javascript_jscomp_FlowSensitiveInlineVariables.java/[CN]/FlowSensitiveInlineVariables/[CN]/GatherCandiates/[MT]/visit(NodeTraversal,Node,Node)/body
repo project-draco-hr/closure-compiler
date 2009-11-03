@@ -1,0 +1,28 @@
+{
+  DiGraphNode<Node,Branch> graphNode=cfg.getDirectedGraphNode(n);
+  if (graphNode == null) {
+    return;
+  }
+  FlowState<MustDef> state=graphNode.getAnnotation();
+  final MustDef defs=state.getIn();
+  final Node cfgNode=n;
+  AbstractCfgNodeTraversalCallback gatherCb=new AbstractCfgNodeTraversalCallback(){
+    @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
+      if (NodeUtil.isName(n)) {
+        if ((NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || NodeUtil.isVar(parent) || parent.getType() == Token.INC || parent.getType() == Token.DEC || parent.getType() == Token.LP || parent.getType() == Token.CATCH) {
+          return;
+        }
+        String name=n.getString();
+        if (compiler.getCodingConvention().isExported(name)) {
+          return;
+        }
+        Node defNode=reachingDef.getDef(name,cfgNode);
+        if (defNode != null) {
+          candidates.add(new Candidate(name,defNode,n,cfgNode));
+        }
+      }
+    }
+  }
+;
+  NodeTraversal.traverse(compiler,cfgNode,gatherCb);
+}

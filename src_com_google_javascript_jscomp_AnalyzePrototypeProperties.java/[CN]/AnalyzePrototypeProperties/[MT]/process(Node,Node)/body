@@ -1,0 +1,8 @@
+{
+  if (!canModifyExterns) {
+    NodeTraversal.traverse(compiler,externRoot,new ProcessExternProperties());
+  }
+  NodeTraversal.traverse(compiler,root,new ProcessProperties());
+  FixedPointGraphTraversal<NameInfo,JSModule> t=FixedPointGraphTraversal.newTraversal(new PropagateReferences());
+  t.computeFixedPoint(symbolGraph,Sets.newHashSet(externNode,globalNode));
+}

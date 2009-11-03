@@ -1,0 +1,24 @@
+{
+  initialize();
+  int step=0;
+  while (!orderedWorkSet.isEmpty()) {
+    if (step > maxSteps) {
+      throw new MaxIterationsExceededException("Analysis did not terminate after " + maxSteps + " iterations");
+    }
+    DiGraphNode<N,Branch> curNode=orderedWorkSet.iterator().next();
+    orderedWorkSet.remove(curNode);
+    joinInputs(curNode);
+    if (flow(curNode)) {
+      List<DiGraphNode<N,Branch>> nextNodes=isForward() ? cfg.getDirectedSuccNodes(curNode) : cfg.getDirectedPredNodes(curNode);
+      for (      DiGraphNode<N,Branch> nextNode : nextNodes) {
+        if (nextNode != cfg.getImplicitReturn()) {
+          orderedWorkSet.add(nextNode);
+        }
+      }
+    }
+    step++;
+  }
+  if (isForward()) {
+    joinInputs(getCfg().getImplicitReturn());
+  }
+}

@@ -1,0 +1,33 @@
+{
+  checkArgument(elmap.containsKey(value),"Element does not exist: " + value);
+  final Predicate<Object> isSameRoot=new Predicate<Object>(){
+    /** 
+ * some node that's close to the root, or null 
+ */
+    Node<E> nodeForValue=elmap.get(value);
+    public boolean apply(    @Nullable Object b){
+      if (Objects.equal(value,b)) {
+        return true;
+      }
+      Node<E> nodeForB=elmap.get(b);
+      if (nodeForB == null) {
+        return false;
+      }
+      nodeForValue=findRoot(nodeForValue);
+      return findRoot(nodeForB) == nodeForValue;
+    }
+  }
+;
+  return new AbstractSet<E>(){
+    @Override public boolean contains(    Object o){
+      return isSameRoot.apply(o);
+    }
+    @Override public Iterator<E> iterator(){
+      return unmodifiableIterator(filter(elmap.keySet().iterator(),isSameRoot));
+    }
+    @Override public int size(){
+      return findRoot(elmap.get(value)).size;
+    }
+  }
+;
+}

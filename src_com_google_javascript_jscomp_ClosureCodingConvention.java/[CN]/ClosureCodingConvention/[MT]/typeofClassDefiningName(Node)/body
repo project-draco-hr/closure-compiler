@@ -1,0 +1,22 @@
+{
+  String methodName=null;
+  if (callName.getType() == Token.GETPROP) {
+    methodName=callName.getLastChild().getString();
+  }
+ else   if (callName.getType() == Token.NAME) {
+    String name=callName.getString();
+    int dollarIndex=name.lastIndexOf('$');
+    if (dollarIndex != -1) {
+      methodName=name.substring(dollarIndex + 1);
+    }
+  }
+  if (methodName != null) {
+    if (methodName.equals("inherits")) {
+      return SubclassType.INHERITS;
+    }
+ else     if (methodName.equals("mixin")) {
+      return SubclassType.MIXIN;
+    }
+  }
+  return null;
+}

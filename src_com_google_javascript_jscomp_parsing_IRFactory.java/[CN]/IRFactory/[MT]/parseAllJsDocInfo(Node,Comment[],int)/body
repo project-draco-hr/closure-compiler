@@ -1,0 +1,31 @@
+{
+  if (ci >= comments.length) {
+    return ci;
+  }
+  if (node.getProp(TMP_JSDOC_PROP) != null) {
+    String jsDoc=(String)node.getProp(TMP_JSDOC_PROP);
+    while (comments[ci].getCommentType() != JSDOC || !comments[ci].getValue().equals(jsDoc)) {
+      ci++;
+      Preconditions.checkState(ci < comments.length);
+    }
+    JSDocInfo info=parseJSDocInfo(jsDoc,comments[ci].getLineno(),comments[ci].getAbsolutePosition());
+    node.setJSDocInfo(info);
+    if (info != null && info.hasEnumParameterType()) {
+      if (node.getType() == Token.NAME) {
+        registry.identifyEnumName(node.getString());
+      }
+ else       if (node.getType() == Token.VAR && node.getChildCount() == 1) {
+        registry.identifyEnumName(node.getFirstChild().getString());
+      }
+ else       if (node.getType() == Token.ASSIGN) {
+        registry.identifyEnumName(node.getFirstChild().getQualifiedName());
+      }
+    }
+    ci++;
+    node.removeProp(TMP_JSDOC_PROP);
+  }
+  for (  Node child : node.children()) {
+    ci=parseAllJsDocInfo(child,comments,ci);
+  }
+  return ci;
+}

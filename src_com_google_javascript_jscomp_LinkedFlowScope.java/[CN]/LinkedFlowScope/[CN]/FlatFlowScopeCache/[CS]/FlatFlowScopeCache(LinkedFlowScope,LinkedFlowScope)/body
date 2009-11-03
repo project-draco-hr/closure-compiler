@@ -1,0 +1,39 @@
+{
+  linkedEquivalent=null;
+  functionScope=joinedScopeA.flowsFromBottom() ? joinedScopeB.getFunctionScope() : joinedScopeA.getFunctionScope();
+  Map<String,StaticSlot<JSType>> slotsA=joinedScopeA.allFlowSlots();
+  Map<String,StaticSlot<JSType>> slotsB=joinedScopeB.allFlowSlots();
+  symbols=slotsA;
+  Set<String> symbolNames=Sets.newHashSet(symbols.keySet());
+  symbolNames.addAll(slotsB.keySet());
+  for (  String name : symbolNames) {
+    StaticSlot<JSType> slotA=slotsA.get(name);
+    StaticSlot<JSType> slotB=slotsB.get(name);
+    JSType joinedType=null;
+    if (slotB == null || slotB.getType() == null) {
+      StaticSlot<JSType> fnSlot=joinedScopeB.getFunctionScope().getSlot(name);
+      JSType fnSlotType=fnSlot == null ? null : fnSlot.getType();
+      if (fnSlotType == null) {
+      }
+ else {
+        joinedType=slotA.getType().getLeastSupertype(fnSlotType);
+      }
+    }
+ else     if (slotA == null || slotA.getType() == null) {
+      StaticSlot<JSType> fnSlot=joinedScopeA.getFunctionScope().getSlot(name);
+      JSType fnSlotType=fnSlot == null ? null : fnSlot.getType();
+      if (fnSlotType == null) {
+        symbols.put(name,slotB);
+      }
+ else {
+        joinedType=slotB.getType().getLeastSupertype(fnSlotType);
+      }
+    }
+ else {
+      joinedType=slotA.getType().getLeastSupertype(slotB.getType());
+    }
+    if (joinedType != null) {
+      symbols.put(name,new SimpleSlot(name,joinedType,true));
+    }
+  }
+}

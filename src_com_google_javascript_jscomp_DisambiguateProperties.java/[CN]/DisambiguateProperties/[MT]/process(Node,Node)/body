@@ -1,0 +1,10 @@
+{
+  for (  TypeMismatch mis : compiler.getTypeValidator().getMismatches()) {
+    addInvalidatingType(mis.first);
+    addInvalidatingType(mis.second);
+  }
+  StaticScope<T> scope=typeSystem.getRootScope();
+  NodeTraversal.traverse(compiler,externs,new FindExternProperties());
+  NodeTraversal.traverse(compiler,root,new FindRenameableProperties());
+  renameProperties();
+}

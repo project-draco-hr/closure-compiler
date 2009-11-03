@@ -1,0 +1,18 @@
+{
+  for (  NamedType type : unresolvedNamedTypes.get(scope)) {
+    type.resolve(reporter,scope);
+  }
+  resolvedNamedTypes.putAll(scope,unresolvedNamedTypes.removeAll(scope));
+  if (scope != null && scope.getParentScope() == null) {
+    PrototypeObjectType globalThis=(PrototypeObjectType)getNativeType(JSTypeNative.GLOBAL_THIS);
+    JSType windowType=getType("Window");
+    if (globalThis.isUnknownType()) {
+      if (windowType instanceof ObjectType) {
+        globalThis.setImplicitPrototype((ObjectType)windowType);
+      }
+ else {
+        globalThis.setImplicitPrototype(getNativeObjectType(JSTypeNative.OBJECT_TYPE));
+      }
+    }
+  }
+}

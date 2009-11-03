@@ -1,0 +1,24 @@
+{
+  List<Node> ancestors=Lists.newArrayList();
+  Node root=(new Compiler()).parseTestCode(";" + code);
+  for (Node n=root; n != null; n=n.getFirstChild()) {
+    ancestors.add(0,n);
+  }
+  FunctionlessLocalScope searchIt=new FunctionlessLocalScope(ancestors.toArray(new Node[ancestors.size()]));
+  boolean found=false;
+  while (searchIt.hasNext()) {
+    Node n=searchIt.next();
+    if (n.getType() == Token.NAME && searchIt.currentParent().getType() == Token.VAR && n.getString().equals("X")) {
+      found=true;
+      break;
+    }
+  }
+  assertTrue("Variable X not found! " + root.toStringTree(),found);
+  List<Node> currentAncestors=searchIt.currentAncestors();
+  Iterator<Node> moveIt=new LocalVarMotion(currentAncestors.toArray(new Node[currentAncestors.size()]));
+  List<Integer> actualTokens=Lists.newArrayList();
+  while (moveIt.hasNext()) {
+    actualTokens.add(moveIt.next().getType());
+  }
+  assertEquals(expectedTokens,actualTokens);
+}

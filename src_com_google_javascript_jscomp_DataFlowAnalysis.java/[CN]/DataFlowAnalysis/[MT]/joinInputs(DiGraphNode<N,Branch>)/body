@@ -1,0 +1,44 @@
+{
+  FlowState<L> state=node.getAnnotation();
+  if (isForward()) {
+    if (cfg.getEntry() == node) {
+      state.setIn(createEntryLattice());
+    }
+ else {
+      List<DiGraphNode<N,Branch>> inNodes=cfg.getDirectedPredNodes(node);
+      if (inNodes.size() == 1) {
+        FlowState<L> inNodeState=inNodes.get(0).getAnnotation();
+        state.setIn(inNodeState.getOut());
+      }
+ else       if (inNodes.size() > 1) {
+        List<L> values=new ArrayList<L>(inNodes.size());
+        for (        DiGraphNode<N,Branch> currentNode : inNodes) {
+          FlowState<L> currentNodeState=currentNode.getAnnotation();
+          values.add(currentNodeState.getOut());
+        }
+        state.setIn(joinOp.apply(values));
+      }
+    }
+  }
+ else {
+    List<DiGraphNode<N,Branch>> inNodes=cfg.getDirectedSuccNodes(node);
+    if (inNodes.size() == 1) {
+      DiGraphNode<N,Branch> inNode=inNodes.get(0);
+      if (inNode == cfg.getImplicitReturn()) {
+        state.setOut(createEntryLattice());
+      }
+ else {
+        FlowState<L> inNodeState=inNode.getAnnotation();
+        state.setOut(inNodeState.getIn());
+      }
+    }
+ else     if (inNodes.size() > 1) {
+      List<L> values=new ArrayList<L>(inNodes.size());
+      for (      DiGraphNode<N,Branch> currentNode : inNodes) {
+        FlowState<L> currentNodeState=currentNode.getAnnotation();
+        values.add(currentNodeState.getIn());
+      }
+      state.setOut(joinOp.apply(values));
+    }
+  }
+}

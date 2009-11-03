@@ -1,0 +1,23 @@
+{
+  AbstractPostOrderCallback finder=new AbstractPostOrderCallback(){
+    @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
+      if (jsScope == t.getScope() || !NodeUtil.isName(n) || NodeUtil.isFunction(parent)) {
+        return;
+      }
+      String name=n.getString();
+      Var var=t.getScope().getVar(name);
+      if (var != null && var.scope == jsScope) {
+        escaped.add(jsScope.getVar(name));
+      }
+    }
+  }
+;
+  NodeTraversal t=new NodeTraversal(compiler,finder);
+  t.traverseAtScope(jsScope);
+  for (Iterator<Var> i=jsScope.getVars(); i.hasNext(); ) {
+    Var var=i.next();
+    if (var.getParentNode().getType() == Token.CATCH || compiler.getCodingConvention().isExported(var.getName())) {
+      escaped.add(var);
+    }
+  }
+}

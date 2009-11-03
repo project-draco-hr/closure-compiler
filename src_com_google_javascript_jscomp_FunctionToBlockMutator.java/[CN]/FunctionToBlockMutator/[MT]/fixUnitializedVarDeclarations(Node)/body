@@ -1,0 +1,15 @@
+{
+  if (NodeUtil.isLoopStructure(n)) {
+    return;
+  }
+  if (NodeUtil.isVar(n)) {
+    Node name=n.getFirstChild();
+    if (!name.hasChildren()) {
+      name.addChildToBack(Node.newString(Token.NAME,"undefined"));
+    }
+    return;
+  }
+  for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+    fixUnitializedVarDeclarations(c);
+  }
+}

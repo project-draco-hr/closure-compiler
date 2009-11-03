@@ -1,0 +1,23 @@
+{
+  Preconditions.checkState(specs != null);
+  Map<String,String> wrappers=Maps.newHashMapWithExpectedSize(modules.length);
+  for (  JSModule m : modules) {
+    wrappers.put(m.getName(),"");
+  }
+  for (  String spec : specs) {
+    int pos=spec.indexOf(':');
+    if (pos == -1) {
+      throw new FlagUsageException("Expected module wrapper to have " + "<name>:<wrapper> format: " + spec);
+    }
+    String name=spec.substring(0,pos);
+    if (!wrappers.containsKey(name)) {
+      throw new FlagUsageException("Unknown module: '" + name + "'");
+    }
+    String wrapper=spec.substring(pos + 1);
+    if (!wrapper.contains("%s")) {
+      throw new FlagUsageException("No %s placeholder in module wrapper: '" + wrapper + "'");
+    }
+    wrappers.put(name,wrapper);
+  }
+  return wrappers;
+}

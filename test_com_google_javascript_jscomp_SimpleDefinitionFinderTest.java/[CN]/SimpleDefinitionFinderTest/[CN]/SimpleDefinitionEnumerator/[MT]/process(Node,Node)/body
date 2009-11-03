@@ -1,0 +1,23 @@
+{
+  passUnderTest.process(externs,root);
+  NodeTraversal.traverse(compiler,externs,this);
+  NodeTraversal.traverse(compiler,root,this);
+  for (  DefinitionSite defSite : passUnderTest.getDefinitionSites()) {
+    Node node=defSite.node;
+    Definition definition=defSite.definition;
+    StringBuffer sb=new StringBuffer();
+    sb.append("DEF ");
+    sb.append(Token.name(node.getType()));
+    sb.append(" ");
+    sb.append(node.getQualifiedName());
+    sb.append(" -> ");
+    Node rValue=definition.getRValue();
+    if (rValue != null) {
+      sb.append(Token.name(rValue.getType()));
+    }
+ else {
+      sb.append("<null>");
+    }
+    found.add(sb.toString());
+  }
+}

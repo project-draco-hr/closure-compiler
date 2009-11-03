@@ -1,0 +1,15 @@
+{
+  Node node=new Node(Token.LABEL);
+  Node prev=null;
+  Node cur=node;
+  for (  Label label : statementNode.getLabels()) {
+    if (prev != null) {
+      prev.addChildToBack(cur);
+    }
+    cur.addChildToBack(transform(label));
+    prev=cur;
+    cur=new Node(Token.LABEL);
+  }
+  prev.addChildToBack(transform(statementNode.getStatement()));
+  return node;
+}

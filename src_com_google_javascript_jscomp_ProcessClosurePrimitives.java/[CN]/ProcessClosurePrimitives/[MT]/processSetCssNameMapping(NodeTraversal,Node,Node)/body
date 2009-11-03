@@ -1,0 +1,35 @@
+{
+  Node left=n.getFirstChild();
+  Node arg=left.getNext();
+  if (verifyArgument(t,left,arg,Token.OBJECTLIT)) {
+    final Map<String,String> cssNames=Maps.newHashMap();
+    JSError error=null;
+    for (Node key=arg.getFirstChild(); key != null; key=key.getNext().getNext()) {
+      Node value=key.getNext();
+      if (key.getType() != Token.STRING || value == null || value.getType() != Token.STRING) {
+        error=JSError.make(t,n,NON_STRING_PASSED_TO_SET_CSS_NAME_MAPPING_ERROR);
+      }
+      if (error != null) {
+        compiler.report(error);
+        break;
+      }
+      cssNames.put(key.getString(),value.getString());
+    }
+    if (error == null) {
+      CssRenamingMap cssRenamingMap=new CssRenamingMap(){
+        public String get(        String value){
+          if (cssNames.containsKey(value)) {
+            return cssNames.get(value);
+          }
+ else {
+            return value;
+          }
+        }
+      }
+;
+      compiler.setCssRenamingMap(cssRenamingMap);
+      parent.getParent().removeChild(parent);
+      compiler.reportCodeChange();
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+switch (n.getType()) {
+case Token.FUNCTION:
+    Node functionNameNode=n.getFirstChild();
+  String functionName=functionNameNode.getString();
+if (functionName.length() == 0) {
+  if (parent.getType() == Token.ASSIGN) {
+    Node lhs=parent.getFirstChild();
+    String name=namer.getName(lhs);
+    namer.setFunctionName(name,n);
+  }
+ else   if (parent.getType() == Token.NAME) {
+    String name=namer.getName(parent);
+    namer.setFunctionName(name,n);
+  }
+}
+break;
+case Token.ASSIGN:
+Node lhs=n.getFirstChild();
+Node rhs=lhs.getNext();
+if (rhs.getType() == Token.OBJECTLIT) {
+nameObjectLiteralMethods(rhs,namer.getName(lhs));
+}
+}
+}

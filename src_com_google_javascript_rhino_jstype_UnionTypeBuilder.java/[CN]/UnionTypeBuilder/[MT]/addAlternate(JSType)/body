@@ -1,0 +1,41 @@
+{
+  if (alternate.isNoType()) {
+    return this;
+  }
+  isAllType=isAllType || alternate.isAllType();
+  boolean isAlternateUnknown=alternate instanceof UnknownType;
+  isNativeUnknownType=isNativeUnknownType || isAlternateUnknown;
+  if (isAlternateUnknown) {
+    areAllUnknownsChecked=areAllUnknownsChecked && alternate.isCheckedUnknownType();
+  }
+  if (!isAllType && !isNativeUnknownType) {
+    if (alternate instanceof UnionType) {
+      UnionType union=(UnionType)alternate;
+      for (      JSType unionAlt : union.getAlternates()) {
+        addAlternate(unionAlt);
+      }
+    }
+ else {
+      if (!alternate.isUnknownType()) {
+        Iterator<JSType> it=alternates.iterator();
+        while (it.hasNext()) {
+          JSType current=it.next();
+          if (!current.isUnknownType()) {
+            if (alternate.isSubtype(current)) {
+              return this;
+            }
+ else             if (current.isSubtype(alternate)) {
+              it.remove();
+            }
+          }
+        }
+      }
+      alternates.add(alternate);
+      result=null;
+    }
+  }
+ else {
+    result=null;
+  }
+  return this;
+}

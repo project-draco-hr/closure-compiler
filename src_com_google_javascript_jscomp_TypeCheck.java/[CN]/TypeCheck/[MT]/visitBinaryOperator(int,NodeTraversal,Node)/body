@@ -1,0 +1,47 @@
+{
+  Node left=n.getFirstChild();
+  JSType leftType=getJSType(left);
+  Node right=n.getLastChild();
+  JSType rightType=getJSType(right);
+switch (op) {
+case Token.ASSIGN_LSH:
+case Token.ASSIGN_RSH:
+case Token.LSH:
+case Token.RSH:
+case Token.ASSIGN_URSH:
+case Token.URSH:
+    if (!leftType.matchesInt32Context()) {
+      t.report(left,BIT_OPERATION,NodeUtil.opToStr(n.getType()),leftType.toString());
+    }
+  if (!rightType.matchesUint32Context()) {
+    t.report(right,BIT_OPERATION,NodeUtil.opToStr(n.getType()),rightType.toString());
+  }
+break;
+case Token.ASSIGN_DIV:
+case Token.ASSIGN_MOD:
+case Token.ASSIGN_MUL:
+case Token.ASSIGN_SUB:
+case Token.DIV:
+case Token.MOD:
+case Token.MUL:
+case Token.SUB:
+validator.expectNumber(t,left,leftType,"left operand");
+validator.expectNumber(t,right,rightType,"right operand");
+break;
+case Token.ASSIGN_BITAND:
+case Token.ASSIGN_BITXOR:
+case Token.ASSIGN_BITOR:
+case Token.BITAND:
+case Token.BITXOR:
+case Token.BITOR:
+validator.expectBitwiseable(t,left,leftType,"bad left operand to bitwise operator");
+validator.expectBitwiseable(t,right,rightType,"bad right operand to bitwise operator");
+break;
+case Token.ASSIGN_ADD:
+case Token.ADD:
+break;
+default :
+t.report(n,UNEXPECTED_TOKEN,Node.tokenToName(op));
+}
+ensureTyped(t,n);
+}

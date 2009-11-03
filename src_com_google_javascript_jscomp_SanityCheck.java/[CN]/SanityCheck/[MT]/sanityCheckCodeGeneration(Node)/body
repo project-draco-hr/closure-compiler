@@ -1,0 +1,15 @@
+{
+  if (compiler.hasHaltingErrors()) {
+    return;
+  }
+  String source=compiler.toSource(root);
+  Node root2=compiler.parseSyntheticCode(source);
+  if (compiler.hasHaltingErrors()) {
+    compiler.report(JSError.make(CANNOT_PARSE_GENERATED_CODE,StringUtil.truncateAtMaxLength(source,100,true)));
+    return;
+  }
+  String source2=compiler.toSource(root2);
+  if (!source.equals(source2)) {
+    compiler.report(JSError.make(GENERATED_BAD_CODE,StringUtil.truncateAtMaxLength(source,100,true),StringUtil.truncateAtMaxLength(source2,100,true)));
+  }
+}

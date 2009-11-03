@@ -1,0 +1,42 @@
+{
+  int maxLine=0;
+  Map<Integer,LineMapping> lineMappings=Maps.newHashMap();
+  for (  Mapping mapping : mappings) {
+    int prefixLine=prefixPosition.getLineNumber();
+    int startPositionLine=prefixLine + mapping.startPosition.getLineNumber();
+    int endPositionLine=prefixLine + mapping.endPosition.getLineNumber();
+    maxLine=Math.max(maxLine,endPositionLine);
+    for (int i=startPositionLine; i <= endPositionLine; ++i) {
+      LineMapping lineMapping=lineMappings.get(i);
+      if (lineMapping == null) {
+        lineMapping=new LineMapping();
+        lineMapping.lineNumber=i;
+        lineMappings.put(i,lineMapping);
+      }
+      int startCharacter=mapping.startPosition.getCharacterIndex();
+      if (mapping.startPosition.getLineNumber() == 0) {
+        startCharacter+=prefixPosition.getCharacterIndex();
+      }
+      int endCharacter=mapping.endPosition.getCharacterIndex();
+      if (mapping.endPosition.getLineNumber() == 0) {
+        endCharacter+=prefixPosition.getCharacterIndex();
+      }
+      lineMapping.length=Math.max(lineMapping.length,endCharacter);
+      if (i > startPositionLine) {
+        startCharacter=0;
+      }
+      if (i < endPositionLine) {
+        endCharacter=Integer.MAX_VALUE;
+      }
+      LineCharMapping lcm=new LineCharMapping();
+      lcm.startCharacter=startCharacter;
+      lcm.endCharacter=endCharacter;
+      lcm.basisMapping=mapping;
+      if (!lineMapping.files.contains(mapping.sourceFile)) {
+        lineMapping.files.add(mapping.sourceFile);
+      }
+      lineMapping.characterMappings.add(lcm);
+    }
+  }
+  return new LineMappingInformation(lineMappings,maxLine);
+}

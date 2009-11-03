@@ -1,0 +1,21 @@
+{
+  if (n.getJSType() != null) {
+    return scope;
+  }
+  ObjectType objectType=registry.createAnonymousObjectType();
+  for (Node name=n.getFirstChild(); name != null; name=name.getNext().getNext()) {
+    Node value=name.getNext();
+    scope=traverse(name,scope);
+    scope=traverse(value,scope);
+    String memberName=NodeUtil.getStringValue(name);
+    if (memberName != null) {
+      objectType.defineInferredProperty(memberName,getJSType(value),false);
+    }
+ else {
+      n.setJSType(getNativeType(UNKNOWN_TYPE));
+      return scope;
+    }
+  }
+  n.setJSType(objectType);
+  return scope;
+}

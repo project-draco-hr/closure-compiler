@@ -1,0 +1,31 @@
+{
+  for (  Map.Entry<Var,NamedInfo> e : namedInfo.entrySet()) {
+    NamedInfo info=e.getValue();
+    JSModule deepestDependency=info.deepestModule;
+    if (info.allowMove && deepestDependency != null) {
+      Iterator<Declaration> it=info.declarationIterator();
+      JSModuleGraph moduleGraph=compiler.getModuleGraph();
+      while (it.hasNext()) {
+        Declaration decl=it.next();
+        if (decl.module != null && moduleGraph.dependsOn(deepestDependency,decl.module)) {
+          Node destParent=moduleVarParentMap.get(deepestDependency);
+          if (destParent == null) {
+            destParent=compiler.getNodeForCodeInsertion(deepestDependency);
+            moduleVarParentMap.put(deepestDependency,destParent);
+          }
+          Node declParent=decl.node.getParent();
+          if (declParent.getType() == Token.VAR && declParent.getChildCount() > 1) {
+            declParent.removeChild(decl.node);
+            Node var=new Node(Token.VAR,decl.node);
+            destParent.addChildToFront(var);
+          }
+ else {
+            declParent.detachFromParent();
+            destParent.addChildToFront(declParent);
+          }
+          compiler.reportCodeChange();
+        }
+      }
+    }
+  }
+}

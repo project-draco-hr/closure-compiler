@@ -1,0 +1,30 @@
+{
+  boolean allowDupe=false;
+  if (n.getType() == Token.GETPROP) {
+    JSDocInfo info=n.getJSDocInfo();
+    if (info == null) {
+      info=parent.getJSDocInfo();
+    }
+    allowDupe=info != null && info.getSuppressions().contains("duplicate");
+  }
+  JSType varType=var.getType();
+  if (varType != null && varType != typeRegistry.getNativeType(UNKNOWN_TYPE) && newType != null && newType != typeRegistry.getNativeType(UNKNOWN_TYPE)) {
+    if (var.input == null) {
+      n.setJSType(varType);
+      if (parent.getType() == Token.VAR) {
+        if (n.getFirstChild() != null) {
+          n.getFirstChild().setJSType(varType);
+        }
+      }
+ else {
+        Preconditions.checkState(parent.getType() == Token.FUNCTION);
+        parent.setJSType(varType);
+      }
+    }
+ else {
+      if (!(allowDupe || var.getParentNode().getType() == Token.EXPR_RESULT) || !newType.equals(varType)) {
+        compiler.report(JSError.make(sourceName,n,DUP_VAR_DECLARATION,variableName,newType.toString(),var.getInputName(),String.valueOf(var.nameNode.getLineno()),varType.toString()));
+      }
+    }
+  }
+}

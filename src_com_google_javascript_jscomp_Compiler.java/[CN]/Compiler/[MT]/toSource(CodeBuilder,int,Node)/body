@@ -1,0 +1,27 @@
+{
+  runInCompilerThread(new Callable<Void>(){
+    public Void call() throws Exception {
+      if (options_.printInputDelimiter) {
+        if ((cb.getLength() > 0) && !cb.endsWith("\n")) {
+          cb.append("\n");
+        }
+        cb.append("// Input ").append(String.valueOf(inputSeqNum)).append("\n");
+      }
+      if (root.getJSDocInfo() != null && root.getJSDocInfo().getLicense() != null) {
+        cb.append("/*\n").append(root.getJSDocInfo().getLicense()).append("*/\n");
+      }
+      if (options_.sourceMapOutputPath != null) {
+        sourceMap_.setStartingPosition(cb.getLineIndex(),cb.getColumnIndex());
+      }
+      String code=toSource(root);
+      if (!code.isEmpty()) {
+        cb.append(code);
+        if (!code.endsWith(";")) {
+          cb.append(";");
+        }
+      }
+      return null;
+    }
+  }
+);
+}

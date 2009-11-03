@@ -1,0 +1,38 @@
+{
+  CodingConvention convention=compiler_.getCodingConvention();
+  for (Iterator<Scope.Var> it=scope.getVars(); it.hasNext(); ) {
+    Scope.Var var=it.next();
+    if (!var.referenced && (var.isLocal() || !convention.isExported(var.name))) {
+      compiler_.addToDebugLog("Unreferenced var: " + var.name);
+      Node nameNode=var.nameNode;
+      Node toRemove=nameNode.getParent();
+      Node parent=toRemove.getParent();
+      Preconditions.checkState(toRemove.getType() == Token.VAR || toRemove.getType() == Token.FUNCTION || toRemove.getType() == Token.LP && parent.getType() == Token.FUNCTION,"We should only declare vars and functions and function args");
+      if (toRemove.getType() == Token.LP && parent.getType() == Token.FUNCTION) {
+      }
+ else       if (toRemove.getType() == Token.FUNCTION && NodeUtil.isFunctionAnonymous(toRemove)) {
+      }
+ else       if (parent != null && parent.getType() == Token.FOR && parent.getChildCount() < 4) {
+      }
+ else       if (toRemove.getType() == Token.VAR && nameNode.hasChildren() && NodeUtil.mayHaveSideEffects(nameNode.getFirstChild())) {
+        if (!warnedVars_.contains(var)) {
+          warnedVars_.add(var);
+          String inputName=var.input != null ? var.input.getName() : "<unknown>";
+          logger_.info("Unused var " + var.name + " declared in "+ inputName+ " at line "+ toRemove.getLineno()+ " may have side effects and can't be removed");
+        }
+        if (toRemove.getChildCount() == 1) {
+          parent.replaceChild(toRemove,new Node(Token.EXPR_RESULT,nameNode.removeFirstChild()));
+          numRemoved_++;
+        }
+      }
+ else       if (toRemove.getType() == Token.VAR && toRemove.getChildCount() > 1) {
+        toRemove.removeChild(nameNode);
+        numRemoved_++;
+      }
+ else       if (parent != null) {
+        NodeUtil.removeChild(parent,toRemove);
+        numRemoved_++;
+      }
+    }
+  }
+}

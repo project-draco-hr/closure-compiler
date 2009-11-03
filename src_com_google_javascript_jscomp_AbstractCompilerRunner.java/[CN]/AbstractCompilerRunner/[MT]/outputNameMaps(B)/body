@@ -1,0 +1,43 @@
+{
+  String propertyMapOutputPath=null;
+  String variableMapOutputPath=null;
+  String functionInformationMapOutputPath=null;
+  if (FLAG_create_name_map_files.get()) {
+    String basePath=getMapPath(options.jsOutputFile);
+    propertyMapOutputPath=basePath + "_props_map.out";
+    variableMapOutputPath=basePath + "_vars_map.out";
+    functionInformationMapOutputPath=basePath + "_functions_map.out";
+  }
+  if (!FLAG_variable_map_output_file.get().equals("")) {
+    if (variableMapOutputPath != null) {
+      throw new FlagUsageException("The flags variable_map_output_file and " + "create_name_map_files cannot both be used simultaniously.");
+    }
+    variableMapOutputPath=FLAG_variable_map_output_file.get();
+  }
+  if (!FLAG_property_map_output_file.get().equals("")) {
+    if (propertyMapOutputPath != null) {
+      throw new FlagUsageException("The flags property_map_output_file and " + "create_name_map_files cannot both be used simultaniously.");
+    }
+    propertyMapOutputPath=FLAG_property_map_output_file.get();
+  }
+  if (variableMapOutputPath != null) {
+    if (compiler.getVariableMap() != null) {
+      compiler.getVariableMap().save(variableMapOutputPath);
+    }
+  }
+  if (propertyMapOutputPath != null) {
+    if (compiler.getPropertyMap() != null) {
+      compiler.getPropertyMap().save(propertyMapOutputPath);
+    }
+  }
+  if (functionInformationMapOutputPath != null) {
+    if (compiler.getFunctionalInformationMap() != null) {
+      FileOutputStream file=new FileOutputStream(functionInformationMapOutputPath);
+      CodedOutputStream outputStream=CodedOutputStream.newInstance(file);
+      compiler.getFunctionalInformationMap().writeTo(outputStream);
+      outputStream.flush();
+      file.flush();
+      file.close();
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  PriorityQueue<DiGraphNode<Node,Branch>> worklist=new PriorityQueue<DiGraphNode<Node,Branch>>(10,priorityComparator);
+  worklist.add(entry);
+  while (!worklist.isEmpty()) {
+    DiGraphNode<Node,Branch> current=worklist.remove();
+    if (nodePriorities.containsKey(current)) {
+      continue;
+    }
+    nodePriorities.put(current,++priorityCounter);
+    List<DiGraphNode<Node,Branch>> successors=cfg.getDirectedSuccNodes(current);
+    for (    DiGraphNode<Node,Branch> candidate : successors) {
+      worklist.add(candidate);
+    }
+  }
+}

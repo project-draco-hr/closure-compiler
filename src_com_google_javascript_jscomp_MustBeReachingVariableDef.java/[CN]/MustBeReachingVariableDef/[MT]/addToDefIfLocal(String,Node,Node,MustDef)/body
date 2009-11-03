@@ -1,0 +1,27 @@
+{
+  Var var=jsScope.getVar(name);
+  if (var == null || var.scope != jsScope) {
+    return;
+  }
+  for (  Var other : def.reachingDef.keySet()) {
+    Definition otherDef=def.reachingDef.get(other);
+    if (otherDef == null) {
+      continue;
+    }
+    if (otherDef.depends.contains(var)) {
+      def.reachingDef.put(other,null);
+    }
+  }
+  if (!escaped.contains(var)) {
+    if (node == null) {
+      def.reachingDef.put(var,null);
+    }
+ else {
+      Definition definition=new Definition(node);
+      if (rValue != null) {
+        computeDependence(definition,rValue);
+      }
+      def.reachingDef.put(var,definition);
+    }
+  }
+}

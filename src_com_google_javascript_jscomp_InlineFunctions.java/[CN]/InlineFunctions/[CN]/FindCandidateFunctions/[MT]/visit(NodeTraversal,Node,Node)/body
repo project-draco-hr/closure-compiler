@@ -1,0 +1,20 @@
+{
+switch (n.getType()) {
+case Token.VAR:
+    if (n.hasOneChild()) {
+      Node nameNode=n.getFirstChild();
+      if (nameNode.getType() == Token.NAME && nameNode.hasChildren() && nameNode.getFirstChild().getType() == Token.FUNCTION) {
+        maybeAddFunction(new FunctionVar(n),t.getModule());
+      }
+    }
+  break;
+case Token.FUNCTION:
+Preconditions.checkState(NodeUtil.isStatementBlock(parent) || parent.getType() == Token.LABEL);
+Function fn=new NamedFunction(n);
+String name=fn.getName();
+if (!name.isEmpty()) {
+maybeAddFunction(fn,t.getModule());
+}
+break;
+}
+}

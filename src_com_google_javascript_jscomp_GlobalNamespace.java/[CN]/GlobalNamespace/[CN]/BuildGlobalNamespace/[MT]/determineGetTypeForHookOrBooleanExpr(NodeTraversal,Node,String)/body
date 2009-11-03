@@ -1,0 +1,41 @@
+{
+  Node prev=parent;
+  for (  Node anc : parent.getAncestors()) {
+switch (anc.getType()) {
+case Token.EXPR_RESULT:
+case Token.VAR:
+case Token.IF:
+case Token.WHILE:
+case Token.FOR:
+case Token.TYPEOF:
+case Token.VOID:
+case Token.NOT:
+case Token.BITNOT:
+case Token.POS:
+case Token.NEG:
+      return Ref.Type.DIRECT_GET;
+case Token.HOOK:
+    if (anc.getFirstChild() == prev) {
+      return Ref.Type.DIRECT_GET;
+    }
+  break;
+case Token.ASSIGN:
+if (!name.equals(anc.getFirstChild().getQualifiedName())) {
+  return Ref.Type.ALIASING_GET;
+}
+break;
+case Token.NAME:
+if (!name.equals(anc.getString())) {
+return Ref.Type.ALIASING_GET;
+}
+break;
+case Token.CALL:
+if (anc.getFirstChild() != prev) {
+return Ref.Type.ALIASING_GET;
+}
+break;
+}
+prev=anc;
+}
+return Ref.Type.ALIASING_GET;
+}

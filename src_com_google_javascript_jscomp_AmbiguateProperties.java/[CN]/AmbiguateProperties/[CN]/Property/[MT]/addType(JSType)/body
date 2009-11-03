@@ -1,0 +1,16 @@
+{
+  if (skipAmbiguating) {
+    return;
+  }
+  ++numOccurrences;
+  if (newType instanceof UnionType) {
+    newType=newType.restrictByNotNullOrUndefined();
+    if (newType instanceof UnionType) {
+      for (      JSType alt : ((UnionType)newType).getAlternates()) {
+        addNonUnionType(alt);
+      }
+      return;
+    }
+  }
+  addNonUnionType(newType);
+}

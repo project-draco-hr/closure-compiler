@@ -1,0 +1,11 @@
+{
+  Compiler compiler=new Compiler();
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,true);
+  Node root=compiler.parseSyntheticCode("cfgtest",input);
+  if (runSynBlockPass) {
+    CreateSyntheticBlocks pass=new CreateSyntheticBlocks(compiler,"START","END");
+    pass.process(null,root);
+  }
+  cfa.process(null,root);
+  return cfa.getCfg();
+}

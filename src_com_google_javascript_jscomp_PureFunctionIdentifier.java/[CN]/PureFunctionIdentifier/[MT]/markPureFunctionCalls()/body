@@ -1,0 +1,21 @@
+{
+  for (  Node callNode : allFunctionCalls) {
+    Node name=callNode.getFirstChild();
+    Collection<Definition> defs=getCallableDefinitions(definitionProvider,name);
+    if (defs == null) {
+      continue;
+    }
+    boolean hasSideEffects=false;
+    for (    Definition def : defs) {
+      FunctionInformation functionInfo=functionSideEffectMap.get(def.getRValue());
+      Preconditions.checkNotNull(functionInfo);
+      if ((NodeUtil.isCall(callNode) && functionInfo.mayHaveSideEffects()) || (NodeUtil.isNew(callNode) && (functionInfo.mutatesGlobalState() || functionInfo.functionThrows()))) {
+        hasSideEffects=true;
+        break;
+      }
+    }
+    if (!hasSideEffects) {
+      callNode.setIsNoSideEffectsCall();
+    }
+  }
+}

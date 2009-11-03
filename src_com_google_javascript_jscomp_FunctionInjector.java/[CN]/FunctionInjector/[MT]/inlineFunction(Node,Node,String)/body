@@ -1,0 +1,61 @@
+{
+  Node parent=callNode.getParent();
+  Node grandParent=parent.getParent();
+  CallSiteType callSiteType=classifyCallSite(callNode);
+  Preconditions.checkArgument(callSiteType != CallSiteType.UNSUPPORTED);
+  String resultName=null;
+  boolean needsDefaultReturnResult=true;
+switch (callSiteType) {
+case SIMPLE_ASSIGNMENT:
+    resultName=parent.getFirstChild().getString();
+  break;
+case VAR_DECL_SIMPLE_ASSIGNMENT:
+resultName=parent.getString();
+break;
+case SIMPLE_CALL:
+resultName=null;
+needsDefaultReturnResult=false;
+break;
+case EXPRESSION:
+resultName=getUniqueResultName();
+needsDefaultReturnResult=false;
+break;
+case DECOMPOSABLE_EXPRESSION:
+throw new IllegalStateException("Decomposable expressions must decomposed before inlining.");
+default :
+throw new IllegalStateException("Unexpected call site type.");
+}
+boolean isCallInLoop=isCallWithinLoop(callNode);
+FunctionToBlockMutator mutator=new FunctionToBlockMutator(compiler,this.safeNameIdSupplier);
+String fnNameClean=Normalize.removeConstantMarkerFromName(fnName);
+Node newBlock=mutator.mutate(fnNameClean,fnNode,callNode,resultName,needsDefaultReturnResult,isCallInLoop);
+Node greatGrandParent=grandParent.getParent();
+switch (callSiteType) {
+case VAR_DECL_SIMPLE_ASSIGNMENT:
+parent.removeChild(parent.getFirstChild());
+Preconditions.checkState(parent.getFirstChild() == null);
+greatGrandParent.addChildAfter(newBlock,grandParent);
+break;
+case SIMPLE_ASSIGNMENT:
+Preconditions.checkState(NodeUtil.isExpressionNode(grandParent));
+greatGrandParent.replaceChild(grandParent,newBlock);
+break;
+case SIMPLE_CALL:
+Preconditions.checkState(NodeUtil.isExpressionNode(parent));
+grandParent.replaceChild(parent,newBlock);
+break;
+case EXPRESSION:
+Node injectionPoint=ExpressionDecomposer.findInjectionPoint(callNode);
+Preconditions.checkNotNull(injectionPoint);
+Node injectionPointParent=injectionPoint.getParent();
+Preconditions.checkNotNull(injectionPointParent);
+Preconditions.checkState(NodeUtil.isStatementBlock(injectionPointParent));
+newBlock.addChildrenToFront(NodeUtil.newVarNode(resultName,null));
+injectionPointParent.addChildBefore(newBlock,injectionPoint);
+parent.replaceChild(callNode,Node.newString(Token.NAME,resultName));
+break;
+default :
+throw new IllegalStateException("Unexpected call site type.");
+}
+return newBlock;
+}

@@ -1,0 +1,22 @@
+{
+  if (right.getType() == Token.STRING && right.getString().equals("length")) {
+    int knownLength=-1;
+switch (left.getType()) {
+case Token.ARRAYLIT:
+      if (NodeUtil.mayHaveSideEffects(left)) {
+        return;
+      }
+    knownLength=left.getChildCount();
+  break;
+case Token.STRING:
+knownLength=left.getString().length();
+break;
+default :
+return;
+}
+Preconditions.checkState(knownLength != -1);
+Node lengthNode=Node.newNumber(knownLength);
+parent.replaceChild(n,lengthNode);
+t.getCompiler().reportCodeChange();
+}
+}

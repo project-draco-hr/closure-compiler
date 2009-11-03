@@ -1,0 +1,20 @@
+{
+  Compiler compiler=new Compiler();
+  ScopeCreator creator=new SyntacticScopeCreator(compiler);
+  ExpectNodeOnEnterScope callback=new ExpectNodeOnEnterScope();
+  NodeTraversal t=new NodeTraversal(compiler,callback,creator);
+  String code="" + "var a; " + "function foo() {"+ "  var b;"+ "}";
+  Node tree=parse(compiler,code);
+  Scope topScope=creator.createScope(tree,null);
+  callback.expect(tree.getFirstChild(),tree);
+  t.traverseWithScope(tree.getFirstChild(),topScope);
+  callback.assertEntered();
+  callback.expect(tree.getFirstChild(),tree.getFirstChild());
+  t.traverse(tree.getFirstChild());
+  callback.assertEntered();
+  Node fn=tree.getFirstChild().getNext();
+  Scope fnScope=creator.createScope(fn,topScope);
+  callback.expect(fn,fn);
+  t.traverseAtScope(fnScope);
+  callback.assertEntered();
+}

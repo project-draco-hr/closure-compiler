@@ -1,0 +1,19 @@
+{
+  if (other.isSingleton()) {
+    if (alternatives.contains(other)) {
+      return other;
+    }
+ else {
+      return NONE;
+    }
+  }
+ else   if (other.isUnion()) {
+    Set<ConcreteType> types=Sets.newHashSet(alternatives);
+    types.retainAll(other.toUnion().alternatives);
+    return createForTypes(types);
+  }
+ else {
+    Preconditions.checkArgument(other.isNone() || other.isAll());
+    return other.intersectWith(this);
+  }
+}

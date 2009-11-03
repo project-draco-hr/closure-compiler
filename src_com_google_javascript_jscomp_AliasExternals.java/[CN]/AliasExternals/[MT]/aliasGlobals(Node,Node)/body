@@ -1,0 +1,22 @@
+{
+  NodeTraversal.traverse(compiler,externs,new GetGlobals());
+  NodeTraversal.traverse(compiler,root,new GlobalGatherer());
+  for (  Property global : globals.values()) {
+    if (global.mutatorCount > 0) {
+      continue;
+    }
+    int currentBytes=global.name.length() * global.accessorCount;
+    int aliasedBytes=8 + global.name.length() + 2 * global.accessorCount;
+    if (aliasedBytes < currentBytes) {
+      global.aliasAccessor=true;
+    }
+  }
+  for (  Node globalUse : globalUses) {
+    replaceGlobalUse(globalUse);
+  }
+  for (  Property global : globals.values()) {
+    if (global.aliasAccessor) {
+      addGlobalAliasNode(global.name,getAddingRoot(global.deepestModuleAccess));
+    }
+  }
+}

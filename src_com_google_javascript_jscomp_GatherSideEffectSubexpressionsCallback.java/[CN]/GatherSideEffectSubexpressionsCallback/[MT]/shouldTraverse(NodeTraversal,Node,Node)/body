@@ -1,0 +1,29 @@
+{
+  if (FORBIDDEN_TYPES.contains(node.getType()) || NodeUtil.isControlStructure(node)) {
+    throw new IllegalArgumentException(Token.name(node.getType()) + " nodes are not supported.");
+  }
+  if (node.getType() == Token.FUNCTION) {
+    return false;
+  }
+  if (node.getType() == Token.HOOK) {
+    return processHook(node);
+  }
+  if ((node.getType() == Token.AND) || (node.getType() == Token.OR)) {
+    return processShortCircuitExpression(node);
+  }
+  if (!NodeUtil.nodeTypeMayHaveSideEffects(node)) {
+    return true;
+  }
+ else {
+    if (node.getType() == Token.CALL) {
+      return processFunctionCall(node);
+    }
+ else     if (node.getType() == Token.NEW) {
+      return processConstructorCall(node);
+    }
+ else {
+      accumulator.keepSubTree(node);
+      return false;
+    }
+  }
+}

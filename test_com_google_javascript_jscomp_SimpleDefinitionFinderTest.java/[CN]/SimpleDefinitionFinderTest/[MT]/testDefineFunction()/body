@@ -1,0 +1,9 @@
+{
+  checkDefinitionsInJs("var a = function(){}",ImmutableSet.of("DEF NAME a -> FUNCTION"));
+  checkDefinitionsInJs("var a = function f(){}",ImmutableSet.of("DEF NAME f -> FUNCTION","DEF NAME a -> FUNCTION"));
+  checkDefinitionsInJs("function a(){}",ImmutableSet.of("DEF NAME a -> FUNCTION"));
+  checkDefinitionsInJs("a = function(){}",ImmutableSet.of("DEF NAME a -> FUNCTION"));
+  checkDefinitionsInJs("a.b = function(){}",ImmutableSet.of("DEF GETPROP a.b -> FUNCTION"));
+  checkDefinitionsInJs("a[\"b\"] = function(){}",ImmutableSet.<String>of());
+  checkDefinitionsInJs("f().b = function(){}",ImmutableSet.of("DEF GETPROP null -> FUNCTION"));
+}

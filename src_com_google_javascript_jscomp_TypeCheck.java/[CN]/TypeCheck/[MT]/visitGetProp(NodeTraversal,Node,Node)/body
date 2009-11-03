@@ -1,0 +1,14 @@
+{
+  if (n.getJSType() != null && parent.getType() == Token.ASSIGN) {
+    return;
+  }
+  Node property=n.getLastChild();
+  Node objNode=n.getFirstChild();
+  JSType childType=getJSType(objNode);
+  if (!validator.expectNotVoid(t,n,childType,"undefined has no properties",getNativeType(OBJECT_TYPE))) {
+    ensureTyped(t,n);
+    return;
+  }
+  checkPropertyAccess(childType,property.getString(),t,n);
+  ensureTyped(t,n);
+}

@@ -1,0 +1,21 @@
+{
+  Node result=n.getFirstChild();
+  if (result != null) {
+switch (result.getType()) {
+case Token.VOID:
+      Node operand=result.getFirstChild();
+    if (!NodeUtil.mayHaveSideEffects(operand)) {
+      n.removeFirstChild();
+      t.getCompiler().reportCodeChange();
+    }
+  return;
+case Token.NAME:
+String name=result.getString();
+if (name.equals("undefined")) {
+n.removeFirstChild();
+t.getCompiler().reportCodeChange();
+}
+return;
+}
+}
+}

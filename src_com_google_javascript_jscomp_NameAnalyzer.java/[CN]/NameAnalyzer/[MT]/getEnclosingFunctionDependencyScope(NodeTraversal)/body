@@ -1,0 +1,23 @@
+{
+  Node function=t.getEnclosingFunction();
+  if (function == null) {
+    return null;
+  }
+  NameInformation ref=scopes.get(function);
+  if (ref != null) {
+    return ref;
+  }
+  Node parent=function.getParent();
+  if (parent != null) {
+    if (parent.getType() == Token.NAME) {
+      return scopes.get(parent);
+    }
+    if (parent.getType() == Token.ASSIGN) {
+      Node gramp=parent.getParent();
+      if (gramp != null && gramp.getType() == Token.EXPR_RESULT) {
+        return scopes.get(gramp);
+      }
+    }
+  }
+  return null;
+}

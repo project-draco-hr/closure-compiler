@@ -1,0 +1,12 @@
+{
+  Preconditions.checkArgument((node.getType() == Token.AND) || (node.getType() == Token.OR),"Expected: AND or OR, Got: " + Token.name(node.getType()));
+  Node left=node.getFirstChild();
+  Node right=left.getNext();
+  if (NodeUtil.mayHaveSideEffects(right)) {
+    accumulator.keepSimplifiedShortCircuitExpression(node);
+    return false;
+  }
+ else {
+    return true;
+  }
+}

@@ -1,0 +1,17 @@
+{
+  List<Reference> refSet=refInfo.references;
+  if (!isValidDeclaration(refSet.get(0))) {
+    return false;
+  }
+  for (int i=1; i < refSet.size(); i++) {
+    Reference ref=refSet.get(i);
+    if (!isValidReference(ref)) {
+      return false;
+    }
+  }
+  if (!refInfo.isWellDefined()) {
+    return false;
+  }
+  Node value=refSet.get(0).getNameNode().getFirstChild();
+  return NodeUtil.isImmutableValue(value) && (value.getType() != Token.STRING || isStringWorthInlining(v,refInfo.references));
+}

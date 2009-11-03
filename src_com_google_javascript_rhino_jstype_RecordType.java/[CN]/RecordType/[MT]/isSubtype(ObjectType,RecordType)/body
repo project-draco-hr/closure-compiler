@@ -1,0 +1,22 @@
+{
+  for (  String property : typeB.properties.keySet()) {
+    if (!typeA.hasProperty(property)) {
+      return false;
+    }
+    JSType propA=typeA.getPropertyType(property);
+    JSType propB=typeB.getPropertyType(property);
+    if (!propA.isUnknownType() && !propB.isUnknownType()) {
+      if (typeA.isPropertyTypeDeclared(property)) {
+        if (!propA.equals(propB)) {
+          return false;
+        }
+      }
+ else {
+        if (!propA.isSubtype(propB)) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}

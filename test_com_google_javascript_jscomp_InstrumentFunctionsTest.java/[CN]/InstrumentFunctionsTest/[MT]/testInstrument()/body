@@ -1,0 +1,18 @@
+{
+  final String kPreamble="var $$toRemoveDefinition1, $$notToRemove;\n" + "var $$toRemoveDefinition2, $$toRemoveDefinition3;\n";
+  List<String> initCodeList=ImmutableList.of("var $$Table = [];","function $$TestDefine(id) {","  $$Table[id] = 0;","};","function $$TestInstrument(id) {","  $$Table[id]++;","};");
+  StringBuilder initCodeBuilder=new StringBuilder();
+  StringBuilder pbBuilder=new StringBuilder();
+  for (  String line : initCodeList) {
+    initCodeBuilder.append(line).append("\n");
+    pbBuilder.append("init: \"").append(line).append("\"\n");
+  }
+  pbBuilder.append("report_call: \"$$testInstrument\"").append("report_defined: \"$$testDefine\"").append("declaration_to_remove: \"$$toRemoveDefinition1\"").append("declaration_to_remove: \"$$toRemoveDefinition2\"").append("declaration_to_remove: \"$$toRemoveDefinition3\"");
+  final String initCode=initCodeBuilder.toString();
+  this.instrumentationPb=pbBuilder.toString();
+  test("function a(){b}",initCode + "$$testDefine(0);" + "function a(){$$testInstrument(0);b}");
+  test(kPreamble + "function a(){b}",initCode + "$$testDefine(0);" + "var $$notToRemove;"+ "function a(){$$testInstrument(0);b}");
+  test(kPreamble + "var a = { b: function(){c} }",initCode + "var $$notToRemove;" + "$$testDefine(0);"+ "var a = { b: function(){$$testInstrument(0);c} }");
+  test(kPreamble + "var a = { b: function(){c}, d: function(){e} }",initCode + "var $$notToRemove;" + "$$testDefine(0);"+ "$$testDefine(1);"+ "var a={b:function(){$$testInstrument(0);c},"+ "d:function(){$$testInstrument(1);e}}");
+  test(kPreamble + "var a = { b: { f: function(){c} }, d: function(){e} }",initCode + "var $$notToRemove;" + "$$testDefine(0);"+ "$$testDefine(1);"+ "var a={b:{f:function(){$$testInstrument(0);c}},"+ "d:function(){$$testInstrument(1);e}}");
+}

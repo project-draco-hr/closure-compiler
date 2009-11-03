@@ -1,0 +1,33 @@
+{
+  Node left=n.getFirstChild();
+  Node right=n.getLastChild();
+  BooleanOutcomePair leftLiterals=traverseWithinShortCircuitingBinOp(left,scope.createChildFlowScope());
+  JSType leftType=left.getJSType();
+  FlowScope rightScope=reverseInterpreter.getPreciserScopeKnowingConditionOutcome(left,leftLiterals.getOutcomeFlowScope(left.getType(),condition),condition);
+  BooleanOutcomePair rightLiterals=traverseWithinShortCircuitingBinOp(right,rightScope.createChildFlowScope());
+  JSType rightType=right.getJSType();
+  JSType type;
+  BooleanOutcomePair literals;
+  if (leftType != null && rightType != null) {
+    leftType=leftType.getRestrictedTypeGivenToBooleanOutcome(!condition);
+    if (leftLiterals.toBooleanOutcomes == BooleanLiteralSet.get(!condition)) {
+      type=leftType;
+      literals=leftLiterals;
+    }
+ else {
+      type=leftType.getLeastSupertype(rightType);
+      literals=getBooleanOutcomePair(leftLiterals,rightLiterals,condition);
+    }
+    if (literals.booleanValues == BooleanLiteralSet.EMPTY && getNativeType(BOOLEAN_TYPE).isSubtype(type)) {
+      if (type instanceof UnionType) {
+        type=((UnionType)type).getRestrictedUnion(getNativeType(BOOLEAN_TYPE));
+      }
+    }
+  }
+ else {
+    type=null;
+    literals=new BooleanOutcomePair(BooleanLiteralSet.BOTH,BooleanLiteralSet.BOTH,leftLiterals.getJoinedFlowScope(),rightLiterals.getJoinedFlowScope());
+  }
+  n.setJSType(type);
+  return literals;
+}

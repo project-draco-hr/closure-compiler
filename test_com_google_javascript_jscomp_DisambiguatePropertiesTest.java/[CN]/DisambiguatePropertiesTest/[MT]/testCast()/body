@@ -1,0 +1,7 @@
+{
+  String js="" + "/** @constructor */ function Foo() {}\n" + "Foo.prototype.a = 0;"+ "/** @constructor */ function Bar() {}\n"+ "Bar.prototype.a = 0;"+ "/** @type {Foo|Bar} */\n"+ "var F = new Foo;\n"+ "(/** @type {Bar} */(F)).a = 0;";
+  String output="" + "function Foo(){}Foo.prototype.Foo_prototype$a=0;" + "function Bar(){}Bar.prototype.Bar_prototype$a=0;"+ "var F=new Foo;F.Bar_prototype$a=0;";
+  String ttOutput="" + "function Foo(){}Foo.prototype.Foo_prototype$a=0;" + "function Bar(){}Bar.prototype.Bar_prototype$a=0;"+ "var F=new Foo;F.Unique$1$a=0;";
+  testSets(false,js,output,"{a=[[Bar.prototype], [Foo.prototype]]}");
+  testSets(true,js,ttOutput,"{a=[[Bar.prototype], [Foo.prototype], [Unique$1]]}");
+}

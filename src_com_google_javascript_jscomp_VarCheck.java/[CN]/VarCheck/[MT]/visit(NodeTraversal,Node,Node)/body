@@ -1,0 +1,54 @@
+{
+  if (n.getType() != Token.NAME) {
+    return;
+  }
+  if (NodeUtil.isLabelName(n)) {
+    return;
+  }
+  String varName=n.getString();
+  if (varName.isEmpty()) {
+    Preconditions.checkState(NodeUtil.isFunction(parent));
+    if (!NodeUtil.isAnonymousFunction(parent)) {
+      t.report(n,INVALID_FUNCTION_DECL);
+    }
+    return;
+  }
+  Scope scope=t.getScope();
+  Scope.Var var=scope.getVar(varName);
+  if (var == null) {
+    if (NodeUtil.isAnonymousFunction(parent)) {
+    }
+ else {
+      t.report(n,UNDEFINED_VAR_ERROR,varName);
+      Node nameNode=Node.newString(Token.NAME,varName);
+      getSynthesizedExternsRoot().addChildToBack(new Node(Token.VAR,nameNode));
+      scope.declare(varName,nameNode,null,getSynthesizedExternsInput());
+    }
+    return;
+  }
+  CompilerInput currInput=t.getInput();
+  CompilerInput varInput=var.input;
+  if (currInput == varInput || currInput == null || varInput == null) {
+    return;
+  }
+  JSModule currModule=currInput.getModule();
+  JSModule varModule=varInput.getModule();
+  JSModuleGraph moduleGraph=compiler.getModuleGraph();
+  if (varModule != currModule && varModule != null && currModule != null) {
+    if (moduleGraph.dependsOn(currModule,varModule)) {
+    }
+ else {
+      if (nonStrictModuleChecks && scope.isGlobal()) {
+        if (moduleGraph.dependsOn(varModule,currModule)) {
+          t.report(n,VIOLATED_MODULE_DEP_ERROR,currModule.getName(),varModule.getName(),varName);
+        }
+ else {
+          t.report(n,MISSING_MODULE_DEP_ERROR,currModule.getName(),varModule.getName(),varName);
+        }
+      }
+ else {
+        t.report(n,STRICT_MODULE_DEP_ERROR,currModule.getName(),varModule.getName(),varName);
+      }
+    }
+  }
+}

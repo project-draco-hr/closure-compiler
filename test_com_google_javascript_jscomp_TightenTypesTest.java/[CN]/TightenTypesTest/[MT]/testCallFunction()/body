@@ -1,0 +1,9 @@
+{
+  testSame("/** @constructor */ function Foo() { this.a = new A; }\n" + "/** @constructor \n @extends Foo */ function Bar() {\n" + "  Foo.call(this);\n"+ "}\n"+ "/** @constructor */ function A() {};\n"+ "new Bar;");
+  assertTrue(isCalled(getType("Foo")));
+  assertTrue(isCalled(getType("A")));
+  ConcreteType fooType=getThisType(getType("Foo"));
+  assertType("A",getPropertyType(fooType,"a"));
+  ConcreteType barType=getThisType(getType("Bar"));
+  assertType("A",getPropertyType(barType,"a"));
+}

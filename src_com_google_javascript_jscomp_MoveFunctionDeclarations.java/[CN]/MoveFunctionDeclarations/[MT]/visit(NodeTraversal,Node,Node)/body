@@ -1,0 +1,16 @@
+{
+  if (parent == null || parent.getType() != Token.SCRIPT) {
+    return;
+  }
+  if (NodeUtil.isFunctionDeclaration(n)) {
+    parent.removeChild(n);
+    compiler.reportCodeChange();
+    JSModule module=t.getModule();
+    List<Node> moduleFunctions=functions.get(module);
+    if (moduleFunctions == null) {
+      moduleFunctions=Lists.newArrayList();
+      functions.put(module,moduleFunctions);
+    }
+    moduleFunctions.add(n);
+  }
+}

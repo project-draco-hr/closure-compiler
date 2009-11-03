@@ -1,0 +1,17 @@
+{
+  DiagnosticType diagnostic=null;
+  if (arg == null) {
+    diagnostic=NULL_ARGUMENT_ERROR;
+  }
+ else   if (arg.getType() != desiredType) {
+    diagnostic=INVALID_ARGUMENT_ERROR;
+  }
+ else   if (arg.getNext() != null) {
+    diagnostic=TOO_MANY_ARGUMENTS_ERROR;
+  }
+  if (diagnostic != null) {
+    compiler.report(JSError.make(t,methodName,diagnostic,methodName.getQualifiedName()));
+    return false;
+  }
+  return true;
+}

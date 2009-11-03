@@ -1,0 +1,33 @@
+{
+  Context cx=Context.enter();
+  SimpleErrorReporter errorReporter=new SimpleErrorReporter();
+  cx.setErrorReporter(errorReporter);
+  CompilerEnvirons compilerEnv=new CompilerEnvirons();
+  compilerEnv.initFromContext(cx);
+  if (parseJSDoc) {
+    compilerEnv.setParseJSDoc(true);
+  }
+  Parser p=new Parser(compilerEnv,errorReporter);
+  ScriptOrFnNode root=null;
+  try {
+    root=p.parse(sourceString,sourceURI,1);
+  }
+ catch (  EvaluatorException e) {
+    errorReporter.error(e.details(),e.sourceName(),e.lineNumber(),e.lineSource(),e.lineNumber());
+  }
+ finally {
+    Context.exit();
+  }
+  List<String> errors=errorReporter.errors();
+  if (errors != null) {
+    StringBuilder message=new StringBuilder();
+    for (    String error : errors) {
+      if (message.length() > 0) {
+        message.append('\n');
+      }
+      message.append(error);
+    }
+    throw new RhinoException(message.toString());
+  }
+  return root;
+}

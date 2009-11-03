@@ -1,0 +1,59 @@
+{
+switch (n.getType()) {
+case Token.NAME:
+case Token.GETPROP:
+    if (NodeUtil.isGetProp(parent) || parent.getType() == Token.REF_SPECIAL) {
+      return;
+    }
+ else     if (NodeUtil.isFunction(parent)) {
+      return;
+    }
+ else     if (NodeUtil.isAssign(parent)) {
+      return;
+    }
+  if (isLocalNameReference(t,n)) {
+    return;
+  }
+if (isPrototypeNameReference(n)) {
+  recordPrototypePropUse(t,n,parent);
+}
+ else if (isStaticNameReference(n,t.getScope())) {
+  recordStaticNameUse(t,n,parent);
+}
+ else {
+  recordUnknownUse(t,n,parent);
+}
+break;
+case Token.ASSIGN:
+Node lhs=n.getFirstChild();
+Node rhs=n.getLastChild();
+if (NodeUtil.isFunction(rhs)) {
+return;
+}
+if (NodeUtil.isName(lhs) || NodeUtil.isGetProp(lhs) || NodeUtil.isGetProp(rhs)) {
+if (NodeUtil.isPrototypeProperty(lhs)) {
+Name name=recordPrototypePropDefinition(t,lhs,getType(rhs),n,parent,parent.getParent());
+name.setAliased(true);
+}
+}
+maybeAliasNamesOnAssign(lhs,rhs);
+break;
+case Token.VAR:
+Node varName=n.getFirstChild();
+Node assignedValue=varName.getFirstChild();
+if (assignedValue == null) {
+return;
+}
+maybeAliasNamesOnAssign(varName,assignedValue);
+break;
+case Token.CALL:
+Node param=n.getFirstChild();
+while ((param=param.getNext()) != null) {
+if (NodeUtil.isName(param) || NodeUtil.isGetProp(param)) {
+safeAlias(param);
+}
+}
+maybeRecordExport(n);
+break;
+}
+}

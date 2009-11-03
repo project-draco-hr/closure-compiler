@@ -1,0 +1,25 @@
+{
+  Node aliasParent=alias.node.getParent();
+  if (aliasParent.getType() == Token.NAME) {
+    Scope scope=alias.scope;
+    Var aliasVar=scope.getVar(aliasParent.getString());
+    ReferenceCollectingCallback collector=new ReferenceCollectingCallback(compiler,ReferenceCollectingCallback.DO_NOTHING_BEHAVIOR,Predicates.<Var>equalTo(aliasVar));
+    (new NodeTraversal(compiler,collector)).traverseAtScope(scope);
+    ReferenceCollection aliasRefs=collector.getReferenceCollection(aliasVar);
+    if (aliasRefs.isWellDefined() && aliasRefs.isNeverReassigned()) {
+      int size=aliasRefs.references.size();
+      Set<Node> newNodes=Sets.newHashSetWithExpectedSize(size - 1);
+      for (int i=1; i < size; i++) {
+        ReferenceCollectingCallback.Reference aliasRef=aliasRefs.references.get(i);
+        Node newNode=alias.node.cloneTree();
+        aliasRef.getParent().replaceChild(aliasRef.getNameNode(),newNode);
+        newNodes.add(newNode);
+      }
+      aliasParent.replaceChild(alias.node,new Node(Token.NULL));
+      compiler.reportCodeChange();
+      namespace.scanNewNodes(alias.scope,newNodes);
+      return true;
+    }
+  }
+  return false;
+}

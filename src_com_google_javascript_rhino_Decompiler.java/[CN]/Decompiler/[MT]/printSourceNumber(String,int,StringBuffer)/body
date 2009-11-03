@@ -1,0 +1,35 @@
+{
+  double number=0.0;
+  char type=source.charAt(offset);
+  ++offset;
+  if (type == 'S') {
+    if (sb != null) {
+      int ival=source.charAt(offset);
+      number=ival;
+    }
+    ++offset;
+  }
+ else   if (type == 'J' || type == 'D') {
+    if (sb != null) {
+      long lbits;
+      lbits=(long)source.charAt(offset) << 48;
+      lbits|=(long)source.charAt(offset + 1) << 32;
+      lbits|=(long)source.charAt(offset + 2) << 16;
+      lbits|=source.charAt(offset + 3);
+      if (type == 'J') {
+        number=lbits;
+      }
+ else {
+        number=Double.longBitsToDouble(lbits);
+      }
+    }
+    offset+=4;
+  }
+ else {
+    throw new RuntimeException();
+  }
+  if (sb != null) {
+    sb.append(ScriptRuntime.numberToString(number,10));
+  }
+  return offset;
+}

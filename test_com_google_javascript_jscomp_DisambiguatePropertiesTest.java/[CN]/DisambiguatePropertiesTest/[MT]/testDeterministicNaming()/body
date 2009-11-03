@@ -1,0 +1,8 @@
+{
+  String js="/** @constructor */function A() {}\n" + "/** @return {string} */A.prototype.f = function() {return 'a';};\n" + "/** @constructor */function B() {}\n"+ "/** @return {string} */B.prototype.f = function() {return 'b';};\n"+ "/** @constructor */function C() {}\n"+ "/** @return {string} */C.prototype.f = function() {return 'c';};\n"+ "/** @type {A|B} */var ab = 1 ? new B : new A;\n"+ "/** @type {string} */var n = ab.f();\n";
+  String output="function A() {}\n" + "A.prototype.A_prototype$f = function() { return'a'; };\n" + "function B() {}\n"+ "B.prototype.A_prototype$f = function() { return'b'; };\n"+ "function C() {}\n"+ "C.prototype.C_prototype$f = function() { return'c'; };\n"+ "var ab = 1 ? new B : new A; var n = ab.A_prototype$f();\n";
+  for (int i=0; i < 5; i++) {
+    testSets(false,js,output,"{f=[[A.prototype, B.prototype], [C.prototype]]}");
+    testSets(true,js,output,"{f=[[A.prototype, B.prototype], [C.prototype]]}");
+  }
+}

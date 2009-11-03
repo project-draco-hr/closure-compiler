@@ -1,0 +1,23 @@
+{
+  Node newFnNode=fnNode.cloneTree();
+  makeLocalNamesUnique(newFnNode,isCallInLoop);
+  Set<String> namesToAlias=FunctionArgumentInjector.findModifiedParameters(newFnNode);
+  LinkedHashMap<String,Node> args=FunctionArgumentInjector.getFunctionCallParameterMap(newFnNode,callNode,this.safeNameIdSupplier);
+  boolean hasArgs=!args.isEmpty();
+  if (hasArgs) {
+    FunctionArgumentInjector.maybeAddTempsForCallArguments(newFnNode,args,namesToAlias,compiler.getCodingConvention());
+  }
+  Node newBlock=NodeUtil.getFunctionBody(newFnNode);
+  newBlock.detachFromParent();
+  if (hasArgs) {
+    Node inlineResult=aliasAndInlineArguments(newBlock,args,namesToAlias);
+    Preconditions.checkState(newBlock == inlineResult);
+  }
+  if (isCallInLoop) {
+    fixUnitializedVarDeclarations(newBlock);
+  }
+  String labelName=getLabelNameForFunction(fnName);
+  Node injectableBlock=replaceReturns(newBlock,resultName,labelName,needsDefaultResult);
+  Preconditions.checkState(injectableBlock != null);
+  return injectableBlock;
+}

@@ -1,0 +1,17 @@
+{
+  Compiler compiler=new Compiler();
+  src="function _FUNCTION(param1, param2){" + src + "}";
+  Node n=compiler.parseTestCode(src).getFirstChild();
+  assertEquals(0,compiler.getErrorCount());
+  Scope scope=new SyntacticScopeCreator(compiler).createScope(n,null);
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false);
+  cfa.process(null,n);
+  ControlFlowGraph<Node> cfg=cfa.getCfg();
+  useDef=new MaybeReachingVariableUse(cfg,scope,compiler);
+  useDef.analyze();
+  def=null;
+  uses=Lists.newArrayList();
+  new NodeTraversal(compiler,new LabelFinder()).traverse(n);
+  assertNotNull("Code should have an instruction labeled D",def);
+  assertFalse("Code should have an instruction labeled starting withing U",uses.isEmpty());
+}

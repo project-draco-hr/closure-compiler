@@ -1,0 +1,23 @@
+{
+  Node child=subExpression;
+  for (  Node parent : child.getAncestors()) {
+    int parentType=parent.getType();
+switch (parentType) {
+case Token.EXPR_RESULT:
+case Token.IF:
+case Token.SWITCH:
+case Token.RETURN:
+case Token.VAR:
+      Preconditions.checkState(child == parent.getFirstChild());
+    return parent;
+case Token.SCRIPT:
+case Token.BLOCK:
+case Token.LABEL:
+case Token.CASE:
+case Token.DEFAULT:
+  return null;
+}
+child=parent;
+}
+throw new IllegalStateException("Unexpected AST structure.");
+}

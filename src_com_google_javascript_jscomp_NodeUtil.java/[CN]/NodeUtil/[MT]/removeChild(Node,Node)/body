@@ -1,0 +1,26 @@
+{
+  if (isStatementBlock(parent) || isSwitchCase(node) || isTryFinallyNode(parent,node)) {
+    parent.removeChild(node);
+  }
+ else   if (parent.getType() == Token.VAR) {
+    if (parent.hasMoreThanOneChild()) {
+      parent.removeChild(node);
+    }
+ else {
+      removeChild(parent.getParent(),parent);
+    }
+  }
+ else   if (node.getType() == Token.BLOCK) {
+    node.detachChildren();
+  }
+ else   if (parent.getType() == Token.LABEL && node == parent.getLastChild()) {
+    removeChild(parent.getParent(),parent);
+  }
+ else   if (parent.getType() == Token.FOR && parent.getChildCount() == 4) {
+    Preconditions.checkState(parent.getType() == Token.FOR && parent.getChildCount() == 4);
+    parent.replaceChild(node,new Node(Token.EMPTY));
+  }
+ else {
+    throw new IllegalStateException("Invalid attempt to remove node: " + node.toString() + " of "+ parent.toString());
+  }
+}

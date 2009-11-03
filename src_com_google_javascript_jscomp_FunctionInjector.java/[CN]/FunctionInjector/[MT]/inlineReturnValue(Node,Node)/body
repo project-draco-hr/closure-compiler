@@ -1,0 +1,19 @@
+{
+  Node block=fnNode.getLastChild();
+  Node callParentNode=callNode.getParent();
+  Map<String,Node> argMap=FunctionArgumentInjector.getFunctionCallParameterMap(fnNode,callNode,this.safeNameIdSupplier);
+  Node newExpression;
+  if (!block.hasChildren()) {
+    newExpression=NodeUtil.newUndefinedNode();
+  }
+ else {
+    Node returnNode=block.getFirstChild();
+    Preconditions.checkArgument(returnNode.getType() == Token.RETURN);
+    Node safeReturnNode=returnNode.cloneTree();
+    Node inlineResult=FunctionArgumentInjector.inject(safeReturnNode,null,argMap);
+    Preconditions.checkArgument(safeReturnNode == inlineResult);
+    newExpression=safeReturnNode.removeFirstChild();
+  }
+  callParentNode.replaceChild(callNode,newExpression);
+  return newExpression;
+}

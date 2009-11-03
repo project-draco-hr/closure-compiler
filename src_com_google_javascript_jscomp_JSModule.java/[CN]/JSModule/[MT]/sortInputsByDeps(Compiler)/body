@@ -1,0 +1,16 @@
+{
+  final Map<String,CompilerInput> provides=Maps.newHashMap();
+  for (  CompilerInput input : inputs) {
+    for (    String provide : input.getProvides(compiler)) {
+      provides.put(provide,input);
+    }
+  }
+  List<CompilerInput> list=Lists.newArrayList();
+  Set<CompilerInput> set=Sets.newHashSet();
+  for (  CompilerInput input : inputs) {
+    addInputAndDeps(input,provides,compiler,list,set,Sets.<CompilerInput>newHashSet());
+  }
+  X.assertTrue(inputs.size() == list.size());
+  inputs.clear();
+  inputs.addAll(list);
+}

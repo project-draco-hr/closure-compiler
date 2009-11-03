@@ -1,0 +1,16 @@
+{
+  jsType=jsType.restrictByNotNullOrUndefined();
+  if (jsType instanceof UnionType) {
+    for (    JSType alt : ((UnionType)jsType).getAlternates()) {
+      return maybeAddAutoboxes(cType,alt,prop);
+    }
+  }
+  if (jsType.autoboxesTo() != null) {
+    JSType autoboxed=jsType.autoboxesTo();
+    return cType.unionWith(tt.getConcreteInstance((ObjectType)autoboxed));
+  }
+ else   if (jsType.unboxesTo() != null) {
+    return cType.unionWith(tt.getConcreteInstance((ObjectType)jsType));
+  }
+  return cType;
+}

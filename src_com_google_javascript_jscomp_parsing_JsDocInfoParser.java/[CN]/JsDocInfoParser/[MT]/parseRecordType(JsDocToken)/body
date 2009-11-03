@@ -1,0 +1,14 @@
+{
+  Node recordType=newNode(Token.LC);
+  Node fieldTypeList=parseFieldTypeList(token);
+  if (fieldTypeList == null) {
+    return reportGenericTypeSyntaxWarning();
+  }
+  skipEOLs();
+  if (!match(JsDocToken.RC)) {
+    return reportTypeSyntaxWarning("msg.jsdoc.missing.rc");
+  }
+  next();
+  recordType.addChildToBack(fieldTypeList);
+  return recordType;
+}

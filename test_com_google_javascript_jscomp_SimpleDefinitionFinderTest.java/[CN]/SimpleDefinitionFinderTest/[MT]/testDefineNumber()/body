@@ -1,0 +1,9 @@
+{
+  checkDefinitionsInJs("var a = 1",ImmutableSet.of("DEF NAME a -> NUMBER"));
+  checkDefinitionsInJs("a = 1",ImmutableSet.of("DEF NAME a -> NUMBER"));
+  checkDefinitionsInJs("a.b = 1",ImmutableSet.of("DEF GETPROP a.b -> NUMBER"));
+  checkDefinitionsInJs("a[\"b\"] = 1",ImmutableSet.<String>of());
+  checkDefinitionsInJs("f().b = 1",ImmutableSet.of("DEF GETPROP null -> NUMBER"));
+  checkDefinitionsInJs("({a : 1}); o.a",ImmutableSet.of("DEF STRING null -> NUMBER","USE GETPROP o.a -> [NUMBER]"));
+  checkDefinitionsInJs("var a = {b : 1}; a.b",ImmutableSet.of("DEF NAME a -> <null>","DEF STRING null -> NUMBER","USE NAME a -> [<null>]","USE GETPROP a.b -> [NUMBER]"));
+}

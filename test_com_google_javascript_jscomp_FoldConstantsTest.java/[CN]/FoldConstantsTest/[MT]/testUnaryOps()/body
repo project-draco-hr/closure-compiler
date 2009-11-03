@@ -1,0 +1,19 @@
+{
+  fold("!foo()","foo()");
+  fold("~foo()","foo()");
+  fold("-foo()","foo()");
+  fold("a=!true","a=false");
+  fold("a=!10","a=false");
+  fold("a=!false","a=true");
+  fold("a=!foo()","a=!foo()");
+  fold("a=-0","a=0");
+  fold("a=-Infinity","a=-Infinity");
+  fold("a=-NaN","a=NaN");
+  fold("a=-foo()","a=-foo()");
+  fold("a=~~0","a=0");
+  fold("a=~~10","a=10");
+  fold("a=~-7","a=6");
+  fold("a=~0x100000000","a=~0x100000000",FoldConstants.BITWISE_OPERAND_OUT_OF_RANGE);
+  fold("a=~-0x100000000","a=~-0x100000000",FoldConstants.BITWISE_OPERAND_OUT_OF_RANGE);
+  fold("a=~.5","~.5",FoldConstants.FRACTIONAL_BITWISE_OPERAND);
+}

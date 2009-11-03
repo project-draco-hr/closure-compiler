@@ -1,0 +1,21 @@
+{
+  if (!invert) {
+    return new CompilerPass(){
+      @Override public void process(      Node externs,      Node root){
+        compiler.resetUniqueNameId();
+        MakeDeclaredNamesUnique renamer=null;
+        if (useDefaultRenamer) {
+          renamer=new MakeDeclaredNamesUnique();
+        }
+ else {
+          renamer=new MakeDeclaredNamesUnique(new InlineRenamer(compiler.getUniqueNameIdSupplier(),localNamePrefix,removeConst));
+        }
+        NodeTraversal.traverseRoots(compiler,Lists.newArrayList(externs,root),renamer);
+      }
+    }
+;
+  }
+ else {
+    return MakeDeclaredNamesUnique.getContextualRenameInverter(compiler);
+  }
+}

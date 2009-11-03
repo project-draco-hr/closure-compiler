@@ -1,0 +1,9 @@
+{
+  testSame("var foo = {}; /** @constructor */ foo.Bar = function() {};");
+  ObjectType foo=(ObjectType)findNameType("foo",globalScope);
+  assertTrue(foo.hasProperty("Bar"));
+  assertFalse(foo.isPropertyTypeInferred("Bar"));
+  JSType fooBar=foo.getPropertyType("Bar");
+  assertEquals("function (this:foo.Bar): ?",fooBar.toString());
+  assertEquals(Sets.newHashSet(foo),registry.getTypesWithProperty("Bar"));
+}

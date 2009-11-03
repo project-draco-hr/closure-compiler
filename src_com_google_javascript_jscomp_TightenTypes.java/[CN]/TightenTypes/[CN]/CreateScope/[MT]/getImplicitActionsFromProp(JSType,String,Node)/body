@@ -1,0 +1,29 @@
+{
+  List<Action> actions=Lists.newArrayList();
+  if (jsType instanceof UnionType) {
+    boolean found=false;
+    for (    JSType alt : ((UnionType)jsType).getAlternates()) {
+      if (alt instanceof ObjectType) {
+        ObjectType altObj=(ObjectType)alt;
+        actions.addAll(getImplicitActionsFromPropNonUnion(altObj,prop,fnNode));
+        if (altObj.hasProperty(prop)) {
+          found=true;
+        }
+      }
+    }
+    if (found) {
+      return actions;
+    }
+  }
+ else   if (jsType instanceof ObjectType && !jsType.isUnknownType()) {
+    ObjectType objType=(ObjectType)jsType;
+    if (objType.hasProperty(prop)) {
+      return getImplicitActionsFromPropNonUnion(objType,prop,fnNode);
+    }
+  }
+  Set<ObjectType> types=getTypeRegistry().getTypesWithProperty(prop);
+  for (  ObjectType type : types) {
+    actions.addAll(getImplicitActionsFromPropNonUnion(type,prop,fnNode));
+  }
+  return actions;
+}

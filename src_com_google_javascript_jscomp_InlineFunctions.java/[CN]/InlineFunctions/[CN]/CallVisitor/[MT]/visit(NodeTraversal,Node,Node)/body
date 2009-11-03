@@ -1,0 +1,30 @@
+{
+switch (n.getType()) {
+case Token.CALL:
+    Node child=n.getFirstChild();
+  String name=null;
+if (child.getType() == Token.NAME) {
+  name=child.getString();
+}
+ else if (child.getType() == Token.FUNCTION) {
+  name=anonFunctionMap.get(child);
+}
+ else if (NodeUtil.isFunctionObjectCall(n)) {
+  Preconditions.checkState(NodeUtil.isGet(child));
+  Node fnIdentifingNode=child.getFirstChild();
+  if (fnIdentifingNode.getType() == Token.NAME) {
+    name=fnIdentifingNode.getString();
+  }
+ else   if (fnIdentifingNode.getType() == Token.FUNCTION) {
+    name=anonFunctionMap.get(fnIdentifingNode);
+  }
+}
+if (name != null) {
+FunctionState fs=functionMap.get(name);
+if (fs != null) {
+  callback.visitCallSite(t,n,parent,fs);
+}
+}
+break;
+}
+}

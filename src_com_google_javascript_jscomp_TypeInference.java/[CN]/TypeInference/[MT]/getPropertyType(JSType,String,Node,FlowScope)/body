@@ -1,0 +1,26 @@
+{
+  String qualifiedName=n.getQualifiedName();
+  StaticSlot<JSType> var=scope.getSlot(qualifiedName);
+  if (var != null) {
+    JSType varType=var.getType();
+    if (varType != null) {
+      if (varType.equals(getNativeType(UNKNOWN_TYPE)) && var != syntacticScope.getSlot(qualifiedName)) {
+        return getNativeType(CHECKED_UNKNOWN_TYPE);
+      }
+ else {
+        return varType;
+      }
+    }
+  }
+  JSType propertyType=null;
+  if (objType != null) {
+    propertyType=objType.findPropertyType(propName);
+  }
+  if ((propertyType == null || propertyType.isUnknownType()) && qualifiedName != null) {
+    JSType regType=registry.getType(qualifiedName);
+    if (regType instanceof ObjectType) {
+      propertyType=((ObjectType)regType).getConstructor();
+    }
+  }
+  return propertyType;
+}

@@ -1,0 +1,8 @@
+{
+  testSame("/** @constructor */ function A() {};\n" + "/** @constructor \n@extends A */ function B() {};\n" + "/** @constructor \n@extends A */ function C() {};\n"+ "/** @constructor \n@extends B */ function D() {};\n"+ "/** @constructor */ function Ext() {};\n"+ "/** @type A */ Ext.prototype.a;\n"+ "/** @type B */ Ext.prototype.b;\n"+ "/** @type D */ Ext.prototype.d;\n"+ "/** @return A */ Ext.prototype.getA = function() {};\n"+ "/** @return B */ Ext.prototype.getB = function() {};\n","var a = (new Ext).a;\n" + "var a2 = (new Ext).getA();\n" + "var b = (new Ext).b;\n"+ "var b2 = (new Ext).getB();\n"+ "var d = (new Ext).d;\n",null);
+  assertType("(A,B,C,D)",getType("a"));
+  assertType("(A,B,C,D)",getType("a2"));
+  assertType("(B,D)",getType("b"));
+  assertType("(B,D)",getType("b2"));
+  assertType("D",getType("d"));
+}

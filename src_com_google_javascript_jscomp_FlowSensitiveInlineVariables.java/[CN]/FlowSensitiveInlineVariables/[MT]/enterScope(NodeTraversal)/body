@@ -1,0 +1,20 @@
+{
+  if (t.inGlobalScope()) {
+    return;
+  }
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false);
+  Preconditions.checkState(NodeUtil.isFunction(t.getScopeRoot()));
+  cfa.process(null,t.getScopeRoot().getLastChild());
+  cfg=cfa.getCfg();
+  reachingDef=new MustBeReachingVariableDef(cfg,t.getScope(),compiler);
+  reachingDef.analyze();
+  candidates=Lists.newLinkedList();
+  new NodeTraversal(compiler,new GatherCandiates()).traverse(t.getScopeRoot().getLastChild());
+  reachingUses=new MaybeReachingVariableUse(cfg,t.getScope(),compiler);
+  reachingUses.analyze();
+  for (  Candidate c : candidates) {
+    if (c.canInline()) {
+      c.inlineVariable();
+    }
+  }
+}

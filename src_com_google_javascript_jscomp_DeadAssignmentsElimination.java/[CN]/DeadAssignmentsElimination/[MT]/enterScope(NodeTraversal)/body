@@ -1,0 +1,12 @@
+{
+  Scope scope=t.getScope();
+  if (scope.isGlobal()) {
+    return;
+  }
+  if (!NodeUtil.containsFunctionDeclaration(t.getScopeRoot().getLastChild())) {
+    ControlFlowGraph<Node> cfg=t.getControlFlowGraph();
+    liveness=new LiveVariablesAnalysis(cfg,scope,compiler);
+    liveness.analyze();
+    tryRemoveDeadAssignments(t,cfg);
+  }
+}

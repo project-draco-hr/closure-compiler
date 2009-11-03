@@ -1,0 +1,34 @@
+{
+  if (that.isRecordType()) {
+    RecordType thatRecord=(RecordType)that;
+    RecordTypeBuilder builder=new RecordTypeBuilder(registry);
+    for (    String property : properties.keySet()) {
+      if (thatRecord.hasProperty(property) && !thatRecord.getPropertyType(property).equals(getPropertyType(property))) {
+        return registry.getNativeObjectType(JSTypeNative.NO_TYPE);
+      }
+      builder.addProperty(property,getPropertyType(property));
+    }
+    for (    String property : thatRecord.properties.keySet()) {
+      if (!hasProperty(property)) {
+        builder.addProperty(property,thatRecord.getPropertyType(property));
+      }
+    }
+    return builder.build();
+  }
+  JSType greatestSubtype=super.getGreatestSubtype(that);
+  if (greatestSubtype.isNoObjectType() && !that.isNoObjectType()) {
+    for (    Map.Entry<String,JSType> entry : properties.entrySet()) {
+      String propName=entry.getKey();
+      JSType propType=entry.getValue();
+      UnionTypeBuilder builder=new UnionTypeBuilder(registry);
+      for (      ObjectType alt : registry.getTypesWithProperty(propName)) {
+        JSType altPropType=alt.getPropertyType(propName);
+        if (altPropType != null && !alt.equals(this) && alt.isSubtype(that) && (propType.isUnknownType() || altPropType.isUnknownType() || altPropType.equals(propType))) {
+          builder.addAlternate(alt);
+        }
+      }
+      greatestSubtype=greatestSubtype.getLeastSupertype(builder.build());
+    }
+  }
+  return greatestSubtype;
+}

@@ -1,0 +1,16 @@
+{
+  if (node.getType() == Token.LABEL) {
+    LabelNamespace current=namespaceStack.peek();
+    int currentDepth=current.renameMap.size() + 1;
+    String name=node.getFirstChild().getString();
+    LabelInfo li=new LabelInfo(currentDepth);
+    Preconditions.checkState(!current.renameMap.containsKey(name));
+    current.renameMap.put(name,li);
+    if (names.size() < currentDepth) {
+      names.add(nameGenerator.generateNextName());
+    }
+    String newName=getNameForId(currentDepth);
+    compiler.addToDebugLog("label renamed: " + name + " => "+ newName);
+  }
+  return true;
+}

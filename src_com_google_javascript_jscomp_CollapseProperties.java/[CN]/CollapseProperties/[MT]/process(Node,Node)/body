@@ -1,0 +1,21 @@
+{
+  GlobalNamespace namespace;
+  if (collapsePropertiesOnExternTypes) {
+    namespace=new GlobalNamespace(compiler,externs,root);
+  }
+ else {
+    namespace=new GlobalNamespace(compiler,root);
+  }
+  if (inlineAliases) {
+    inlineAliases(namespace);
+  }
+  nameMap=namespace.getNameIndex();
+  globalNames=namespace.getNameForest();
+  checkNamespaces();
+  for (  Name n : globalNames) {
+    flattenReferencesToCollapsibleDescendantNames(n,n.name);
+  }
+  for (  Name n : globalNames) {
+    collapseDeclarationOfNameAndDescendants(n,n.name);
+  }
+}

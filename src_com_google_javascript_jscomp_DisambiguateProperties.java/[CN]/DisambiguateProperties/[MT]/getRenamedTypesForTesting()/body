@@ -1,0 +1,14 @@
+{
+  Multimap<String,Collection<T>> ret=Multimaps.newHashMultimap();
+  for (  Map.Entry<String,Property> entry : properties.entrySet()) {
+    Property prop=entry.getValue();
+    if (!prop.skipRenaming) {
+      for (      Collection<T> c : prop.getTypes().allEquivalenceClasses()) {
+        if (!c.isEmpty() && !prop.typesToSkip.contains(c.iterator().next())) {
+          ret.put(entry.getKey(),c);
+        }
+      }
+    }
+  }
+  return ret;
+}

@@ -1,0 +1,46 @@
+{
+  astPosition.put(n,astPositionCounter++);
+switch (n.getType()) {
+case Token.FUNCTION:
+    if (shouldTraverseFunctions || n == cfg.getEntry().getValue()) {
+      exceptionHandler.push(n);
+      return true;
+    }
+  return false;
+case Token.TRY:
+exceptionHandler.push(n);
+return true;
+}
+if (parent != null) {
+switch (parent.getType()) {
+case Token.FOR:
+return n == parent.getLastChild();
+case Token.IF:
+case Token.WHILE:
+case Token.WITH:
+return n != parent.getFirstChild();
+case Token.DO:
+return n != parent.getFirstChild().getNext();
+case Token.SWITCH:
+case Token.CASE:
+case Token.CATCH:
+case Token.LABEL:
+return n != parent.getFirstChild();
+case Token.FUNCTION:
+return n == parent.getFirstChild().getNext().getNext();
+case Token.CONTINUE:
+case Token.BREAK:
+case Token.EXPR_RESULT:
+case Token.VAR:
+case Token.RETURN:
+case Token.THROW:
+return false;
+case Token.TRY:
+if (n == parent.getFirstChild().getNext()) {
+Preconditions.checkState(exceptionHandler.peek() == parent);
+exceptionHandler.pop();
+}
+}
+}
+return true;
+}

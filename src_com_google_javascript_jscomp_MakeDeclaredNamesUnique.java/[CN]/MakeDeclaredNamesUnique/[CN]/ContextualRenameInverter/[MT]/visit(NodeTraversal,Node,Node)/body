@@ -1,0 +1,31 @@
+{
+  if (node.getType() == Token.NAME) {
+    String oldName=node.getString();
+    if (oldName.indexOf("$$") != -1) {
+      Scope scope=t.getScope();
+      Var var=t.getScope().getVar(oldName);
+      if (var == null || var.isGlobal()) {
+        return;
+      }
+      if (nameMap.containsKey(var)) {
+        node.setString(nameMap.get(var));
+      }
+ else {
+        String newName=oldName.substring(0,oldName.lastIndexOf("$$"));
+        if (var.scope.isDeclared(newName,false) || !TokenStream.isJSIdentifier(newName)) {
+          newName=oldName;
+        }
+ else {
+          var.scope.declare(newName,var.nameNode,null,null);
+          Node parentNode=var.getParentNode();
+          if (parentNode.getType() == Token.FUNCTION && parentNode == var.scope.getRootNode()) {
+            var.getNameNode().setString(newName);
+          }
+          node.setString(newName);
+          compiler.reportCodeChange();
+        }
+        nameMap.put(var,newName);
+      }
+    }
+  }
+}

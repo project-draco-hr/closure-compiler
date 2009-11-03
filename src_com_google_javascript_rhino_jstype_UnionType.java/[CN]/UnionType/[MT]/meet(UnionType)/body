@@ -1,0 +1,15 @@
+{
+  UnionTypeBuilder builder=new UnionTypeBuilder(registry);
+  for (  JSType alternate : alternates) {
+    if (alternate.isSubtype(that)) {
+      builder.addAlternate(alternate);
+    }
+  }
+  for (  JSType otherAlternate : that.alternates) {
+    if (otherAlternate.isSubtype(this)) {
+      builder.addAlternate(otherAlternate);
+    }
+  }
+  JSType result=builder.build();
+  return result == null ? getNativeType(JSTypeNative.NO_TYPE) : result;
+}

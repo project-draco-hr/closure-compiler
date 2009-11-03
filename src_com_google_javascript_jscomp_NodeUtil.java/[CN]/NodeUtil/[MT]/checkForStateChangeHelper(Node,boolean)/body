@@ -1,0 +1,70 @@
+{
+switch (n.getType()) {
+case Token.AND:
+case Token.BLOCK:
+case Token.EXPR_RESULT:
+case Token.HOOK:
+case Token.IF:
+case Token.IN:
+case Token.LP:
+case Token.NUMBER:
+case Token.OR:
+case Token.THIS:
+case Token.TRUE:
+case Token.FALSE:
+case Token.NULL:
+case Token.STRING:
+case Token.SWITCH:
+case Token.TRY:
+case Token.EMPTY:
+    break;
+case Token.THROW:
+  return true;
+case Token.OBJECTLIT:
+case Token.ARRAYLIT:
+case Token.REGEXP:
+if (checkForNewObjects) {
+  return true;
+}
+break;
+case Token.VAR:
+case Token.NAME:
+if (n.getFirstChild() != null) return true;
+break;
+case Token.FUNCTION:
+return !isFunctionAnonymous(n);
+case Token.NEW:
+{
+if (checkForNewObjects) {
+return true;
+}
+if (n.isNoSideEffectsCall()) {
+break;
+}
+Node constructor=n.getFirstChild();
+if (Token.NAME == constructor.getType()) {
+String className=constructor.getString();
+if (CONSTRUCTORS_WITHOUT_SIDE_EFFECTS.contains(className)) {
+break;
+}
+}
+ else {
+}
+}
+return true;
+case Token.CALL:
+if (n.isNoSideEffectsCall()) {
+break;
+}
+return true;
+default :
+if (isSimpleOperatorType(n.getType())) break;
+return true;
+}
+for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+if (checkForStateChangeHelper(c,checkForNewObjects)) {
+return true;
+}
+}
+return false;
+}

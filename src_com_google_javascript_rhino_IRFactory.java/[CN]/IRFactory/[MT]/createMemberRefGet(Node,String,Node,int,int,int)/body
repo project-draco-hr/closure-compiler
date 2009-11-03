@@ -1,0 +1,32 @@
+{
+  Node nsNode=null;
+  if (namespace != null) {
+    if (namespace.equals("*")) {
+      nsNode=new Node(Token.NULL,lineno,charno);
+    }
+ else {
+      nsNode=createName(namespace,lineno,charno);
+    }
+  }
+  Node ref;
+  if (target == null) {
+    if (namespace == null) {
+      ref=new Node(Token.REF_NAME,elem,lineno,charno);
+    }
+ else {
+      ref=new Node(Token.REF_NS_NAME,nsNode,elem,lineno,charno);
+    }
+  }
+ else {
+    if (namespace == null) {
+      ref=new Node(Token.REF_MEMBER,target,elem,lineno,charno);
+    }
+ else {
+      ref=new Node(Token.REF_NS_MEMBER,target,nsNode,elem,lineno,charno);
+    }
+  }
+  if (memberTypeFlags != 0) {
+    ref.putIntProp(Node.MEMBER_TYPE_PROP,memberTypeFlags);
+  }
+  return new Node(Token.GET_REF,ref,lineno,charno);
+}

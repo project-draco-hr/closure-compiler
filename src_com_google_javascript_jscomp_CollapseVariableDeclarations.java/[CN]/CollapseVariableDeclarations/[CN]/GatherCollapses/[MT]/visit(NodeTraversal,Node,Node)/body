@@ -1,0 +1,17 @@
+{
+  if (n.getType() != Token.VAR)   return;
+  if (nodesToCollapse.contains(n))   return;
+  if (parent.getType() == Token.IF)   return;
+  Node varNode=n;
+  n=n.getNext();
+  boolean hasNodesToCollapse=false;
+  while (n != null && n.getType() == Token.VAR) {
+    nodesToCollapse.add(n);
+    hasNodesToCollapse=true;
+    n=n.getNext();
+  }
+  if (hasNodesToCollapse) {
+    nodesToCollapse.add(varNode);
+    collapses.add(new Collapse(varNode,parent));
+  }
+}

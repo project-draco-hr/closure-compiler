@@ -1,0 +1,12 @@
+{
+  return new CompilerPass(){
+    public void process(    Node externs,    Node js){
+      new CreateSyntheticBlocks(compiler,START_MARKER,END_MARKER).process(externs,js);
+      NodeTraversal.traverse(compiler,js,new FoldConstants(compiler));
+      NodeTraversal.traverse(compiler,js,new MinimizeExitPoints(compiler));
+      NodeTraversal.traverse(compiler,js,new FoldConstants(compiler));
+      new Denormalize(compiler).process(externs,js);
+    }
+  }
+;
+}

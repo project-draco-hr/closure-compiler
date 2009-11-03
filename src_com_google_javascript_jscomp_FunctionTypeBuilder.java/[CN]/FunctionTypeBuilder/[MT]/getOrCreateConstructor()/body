@@ -1,0 +1,24 @@
+{
+  FunctionType fnType=typeRegistry.createConstructorType(fnName,sourceNode,parametersNode,returnType);
+  JSType existingType=typeRegistry.getType(fnName);
+  if (existingType != null) {
+    boolean isInstanceObject=existingType instanceof InstanceObjectType;
+    if (isInstanceObject || fnName.equals("Function")) {
+      FunctionType existingFn=isInstanceObject ? ((InstanceObjectType)existingType).getConstructor() : typeRegistry.getNativeFunctionType(FUNCTION_FUNCTION_TYPE);
+      if (existingFn.getSource() == null) {
+        existingFn.setSource(sourceNode);
+      }
+      if (!existingFn.hasEqualCallType(fnType)) {
+        reportWarning(TYPE_REDEFINITION,fnName,fnType.toString(),existingFn.toString());
+      }
+      return existingFn;
+    }
+ else {
+    }
+  }
+  maybeSetBaseType(fnType);
+  if (scope.isGlobal() && !fnName.isEmpty()) {
+    typeRegistry.declareType(fnName,fnType.getInstanceType());
+  }
+  return fnType;
+}

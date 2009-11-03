@@ -1,0 +1,32 @@
+{
+  if (parent == null) {
+    return true;
+  }
+switch (parent.getType()) {
+case Token.BLOCK:
+case Token.SCRIPT:
+case Token.TRY:
+case Token.FINALLY:
+    return false;
+case Token.FUNCTION:
+  return n == parent.getFirstChild().getNext();
+case Token.WHILE:
+case Token.DO:
+case Token.IF:
+return NodeUtil.getConditionExpression(parent) == n;
+case Token.FOR:
+if (parent.getChildCount() == 4) {
+return NodeUtil.getConditionExpression(parent) == n;
+}
+ else {
+return n != parent.getLastChild();
+}
+case Token.SWITCH:
+case Token.CASE:
+case Token.CATCH:
+case Token.WITH:
+return n == parent.getFirstChild();
+default :
+return true;
+}
+}

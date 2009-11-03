@@ -1,0 +1,29 @@
+{
+  JSDocInfo info=n.getJSDocInfo();
+  FunctionType functionType=(FunctionType)n.getJSType();
+  String functionPrivateName=n.getFirstChild().getString();
+  if (functionType.isInterface() || functionType.isConstructor()) {
+    FunctionType baseConstructor=functionType.getPrototype().getImplicitPrototype().getConstructor();
+    if (baseConstructor != null && baseConstructor != getNativeType(OBJECT_FUNCTION_TYPE) && (baseConstructor.isConstructor() && functionType.isInterface() || baseConstructor.isInterface() && functionType.isConstructor())) {
+      compiler.report(JSError.make(t,n,CONFLICTING_EXTENDED_TYPE,functionPrivateName));
+    }
+    for (    JSType baseInterface : functionType.getImplementedInterfaces()) {
+      boolean badImplementedType=false;
+      if (baseInterface instanceof ObjectType) {
+        FunctionType interfaceConstructor=((ObjectType)baseInterface).getConstructor();
+        if (interfaceConstructor != null && !interfaceConstructor.isInterface()) {
+          badImplementedType=true;
+        }
+      }
+ else {
+        badImplementedType=true;
+      }
+      if (badImplementedType) {
+        t.report(n,BAD_IMPLEMENTED_TYPE,functionPrivateName);
+      }
+    }
+    if (functionType.isConstructor()) {
+      validator.expectAllInterfacePropertiesImplemented(functionType);
+    }
+  }
+}

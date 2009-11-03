@@ -1,0 +1,18 @@
+{
+  Node pn=mulExpr();
+  int lineno;
+  int charno;
+  for (; ; ) {
+    int tt=peekToken();
+    lineno=ts.getLineno();
+    charno=ts.getCharno();
+    if (tt == Token.ADD || tt == Token.SUB) {
+      consumeToken();
+      decompiler.addToken(tt);
+      pn=nf.createBinary(tt,pn,mulExpr(),lineno,charno);
+      continue;
+    }
+    break;
+  }
+  return pn;
+}

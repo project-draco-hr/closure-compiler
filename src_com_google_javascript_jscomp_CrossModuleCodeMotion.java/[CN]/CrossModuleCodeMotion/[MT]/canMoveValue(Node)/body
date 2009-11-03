@@ -1,0 +1,18 @@
+{
+  if (n == null || NodeUtil.isLiteralValue(n) || n.getType() == Token.FUNCTION) {
+    return true;
+  }
+ else   if (n.getType() == Token.CALL) {
+    Node functionName=n.getFirstChild();
+    return functionName.getType() == Token.NAME && (functionName.getString().equals(CrossModuleMethodMotion.STUB_METHOD_NAME) || functionName.getString().equals(CrossModuleMethodMotion.UNSTUB_METHOD_NAME));
+  }
+ else   if (n.getType() == Token.ARRAYLIT || n.getType() == Token.OBJECTLIT) {
+    for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+      if (!canMoveValue(child)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
+}

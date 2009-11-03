@@ -1,0 +1,17 @@
+{
+  if (objType.isUnknownType()) {
+    expectStringOrNumber(t,n,indexType,"property access");
+  }
+ else   if (objType instanceof ObjectType && ((ObjectType)objType).getIndexType() != null) {
+    expectCanAssignTo(t,n,indexType,((ObjectType)objType).getIndexType(),"restricted index type");
+  }
+ else   if (objType.isArrayType()) {
+    expectNumber(t,n,indexType,"array access");
+  }
+ else   if (objType.matchesObjectContext()) {
+    expectString(t,n,indexType,"property access");
+  }
+ else {
+    mismatch(t,n,"only arrays or objects can be accessed",objType,typeRegistry.createUnionType(ARRAY_TYPE,OBJECT_TYPE));
+  }
+}

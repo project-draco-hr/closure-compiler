@@ -1,0 +1,43 @@
+{
+  if (!atStart) {
+    if (lookAhead == null) {
+      return;
+    }
+    Node curNode=iterator.current();
+    if (curNode.getType() == Token.NAME && varName.equals(curNode.getString())) {
+      lookAhead=null;
+      return;
+    }
+  }
+  if (!iterator.hasNext()) {
+    lookAhead=null;
+    return;
+  }
+  Node nextNode=iterator.next();
+  Node nextParent=iterator.currentParent();
+  int type=nextNode.getType();
+  if (valueHasSideEffects) {
+    if (type == Token.NAME && !varName.equals(nextNode.getString())) {
+      boolean blocked=false;
+      if (nextParent == null) {
+        blocked=true;
+      }
+ else {
+        boolean assignsName=(nextParent.getType() == Token.ASSIGN && nextNode == nextParent.getFirstChild());
+        boolean isVarDeclaration=(nextParent.getType() == Token.VAR);
+        if (!assignsName && !isVarDeclaration) {
+          blocked=true;
+        }
+      }
+      if (blocked) {
+        lookAhead=null;
+        return;
+      }
+    }
+  }
+  if (NodeUtil.nodeTypeMayHaveSideEffects(nextNode) && type != Token.NAME || type == Token.NAME && nextParent.getType() == Token.CATCH) {
+    lookAhead=null;
+    return;
+  }
+  lookAhead=nextNode;
+}

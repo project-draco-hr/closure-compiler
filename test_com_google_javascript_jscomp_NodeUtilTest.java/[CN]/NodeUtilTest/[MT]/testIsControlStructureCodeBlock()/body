@@ -1,0 +1,11 @@
+{
+  Compiler compiler=new Compiler();
+  Node root=parse("if (x) foo(); else boo();");
+  Node ifNode=root.getFirstChild();
+  Node ifCondition=ifNode.getFirstChild();
+  Node ifCase=ifNode.getFirstChild().getNext();
+  Node elseCase=ifNode.getLastChild();
+  assertFalse(NodeUtil.isControlStructureCodeBlock(ifNode,ifCondition));
+  assertTrue(NodeUtil.isControlStructureCodeBlock(ifNode,ifCase));
+  assertTrue(NodeUtil.isControlStructureCodeBlock(ifNode,elseCase));
+}

@@ -1,0 +1,22 @@
+{
+  if (jsType.isUnknownType() || jsType.isEmptyType()) {
+    return ConcreteType.ALL;
+  }
+  if (jsType.isUnionType()) {
+    ConcreteType type=ConcreteType.NONE;
+    for (    JSType alt : ((UnionType)jsType).getAlternates()) {
+      type=type.unionWith(createType(alt));
+    }
+    return type;
+  }
+  if (jsType.isFunctionType()) {
+    if (getConcreteFunction((FunctionType)jsType) != null) {
+      return getConcreteFunction((FunctionType)jsType);
+    }
+    return ConcreteType.ALL;
+  }
+  if (jsType.isObject()) {
+    return createConcreteInstance((ObjectType)jsType);
+  }
+  return ConcreteType.NONE;
+}

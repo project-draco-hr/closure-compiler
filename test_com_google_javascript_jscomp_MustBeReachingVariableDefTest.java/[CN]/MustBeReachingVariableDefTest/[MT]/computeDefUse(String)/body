@@ -1,0 +1,18 @@
+{
+  Compiler compiler=new Compiler();
+  src="function _FUNCTION(param1, param2){" + src + "}";
+  Node externs=compiler.parseTestCode(EXTERNS);
+  Node root=compiler.parseTestCode(src).getFirstChild();
+  assertEquals(0,compiler.getErrorCount());
+  Scope scope=new SyntacticScopeCreator(compiler).createScope(root,null);
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false);
+  cfa.process(null,root);
+  ControlFlowGraph<Node> cfg=cfa.getCfg();
+  defUse=new MustBeReachingVariableDef(cfg,scope,compiler);
+  defUse.analyze();
+  def=null;
+  use=null;
+  new NodeTraversal(compiler,new LabelFinder()).traverse(root);
+  assertNotNull("Code should have an instruction labeled D",def);
+  assertNotNull("Code should have an instruction labeled U",use);
+}

@@ -1,0 +1,12 @@
+{
+  int fnInstanceCount=directInlines + blockInlines - (removable ? 1 : 0);
+  if (fnInstanceCount == 0) {
+    if (blockInlines > 0 && costDeltaBlock > 0) {
+      return false;
+    }
+    return true;
+  }
+  int costDelta=(directInlines * costDeltaDirect) + (blockInlines * costDeltaBlock);
+  int threshold=(callCost - costDelta) / fnInstanceCount;
+  return InlineCostEstimator.getCost(fnNode,threshold + 1) <= threshold;
+}

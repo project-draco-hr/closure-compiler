@@ -1,0 +1,14 @@
+{
+  Compiler compiler=new Compiler();
+  src="function _FUNCTION(param1, param2){" + src + "}";
+  Node n=compiler.parseTestCode(src).removeFirstChild();
+  Node script=new Node(Token.SCRIPT,n);
+  assertEquals(0,compiler.getErrorCount());
+  Scope scope=new SyntacticScopeCreator(compiler).createScope(n,new Scope(script,compiler));
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false);
+  cfa.process(null,n);
+  ControlFlowGraph<Node> cfg=cfa.getCfg();
+  LiveVariablesAnalysis analysis=new LiveVariablesAnalysis(cfg,scope,compiler);
+  analysis.analyze();
+  return analysis;
+}

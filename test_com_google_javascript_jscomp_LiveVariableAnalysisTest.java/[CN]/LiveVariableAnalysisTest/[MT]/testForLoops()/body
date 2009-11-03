@@ -1,0 +1,12 @@
+{
+  assertNotLiveBeforeX("var a,b;for(a=0;a<9;a++){b(a)};X:b","a");
+  assertNotLiveBeforeX("var a,b;for(a in b){a()};X:b","a");
+  assertNotLiveBeforeX("var a,b;for(a in b){a()};X:a","b");
+  assertLiveBeforeX("var b;for(var a in b){X:a()};","a");
+  assertLiveBeforeX("var a,b;for(a=0;a<9;a++){X:1}","a");
+  assertLiveAfterX("var a,b;for(a in b){X:b};","a");
+  assertLiveBeforeX("var a,b; X:for(a in b){ }","a");
+  assertLiveBeforeX("var a,b;X:a();b();for(a in b){a()};","a");
+  assertLiveBeforeX("var a,b;X:b;for(b=a;;){};","a");
+  assertNotLiveBeforeX("var a,b;X:a;for(b=a;;){b()};b();","b");
+}

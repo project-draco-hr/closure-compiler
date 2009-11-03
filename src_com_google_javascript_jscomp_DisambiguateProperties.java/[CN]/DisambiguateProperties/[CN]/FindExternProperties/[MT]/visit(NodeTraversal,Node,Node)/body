@@ -1,0 +1,17 @@
+{
+  if (n.getType() == Token.GETPROP) {
+    String field=n.getLastChild().getString();
+    T type=typeSystem.getType(getScope(),n.getFirstChild(),field);
+    Property prop=getProperty(field);
+    if (typeSystem.isInvalidatingType(type)) {
+      prop.invalidate();
+    }
+ else {
+      prop.addTypeToSkip(type);
+      if ((type=typeSystem.getInstanceFromPrototype(type)) != null) {
+        prop.getTypes().add(type);
+        prop.typesToSkip.add(type);
+      }
+    }
+  }
+}

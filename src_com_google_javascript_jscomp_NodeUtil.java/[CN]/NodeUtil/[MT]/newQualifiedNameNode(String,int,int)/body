@@ -1,0 +1,16 @@
+{
+  int endPos=name.indexOf('.');
+  if (endPos == -1) {
+    return Node.newString(Token.NAME,name,lineno,charno);
+  }
+  Node node=Node.newString(Token.NAME,name.substring(0,endPos),lineno,charno);
+  int startPos;
+  do {
+    startPos=endPos + 1;
+    endPos=name.indexOf('.',startPos);
+    String part=(endPos == -1 ? name.substring(startPos) : name.substring(startPos,endPos));
+    node=new Node(Token.GETPROP,node,Node.newString(Token.STRING,part,lineno,charno),lineno,charno);
+  }
+ while (endPos != -1);
+  return node;
+}

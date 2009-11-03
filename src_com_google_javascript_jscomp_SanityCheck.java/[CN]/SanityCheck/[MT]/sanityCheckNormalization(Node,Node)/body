@@ -1,0 +1,11 @@
+{
+  CodeChangeHandler.RecentChange handler=new CodeChangeHandler.RecentChange();
+  compiler.addChangeHandler(handler);
+  new NodeTypeNormalizer(handler).process(null,root);
+  Preconditions.checkState(!handler.hasCodeChanged(),"normalizeNodeType constraints violated by last pass");
+  if (compiler.isNormalized()) {
+    (new Normalize(compiler,true)).process(externs,root);
+    Preconditions.checkState(!handler.hasCodeChanged(),"normalize constraints violated by last pass");
+  }
+  compiler.removeChangeHandler(handler);
+}

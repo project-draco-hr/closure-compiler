@@ -1,0 +1,31 @@
+{
+  this.compiler=compiler;
+  this.functionNames=functionNames;
+  this.templateFilename=templateFilename;
+  this.appNameStr=appNameStr;
+  Instrumentation.Builder builder=Instrumentation.newBuilder();
+  try {
+    TextFormat.merge(readable,builder);
+  }
+ catch (  IOException e) {
+    compiler.report(JSError.make(RhinoErrorReporter.PARSE_ERROR,"Error reading instrumentation template protobuf at " + templateFilename));
+    this.initCodeSource="";
+    this.definedFunctionName="";
+    this.reportFunctionName="";
+    this.reportFunctionExitName="";
+    this.appNameSetter="";
+    this.declarationsToRemove=Lists.newArrayList();
+    return;
+  }
+  Instrumentation template=builder.build();
+  StringBuilder initCodeSourceBuilder=new StringBuilder();
+  for (  String line : template.getInitList()) {
+    initCodeSourceBuilder.append(line).append("\n");
+  }
+  this.initCodeSource=initCodeSourceBuilder.toString();
+  this.definedFunctionName=template.getReportDefined();
+  this.reportFunctionName=template.getReportCall();
+  this.reportFunctionExitName=template.getReportExit();
+  this.appNameSetter=template.getAppNameSetter();
+  this.declarationsToRemove=ImmutableList.copyOf(template.getDeclarationToRemoveList());
+}

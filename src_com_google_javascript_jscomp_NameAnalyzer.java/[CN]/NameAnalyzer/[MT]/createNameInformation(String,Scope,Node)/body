@@ -1,0 +1,19 @@
+{
+  String rootName=rootNameNode.getString();
+  Var v=scope.getVar(rootName);
+  boolean isExtern=(v == null && externalNames.contains(rootName));
+  boolean isGlobalRef=(v != null && v.isGlobal()) || isExtern || rootName.equals(WINDOW);
+  if (!isGlobalRef) {
+    return null;
+  }
+  NameInformation nameInfo=new NameInformation();
+  int idx=name.indexOf(PROTOTYPE_SUBSTRING);
+  if (idx != -1) {
+    nameInfo.isPrototype=true;
+    nameInfo.prototypeClass=name.substring(0,idx);
+    nameInfo.prototypeProperty=name.substring(idx + PROTOTYPE_SUBSTRING_LEN);
+  }
+  nameInfo.name=name;
+  nameInfo.isExternallyReferenceable=isExtern || isExternallyReferenceable(scope,name);
+  return nameInfo;
+}

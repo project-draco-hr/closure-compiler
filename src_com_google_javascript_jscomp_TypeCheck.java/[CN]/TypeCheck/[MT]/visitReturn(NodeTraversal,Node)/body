@@ -1,0 +1,24 @@
+{
+  Node function=t.getEnclosingFunction();
+  if (function == null) {
+    return;
+  }
+  JSType jsType=getJSType(function);
+  if (jsType instanceof FunctionType) {
+    FunctionType functionType=(FunctionType)jsType;
+    JSType returnType=functionType.getReturnType();
+    if (returnType == null) {
+      returnType=getNativeType(VOID_TYPE);
+    }
+    Node valueNode=n.getFirstChild();
+    JSType actualReturnType;
+    if (valueNode == null) {
+      actualReturnType=getNativeType(VOID_TYPE);
+      valueNode=n;
+    }
+ else {
+      actualReturnType=getJSType(valueNode);
+    }
+    validator.expectCanAssignTo(t,valueNode,actualReturnType,returnType,"inconsistent return type");
+  }
+}

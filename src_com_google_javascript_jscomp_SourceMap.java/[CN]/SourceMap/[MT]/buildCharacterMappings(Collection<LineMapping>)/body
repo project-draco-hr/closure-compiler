@@ -1,0 +1,19 @@
+{
+  for (  LineMapping lineMapping : lineMappings) {
+    for (int i=0; i <= lineMapping.length; ++i) {
+      int minLength=Integer.MAX_VALUE;
+      LineCharMapping current=null;
+      for (      LineCharMapping lcm : lineMapping.characterMappings) {
+        if (i < lcm.startCharacter || i > lcm.endCharacter) {
+          continue;
+        }
+        int lcmLength=lcm.endCharacter - lcm.startCharacter;
+        if (lcmLength < minLength) {
+          minLength=lcmLength;
+          current=lcm;
+        }
+      }
+      lineMapping.charToMap.put(i,current);
+    }
+  }
+}

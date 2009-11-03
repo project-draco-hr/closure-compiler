@@ -1,0 +1,19 @@
+{
+  JSType propertyType=null;
+  for (  JSType alternate : getAlternates()) {
+    if (alternate.isNullType() || alternate.isVoidType()) {
+      continue;
+    }
+    JSType altPropertyType=alternate.findPropertyType(propertyName);
+    if (altPropertyType == null) {
+      continue;
+    }
+    if (propertyType == null) {
+      propertyType=altPropertyType;
+    }
+ else {
+      propertyType=propertyType.getLeastSupertype(altPropertyType);
+    }
+  }
+  return propertyType;
+}

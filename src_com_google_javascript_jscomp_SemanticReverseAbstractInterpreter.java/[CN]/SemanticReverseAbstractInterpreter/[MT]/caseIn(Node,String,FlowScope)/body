@@ -1,0 +1,22 @@
+{
+  JSType objectType=object.getJSType();
+  objectType=this.getRestrictedWithoutNull(objectType);
+  objectType=this.getRestrictedWithoutUndefined(objectType);
+  boolean hasProperty=false;
+  if (objectType instanceof ObjectType) {
+    hasProperty=((ObjectType)objectType).hasProperty(propertyName);
+  }
+  if (!hasProperty) {
+    String qualifiedName=object.getQualifiedName();
+    if (qualifiedName != null) {
+      String propertyQualifiedName=qualifiedName + "." + propertyName;
+      if (blindScope.getSlot(propertyQualifiedName) == null) {
+        FlowScope informed=blindScope.createChildFlowScope();
+        JSType unknownType=typeRegistry.getNativeType(JSTypeNative.UNKNOWN_TYPE);
+        informed.inferQualifiedSlot(propertyQualifiedName,unknownType,unknownType);
+        return informed;
+      }
+    }
+  }
+  return blindScope;
+}

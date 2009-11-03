@@ -1,0 +1,11 @@
+{
+  Compiler compiler=new Compiler();
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,true);
+  Node script1=compiler.parseSyntheticCode("cfgtest","var foo;");
+  Node script2=compiler.parseSyntheticCode("cfgtest2","var bar;");
+  Node root=new Node(Token.BLOCK,script1,script2);
+  cfa.process(null,script1);
+  ControlFlowGraph<Node> cfg=cfa.getCfg();
+  assertNotNull(cfg.getNode(script1));
+  assertNull(cfg.getNode(script2));
+}

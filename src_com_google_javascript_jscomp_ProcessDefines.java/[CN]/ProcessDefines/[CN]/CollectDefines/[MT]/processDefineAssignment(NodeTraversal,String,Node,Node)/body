@@ -1,0 +1,23 @@
+{
+  if (value == null || !NodeUtil.isValidDefineValue(value,allDefines.keySet())) {
+    compiler.report(JSError.make(t,value,INVALID_DEFINE_INIT_ERROR,name));
+  }
+ else   if (!isAssignAllowed()) {
+    compiler.report(JSError.make(t,valueParent,NON_GLOBAL_DEFINE_INIT_ERROR,name));
+  }
+ else {
+    DefineInfo info=allDefines.get(name);
+    if (info == null) {
+      info=new DefineInfo(value,valueParent);
+      allDefines.put(name,info);
+      assignableDefines.put(name,info);
+    }
+ else     if (info.recordAssignment(value)) {
+      return true;
+    }
+ else {
+      compiler.report(JSError.make(t,valueParent,DEFINE_NOT_ASSIGNABLE_ERROR,name,info.getReasonWhyNotAssignable()));
+    }
+  }
+  return false;
+}

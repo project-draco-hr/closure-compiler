@@ -1,0 +1,16 @@
+{
+  final BitSet gen=new BitSet(input.liveSet.size());
+  final BitSet kill=new BitSet(input.liveSet.size());
+  boolean conditional=false;
+  List<DiGraphEdge<Node,Branch>> edgeList=getCfg().getOutEdges(node);
+  for (  DiGraphEdge<Node,Branch> edge : edgeList) {
+    if (Branch.ON_EX.equals(edge.getValue())) {
+      conditional=true;
+    }
+  }
+  computeGenKill(node,gen,kill,conditional);
+  LiveVariableLattice result=new LiveVariableLattice(input);
+  result.liveSet.andNot(kill);
+  result.liveSet.or(gen);
+  return result;
+}

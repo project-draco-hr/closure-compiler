@@ -1,0 +1,21 @@
+{
+  fold("if (1){ x=1; } else { x = 2;}","x=1");
+  fold("if (false){ x = 1; } else { x = 2; }","x=2");
+  fold("if (undefined){ x = 1; } else { x = 2; }","x=2");
+  fold("if (null){ x = 1; } else { x = 2; }","x=2");
+  fold("if (void 0){ x = 1; } else { x = 2; }","x=2");
+  fold("if (false){ x = 1; } else if (true) { x = 3; } else { x = 2; }","x=3");
+  fold("if (false){ x = 1; } else if (cond) { x = 2; } else { x = 3; }","x=cond?2:3");
+  fold("var x = (true) ? 1 : 0","var x=1");
+  fold("var y = (true) ? ((false) ? 12 : (cond ? 1 : 2)) : 13","var y=cond?1:2");
+  fold("if (x){ x = 1; } else if (false) { x = 3; }","if(x)x=1");
+  fold("x?void 0:y()","x||y()");
+  fold("!x?void 0:y()","x&&y()");
+  foldSame("var z=x?void 0:y()");
+  foldSame("z=x?void 0:y()");
+  foldSame("z*=x?void 0:y()");
+  fold("x?y():void 0","x&&y()");
+  foldSame("var z=x?y():void 0");
+  foldSame("(w?x:void 0).y=z");
+  foldSame("(w?x:void 0).y+=z");
+}

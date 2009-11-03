@@ -1,0 +1,11 @@
+{
+  checkDefinitionsInJs("a = 1; a = 2; a",ImmutableSet.of("DEF NAME a -> NUMBER","USE NAME a -> [NUMBER x 2]"));
+  checkDefinitionsInJs("a = 1; a = 'a'; a",ImmutableSet.of("DEF NAME a -> NUMBER","DEF NAME a -> STRING","USE NAME a -> [NUMBER, STRING]"));
+  checkDefinitionsInJs("a = 1; b = 2; a = b; a",ImmutableSet.of("DEF NAME a -> <null>","DEF NAME a -> NUMBER","DEF NAME b -> NUMBER","USE NAME a -> [<null>, NUMBER]","USE NAME b -> [NUMBER]"));
+  checkDefinitionsInJs("a = 1; b = 2; c = b; c = a; c",ImmutableSet.of("DEF NAME a -> NUMBER","DEF NAME b -> NUMBER","DEF NAME c -> <null>","USE NAME a -> [NUMBER]","USE NAME b -> [NUMBER]","USE NAME c -> [<null> x 2]"));
+  checkDefinitionsInJs("function f(){} f()",ImmutableSet.of("DEF NAME f -> FUNCTION","USE NAME f -> [FUNCTION]"));
+  checkDefinitionsInJs("function f(){} f.call(null)",ImmutableSet.of("DEF NAME f -> FUNCTION","USE NAME f -> [FUNCTION]","USE GETPROP f.call -> [FUNCTION]"));
+  checkDefinitionsInJs("function f(){} f.apply(null, [])",ImmutableSet.of("DEF NAME f -> FUNCTION","USE NAME f -> [FUNCTION]","USE GETPROP f.apply -> [FUNCTION]"));
+  checkDefinitionsInJs("function f(){} f.foobar()",ImmutableSet.of("DEF NAME f -> FUNCTION","USE NAME f -> [FUNCTION]"));
+  checkDefinitionsInJs("function f(){} f(); f.call(null)",ImmutableSet.of("DEF NAME f -> FUNCTION","USE NAME f -> [FUNCTION]","USE GETPROP f.call -> [FUNCTION]"));
+}

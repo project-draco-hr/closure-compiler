@@ -1,0 +1,26 @@
+{
+  runCustomPasses(CustomPassExecutionTime.BEFORE_CHECKS);
+  PhaseOptimizer phaseOptimizer=new PhaseOptimizer(this,tracker);
+  if (options_.devMode == DevMode.EVERY_PASS) {
+    phaseOptimizer.setSanityCheck(sanityCheck);
+  }
+  phaseOptimizer.consume(getPassConfig().getChecks());
+  phaseOptimizer.process(externsRoot,jsRoot);
+  if (hasErrors()) {
+    return;
+  }
+  if (options_.instrumentationTemplate != null || options_.recordFunctionInformation) {
+    computeFunctionNames();
+  }
+  if (options_.removeTryCatchFinally) {
+    removeTryCatchFinally();
+  }
+  if (!options_.stripTypes.isEmpty() || !options_.stripNameSuffixes.isEmpty() || !options_.stripTypePrefixes.isEmpty()|| !options_.stripNamePrefixes.isEmpty()) {
+    stripCode(options_.stripTypes,options_.stripNameSuffixes,options_.stripTypePrefixes,options_.stripNamePrefixes);
+  }
+  runCustomPasses(CustomPassExecutionTime.BEFORE_OPTIMIZATIONS);
+  normalize();
+  if (options_.sourceMapOutputPath != null) {
+    this.sourceMap_=new SourceMap();
+  }
+}

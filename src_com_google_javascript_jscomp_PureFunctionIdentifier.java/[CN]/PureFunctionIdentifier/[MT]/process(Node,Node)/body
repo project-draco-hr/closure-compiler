@@ -1,0 +1,11 @@
+{
+  if (externs != null || root != null) {
+    throw new IllegalStateException("It is illegal to call PureFunctionIdentifier.process " + "twice the same instance.  Please use a new " + "PureFunctionIdentifier instance each time.");
+  }
+  externs=externsAst;
+  root=srcAst;
+  NodeTraversal.traverse(compiler,externs,new FunctionAnalyzer(true));
+  NodeTraversal.traverse(compiler,root,new FunctionAnalyzer(false));
+  propagateSideEffects();
+  markPureFunctionCalls();
+}

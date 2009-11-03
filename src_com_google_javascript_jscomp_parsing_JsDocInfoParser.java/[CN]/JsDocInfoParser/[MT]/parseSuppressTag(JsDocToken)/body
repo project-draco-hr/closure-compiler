@@ -1,0 +1,31 @@
+{
+  if (token == JsDocToken.LC) {
+    Set<String> suppressions=new HashSet<String>();
+    while (true) {
+      if (match(JsDocToken.STRING)) {
+        suppressions.add(stream.getString());
+        token=next();
+      }
+ else {
+        parser.addWarning("msg.jsdoc.suppress",stream.getLineno(),stream.getCharno());
+        return token;
+      }
+      if (match(JsDocToken.PIPE)) {
+        token=next();
+      }
+ else {
+        break;
+      }
+    }
+    if (!match(JsDocToken.RC)) {
+      parser.addWarning("msg.jsdoc.suppress",stream.getLineno(),stream.getCharno());
+    }
+ else {
+      token=next();
+      if (!jsdocBuilder.recordSuppressions(suppressions)) {
+        parser.addWarning("msg.jsdoc.suppress.duplicate",stream.getLineno(),stream.getCharno());
+      }
+    }
+  }
+  return token;
+}

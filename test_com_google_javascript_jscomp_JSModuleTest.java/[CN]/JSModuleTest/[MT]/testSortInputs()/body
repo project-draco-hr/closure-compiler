@@ -1,0 +1,13 @@
+{
+  JSModule mod=new JSModule("mod");
+  mod.add(JSSourceFile.fromCode("a.js","goog.require('b');goog.require('c')"));
+  mod.add(JSSourceFile.fromCode("b.js","goog.provide('b');goog.require('d')"));
+  mod.add(JSSourceFile.fromCode("c.js","goog.provide('c');goog.require('d')"));
+  mod.add(JSSourceFile.fromCode("d.js","goog.provide('d')"));
+  mod.sortInputsByDeps(new Compiler(System.err));
+  assertEquals(4,mod.getInputs().size());
+  assertEquals("d.js",mod.getInputs().get(0).getSourceFile().getName());
+  assertEquals("b.js",mod.getInputs().get(1).getSourceFile().getName());
+  assertEquals("c.js",mod.getInputs().get(2).getSourceFile().getName());
+  assertEquals("a.js",mod.getInputs().get(3).getSourceFile().getName());
+}

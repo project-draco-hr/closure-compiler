@@ -1,0 +1,21 @@
+{
+  for (  Entry<String,StringInfo> entry : stringInfoMap.entrySet()) {
+    StringInfo info=entry.getValue();
+    if (!info.isAliased) {
+      continue;
+    }
+    String alias=info.getVariableName(entry.getKey());
+    Node value=Node.newString(Token.STRING,entry.getKey());
+    Node name=Node.newString(Token.NAME,alias);
+    name.addChildToBack(value);
+    Node var=new Node(Token.VAR);
+    var.addChildToBack(name);
+    if (info.siblingToInsertVarDeclBefore == null) {
+      info.parentForNewVarDecl.addChildToFront(var);
+    }
+ else {
+      info.parentForNewVarDecl.addChildBefore(var,info.siblingToInsertVarDeclBefore);
+    }
+    compiler.reportCodeChange();
+  }
+}

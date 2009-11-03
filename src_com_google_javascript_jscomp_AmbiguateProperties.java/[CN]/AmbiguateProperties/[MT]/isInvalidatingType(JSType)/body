@@ -1,0 +1,14 @@
+{
+  if (type instanceof UnionType) {
+    type=type.restrictByNotNullOrUndefined();
+    if (type instanceof UnionType) {
+      for (      JSType alt : ((UnionType)type).getAlternates()) {
+        if (isInvalidatingType(alt)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+  return type == null || !(type instanceof ObjectType) || invalidatingTypes.contains(type) || !((ObjectType)type).hasName() || (type.isNamedType() && type.isUnknownType()) || type.isEnumType() || type.autoboxesTo() != null;
+}

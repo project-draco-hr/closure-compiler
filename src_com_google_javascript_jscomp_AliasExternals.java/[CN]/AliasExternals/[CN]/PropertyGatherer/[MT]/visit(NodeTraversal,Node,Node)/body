@@ -1,0 +1,15 @@
+{
+  if (n.getType() == Token.GETPROP) {
+    Node propNameNode=n.getLastChild();
+    if (canReplaceWithGetProp(propNameNode,n,parent)) {
+      String name=propNameNode.getString();
+      props.get(name).recordAccessor(t);
+      accessors.add(n);
+    }
+    if (canReplaceWithSetProp(propNameNode,n,parent)) {
+      String name=propNameNode.getString();
+      props.get(name).recordMutator(t);
+      mutators.add(n);
+    }
+  }
+}

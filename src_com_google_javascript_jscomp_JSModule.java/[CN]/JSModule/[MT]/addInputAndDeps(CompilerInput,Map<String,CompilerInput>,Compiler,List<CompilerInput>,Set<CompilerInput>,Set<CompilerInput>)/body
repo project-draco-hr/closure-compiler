@@ -1,0 +1,15 @@
+{
+  if (!set.contains(input)) {
+    if (inProgress.contains(input)) {
+      throw new IllegalArgumentException("Circular dependency involving input: " + input.getName());
+    }
+    inProgress.add(input);
+    for (    String require : input.getRequires(compiler)) {
+      if (provides.containsKey(require)) {
+        addInputAndDeps(provides.get(require),provides,compiler,list,set,inProgress);
+      }
+    }
+    list.add(input);
+    set.add(input);
+  }
+}

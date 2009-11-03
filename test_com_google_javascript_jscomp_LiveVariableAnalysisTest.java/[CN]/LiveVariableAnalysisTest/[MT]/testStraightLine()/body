@@ -1,0 +1,21 @@
+{
+  assertNotLiveBeforeX("X:var a;","a");
+  assertNotLiveAfterX("X:var a;","a");
+  assertNotLiveAfterX("X:var a=1;","a");
+  assertLiveAfterX("X:var a=1; a()","a");
+  assertNotLiveBeforeX("X:var a=1; a()","a");
+  assertLiveBeforeX("var a;X:a;","a");
+  assertLiveBeforeX("var a;X:a=a+1;","a");
+  assertLiveBeforeX("var a;X:a+=1;","a");
+  assertLiveBeforeX("var a;X:a++;","a");
+  assertNotLiveAfterX("var a,b;X:b();","a");
+  assertNotLiveBeforeX("var a,b;X:b();","a");
+  assertLiveBeforeX("var a,b;X:b(a);","a");
+  assertLiveBeforeX("var a,b;X:b(1,2,3,b(a + 1));","a");
+  assertNotLiveBeforeX("var a,b;X:a=1;b(a)","a");
+  assertNotLiveAfterX("var a,b;X:b(a);b()","a");
+  assertLiveBeforeX("var a,b;X:b();b=1;a()","b");
+  assertLiveAfterX("X:a();var a;a()","a");
+  assertNotLiveAfterX("X:a();var a=1;a()","a");
+  assertLiveBeforeX("var a,b;X:a,b=1","a");
+}

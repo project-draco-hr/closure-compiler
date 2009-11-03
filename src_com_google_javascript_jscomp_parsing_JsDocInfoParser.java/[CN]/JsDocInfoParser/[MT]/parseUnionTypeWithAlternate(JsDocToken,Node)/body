@@ -1,0 +1,34 @@
+{
+  Node union=newNode(Token.PIPE);
+  if (alternate != null) {
+    union.addChildToBack(alternate);
+  }
+  Node expr=null;
+  do {
+    if (expr != null) {
+      skipEOLs();
+      token=next();
+      Preconditions.checkState(token == JsDocToken.PIPE || token == JsDocToken.COMMA);
+      boolean isPipe=token == JsDocToken.PIPE;
+      if (isPipe && match(JsDocToken.PIPE)) {
+        next();
+      }
+      skipEOLs();
+      token=next();
+    }
+    expr=parseTypeExpression(token);
+    if (expr == null) {
+      return null;
+    }
+    union.addChildToBack(expr);
+  }
+ while (match(JsDocToken.PIPE,JsDocToken.COMMA));
+  if (alternate == null) {
+    skipEOLs();
+    if (!match(JsDocToken.RP)) {
+      return reportTypeSyntaxWarning("msg.jsdoc.missing.rp");
+    }
+    next();
+  }
+  return union;
+}

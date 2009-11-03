@@ -1,0 +1,20 @@
+{
+  final String TEST_EXCEPTION="test me";
+  NodeTraversal.Callback cb=new NodeTraversal.AbstractPostOrderCallback(){
+    @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
+      throw new RuntimeException(TEST_EXCEPTION);
+    }
+  }
+;
+  Compiler compiler=new Compiler();
+  NodeTraversal t=new NodeTraversal(compiler,cb);
+  String code="function foo() {}";
+  Node tree=parse(compiler,code);
+  try {
+    t.traverse(tree);
+    fail("Expected RuntimeException");
+  }
+ catch (  RuntimeException e) {
+    assertTrue(e.getMessage().startsWith("INTERNAL COMPILER ERROR.\n" + "Please report this problem.\n" + "test me"));
+  }
+}

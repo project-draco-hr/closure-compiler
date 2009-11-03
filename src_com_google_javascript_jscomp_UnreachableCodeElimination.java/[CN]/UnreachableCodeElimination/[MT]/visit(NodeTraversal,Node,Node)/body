@@ -1,0 +1,26 @@
+{
+  if (parent == null) {
+    return;
+  }
+  if (n.getType() == Token.FUNCTION || n.getType() == Token.SCRIPT) {
+    return;
+  }
+  if (n.getType() == Token.TRY) {
+    Node body=n.getFirstChild();
+    Node catchOrFinallyBlock=body.getNext();
+    Node finallyBlock=catchOrFinallyBlock.getNext();
+    if (!catchOrFinallyBlock.hasChildren() && (finallyBlock == null || !finallyBlock.hasChildren())) {
+      n.removeChild(body);
+      parent.replaceChild(n,body);
+      compiler.reportCodeChange();
+      n=body;
+    }
+  }
+  GraphNode<Node,Branch> gNode=curCfg.getNode(n);
+  if (gNode == null) {
+    return;
+  }
+  if (gNode.getAnnotation() != GraphReachability.REACHABLE || (removeNoOpStatements && !NodeUtil.mayEffectMutableState(n))) {
+    removeDeadExprStatementSafely(n,parent);
+  }
+}

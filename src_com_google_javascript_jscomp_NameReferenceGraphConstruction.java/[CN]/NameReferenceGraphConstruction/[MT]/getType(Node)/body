@@ -1,0 +1,12 @@
+{
+  JSType type=n.getJSType();
+  if (type == null) {
+    if (CONSERVATIVE) {
+      throw new RuntimeException("Type system failed us :(");
+    }
+ else {
+      return compiler.getTypeRegistry().getNativeType(JSTypeNative.UNKNOWN_TYPE);
+    }
+  }
+  return type.restrictByNotNullOrUndefined();
+}

@@ -1,0 +1,14 @@
+{
+switch (n.getType()) {
+case Token.GETELEM:
+    Node left=n.getFirstChild();
+  Node right=left.getNext();
+if (right.getType() == Token.STRING && NodeUtil.isValidPropertyName(right.getString())) {
+  n.removeChild(left);
+  n.removeChild(right);
+  parent.replaceChild(n,new Node(Token.GETPROP,left,right));
+  compiler.reportCodeChange();
+}
+break;
+}
+}

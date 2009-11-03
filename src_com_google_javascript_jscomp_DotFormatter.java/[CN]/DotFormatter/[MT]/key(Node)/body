@@ -1,0 +1,29 @@
+{
+  Integer key=assignments.get(n);
+  if (key == null) {
+    key=keyCount++;
+    assignments.put(n,key);
+    builder.append(INDENT);
+    builder.append(formatNodeName(key));
+    builder.append(" [label=\"");
+    builder.append(name(n));
+    JSType type=n.getJSType();
+    if (type != null) {
+      builder.append(" : ");
+      builder.append(type.toString());
+    }
+    if (printAnnotations && cfg != null && cfg.hasNode(n)) {
+      Object annotation=cfg.getNode(n).getAnnotation();
+      if (annotation != null) {
+        builder.append("\\n");
+        builder.append(annotation.toString());
+      }
+    }
+    builder.append("\"");
+    if (n.getJSDocInfo() != null) {
+      builder.append(" color=\"green\"");
+    }
+    builder.append("];\n");
+  }
+  return key;
+}

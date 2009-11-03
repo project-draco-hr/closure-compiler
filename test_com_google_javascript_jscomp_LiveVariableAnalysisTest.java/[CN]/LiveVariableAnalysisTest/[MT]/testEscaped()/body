@@ -1,0 +1,13 @@
+{
+  assertEscaped("var a;function b(){a()}","a");
+  assertEscaped("var a;function b(){param1()}","param1");
+  assertEscaped("var a;function b(){function c(){a()}}","a");
+  assertEscaped("var a;function b(){param1.x = function() {a()}}","a");
+  assertEscaped("try{} catch(e){}","e");
+  assertNotEscaped("var a;function b(){var c; c()}","c");
+  assertNotEscaped("var a;function f(){function b(){var c;c()}}","c");
+  assertNotEscaped("var a;function b(){};a()","a");
+  assertNotEscaped("var a;function f(){function b(){}}a()","a");
+  assertNotEscaped("var a;function b(){var a;a()};a()","a");
+  assertEscaped("var _x","_x");
+}

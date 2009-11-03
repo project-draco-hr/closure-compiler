@@ -1,0 +1,8 @@
+{
+  testSame("/** @constructor */ function f() { " + "  /** @type {number} */ this.foo = 3;" + "}"+ "var x = new f();");
+  ObjectType x=(ObjectType)findNameType("x",globalScope);
+  assertEquals("f",x.toString());
+  assertTrue(x.hasProperty("foo"));
+  assertEquals("number",x.getPropertyType("foo").toString());
+  assertFalse(x.isPropertyTypeInferred("foo"));
+}

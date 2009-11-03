@@ -1,0 +1,14 @@
+{
+  Node function=n.getFirstChild();
+  if (function == null || function.getType() != Token.GETPROP) {
+    return false;
+  }
+  if (parent != null && parent.getType() == Token.NAME) {
+    Node gramps=parent.getParent();
+    if (gramps != null && gramps.getType() == Token.VAR) {
+      return false;
+    }
+  }
+  Node callee=function.getFirstChild();
+  return nameEndsWithFieldNameToStrip(callee) || nameEndsWithFieldNameToStrip(function) || qualifiedNameBeginsWithStripType(callee)|| actsOnStripType(t,n);
+}

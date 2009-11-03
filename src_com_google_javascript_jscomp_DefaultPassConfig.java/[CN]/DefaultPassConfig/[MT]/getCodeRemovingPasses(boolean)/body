@@ -1,0 +1,24 @@
+{
+  List<PassFactory> passes=Lists.newArrayList();
+  if (options.inlineVariables && !beforeSmartNameRemoval) {
+    passes.add(inlineVariables);
+  }
+ else   if (options.inlineConstantVars) {
+    passes.add(inlineConstants);
+  }
+  if (options.removeConstantExpressions) {
+    passes.add(removeConstantExpressions);
+  }
+  if (options.foldConstants) {
+    passes.add(minimizeExitPoints);
+    passes.add(foldConstants);
+  }
+  if (options.removeDeadCode) {
+    passes.add(removeUnreachableCode);
+  }
+  if (options.removeUnusedPrototypeProperties) {
+    passes.add(removeUnusedPrototypeProperties);
+  }
+  assertAllLoopablePasses(passes);
+  return passes;
+}

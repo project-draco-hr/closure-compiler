@@ -1,0 +1,12 @@
+{
+  NodeTraversal.traverse(compiler,externs,new ProcessExternals());
+  NodeTraversal.traverse(compiler,root,new FindDependencyScopes());
+  NodeTraversal.traverse(compiler,root,new HoistVariableAndFunctionDeclarations());
+  NodeTraversal.traverse(compiler,root,new FindDeclarationsAndSetters());
+  NodeTraversal.traverse(compiler,root,new FindReferences());
+  referenceParentNames();
+  calculateReferences();
+  if (removeUnreferenced) {
+    removeUnreferenced();
+  }
+}

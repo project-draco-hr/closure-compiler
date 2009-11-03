@@ -1,0 +1,20 @@
+{
+  Node fieldName=parseFieldName(token);
+  if (fieldName == null) {
+    return null;
+  }
+  skipEOLs();
+  if (!match(JsDocToken.COLON)) {
+    return fieldName;
+  }
+  next();
+  skipEOLs();
+  Node typeExpression=parseTypeExpression(next());
+  if (typeExpression == null) {
+    return null;
+  }
+  Node fieldType=newNode(Token.COLON);
+  fieldType.addChildToBack(fieldName);
+  fieldType.addChildToBack(typeExpression);
+  return fieldType;
+}

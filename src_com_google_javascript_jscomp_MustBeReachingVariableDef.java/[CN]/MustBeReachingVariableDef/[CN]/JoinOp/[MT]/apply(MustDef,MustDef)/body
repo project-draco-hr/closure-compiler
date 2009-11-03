@@ -1,0 +1,30 @@
+{
+  MustDef result=new MustDef();
+  Map<Var,Definition> resultMap=result.reachingDef;
+  for (  Var var : a.reachingDef.keySet()) {
+    Definition aDef=a.reachingDef.get(var);
+    if (aDef == null) {
+      resultMap.put(var,null);
+      continue;
+    }
+    Node aNode=aDef.node;
+    if (b.reachingDef.containsKey(var)) {
+      Definition bDef=b.reachingDef.get(var);
+      if (aDef.equals(bDef)) {
+        resultMap.put(var,aDef);
+      }
+ else {
+        resultMap.put(var,null);
+      }
+    }
+ else {
+      resultMap.put(var,aDef);
+    }
+  }
+  for (  Var var : b.reachingDef.keySet()) {
+    if (!a.reachingDef.containsKey(var)) {
+      resultMap.put(var,b.reachingDef.get(var));
+    }
+  }
+  return result;
+}

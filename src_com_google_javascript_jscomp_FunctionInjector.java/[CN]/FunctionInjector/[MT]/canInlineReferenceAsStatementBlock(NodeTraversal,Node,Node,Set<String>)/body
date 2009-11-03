@@ -1,0 +1,18 @@
+{
+  CallSiteType callSiteType=classifyCallSite(callNode);
+  if (callSiteType == CallSiteType.UNSUPPORTED) {
+    return CanInlineResult.NO;
+  }
+  if (!allowDecomposition && callSiteType == CallSiteType.DECOMPOSABLE_EXPRESSION) {
+    return CanInlineResult.NO;
+  }
+  if (!callMeetsBlockInliningRequirements(t,callNode,fnNode,namesToAlias)) {
+    return CanInlineResult.NO;
+  }
+  if (callSiteType == CallSiteType.DECOMPOSABLE_EXPRESSION) {
+    return CanInlineResult.AFTER_DECOMPOSITION;
+  }
+ else {
+    return CanInlineResult.YES;
+  }
+}

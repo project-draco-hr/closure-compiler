@@ -1,0 +1,11 @@
+{
+  Compiler compiler=new Compiler();
+  List<Node> replacements=Lists.newArrayList();
+  CopySideEffectSubexpressions accumulator=new CopySideEffectSubexpressions(compiler,replacements);
+  accumulator.keepSimplifiedHookExpression(root,thenHasSideEffects,elseHasSideEffects);
+  List<String> actual=Lists.newArrayList();
+  for (  Node replacement : replacements) {
+    actual.add(compiler.toSource(replacement));
+  }
+  assertEquals(expected,actual);
+}

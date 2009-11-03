@@ -1,0 +1,23 @@
+{
+  Collection<Definition> defs=passUnderTest.getDefinitionsReferencedAt(node);
+  if (defs != null) {
+    StringBuffer sb=new StringBuffer();
+    sb.append("USE ");
+    sb.append(Token.name(node.getType()));
+    sb.append(" ");
+    sb.append(node.getQualifiedName());
+    sb.append(" -> ");
+    Multiset<String> defstrs=Multisets.newTreeMultiset();
+    for (    Definition def : defs) {
+      Node rValue=def.getRValue();
+      if (rValue != null) {
+        defstrs.add(Token.name(rValue.getType()));
+      }
+ else {
+        defstrs.add("<null>");
+      }
+    }
+    sb.append(defstrs.toString());
+    found.add(sb.toString());
+  }
+}

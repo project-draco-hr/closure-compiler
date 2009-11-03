@@ -1,0 +1,22 @@
+{
+  JSType constructor=getType(NodeUtil.getPrototypeClassName(qName));
+  FunctionType classType=null;
+  String className=null;
+  if (constructor instanceof FunctionType && constructor.isConstructor()) {
+    classType=(FunctionType)constructor;
+    className=classType.getName();
+  }
+ else {
+    classType=compiler.getTypeRegistry().getNativeFunctionType(JSTypeNative.U2U_CONSTRUCTOR_TYPE);
+    className=NodeUtil.getPrototypeClassName(qName).getQualifiedName();
+  }
+  recordClassConstructorOrInterface(className,classType,null,null,null,null);
+  String qNameStr=className + ".prototype." + NodeUtil.getPrototypePropertyName(qName);
+  Name prototypeProp=graph.defineNameIfNotExists(qNameStr,isExtern);
+  Preconditions.checkNotNull(prototypeProp,qNameStr + " should be in the name graph as a node.");
+  if (assign != null) {
+    prototypeProp.addAssignmentDeclaration(assign);
+  }
+  prototypeProp.setType(type);
+  return prototypeProp;
+}

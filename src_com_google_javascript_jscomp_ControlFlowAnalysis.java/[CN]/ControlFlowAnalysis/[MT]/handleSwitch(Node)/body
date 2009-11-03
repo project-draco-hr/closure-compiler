@@ -1,0 +1,15 @@
+{
+  Node next=getNextSiblingOfType(node.getFirstChild().getNext(),Token.CASE,Token.EMPTY);
+  if (next != null) {
+    createEdge(node,Branch.UNCOND,next);
+  }
+ else {
+    if (node.getFirstChild().getNext() != null) {
+      createEdge(node,Branch.UNCOND,node.getFirstChild().getNext());
+    }
+ else {
+      createEdge(node,Branch.UNCOND,computeFollowNode(node));
+    }
+  }
+  connectToPossibleExceptionHandler(node,node.getFirstChild());
+}

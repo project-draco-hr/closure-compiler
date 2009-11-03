@@ -1,0 +1,47 @@
+{
+  UndiGraph<Var,Void> interferenceGraph=new LinkedUndirectedGraph<Var,Void>();
+  Scope scope=t.getScope();
+  for (Iterator<Var> i=scope.getVars(); i.hasNext(); ) {
+    Var v=i.next();
+    if (!escaped.contains(v)) {
+      if (!NodeUtil.isFunction(v.getParentNode())) {
+        interferenceGraph.createNode(v);
+      }
+    }
+  }
+  for (  DiGraphNode<Node,Branch> cfgNode : cfg.getDirectedGraphNodes()) {
+    FlowState<LiveVariableLattice> state=cfgNode.getAnnotation();
+    if (cfg.isImplicitReturn(cfgNode)) {
+      continue;
+    }
+    int varsInScope=scope.getVarCount();
+    ArrayList<CombinedLiveRangeChecker> rangesToCheck=new ArrayList<CombinedLiveRangeChecker>(varsInScope * varsInScope);
+    for (Iterator<Var> i1=scope.getVars(); i1.hasNext(); ) {
+      Var v1=i1.next();
+      for (Iterator<Var> i2=scope.getVars(); i2.hasNext(); ) {
+        Var v2=i2.next();
+        if (v1 == v2 || !interferenceGraph.hasNode(v1) || !interferenceGraph.hasNode(v2)) {
+          continue;
+        }
+        boolean v1OutLive=state.getOut().isLive(v1);
+        boolean v2OutLive=state.getOut().isLive(v2);
+        if (v1.getParentNode().getType() == Token.LP && v2.getParentNode().getType() == Token.LP) {
+          interferenceGraph.connectIfNotFound(v1,null,v2);
+        }
+ else         if ((state.getIn().isLive(v1) && state.getIn().isLive(v2)) || (v1OutLive && v2OutLive)) {
+          interferenceGraph.connectIfNotFound(v1,null,v2);
+        }
+ else {
+          LiveRangeChecker checker1=new LiveRangeChecker(v1,v2OutLive ? null : v2);
+          LiveRangeChecker checker2=new LiveRangeChecker(v2,v1OutLive ? null : v1);
+          rangesToCheck.add(new CombinedLiveRangeChecker(checker1,checker2));
+        }
+      }
+    }
+    checkRanges(rangesToCheck,cfgNode.getValue());
+    for (    CombinedLiveRangeChecker range : rangesToCheck) {
+      range.connectIfCrossed(interferenceGraph);
+    }
+  }
+  return interferenceGraph;
+}

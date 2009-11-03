@@ -1,0 +1,18 @@
+{
+  if (value.getType() == Token.OBJECTLIT) {
+    value=value.getFirstChild();
+    value=(value == null) ? null : value.getNext();
+    while (value != null) {
+      validator.expectCanAssignTo(t,value,getJSType(value),primitiveType,"element type must match enum's type");
+      value=value.getNext();
+      value=(value == null) ? null : value.getNext();
+    }
+  }
+ else   if (value.getJSType() instanceof EnumType) {
+    EnumType valueEnumType=(EnumType)value.getJSType();
+    JSType valueEnumPrimitiveType=valueEnumType.getElementsType().getPrimitiveType();
+    validator.expectCanAssignTo(t,value,valueEnumPrimitiveType,primitiveType,"incompatible enum element types");
+  }
+ else {
+  }
+}

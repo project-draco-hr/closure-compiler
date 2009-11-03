@@ -1,0 +1,17 @@
+{
+  Map<Node<E>,ImmutableSet.Builder<E>> groupsTmp=Maps.newHashMap();
+  for (  Node<E> elem : elmap.values()) {
+    Node<E> root=findRoot(elem);
+    ImmutableSet.Builder<E> builder=groupsTmp.get(root);
+    if (builder == null) {
+      builder=ImmutableSet.builder();
+      groupsTmp.put(root,builder);
+    }
+    builder.add(elem.element);
+  }
+  ImmutableList.Builder<Set<E>> result=ImmutableList.builder();
+  for (  ImmutableSet.Builder<E> group : groupsTmp.values()) {
+    result.add(group.build());
+  }
+  return result.build();
+}

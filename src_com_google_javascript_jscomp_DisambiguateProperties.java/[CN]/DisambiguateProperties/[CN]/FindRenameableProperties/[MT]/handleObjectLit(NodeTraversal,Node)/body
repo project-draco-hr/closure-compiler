@@ -1,0 +1,16 @@
+{
+  Node child=n.getFirstChild();
+  while (child != null) {
+    if (child.getType() == Token.STRING) {
+      String name=child.getString();
+      T type=typeSystem.getType(getScope(),n,name);
+      Property prop=getProperty(name);
+      if (!prop.scheduleRenaming(child,processProperty(t,prop,type,null))) {
+        if (showInvalidationWarnings) {
+          compiler.report(JSError.make(t.getSourceName(),child,INVALIDATION,name,(type == null ? "null" : type.toString()),n.toString()));
+        }
+      }
+    }
+    child=child.getNext().getNext();
+  }
+}

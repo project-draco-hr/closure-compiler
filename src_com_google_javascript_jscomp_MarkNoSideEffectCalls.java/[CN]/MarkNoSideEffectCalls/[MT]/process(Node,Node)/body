@@ -1,0 +1,7 @@
+{
+  SimpleDefinitionFinder defFinder=new SimpleDefinitionFinder(compiler);
+  defFinder.process(externs,root);
+  NodeTraversal.traverse(compiler,externs,new GatherNoSideEffectFunctions(true));
+  NodeTraversal.traverse(compiler,root,new GatherNoSideEffectFunctions(false));
+  NodeTraversal.traverse(compiler,root,new SetNoSideEffectCallProperty(defFinder));
+}

@@ -1,0 +1,16 @@
+{
+  testNotMissing("try { return 1; } finally { }");
+  testNotMissing("try { } finally { return 1; }");
+  testMissing("try { } finally { }");
+  testNotMissing("try { return 1; } finally { while (true) { } }");
+  testMissing("try { } finally { while (x) { } }");
+  testMissing("try { } finally { while (x) { if (x) { break; } } }");
+  testNotMissing("try { return 2; } finally { while (x) { if (x) { break; } } }");
+  testMissing("try { } finally { try { } finally { } }");
+  testNotMissing("try { } finally { try { return 1; } finally { } }");
+  testNotMissing("try { return 1; } finally { try { } finally { } }");
+  testNotMissing("try { g(); return 1; } finally { }");
+  testNotMissing("try {" + "   /** @return {number} */ function f() {" + "       try { return 1; }"+ "       finally { }"+ "   };"+ "   return 1;"+ "}"+ "finally { }");
+  testMissing("try {" + "   /** @return {number} */ function f() {" + "       try { }"+ "       finally { }"+ "   };"+ "   return 1;"+ "}"+ "finally { }");
+  testMissing("try {" + "   /** @return {number} */ function f() {" + "       try { return 1; }"+ "       finally { }"+ "   };"+ "}"+ "finally { }");
+}

@@ -1,0 +1,14 @@
+{
+  List<String> pieces=Lists.newArrayList(exportPath.split("\\."));
+  for (int i=pieces.size(); i > 0; i--) {
+    String cPath=Joiner.on(".").join(Iterables.limit(pieces,i));
+    if (mappedPaths.containsKey(cPath)) {
+      String newPath=mappedPaths.get(cPath);
+      if (i < pieces.size()) {
+        newPath+="." + Joiner.on(".").join(Iterables.skip(pieces,i));
+      }
+      return newPath + "." + symbolName;
+    }
+  }
+  return exportPath + "." + symbolName;
+}

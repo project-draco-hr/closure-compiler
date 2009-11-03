@@ -1,0 +1,18 @@
+{
+  List<PassFactory> passes=Lists.newArrayList();
+  if (options.inlineGetters) {
+    passes.add(inlineGetters);
+  }
+  passes.addAll(getCodeRemovingPasses(false));
+  if (options.inlineFunctions) {
+    passes.add(inlineFunctions);
+  }
+  if (options.removeUnusedVars) {
+    if (options.deadAssignmentElimination) {
+      passes.add(deadAssignmentsElimination);
+    }
+    passes.add(removeUnusedVars);
+  }
+  assertAllLoopablePasses(passes);
+  return passes;
+}

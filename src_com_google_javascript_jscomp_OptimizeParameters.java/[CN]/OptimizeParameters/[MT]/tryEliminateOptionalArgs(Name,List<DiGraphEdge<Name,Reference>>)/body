@@ -1,0 +1,16 @@
+{
+  int maxArgs=-1;
+  for (  DiGraphEdge<Name,Reference> refEdge : edges) {
+    Reference ref=refEdge.getValue();
+    Node call=ref.parent;
+    if (isCallSite(ref)) {
+      int numArgs=call.getChildCount() - 1;
+      if (numArgs > maxArgs) {
+        maxArgs=numArgs;
+      }
+    }
+  }
+  for (  Definition definition : name.getDeclarations()) {
+    eliminateParamsAfter(definition.getRValue(),maxArgs);
+  }
+}

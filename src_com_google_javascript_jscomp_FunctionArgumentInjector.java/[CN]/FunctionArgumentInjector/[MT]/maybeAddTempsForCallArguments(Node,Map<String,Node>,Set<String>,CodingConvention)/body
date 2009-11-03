@@ -1,0 +1,52 @@
+{
+  if (argMap.isEmpty()) {
+    return;
+  }
+  Preconditions.checkArgument(fnNode.getType() == Token.FUNCTION);
+  Node block=fnNode.getLastChild();
+  Set<String> parameters=argMap.keySet();
+  Set<String> namesAfterSideEffects=findParametersReferencedAfterSideEffect(parameters,block);
+  for (  Map.Entry<String,Node> entry : argMap.entrySet()) {
+    String argName=entry.getKey();
+    if (namesNeedingTemps.contains(argName)) {
+      continue;
+    }
+    Node cArg=entry.getValue();
+    boolean safe=true;
+    int references=NodeUtil.getNameReferenceCount(block,argName);
+    if (NodeUtil.mayEffectMutableState(cArg) && references > 0) {
+      safe=false;
+    }
+ else     if (NodeUtil.mayHaveSideEffects(cArg)) {
+      safe=false;
+    }
+ else     if (canBeSideEffected(cArg) && namesAfterSideEffects.contains(argName)) {
+      safe=false;
+    }
+ else     if (references > 1) {
+switch (cArg.getType()) {
+case Token.NAME:
+        String name=cArg.getString();
+      safe=!(convention.isExported(name));
+    break;
+case Token.NULL:
+case Token.VOID:
+case Token.THIS:
+case Token.FALSE:
+case Token.TRUE:
+case Token.NUMBER:
+  safe=true;
+break;
+case Token.STRING:
+safe=(cArg.getString().length() < 2);
+break;
+default :
+safe=false;
+break;
+}
+}
+if (!safe) {
+namesNeedingTemps.add(argName);
+}
+}
+}

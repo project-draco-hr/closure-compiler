@@ -1,0 +1,16 @@
+{
+  NodeTraversal.traverse(compiler,externs,new ProcessExternedProperties());
+  NodeTraversal.traverse(compiler,root,new ProcessProperties());
+  for (  Property prop : properties.values()) {
+    if (prop.reads != null) {
+      for (      Node n : prop.reads) {
+        compiler.report(JSError.make((String)n.getProp(Node.SOURCENAME_PROP),n,checkReads,READ_WITHOUT_SET,n.getString()));
+      }
+    }
+    if (prop.writes != null) {
+      for (      Node n : prop.writes) {
+        compiler.report(JSError.make((String)n.getProp(Node.SOURCENAME_PROP),n,checkWrites,SET_WITHOUT_READ,n.getString()));
+      }
+    }
+  }
+}

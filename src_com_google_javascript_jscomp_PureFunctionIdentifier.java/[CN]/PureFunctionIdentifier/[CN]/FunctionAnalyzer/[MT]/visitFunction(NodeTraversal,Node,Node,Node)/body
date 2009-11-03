@@ -1,0 +1,16 @@
+{
+  Preconditions.checkArgument(!functionSideEffectMap.containsKey(node));
+  FunctionInformation sideEffectInfo=new FunctionInformation(inExterns);
+  functionSideEffectMap.put(node,sideEffectInfo);
+  if (hasNoSideEffectsAnnotation(node,parent,gramp)) {
+    if (inExterns) {
+      sideEffectInfo.setIsPure();
+    }
+ else {
+      traversal.report(node,INVALID_NO_SIDE_EFFECT_ANNOTATION);
+    }
+  }
+ else   if (inExterns) {
+    sideEffectInfo.setTaintsGlobalState();
+  }
+}

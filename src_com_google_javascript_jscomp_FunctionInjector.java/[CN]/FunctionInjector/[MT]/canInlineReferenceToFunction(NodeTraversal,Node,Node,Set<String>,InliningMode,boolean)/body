@@ -1,0 +1,14 @@
+{
+  if (!isSupportedCallType(callNode)) {
+    return CanInlineResult.NO;
+  }
+  if (referencesThis && !NodeUtil.isFunctionObjectCall(callNode)) {
+    return CanInlineResult.NO;
+  }
+  if (mode == InliningMode.DIRECT) {
+    return canInlineReferenceDirectly(callNode,fnNode);
+  }
+ else {
+    return canInlineReferenceAsStatementBlock(t,callNode,fnNode,needAliases);
+  }
+}

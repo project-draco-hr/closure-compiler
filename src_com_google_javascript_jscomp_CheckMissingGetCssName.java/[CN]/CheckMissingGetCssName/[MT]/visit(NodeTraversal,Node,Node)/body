@@ -1,0 +1,17 @@
+{
+  if (n.getType() == Token.STRING && parent.getType() != Token.GETPROP && parent.getType() != Token.REGEXP && !NodeUtil.isObjectLitKey(n,parent)) {
+    String s=n.getString();
+    for (blacklist.reset(s); blacklist.find(); ) {
+      if (insideGetCssNameCall(n,parent)) {
+        continue;
+      }
+      if (insideGetUniqueIdCall(n,parent)) {
+        continue;
+      }
+      if (insideAssignmentToIdConstant(n,parent)) {
+        continue;
+      }
+      compiler.report(JSError.make(t,n,level,MISSING_GETCSSNAME,blacklist.group()));
+    }
+  }
+}

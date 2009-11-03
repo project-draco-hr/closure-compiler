@@ -1,0 +1,14 @@
+{
+  if (node.getType() == Token.LABEL) {
+    if (node.getFirstChild().getString().equals("X")) {
+      return cfg.getNode(node.getLastChild()).getAnnotation();
+    }
+  }
+  for (Node c=node.getFirstChild(); c != null; c=c.getNext()) {
+    FlowState<LiveVariablesAnalysis.LiveVariableLattice> state=getFlowStateAtX(c,cfg);
+    if (state != null) {
+      return state;
+    }
+  }
+  return null;
+}

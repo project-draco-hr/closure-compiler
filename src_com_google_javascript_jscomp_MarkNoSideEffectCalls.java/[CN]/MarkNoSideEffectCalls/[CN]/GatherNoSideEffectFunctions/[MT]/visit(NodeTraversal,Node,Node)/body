@@ -1,0 +1,32 @@
+{
+  if (!inExterns && hasNoSideEffectsAnnotation(node)) {
+    traversal.report(node,INVALID_NO_SIDE_EFFECT_ANNOTATION);
+  }
+  if (NodeUtil.isGetProp(node)) {
+    if (NodeUtil.isExpressionNode(parent) && hasNoSideEffectsAnnotation(node)) {
+      noSideEffectFunctionNames.add(node);
+    }
+  }
+ else   if (NodeUtil.isFunction(node)) {
+    boolean hasAnnotation=hasNoSideEffectsAnnotation(node);
+    List<Node> nameNodes=Lists.newArrayList();
+    nameNodes.add(node.getFirstChild());
+    Node nameNode=null;
+    if (NodeUtil.isName(parent)) {
+      Node gramp=parent.getParent();
+      if (NodeUtil.isVar(gramp) && gramp.hasOneChild() && hasNoSideEffectsAnnotation(gramp)) {
+        hasAnnotation=true;
+      }
+      nameNodes.add(parent);
+    }
+ else     if (NodeUtil.isAssign(parent)) {
+      if (hasNoSideEffectsAnnotation(parent)) {
+        hasAnnotation=true;
+      }
+      nameNodes.add(parent.getFirstChild());
+    }
+    if (hasAnnotation) {
+      noSideEffectFunctionNames.addAll(nameNodes);
+    }
+  }
+}

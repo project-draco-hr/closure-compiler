@@ -1,0 +1,19 @@
+{
+  int parentNodeType=parent.getType();
+  if (parentNodeType == Token.FUNCTION || parentNodeType == Token.CATCH || parentNodeType == Token.LP || parentNodeType == Token.VAR) {
+    return false;
+  }
+  JSType type=n.getJSType();
+  if (type == null) {
+    type=getNativeType(UNKNOWN_TYPE);
+    Var var=t.getScope().getVar(n.getString());
+    if (var != null) {
+      JSType varType=var.getType();
+      if (varType != null) {
+        type=varType;
+      }
+    }
+  }
+  ensureTyped(t,n,type);
+  return true;
+}

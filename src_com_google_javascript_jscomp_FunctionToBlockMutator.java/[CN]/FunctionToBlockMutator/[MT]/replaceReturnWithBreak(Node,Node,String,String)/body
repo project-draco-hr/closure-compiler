@@ -1,0 +1,22 @@
+{
+  if (current.getType() == Token.FUNCTION || current.getType() == Token.EXPR_RESULT) {
+    return current;
+  }
+  if (current.getType() == Token.RETURN) {
+    Preconditions.checkState(NodeUtil.isStatementBlock(parent));
+    Node resultNode=getReplacementReturnStatement(current,resultName);
+    Node name=Node.newString(Token.NAME,labelName);
+    Node breakNode=new Node(Token.BREAK,name);
+    parent.replaceChild(current,breakNode);
+    if (resultNode != null) {
+      parent.addChildBefore(resultNode,breakNode);
+    }
+    current=breakNode;
+  }
+ else {
+    for (Node c=current.getFirstChild(); c != null; c=c.getNext()) {
+      c=replaceReturnWithBreak(c,current,resultName,labelName);
+    }
+  }
+  return current;
+}

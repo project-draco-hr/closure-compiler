@@ -1,0 +1,17 @@
+{
+  Node n=compiler.parseTestCode("function() {" + js + "}");
+  assertEquals("parsing error: " + Join.join(", ",compiler.getErrors()),0,compiler.getErrorCount());
+  n=n.getFirstChild();
+  Scope assumedScope=new SyntacticScopeCreator(compiler).createScope(n,null);
+  for (  Map.Entry<String,JSType> entry : assumptions.entrySet()) {
+    assumedScope.declare(entry.getKey(),null,entry.getValue(),null);
+  }
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false);
+  cfa.process(null,n);
+  ControlFlowGraph<Node> cfg=cfa.getCfg();
+  ReverseAbstractInterpreter rai=new SemanticReverseAbstractInterpreter(compiler.getCodingConvention(),registry);
+  TypeInference dfa=new TypeInference(compiler,cfg,rai,assumedScope);
+  dfa.analyze();
+  BranchedFlowState<FlowScope> rtnState=cfg.getImplicitReturn().getAnnotation();
+  returnScope=rtnState.getIn();
+}

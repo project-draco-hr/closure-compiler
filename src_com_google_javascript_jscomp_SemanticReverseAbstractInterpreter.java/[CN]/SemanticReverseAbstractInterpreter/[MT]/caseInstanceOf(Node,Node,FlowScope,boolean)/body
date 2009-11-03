@@ -1,0 +1,25 @@
+{
+  JSType leftType=getTypeIfRefinable(left,blindScope);
+  if (leftType == null) {
+    return blindScope;
+  }
+  JSType rightType=right.getJSType();
+  ObjectType targetType=typeRegistry.getNativeObjectType(JSTypeNative.UNKNOWN_TYPE);
+  if (rightType instanceof FunctionType) {
+    targetType=(FunctionType)rightType;
+  }
+  Visitor<JSType> visitor;
+  if (outcome) {
+    visitor=new RestrictByTrueInstanceOfResultVisitor(targetType);
+  }
+ else {
+    visitor=new RestrictByFalseInstanceOfResultVisitor(targetType);
+  }
+  JSType restrictedLeftType=leftType.visit(visitor);
+  if (restrictedLeftType != null && !restrictedLeftType.equals(leftType)) {
+    FlowScope informed=blindScope.createChildFlowScope();
+    declareNameInScope(informed,left,restrictedLeftType);
+    return informed;
+  }
+  return blindScope;
+}

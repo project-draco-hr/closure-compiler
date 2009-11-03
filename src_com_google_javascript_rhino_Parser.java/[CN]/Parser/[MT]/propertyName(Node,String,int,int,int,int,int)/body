@@ -1,0 +1,29 @@
+{
+  String namespace=null;
+  if (matchToken(Token.COLONCOLON)) {
+    decompiler.addToken(Token.COLONCOLON);
+    namespace=name;
+    int tt=nextToken();
+switch (tt) {
+case Token.NAME:
+      name=ts.getString();
+    decompiler.addName(name);
+  break;
+case Token.MUL:
+decompiler.addName("*");
+name="*";
+break;
+case Token.LB:
+decompiler.addToken(Token.LB);
+pn=nf.createElementGet(pn,namespace,expr(false),memberTypeFlags,nameLineno,nameCharno);
+mustMatchToken(Token.RB,"msg.no.bracket.index");
+decompiler.addToken(Token.RB);
+return pn;
+default :
+reportError("msg.no.name.after.coloncolon");
+name="?";
+}
+}
+pn=nf.createPropertyGet(pn,namespace,name,memberTypeFlags,dotLineno,dotCharno,nameLineno,nameCharno);
+return pn;
+}

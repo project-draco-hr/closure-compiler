@@ -1,0 +1,30 @@
+{
+  if (n.getType() != Token.NEW) {
+    return;
+  }
+  Node objectName=n.getFirstChild();
+  if (!ObjectPropertyStringPreprocess.EXTERN_OBJECT_PROPERTY_STRING.equals(objectName.getQualifiedName())) {
+    return;
+  }
+  Node firstArgument=objectName.getNext();
+  Node secondArgument=firstArgument.getNext();
+  int secondArgumentType=secondArgument.getType();
+  if (secondArgumentType == Token.GETPROP) {
+    Node newChild=secondArgument.getFirstChild();
+    secondArgument.removeChild(newChild);
+    n.replaceChild(firstArgument,newChild);
+    n.replaceChild(secondArgument,Node.newString(secondArgument.getFirstChild().getString()));
+  }
+ else   if (secondArgumentType == Token.GETELEM) {
+    Node newFirstArgument=secondArgument.getFirstChild();
+    secondArgument.removeChild(newFirstArgument);
+    Node newSecondArgument=secondArgument.getLastChild();
+    secondArgument.removeChild(newSecondArgument);
+    n.replaceChild(firstArgument,newFirstArgument);
+    n.replaceChild(secondArgument,newSecondArgument);
+  }
+ else {
+    n.replaceChild(secondArgument,Node.newString(secondArgument.getString()));
+  }
+  compiler.reportCodeChange();
+}

@@ -1,0 +1,17 @@
+{
+  Name node=nameMap.get(name);
+  if (node == null) {
+    int i=name.lastIndexOf('.');
+    if (i >= 0) {
+      String parentName=name.substring(0,i);
+      Name parent=getOrCreateName(parentName);
+      node=parent.addProperty(name.substring(i + 1),inExterns);
+    }
+ else {
+      node=new Name(name,null,inExterns);
+      globalNames.add(node);
+    }
+    nameMap.put(name,node);
+  }
+  return node;
+}

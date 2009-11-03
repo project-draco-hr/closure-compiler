@@ -1,0 +1,18 @@
+{
+  Node addingRoot=null;
+  Node ancestor=n;
+  while (null != (ancestor=ancestor.getParent())) {
+    int type=ancestor.getType();
+    if (type == Token.SCRIPT) {
+      addingRoot=ancestor;
+      break;
+    }
+ else     if (type == Token.FUNCTION) {
+      addingRoot=ancestor.getLastChild();
+      break;
+    }
+  }
+  Preconditions.checkState(addingRoot.getType() == Token.BLOCK || addingRoot.getType() == Token.SCRIPT);
+  Preconditions.checkState(addingRoot.getFirstChild() == null || addingRoot.getFirstChild().getType() != Token.SCRIPT);
+  return addingRoot;
+}

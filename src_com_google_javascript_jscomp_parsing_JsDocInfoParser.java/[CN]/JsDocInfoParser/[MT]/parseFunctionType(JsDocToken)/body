@@ -1,0 +1,56 @@
+{
+  if (token != JsDocToken.LP) {
+    return reportTypeSyntaxWarning("msg.jsdoc.missing.lp");
+  }
+  Node functionType=newNode(Token.FUNCTION);
+  Node parameters=null;
+  skipEOLs();
+  if (!match(JsDocToken.RP)) {
+    token=next();
+    boolean hasParams=true;
+    if (token == JsDocToken.STRING && "this".equals(stream.getString())) {
+      if (match(JsDocToken.COLON)) {
+        next();
+        skipEOLs();
+        Node thisType=wrapNode(Token.THIS,parseTypeName(next()));
+        if (thisType == null) {
+          return null;
+        }
+        functionType.addChildToFront(thisType);
+      }
+ else {
+        return reportTypeSyntaxWarning("msg.jsdoc.missing.colon");
+      }
+      if (match(JsDocToken.COMMA)) {
+        next();
+        skipEOLs();
+        token=next();
+      }
+ else {
+        hasParams=false;
+      }
+    }
+    if (hasParams) {
+      parameters=parseParametersType(token);
+      if (parameters == null) {
+        return null;
+      }
+    }
+  }
+  if (parameters != null) {
+    functionType.addChildToBack(parameters);
+  }
+  skipEOLs();
+  if (!match(JsDocToken.RP)) {
+    return reportTypeSyntaxWarning("msg.jsdoc.missing.rp");
+  }
+  skipEOLs();
+  Node resultType=parseResultType(next());
+  if (resultType == null) {
+    return null;
+  }
+ else {
+    functionType.addChildToBack(resultType);
+  }
+  return functionType;
+}

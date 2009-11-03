@@ -1,0 +1,26 @@
+{
+  final Compiler compiler=new Compiler();
+  final FunctionToBlockMutator mutator=new FunctionToBlockMutator(compiler,compiler.getUniqueNameIdSupplier());
+  Node expectedRoot=parse(compiler,expectedResult);
+  final Node expected=expectedRoot.getFirstChild();
+  final Node tree=parse(compiler,code);
+  Node externsRoot=new Node(Token.EMPTY);
+  Node mainRoot=tree;
+  MarkNoSideEffectCalls mark=new MarkNoSideEffectCalls(compiler);
+  mark.process(externsRoot,mainRoot);
+  final Node fnNode=findFunction(tree,fnName);
+  final Set<String> unsafe=FunctionArgumentInjector.findModifiedParameters(fnNode);
+  compiler.setNormalized();
+  Method tester=new Method(){
+    public boolean call(    NodeTraversal t,    Node n,    Node parent){
+      Node result=mutator.mutate(fnName,fnNode,n,resultName,needsDefaultResult,isCallInLoop);
+      String explanation=expected.checkTreeEquals(result);
+      assertNull("\nExpected: " + compiler.toSource(expected) + "\nResult: "+ compiler.toSource(result)+ "\n"+ explanation,explanation);
+      return true;
+    }
+  }
+;
+  compiler.resetUniqueNameId();
+  TestCallback test=new TestCallback(fnName,tester);
+  NodeTraversal.traverse(compiler,tree,test);
+}

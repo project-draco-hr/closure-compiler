@@ -1,0 +1,18 @@
+{
+  Node callName=callNode.getFirstChild();
+  SubclassType type=typeofClassDefiningName(callName);
+  if (type != null) {
+    Node subclass=null;
+    Node superclass=callNode.getLastChild();
+    if (callNode.getChildCount() == 2 && callName.getType() == Token.GETPROP) {
+      subclass=callName.getFirstChild();
+    }
+ else     if (callNode.getChildCount() == 3) {
+      subclass=callName.getNext();
+    }
+    if (subclass != null && subclass.isUnscopedQualifiedName() && superclass.isUnscopedQualifiedName()) {
+      return new SubclassRelationship(type,stripPrototype(subclass),stripPrototype(superclass));
+    }
+  }
+  return null;
+}

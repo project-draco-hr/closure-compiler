@@ -1,0 +1,21 @@
+{
+  Preconditions.checkArgument(call.getType() == Token.CALL);
+  Node first=call.getFirstChild();
+  Preconditions.checkArgument(NodeUtil.isGet(first));
+  Node getVarNode=extractExpression(first,state.extractBeforeStatement);
+  state.extractBeforeStatement=getVarNode;
+  Node getExprNode=getVarNode.getFirstChild().getFirstChild();
+  Preconditions.checkArgument(NodeUtil.isGet(getExprNode));
+  Node thisVarNode=extractExpression(getExprNode.getFirstChild(),state.extractBeforeStatement);
+  state.extractBeforeStatement=thisVarNode;
+  Node thisNameNode=thisVarNode.getFirstChild();
+  Node functionNameNode=getVarNode.getFirstChild();
+  Node newCall=new Node(Token.CALL,new Node(Token.GETPROP,functionNameNode.cloneNode(),Node.newString("call")),thisNameNode.cloneNode(),call.getLineno(),call.getCharno());
+  call.removeFirstChild();
+  if (call.hasChildren()) {
+    newCall.addChildrenToBack(call.removeChildren());
+  }
+  Node callParent=call.getParent();
+  callParent.replaceChild(call,newCall);
+  return newCall;
+}

@@ -1,0 +1,10 @@
+{
+  testSame("/** @constructor */ function Extern() {}" + "/** @type {Extern} */ var myExtern;" + "/** @type {number} */ myExtern.foo;","",null);
+  JSType e=globalScope.getVar("myExtern").getType();
+  assertEquals("(Extern|null)",e.toString());
+  ObjectType externType=(ObjectType)e.restrictByNotNullOrUndefined();
+  assertTrue(globalScope.getRootNode().toStringTree(),externType.hasOwnProperty("foo"));
+  assertTrue(externType.isPropertyTypeDeclared("foo"));
+  assertEquals("number",externType.getPropertyType("foo").toString());
+  assertTrue(externType.isPropertyInExterns("foo"));
+}

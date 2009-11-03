@@ -1,0 +1,21 @@
+{
+  inputsByName_=new HashMap<String,CompilerInput>();
+  for (  CompilerInput input : externs_) {
+    String name=input.getName();
+    if (!inputsByName_.containsKey(name)) {
+      inputsByName_.put(name,input);
+    }
+ else {
+      report(JSError.make(DUPLICATE_EXTERN_INPUT,name));
+    }
+  }
+  for (  CompilerInput input : inputs_) {
+    String name=input.getName();
+    if (!inputsByName_.containsKey(name)) {
+      inputsByName_.put(name,input);
+    }
+ else {
+      report(JSError.make(DUPLICATE_INPUT,name));
+    }
+  }
+}

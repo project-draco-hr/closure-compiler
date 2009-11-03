@@ -1,0 +1,21 @@
+{
+  ConcreteType ret=ConcreteType.NONE;
+  if (jsType instanceof UnionType) {
+    for (    JSType alt : ((UnionType)jsType).getAlternates()) {
+      ret=ret.unionWith(createTypeWithSubTypes(alt));
+    }
+  }
+ else {
+    if (jsType instanceof ObjectType && ((ObjectType)jsType).getConstructor() != null && ((ObjectType)jsType).getConstructor().isInterface()) {
+      ObjectType instType=(ObjectType)jsType;
+      Collection<FunctionType> implementors=getTypeRegistry().getDirectImplementors(instType);
+      for (      FunctionType implementor : implementors) {
+        ret=ret.unionWith(createTypeWithSubTypes(implementor.getInstanceType()));
+      }
+    }
+ else {
+      ret=ret.unionWith(createUnionWithSubTypes(createType(jsType)));
+    }
+  }
+  return ret;
+}

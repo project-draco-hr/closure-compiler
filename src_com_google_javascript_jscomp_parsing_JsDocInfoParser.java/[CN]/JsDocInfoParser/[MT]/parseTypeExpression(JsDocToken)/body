@@ -1,0 +1,22 @@
+{
+  if (token == JsDocToken.QMARK) {
+    return wrapNode(Token.QMARK,parseBasicTypeExpression(next()));
+  }
+ else   if (token == JsDocToken.BANG) {
+    return wrapNode(Token.BANG,parseBasicTypeExpression(next()));
+  }
+ else {
+    Node basicTypeExpr=parseBasicTypeExpression(token);
+    if (basicTypeExpr != null) {
+      if (match(JsDocToken.QMARK)) {
+        next();
+        return wrapNode(Token.QMARK,basicTypeExpr);
+      }
+ else       if (match(JsDocToken.BANG)) {
+        next();
+        return wrapNode(Token.BANG,basicTypeExpr);
+      }
+    }
+    return basicTypeExpr;
+  }
+}

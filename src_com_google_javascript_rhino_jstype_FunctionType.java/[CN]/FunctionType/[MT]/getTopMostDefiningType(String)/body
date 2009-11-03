@@ -1,0 +1,12 @@
+{
+  Preconditions.checkState(isConstructor() || isInterface());
+  Preconditions.checkArgument(getPrototype().hasProperty(propertyName));
+  FunctionType ctor=this;
+  JSType topInstanceType;
+  do {
+    topInstanceType=ctor.getInstanceType();
+    ctor=ctor.getSuperClassConstructor();
+  }
+ while (ctor != null && ctor.getPrototype().hasProperty(propertyName));
+  return topInstanceType;
+}

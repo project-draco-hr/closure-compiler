@@ -1,0 +1,19 @@
+{
+  if (!(type instanceof ObjectType)) {
+    if (type.autoboxesTo() != null) {
+      type=type.autoboxesTo();
+    }
+ else {
+      return null;
+    }
+  }
+  ObjectType foundType=null;
+  ObjectType objType=(ObjectType)type;
+  while (objType != null && objType.getImplicitPrototype() != objType) {
+    if (objType.hasOwnProperty(field)) {
+      foundType=objType;
+    }
+    objType=objType.getImplicitPrototype();
+  }
+  return foundType;
+}

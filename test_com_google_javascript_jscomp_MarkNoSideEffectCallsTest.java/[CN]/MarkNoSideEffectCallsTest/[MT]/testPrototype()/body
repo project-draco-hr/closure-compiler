@@ -1,0 +1,7 @@
+{
+  testMarkCalls("function c(){};" + "/**@nosideeffects*/c.prototype.g = function(){};","var o = new c; o.g()",ImmutableList.of("o.g"));
+  testMarkCalls("function c(){};" + "/**@nosideeffects*/c.prototype.g = function(){};","function f(){}" + "var o = new c; o.g(); f()",ImmutableList.of("o.g"));
+  testMarkCalls("function c(){};" + "/**@nosideeffects*/c.prototype.g = function(){};","var o = new c;" + "o.g = function(){};" + "o.g()",ImmutableList.<String>of());
+  testMarkCalls("function c1(){};" + "/**@nosideeffects*/c1.prototype.f = function(){};" + "function c2(){};"+ "/**@nosideeffects*/c2.prototype.f = function(){};","var o = new c1;" + "o.f()",ImmutableList.of("o.f"));
+  testMarkCalls("function c1(){};" + "/**@nosideeffects*/c1.prototype.f = function(){};","function c2(){};" + "c2.prototype.f = function(){};" + "var o = new c1;"+ "o.f()",Collections.<String>emptyList());
+}

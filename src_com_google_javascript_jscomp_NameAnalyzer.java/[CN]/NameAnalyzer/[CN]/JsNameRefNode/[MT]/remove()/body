@@ -1,0 +1,56 @@
+{
+  Node containingNode=parent.getParent();
+switch (parent.getType()) {
+case Token.VAR:
+    if (parent.getFirstChild() == parent.getLastChild()) {
+      replaceWithRhs(containingNode,parent);
+    }
+ else {
+      List<Node> earlyChildren=Lists.newArrayList();
+      List<Node> lateChildren=Lists.newArrayList();
+      boolean seen=false;
+      for (      Node child : parent.children()) {
+        if (child == node) {
+          seen=true;
+          continue;
+        }
+        if (seen) {
+          lateChildren.add(child);
+        }
+ else {
+          earlyChildren.add(child);
+        }
+      }
+      if (!earlyChildren.isEmpty() && !lateChildren.isEmpty()) {
+        Node earlyDecls=new Node(Token.VAR);
+        for (        Node child : earlyChildren) {
+          parent.removeChild(child);
+          earlyDecls.addChildToBack(child);
+        }
+        containingNode.addChildBefore(earlyDecls,parent);
+      }
+      Node currDecl=new Node(Token.VAR);
+      parent.removeChild(node);
+      currDecl.addChildToBack(node);
+      if (earlyChildren.isEmpty() || !lateChildren.isEmpty()) {
+        containingNode.addChildBefore(currDecl,parent);
+      }
+ else {
+        containingNode.addChildAfter(currDecl,parent);
+      }
+      replaceWithRhs(containingNode,currDecl);
+    }
+  break;
+case Token.FUNCTION:
+replaceWithRhs(containingNode,parent);
+break;
+case Token.ASSIGN:
+if (NodeUtil.isExpressionNode(containingNode)) {
+replaceWithRhs(containingNode.getParent(),containingNode);
+}
+ else {
+replaceWithRhs(containingNode,parent);
+}
+break;
+}
+}

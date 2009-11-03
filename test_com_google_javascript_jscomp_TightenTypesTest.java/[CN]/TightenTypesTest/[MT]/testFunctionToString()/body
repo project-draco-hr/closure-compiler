@@ -1,0 +1,6 @@
+{
+  testSame("/** @constructor */ function Foo() {}\n" + "/** @constructor \n * @extends Foo */\n" + "function Bar() { Foo.call(this); }\n"+ "var a = function(a) { return new Foo; };\n;"+ "a(new Foo);\n"+ "a(new Bar);\n"+ "new Bar;");
+  assertType("function ((Bar,Foo)): Foo",getType("a"));
+  assertType("function (this:(Bar,Foo)): ()",getType("Foo"));
+  assertType("function (this:Bar): ()",getType("Bar"));
+}

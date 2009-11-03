@@ -1,0 +1,28 @@
+{
+  if (referenceInfo.references.size() >= 2 && isImmutableAndWellDefinedVariable(v,referenceInfo)) {
+    inlineWellDefinedVariable(v,referenceInfo.references);
+    staleVars.add(v);
+  }
+ else   if (referenceInfo.references.size() == 2) {
+    Reference declaration=referenceInfo.references.get(0);
+    Reference reference=referenceInfo.references.get(1);
+    if (canInline(declaration,reference)) {
+      blacklistVarReferencesInTree(declaration.getNameNode().getFirstChild(),scope);
+      inline(v,declaration,reference);
+      staleVars.add(v);
+    }
+  }
+  if (!staleVars.contains(v) && referenceInfo.isWellDefined() && referenceInfo.isNeverReassigned()) {
+    List<Reference> refs=referenceInfo.references;
+    for (int i=1; i < refs.size(); i++) {
+      Node nameNode=refs.get(i).getNameNode();
+      if (aliasCandidates.containsKey(nameNode)) {
+        AliasCandidate candidate=aliasCandidates.get(nameNode);
+        if (!staleVars.contains(candidate.alias)) {
+          inlineWellDefinedVariable(candidate.alias,candidate.refInfo.references);
+          staleVars.add(candidate.alias);
+        }
+      }
+    }
+  }
+}

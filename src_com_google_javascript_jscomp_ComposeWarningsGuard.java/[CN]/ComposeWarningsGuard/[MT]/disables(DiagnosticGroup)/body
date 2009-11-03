@@ -1,0 +1,15 @@
+{
+  nextSingleton:   for (  DiagnosticType type : group.getTypes()) {
+    DiagnosticGroup singleton=DiagnosticGroup.forType(type);
+    for (    WarningsGuard guard : guards) {
+      if (guard.disables(singleton)) {
+        continue nextSingleton;
+      }
+ else       if (guard.enables(singleton)) {
+        return false;
+      }
+    }
+    return false;
+  }
+  return true;
+}

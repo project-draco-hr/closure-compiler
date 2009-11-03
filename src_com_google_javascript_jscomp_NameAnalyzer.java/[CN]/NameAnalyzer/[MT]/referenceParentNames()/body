@@ -1,0 +1,19 @@
+{
+  Set<JsName> allNamesCopy=Sets.newHashSet(allNames.values());
+  for (  JsName name : allNamesCopy) {
+    String curName=name.name;
+    JsName curJsName=name;
+    while (curName.indexOf('.') != -1) {
+      String parentName=curName.substring(0,curName.lastIndexOf('.'));
+      if (!globalNames.contains(parentName)) {
+        JsName parentJsName=getName(parentName,true);
+        curJsName.refersTo.add(parentName);
+        parentJsName.referencedBy.add(curName);
+        parentJsName.refersTo.add(curName);
+        curJsName.referencedBy.add(parentName);
+        curJsName=parentJsName;
+      }
+      curName=parentName;
+    }
+  }
+}

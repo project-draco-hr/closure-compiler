@@ -1,0 +1,14 @@
+{
+  testSame("var f = new Foo();f.oneArg(1);");
+  testSame("var f = new Foo();f.twoArg(1, 2);");
+  testSame("var f = new Foo();f.oneOrTwoArg(1);");
+  testSame("var b = new Biz();b.oneOrTwoArg(1, 2);");
+  testSame("Boz.staticMethod(1, 2);");
+  testSame("window.setTimeout(function() {}, 100);");
+  testErr("var f = new Foo();f.oneArg(1, 2);",FunctionCheck.WRONG_ARGUMENT_COUNT_ERROR);
+  testErr("var f = new Foo();f.twoArg(1);",FunctionCheck.WRONG_ARGUMENT_COUNT_ERROR);
+  testErr("Boz.staticMethod(1);",FunctionCheck.WRONG_ARGUMENT_COUNT_ERROR);
+  testErr("window.setTimeout(function() {});",FunctionCheck.WRONG_ARGUMENT_COUNT_ERROR);
+  testSame("var f = new Foo();f[1]();");
+  testSame("var f = new Foo();var b = \"oneArg\";f[b]();");
+}

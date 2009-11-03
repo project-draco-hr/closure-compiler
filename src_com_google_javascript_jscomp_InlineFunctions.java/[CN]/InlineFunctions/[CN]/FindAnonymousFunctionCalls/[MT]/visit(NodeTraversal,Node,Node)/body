@@ -1,0 +1,21 @@
+{
+switch (n.getType()) {
+case Token.CALL:
+    Node fnNode=null;
+  if (n.getFirstChild().getType() == Token.FUNCTION) {
+    fnNode=n.getFirstChild();
+  }
+ else   if (NodeUtil.isFunctionObjectCall(n)) {
+    Node fnIdentifingNode=n.getFirstChild().getFirstChild();
+    if (fnIdentifingNode.getType() == Token.FUNCTION) {
+      fnNode=fnIdentifingNode;
+    }
+  }
+if (fnNode != null) {
+  Function fn=new AnonymousFunction(fnNode,callsSeen++);
+  maybeAddFunction(fn,t.getModule());
+  anonFns.put(fnNode,fn.getName());
+}
+break;
+}
+}

@@ -1,0 +1,24 @@
+{
+  if (this.equals(that)) {
+    return true;
+  }
+  if (that.isFunctionType()) {
+    if (((FunctionType)that).isInterface()) {
+      return true;
+    }
+    if (this.isInterface()) {
+      return false;
+    }
+    FunctionType other=(FunctionType)that;
+    return (this.isConstructor() || other.isConstructor() || other.typeOfThis.isSubtype(this.typeOfThis)|| this.typeOfThis.isSubtype(other.typeOfThis)) && this.call.isSubtype(other.call);
+  }
+  if (that instanceof UnionType) {
+    UnionType union=(UnionType)that;
+    for (    JSType element : union.alternates) {
+      if (this.isSubtype(element)) {
+        return true;
+      }
+    }
+  }
+  return getNativeType(JSTypeNative.FUNCTION_PROTOTYPE).isSubtype(that);
+}

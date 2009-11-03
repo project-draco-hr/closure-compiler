@@ -1,0 +1,10 @@
+{
+  String name=n.getLastChild().getString();
+  T type=typeSystem.getType(getScope(),n.getFirstChild(),name);
+  Property prop=getProperty(name);
+  if (!prop.scheduleRenaming(n.getLastChild(),processProperty(t,prop,type,null))) {
+    if (showInvalidationWarnings) {
+      compiler.report(JSError.make(t.getSourceName(),n,INVALIDATION,name,(type == null ? "null" : type.toString()),n.toString()));
+    }
+  }
+}

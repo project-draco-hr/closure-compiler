@@ -1,0 +1,58 @@
+{
+  if (!(NodeUtil.isName(n) || NodeUtil.isGet(n) && !NodeUtil.isGetProp(parent))) {
+    return;
+  }
+  NameInformation nameInfo=createNameInformation(t,n,parent);
+  if (nameInfo == null) {
+    return;
+  }
+  if (nameInfo.onlyAffectsClassDef) {
+    recordReference(nameInfo.name,nameInfo.superclass);
+    String nodeName=n.getQualifiedName();
+    if (nodeName != null) {
+      recordReference(nameInfo.name,nodeName);
+    }
+    return;
+  }
+  if (parent.getType() == Token.INSTANCEOF && parent.getLastChild() == n) {
+    JsName checkedClass=getName(nameInfo.name,true);
+    refNodes.add(new InstanceOfCheckNode(checkedClass,n,parent,parent.getParent()));
+    return;
+  }
+  NameInformation referring=getDependencyScope(n);
+  String referringName="";
+  if (referring != null) {
+    referringName=referring.isPrototype ? referring.prototypeClass : referring.name;
+  }
+  String name=nameInfo.name;
+  if (nameInfo.isExternallyReferenceable) {
+    recordReference(WINDOW,name);
+    return;
+  }
+  if (NodeUtil.isLhs(n,parent)) {
+    if (referring != null) {
+      recordReference(referringName,name);
+    }
+    return;
+  }
+  if (nodesToKeep.contains(n)) {
+    NameInformation functionScope=getEnclosingFunctionDependencyScope(t);
+    if (functionScope != null) {
+      recordReference(functionScope.name,name);
+    }
+ else {
+      recordReference(WINDOW,name);
+    }
+  }
+ else   if (referring != null) {
+    recordReference(referringName,name);
+  }
+ else {
+    for (    Node ancestor : n.getAncestors()) {
+      if (NodeUtil.isAssignmentOp(ancestor) || NodeUtil.isFunction(ancestor)) {
+        recordReference(WINDOW,name);
+        break;
+      }
+    }
+  }
+}

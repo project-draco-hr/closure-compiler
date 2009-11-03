@@ -1,0 +1,25 @@
+{
+switch (parent.getType()) {
+case Token.FOR:
+case Token.WHILE:
+case Token.LABEL:
+case Token.WITH:
+    return parent.getLastChild() == n;
+case Token.DO:
+  return parent.getFirstChild() == n;
+case Token.IF:
+return parent.getFirstChild() != n;
+case Token.TRY:
+return parent.getFirstChild() == n || parent.getLastChild() == n;
+case Token.CATCH:
+return parent.getLastChild() == n;
+case Token.SWITCH:
+case Token.CASE:
+return parent.getFirstChild() != n;
+case Token.DEFAULT:
+return true;
+default :
+Preconditions.checkState(isControlStructure(parent));
+return false;
+}
+}

@@ -1,0 +1,27 @@
+{
+  this.root=root;
+  astPositionCounter=0;
+  astPosition=Maps.newHashMap();
+  nodePriorities=Maps.newHashMap();
+  cfg=new AstControlFlowGraph(computeFallThrough(root),nodePriorities);
+  NodeTraversal.traverse(compiler,root,this);
+  astPosition.put(null,++astPositionCounter);
+  priorityCounter=0;
+  DiGraphNode<Node,Branch> entry=cfg.getEntry();
+  prioritizeFromEntryNode(entry);
+  if (shouldTraverseFunctions) {
+    for (    DiGraphNode<Node,Branch> candidate : cfg.getDirectedGraphNodes()) {
+      Node value=candidate.getValue();
+      if (value != null && value.getType() == Token.FUNCTION) {
+        Preconditions.checkState(!nodePriorities.containsKey(candidate) || candidate == entry);
+        prioritizeFromEntryNode(candidate);
+      }
+    }
+  }
+  for (  DiGraphNode<Node,Branch> candidate : cfg.getDirectedGraphNodes()) {
+    if (!nodePriorities.containsKey(candidate)) {
+      nodePriorities.put(candidate,++priorityCounter);
+    }
+  }
+  nodePriorities.put(cfg.getImplicitReturn(),++priorityCounter);
+}

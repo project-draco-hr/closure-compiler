@@ -1,0 +1,34 @@
+{
+  if (n.getType() != Token.NAME) {
+    return;
+  }
+  String name=n.getString();
+  if (name.length() == 0) {
+    return;
+  }
+  Scope.Var var=t.getScope().getVar(name);
+  boolean local=(var != null) && var.isLocal();
+  if (!local && localRenamingOnly) {
+    reservedNames.add(name);
+    return;
+  }
+  if (!okToRenameVar(name,local)) {
+    return;
+  }
+  if (isExternsPass_) {
+    if (!local) {
+      externNames.add(name);
+    }
+    return;
+  }
+  if (local) {
+    String tempName=LOCAL_VAR_PREFIX + var.getLocalVarIndex();
+    incCount(tempName,null);
+    localNameNodes.add(n);
+    localTempNames.add(tempName);
+  }
+ else   if (var != null) {
+    incCount(name,var.input);
+    globalNameNodes.add(n);
+  }
+}

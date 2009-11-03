@@ -1,0 +1,31 @@
+{
+  if (left.getType() == Token.NUMBER && right.getType() == Token.NUMBER) {
+    double result;
+    double lval=left.getDouble();
+    double rval=right.getDouble();
+switch (n.getType()) {
+case Token.ADD:
+      result=lval + rval;
+    break;
+case Token.SUB:
+  result=lval - rval;
+break;
+case Token.MUL:
+result=lval * rval;
+break;
+case Token.DIV:
+if (rval == 0) {
+error(t,DIVIDE_BY_0_ERROR,right);
+return;
+}
+result=lval / rval;
+break;
+default :
+throw new Error("Unknown arithmetic operator");
+}
+if (String.valueOf(result).length() <= String.valueOf(lval).length() + String.valueOf(rval).length() + 1) {
+parent.replaceChild(n,Node.newNumber(result));
+t.getCompiler().reportCodeChange();
+}
+}
+}

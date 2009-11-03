@@ -1,0 +1,18 @@
+{
+  if (n.getType() == Token.EMPTY || (n.getType() == Token.BLOCK && !n.hasChildren())) {
+    return;
+  }
+switch (n.getType()) {
+case Token.DO:
+case Token.TRY:
+case Token.CATCH:
+case Token.FINALLY:
+    return;
+}
+NodeUtil.redeclareVarsInsideBranch(n);
+compiler.reportCodeChange();
+if (logger.isLoggable(Level.FINE)) {
+  logger.fine("Removing " + n.toString());
+}
+NodeUtil.removeChild(parent,n);
+}

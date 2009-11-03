@@ -1,0 +1,43 @@
+{
+  Node gramps=parent.getParent();
+switch (parent.getType()) {
+case Token.VAR:
+    if (canMoveValue(name.getFirstChild())) {
+      return info.addDeclaration(new Declaration(t.getModule(),name,parent,gramps));
+    }
+  return false;
+case Token.FUNCTION:
+if (NodeUtil.isFunctionDeclaration(parent)) {
+  return info.addDeclaration(new Declaration(t.getModule(),name,parent,gramps));
+}
+return false;
+case Token.ASSIGN:
+case Token.GETPROP:
+Node child=name;
+for (Node current : name.getAncestors()) {
+if (current.getType() == Token.GETPROP) {
+}
+ else if (current.getType() == Token.ASSIGN && current.getFirstChild() == child) {
+Node currentParent=current.getParent();
+if (NodeUtil.isExpressionNode(currentParent) && canMoveValue(current.getLastChild())) {
+return info.addDeclaration(new Declaration(t.getModule(),current,currentParent,currentParent.getParent()));
+}
+}
+ else {
+return false;
+}
+child=current;
+}
+return false;
+case Token.CALL:
+if (NodeUtil.isExprCall(gramps)) {
+SubclassRelationship relationship=compiler.getCodingConvention().getClassesDefinedByCall(parent);
+if (relationship != null && name.getString().equals(relationship.subclassName)) {
+return info.addDeclaration(new Declaration(t.getModule(),parent,gramps,gramps.getParent()));
+}
+}
+return false;
+default :
+return false;
+}
+}

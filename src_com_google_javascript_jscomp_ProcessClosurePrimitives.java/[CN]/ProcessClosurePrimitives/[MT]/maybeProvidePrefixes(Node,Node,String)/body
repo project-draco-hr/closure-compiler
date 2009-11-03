@@ -1,0 +1,17 @@
+{
+  int pos=ns.lastIndexOf('.');
+  Node nodeToAddBefore=node;
+  while (pos != -1) {
+    String prefixNs=ns.substring(0,pos);
+    pos=prefixNs.lastIndexOf('.');
+    if (providedNodes.containsKey(prefixNs)) {
+      break;
+    }
+ else {
+      providedNodes.put(prefixNs,null);
+      Node newNode=(pos == -1 ? makeVarDeclNode(prefixNs) : makeAssignmentExprNode(prefixNs,node));
+      parent.addChildBefore(newNode,nodeToAddBefore);
+      nodeToAddBefore=newNode;
+    }
+  }
+}

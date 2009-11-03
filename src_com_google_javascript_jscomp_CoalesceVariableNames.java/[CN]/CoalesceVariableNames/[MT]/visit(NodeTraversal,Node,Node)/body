@@ -1,0 +1,22 @@
+{
+  if (colorings.isEmpty() || !NodeUtil.isName(n) || NodeUtil.isFunction(parent)) {
+    return;
+  }
+  Var var=t.getScope().getVar(n.getString());
+  GraphNode<Var,?> vNode=colorings.peek().getGraph().getNode(var);
+  if (vNode == null) {
+    return;
+  }
+  Var coalescedVar=colorings.peek().getPartitionSuperNode(var);
+  if (vNode.getValue().equals(coalescedVar)) {
+    return;
+  }
+  if (var.getNameNode() == n) {
+    coalescedLog.append(n.getString()).append(" => ").append(coalescedVar.name).append(" in ").append(t.getSourceName()).append(':').append(n.getLineno()).append('\n');
+  }
+  n.setString(coalescedVar.name);
+  compiler.reportCodeChange();
+  if (NodeUtil.isVar(parent)) {
+    removeVarDeclaration(n);
+  }
+}

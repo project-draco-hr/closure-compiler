@@ -1,0 +1,31 @@
+{
+  String label=null;
+  if (node.hasChildren()) {
+    label=node.getFirstChild().getString();
+  }
+  Node cur;
+  Node lastJump;
+  Node parent=node.getParent();
+  for (cur=node, lastJump=node; !isContinueTarget(cur,parent,label); cur=parent, parent=parent.getParent()) {
+    if (cur.getType() == Token.TRY && NodeUtil.hasFinally(cur)) {
+      if (lastJump == node) {
+        createEdge(lastJump,Branch.UNCOND,cur.getLastChild());
+      }
+ else {
+        finallyMap.put(lastJump,computeFallThrough(cur.getLastChild()));
+      }
+      lastJump=cur;
+    }
+    Preconditions.checkState(parent != null,"Cannot find continue target.");
+  }
+  Node iter=cur;
+  if (cur.getChildCount() == 4) {
+    iter=cur.getFirstChild().getNext().getNext();
+  }
+  if (lastJump == node) {
+    createEdge(node,Branch.UNCOND,iter);
+  }
+ else {
+    finallyMap.put(lastJump,iter);
+  }
+}

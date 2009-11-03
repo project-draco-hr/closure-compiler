@@ -1,0 +1,18 @@
+{
+  if (!compiler.getCodingConvention().allowsVariableRedeclaration(scope,name,parent)) {
+    Scope.Var origVar=scope.getVar(name);
+    Node origParent=origVar.getParentNode();
+    if (origParent.getType() == Token.CATCH && parent.getType() == Token.CATCH) {
+      return;
+    }
+    boolean allowDupe=false;
+    JSDocInfo info=n.getJSDocInfo();
+    if (info == null) {
+      info=parent.getJSDocInfo();
+    }
+    allowDupe=info != null && info.getSuppressions().contains("duplicate");
+    if (!allowDupe) {
+      compiler.report(JSError.make(sourceName,nodeWithLineNumber,VAR_MULTIPLY_DECLARED_ERROR,name,(origVar.input != null ? origVar.input.getName() : "??")));
+    }
+  }
+}

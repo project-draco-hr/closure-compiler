@@ -1,0 +1,46 @@
+{
+  JSDocInfo info;
+switch (n.getType()) {
+case Token.ASSIGN:
+    info=(JSDocInfo)n.getProp(Node.JSDOC_INFO_PROP);
+  if (info != null && info.isConstructor()) {
+    String qualifiedName=n.getFirstChild().getQualifiedName();
+    constructors.add(qualifiedName);
+  }
+break;
+case Token.FUNCTION:
+if (NodeUtil.isFunctionAnonymous(n)) {
+if (parent.getType() == Token.NAME) {
+  String functionName=parent.getString();
+  info=(JSDocInfo)parent.getProp(Node.JSDOC_INFO_PROP);
+  if (info != null && info.isConstructor()) {
+    constructors.add(functionName);
+  }
+ else {
+    Node gramps=parent.getParent();
+    Preconditions.checkState(gramps != null && gramps.getType() == Token.VAR);
+    info=(JSDocInfo)gramps.getProp(Node.JSDOC_INFO_PROP);
+    if (info != null && info.isConstructor()) {
+      constructors.add(functionName);
+    }
+  }
+}
+}
+ else {
+info=(JSDocInfo)n.getProp(Node.JSDOC_INFO_PROP);
+if (info != null && info.isConstructor()) {
+  String functionName=n.getFirstChild().getString();
+  constructors.add(functionName);
+}
+}
+break;
+case Token.CALL:
+visitCallNode(n,parent);
+break;
+case Token.SCRIPT:
+visitScriptNode(t);
+break;
+case Token.NEW:
+visitNewNode(t,n);
+}
+}

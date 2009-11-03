@@ -1,0 +1,19 @@
+{
+  Node parent=getProp.getParent();
+switch (parent.getType()) {
+case Token.CALL:
+    return parent.getFirstChild() != getProp && compiler.getCodingConvention().isPropertyTestFunction(parent);
+case Token.IF:
+case Token.WHILE:
+case Token.DO:
+case Token.FOR:
+  return NodeUtil.getConditionExpression(parent) == getProp;
+case Token.INSTANCEOF:
+case Token.TYPEOF:
+return true;
+case Token.AND:
+case Token.HOOK:
+return parent.getFirstChild() == getProp;
+}
+return false;
+}

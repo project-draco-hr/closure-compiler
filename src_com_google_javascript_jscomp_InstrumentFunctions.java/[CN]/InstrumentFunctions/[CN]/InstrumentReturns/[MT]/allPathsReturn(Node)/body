@@ -1,0 +1,13 @@
+{
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false);
+  cfa.process(null,block);
+  ControlFlowGraph<Node> cfg=cfa.getCfg();
+  Node returnPathsParent=cfg.getImplicitReturn().getValue();
+  for (  DiGraphNode<Node,Branch> pred : cfg.getDirectedPredNodes(returnPathsParent)) {
+    Node n=pred.getValue();
+    if (n.getType() != Token.RETURN) {
+      return false;
+    }
+  }
+  return true;
+}

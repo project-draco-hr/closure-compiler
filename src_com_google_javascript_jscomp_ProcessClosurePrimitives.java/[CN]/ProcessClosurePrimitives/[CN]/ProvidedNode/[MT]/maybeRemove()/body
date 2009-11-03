@@ -1,0 +1,21 @@
+{
+  if ((providedNode != null) && (replacementCandidate != null)) {
+    providedParent.removeChild(providedNode);
+    compiler.reportCodeChange();
+    if (NodeUtil.isExpressionNode(replacementCandidate)) {
+      replacementCandidate.putBooleanProp(Node.IS_NAMESPACE,true);
+      Node assignNode=replacementCandidate.getFirstChild();
+      Node nameNode=assignNode.getFirstChild();
+      if (nameNode.getType() == Token.NAME) {
+        Node valueNode=nameNode.getNext();
+        assignNode.removeChild(nameNode);
+        assignNode.removeChild(valueNode);
+        nameNode.addChildToFront(valueNode);
+        Node varNode=new Node(Token.VAR,nameNode);
+        replacementCandidateParent.replaceChild(replacementCandidate,varNode);
+        nameNode.setJSDocInfo(assignNode.getJSDocInfo());
+        compiler.reportCodeChange();
+      }
+    }
+  }
+}

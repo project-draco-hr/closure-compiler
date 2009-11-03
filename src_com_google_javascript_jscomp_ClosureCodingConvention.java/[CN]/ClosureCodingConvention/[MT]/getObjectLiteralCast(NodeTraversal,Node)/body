@@ -1,0 +1,17 @@
+{
+  Preconditions.checkArgument(callNode.getType() == Token.CALL);
+  Node callName=callNode.getFirstChild();
+  if (!"goog.reflect.object".equals(callName.getQualifiedName()) || callName.getChildCount() != 2) {
+    return null;
+  }
+  Node typeNode=callName.getNext();
+  if (!typeNode.isQualifiedName()) {
+    return null;
+  }
+  Node objectNode=typeNode.getNext();
+  if (objectNode.getType() != Token.OBJECTLIT) {
+    t.getCompiler().report(JSError.make(t.getSourceName(),callNode,OBJECTLIT_EXPECTED));
+    return null;
+  }
+  return new ObjectLiteralCast(typeNode.getQualifiedName(),typeNode.getNext());
+}

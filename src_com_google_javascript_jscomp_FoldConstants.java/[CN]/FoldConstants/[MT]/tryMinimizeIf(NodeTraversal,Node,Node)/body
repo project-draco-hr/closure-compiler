@@ -1,0 +1,119 @@
+{
+  Node cond=n.getFirstChild();
+  Node thenBranch=cond.getNext();
+  Node elseBranch=thenBranch.getNext();
+  if (elseBranch == null) {
+    if (isExpressBlock(thenBranch)) {
+      Node expr=getBlockExpression(thenBranch);
+      if (isPropertyAssignmentInExpression(t,expr)) {
+        return;
+      }
+      if (cond.getType() == Token.NOT) {
+        if (isLowerPrecedenceInExpression(t,cond,OR_PRECEDENCE) && isLowerPrecedenceInExpression(t,expr.getFirstChild(),OR_PRECEDENCE)) {
+          return;
+        }
+        Node or=new Node(Token.OR,cond.removeFirstChild(),expr.removeFirstChild());
+        Node newExpr=NodeUtil.newExpr(or);
+        parent.replaceChild(n,newExpr);
+        t.getCompiler().reportCodeChange();
+        return;
+      }
+      if (isLowerPrecedenceInExpression(t,cond,AND_PRECEDENCE) || isLowerPrecedenceInExpression(t,expr.getFirstChild(),AND_PRECEDENCE)) {
+        return;
+      }
+      n.removeChild(cond);
+      Node and=new Node(Token.AND,cond,expr.removeFirstChild());
+      Node newExpr=NodeUtil.newExpr(and);
+      parent.replaceChild(n,newExpr);
+      t.getCompiler().reportCodeChange();
+    }
+    return;
+  }
+  tryRemoveRepeatedStatements(t,n);
+  if (cond.getType() == Token.NOT && !consumesDanglingElse(elseBranch)) {
+    n.replaceChild(cond,cond.removeFirstChild());
+    n.removeChild(thenBranch);
+    n.addChildToBack(thenBranch);
+    t.getCompiler().reportCodeChange();
+    return;
+  }
+  if (isReturnExpressBlock(thenBranch) && isReturnExpressBlock(elseBranch)) {
+    Node thenExpr=getBlockReturnExpression(thenBranch);
+    Node elseExpr=getBlockReturnExpression(elseBranch);
+    n.removeChild(cond);
+    thenExpr.detachFromParent();
+    elseExpr.detachFromParent();
+    Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr);
+    Node returnNode=new Node(Token.RETURN,hookNode);
+    parent.replaceChild(n,returnNode);
+    t.getCompiler().reportCodeChange();
+    return;
+  }
+  boolean thenBranchIsExpressionBlock=isExpressBlock(thenBranch);
+  boolean elseBranchIsExpressionBlock=isExpressBlock(elseBranch);
+  if (thenBranchIsExpressionBlock && elseBranchIsExpressionBlock) {
+    Node thenOp=getBlockExpression(thenBranch).getFirstChild();
+    Node elseOp=getBlockExpression(elseBranch).getFirstChild();
+    if (thenOp.getType() == elseOp.getType()) {
+      if (NodeUtil.isAssignmentOp(thenOp)) {
+        Node lhs=thenOp.getFirstChild();
+        if (lhs.checkTreeEqualsSilent(elseOp.getFirstChild()) && !NodeUtil.mayEffectMutableState(lhs)) {
+          n.removeChild(cond);
+          Node assignName=thenOp.removeFirstChild();
+          Node thenExpr=thenOp.removeFirstChild();
+          Node elseExpr=elseOp.getLastChild();
+          elseOp.removeChild(elseExpr);
+          Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr);
+          Node assign=new Node(thenOp.getType(),assignName,hookNode);
+          Node expr=NodeUtil.newExpr(assign);
+          parent.replaceChild(n,expr);
+          t.getCompiler().reportCodeChange();
+        }
+      }
+ else       if (NodeUtil.isCall(thenOp)) {
+        n.removeChild(cond);
+        thenOp.detachFromParent();
+        elseOp.detachFromParent();
+        Node hookNode=new Node(Token.HOOK,cond,thenOp,elseOp);
+        Node expr=NodeUtil.newExpr(hookNode);
+        parent.replaceChild(n,expr);
+        t.getCompiler().reportCodeChange();
+      }
+    }
+    return;
+  }
+  boolean thenBranchIsVar=isVarBlock(thenBranch);
+  boolean elseBranchIsVar=isVarBlock(elseBranch);
+  if (thenBranchIsVar && elseBranchIsExpressionBlock && NodeUtil.isAssign(getBlockExpression(elseBranch).getFirstChild())) {
+    Node var=getBlockVar(thenBranch);
+    Node elseAssign=getBlockExpression(elseBranch).getFirstChild();
+    Node name1=var.getFirstChild();
+    Node name2=elseAssign.getFirstChild();
+    if (name1.hasChildren() && name1.getString().equals(name2.getString())) {
+      Node thenExpr=name1.removeChildren();
+      Node elseExpr=elseAssign.getLastChild().detachFromParent();
+      cond.detachFromParent();
+      Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr);
+      var.detachFromParent();
+      name1.addChildrenToBack(hookNode);
+      parent.replaceChild(n,var);
+      t.getCompiler().reportCodeChange();
+    }
+  }
+ else   if (elseBranchIsVar && thenBranchIsExpressionBlock && NodeUtil.isAssign(getBlockExpression(thenBranch).getFirstChild())) {
+    Node var=getBlockVar(elseBranch);
+    Node thenAssign=getBlockExpression(thenBranch).getFirstChild();
+    Node name1=thenAssign.getFirstChild();
+    Node name2=var.getFirstChild();
+    if (name2.hasChildren() && name1.getString().equals(name2.getString())) {
+      Node thenExpr=thenAssign.getLastChild().detachFromParent();
+      Node elseExpr=name2.removeChildren();
+      cond.detachFromParent();
+      Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr);
+      var.detachFromParent();
+      name2.addChildrenToBack(hookNode);
+      parent.replaceChild(n,var);
+      t.getCompiler().reportCodeChange();
+    }
+  }
+}

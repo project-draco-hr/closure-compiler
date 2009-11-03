@@ -1,0 +1,16 @@
+{
+  Node propNameNode=getPropNode.getLastChild();
+  Node parentNode=getPropNode.getParent();
+  Property prop=props.get(propNameNode.getString());
+  if (prop.aliasMutator) {
+    Node propSrc=getPropNode.getFirstChild();
+    Node propDest=parentNode.getLastChild();
+    getPropNode.removeChild(propSrc);
+    getPropNode.removeChild(propNameNode);
+    parentNode.removeChild(propDest);
+    Node callName=Node.newString(Token.NAME,getMutatorFor(propNameNode.getString()));
+    Node call=new Node(Token.CALL,callName,propSrc,propDest);
+    replaceNode(parentNode.getParent(),parentNode,call);
+    compiler.reportCodeChange();
+  }
+}

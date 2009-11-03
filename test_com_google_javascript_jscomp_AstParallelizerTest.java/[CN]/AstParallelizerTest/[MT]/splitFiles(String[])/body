@@ -1,0 +1,21 @@
+{
+  Compiler compiler=new Compiler();
+  JSSourceFile[] files=new JSSourceFile[input.length];
+  for (int i=0; i < files.length; i++) {
+    files[i]=JSSourceFile.fromCode("file" + i,input[i]);
+  }
+  compiler.init(new JSSourceFile[0],files,new CompilerOptions());
+  compiler.parse();
+  Node orginal=compiler.getRoot();
+  Node root=orginal.cloneTree();
+  AstParallelizer parallelizer=AstParallelizer.createNewFileLevelAstParallelizer(root);
+  List<Node> forest=parallelizer.split();
+  assertEquals(input.length,forest.size());
+  int i=0;
+  for (  Node n : forest) {
+    Node tree=compiler.parseTestCode(input[i++]);
+    assertEquals(compiler.toSource(tree),compiler.toSource(n));
+  }
+  parallelizer.join();
+  assertTrue(orginal.checkTreeEqualsSilent(root));
+}

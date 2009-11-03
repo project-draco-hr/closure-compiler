@@ -1,0 +1,12 @@
+{
+  Preconditions.checkState(scopeCreator == null);
+  Preconditions.checkState(topScope == null);
+  Preconditions.checkState(jsRoot.getParent() != null);
+  Node externsAndJsRoot=jsRoot.getParent();
+  scopeCreator=new MemoizedScopeCreator(new TypedScopeCreator(compiler));
+  topScope=scopeCreator.createScope(externsAndJsRoot,null);
+  TypeInferencePass inference=new TypeInferencePass(compiler,reverseInterpreter,topScope,scopeCreator);
+  inference.process(externsRoot,jsRoot);
+  process(externsRoot,jsRoot);
+  return topScope;
+}

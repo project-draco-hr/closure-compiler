@@ -1,0 +1,12 @@
+{
+  for (Iterator<Var> it=scope.getVars(); it.hasNext(); ) {
+    Var var=it.next();
+    if (var.isTypeInferred()) {
+      JSType type=var.getType();
+      if (type == null || type.isUnknownType()) {
+        JSType flowType=getSlot(var.getName()).getType();
+        var.setType(flowType);
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  List<DiGraphNode<Node,Branch>> nodes=cfg.getDirectedGraphNodes();
+  for (  DiGraphNode<Node,Branch> cfgNode : nodes) {
+    FlowState<LiveVariableLattice> state=cfgNode.getAnnotation();
+    Node n=cfgNode.getValue();
+    if (n == null) {
+      continue;
+    }
+switch (n.getType()) {
+case Token.IF:
+case Token.WHILE:
+case Token.DO:
+      tryRemoveAssignment(t,NodeUtil.getConditionExpression(n),n,state);
+    continue;
+case Token.FOR:
+  if (n.getChildCount() == 4) {
+    tryRemoveAssignment(t,NodeUtil.getConditionExpression(n),n,state);
+    tryRemoveAssignment(t,n.getFirstChild().getNext().getNext(),n,state);
+  }
+continue;
+case Token.SWITCH:
+case Token.CASE:
+case Token.RETURN:
+if (n.hasChildren()) {
+tryRemoveAssignment(t,n.getFirstChild(),n,state);
+}
+continue;
+}
+if (NodeUtil.isExpressionNode(n)) {
+tryRemoveAssignment(t,n.getFirstChild(),n,state);
+}
+}
+}

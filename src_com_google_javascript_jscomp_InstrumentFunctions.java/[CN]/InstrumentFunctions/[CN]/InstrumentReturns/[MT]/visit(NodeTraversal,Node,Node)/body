@@ -1,0 +1,12 @@
+{
+  if (n.getType() != Token.RETURN) {
+    return;
+  }
+  Node call=newReportFunctionExitNode();
+  Node returnRhs=n.removeFirstChild();
+  if (returnRhs != null) {
+    call.addChildToBack(returnRhs);
+  }
+  n.addChildToFront(call);
+  compiler.reportCodeChange();
+}

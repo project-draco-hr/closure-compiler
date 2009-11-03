@@ -1,0 +1,16 @@
+{
+  BranchedFlowState<L> state=node.getAnnotation();
+  List<DiGraphNode<N,Branch>> predNodes=getCfg().getDirectedPredNodes(node);
+  List<L> values=new ArrayList<L>(predNodes.size());
+  for (  DiGraphNode<N,Branch> predNode : predNodes) {
+    BranchedFlowState<L> predNodeState=predNode.getAnnotation();
+    L in=predNodeState.out.get(getCfg().getDirectedSuccNodes(predNode).indexOf(node));
+    values.add(in);
+  }
+  if (getCfg().getEntry() == node) {
+    state.setIn(createEntryLattice());
+  }
+ else   if (!values.isEmpty()) {
+    state.setIn(joinOp.apply(values));
+  }
+}

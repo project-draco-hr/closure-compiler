@@ -1,0 +1,19 @@
+{
+  Node qNameNode=n.getFirstChild();
+  String qName=qNameNode.getQualifiedName();
+  if (qName == null || qName.isEmpty()) {
+    return;
+  }
+  Node nameNode=qNameNode;
+  for (; nameNode.hasChildren(); nameNode=nameNode.getFirstChild()) {
+  }
+  if (nameNode.getType() != Token.NAME) {
+    return;
+  }
+  String name=nameNode.getString();
+  Scope.Var var=t.getScope().getVar(name);
+  if (var == null || var.isLocal() || var.isExtern()) {
+    return;
+  }
+  newNodes.add(n);
+}

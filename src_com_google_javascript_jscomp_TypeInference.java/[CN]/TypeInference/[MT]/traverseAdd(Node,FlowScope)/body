@@ -1,0 +1,32 @@
+{
+  Node left=n.getFirstChild();
+  Node right=left.getNext();
+  scope=traverseChildren(n,scope);
+  JSType leftType=left.getJSType();
+  JSType rightType=right.getJSType();
+  JSType type=getNativeType(UNKNOWN_TYPE);
+  if (leftType != null && rightType != null) {
+    boolean leftIsUnknown=leftType.isUnknownType();
+    boolean rightIsUnknown=rightType.isUnknownType();
+    if (leftIsUnknown && rightIsUnknown) {
+      type=getNativeType(UNKNOWN_TYPE);
+    }
+ else     if ((!leftIsUnknown && leftType.isString()) || (!rightIsUnknown && rightType.isString())) {
+      type=getNativeType(STRING_TYPE);
+    }
+ else     if (leftIsUnknown || rightIsUnknown) {
+      type=getNativeType(UNKNOWN_TYPE);
+    }
+ else     if (isAddedAsNumber(leftType) && isAddedAsNumber(rightType)) {
+      type=getNativeType(NUMBER_TYPE);
+    }
+ else {
+      type=registry.createUnionType(STRING_TYPE,NUMBER_TYPE);
+    }
+  }
+  n.setJSType(type);
+  if (n.getType() == Token.ASSIGN_ADD) {
+    updateScopeForTypeChange(scope,left,leftType,type);
+  }
+  return scope;
+}

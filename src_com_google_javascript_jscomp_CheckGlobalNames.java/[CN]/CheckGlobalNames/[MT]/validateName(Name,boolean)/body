@@ -1,0 +1,21 @@
+{
+  Ref declaration=name.declaration;
+  if (!isDefined) {
+    if (declaration != null) {
+      reportRefToUndefinedName(name,declaration);
+    }
+  }
+  if (name.refs != null) {
+    JSModuleGraph moduleGraph=compiler.getModuleGraph();
+    for (    Ref ref : name.refs) {
+      if (!isDefined) {
+        reportRefToUndefinedName(name,ref);
+      }
+ else {
+        if (declaration != null && ref.module != declaration.module && !moduleGraph.dependsOn(ref.module,declaration.module)) {
+          reportBadModuleReference(name,ref);
+        }
+      }
+    }
+  }
+}

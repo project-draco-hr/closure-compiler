@@ -1,0 +1,24 @@
+{
+  return runInCompilerThread(new Callable<String[]>(){
+    public String[] call() throws Exception {
+      List<CompilerInput> inputs=module.getInputs();
+      int numInputs=inputs.size();
+      if (numInputs == 0) {
+        return new String[0];
+      }
+      String[] sources=new String[numInputs];
+      CodeBuilder cb=new CodeBuilder();
+      for (int i=0; i < numInputs; i++) {
+        Node scriptNode=inputs.get(i).getAstRoot(Compiler.this);
+        if (scriptNode == null) {
+          throw new IllegalArgumentException("Bad module input: " + inputs.get(i).getName());
+        }
+        cb.reset();
+        toSource(cb,i,scriptNode);
+        sources[i]=cb.toString();
+      }
+      return sources;
+    }
+  }
+);
+}

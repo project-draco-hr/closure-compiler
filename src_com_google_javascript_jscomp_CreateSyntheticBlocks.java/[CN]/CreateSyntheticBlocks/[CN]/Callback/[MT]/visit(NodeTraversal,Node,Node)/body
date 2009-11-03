@@ -1,0 +1,48 @@
+{
+  if (n.getType() != Token.NAME || parent.getType() != Token.CALL) {
+    return;
+  }
+  if (startMarkerName.equals(n.getString())) {
+    Node ancestorBlockChild=n;
+    Node ancestorBlock=null;
+    for (    Node ancestor : n.getAncestors()) {
+      int type=ancestor.getType();
+      if (type == Token.SCRIPT || type == Token.BLOCK) {
+        ancestorBlock=ancestor;
+        break;
+      }
+      ancestorBlockChild=ancestor;
+    }
+    startMarkerStack.push(new StartMarker(t.getSourceName(),n,ancestorBlockChild,ancestorBlock));
+  }
+  if (!endMarkerName.equals(n.getString())) {
+    return;
+  }
+  if (startMarkerStack.isEmpty()) {
+    compiler.report(JSError.make(t,n,UNMATCHED_END_MARKER,startMarkerName,endMarkerName));
+    return;
+  }
+  StartMarker startMarker=startMarkerStack.pop();
+  Node endMarkerAncestorBlockChild=n;
+  for (  Node ancestor : n.getAncestors()) {
+    int type=ancestor.getType();
+    if (type == Token.SCRIPT || type == Token.BLOCK) {
+      if (ancestor != startMarker.ancestorBlock) {
+        compiler.report(JSError.make(t,n,UNMATCHED_END_MARKER,startMarkerName,endMarkerName));
+        return;
+      }
+      break;
+    }
+    endMarkerAncestorBlockChild=ancestor;
+  }
+  Node block=new Node(Token.BLOCK);
+  block.setIsSyntheticBlock(true);
+  startMarker.ancestorBlock.addChildAfter(block,startMarker.ancestorBlockChild);
+  Node removedNode=null;
+  do {
+    removedNode=startMarker.ancestorBlock.removeChildAfter(block);
+    block.addChildToBack(removedNode);
+  }
+ while (removedNode != endMarkerAncestorBlockChild);
+  compiler.reportCodeChange();
+}

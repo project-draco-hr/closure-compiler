@@ -1,0 +1,12 @@
+{
+  Collection<UseSite> useSites=defFinder.getUseSites(definition);
+  for (  UseSite site : useSites) {
+    Node node=site.node;
+    Node parent=node.getParent();
+    Node objectNode=node.getFirstChild();
+    node.removeChild(objectNode);
+    parent.replaceChild(node,objectNode);
+    parent.addChildToFront(Node.newString(Token.NAME,newMethodName));
+    compiler.reportCodeChange();
+  }
+}

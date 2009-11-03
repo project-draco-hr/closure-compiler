@@ -1,0 +1,24 @@
+{
+  if (NodeUtil.isName(n) || NodeUtil.isGetProp(n)) {
+    String name=n.getQualifiedName();
+    if (name != null) {
+      defineAndAlias(name);
+      return;
+    }
+  }
+  if (NodeUtil.isGetProp(n)) {
+    defineAndAlias(n.getLastChild().getString());
+  }
+ else   if (NodeUtil.isAssign(n)) {
+    safeAlias(n.getFirstChild());
+  }
+ else   if (n.hasChildren()) {
+    Node cur=n.getFirstChild();
+    do {
+      safeAlias(cur);
+    }
+ while ((cur=cur.getNext()) != null);
+  }
+ else {
+  }
+}

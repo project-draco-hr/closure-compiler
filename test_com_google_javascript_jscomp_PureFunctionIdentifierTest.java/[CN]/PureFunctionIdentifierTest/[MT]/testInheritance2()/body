@@ -1,0 +1,4 @@
+{
+  String source=CompilerTypeTestCase.CLOSURE_DEFS + "/**@constructor*/function I(){}\n" + "I.prototype.foo = function(){};\n"+ "I.prototype.bar = function(){this.foo()};\n"+ "/**@constructor\n@extends {I}*/function A(){};\n"+ "goog.inherits(A, I)\n;"+ "/** @override */A.prototype.foo = function(){this.data=24};\n"+ "var i = new I();i.foo();i.bar();\n"+ "var a = new A();a.foo();a.bar();";
+  checkMarkedCalls(source,ImmutableList.of("goog.inherits","I","A"));
+}

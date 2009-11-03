@@ -1,0 +1,11 @@
+{
+  scope=traverseChildren(n,scope);
+  JSType objType=getJSType(n.getFirstChild()).restrictByNotNullOrUndefined();
+  if (objType instanceof ObjectType) {
+    JSType type=((ObjectType)objType).getParameterType();
+    if (type != null) {
+      n.setJSType(type);
+    }
+  }
+  return dereferencePointer(n.getFirstChild(),scope);
+}

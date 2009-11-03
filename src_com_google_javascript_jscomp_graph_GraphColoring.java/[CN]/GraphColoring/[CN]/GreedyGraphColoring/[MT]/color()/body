@@ -1,0 +1,30 @@
+{
+  graph.clearNodeAnnotations();
+  List<GraphNode<N,E>> worklist=graph.getNodes();
+  Collections.sort(worklist,new Comparator<GraphNode<N,E>>(){
+    @Override public int compare(    GraphNode<N,E> o1,    GraphNode<N,E> o2){
+      int result=graph.getWeight(o2.getValue()) - graph.getWeight(o1.getValue());
+      return result == 0 && tieBreaker != null ? tieBreaker.compare(o1.getValue(),o2.getValue()) : result;
+    }
+  }
+);
+  worklist=Lists.newLinkedList(worklist);
+  int count=0;
+  do {
+    Color color=new Color(count);
+    SubGraph<N,E> subgraph=graph.newSubGraph();
+    for (Iterator<GraphNode<N,E>> i=worklist.iterator(); i.hasNext(); ) {
+      GraphNode<N,E> node=i.next();
+      if (subgraph.isIndependentOf(node.getValue())) {
+        subgraph.addNode(node.getValue());
+        node.setAnnotation(color);
+        i.remove();
+      }
+    }
+    count++;
+  }
+ while (!worklist.isEmpty());
+  @SuppressWarnings("unchecked") N[] map=(N[])new Object[count];
+  colorToNodeMap=map;
+  return count;
+}

@@ -1,0 +1,14 @@
+{
+  int m1Depth=getDepth(m1);
+  int m2Depth=getDepth(m2);
+  for (int depth=Math.min(m1Depth,m2Depth) - 1; depth >= 0; depth--) {
+    List<JSModule> modulesAtDepth=modulesByDepth.get(depth);
+    for (int i=modulesAtDepth.size() - 1; i >= 0; i--) {
+      JSModule m=modulesAtDepth.get(i);
+      if (dependsOn(m1,m) && dependsOn(m2,m)) {
+        return m;
+      }
+    }
+  }
+  return null;
+}

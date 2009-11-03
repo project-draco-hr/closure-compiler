@@ -1,0 +1,18 @@
+{
+  found=found.restrictByNotNullOrUndefined();
+  required=required.restrictByNotNullOrUndefined();
+  if (found.canAssignTo(required) || required.canAssignTo(found)) {
+    return;
+  }
+  mismatches.add(new TypeMismatch(found,required));
+  if (found instanceof FunctionType && required instanceof FunctionType) {
+    FunctionType fnTypeA=((FunctionType)found);
+    FunctionType fnTypeB=((FunctionType)required);
+    Iterator<Node> paramItA=fnTypeA.getParameters().iterator();
+    Iterator<Node> paramItB=fnTypeB.getParameters().iterator();
+    while (paramItA.hasNext() && paramItB.hasNext()) {
+      registerIfMismatch(paramItA.next().getJSType(),paramItB.next().getJSType());
+    }
+    registerIfMismatch(fnTypeA.getReturnType(),fnTypeB.getReturnType());
+  }
+}

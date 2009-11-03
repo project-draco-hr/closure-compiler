@@ -1,0 +1,6 @@
+{
+  String externs="" + "/** @constructor */ function Foo() { }" + "Foo.prototype.a = 4;\n";
+  String js="" + "/** @constructor */ function Bar() { this.a = 2; }\n" + "/** @constructor */ function Baz() { this.a = 3; }\n"+ "/** @constructor */ function Buz() { this.a = 4; }\n"+ "/** @constructor */ function T1() { this.a = 3; }\n"+ "/** @constructor */ function T2() { this.a = 3; }\n"+ "/** @type {Bar|Baz} */ var b;\n"+ "/** @type {Baz|Buz} */ var c;\n"+ "/** @type {Buz|Foo} */ var d;\n"+ "b.a = 5; c.a = 6; d.a = 7;";
+  String output="" + "/** @constructor */ function Bar() { this.a = 2; }\n" + "/** @constructor */ function Baz() { this.a = 3; }\n"+ "/** @constructor */ function Buz() { this.a = 4; }\n"+ "/** @constructor */ function T1() { this.T1$a = 3; }\n"+ "/** @constructor */ function T2() { this.T2$a = 3; }\n"+ "/** @type {Bar|Baz} */ var b;\n"+ "/** @type {Baz|Buz} */ var c;\n"+ "/** @type {Buz|Foo} */ var d;\n"+ "b.a = 5; c.a = 6; d.a = 7;";
+  testSets(false,externs,js,output,"{a=[[T1], [T2]]}");
+}

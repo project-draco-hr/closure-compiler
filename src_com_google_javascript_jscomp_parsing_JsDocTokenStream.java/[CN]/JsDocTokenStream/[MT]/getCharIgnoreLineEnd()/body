@@ -1,0 +1,41 @@
+{
+  if (ungetCursor != 0) {
+    cursor++;
+    --ungetCursor;
+    if (charno == -1) {
+      charno=getOffset();
+    }
+    return ungetBuffer[ungetCursor];
+  }
+  for (; ; ) {
+    int c;
+    if (sourceCursor == sourceEnd) {
+      hitEOF=true;
+      if (charno == -1) {
+        charno=getOffset();
+      }
+      return EOF_CHAR;
+    }
+    cursor++;
+    c=sourceString.charAt(sourceCursor++);
+    if (c <= 127) {
+      if (c == '\n' || c == '\r') {
+        lineEndChar=c;
+        c='\n';
+      }
+    }
+ else {
+      if (isJSFormatChar(c)) {
+        continue;
+      }
+      if (ScriptRuntime.isJSLineTerminator(c)) {
+        lineEndChar=c;
+        c='\n';
+      }
+    }
+    if (charno == -1) {
+      charno=getOffset();
+    }
+    return c;
+  }
+}

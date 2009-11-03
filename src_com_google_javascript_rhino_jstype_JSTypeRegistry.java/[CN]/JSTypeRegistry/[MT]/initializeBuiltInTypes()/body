@@ -1,0 +1,142 @@
+{
+  BooleanType BOOLEAN_TYPE=new BooleanType(this);
+  registerNativeType(JSTypeNative.BOOLEAN_TYPE,BOOLEAN_TYPE);
+  NullType NULL_TYPE=new NullType(this);
+  registerNativeType(JSTypeNative.NULL_TYPE,NULL_TYPE);
+  NumberType NUMBER_TYPE=new NumberType(this);
+  registerNativeType(JSTypeNative.NUMBER_TYPE,NUMBER_TYPE);
+  StringType STRING_TYPE=new StringType(this);
+  registerNativeType(JSTypeNative.STRING_TYPE,STRING_TYPE);
+  UnknownType UNKNOWN_TYPE=new UnknownType(this,false);
+  registerNativeType(JSTypeNative.UNKNOWN_TYPE,UNKNOWN_TYPE);
+  registerNativeType(JSTypeNative.CHECKED_UNKNOWN_TYPE,new UnknownType(this,true));
+  VoidType VOID_TYPE=new VoidType(this);
+  registerNativeType(JSTypeNative.VOID_TYPE,VOID_TYPE);
+  AllType ALL_TYPE=new AllType(this);
+  registerNativeType(JSTypeNative.ALL_TYPE,ALL_TYPE);
+  ObjectType TOP_LEVEL_PROTOTYPE=new FunctionPrototypeType(this,null,null,true);
+  registerNativeType(JSTypeNative.TOP_LEVEL_PROTOTYPE,TOP_LEVEL_PROTOTYPE);
+  FunctionType OBJECT_FUNCTION_TYPE=new FunctionType(this,"Object",null,createOptionalParameters(ALL_TYPE),UNKNOWN_TYPE,null,null,true,true);
+  OBJECT_FUNCTION_TYPE.defineDeclaredProperty("prototype",TOP_LEVEL_PROTOTYPE,true);
+  registerNativeType(JSTypeNative.OBJECT_FUNCTION_TYPE,OBJECT_FUNCTION_TYPE);
+  ObjectType OBJECT_PROTOTYPE=OBJECT_FUNCTION_TYPE.getPrototype();
+  registerNativeType(JSTypeNative.OBJECT_PROTOTYPE,OBJECT_PROTOTYPE);
+  ObjectType OBJECT_TYPE=OBJECT_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.OBJECT_TYPE,OBJECT_TYPE);
+  FunctionType FUNCTION_FUNCTION_TYPE=new FunctionType(this,"Function",null,createParametersWithVarArgs(ALL_TYPE),UNKNOWN_TYPE,null,null,true,true);
+  FUNCTION_FUNCTION_TYPE.setPrototypeBasedOn(OBJECT_TYPE);
+  registerNativeType(JSTypeNative.FUNCTION_FUNCTION_TYPE,FUNCTION_FUNCTION_TYPE);
+  ObjectType FUNCTION_PROTOTYPE=FUNCTION_FUNCTION_TYPE.getPrototype();
+  registerNativeType(JSTypeNative.FUNCTION_PROTOTYPE,FUNCTION_PROTOTYPE);
+  NoType NO_TYPE=new NoType(this);
+  registerNativeType(JSTypeNative.NO_TYPE,NO_TYPE);
+  NoObjectType NO_OBJECT_TYPE=new NoObjectType(this);
+  registerNativeType(JSTypeNative.NO_OBJECT_TYPE,NO_OBJECT_TYPE);
+  FunctionType ARRAY_FUNCTION_TYPE=new FunctionType(this,"Array",null,createParametersWithVarArgs(ALL_TYPE),null,null,null,true,true){
+    private static final long serialVersionUID=1L;
+    @Override public JSType getReturnType(){
+      return getInstanceType();
+    }
+  }
+;
+  ObjectType arrayPrototype=ARRAY_FUNCTION_TYPE.getPrototype();
+  registerNativeType(JSTypeNative.ARRAY_FUNCTION_TYPE,ARRAY_FUNCTION_TYPE);
+  ObjectType ARRAY_TYPE=ARRAY_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.ARRAY_TYPE,ARRAY_TYPE);
+  FunctionType BOOLEAN_OBJECT_FUNCTION_TYPE=new FunctionType(this,"Boolean",null,createParameters(false,ALL_TYPE),BOOLEAN_TYPE,null,null,true,true);
+  ObjectType booleanPrototype=BOOLEAN_OBJECT_FUNCTION_TYPE.getPrototype();
+  registerNativeType(JSTypeNative.BOOLEAN_OBJECT_FUNCTION_TYPE,BOOLEAN_OBJECT_FUNCTION_TYPE);
+  ObjectType BOOLEAN_OBJECT_TYPE=BOOLEAN_OBJECT_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.BOOLEAN_OBJECT_TYPE,BOOLEAN_OBJECT_TYPE);
+  FunctionType DATE_FUNCTION_TYPE=new FunctionType(this,"Date",null,createOptionalParameters(UNKNOWN_TYPE,UNKNOWN_TYPE,UNKNOWN_TYPE,UNKNOWN_TYPE,UNKNOWN_TYPE,UNKNOWN_TYPE,UNKNOWN_TYPE),STRING_TYPE,null,null,true,true);
+  ObjectType datePrototype=DATE_FUNCTION_TYPE.getPrototype();
+  registerNativeType(JSTypeNative.DATE_FUNCTION_TYPE,DATE_FUNCTION_TYPE);
+  ObjectType DATE_TYPE=DATE_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.DATE_TYPE,DATE_TYPE);
+  FunctionType ERROR_FUNCTION_TYPE=new ErrorFunctionType(this,"Error");
+  registerNativeType(JSTypeNative.ERROR_FUNCTION_TYPE,ERROR_FUNCTION_TYPE);
+  ObjectType ERROR_TYPE=ERROR_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.ERROR_TYPE,ERROR_TYPE);
+  FunctionType EVAL_ERROR_FUNCTION_TYPE=new ErrorFunctionType(this,"EvalError");
+  EVAL_ERROR_FUNCTION_TYPE.setPrototypeBasedOn(ERROR_TYPE);
+  registerNativeType(JSTypeNative.EVAL_ERROR_FUNCTION_TYPE,EVAL_ERROR_FUNCTION_TYPE);
+  ObjectType EVAL_ERROR_TYPE=EVAL_ERROR_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.EVAL_ERROR_TYPE,EVAL_ERROR_TYPE);
+  FunctionType RANGE_ERROR_FUNCTION_TYPE=new ErrorFunctionType(this,"RangeError");
+  RANGE_ERROR_FUNCTION_TYPE.setPrototypeBasedOn(ERROR_TYPE);
+  registerNativeType(JSTypeNative.RANGE_ERROR_FUNCTION_TYPE,RANGE_ERROR_FUNCTION_TYPE);
+  ObjectType RANGE_ERROR_TYPE=RANGE_ERROR_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.RANGE_ERROR_TYPE,RANGE_ERROR_TYPE);
+  FunctionType REFERENCE_ERROR_FUNCTION_TYPE=new ErrorFunctionType(this,"ReferenceError");
+  REFERENCE_ERROR_FUNCTION_TYPE.setPrototypeBasedOn(ERROR_TYPE);
+  registerNativeType(JSTypeNative.REFERENCE_ERROR_FUNCTION_TYPE,REFERENCE_ERROR_FUNCTION_TYPE);
+  ObjectType REFERENCE_ERROR_TYPE=REFERENCE_ERROR_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.REFERENCE_ERROR_TYPE,REFERENCE_ERROR_TYPE);
+  FunctionType SYNTAX_ERROR_FUNCTION_TYPE=new ErrorFunctionType(this,"SyntaxError");
+  SYNTAX_ERROR_FUNCTION_TYPE.setPrototypeBasedOn(ERROR_TYPE);
+  registerNativeType(JSTypeNative.SYNTAX_ERROR_FUNCTION_TYPE,SYNTAX_ERROR_FUNCTION_TYPE);
+  ObjectType SYNTAX_ERROR_TYPE=SYNTAX_ERROR_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.SYNTAX_ERROR_TYPE,SYNTAX_ERROR_TYPE);
+  FunctionType TYPE_ERROR_FUNCTION_TYPE=new ErrorFunctionType(this,"TypeError");
+  TYPE_ERROR_FUNCTION_TYPE.setPrototypeBasedOn(ERROR_TYPE);
+  registerNativeType(JSTypeNative.TYPE_ERROR_FUNCTION_TYPE,TYPE_ERROR_FUNCTION_TYPE);
+  ObjectType TYPE_ERROR_TYPE=TYPE_ERROR_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.TYPE_ERROR_TYPE,TYPE_ERROR_TYPE);
+  FunctionType URI_ERROR_FUNCTION_TYPE=new ErrorFunctionType(this,"URIError");
+  URI_ERROR_FUNCTION_TYPE.setPrototypeBasedOn(ERROR_TYPE);
+  registerNativeType(JSTypeNative.URI_ERROR_FUNCTION_TYPE,URI_ERROR_FUNCTION_TYPE);
+  ObjectType URI_ERROR_TYPE=URI_ERROR_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.URI_ERROR_TYPE,URI_ERROR_TYPE);
+  FunctionType NUMBER_OBJECT_FUNCTION_TYPE=new FunctionType(this,"Number",null,createParameters(false,ALL_TYPE),NUMBER_TYPE,null,null,true,true);
+  ObjectType numberPrototype=NUMBER_OBJECT_FUNCTION_TYPE.getPrototype();
+  registerNativeType(JSTypeNative.NUMBER_OBJECT_FUNCTION_TYPE,NUMBER_OBJECT_FUNCTION_TYPE);
+  ObjectType NUMBER_OBJECT_TYPE=NUMBER_OBJECT_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.NUMBER_OBJECT_TYPE,NUMBER_OBJECT_TYPE);
+  FunctionType REGEXP_FUNCTION_TYPE=new FunctionType(this,"RegExp",null,createOptionalParameters(ALL_TYPE,ALL_TYPE),null,null,null,true,true){
+    private static final long serialVersionUID=1L;
+    @Override public JSType getReturnType(){
+      return getInstanceType();
+    }
+  }
+;
+  ObjectType regexpPrototype=REGEXP_FUNCTION_TYPE.getPrototype();
+  registerNativeType(JSTypeNative.REGEXP_FUNCTION_TYPE,REGEXP_FUNCTION_TYPE);
+  ObjectType REGEXP_TYPE=REGEXP_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.REGEXP_TYPE,REGEXP_TYPE);
+  FunctionType STRING_OBJECT_FUNCTION_TYPE=new FunctionType(this,"String",null,createParameters(false,ALL_TYPE),STRING_TYPE,null,null,true,true);
+  ObjectType stringPrototype=STRING_OBJECT_FUNCTION_TYPE.getPrototype();
+  registerNativeType(JSTypeNative.STRING_OBJECT_FUNCTION_TYPE,STRING_OBJECT_FUNCTION_TYPE);
+  ObjectType STRING_OBJECT_TYPE=STRING_OBJECT_FUNCTION_TYPE.getInstanceType();
+  registerNativeType(JSTypeNative.STRING_OBJECT_TYPE,STRING_OBJECT_TYPE);
+  JSType OBJECT_NUMBER_STRING=createUnionType(OBJECT_TYPE,NUMBER_TYPE,STRING_TYPE);
+  registerNativeType(JSTypeNative.OBJECT_NUMBER_STRING,OBJECT_NUMBER_STRING);
+  JSType OBJECT_NUMBER_STRING_BOOLEAN=createUnionType(OBJECT_TYPE,NUMBER_TYPE,STRING_TYPE,BOOLEAN_TYPE);
+  registerNativeType(JSTypeNative.OBJECT_NUMBER_STRING_BOOLEAN,OBJECT_NUMBER_STRING_BOOLEAN);
+  JSType NUMBER_STRING_BOOLEAN=createUnionType(NUMBER_TYPE,STRING_TYPE,BOOLEAN_TYPE);
+  registerNativeType(JSTypeNative.NUMBER_STRING_BOOLEAN,NUMBER_STRING_BOOLEAN);
+  JSType NUMBER_STRING=createUnionType(NUMBER_TYPE,STRING_TYPE);
+  registerNativeType(JSTypeNative.NUMBER_STRING,NUMBER_STRING);
+  JSType STRING_VALUE_OR_OBJECT_TYPE=createUnionType(STRING_OBJECT_TYPE,STRING_TYPE);
+  registerNativeType(JSTypeNative.STRING_VALUE_OR_OBJECT_TYPE,STRING_VALUE_OR_OBJECT_TYPE);
+  JSType NUMBER_VALUE_OR_OBJECT_TYPE=createUnionType(NUMBER_OBJECT_TYPE,NUMBER_TYPE);
+  registerNativeType(JSTypeNative.NUMBER_VALUE_OR_OBJECT_TYPE,NUMBER_VALUE_OR_OBJECT_TYPE);
+  FunctionType U2U_FUNCTION_TYPE=createFunctionType(UNKNOWN_TYPE,true,UNKNOWN_TYPE);
+  registerNativeType(JSTypeNative.U2U_FUNCTION_TYPE,U2U_FUNCTION_TYPE);
+  FunctionType U2U_CONSTRUCTOR_TYPE=new FunctionType(this,"Function",null,createParametersWithVarArgs(UNKNOWN_TYPE),UNKNOWN_TYPE,NO_OBJECT_TYPE,null,true,true){
+    private static final long serialVersionUID=1L;
+    @Override public FunctionType getConstructor(){
+      return registry.getNativeFunctionType(JSTypeNative.FUNCTION_FUNCTION_TYPE);
+    }
+  }
+;
+  registerNativeType(JSTypeNative.U2U_CONSTRUCTOR_TYPE,U2U_CONSTRUCTOR_TYPE);
+  registerNativeType(JSTypeNative.FUNCTION_INSTANCE_TYPE,U2U_CONSTRUCTOR_TYPE);
+  FUNCTION_FUNCTION_TYPE.setInstanceType(U2U_CONSTRUCTOR_TYPE);
+  U2U_CONSTRUCTOR_TYPE.setImplicitPrototype(FUNCTION_PROTOTYPE);
+  FunctionType LEAST_FUNCTION_TYPE=createFunctionType(NO_TYPE,true,ALL_TYPE);
+  registerNativeType(JSTypeNative.LEAST_FUNCTION_TYPE,LEAST_FUNCTION_TYPE);
+  ObjectType GLOBAL_THIS=createObjectType("global this",null,UNKNOWN_TYPE);
+  registerNativeType(JSTypeNative.GLOBAL_THIS,GLOBAL_THIS);
+  FunctionType GREATEST_FUNCTION_TYPE=createFunctionType(ALL_TYPE,true,NO_TYPE);
+  registerNativeType(JSTypeNative.GREATEST_FUNCTION_TYPE,GREATEST_FUNCTION_TYPE);
+}

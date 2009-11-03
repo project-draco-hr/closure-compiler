@@ -1,0 +1,10 @@
+{
+  Node varNode=declaration.getParent();
+  varNode.removeChild(declaration.getNameNode());
+  if (!varNode.hasChildren()) {
+    Preconditions.checkState(varNode.getType() == Token.VAR);
+    Node grandparent=declaration.getGrandparent();
+    NodeUtil.removeChild(grandparent,varNode);
+  }
+  compiler.reportCodeChange();
+}

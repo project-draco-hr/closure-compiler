@@ -1,0 +1,28 @@
+{
+  StringBuilder b=new StringBuilder(32);
+  b.append("function (");
+  boolean hasKnownTypeOfThis=!getThisSlot().getType().isNone();
+  if (hasKnownTypeOfThis) {
+    b.append("this:");
+    b.append(getThisSlot().getType().toString());
+  }
+  Node n=getFirstParameter();
+  if (hasKnownTypeOfThis && n != null) {
+    b.append(", ");
+  }
+  for (int i=0; n != null; ++i, n=n.getNext()) {
+    String paramName=n.getString();
+    StaticSlot<ConcreteType> var=getScope().getOwnSlot(paramName);
+    b.append(var.getType());
+    getParameterSlot(i).getType();
+    if (n.getNext() != null) {
+      b.append(", ");
+    }
+  }
+  b.append(")");
+  if (getReturnSlot().getType() != null) {
+    b.append(": ");
+    b.append(getReturnSlot().getType().toString());
+  }
+  return b.toString();
+}

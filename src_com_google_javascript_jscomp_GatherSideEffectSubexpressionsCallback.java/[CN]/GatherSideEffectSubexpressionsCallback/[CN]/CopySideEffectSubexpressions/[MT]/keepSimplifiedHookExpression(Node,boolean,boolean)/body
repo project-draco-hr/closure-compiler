@@ -1,0 +1,22 @@
+{
+  Preconditions.checkArgument(hook.getType() == Token.HOOK,"Expected: HOOK, Got: " + Token.name(hook.getType()));
+  Node condition=hook.getFirstChild();
+  Node thenBranch=condition.getNext();
+  Node elseBranch=thenBranch.getNext();
+  if (thenHasSideEffects && elseHasSideEffects) {
+    Node simplified=hook.cloneNode();
+    simplified.addChildToBack(condition.cloneTree());
+    simplified.addChildToBack(simplifyShortCircuitBranch(thenBranch));
+    simplified.addChildToBack(simplifyShortCircuitBranch(elseBranch));
+    replacements.add(simplified);
+  }
+ else   if (thenHasSideEffects || elseHasSideEffects) {
+    int type=thenHasSideEffects ? Token.AND : Token.OR;
+    Node body=thenHasSideEffects ? thenBranch : elseBranch;
+    Node simplified=new Node(type,condition.cloneTree(),simplifyShortCircuitBranch(body));
+    replacements.add(simplified);
+  }
+ else {
+    throw new IllegalArgumentException("keepSimplifiedHookExpression must keep at least 1 branch");
+  }
+}

@@ -1,0 +1,17 @@
+{
+  for (Node next, c=n.getFirstChild(); c != null; c=next) {
+    next=c.getNext();
+    if (c.getType() == Token.VAR) {
+      if (assertOnChange && !c.hasChildren()) {
+        throw new IllegalStateException("Empty VAR node.");
+      }
+      while (c.getFirstChild() != c.getLastChild()) {
+        Node name=c.getFirstChild();
+        c.removeChild(name);
+        Node newVar=new Node(Token.VAR,name,n.getLineno(),n.getCharno());
+        n.addChildBefore(newVar,c);
+        reportCodeChange("VAR with multiple children");
+      }
+    }
+  }
+}

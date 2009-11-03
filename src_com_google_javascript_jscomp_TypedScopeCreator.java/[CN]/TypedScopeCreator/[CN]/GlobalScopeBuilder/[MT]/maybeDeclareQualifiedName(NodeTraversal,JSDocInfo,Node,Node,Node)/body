@@ -1,0 +1,66 @@
+{
+  Node ownerNode=n.getFirstChild();
+  String ownerName=ownerNode.getQualifiedName();
+  String qName=n.getQualifiedName();
+  String propName=n.getLastChild().getString();
+  Preconditions.checkArgument(qName != null && ownerName != null);
+  if ("prototype".equals(propName)) {
+    Var qVar=scope.getVar(qName);
+    if (qVar != null) {
+      if (!qVar.isTypeInferred()) {
+        return;
+      }
+      scope.undeclare(qVar);
+    }
+  }
+  JSType valueType=getDeclaredGetPropType(t,info,n,rhsValue);
+  if (valueType == null && rhsValue != null) {
+    valueType=rhsValue.getJSType();
+  }
+  if (valueType == null) {
+    if (parent.getType() == Token.EXPR_RESULT) {
+      ObjectType ownerType=getObjectSlot(ownerName);
+      JSType unknownType=typeRegistry.getNativeType(UNKNOWN_TYPE);
+      if (ownerType == null) {
+        defineSlot(n,parent,unknownType,false);
+      }
+ else {
+        boolean isExtern=t.getInput().isExtern();
+        if (isExtern || ownerType.isFunctionPrototypeType()) {
+          ownerType.defineDeclaredProperty(propName,unknownType,isExtern);
+        }
+ else {
+          typeRegistry.registerPropertyOnType(propName,ownerType);
+        }
+      }
+    }
+ else     if (rhsValue != null && rhsValue.getType() == Token.TRUE) {
+      ObjectType ownerType=getObjectSlot(ownerName);
+      if (ownerType instanceof FunctionType) {
+        JSType ownerTypeOfThis=((FunctionType)ownerType).getTypeOfThis();
+        JSType delegateType=typeRegistry.getType(codingConvention.getDelegateSuperclassName());
+        if (delegateType != null && ownerTypeOfThis.isSubtype(delegateType)) {
+          defineSlot(n,parent,typeRegistry.getNativeType(BOOLEAN_TYPE),true);
+        }
+      }
+    }
+    return;
+  }
+  boolean inferred=true;
+  if (info != null) {
+    inferred=!(info.hasType() || info.hasEnumParameterType() || FunctionTypeBuilder.isFunctionTypeDeclaration(info));
+  }
+  if (inferred) {
+    inferred=!(rhsValue != null && rhsValue.getType() == Token.FUNCTION && !scope.isDeclared(qName,false));
+  }
+  if (!inferred) {
+    ObjectType ownerType=getObjectSlot(ownerName);
+    if (ownerType != null) {
+      boolean isExtern=t.getInput().isExtern();
+      if ((!ownerType.hasOwnProperty(propName) || ownerType.isPropertyTypeInferred(propName)) && (isExtern || !ownerType.isInstanceType())) {
+        ownerType.defineDeclaredProperty(propName,valueType,isExtern);
+      }
+    }
+    defineSlot(n,parent,valueType,inferred);
+  }
+}

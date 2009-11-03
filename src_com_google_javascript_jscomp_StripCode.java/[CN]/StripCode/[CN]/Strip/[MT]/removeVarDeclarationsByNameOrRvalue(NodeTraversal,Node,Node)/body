@@ -1,0 +1,15 @@
+{
+  for (Node nameNode=n.getFirstChild(); nameNode != null; nameNode=nameNode.getNext()) {
+    String name=nameNode.getString();
+    if (isStripName(name) || isCallWhoseReturnValueShouldBeStripped(nameNode.getFirstChild())) {
+      Scope scope=t.getScope();
+      varsToRemove.add(scope.getVar(name));
+      n.removeChild(nameNode);
+      compiler.reportCodeChange();
+    }
+  }
+  if (!n.hasChildren()) {
+    replaceWithEmpty(n,parent);
+    compiler.reportCodeChange();
+  }
+}

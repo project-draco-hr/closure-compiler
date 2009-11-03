@@ -1,0 +1,15 @@
+{
+  for (  GraphNode<Name,Reference> node : graph.getNodes()) {
+    Name name=node.getValue();
+    String propName=name.getPropertyName();
+    if (propName == null) {
+      continue;
+    }
+    Collection<Pair<Name,Reference>> uses=unknownNameUse.get(propName);
+    if (uses != null) {
+      for (      Pair<Name,Reference> use : uses) {
+        graph.connect(use.getFirst(),use.getSecond(),name);
+      }
+    }
+  }
+}

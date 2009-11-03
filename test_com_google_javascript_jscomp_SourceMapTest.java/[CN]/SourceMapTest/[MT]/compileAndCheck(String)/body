@@ -1,0 +1,19 @@
+{
+  RunResult result=compile(js);
+  Map<String,Token> originalTokens=findTokens(js);
+  Map<String,Token> resultTokens=findTokens(result.generatedSource);
+  assertEquals(originalTokens.size(),resultTokens.size());
+  for (  Token token : resultTokens.values()) {
+    SourceMap.Mapping mapping=result.sourceMap.getMappingFor(token.position);
+    assertNotNull(mapping);
+    Token inputToken=originalTokens.get(token.tokenName);
+    assertNotNull(inputToken);
+    assertEquals(mapping.originalPosition.getLineNumber(),inputToken.position.getLineNumber() + 1);
+    if (!inputToken.tokenName.startsWith("STR")) {
+      assertNotNull(mapping.originalName);
+    }
+    if (mapping.originalName != null) {
+      assertEquals(mapping.originalName,"__" + inputToken.tokenName + "__");
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  List<Node> subexpressions=Lists.newArrayList();
+  NodeTraversal.traverse(compiler,n,new GatherSideEffectSubexpressionsCallback(compiler,new CopySideEffectSubexpressions(compiler,subexpressions)));
+  List<Node> replacements=Lists.newArrayListWithExpectedSize(subexpressions.size());
+  for (  Node subexpression : subexpressions) {
+    replacements.add(new Node(Token.EXPR_RESULT,subexpression));
+  }
+  return replacements;
+}

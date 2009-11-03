@@ -1,0 +1,53 @@
+{
+  if (!NodeUtil.isExpressionNode(n)) {
+    return;
+  }
+  Node callNode=n.getFirstChild();
+  if (callNode.getType() != Token.CALL) {
+    return;
+  }
+  Node getPropNode=callNode.getFirstChild();
+  if (getPropNode.getType() != Token.GETPROP) {
+    return;
+  }
+  Node getPropFirstChildNode=getPropNode.getFirstChild();
+  Collection<Definition> definitions=defFinder.getDefinitionsReferencedAt(getPropNode);
+  if (definitions == null) {
+    return;
+  }
+  for (  Definition definition : definitions) {
+    Node rValue=definition.getRValue();
+    if (rValue == null) {
+      return;
+    }
+    if (badFunctionNodes.contains(rValue)) {
+      return;
+    }
+    if (!goodFunctionNodes.contains(rValue)) {
+      NodeTraversal.traverse(compiler,rValue,gatherFunctions);
+      if (badFunctionNodes.contains(rValue)) {
+        return;
+      }
+    }
+  }
+  Node nextNode=n.getNext();
+  if (nextNode == null || nextNode.getType() != Token.EXPR_RESULT) {
+    return;
+  }
+  Node nextCallNode=nextNode.getFirstChild();
+  if (nextCallNode.getType() != Token.CALL) {
+    return;
+  }
+  Node nextGetPropNode=nextCallNode.getFirstChild();
+  if (nextGetPropNode.getType() != Token.GETPROP) {
+    return;
+  }
+  Node nextGetPropFirstChildNode=nextGetPropNode.getFirstChild();
+  if (!nextGetPropFirstChildNode.checkTreeEqualsSilent(getPropFirstChildNode)) {
+    return;
+  }
+  if (NodeUtil.mayEffectMutableState(getPropFirstChildNode)) {
+    return;
+  }
+  callSites.add(new CallSite(parent,n,callNode,nextGetPropNode,nextGetPropFirstChildNode));
+}

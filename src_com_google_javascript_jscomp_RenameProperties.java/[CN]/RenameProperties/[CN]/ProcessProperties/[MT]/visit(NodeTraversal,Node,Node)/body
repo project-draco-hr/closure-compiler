@@ -1,0 +1,59 @@
+{
+switch (n.getType()) {
+case Token.GETPROP:
+    Node propNode=n.getFirstChild().getNext();
+  if (propNode.getType() == Token.STRING) {
+    maybeMarkCandidate(propNode,t);
+  }
+break;
+case Token.OBJECTLIT:
+for (Node key=n.getFirstChild(); key != null; key=key.getNext().getNext()) {
+if (key.getType() == Token.STRING) {
+  if (!key.isQuotedString()) {
+    maybeMarkCandidate(key,t);
+  }
+ else {
+    quotedNames.add(key.getString());
+  }
+}
+}
+break;
+case Token.GETELEM:
+Node child=n.getLastChild();
+if (child != null && child.getType() == Token.STRING) {
+quotedNames.add(child.getString());
+}
+break;
+case Token.CALL:
+Node fnName=n.getFirstChild();
+if (fnName.getType() == Token.NAME && RENAME_PROPERTY_FUNCTION_NAME.equals(fnName.getString())) {
+callNodeToParentMap.put(n,parent);
+countCallCandidates(t,n);
+}
+break;
+case Token.FUNCTION:
+if (NodeUtil.isFunctionDeclaration(n)) {
+String name=n.getFirstChild().getString();
+if (RENAME_PROPERTY_FUNCTION_NAME.equals(name)) {
+if (NodeUtil.isExpressionNode(parent)) {
+parent.detachFromParent();
+}
+ else {
+parent.removeChild(n);
+}
+compiler.reportCodeChange();
+}
+}
+ else if (parent.getType() == Token.NAME && RENAME_PROPERTY_FUNCTION_NAME.equals(parent.getString())) {
+Node varNode=parent.getParent();
+if (varNode.getType() == Token.VAR) {
+varNode.removeChild(parent);
+if (!varNode.hasChildren()) {
+varNode.detachFromParent();
+}
+compiler.reportCodeChange();
+}
+}
+break;
+}
+}

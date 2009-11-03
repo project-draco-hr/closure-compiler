@@ -1,0 +1,10 @@
+{
+  if (!NodeUtil.isGetProp(n)) {
+    return false;
+  }
+  JSType type=getType(n.getFirstChild());
+  if (type.isUnknownType() || type.isUnionType()) {
+    return false;
+  }
+  return (type instanceof InstanceObjectType || type.autoboxesTo() != null);
+}

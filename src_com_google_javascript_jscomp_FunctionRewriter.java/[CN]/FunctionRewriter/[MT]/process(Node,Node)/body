@@ -1,0 +1,28 @@
+{
+  List<Reducer> reducers=ImmutableList.of(new ReturnConstantReducer(),new GetterReducer(),new SetterReducer(),new EmptyFunctionReducer(),new IdentityReducer());
+  Multimap<Reducer,Reduction> reductionMap=Multimaps.newHashMultimap();
+  NodeTraversal.traverse(compiler,root,new ReductionGatherer(reducers,reductionMap));
+  for (  Reducer reducer : reducers) {
+    Collection<Reduction> reductions=reductionMap.get(reducer);
+    if (reductions.isEmpty()) {
+      continue;
+    }
+    Node helperCode=parseHelperCode(reducer);
+    if (helperCode == null) {
+      continue;
+    }
+    int helperCodeCost=InlineCostEstimator.getCost(helperCode);
+    int savings=0;
+    for (    Reduction reduction : reductions) {
+      savings+=reduction.estimateSavings();
+    }
+    if (savings > (helperCodeCost + SAVINGS_THRESHOLD)) {
+      for (      Reduction reduction : reductions) {
+        reduction.apply();
+      }
+      Node addingRoot=compiler.getNodeForCodeInsertion(null);
+      addingRoot.addChildrenToFront(helperCode);
+      compiler.reportCodeChange();
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  if (NodeUtil.isFunction(defCfgNode)) {
+    return false;
+  }
+  getDefinition(defCfgNode,null);
+  getNumUseInUseCfgNode(useCfgNode,null);
+  if (def == null) {
+    return false;
+  }
+  if (NodeUtil.isAssign(def) && !NodeUtil.isExprAssign(def.getParent())) {
+    return false;
+  }
+  if (NodeUtil.mayHaveSideEffects(def.getLastChild())) {
+    return false;
+  }
+  if (numUseWithinUseCfgNode != 1) {
+    return false;
+  }
+  if (NodeUtil.has(def.getLastChild(),new Predicate<Node>(){
+    @Override public boolean apply(    Node input){
+switch (input.getType()) {
+case Token.GETELEM:
+case Token.GETPROP:
+case Token.ARRAYLIT:
+case Token.OBJECTLIT:
+case Token.REGEXP:
+case Token.NEW:
+        return true;
+    }
+    return false;
+  }
+}
+,new Predicate<Node>(){
+  @Override public boolean apply(  Node input){
+    return !NodeUtil.isFunction(input);
+  }
+}
+)) {
+  return false;
+}
+Collection<Node> uses=reachingUses.getUses(varName,defCfgNode);
+if (uses.size() != 1) {
+  return false;
+}
+return true;
+}

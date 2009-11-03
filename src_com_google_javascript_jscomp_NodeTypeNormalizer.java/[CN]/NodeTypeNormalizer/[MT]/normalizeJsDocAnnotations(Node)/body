@@ -1,0 +1,13 @@
+{
+  if (n.getType() == Token.OBJECTLIT) {
+    for (Node key=n.getFirstChild(); key != null; key=key.getNext().getNext()) {
+      Node value=key.getNext();
+      if (key.getJSDocInfo() != null && key.getNext().getType() == Token.FUNCTION) {
+        value.setJSDocInfo(key.getJSDocInfo());
+      }
+    }
+  }
+  for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+    normalizeJsDocAnnotations(child);
+  }
+}

@@ -1,0 +1,8 @@
+{
+  JSModule[] m=createModules("function Foo() {}" + "Foo.prototype.baz = function() { return 1; };" + "function Goo() {}"+ "Goo.prototype.baz = function() { return 2; };","","(new Foo).baz()","","(new Goo).baz()");
+  m[1].addDependency(m[0]);
+  m[2].addDependency(m[1]);
+  m[3].addDependency(m[2]);
+  m[4].addDependency(m[2]);
+  test(m,new String[]{STUB_DECLARATIONS + "function Foo() {}" + "Foo.prototype.baz = JSCompiler_stubMethod(1);"+ "function Goo() {}"+ "Goo.prototype.baz = JSCompiler_stubMethod(0);","","Foo.prototype.baz = " + "JSCompiler_unstubMethod(1, function() { return 1; });" + "Goo.prototype.baz = "+ "JSCompiler_unstubMethod(0, function() { return 2; });"+ "(new Foo).baz()","","(new Goo).baz()"});
+}

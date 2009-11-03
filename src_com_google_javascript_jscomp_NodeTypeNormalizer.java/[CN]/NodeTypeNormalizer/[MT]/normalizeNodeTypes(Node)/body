@@ -1,0 +1,15 @@
+{
+  if (n.getType() == Token.EXPR_VOID) {
+    n.setType(Token.EXPR_RESULT);
+    reportChange();
+  }
+  if (n.getType() == Token.FUNCTION) {
+    n.removeProp(Node.FUNCTION_PROP);
+    reportChange();
+  }
+  normalizeBlocks(n);
+  for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+    Preconditions.checkState(child.getParent() == n);
+    normalizeNodeTypes(child);
+  }
+}

@@ -1,0 +1,20 @@
+{
+  if (token != JsDocToken.STRING) {
+    return reportGenericTypeSyntaxWarning();
+  }
+  Node typeName=newStringNode(stream.getString());
+  if (match(JsDocToken.LT)) {
+    next();
+    skipEOLs();
+    Node memberType=parseTypeExpressionList(next());
+    if (memberType != null) {
+      typeName.addChildToFront(memberType);
+      skipEOLs();
+      if (!match(JsDocToken.GT)) {
+        return reportTypeSyntaxWarning("msg.jsdoc.missing.gt");
+      }
+      next();
+    }
+  }
+  return typeName;
+}

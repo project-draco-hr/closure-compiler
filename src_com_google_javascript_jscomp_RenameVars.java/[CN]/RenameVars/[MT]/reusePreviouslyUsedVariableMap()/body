@@ -1,0 +1,12 @@
+{
+  for (  Assignment a : assignments.values()) {
+    String prevNewName=prevUsedRenameMap.lookupNewName(a.oldName);
+    if (prevNewName == null || reservedNames.contains(prevNewName)) {
+      continue;
+    }
+    if (a.oldName.startsWith(LOCAL_VAR_PREFIX) || (!externNames.contains(a.oldName) && prevNewName.startsWith(prefix))) {
+      reservedNames.add(prevNewName);
+      finalizeNameAssignment(a,prevNewName);
+    }
+  }
+}

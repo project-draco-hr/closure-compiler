@@ -1,0 +1,38 @@
+{
+  StringBuilder sb=new StringBuilder("/**\n");
+  if (node.getJSType().isUnknownType()) {
+    return "";
+  }
+  FunctionType funType=(FunctionType)node.getJSType();
+  Node paramNode=funType.getSource().getFirstChild().getNext().getFirstChild();
+  for (  Node n : funType.getParameters()) {
+    if (paramNode == null) {
+      break;
+    }
+    sb.append(" * @param {" + n.getJSType() + "} ");
+    sb.append(paramNode.getString());
+    sb.append("\n");
+    paramNode=paramNode.getNext();
+  }
+  JSType retType=funType.getReturnType();
+  if (retType != null && !retType.isUnknownType() && !retType.isEmptyType()) {
+    sb.append(" * @return {" + retType + "}\n");
+  }
+  if (funType.isConstructor() || funType.isInterface()) {
+    ObjectType superInstance=funType.getSuperClassConstructor().getInstanceType();
+    if (!superInstance.toString().equals("Object")) {
+      sb.append(" * @extends {" + superInstance + "}\n");
+    }
+    for (    ObjectType interfaze : funType.getImplementedInterfaces()) {
+      sb.append(" * @implements {" + interfaze + "}\n");
+    }
+    if (funType.isConstructor()) {
+      sb.append(" * @constructor\n");
+    }
+ else     if (funType.isInterface()) {
+      sb.append(" * @interface\n");
+    }
+  }
+  sb.append(" */\n");
+  return sb.toString();
+}

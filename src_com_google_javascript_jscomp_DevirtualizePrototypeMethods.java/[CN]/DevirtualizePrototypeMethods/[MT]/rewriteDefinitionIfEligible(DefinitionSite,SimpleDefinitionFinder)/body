@@ -1,0 +1,17 @@
+{
+  if (defSite.inExterns || !defSite.inGlobalScope || !isEligibleDefinition(defFinder,defSite)) {
+    return;
+  }
+  Node node=defSite.node;
+  if (!isPrototypeMethodDefinition(node)) {
+    return;
+  }
+  for (Node ancestor=node.getParent(); ancestor != null; ancestor=ancestor.getParent()) {
+    if (NodeUtil.isControlStructure(ancestor)) {
+      return;
+    }
+  }
+  String newMethodName=getRewrittenMethodName(node.getLastChild().getString());
+  rewriteDefinition(node,newMethodName);
+  rewriteCallSites(defFinder,defSite.definition,newMethodName);
+}

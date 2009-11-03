@@ -1,0 +1,7 @@
+{
+  JSModule[] modules=createModules("function Foo() {}" + "Foo.prototype.baz = function() {};","","(new Foo).baz() + 1","(new Foo).baz() + 2");
+  modules[1].addDependency(modules[0]);
+  modules[2].addDependency(modules[1]);
+  modules[3].addDependency(modules[1]);
+  test(modules,new String[]{STUB_DECLARATIONS + "function Foo() {}" + "Foo.prototype.baz = JSCompiler_stubMethod(0);","Foo.prototype.baz = JSCompiler_unstubMethod(0, function() {});","(new Foo).baz() + 1","(new Foo).baz() + 2"});
+}

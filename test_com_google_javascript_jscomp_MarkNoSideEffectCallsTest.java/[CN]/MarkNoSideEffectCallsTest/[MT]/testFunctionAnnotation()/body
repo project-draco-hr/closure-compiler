@@ -1,0 +1,10 @@
+{
+  testMarkCalls("/**@nosideeffects*/function f(){}","f()",ImmutableList.of("f"));
+  testMarkCalls("/**@nosideeffects*/var f = function(){};","f()",ImmutableList.of("f"));
+  testMarkCalls("var f = /**@nosideeffects*/function(){};","f()",ImmutableList.of("f"));
+  testMarkCalls("var f; f = /**@nosideeffects*/function(){};","f()",ImmutableList.of("f"));
+  testMarkCalls("var f; /**@nosideeffects*/ f = function(){};","f()",ImmutableList.of("f"));
+  testMarkCalls("function f(){}",Collections.<String>emptyList());
+  testMarkCalls("function f(){} f()",Collections.<String>emptyList());
+  testMarkCalls("/**@nosideeffects*/var f = " + "/**@nosideeffects*/function(){};","f()",ImmutableList.of("f"));
+}

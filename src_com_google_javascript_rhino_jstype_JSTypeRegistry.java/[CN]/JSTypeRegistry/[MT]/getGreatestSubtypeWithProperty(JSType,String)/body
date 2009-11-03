@@ -1,0 +1,15 @@
+{
+  if (greatestSubtypeByProperty.containsKey(propertyName)) {
+    return greatestSubtypeByProperty.get(propertyName).getGreatestSubtype(type);
+  }
+  if (typesIndexedByProperty.containsKey(propertyName)) {
+    UnionTypeBuilder builder=new UnionTypeBuilder(this);
+    for (    JSType alt : typesIndexedByProperty.get(propertyName)) {
+      builder.addAlternate(alt);
+    }
+    JSType built=builder.build();
+    greatestSubtypeByProperty.put(propertyName,built);
+    return built.getGreatestSubtype(type);
+  }
+  return getNativeType(NO_TYPE);
+}

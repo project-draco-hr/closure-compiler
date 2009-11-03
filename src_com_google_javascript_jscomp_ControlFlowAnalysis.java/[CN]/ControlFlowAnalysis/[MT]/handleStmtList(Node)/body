@@ -1,0 +1,32 @@
+{
+  Node parent=node.getParent();
+  if (node.getType() == Token.BLOCK && parent != null && parent.getType() == Token.TRY && NodeUtil.getCatchBlock(parent) == node && !NodeUtil.hasCatchHandler(node)) {
+    return;
+  }
+  Node child=node.getFirstChild();
+  while (child != null && child.getType() == Token.FUNCTION) {
+    child=child.getNext();
+  }
+  if (child != null) {
+    createEdge(node,Branch.UNCOND,computeFallThrough(child));
+  }
+ else {
+    createEdge(node,Branch.UNCOND,computeFollowNode(node));
+  }
+  if (parent != null) {
+switch (parent.getType()) {
+case Token.DEFAULT:
+case Token.CASE:
+case Token.TRY:
+      break;
+default :
+    if (node.getType() == Token.BLOCK && node.isSyntheticBlock()) {
+      Node next=node.getLastChild();
+      if (next != null) {
+        createEdge(node,Branch.SYN_BLOCK,computeFallThrough(next));
+      }
+    }
+  break;
+}
+}
+}

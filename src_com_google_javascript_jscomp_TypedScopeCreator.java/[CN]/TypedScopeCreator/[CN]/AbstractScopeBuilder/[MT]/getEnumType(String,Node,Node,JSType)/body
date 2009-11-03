@@ -1,0 +1,38 @@
+{
+  EnumType enumType=null;
+  if (value != null) {
+    if (value.getType() == Token.OBJECTLIT) {
+      enumType=typeRegistry.createEnumType(name,elementsType);
+      Node key=value.getFirstChild();
+      while (key != null) {
+        String keyName=NodeUtil.getStringValue(key);
+        if (enumType.hasOwnProperty(keyName)) {
+          compiler.report(JSError.make(sourceName,key,ENUM_DUP,keyName));
+        }
+ else         if (!codingConvention.isValidEnumKey(keyName)) {
+          compiler.report(JSError.make(sourceName,key,ENUM_NOT_CONSTANT,keyName));
+        }
+ else {
+          enumType.defineElement(keyName);
+        }
+        key=key.getNext();
+        key=(key == null) ? null : key.getNext();
+      }
+    }
+ else     if (value.isQualifiedName()) {
+      Var var=scope.getVar(value.getQualifiedName());
+      if (var != null && var.getType() instanceof EnumType) {
+        enumType=(EnumType)var.getType();
+      }
+    }
+  }
+  if (enumType == null) {
+    compiler.report(JSError.make(sourceName,parent,ENUM_INITIALIZER));
+  }
+ else   if (scope.isGlobal()) {
+    if (name != null && !name.isEmpty()) {
+      typeRegistry.declareType(name,enumType.getElementsType());
+    }
+  }
+  return enumType;
+}

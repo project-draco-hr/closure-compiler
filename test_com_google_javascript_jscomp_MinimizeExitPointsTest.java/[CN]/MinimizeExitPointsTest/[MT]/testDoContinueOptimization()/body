@@ -1,0 +1,21 @@
+{
+  fold("do{if(x)continue; x=3; continue; }while(true)","do if(x); else x=3; while(true)");
+  foldSame("do{a();continue;b()}while(true)");
+  fold("do{if(true){a();continue;}else;b();}while(true)","do{if(true){a();}else{b();}}while(true)");
+  fold("do{if(false){a();continue;}else;b();continue;}while(true)","do{if(false){a();}else{b();}}while(true)");
+  fold("do{if(a()){b();continue;}else;c();}while(true)","do{if(a()){b();}else{c()}}while(true)");
+  fold("do{if(a()){b();}else{c();continue;}}while(true)","do{if(a()){b();}else{c();}}while(true)");
+  fold("do{if(a()){b();continue;}else;}while(true)","do{if(a()){b();}else;}while(true)");
+  fold("do{if(a()){continue;}else{continue;} continue;}while(true)","do{if(a()){}else{}}while(true)");
+  fold("do{if(a()){continue;}else{continue;} b();}while(true)","do{if(a()){}else{continue; b();}}while(true)");
+  fold("do{while(a())continue;}while(true)","do while(a());while(true)");
+  fold("do{for(x in a())continue}while(true)","do for(x in a());while(true)");
+  fold("do{while(a())break;}while(true)","do while(a())break;while(true)");
+  fold("do for(x in a())break;while(true)","do for(x in a())break;while(true)");
+  fold("do{try{continue;}catch(e){continue;}}while(true)","do{try{}catch(e){}}while(true)");
+  fold("do{try{if(a()){continue;}else{continue;}" + "continue;}catch(e){}}while(true)","do{try{if(a()){}else{}}catch(e){}}while(true)");
+  fold("do{g:continue}while(true)","do{}while(true)");
+  fold("do{g:if(a()){continue;}else{continue;} continue;}while(true)","do{g:if(a());else;}while(true)");
+  fold("do { foo(); continue; } while(false)","do { foo(); } while(false)");
+  fold("do { foo(); break; } while(false)","do { foo(); } while(false)");
+}

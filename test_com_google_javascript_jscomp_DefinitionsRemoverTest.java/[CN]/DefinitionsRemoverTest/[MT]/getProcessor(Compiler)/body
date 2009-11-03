@@ -1,0 +1,13 @@
+{
+  return new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      DefinitionsGatherer g=new DefinitionsGatherer();
+      (new NodeTraversal(compiler,g)).traverse(root);
+      for (      Definition def : g.definitions) {
+        def.remove();
+        compiler.reportCodeChange();
+      }
+    }
+  }
+;
+}

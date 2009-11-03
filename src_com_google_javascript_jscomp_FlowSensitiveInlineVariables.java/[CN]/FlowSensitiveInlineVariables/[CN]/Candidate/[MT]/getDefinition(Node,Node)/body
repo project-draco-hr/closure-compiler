@@ -1,0 +1,21 @@
+{
+  AbstractCfgNodeTraversalCallback gatherCb=new AbstractCfgNodeTraversalCallback(){
+    @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
+switch (n.getType()) {
+case Token.NAME:
+        if (n.getString().equals(varName) && n.hasChildren()) {
+          def=n;
+        }
+      return;
+case Token.ASSIGN:
+    Node lhs=n.getFirstChild();
+  if (NodeUtil.isName(lhs) && lhs.getString().equals(varName)) {
+    def=n;
+  }
+return;
+}
+}
+}
+;
+NodeTraversal.traverse(compiler,n,gatherCb);
+}

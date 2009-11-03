@@ -1,0 +1,457 @@
+{
+  Node pn=null;
+  int tt;
+  tt=peekToken();
+switch (tt) {
+case Token.IF:
+{
+      consumeToken();
+      decompiler.addToken(Token.IF);
+      int lineno=ts.getLineno();
+      int charno=ts.getCharno();
+      Node cond=condition();
+      decompiler.addEOL(Token.LC);
+      Node ifTrue=statement();
+      Node ifFalse=null;
+      if (matchToken(Token.ELSE)) {
+        decompiler.addToken(Token.RC);
+        decompiler.addToken(Token.ELSE);
+        decompiler.addEOL(Token.LC);
+        ifFalse=statement();
+      }
+      decompiler.addEOL(Token.RC);
+      pn=nf.createIf(cond,ifTrue,ifFalse,lineno,charno);
+      return pn;
+    }
+case Token.SWITCH:
+{
+    consumeToken();
+    decompiler.addToken(Token.SWITCH);
+    int lineno=ts.getLineno();
+    int charno=ts.getCharno();
+    mustMatchToken(Token.LP,"msg.no.paren.switch");
+    decompiler.addToken(Token.LP);
+    pn=enterSwitch(expr(false),lineno,charno);
+    try {
+      mustMatchToken(Token.RP,"msg.no.paren.after.switch");
+      decompiler.addToken(Token.RP);
+      mustMatchToken(Token.LC,"msg.no.brace.switch");
+      decompiler.addEOL(Token.LC);
+      boolean hasDefault=false;
+      switchLoop:       for (; ; ) {
+        tt=nextToken();
+        lineno=ts.getLineno();
+        charno=ts.getCharno();
+        Node caseExpression;
+switch (tt) {
+case Token.RC:
+          break switchLoop;
+case Token.CASE:
+        decompiler.addToken(Token.CASE);
+      caseExpression=expr(false);
+    mustMatchToken(Token.COLON,"msg.no.colon.case");
+  decompiler.addEOL(Token.COLON);
+break;
+case Token.DEFAULT:
+if (hasDefault) {
+reportError("msg.double.switch.default");
+}
+decompiler.addToken(Token.DEFAULT);
+hasDefault=true;
+caseExpression=null;
+mustMatchToken(Token.COLON,"msg.no.colon.case");
+decompiler.addEOL(Token.COLON);
+break;
+default :
+reportError("msg.bad.switch");
+break switchLoop;
+}
+Node block=nf.createLeaf(Token.BLOCK,lineno,charno);
+block.setIsSyntheticBlock(true);
+while ((tt=peekToken()) != Token.RC && tt != Token.CASE && tt != Token.DEFAULT && tt != Token.EOF) {
+nf.addChildToBack(block,statement());
+}
+nf.addSwitchCase(pn,caseExpression,block,lineno,charno);
+}
+decompiler.addEOL(Token.RC);
+nf.closeSwitch(pn);
+}
+  finally {
+exitSwitch();
+}
+return pn;
+}
+case Token.WHILE:
+{
+consumeToken();
+decompiler.addToken(Token.WHILE);
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+Node cond=condition();
+decompiler.addEOL(Token.LC);
+Node body=statement();
+decompiler.addEOL(Token.RC);
+pn=nf.createWhile(cond,body,lineno,charno);
+return pn;
+}
+case Token.DO:
+{
+consumeToken();
+decompiler.addToken(Token.DO);
+decompiler.addEOL(Token.LC);
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+Node body=statement();
+decompiler.addToken(Token.RC);
+mustMatchToken(Token.WHILE,"msg.no.while.do");
+decompiler.addToken(Token.WHILE);
+Node cond=condition();
+pn=nf.createDoWhile(body,cond,lineno,charno);
+matchToken(Token.SEMI);
+decompiler.addEOL(Token.SEMI);
+return pn;
+}
+case Token.FOR:
+{
+consumeToken();
+boolean isForEach=false;
+decompiler.addToken(Token.FOR);
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+Node init;
+Node cond;
+Node incr=null;
+Node body;
+if (matchToken(Token.NAME)) {
+decompiler.addName(ts.getString());
+if (ts.getString().equals("each")) {
+isForEach=true;
+}
+ else {
+reportError("msg.no.paren.for");
+}
+}
+mustMatchToken(Token.LP,"msg.no.paren.for");
+decompiler.addToken(Token.LP);
+tt=peekToken();
+if (tt == Token.SEMI) {
+init=nf.createLeaf(Token.EMPTY,ts.getLineno(),ts.getCharno());
+}
+ else {
+if (tt == Token.VAR) {
+consumeToken();
+init=variables(Token.FOR);
+}
+ else {
+init=expr(true);
+}
+}
+if (matchToken(Token.IN)) {
+decompiler.addToken(Token.IN);
+cond=expr(false);
+}
+ else {
+mustMatchToken(Token.SEMI,"msg.no.semi.for");
+decompiler.addToken(Token.SEMI);
+if (peekToken() == Token.SEMI) {
+cond=nf.createLeaf(Token.EMPTY,ts.getLineno(),ts.getCharno());
+}
+ else {
+cond=expr(false);
+}
+mustMatchToken(Token.SEMI,"msg.no.semi.for.cond");
+decompiler.addToken(Token.SEMI);
+if (peekToken() == Token.RP) {
+incr=nf.createLeaf(Token.EMPTY,ts.getLineno(),ts.getCharno());
+}
+ else {
+incr=expr(false);
+}
+}
+mustMatchToken(Token.RP,"msg.no.paren.for.ctrl");
+decompiler.addToken(Token.RP);
+decompiler.addEOL(Token.LC);
+body=statement();
+decompiler.addEOL(Token.RC);
+if (incr == null) {
+pn=nf.createForIn(init,cond,body,lineno,charno);
+}
+ else {
+pn=nf.createFor(init,cond,incr,body,lineno,charno);
+}
+return pn;
+}
+case Token.TRY:
+{
+consumeToken();
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+Node tryblock;
+Node catchblocks=null;
+Node finallyblock=null;
+JSDocInfo info=ts.getAndResetJSDocInfo();
+decompiler.addToken(Token.TRY);
+decompiler.addEOL(Token.LC);
+tryblock=statement();
+decompiler.addEOL(Token.RC);
+catchblocks=nf.createLeaf(Token.BLOCK,ts.getLineno(),ts.getCharno());
+boolean sawDefaultCatch=false;
+int peek=peekToken();
+if (peek == Token.CATCH) {
+while (matchToken(Token.CATCH)) {
+int catchLineno=ts.getLineno();
+int catchCharno=ts.getCharno();
+if (sawDefaultCatch) {
+reportError("msg.catch.unreachable");
+}
+decompiler.addToken(Token.CATCH);
+mustMatchToken(Token.LP,"msg.no.paren.catch");
+decompiler.addToken(Token.LP);
+mustMatchToken(Token.NAME,"msg.bad.catchcond");
+String varName=ts.getString();
+int nameLineno=ts.getLineno();
+int nameCharno=ts.getCharno();
+decompiler.addName(varName);
+Node catchCond=null;
+if (matchToken(Token.IF)) {
+decompiler.addToken(Token.IF);
+catchCond=expr(false);
+}
+ else {
+sawDefaultCatch=true;
+}
+mustMatchToken(Token.RP,"msg.bad.catchcond");
+decompiler.addToken(Token.RP);
+mustMatchToken(Token.LC,"msg.no.brace.catchblock");
+decompiler.addEOL(Token.LC);
+nf.addChildToBack(catchblocks,nf.createCatch(varName,nameLineno,nameCharno,catchCond,statements(),catchLineno,catchCharno));
+mustMatchToken(Token.RC,"msg.no.brace.after.body");
+decompiler.addEOL(Token.RC);
+}
+}
+ else if (peek != Token.FINALLY) {
+mustMatchToken(Token.FINALLY,"msg.try.no.catchfinally");
+}
+if (matchToken(Token.FINALLY)) {
+decompiler.addToken(Token.FINALLY);
+decompiler.addEOL(Token.LC);
+finallyblock=statement();
+decompiler.addEOL(Token.RC);
+}
+pn=nf.createTryCatchFinally(tryblock,catchblocks,finallyblock,lineno,charno);
+if (info != null) {
+pn.setJSDocInfo(info);
+}
+return pn;
+}
+case Token.THROW:
+{
+consumeToken();
+if (peekTokenOrEOL() == Token.EOL) {
+reportError("msg.bad.throw.eol");
+}
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+decompiler.addToken(Token.THROW);
+pn=nf.createThrow(expr(false),lineno,charno);
+break;
+}
+case Token.BREAK:
+{
+consumeToken();
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+decompiler.addToken(Token.BREAK);
+String label=matchLabel();
+if (label != null) {
+decompiler.addToken(Token.NAME);
+decompiler.addName(label);
+}
+pn=nf.createBreak(label,lineno,charno);
+break;
+}
+case Token.CONTINUE:
+{
+consumeToken();
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+decompiler.addToken(Token.CONTINUE);
+String label=matchLabel();
+if (label != null) {
+decompiler.addToken(Token.NAME);
+decompiler.addName(label);
+}
+pn=nf.createContinue(label,lineno,charno);
+break;
+}
+case Token.DEBUGGER:
+{
+consumeToken();
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+decompiler.addToken(Token.DEBUGGER);
+pn=nf.createDebugger(lineno,charno);
+break;
+}
+case Token.WITH:
+{
+consumeToken();
+decompiler.addToken(Token.WITH);
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+mustMatchToken(Token.LP,"msg.no.paren.with");
+decompiler.addToken(Token.LP);
+Node obj=expr(false);
+mustMatchToken(Token.RP,"msg.no.paren.after.with");
+decompiler.addToken(Token.RP);
+decompiler.addEOL(Token.LC);
+++nestingOfWith;
+Node body;
+try {
+body=statement();
+}
+  finally {
+--nestingOfWith;
+}
+decompiler.addEOL(Token.RC);
+pn=nf.createWith(obj,body,lineno,charno);
+return pn;
+}
+case Token.CONST:
+case Token.VAR:
+{
+consumeToken();
+pn=variables(tt);
+break;
+}
+case Token.RETURN:
+{
+if (!insideFunction()) {
+reportError("msg.bad.return");
+}
+consumeToken();
+decompiler.addToken(Token.RETURN);
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+Node retExpr;
+tt=peekTokenOrEOL();
+switch (tt) {
+case Token.SEMI:
+case Token.RC:
+case Token.EOF:
+case Token.EOL:
+case Token.ERROR:
+retExpr=null;
+break;
+default :
+retExpr=expr(false);
+hasReturnValue=true;
+}
+pn=nf.createReturn(retExpr,lineno,charno);
+break;
+}
+case Token.LC:
+consumeToken();
+if (statementLabel != null) {
+decompiler.addToken(Token.LC);
+}
+pn=statements();
+mustMatchToken(Token.RC,"msg.no.brace.block");
+if (statementLabel != null) {
+decompiler.addEOL(Token.RC);
+}
+return pn;
+case Token.ERROR:
+case Token.SEMI:
+consumeToken();
+pn=nf.createLeaf(Token.EMPTY,ts.getLineno(),ts.getCharno());
+return pn;
+case Token.FUNCTION:
+{
+consumeToken();
+pn=function(FunctionNode.FUNCTION_EXPRESSION_STATEMENT);
+return pn;
+}
+case Token.DEFAULT:
+{
+consumeToken();
+mustHaveXML();
+decompiler.addToken(Token.DEFAULT);
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+if (!(matchToken(Token.NAME) && ts.getString().equals("xml"))) {
+reportError("msg.bad.namespace");
+}
+decompiler.addName(" xml");
+if (!(matchToken(Token.NAME) && ts.getString().equals("namespace"))) {
+reportError("msg.bad.namespace");
+}
+decompiler.addName(" namespace");
+if (!matchToken(Token.ASSIGN)) {
+reportError("msg.bad.namespace");
+}
+decompiler.addToken(Token.ASSIGN);
+Node expr=expr(false);
+pn=nf.createDefaultNamespace(expr,lineno,charno);
+break;
+}
+case Token.NAME:
+{
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+String name=ts.getString();
+setCheckForLabel();
+pn=expr(false);
+if (pn.getType() != Token.LABEL) {
+pn=nf.createExprStatement(pn,lineno,charno);
+}
+ else {
+if (peekToken() != Token.COLON) Kit.codeBug();
+consumeToken();
+decompiler.addName(name);
+decompiler.addEOL(Token.COLON);
+if (labelSet == null) {
+labelSet=new Hashtable<String,Node>();
+}
+ else if (labelSet.containsKey(name)) {
+reportError("msg.dup.label");
+}
+labelSet.put(name,pn);
+pn=nf.createLabel(name,lineno,charno);
+try {
+nf.addChildToBack(pn,statementHelper(pn));
+}
+  finally {
+labelSet.remove(name);
+}
+return pn;
+}
+break;
+}
+default :
+{
+int lineno=ts.getLineno();
+int charno=ts.getCharno();
+pn=expr(false);
+pn=nf.createExprStatement(pn,lineno,charno);
+break;
+}
+}
+int ttFlagged=peekFlaggedToken();
+switch (ttFlagged & CLEAR_TI_MASK) {
+case Token.SEMI:
+consumeToken();
+break;
+case Token.ERROR:
+case Token.EOF:
+case Token.RC:
+break;
+default :
+if ((ttFlagged & TI_AFTER_EOL) == 0) {
+reportError("msg.no.semi.stmt");
+}
+break;
+}
+decompiler.addEOL(Token.SEMI);
+return pn;
+}

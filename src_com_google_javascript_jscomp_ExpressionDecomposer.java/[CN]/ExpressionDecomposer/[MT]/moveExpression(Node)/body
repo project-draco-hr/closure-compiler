@@ -1,0 +1,13 @@
+{
+  String resultName=getTempValueName();
+  Node injectionPoint=findInjectionPoint(expression);
+  Preconditions.checkNotNull(injectionPoint);
+  Node injectionPointParent=injectionPoint.getParent();
+  Preconditions.checkNotNull(injectionPointParent);
+  Preconditions.checkState(NodeUtil.isStatementBlock(injectionPointParent));
+  Node expressionParent=expression.getParent();
+  expressionParent.replaceChild(expression,Node.newString(Token.NAME,resultName));
+  Node newExpressionRoot=NodeUtil.newVarNode(resultName,expression);
+  injectionPointParent.addChildBefore(newExpressionRoot,injectionPoint);
+  compiler.reportCodeChange();
+}

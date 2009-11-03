@@ -1,0 +1,7 @@
+{
+  String src="while(1){try{" + "if(a){a;continue;}else if(b){b;break;} else if(c) throw 1; else a}" + "catch(e){}finally{c()}bar}foo";
+  ControlFlowGraph<Node> cfg=createCfg(src);
+  assertCrossEdge(cfg,Token.CONTINUE,Token.BLOCK,Branch.UNCOND);
+  assertCrossEdge(cfg,Token.BREAK,Token.BLOCK,Branch.UNCOND);
+  assertCrossEdge(cfg,Token.THROW,Token.BLOCK,Branch.ON_EX);
+}

@@ -1,0 +1,37 @@
+{
+  if (type instanceof UnionType) {
+    type=type.restrictByNotNullOrUndefined();
+    if (type instanceof UnionType) {
+      for (      JSType alt : ((UnionType)type).getAlternates()) {
+        computeRelatedTypes(alt);
+      }
+      return;
+    }
+  }
+  BitSet related=relatedBitsets.get(type);
+  if (related == null) {
+    related=new BitSet(intForType.size());
+    relatedBitsets.put(type,related);
+  }
+  ObjectType parentType=(ObjectType)type;
+  while (parentType != null) {
+    related.set(getIntForType(parentType));
+    parentType=parentType.getImplicitPrototype();
+  }
+  FunctionType constructor=null;
+  if (type instanceof FunctionType) {
+    constructor=(FunctionType)type;
+  }
+ else   if (type instanceof FunctionPrototypeType) {
+    constructor=((FunctionPrototypeType)type).getOwnerFunction();
+  }
+ else {
+    constructor=((ObjectType)type).getConstructor();
+  }
+  if (constructor != null) {
+    Set<ObjectType> interfaces=constructor.getAllImplementedInterfaces();
+    for (    ObjectType itype : interfaces) {
+      related.set(getIntForType(itype));
+    }
+  }
+}

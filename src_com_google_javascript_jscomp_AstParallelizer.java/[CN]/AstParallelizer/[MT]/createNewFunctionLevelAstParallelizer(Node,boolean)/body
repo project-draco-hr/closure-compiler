@@ -1,0 +1,21 @@
+{
+  Predicate<Node> shouldSplit=new Predicate<Node>(){
+    @Override public boolean apply(    Node input){
+      return NodeUtil.isFunction(input);
+    }
+  }
+;
+  Predicate<Node> shouldTraverse=new Predicate<Node>(){
+    @Override public boolean apply(    Node ignored){
+      return true;
+    }
+  }
+;
+  Supplier<Node> placeHolders=new Supplier<Node>(){
+    @Override public Node get(){
+      return new Node(Token.FUNCTION,Node.newString(Token.NAME,TEMP_NAME),new Node(Token.LP),new Node(Token.BLOCK));
+    }
+  }
+;
+  return new AstParallelizer(shouldSplit,shouldTraverse,placeHolders,root,globalPass);
+}

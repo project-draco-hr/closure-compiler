@@ -1,0 +1,19 @@
+{
+  Node parent=node.getParent();
+  if (parent == null) {
+    return false;
+  }
+  Node gramp=parent.getParent();
+  if ((gramp == null) || (parent.getFirstChild() != node) || !NodeUtil.isExprAssign(gramp)) {
+    return false;
+  }
+  Node functionNode=parent.getLastChild();
+  if ((functionNode == null) || !NodeUtil.isFunction(functionNode)) {
+    return false;
+  }
+  if (!NodeUtil.isGetProp(node)) {
+    return false;
+  }
+  Node nameNode=node.getFirstChild();
+  return NodeUtil.isGetProp(nameNode) && nameNode.getLastChild().getString().equals("prototype");
+}

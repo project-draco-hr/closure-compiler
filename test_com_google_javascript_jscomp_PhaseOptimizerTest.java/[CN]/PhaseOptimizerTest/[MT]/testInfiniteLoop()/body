@@ -1,0 +1,11 @@
+{
+  Loop loop=optimizer.addFixedPointLoop();
+  addLoopedPass(loop,"x",PhaseOptimizer.MAX_LOOPS + 1);
+  try {
+    optimizer.process(null,null);
+    fail("Expected RuntimeException");
+  }
+ catch (  RuntimeException e) {
+    assertTrue(e.getMessage().contains(PhaseOptimizer.OPTIMIZE_LOOP_ERROR));
+  }
+}

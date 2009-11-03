@@ -1,0 +1,76 @@
+{
+  List<PassFactory> checks=Lists.newArrayList();
+  if (options.checkSuspiciousCode) {
+    checks.add(suspiciousCode);
+  }
+  if (options.checkControlStructures) {
+    checks.add(checkControlStructures);
+  }
+  if (options.checkRequires.isOn()) {
+    checks.add(checkRequires);
+  }
+  if (options.checkProvides.isOn()) {
+    checks.add(checkProvides);
+  }
+  if (options.generateExports) {
+    checks.add(generateExports);
+  }
+  if (options.exportTestFunctions) {
+    checks.add(exportTestFunctions);
+  }
+  if (options.closurePass) {
+    checks.add(closurePrimitives.makeOneTimePass());
+  }
+  if (options.closurePass && options.checkMissingGetCssNameLevel.isOn()) {
+    checks.add(closureCheckGetCssName);
+  }
+  if (options.closurePass) {
+    checks.add(closureReplaceGetCssName);
+  }
+  if (options.syntheticBlockStartMarker != null) {
+    checks.add(createSyntheticBlocks);
+  }
+  if (options.checkSymbols) {
+    checks.add(checkVars);
+  }
+  if (options.checkShadowVars.isOn()) {
+    checks.add(checkShadowVars);
+  }
+  if (options.aggressiveVarCheck.isOn()) {
+    checks.add(checkVariableReferences);
+  }
+  if (options.processObjectPropertyString) {
+    checks.add(objectPropertyStringPreprocess);
+  }
+  if (options.checkTypes) {
+    checks.add(resolveTypes.makeOneTimePass());
+    checks.add(inferTypes.makeOneTimePass());
+    checks.add(checkTypes.makeOneTimePass());
+  }
+ else {
+    if (options.checkFunctions.isOn()) {
+      checks.add(checkFunctions);
+    }
+    if (options.checkMethods.isOn()) {
+      checks.add(checkMethods);
+    }
+  }
+  if (options.checkUnreachableCode.isOn() || (options.checkTypes && options.checkMissingReturn.isOn())) {
+    checks.add(checkControlFlow);
+  }
+  if (options.enables(DiagnosticGroups.ACCESS_CONTROLS) && options.checkTypes) {
+    checks.add(checkAccessControls);
+  }
+  if (options.checkGlobalNamesLevel.isOn()) {
+    checks.add(checkGlobalNames);
+  }
+  if (options.checkUndefinedProperties.isOn() || options.checkUnusedPropertiesEarly) {
+    checks.add(checkSuspiciousProperties);
+  }
+  if (options.checkCaja || options.checkEs5Strict) {
+    checks.add(checkStrictMode);
+  }
+  checks.add(processDefines);
+  assertAllOneTimePasses(checks);
+  return checks;
+}

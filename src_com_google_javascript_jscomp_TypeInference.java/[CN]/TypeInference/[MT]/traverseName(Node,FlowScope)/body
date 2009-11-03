@@ -1,0 +1,18 @@
+{
+  String varName=n.getString();
+  Node value=n.getFirstChild();
+  JSType type=n.getJSType();
+  if (value != null) {
+    scope=traverse(value,scope);
+    updateScopeForTypeChange(scope,n,n.getJSType(),getJSType(value));
+    return scope;
+  }
+ else {
+    StaticSlot<JSType> var=scope.getSlot(varName);
+    if (var != null) {
+      type=var.getType();
+    }
+  }
+  n.setJSType(type);
+  return scope;
+}

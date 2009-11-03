@@ -1,0 +1,25 @@
+{
+  int tt;
+  Node pn;
+  tt=peekToken();
+  int lineno=ts.getLineno();
+  int charno=ts.getCharno();
+  if (tt == Token.NEW) {
+    consumeToken();
+    decompiler.addToken(Token.NEW);
+    pn=nf.createLeaf(Token.NEW,lineno,charno);
+    nf.addChildToBack(pn,memberExpr(false));
+    if (matchToken(Token.LP)) {
+      decompiler.addToken(Token.LP);
+      argumentList(pn);
+    }
+    tt=peekToken();
+    if (tt == Token.LC) {
+      nf.addChildToBack(pn,primaryExpr());
+    }
+  }
+ else {
+    pn=primaryExpr();
+  }
+  return memberExprTail(allowCallSyntax,pn);
+}

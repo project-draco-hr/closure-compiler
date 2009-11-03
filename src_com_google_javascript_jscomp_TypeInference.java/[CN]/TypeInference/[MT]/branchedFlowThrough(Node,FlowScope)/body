@@ -1,0 +1,51 @@
+{
+  FlowScope output=flowThrough(source,input);
+  Node condition=null;
+  FlowScope conditionFlowScope=null;
+  BooleanOutcomePair conditionOutcomes=null;
+  List<DiGraphEdge<Node,Branch>> branchEdges=getCfg().getOutEdges(source);
+  List<FlowScope> result=Lists.newArrayListWithCapacity(branchEdges.size());
+  for (  DiGraphEdge<Node,Branch> branchEdge : branchEdges) {
+    Branch branch=branchEdge.getValue();
+    FlowScope newScope=output;
+switch (branch) {
+case ON_TRUE:
+      if (source.getType() == Token.FOR && source.getChildCount() == 3) {
+        Node item=source.getFirstChild();
+        if (item.getType() == Token.VAR) {
+          item=item.getFirstChild();
+        }
+        if (item.getType() == Token.NAME) {
+          FlowScope informed=output.createChildFlowScope();
+          redeclare(informed,item.getString(),getNativeType(STRING_TYPE));
+          newScope=informed;
+        }
+        break;
+      }
+case ON_FALSE:
+    if (condition == null) {
+      condition=NodeUtil.getConditionExpression(source);
+      if (condition == null && source.getType() == Token.CASE) {
+        condition=createSwitchCaseConditionExpression(source);
+      }
+    }
+  if (condition != null) {
+    if (condition.getType() == Token.AND || condition.getType() == Token.OR) {
+      if (conditionOutcomes == null) {
+        conditionOutcomes=condition.getType() == Token.AND ? traverseAnd(condition,output.createChildFlowScope()) : traverseOr(condition,output.createChildFlowScope());
+      }
+      newScope=reverseInterpreter.getPreciserScopeKnowingConditionOutcome(condition,conditionOutcomes.getOutcomeFlowScope(condition.getType(),branch == Branch.ON_TRUE),branch == Branch.ON_TRUE);
+    }
+ else {
+      if (conditionFlowScope == null) {
+        conditionFlowScope=traverse(condition,output.createChildFlowScope());
+      }
+      newScope=reverseInterpreter.getPreciserScopeKnowingConditionOutcome(condition,conditionFlowScope,branch == Branch.ON_TRUE);
+    }
+  }
+break;
+}
+result.add(newScope.optimize());
+}
+return result;
+}

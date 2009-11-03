@@ -1,0 +1,19 @@
+{
+  Node irNode=justTransform(node);
+  if (irNode.getType() == Token.FUNCTION && irNode.getFirstChild().getLineno() != -1) {
+    irNode.setLineno(irNode.getFirstChild().getLineno());
+    irNode.setCharno(irNode.getFirstChild().getCharno());
+  }
+ else {
+    if (irNode.getLineno() == -1) {
+      int lineno=node.getLineno();
+      irNode.setLineno(lineno);
+      int charno=position2charno(node.getAbsolutePosition());
+      irNode.setCharno(charno);
+    }
+  }
+  if (node.getJsDoc() != null) {
+    irNode.putProp(TMP_JSDOC_PROP,node.getJsDoc());
+  }
+  return irNode;
+}

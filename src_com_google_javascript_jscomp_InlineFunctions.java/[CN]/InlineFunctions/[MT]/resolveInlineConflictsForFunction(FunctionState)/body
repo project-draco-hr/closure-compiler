@@ -1,0 +1,19 @@
+{
+  if (!fs.hasReferences()) {
+    return;
+  }
+  Node fnNode=fs.getFn().getFunctionNode();
+  Set<String> names=findCalledFunctions(fnNode);
+  if (!names.isEmpty()) {
+    for (    String name : names) {
+      FunctionState fsCalled=fns.get(name);
+      if (fsCalled != null && fsCalled.canRemove()) {
+        fsCalled.setRemove(false);
+        if (!mimimizeCost(fsCalled)) {
+          fsCalled.setInline(false);
+        }
+      }
+    }
+    fs.setSafeFnNode(fs.getFn().getFunctionNode().cloneTree());
+  }
+}

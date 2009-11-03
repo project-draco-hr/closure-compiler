@@ -1,0 +1,19 @@
+{
+  if (n.getType() == Token.NAME) {
+    String name=n.getString();
+    Scope.Var var=t.getScope().getVar(name);
+    if (var != null && var.isLocal()) {
+      return;
+    }
+    Property global=globals.get(name);
+    if (global != null) {
+      if ((NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || parent.getType() == Token.INC || parent.getType() == Token.DEC || parent.getType() == Token.NEW) {
+        global.recordMutator(t);
+      }
+ else {
+        global.recordAccessor(t);
+      }
+      globalUses.add(n);
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  Region region=provider.getSourceRegion(sourceName,lineNumber);
+  assertNotNull(region);
+  String sourceRegion=region.getSourceExcerpt();
+  assertNotNull(sourceRegion);
+  if (lineNumber == 1) {
+    assertEquals(1,region.getBeginningLineNumber());
+  }
+ else {
+    assertTrue(region.getBeginningLineNumber() <= lineNumber);
+  }
+  assertTrue(lineNumber <= region.getEndingLineNumber());
+  assertNotSame(sourceRegion,0,sourceRegion.length());
+  assertNotSame(sourceRegion,'\n',sourceRegion.charAt(0));
+  assertNotSame(sourceRegion,'\n',sourceRegion.charAt(sourceRegion.length() - 1));
+  String line=provider.getSourceLine(sourceName,lineNumber);
+  assertTrue(sourceRegion,sourceRegion.contains(line));
+}

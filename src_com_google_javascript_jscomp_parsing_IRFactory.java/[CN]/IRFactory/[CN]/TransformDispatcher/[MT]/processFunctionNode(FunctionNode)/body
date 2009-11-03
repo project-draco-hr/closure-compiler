@@ -1,0 +1,34 @@
+{
+  Name name=functionNode.getFunctionName();
+  Boolean isUnnamedFunction=false;
+  if (name == null) {
+    name=new Name();
+    name.setIdentifier("");
+    isUnnamedFunction=true;
+  }
+  Node node=new com.google.javascript.rhino.FunctionNode(name.getIdentifier());
+  node.putProp(Node.SOURCENAME_PROP,functionNode.getSourceName());
+  Node newName=transform(name);
+  if (isUnnamedFunction) {
+    newName.setLineno(functionNode.getLineno());
+    int lpColumn=functionNode.getAbsolutePosition() + functionNode.getLp();
+    newName.setCharno(position2charno(lpColumn));
+  }
+  node.addChildToBack(newName);
+  Node lp=new Node(Token.LP);
+  Name fnName=functionNode.getFunctionName();
+  if (fnName != null) {
+    lp.setLineno(fnName.getLineno());
+  }
+ else {
+    lp.setLineno(functionNode.getLineno());
+  }
+  int lparenCharno=functionNode.getLp() + functionNode.getAbsolutePosition();
+  lp.setCharno(position2charno(lparenCharno));
+  for (  AstNode param : functionNode.getParams()) {
+    lp.addChildToBack(transform(param));
+  }
+  node.addChildToBack(lp);
+  node.addChildToBack(transform(functionNode.getBody()));
+  return node;
+}

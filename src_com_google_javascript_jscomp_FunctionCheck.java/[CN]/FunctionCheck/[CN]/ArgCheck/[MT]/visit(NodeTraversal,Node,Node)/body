@@ -1,0 +1,21 @@
+{
+switch (n.getType()) {
+case Token.NEW:
+case Token.CALL:
+    Node fn=n.getFirstChild();
+  if (fn.getType() == Token.NAME) {
+    String fnName=fn.getString();
+    Scope.Var v=t.getScope().getVar(fnName);
+    if (v == null) {
+      return;
+    }
+    Node fnDef=v.getInitialValue();
+    if (fnDef == null || fnDef.getType() != Token.FUNCTION) {
+      return;
+    }
+    FunctionInfo f=getFunctionInfo(fnDef,v.getInputName());
+    checkCall(n,fnName,Collections.singletonList(f),t,level);
+  }
+break;
+}
+}

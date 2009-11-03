@@ -1,0 +1,20 @@
+{
+  boolean hasChanged=false;
+  if (!referenced) {
+    referenced=true;
+    hasChanged=true;
+  }
+  if (moduleGraph != null) {
+    JSModule originalDeepestCommon=deepestCommonModuleRef;
+    if (deepestCommonModuleRef == null) {
+      deepestCommonModuleRef=module;
+    }
+ else {
+      deepestCommonModuleRef=moduleGraph.getDeepestCommonDependencyInclusive(deepestCommonModuleRef,module);
+    }
+    if (originalDeepestCommon != deepestCommonModuleRef) {
+      hasChanged=true;
+    }
+  }
+  return hasChanged;
+}

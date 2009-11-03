@@ -1,0 +1,28 @@
+{
+  if (parent == null || !NodeUtil.isStatementBlock(parent)) {
+    return;
+  }
+  if (!NodeUtil.isExpressionNode(n) && !NodeUtil.isVar(n)) {
+    return;
+  }
+  Node nextSibling=n.getNext();
+  if (nextSibling != null && nextSibling.getType() == Token.FOR && nextSibling.getChildCount() == 4 && nextSibling.getFirstChild().getType() == Token.EMPTY) {
+    if (NodeUtil.containsType(n,Token.IN)) {
+      return;
+    }
+    Node forNode=nextSibling;
+    Node oldInitializer=forNode.getFirstChild();
+    parent.removeChild(n);
+    Node newInitializer;
+    if (NodeUtil.isVar(n)) {
+      newInitializer=n;
+    }
+ else {
+      Preconditions.checkState(n.hasOneChild());
+      newInitializer=n.getFirstChild();
+      n.removeChild(newInitializer);
+    }
+    forNode.replaceChild(oldInitializer,newInitializer);
+    compiler.reportCodeChange();
+  }
+}

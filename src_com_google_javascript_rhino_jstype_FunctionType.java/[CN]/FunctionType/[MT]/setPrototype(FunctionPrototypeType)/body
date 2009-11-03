@@ -1,0 +1,16 @@
+{
+  if (prototype == null) {
+    return false;
+  }
+  if (isConstructor() && prototype == getInstanceType()) {
+    return false;
+  }
+  this.prototype=prototype;
+  if (isConstructor() || isInterface()) {
+    FunctionType superClass=getSuperClassConstructor();
+    if (superClass != null) {
+      superClass.addSubType(this);
+    }
+  }
+  return true;
+}

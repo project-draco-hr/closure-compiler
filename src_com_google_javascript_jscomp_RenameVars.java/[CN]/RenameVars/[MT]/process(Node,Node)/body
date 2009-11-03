@@ -1,0 +1,34 @@
+{
+  assignmentLog=new StringBuilder();
+  NodeTraversal.traverse(compiler,externs,new ProcessVars(true));
+  NodeTraversal.traverse(compiler,root,new ProcessVars(false));
+  reservedNames.addAll(externNames);
+  SortedSet<Assignment> varsByFrequency=new TreeSet<Assignment>(FREQUENCY_COMPARATOR);
+  varsByFrequency.addAll(assignments.values());
+  if (prevUsedRenameMap != null) {
+    reusePreviouslyUsedVariableMap();
+  }
+  assignNames(varsByFrequency);
+  boolean changed=false;
+  for (  Node n : globalNameNodes) {
+    String oldName=n.getString();
+    Assignment a=assignments.get(oldName);
+    if (a.newName != null) {
+      n.setString(a.newName);
+      changed=changed || !a.newName.equals(oldName);
+    }
+  }
+  int count=0;
+  for (  Node n : localNameNodes) {
+    String oldName=localTempNames.get(count);
+    Assignment a=assignments.get(oldName);
+    n.setString(a.newName);
+    changed=changed || !a.newName.equals(oldName);
+    count++;
+  }
+  if (changed) {
+    compiler.reportCodeChange();
+  }
+  compiler.addToDebugLog("JS var assignments:\n" + assignmentLog);
+  assignmentLog=null;
+}

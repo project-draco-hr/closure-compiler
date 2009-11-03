@@ -1,0 +1,25 @@
+{
+  if (sourceFile != null) {
+    n.putProp(Node.SOURCEFILE_PROP,sourceFile);
+  }
+switch (n.getType()) {
+case Token.GETPROP:
+    Node propNode=n.getFirstChild().getNext();
+  if (propNode.getType() == Token.STRING) {
+    n.putProp(Node.ORIGINALNAME_PROP,propNode.getString());
+  }
+break;
+case Token.NAME:
+n.putProp(Node.ORIGINALNAME_PROP,n.getString());
+break;
+case Token.OBJECTLIT:
+for (Node key=n.getFirstChild(); key != null; key=key.getNext().getNext()) {
+if (key.getType() == Token.STRING) {
+if (!key.isQuotedString()) {
+key.putProp(Node.ORIGINALNAME_PROP,key.getString());
+}
+}
+}
+break;
+}
+}

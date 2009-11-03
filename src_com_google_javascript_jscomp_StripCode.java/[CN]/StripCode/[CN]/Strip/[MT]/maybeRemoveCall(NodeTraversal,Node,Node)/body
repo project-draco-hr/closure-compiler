@@ -1,0 +1,26 @@
+{
+  if (isMethodCallThatTriggersRemoval(t,n,parent)) {
+    Node ancestor=parent;
+    Node ancestorChild=n;
+    int ancestorLevel=1;
+    while (true) {
+      if (ancestor.getFirstChild() != ancestorChild) {
+        replaceWithNull(ancestorChild,ancestor);
+        break;
+      }
+      if (NodeUtil.isExpressionNode(ancestor)) {
+        Node ancParent=ancestor.getParent();
+        replaceWithEmpty(ancestor,ancParent);
+        break;
+      }
+      int type=ancestor.getType();
+      if (type != Token.GETPROP && type != Token.GETELEM && type != Token.CALL) {
+        replaceWithNull(ancestorChild,ancestor);
+        break;
+      }
+      ancestorChild=ancestor;
+      ancestor=ancestor.getParent();
+    }
+    compiler.reportCodeChange();
+  }
+}

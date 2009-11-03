@@ -1,0 +1,21 @@
+{
+  List<CompilerInput> inputs=new ArrayList<CompilerInput>();
+  Map<String,JSModule> inputMap=new HashMap<String,JSModule>();
+  for (  JSModule module : modules_) {
+    for (    CompilerInput input : module.getInputs()) {
+      String inputName=input.getName();
+      JSModule firstModule=inputMap.get(inputName);
+      if (firstModule == null) {
+        inputs.add(input);
+        inputMap.put(inputName,module);
+      }
+ else {
+        report(JSError.make(DUPLICATE_INPUT_IN_MODULES,firstModule.getName(),module.getName(),inputName));
+      }
+    }
+  }
+  if (hasErrors()) {
+    return new CompilerInput[0];
+  }
+  return inputs.toArray(new CompilerInput[inputs.size()]);
+}

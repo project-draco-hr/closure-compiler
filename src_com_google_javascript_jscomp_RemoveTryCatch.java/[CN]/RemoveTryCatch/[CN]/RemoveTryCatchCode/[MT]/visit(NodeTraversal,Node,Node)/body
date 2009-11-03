@@ -1,0 +1,43 @@
+{
+switch (n.getType()) {
+case Token.TRY:
+    JSDocInfo info=n.getJSDocInfo();
+  if (info != null && info.shouldPreserveTry()) {
+    return;
+  }
+Node tryBlock=n.getFirstChild();
+Node catchBlock=tryBlock.getNext();
+Node finallyBlock=catchBlock != null ? catchBlock.getNext() : null;
+if (finallyBlock != null && tryNodesContainingReturnStatements.contains(n)) {
+return;
+}
+if (catchBlock.hasOneChild()) {
+NodeUtil.redeclareVarsInsideBranch(catchBlock);
+}
+n.detachChildren();
+Node block;
+if (!NodeUtil.isStatementBlock(parent)) {
+block=new Node(Token.BLOCK);
+parent.replaceChild(n,block);
+block.addChildToFront(tryBlock);
+}
+ else {
+parent.replaceChild(n,tryBlock);
+block=parent;
+}
+if (finallyBlock != null) {
+block.addChildAfter(finallyBlock,tryBlock);
+}
+compiler.reportCodeChange();
+break;
+case Token.RETURN:
+boolean isInTryBlock=false;
+for (Node anc=parent; anc != null && anc.getType() != Token.FUNCTION; anc=anc.getParent()) {
+if (anc.getType() == Token.TRY) {
+tryNodesContainingReturnStatements.add(anc);
+break;
+}
+}
+break;
+}
+}

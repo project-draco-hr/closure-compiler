@@ -1,0 +1,11 @@
+{
+  Preconditions.checkArgument(ancestors.length >= 2);
+  Preconditions.checkArgument(ancestors[0].getType() == Token.NAME);
+  Preconditions.checkArgument(ancestors[1].getType() == Token.VAR);
+  this.iterator=new FunctionlessLocalScope(ancestors);
+  Node nameNode=ancestors[0];
+  Node valueNode=nameNode.getFirstChild();
+  this.varName=nameNode.getString();
+  this.valueHasSideEffects=valueNode != null && NodeUtil.mayHaveSideEffects(valueNode);
+  advanceLookAhead(true);
+}

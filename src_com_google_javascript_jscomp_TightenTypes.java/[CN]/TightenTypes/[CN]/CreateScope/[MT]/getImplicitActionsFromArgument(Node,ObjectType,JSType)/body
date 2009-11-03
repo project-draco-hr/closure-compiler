@@ -1,0 +1,15 @@
+{
+  if (paramType instanceof UnionType) {
+    List<Action> actions=Lists.newArrayList();
+    for (    JSType paramAlt : ((UnionType)paramType).getAlternates()) {
+      actions.addAll(getImplicitActionsFromArgument(arg,thisType,paramAlt));
+    }
+    return actions;
+  }
+ else   if (paramType instanceof FunctionType) {
+    return Lists.<Action>newArrayList(createExternFunctionCall(arg,thisType,(FunctionType)paramType));
+  }
+ else {
+    return Lists.<Action>newArrayList(createExternFunctionCall(arg,thisType,null));
+  }
+}

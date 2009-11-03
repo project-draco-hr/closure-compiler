@@ -1,0 +1,12 @@
+{
+  Node n=t.getScope().getRootNode();
+  BasicBlock parent=blockStack.isEmpty() ? null : blockStack.peek();
+  blockStack.push(new BasicBlock(parent,n));
+  if (n.getType() == Token.FUNCTION) {
+    String fnName=n.getFirstChild().getString();
+    Scope s=t.getScope();
+    if (!fnName.isEmpty() && s.getVar(fnName).scope == s) {
+      addReference(t,s.getVar(fnName),Reference.newBleedingFunction(t,parent,n));
+    }
+  }
+}

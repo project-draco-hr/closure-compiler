@@ -1,0 +1,21 @@
+{
+  JSDocInfo info;
+  int valueNodeType;
+switch (parent.getType()) {
+case Token.ASSIGN:
+    info=parent.getJSDocInfo();
+  valueNodeType=n.getNext().getType();
+break;
+case Token.VAR:
+info=n.getJSDocInfo();
+if (info == null) {
+info=parent.getJSDocInfo();
+}
+Node valueNode=n.getFirstChild();
+valueNodeType=valueNode != null ? valueNode.getType() : Token.VOID;
+break;
+default :
+return false;
+}
+return info != null && (info.isConstructor() && valueNodeType == Token.FUNCTION || info.hasEnumParameterType() && valueNodeType == Token.OBJECTLIT);
+}

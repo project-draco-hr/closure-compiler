@@ -1,0 +1,16 @@
+{
+  Node nameNode=node.getFirstChild();
+  if (nameNode != null) {
+    String name=nameNode.getString();
+    Preconditions.checkState(name.length() != 0);
+    LabelInfo li=getLabelInfo(name);
+    if (li != null) {
+      String newName=getNameForId(li.id);
+      li.referenced=true;
+      if (!name.equals(newName)) {
+        nameNode.setString(newName);
+        compiler.reportCodeChange();
+      }
+    }
+  }
+}

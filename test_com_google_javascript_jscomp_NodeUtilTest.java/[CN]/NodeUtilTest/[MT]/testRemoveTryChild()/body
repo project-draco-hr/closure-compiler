@@ -1,0 +1,38 @@
+{
+  Compiler compiler=new Compiler();
+  Node root=parse("try {foo()} catch(e) {} finally {}");
+  Node actual=root.cloneTree();
+  Node tryNode=actual.getFirstChild();
+  Node tryBlock=tryNode.getFirstChild();
+  Node catchBlocks=tryNode.getFirstChild().getNext();
+  Node finallyBlock=tryNode.getLastChild();
+  NodeUtil.removeChild(tryNode,finallyBlock);
+  String expected="try {foo()} catch(e) {}";
+  String difference=parse(expected).checkTreeEquals(actual);
+  if (difference != null) {
+    assertTrue("Nodes do not match:\n" + difference,false);
+  }
+  actual=root.cloneTree();
+  tryNode=actual.getFirstChild();
+  tryBlock=tryNode.getFirstChild();
+  catchBlocks=tryNode.getFirstChild().getNext();
+  finallyBlock=tryNode.getLastChild();
+  NodeUtil.removeChild(tryNode,tryBlock);
+  expected="try {} catch(e) {} finally {}";
+  difference=parse(expected).checkTreeEquals(actual);
+  if (difference != null) {
+    assertTrue("Nodes do not match:\n" + difference,false);
+  }
+  actual=root.cloneTree();
+  tryNode=actual.getFirstChild();
+  tryBlock=tryNode.getFirstChild();
+  catchBlocks=tryNode.getFirstChild().getNext();
+  Node catchBlock=catchBlocks.getFirstChild();
+  finallyBlock=tryNode.getLastChild();
+  NodeUtil.removeChild(catchBlocks,catchBlock);
+  expected="try {foo()} finally {}";
+  difference=parse(expected).checkTreeEquals(actual);
+  if (difference != null) {
+    assertTrue("Nodes do not match:\n" + difference,false);
+  }
+}

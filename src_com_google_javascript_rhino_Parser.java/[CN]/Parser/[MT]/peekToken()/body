@@ -1,0 +1,15 @@
+{
+  int tt=currentFlaggedToken;
+  if (tt == Token.EOF) {
+    tt=ts.getToken();
+    if (tt == Token.EOL) {
+      do {
+        tt=ts.getToken();
+      }
+ while (tt == Token.EOL);
+      tt|=TI_AFTER_EOL;
+    }
+    currentFlaggedToken=tt;
+  }
+  return tt & CLEAR_TI_MASK;
+}

@@ -1,0 +1,20 @@
+{
+  String name=nameNode.getString();
+  Property prop=getProperty(name);
+  prop.readCount++;
+  if (prop.writeCount == 0 && !isExternallyDefined(name)) {
+    if (checkReads.isOn()) {
+      if (prop.reads == null) {
+        prop.reads=new ArrayList<Node>(MAX_REPORTS_PER_PROPERTY);
+      }
+      if (prop.reads.size() < MAX_REPORTS_PER_PROPERTY) {
+        nameNode.putProp(Node.SOURCENAME_PROP,t.getSourceName());
+        prop.reads.add(nameNode);
+      }
+    }
+  }
+ else {
+    prop.reads=null;
+  }
+  prop.writes=null;
+}

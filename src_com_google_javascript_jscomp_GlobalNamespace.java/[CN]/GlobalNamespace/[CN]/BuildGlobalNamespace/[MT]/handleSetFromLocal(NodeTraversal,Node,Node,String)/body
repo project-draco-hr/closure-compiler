@@ -1,0 +1,11 @@
+{
+  if (maybeHandlePrototypePrefix(t,n,parent,name))   return;
+  Name node=getOrCreateName(name);
+  Ref set=new Ref(t,n,Ref.Type.SET_FROM_LOCAL);
+  node.addRef(set);
+  if (isNestedAssign(parent)) {
+    Ref get=new Ref(t,n,Ref.Type.ALIASING_GET);
+    node.addRef(get);
+    Ref.markTwins(set,get);
+  }
+}

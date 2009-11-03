@@ -1,0 +1,19 @@
+{
+  String js="var foo = {}; var bar = new foo.bar.goo();";
+  JSSourceFile input=JSSourceFile.fromCode("foo.js",js);
+  Compiler compiler=new Compiler();
+  CompilerOptions opts=new CompilerOptions();
+  opts.checkRequires=CheckLevel.WARNING;
+  opts.closurePass=true;
+  Result result=compiler.compile(new JSSourceFile[]{},new JSSourceFile[]{input},opts);
+  JSError[] warnings=result.warnings;
+  assertNotNull(warnings);
+  assertTrue(warnings.length > 0);
+  String expectation="'foo.bar.goo' used but not goog.require'd";
+  for (  JSError warning : warnings) {
+    if (expectation.equals(warning.description)) {
+      return;
+    }
+  }
+  fail("Could not find the following warning:" + expectation);
+}

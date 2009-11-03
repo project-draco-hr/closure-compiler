@@ -1,0 +1,15 @@
+{
+  NameGenerator nameGen=new NameGenerator(reservedNames,"",reservedCharacters);
+  for (  Property p : props) {
+    if (generatePseudoNames) {
+      p.newName="$" + p.oldName + "$";
+    }
+ else {
+      if (p.newName == null) {
+        p.newName=nameGen.generateNextName();
+      }
+    }
+    reservedNames.add(p.newName);
+    compiler.addToDebugLog(p.oldName + " => " + p.newName);
+  }
+}

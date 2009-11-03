@@ -1,0 +1,34 @@
+{
+  if (other instanceof LinkedFlowScope) {
+    LinkedFlowScope that=(LinkedFlowScope)other;
+    if (this.optimize() == that.optimize()) {
+      return true;
+    }
+    if (this.getFunctionScope() != that.getFunctionScope()) {
+      return false;
+    }
+    if (cache == that.cache) {
+      for (      String name : cache.dirtySymbols) {
+        if (diffSlots(getSlot(name),that.getSlot(name))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    Map<String,StaticSlot<JSType>> myFlowSlots=allFlowSlots();
+    Map<String,StaticSlot<JSType>> otherFlowSlots=that.allFlowSlots();
+    for (    StaticSlot<JSType> slot : myFlowSlots.values()) {
+      if (diffSlots(slot,otherFlowSlots.get(slot.getName()))) {
+        return false;
+      }
+      otherFlowSlots.remove(slot.getName());
+    }
+    for (    StaticSlot<JSType> slot : otherFlowSlots.values()) {
+      if (diffSlots(slot,myFlowSlots.get(slot.getName()))) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
+}

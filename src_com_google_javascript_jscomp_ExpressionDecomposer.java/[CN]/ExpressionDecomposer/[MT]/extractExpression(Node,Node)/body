@@ -1,0 +1,12 @@
+{
+  Node parent=expr.getParent();
+  String tempName=getTempConstantValueName();
+  Node replacementValueNode=Node.newString(Token.NAME,tempName);
+  parent.replaceChild(expr,replacementValueNode);
+  Node tempNameNode=Node.newString(Token.NAME,tempName);
+  tempNameNode.addChildrenToBack(expr);
+  Node tempVarNode=new Node(Token.VAR,tempNameNode);
+  Node injectionPointParent=injectionPoint.getParent();
+  injectionPointParent.addChildBefore(tempVarNode,injectionPoint);
+  return tempVarNode;
+}

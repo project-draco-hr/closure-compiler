@@ -1,0 +1,66 @@
+{
+  super(convention,typeRegistry);
+  this.restricters=new ImmutableMapBuilder<String,Function<Pair<JSType,Boolean>,JSType>>().put("isDef",new Function<Pair<JSType,Boolean>,JSType>(){
+    public JSType apply(    Pair<JSType,Boolean> p){
+      if (p.second) {
+        return getRestrictedWithoutUndefined(p.first);
+      }
+ else {
+        return null;
+      }
+    }
+  }
+).put("isNull",new Function<Pair<JSType,Boolean>,JSType>(){
+    public JSType apply(    Pair<JSType,Boolean> p){
+      if (p.second) {
+        return getNativeType(NULL_TYPE);
+      }
+ else {
+        return getRestrictedWithoutNull(p.first);
+      }
+    }
+  }
+).put("isDefAndNotNull",new Function<Pair<JSType,Boolean>,JSType>(){
+    public JSType apply(    Pair<JSType,Boolean> p){
+      if (p.second) {
+        return getRestrictedWithoutUndefined(getRestrictedWithoutNull(p.first));
+      }
+ else {
+        return null;
+      }
+    }
+  }
+).put("isString",new Function<Pair<JSType,Boolean>,JSType>(){
+    public JSType apply(    Pair<JSType,Boolean> p){
+      return getRestrictedByTypeOfResult(p.first,"string",p.second);
+    }
+  }
+).put("isBoolean",new Function<Pair<JSType,Boolean>,JSType>(){
+    public JSType apply(    Pair<JSType,Boolean> p){
+      return getRestrictedByTypeOfResult(p.first,"boolean",p.second);
+    }
+  }
+).put("isNumber",new Function<Pair<JSType,Boolean>,JSType>(){
+    public JSType apply(    Pair<JSType,Boolean> p){
+      return getRestrictedByTypeOfResult(p.first,"number",p.second);
+    }
+  }
+).put("isFunction",new Function<Pair<JSType,Boolean>,JSType>(){
+    public JSType apply(    Pair<JSType,Boolean> p){
+      return getRestrictedByTypeOfResult(p.first,"function",p.second);
+    }
+  }
+).put("isArray",new Function<Pair<JSType,Boolean>,JSType>(){
+    public JSType apply(    Pair<JSType,Boolean> p){
+      Visitor<JSType> visitor=p.second ? restrictToArrayVisitor : restrictToNotArrayVisitor;
+      return p.first == null ? null : p.first.visit(visitor);
+    }
+  }
+).put("isObject",new Function<Pair<JSType,Boolean>,JSType>(){
+    public JSType apply(    Pair<JSType,Boolean> p){
+      Visitor<JSType> visitor=p.second ? restrictToObjectVisitor : restrictToNotObjectVisitor;
+      return p.first == null ? null : p.first.visit(visitor);
+    }
+  }
+).getMap();
+}

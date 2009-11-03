@@ -1,0 +1,25 @@
+{
+  Node notChild=n.getFirstChild();
+  int complementOperator;
+switch (notChild.getType()) {
+case Token.EQ:
+    complementOperator=Token.NE;
+  break;
+case Token.NE:
+complementOperator=Token.EQ;
+break;
+case Token.SHEQ:
+complementOperator=Token.SHNE;
+break;
+case Token.SHNE:
+complementOperator=Token.SHEQ;
+break;
+default :
+return false;
+}
+Node newOperator=n.removeFirstChild();
+newOperator.setType(complementOperator);
+parent.replaceChild(n,newOperator);
+t.getCompiler().reportCodeChange();
+return true;
+}

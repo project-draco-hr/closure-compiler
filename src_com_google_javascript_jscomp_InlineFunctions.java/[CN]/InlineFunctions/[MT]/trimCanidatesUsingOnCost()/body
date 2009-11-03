@@ -1,0 +1,15 @@
+{
+  Iterator<Entry<String,FunctionState>> i;
+  for (i=fns.entrySet().iterator(); i.hasNext(); ) {
+    FunctionState fs=i.next().getValue();
+    if (fs.hasReferences()) {
+      boolean lowersCost=mimimizeCost(fs);
+      if (!lowersCost) {
+        i.remove();
+      }
+    }
+ else     if (!fs.canRemove()) {
+      i.remove();
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  if ((additionalCode == null) && (additionalEndCode == null)) {
+    return new ProcessClosurePrimitives(compiler,false,true);
+  }
+ else {
+    return new CompilerPass(){
+      public void process(      Node externs,      Node root){
+        new ProcessClosurePrimitives(compiler,CheckLevel.OFF,true).process(externs,root);
+        if (additionalCode != null) {
+          JSSourceFile file=JSSourceFile.fromCode("additionalcode",additionalCode);
+          Node scriptNode=root.getFirstChild();
+          Node newScriptNode=new CompilerInput(file).getAstRoot(compiler);
+          while (newScriptNode.getLastChild() != null) {
+            Node lastChild=newScriptNode.getLastChild();
+            newScriptNode.removeChild(lastChild);
+            scriptNode.addChildBefore(lastChild,scriptNode.getFirstChild());
+          }
+        }
+        if (additionalEndCode != null) {
+          JSSourceFile file=JSSourceFile.fromCode("additionalendcode",additionalEndCode);
+          Node scriptNode=root.getFirstChild();
+          Node newScriptNode=new CompilerInput(file).getAstRoot(compiler);
+          while (newScriptNode.getFirstChild() != null) {
+            Node firstChild=newScriptNode.getFirstChild();
+            newScriptNode.removeChild(firstChild);
+            scriptNode.addChildToBack(firstChild);
+          }
+        }
+        new ProcessClosurePrimitives(compiler,CheckLevel.ERROR,true).process(externs,root);
+      }
+    }
+;
+  }
+}

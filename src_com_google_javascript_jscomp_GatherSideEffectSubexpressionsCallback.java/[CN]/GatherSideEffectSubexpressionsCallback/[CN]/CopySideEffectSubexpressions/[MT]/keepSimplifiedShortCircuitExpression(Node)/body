@@ -1,0 +1,10 @@
+{
+  Preconditions.checkArgument((original.getType() == Token.AND) || (original.getType() == Token.OR),"Expected: AND or OR, Got: " + Token.name(original.getType()));
+  Node left=original.getFirstChild();
+  Node right=left.getNext();
+  Node simplifiedRight=simplifyShortCircuitBranch(right);
+  Node simplified=original.cloneNode();
+  simplified.addChildToBack(left.cloneTree());
+  simplified.addChildToBack(simplifiedRight);
+  replacements.add(simplified);
+}

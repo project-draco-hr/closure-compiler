@@ -1,0 +1,30 @@
+{
+  Node receiver=n.getFirstChild();
+  if (recvType instanceof UnionType) {
+    List<Action> actions=Lists.newArrayList();
+    for (    JSType alt : ((UnionType)recvType).getAlternates()) {
+      actions.addAll(getImplicitActionsFromCall(n,alt));
+    }
+    return actions;
+  }
+ else   if (!(recvType instanceof FunctionType)) {
+    return Lists.<Action>newArrayList();
+  }
+  JSType objType=getJSType(receiver.getFirstChild()).restrictByNotNullOrUndefined();
+  String prop=receiver.getLastChild().getString();
+  if (objType instanceof ObjectType && (((ObjectType)objType).isPropertyInExterns(prop)) && ((FunctionType)recvType).getParameters() != null) {
+    List<Action> actions=Lists.newArrayList();
+    Iterator<Node> paramIter=((FunctionType)recvType).getParameters().iterator();
+    Iterator<Node> argumentIter=n.children().iterator();
+    argumentIter.next();
+    while (paramIter.hasNext() && argumentIter.hasNext()) {
+      Node arg=argumentIter.next();
+      Node param=paramIter.next();
+      if (arg.getJSType() instanceof FunctionType) {
+        actions.addAll(getImplicitActionsFromArgument(arg,((FunctionType)arg.getJSType()).getTypeOfThis(),param.getJSType()));
+      }
+    }
+    return actions;
+  }
+  return Lists.<Action>newArrayList();
+}

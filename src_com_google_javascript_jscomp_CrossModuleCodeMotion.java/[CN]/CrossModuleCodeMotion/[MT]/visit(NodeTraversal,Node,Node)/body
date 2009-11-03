@@ -1,0 +1,24 @@
+{
+  if (n.getType() != Token.NAME) {
+    return;
+  }
+  String name=n.getString();
+  if (name.isEmpty() || compiler.getCodingConvention().isExported(name)) {
+    return;
+  }
+  Var v=t.getScope().getVar(name);
+  if (v == null || !v.isGlobal()) {
+    return;
+  }
+  NamedInfo info=getNamedInfo(v);
+  if (info.allowMove) {
+    if (maybeProcessDeclaration(t,n,parent,info)) {
+      if (hasConditionalAncestor(n)) {
+        info.allowMove=false;
+      }
+    }
+ else {
+      processReference(t,info,name);
+    }
+  }
+}

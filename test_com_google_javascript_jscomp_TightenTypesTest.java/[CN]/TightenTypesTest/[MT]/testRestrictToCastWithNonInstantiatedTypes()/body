@@ -1,0 +1,6 @@
+{
+  testSame("/** @constructor */ function Super() {}\n" + "/** @constructor \n @extends {Super} */ function Foo() {};\n" + "Foo.prototype.blah = function() { foofunc() };\n"+ "/** @constructor \n @extends {Super} */ function Bar() {};\n"+ "Bar.prototype.blah = function() { barfunc() };\n"+ "function barfunc() {}\n"+ "function foofunc() {}\n"+ "var a = [];\n"+ "var u = /** @type {Super} */ (a[0]);\n"+ "u.blah()\n"+ "new Foo");
+  assertTrue(isCalled(getType("foofunc")));
+  assertFalse(isCalled(getType("barfunc")));
+  assertType("Array",getType("a"));
+}

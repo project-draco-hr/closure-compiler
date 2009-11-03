@@ -1,0 +1,25 @@
+{
+  returnType=oldType.getReturnType();
+  if (paramsParent == null) {
+    parametersNode=oldType.getParametersNode();
+    if (parametersNode == null) {
+      parametersNode=new FunctionParamBuilder(typeRegistry).build();
+    }
+  }
+ else {
+    FunctionParamBuilder paramBuilder=new FunctionParamBuilder(typeRegistry);
+    Iterator<Node> oldParams=oldType.getParameters().iterator();
+    boolean warnedAboutArgList=false;
+    for (Node currentParam=paramsParent.getFirstChild(); currentParam != null; currentParam=currentParam.getNext()) {
+      if (oldParams.hasNext()) {
+        paramBuilder.newParameterFromNode(oldParams.next());
+      }
+ else {
+        String name=currentParam.getString();
+        warnedAboutArgList|=addParameter(paramBuilder,typeRegistry.getNativeType(UNKNOWN_TYPE),warnedAboutArgList,codingConvention.isOptionalParameter(name),codingConvention.isVarArgsParameter(currentParam,name));
+      }
+    }
+    parametersNode=paramBuilder.build();
+  }
+  return this;
+}

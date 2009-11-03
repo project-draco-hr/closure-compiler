@@ -1,0 +1,26 @@
+{
+  if (namesToAlias == null || namesToAlias.isEmpty()) {
+    Node result=FunctionArgumentInjector.inject(fnTemplateRoot,null,argMap);
+    Preconditions.checkState(result == fnTemplateRoot);
+    return result;
+  }
+ else {
+    Map<String,Node> newArgMap=Maps.newHashMap(argMap);
+    List<Node> newVars=Lists.newLinkedList();
+    for (    Entry<String,Node> entry : argMap.entrySet()) {
+      String name=entry.getKey();
+      if (namesToAlias.contains(name)) {
+        Node newValue=entry.getValue().cloneTree();
+        Node newNode=NodeUtil.newVarNode(name,newValue);
+        newVars.add(0,newNode);
+        newArgMap.remove(name);
+      }
+    }
+    Node result=FunctionArgumentInjector.inject(fnTemplateRoot,null,newArgMap);
+    Preconditions.checkState(result == fnTemplateRoot);
+    for (    Node n : newVars) {
+      fnTemplateRoot.addChildToFront(n);
+    }
+    return result;
+  }
+}

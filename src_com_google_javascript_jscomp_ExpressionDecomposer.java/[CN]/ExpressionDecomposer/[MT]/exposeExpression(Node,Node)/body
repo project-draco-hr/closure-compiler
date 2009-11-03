@@ -1,0 +1,46 @@
+{
+  Node nonconditionalExpr=findNonconditionalParent(subExpression,expressionRoot);
+  boolean hasFollowingSideEffects=NodeUtil.mayHaveSideEffects(nonconditionalExpr);
+  Node exprInjectionPoint=findInjectionPoint(nonconditionalExpr);
+  DecompositionState state=new DecompositionState();
+  state.sideEffects=hasFollowingSideEffects;
+  state.extractBeforeStatement=exprInjectionPoint;
+  for (Node child=nonconditionalExpr, parent=child.getParent(); parent != expressionRoot; child=parent, parent=child.getParent()) {
+    int parentType=parent.getType();
+    Preconditions.checkState(!isConditionalOp(parent) || child == parent.getFirstChild());
+    if (parentType == Token.ASSIGN) {
+      if (parent.getFirstChild().getType() == Token.NAME) {
+      }
+ else {
+        Node left=parent.getFirstChild();
+        int type=left.getType();
+        if (left != child) {
+          Preconditions.checkState(NodeUtil.isGet(left));
+          if (type == Token.GETELEM) {
+            decomposeSubExpressions(left.getLastChild(),null,state);
+          }
+          decomposeSubExpressions(left.getFirstChild(),null,state);
+        }
+      }
+    }
+ else     if (parentType == Token.CALL && NodeUtil.isGet(parent.getFirstChild())) {
+      Node functionExpression=parent.getFirstChild();
+      decomposeSubExpressions(functionExpression.getNext(),child,state);
+      if (isExpressionTreeUnsafe(functionExpression,state.sideEffects)) {
+        state.sideEffects=true;
+        Node replacement=rewriteCallExpression(parent,state);
+        parent=replacement;
+      }
+    }
+ else {
+      decomposeSubExpressions(parent.getFirstChild(),child,state);
+    }
+  }
+  if (nonconditionalExpr == subExpression) {
+  }
+ else {
+    Node parent=nonconditionalExpr.getParent();
+    boolean needResult=parent.getType() != Token.EXPR_RESULT;
+    Node extractedConditional=extractConditional(nonconditionalExpr,exprInjectionPoint,needResult);
+  }
+}

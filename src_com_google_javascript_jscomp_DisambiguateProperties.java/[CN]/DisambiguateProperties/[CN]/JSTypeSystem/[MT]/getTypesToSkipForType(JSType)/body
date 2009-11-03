@@ -1,0 +1,11 @@
+{
+  type=type.restrictByNotNullOrUndefined();
+  if (type instanceof UnionType) {
+    Set<JSType> types=Sets.newHashSet(type);
+    for (    JSType alt : ((UnionType)type).getAlternates()) {
+      types.addAll(getTypesToSkipForTypeNonUnion(type));
+    }
+    return ImmutableSet.copyOf(types);
+  }
+  return ImmutableSet.copyOf(getTypesToSkipForTypeNonUnion(type));
+}

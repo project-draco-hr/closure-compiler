@@ -1,0 +1,27 @@
+{
+switch (n.getType()) {
+case Token.STRING:
+    return n.getString().length() > 0;
+case Token.NUMBER:
+  return n.getDouble() != 0;
+case Token.NULL:
+case Token.FALSE:
+case Token.VOID:
+return false;
+case Token.NAME:
+String name=n.getString();
+if ("undefined".equals(name) || "NaN".equals(name)) {
+return false;
+}
+ else if ("Infinity".equals(name)) {
+return true;
+}
+break;
+case Token.TRUE:
+case Token.ARRAYLIT:
+case Token.OBJECTLIT:
+case Token.REGEXP:
+return true;
+}
+throw new IllegalArgumentException("Non-literal value: " + n);
+}

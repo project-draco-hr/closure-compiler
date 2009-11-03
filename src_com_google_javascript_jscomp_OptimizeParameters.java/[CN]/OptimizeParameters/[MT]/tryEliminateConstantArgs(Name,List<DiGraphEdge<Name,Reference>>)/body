@@ -1,0 +1,31 @@
+{
+  List<Parameter> parameters=Lists.newArrayList();
+  boolean firstCall=true;
+  for (  DiGraphEdge<Name,Reference> refEdge : edges) {
+    Reference ref=refEdge.getValue();
+    Node call=ref.parent;
+    if (isCallSite(ref)) {
+      Node cur=call.getFirstChild();
+      if (firstCall) {
+        buildParameterList(parameters,cur);
+        firstCall=false;
+      }
+ else {
+        findConstantParameters(parameters,cur);
+      }
+    }
+  }
+  for (  DiGraphEdge<Name,Reference> refEdge : edges) {
+    Reference ref=refEdge.getValue();
+    Node call=ref.parent;
+    if (isCallSite(ref)) {
+      optimizeCallSite(parameters,call);
+    }
+  }
+  for (  Definition definition : name.getDeclarations()) {
+    Node function=definition.getRValue();
+    if (NodeUtil.isFunction(function)) {
+      optimizeFunctionDefinition(parameters,function);
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  checkFirstModule(modules);
+  externs_=makeCompilerInput(externs,true);
+  modules_=modules;
+  try {
+    moduleGraph_=new JSModuleGraph(modules);
+  }
+ catch (  JSModuleGraph.ModuleDependenceException e) {
+    report(JSError.make(MODULE_DEPENDENCY_ERROR,e.getModule().getName(),e.getDependentModule().getName()));
+    return;
+  }
+  inputs_=getAllInputsFromModules();
+  options_=options;
+  initInputsByNameMap();
+}

@@ -1,0 +1,18 @@
+{
+  final List<JSError> errors=new ArrayList<JSError>();
+  Compiler compiler=new Compiler(new BasicErrorManager(){
+    @Override public void report(    CheckLevel level,    JSError error){
+      errors.add(error);
+    }
+    @Override public void println(    CheckLevel level,    JSError error){
+    }
+    @Override protected void printSummary(){
+    }
+  }
+);
+  NodeTraversal t=new NodeTraversal(compiler,null);
+  DiagnosticType dt=DiagnosticType.warning("FOO","{0}, {1} - {2}");
+  t.report(null,dt,"Foo","Bar","Hello");
+  assertEquals(1,errors.size());
+  assertEquals("Foo, Bar - Hello",errors.get(0).description);
+}

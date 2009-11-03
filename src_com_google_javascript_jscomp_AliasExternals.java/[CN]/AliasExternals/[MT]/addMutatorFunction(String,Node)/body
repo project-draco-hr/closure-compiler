@@ -1,0 +1,21 @@
+{
+  Node functionName=Node.newString(Token.NAME,getMutatorFor(propName));
+  String localPropName=getMutatorFor(propName) + "$a";
+  String localValueName=getMutatorFor(propName) + "$b";
+  Node hasPropNode=Node.newString(Token.NAME,localPropName);
+  Node propValueNode=Node.newString(Token.NAME,localValueName);
+  Node args=new Node(Token.LP,hasPropNode,propValueNode);
+  Node propNameNode=Node.newString(Token.NAME,localPropName);
+  Node propValue=Node.newString(Token.STRING,propName);
+  Node getProp=new Node(Token.GETPROP,propNameNode,propValue);
+  Node assignFrom=Node.newString(Token.NAME,localValueName);
+  Node assign=new Node(Token.ASSIGN,getProp,assignFrom);
+  Node returnNode=new Node(Token.RETURN,assign);
+  Node functionBlock=new Node(Token.BLOCK,returnNode);
+  FunctionNode fnNode=new FunctionNode(functionName.getString());
+  fnNode.addChildToBack(functionName);
+  fnNode.addChildToBack(args);
+  fnNode.addChildToBack(functionBlock);
+  root.addChildToFront(fnNode);
+  compiler.reportCodeChange();
+}

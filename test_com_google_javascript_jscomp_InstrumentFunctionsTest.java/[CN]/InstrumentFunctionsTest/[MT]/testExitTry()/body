@@ -1,0 +1,11 @@
+{
+  this.instrumentationPb="report_exit: \"$$testExit\"";
+  test("function a(){try{return}catch(err){}}","function a(){try{return $$testExit(0)}catch(err){}$$testExit(0)}");
+  test("function a(){try{}catch(err){return}}","function a(){try{}catch(err){return $$testExit(0)}$$testExit(0)}");
+  test("function a(){try{return}finally{}}","function a(){try{return $$testExit(0)}finally{}$$testExit(0)}");
+  test("function a(){try{return}catch(err){}finally{}}","function a(){try{return $$testExit(0)}catch(err){}finally{}" + "$$testExit(0)}");
+  test("function a(){try{return 1}catch(err){return 2}}","function a(){try{return $$testExit(0, 1)}" + "catch(err){return $$testExit(0,2)}}");
+  test("function a(){try{return 1}catch(err){return 2}finally{}}","function a(){try{return $$testExit(0, 1)}" + "catch(err){return $$testExit(0,2)}" + "finally{}$$testExit(0)}");
+  test("function a(){try{return 1}catch(err){return 2}finally{return}}","function a(){try{return $$testExit(0, 1)}" + "catch(err){return $$testExit(0,2)}finally{return $$testExit(0)}}");
+  test("function a(){try{}catch(err){}finally{return}}","function a(){try{}catch(err){}finally{return $$testExit(0)}}");
+}

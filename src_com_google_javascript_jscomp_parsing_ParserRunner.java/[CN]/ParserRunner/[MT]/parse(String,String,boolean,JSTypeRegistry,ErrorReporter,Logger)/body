@@ -1,0 +1,33 @@
+{
+  initAnnotationNames();
+  Context cx=Context.enter();
+  cx.setErrorReporter(errorReporter);
+  cx.setLanguageVersion(Context.VERSION_1_5);
+  CompilerEnvirons compilerEnv=new CompilerEnvirons();
+  compilerEnv.initFromContext(cx);
+  compilerEnv.setRecordingComments(true);
+  compilerEnv.setRecordingLocalJsDocComments(true);
+  compilerEnv.setWarnTrailingComma(true);
+  if (isIdeMode) {
+    compilerEnv.setReservedKeywordAsIdentifier(true);
+    compilerEnv.setAllowMemberExprAsFunctionName(true);
+  }
+  Parser p=new Parser(compilerEnv,errorReporter);
+  AstRoot astRoot=null;
+  try {
+    astRoot=p.parse(sourceString,sourceName,1);
+  }
+ catch (  EvaluatorException e) {
+    logger.info("Error parsing " + sourceName + ": "+ e.getMessage());
+  }
+ finally {
+    Context.exit();
+  }
+  Node root=null;
+  if (astRoot != null) {
+    Config config=new Config(typeRegistry,annotationNames,isIdeMode);
+    root=IRFactory.transformTree(astRoot,sourceString,config,errorReporter);
+    root.setIsSyntheticBlock(true);
+  }
+  return root;
+}

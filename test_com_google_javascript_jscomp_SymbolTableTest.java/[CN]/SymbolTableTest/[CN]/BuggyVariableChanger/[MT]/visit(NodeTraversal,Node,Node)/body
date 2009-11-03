@@ -1,0 +1,24 @@
+{
+  Scope scope=t.getScope();
+  if (node.getType() == Token.VAR) {
+    compiler.reportCodeChange();
+    if (targetWarning == null) {
+      parent.removeChild(node);
+      for (Node child=node.getFirstChild(); child != null; child=child.getNext()) {
+        scope.undeclare(scope.getVar(child.getString()));
+      }
+    }
+ else     if (targetWarning == VARIABLE_COUNT_MISMATCH) {
+      parent.removeChild(node);
+      scope.undeclare(scope.getVar(node.getFirstChild().getString()));
+    }
+ else     if (targetWarning == MISSING_VARIABLE) {
+      node.getFirstChild().setString("z");
+    }
+ else     if (targetWarning == MOVED_VARIABLE) {
+      Node oldName=node.getFirstChild();
+      oldName.detachFromParent();
+      node.addChildToFront(Node.newString(Token.NAME,"x"));
+    }
+  }
+}

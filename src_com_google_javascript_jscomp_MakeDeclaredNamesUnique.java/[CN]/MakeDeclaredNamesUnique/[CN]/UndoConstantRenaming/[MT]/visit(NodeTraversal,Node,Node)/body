@@ -1,0 +1,16 @@
+{
+  if (node.getType() == Token.NAME) {
+    String name=node.getString();
+    if (name.contains(NodeUtil.CONSTANT_MARKER)) {
+      Preconditions.checkState(name.indexOf(NodeUtil.CONSTANT_MARKER) == name.lastIndexOf(NodeUtil.CONSTANT_MARKER));
+      String constantFreeName=constantRenamingCache.get(name);
+      if (constantFreeName == null) {
+        constantFreeName=name.replace(NodeUtil.CONSTANT_MARKER,"");
+        constantRenamingCache.put(name,constantFreeName);
+      }
+      node.setString(constantFreeName);
+      node.putBooleanProp(Node.IS_CONSTANT_NAME,true);
+      compiler.reportCodeChange();
+    }
+  }
+}

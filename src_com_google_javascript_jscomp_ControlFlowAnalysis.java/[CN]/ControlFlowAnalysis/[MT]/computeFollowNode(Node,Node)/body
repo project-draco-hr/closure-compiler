@@ -1,0 +1,70 @@
+{
+  Node parent=node.getParent();
+  if (parent == null || parent.getType() == Token.FUNCTION || node == root) {
+    return null;
+  }
+switch (parent.getType()) {
+case Token.IF:
+    return computeFollowNode(fromNode,parent);
+case Token.CASE:
+case Token.DEFAULT:
+  if (parent.getNext() != null) {
+    if (parent.getNext().getType() == Token.CASE) {
+      return parent.getNext().getFirstChild().getNext();
+    }
+ else     if (parent.getNext().getType() == Token.DEFAULT) {
+      return parent.getNext().getFirstChild();
+    }
+ else {
+      Preconditions.checkState(false,"Not reachable");
+    }
+  }
+ else {
+    return computeFollowNode(fromNode,parent);
+  }
+break;
+case Token.FOR:
+if (parent.getChildCount() == 4) {
+return parent.getFirstChild().getNext().getNext();
+}
+ else {
+return parent;
+}
+case Token.WHILE:
+case Token.DO:
+return parent;
+case Token.TRY:
+if (parent.getFirstChild() == node) {
+if (NodeUtil.hasFinally(parent)) {
+return computeFallThrough(parent.getLastChild());
+}
+ else {
+return computeFollowNode(fromNode,parent);
+}
+}
+ else if (NodeUtil.getCatchBlock(parent) == node) {
+if (NodeUtil.hasFinally(parent)) {
+return computeFallThrough(node.getNext());
+}
+ else {
+return computeFollowNode(fromNode,parent);
+}
+}
+ else if (parent.getLastChild() == node) {
+for (Node finallyNode : finallyMap.get(parent)) {
+createEdge(fromNode,Branch.UNCOND,finallyNode);
+}
+return computeFollowNode(fromNode,parent);
+}
+}
+Node nextSibling=node.getNext();
+while (nextSibling != null && nextSibling.getType() == Token.FUNCTION) {
+nextSibling=nextSibling.getNext();
+}
+if (nextSibling != null) {
+return computeFallThrough(nextSibling);
+}
+ else {
+return computeFollowNode(fromNode,parent);
+}
+}

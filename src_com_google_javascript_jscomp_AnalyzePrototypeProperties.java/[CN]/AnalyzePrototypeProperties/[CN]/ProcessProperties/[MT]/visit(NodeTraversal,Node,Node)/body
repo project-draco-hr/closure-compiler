@@ -1,0 +1,38 @@
+{
+  if (n.getType() == Token.GETPROP) {
+    String propName=n.getFirstChild().getNext().getString();
+    if (propName.equals("prototype")) {
+      processPrototypeParent(t,parent);
+    }
+ else     if (compiler.getCodingConvention().isExported(propName)) {
+      addGlobalUseOfSymbol(propName,t.getModule(),PROPERTY);
+    }
+ else {
+      addSymbolUse(propName,t.getModule(),PROPERTY);
+    }
+  }
+ else   if (n.getType() == Token.OBJECTLIT && !(parent.getType() == Token.ASSIGN && parent.getFirstChild().getType() == Token.GETPROP && parent.getFirstChild().getLastChild().getString().equals("prototype"))) {
+    for (Node propNameNode=n.getFirstChild(); propNameNode != null; propNameNode=propNameNode.getNext().getNext()) {
+      if (propNameNode.getType() == Token.STRING && !propNameNode.isQuotedString()) {
+        addSymbolUse(propNameNode.getString(),t.getModule(),PROPERTY);
+      }
+    }
+  }
+ else   if (n.getType() == Token.NAME) {
+    String name=n.getString();
+    Var var=t.getScope().getVar(name);
+    if (var != null && var.isGlobal() && var.getInitialValue() != null && var.getInitialValue().getType() == Token.FUNCTION) {
+      if (t.inGlobalScope()) {
+        if (!processGlobalFunctionDeclaration(t,n,parent,parent.getParent())) {
+          addGlobalUseOfSymbol(name,t.getModule(),VAR);
+        }
+      }
+ else {
+        addSymbolUse(name,t.getModule(),VAR);
+      }
+    }
+  }
+  if (isPrototypePropertyAssign(n) || isGlobalFunctionDeclaration(t,n,parent)) {
+    symbolStack.pop();
+  }
+}

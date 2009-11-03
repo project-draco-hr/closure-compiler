@@ -1,0 +1,29 @@
+{
+  int referenceCount=refs.size();
+  if (referenceCount == 0) {
+    return true;
+  }
+  int referencesUsingBlockInlining=0;
+  boolean checkModules=isRemovable && fnModule != null;
+  JSModuleGraph moduleGraph=compiler.getModuleGraph();
+  for (  Reference ref : refs) {
+    if (ref.mode == InliningMode.BLOCK) {
+      referencesUsingBlockInlining++;
+    }
+    if (checkModules && ref.module != null) {
+      if (ref.module != fnModule && !moduleGraph.dependsOn(ref.module,fnModule)) {
+        isRemovable=false;
+        checkModules=false;
+      }
+    }
+  }
+  int referencesUsingDirectInlining=referenceCount - referencesUsingBlockInlining;
+  if (referenceCount == 1 && isRemovable && referencesUsingDirectInlining == 1) {
+    return true;
+  }
+  int callCost=estimateCallCost(fnNode,referencesThis);
+  int overallCallCost=callCost * referenceCount;
+  int costDeltaDirect=inlineCostDelta(fnNode,namesToAlias,InliningMode.DIRECT);
+  int costDeltaBlock=inlineCostDelta(fnNode,namesToAlias,InliningMode.BLOCK);
+  return doesLowerCost(fnNode,overallCallCost,referencesUsingDirectInlining,costDeltaDirect,referencesUsingBlockInlining,costDeltaBlock,isRemovable);
+}

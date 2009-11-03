@@ -1,0 +1,17 @@
+{
+  if (namespace == null && memberTypeFlags == 0) {
+    if (target == null) {
+      return createName(name,nameLineno,nameCharno);
+    }
+    checkActivationName(name,Token.GETPROP);
+    if (ScriptRuntime.isSpecialProperty(name)) {
+      Node ref=new Node(Token.REF_SPECIAL,target);
+      ref.putProp(Node.NAME_PROP,name);
+      return new Node(Token.GET_REF,ref,dotLineno,dotCharno);
+    }
+    return new Node(Token.GETPROP,target,createString(name,nameLineno,nameCharno),dotLineno,dotCharno);
+  }
+  Node elem=createString(name);
+  memberTypeFlags|=Node.PROPERTY_FLAG;
+  return createMemberRefGet(target,namespace,elem,memberTypeFlags,dotLineno,dotCharno);
+}

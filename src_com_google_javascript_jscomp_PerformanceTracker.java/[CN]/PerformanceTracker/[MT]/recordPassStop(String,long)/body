@@ -1,0 +1,17 @@
+{
+  String currentPassName=currentRunningPass.pop();
+  if (!passName.equals(currentPassName)) {
+    throw new RuntimeException(passName + " is not running.");
+  }
+  Long total=runtimeRecord.get(passName);
+  if (total == null) {
+    total=0L;
+  }
+  total=total.longValue() + result;
+  runtimeRecord.put(passName,total);
+  if (codeChange.hasCodeChanged()) {
+    CodeSizeEstimatePrinter printer=estimateCodeSize(jsRoot);
+    curCodeSizeEstimate=recordSizeChange(curCodeSizeEstimate,printer.calcSize(),passName,codeSizeRecord);
+    curZippedCodeSizeEstimate=recordSizeChange(curZippedCodeSizeEstimate,printer.calcZippedSize(),passName,zippedCodeSizeRecord);
+  }
+}

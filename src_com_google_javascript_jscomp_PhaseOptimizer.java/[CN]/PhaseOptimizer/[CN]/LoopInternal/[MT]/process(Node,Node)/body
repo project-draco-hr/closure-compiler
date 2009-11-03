@@ -1,0 +1,23 @@
+{
+  Preconditions.checkState(!loopMutex,"Nested loops are forbidden");
+  loopMutex=true;
+  try {
+    int count=0;
+    do {
+      if (count++ > MAX_LOOPS) {
+        compiler.throwInternalError(OPTIMIZE_LOOP_ERROR,null);
+      }
+      recentChange.reset();
+      for (      CompilerPass pass : myPasses) {
+        pass.process(externs,root);
+        if (hasHaltingErrors()) {
+          return;
+        }
+      }
+    }
+ while (recentChange.hasCodeChanged() && !hasHaltingErrors());
+  }
+  finally {
+    loopMutex=false;
+  }
+}

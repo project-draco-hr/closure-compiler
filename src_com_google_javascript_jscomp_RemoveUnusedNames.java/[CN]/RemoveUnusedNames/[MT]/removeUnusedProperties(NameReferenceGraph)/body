@@ -1,0 +1,11 @@
+{
+  for (  GraphNode<Name,Reference> node : graph.getNodes()) {
+    Name name=node.getValue();
+    NameInfo nameInfo=node.getAnnotation();
+    if (nameInfo == null || !nameInfo.isReferenced()) {
+      name.remove();
+      compiler.reportCodeChange();
+      logger.fine("Removed unused name" + name);
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  if (sealed)   onSealedMutation();
+  if (reporter == null)   throw new IllegalArgumentException();
+  ErrorReporter old=getErrorReporter();
+  if (reporter == old) {
+    return old;
+  }
+  Object listeners=propertyListeners;
+  if (listeners != null) {
+    firePropertyChangeImpl(listeners,errorReporterProperty,old,reporter);
+  }
+  this.errorReporter=reporter;
+  return old;
+}

@@ -1,0 +1,28 @@
+{
+  if (!t.inGlobalScope()) {
+    return;
+  }
+  if (n.getType() == Token.ASSIGN) {
+    Node nameNode=n.getFirstChild();
+    NameInformation ns=createNameInformation(t,nameNode,n);
+    if (ns != null) {
+      recordDepScope(parent,ns);
+    }
+  }
+ else   if (NodeUtil.isVarDeclaration(n)) {
+    NameInformation ns=createNameInformation(t,n,parent);
+    recordDepScope(n,ns);
+  }
+ else   if (NodeUtil.isFunctionDeclaration(n)) {
+    NameInformation ns=createNameInformation(t,n.getFirstChild(),n);
+    recordDepScope(n,ns);
+  }
+ else   if (NodeUtil.isExprCall(n)) {
+    Node callNode=n.getFirstChild();
+    Node nameNode=callNode.getFirstChild();
+    NameInformation ns=createNameInformation(t,nameNode,callNode);
+    if (ns != null && ns.onlyAffectsClassDef) {
+      recordDepScope(n,ns);
+    }
+  }
+}

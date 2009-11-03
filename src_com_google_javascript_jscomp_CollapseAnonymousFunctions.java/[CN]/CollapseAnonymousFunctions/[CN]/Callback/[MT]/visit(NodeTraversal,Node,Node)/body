@@ -1,0 +1,20 @@
+{
+  if (n.getType() != Token.VAR) {
+    return;
+  }
+  Node grandparent=parent.getParent();
+  if (!(parent.getType() == Token.SCRIPT || grandparent != null && grandparent.getType() == Token.FUNCTION && parent.getType() == Token.BLOCK)) {
+    return;
+  }
+  Preconditions.checkState(n.hasOneChild());
+  Node name=n.getFirstChild();
+  Node value=name.getFirstChild();
+  if (value != null && value.getType() == Token.FUNCTION && !isRecursiveFunction(value)) {
+    Node fnName=value.getFirstChild();
+    fnName.setString(name.getString());
+    NodeUtil.copyNameAnnotations(name,fnName);
+    name.removeChild(value);
+    parent.replaceChild(n,value);
+    compiler.reportCodeChange();
+  }
+}

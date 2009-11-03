@@ -1,0 +1,20 @@
+{
+  Node root=t.getScopeRoot();
+  Node parent=root.getParent();
+  if (!t.inGlobalScope()) {
+    String name=NodeUtil.getFunctionName(root,parent);
+    if (name == null) {
+      pushContainingFunction(graph.UNKNOWN);
+      return;
+    }
+    JSType type=getType(root);
+    Node gParent=parent.getParent();
+    Node ggParent=gParent.getParent();
+    if (NodeUtil.isAssign(parent) && NodeUtil.isPrototypeProperty(parent.getFirstChild())) {
+      pushContainingFunction(recordPrototypePropDefinition(t,parent.getFirstChild(),type,parent,gParent,ggParent));
+    }
+ else {
+      pushContainingFunction(recordStaticNameDefinition(t,name,type,root,parent,gParent,root.getLastChild()));
+    }
+  }
+}

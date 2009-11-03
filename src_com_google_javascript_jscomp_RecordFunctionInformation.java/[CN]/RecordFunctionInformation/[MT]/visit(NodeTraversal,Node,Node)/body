@@ -1,0 +1,12 @@
+{
+  if (n.getType() != Token.FUNCTION) {
+    return;
+  }
+  int id=functionNames.getFunctionId(n);
+  if (id < 0) {
+    return;
+  }
+  String compiledSource=compiler.toSource(n);
+  JSModule module=t.getModule();
+  mapBuilder.addEntry(FunctionInformationMap.Entry.newBuilder().setId(id).setSourceName(t.getSourceName()).setLineNumber(n.getLineno()).setModuleName(module == null ? "" : module.getName()).setSize(compiledSource.length()).setName(functionNames.getFunctionName(n)).setCompiledSource(compiledSource).build());
+}

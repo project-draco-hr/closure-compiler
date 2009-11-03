@@ -1,0 +1,38 @@
+{
+  Definition definition=definitionSite.definition;
+  JSModule definitionModule=definitionSite.module;
+  Node rValue=definition.getRValue();
+  if (rValue == null || !NodeUtil.isFunction(rValue) || NodeUtil.isVarArgsFunction(rValue)) {
+    return false;
+  }
+  Node lValue=definition.getLValue();
+  if ((lValue == null) || !NodeUtil.isGetProp(lValue)) {
+    return false;
+  }
+  CodingConvention codingConvention=compiler.getCodingConvention();
+  if (codingConvention.isExported(lValue.getLastChild().getString())) {
+    return false;
+  }
+  Collection<UseSite> useSites=defFinder.getUseSites(definition);
+  if (useSites.isEmpty()) {
+    return false;
+  }
+  JSModuleGraph moduleGraph=compiler.getModuleGraph();
+  for (  UseSite site : useSites) {
+    if (!isCall(site)) {
+      return false;
+    }
+    Node nameNode=site.node;
+    Collection<Definition> singleSiteDefinitions=defFinder.getDefinitionsReferencedAt(nameNode);
+    if (singleSiteDefinitions.size() > 1) {
+      return false;
+    }
+    Preconditions.checkState(!singleSiteDefinitions.isEmpty());
+    Preconditions.checkState(singleSiteDefinitions.contains(definition));
+    JSModule callModule=site.module;
+    if ((definitionModule != callModule) && ((callModule == null) || !moduleGraph.dependsOn(callModule,definitionModule))) {
+      return false;
+    }
+  }
+  return true;
+}

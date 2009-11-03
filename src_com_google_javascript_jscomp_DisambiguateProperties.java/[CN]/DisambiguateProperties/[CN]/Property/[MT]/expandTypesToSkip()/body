@@ -1,0 +1,27 @@
+{
+  if (shouldRename()) {
+    int count=0;
+    while (true) {
+      checkState(++count < 10,"Stuck in loop expanding types to skip.");
+      Set<T> rootTypesToSkip=Sets.newHashSet();
+      for (      T subType : typesToSkip) {
+        rootTypesToSkip.add(types.find(subType));
+      }
+      typesToSkip.addAll(rootTypesToSkip);
+      Set<T> newTypesToSkip=Sets.newHashSet();
+      Set<T> allTypes=types.elements();
+      int originalTypesSize=allTypes.size();
+      for (      T subType : allTypes) {
+        if (!typesToSkip.contains(subType) && typesToSkip.contains(types.find(subType))) {
+          newTypesToSkip.add(subType);
+        }
+      }
+      for (      T newType : newTypesToSkip) {
+        addTypeToSkip(newType);
+      }
+      if (types.elements().size() == originalTypesSize) {
+        break;
+      }
+    }
+  }
+}

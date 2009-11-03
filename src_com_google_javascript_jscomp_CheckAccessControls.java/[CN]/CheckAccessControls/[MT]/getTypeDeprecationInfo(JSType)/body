@@ -1,0 +1,19 @@
+{
+  if (type == null) {
+    return null;
+  }
+  JSDocInfo info=type.getJSDocInfo();
+  if (info != null && info.isDeprecated()) {
+    if (info.getDeprecationReason() != null) {
+      return info.getDeprecationReason();
+    }
+    return "";
+  }
+  if (type instanceof ObjectType) {
+    ObjectType implicitProto=((ObjectType)type).getImplicitPrototype();
+    if (implicitProto != null) {
+      return getTypeDeprecationInfo(implicitProto);
+    }
+  }
+  return null;
+}

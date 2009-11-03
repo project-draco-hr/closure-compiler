@@ -1,0 +1,29 @@
+{
+  Preconditions.checkArgument(token == JsDocToken.LC);
+  skipEOLs();
+  boolean restArg=false;
+  token=next();
+  if (token == JsDocToken.ELLIPSIS) {
+    token=next();
+    restArg=true;
+  }
+  Node typeNode=parseTopLevelTypeExpression(token);
+  if (typeNode != null) {
+    skipEOLs();
+    if (restArg) {
+      typeNode=wrapNode(Token.ELLIPSIS,typeNode);
+    }
+ else     if (match(JsDocToken.EQUALS)) {
+      next();
+      skipEOLs();
+      typeNode=wrapNode(Token.EQUALS,typeNode);
+    }
+    if (!match(JsDocToken.RC)) {
+      reportTypeSyntaxWarning("msg.jsdoc.missing.rc");
+    }
+ else {
+      next();
+    }
+  }
+  return typeNode;
+}

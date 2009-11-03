@@ -1,0 +1,31 @@
+{
+  if (n.getType() == Token.GETPROP) {
+    ObjectType objectType=getJSType(n.getFirstChild()).dereference();
+    if (objectType != null) {
+      String propName=n.getLastChild().getString();
+      while (objectType != null && !objectType.hasOwnProperty(propName)) {
+        objectType=objectType.getImplicitPrototype();
+      }
+      if (objectType != null && (objectType.getConstructor() != null || objectType.isFunctionPrototypeType())) {
+        return objectType.toString() + "." + propName;
+      }
+    }
+  }
+  JSType type=getJSType(n);
+  if (dereference) {
+    type=type.dereference();
+  }
+  String qualifiedName=n.getQualifiedName();
+  if (type.isFunctionPrototypeType() || (type instanceof ObjectType && ((ObjectType)type).getConstructor() != null)) {
+    return type.toString();
+  }
+ else   if (qualifiedName != null) {
+    return qualifiedName;
+  }
+ else   if (type instanceof FunctionType) {
+    return "function";
+  }
+ else {
+    return type.toString();
+  }
+}

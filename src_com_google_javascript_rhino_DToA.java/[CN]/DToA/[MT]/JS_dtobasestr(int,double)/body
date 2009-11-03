@@ -1,0 +1,120 @@
+{
+  if (!(2 <= base && base <= 36))   throw new IllegalArgumentException("Bad base: " + base);
+  if (Double.isNaN(d)) {
+    return "NaN";
+  }
+ else   if (Double.isInfinite(d)) {
+    return (d > 0.0) ? "Infinity" : "-Infinity";
+  }
+ else   if (d == 0) {
+    return "0";
+  }
+  boolean negative;
+  if (d >= 0.0) {
+    negative=false;
+  }
+ else {
+    negative=true;
+    d=-d;
+  }
+  String intDigits;
+  double dfloor=Math.floor(d);
+  long lfloor=(long)dfloor;
+  if (lfloor == dfloor) {
+    intDigits=Long.toString((negative) ? -lfloor : lfloor,base);
+  }
+ else {
+    long floorBits=Double.doubleToLongBits(dfloor);
+    int exp=(int)(floorBits >> Exp_shiftL) & Exp_mask_shifted;
+    long mantissa;
+    if (exp == 0) {
+      mantissa=(floorBits & Frac_maskL) << 1;
+    }
+ else {
+      mantissa=(floorBits & Frac_maskL) | Exp_msk1L;
+    }
+    if (negative) {
+      mantissa=-mantissa;
+    }
+    exp-=1075;
+    BigInteger x=BigInteger.valueOf(mantissa);
+    if (exp > 0) {
+      x=x.shiftLeft(exp);
+    }
+ else     if (exp < 0) {
+      x=x.shiftRight(-exp);
+    }
+    intDigits=x.toString(base);
+  }
+  if (d == dfloor) {
+    return intDigits;
+  }
+ else {
+    char[] buffer;
+    int p;
+    int q;
+    int digit;
+    double df;
+    BigInteger b;
+    buffer=new char[DTOBASESTR_BUFFER_SIZE];
+    p=0;
+    df=d - dfloor;
+    long dBits=Double.doubleToLongBits(d);
+    int word0=(int)(dBits >> 32);
+    int word1=(int)(dBits);
+    int[] e=new int[1];
+    int[] bbits=new int[1];
+    b=d2b(df,e,bbits);
+    int s2=-(word0 >>> Exp_shift1 & Exp_mask >> Exp_shift1);
+    if (s2 == 0)     s2=-1;
+    s2+=Bias + P;
+    BigInteger mlo=BigInteger.valueOf(1);
+    BigInteger mhi=mlo;
+    if ((word1 == 0) && ((word0 & Bndry_mask) == 0) && ((word0 & (Exp_mask & Exp_mask << 1)) != 0)) {
+      s2+=Log2P;
+      mhi=BigInteger.valueOf(1 << Log2P);
+    }
+    b=b.shiftLeft(e[0] + s2);
+    BigInteger s=BigInteger.valueOf(1);
+    s=s.shiftLeft(s2);
+    BigInteger bigBase=BigInteger.valueOf(base);
+    boolean done=false;
+    do {
+      b=b.multiply(bigBase);
+      BigInteger[] divResult=b.divideAndRemainder(s);
+      b=divResult[1];
+      digit=(char)(divResult[0].intValue());
+      if (mlo == mhi)       mlo=mhi=mlo.multiply(bigBase);
+ else {
+        mlo=mlo.multiply(bigBase);
+        mhi=mhi.multiply(bigBase);
+      }
+      int j=b.compareTo(mlo);
+      BigInteger delta=s.subtract(mhi);
+      int j1=(delta.signum() <= 0) ? 1 : b.compareTo(delta);
+      if (j1 == 0 && ((word1 & 1) == 0)) {
+        if (j > 0)         digit++;
+        done=true;
+      }
+ else       if (j < 0 || (j == 0 && ((word1 & 1) == 0))) {
+        if (j1 > 0) {
+          b=b.shiftLeft(1);
+          j1=b.compareTo(s);
+          if (j1 > 0)           digit++;
+        }
+        done=true;
+      }
+ else       if (j1 > 0) {
+        digit++;
+        done=true;
+      }
+      buffer[p++]=BASEDIGIT(digit);
+    }
+ while (!done);
+    StringBuffer sb=new StringBuffer(intDigits.length() + 1 + p);
+    sb.append(intDigits);
+    sb.append('.');
+    sb.append(buffer,0,p);
+    return sb.toString();
+  }
+}

@@ -1,0 +1,20 @@
+{
+  Preconditions.checkState(objectLiteral.getChildCount() % 2 == 0);
+  for (Node keyNode=objectLiteral.getFirstChild(); keyNode != null; keyNode=keyNode.getNext().getNext()) {
+    Node valueNode=keyNode.getNext();
+    if (keyNode.getType() == Token.STRING) {
+      String name=namer.getCombinedName(context,namer.getName(keyNode));
+      int type=valueNode.getType();
+      if (type == Token.FUNCTION) {
+        Node functionNameNode=valueNode.getFirstChild();
+        String functionName=functionNameNode.getString();
+        if (functionName.isEmpty()) {
+          namer.setFunctionName(name,valueNode);
+        }
+      }
+ else       if (type == Token.OBJECTLIT) {
+        nameObjectLiteralMethods(valueNode,name);
+      }
+    }
+  }
+}

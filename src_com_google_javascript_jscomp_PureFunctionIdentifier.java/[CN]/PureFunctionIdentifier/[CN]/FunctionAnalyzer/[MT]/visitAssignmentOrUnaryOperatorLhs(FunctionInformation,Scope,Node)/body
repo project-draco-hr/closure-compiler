@@ -1,0 +1,19 @@
+{
+  if (NodeUtil.isName(lhs)) {
+    Var var=scope.getVar(lhs.getString());
+    if (var == null || var.scope != scope) {
+      sideEffectInfo.setTaintsGlobalState();
+    }
+  }
+ else   if (NodeUtil.isGetProp(lhs)) {
+    if (NodeUtil.isThis(lhs.getFirstChild())) {
+      sideEffectInfo.setTaintsThis();
+    }
+ else {
+      sideEffectInfo.setTaintsUnknown();
+    }
+  }
+ else {
+    sideEffectInfo.setTaintsUnknown();
+  }
+}

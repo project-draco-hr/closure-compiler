@@ -1,0 +1,23 @@
+{
+  if (type.isInstance()) {
+    ConcreteInstanceType instanceType=(ConcreteInstanceType)type;
+    return instanceType.getInstanceTypeWithProperty(field);
+  }
+ else   if (type.isFunction()) {
+    if ("prototype".equals(field) || codingConvention.isSuperClassReference(field)) {
+      return type;
+    }
+  }
+ else   if (type.isNone()) {
+    return new ConcreteUniqueType(++nextUniqueId);
+  }
+ else   if (type.isUnion()) {
+    for (    ConcreteType t : ((ConcreteUnionType)type).getAlternatives()) {
+      ConcreteType ret=getTypeWithProperty(field,t);
+      if (ret != null) {
+        return ret;
+      }
+    }
+  }
+  return null;
+}

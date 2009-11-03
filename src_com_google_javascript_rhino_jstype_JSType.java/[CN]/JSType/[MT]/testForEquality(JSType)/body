@@ -1,0 +1,22 @@
+{
+  if (that.isAllType() || that.isNoType() || that.isUnknownType()) {
+    return UNKNOWN;
+  }
+  if (that.isEnumElementType()) {
+    return that.testForEquality(this);
+  }
+  if (that instanceof UnionType) {
+    UnionType union=(UnionType)that;
+    TernaryValue result=null;
+    for (    JSType t : union.alternates) {
+      TernaryValue test=this.testForEquality(t);
+      if (result == null) {
+        result=test;
+      }
+ else       if (!result.equals(test)) {
+        return UNKNOWN;
+      }
+    }
+  }
+  return null;
+}

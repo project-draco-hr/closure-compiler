@@ -1,0 +1,21 @@
+{
+  Node node;
+  if (caseNode.isDefault()) {
+    node=new Node(Token.DEFAULT);
+  }
+ else {
+    AstNode expr=caseNode.getExpression();
+    node=new Node(Token.CASE,transform(expr));
+  }
+  Node block=new Node(Token.BLOCK);
+  block.putBooleanProp(Node.SYNTHETIC_BLOCK_PROP,true);
+  block.setLineno(caseNode.getLineno());
+  block.setCharno(position2charno(caseNode.getAbsolutePosition()));
+  if (caseNode.getStatements() != null) {
+    for (    AstNode child : caseNode.getStatements()) {
+      block.addChildToBack(transform(child));
+    }
+  }
+  node.addChildToBack(block);
+  return node;
+}

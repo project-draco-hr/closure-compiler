@@ -1,0 +1,8 @@
+{
+  JSModule[] modules=createModules("","function foo() { f('good') }","function foo() { f('good') }");
+  modules[1].addDependency(modules[0]);
+  modules[2].addDependency(modules[0]);
+  moduleGraph=new JSModuleGraph(modules);
+  test(modules,new String[]{"var $$S_good='good'","function foo() {f($$S_good)}","function foo() {f($$S_good)}"});
+  moduleGraph=null;
+}

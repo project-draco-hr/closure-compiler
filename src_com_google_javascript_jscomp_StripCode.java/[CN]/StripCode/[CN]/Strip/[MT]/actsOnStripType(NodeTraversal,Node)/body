@@ -1,0 +1,12 @@
+{
+  SubclassRelationship classes=compiler.getCodingConvention().getClassesDefinedByCall(callNode);
+  if (classes != null) {
+    if (qualifiedNameBeginsWithStripType(classes.subclassName)) {
+      return true;
+    }
+    if (qualifiedNameBeginsWithStripType(classes.superclassName)) {
+      t.report(callNode,STRIP_TYPE_INHERIT_ERROR,classes.subclassName,classes.superclassName);
+    }
+  }
+  return false;
+}

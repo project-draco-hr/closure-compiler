@@ -1,0 +1,43 @@
+{
+  if (region == null) {
+    return null;
+  }
+  String code=region.getSourceExcerpt();
+  if (code.length() == 0) {
+    return null;
+  }
+  int numberLength=Integer.toString(region.getEndingLineNumber()).length();
+  StringBuilder builder=new StringBuilder(code.length() * 2);
+  int start=0;
+  int end=code.indexOf('\n',start);
+  int lineNumber=region.getBeginningLineNumber();
+  while (start >= 0) {
+    String line;
+    if (end < 0) {
+      line=code.substring(start);
+      if (line.length() == 0) {
+        return builder.substring(0,builder.length() - 1);
+      }
+    }
+ else {
+      line=code.substring(start,end);
+    }
+    builder.append("  ");
+    int spaces=numberLength - Integer.toString(lineNumber).length();
+    builder.append(StringUtil.repeat(" ",spaces));
+    builder.append(lineNumber);
+    builder.append("| ");
+    if (end < 0) {
+      builder.append(line);
+      start=-1;
+    }
+ else {
+      builder.append(line);
+      builder.append('\n');
+      start=end + 1;
+      end=code.indexOf('\n',start);
+      lineNumber++;
+    }
+  }
+  return builder.toString();
+}

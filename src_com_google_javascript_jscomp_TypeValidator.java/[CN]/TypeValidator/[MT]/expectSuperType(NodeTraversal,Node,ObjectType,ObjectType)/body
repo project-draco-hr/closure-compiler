@@ -1,0 +1,16 @@
+{
+  FunctionType subCtor=subObject.getConstructor();
+  ObjectType declaredSuper=subObject.getImplicitPrototype().getImplicitPrototype();
+  if (!declaredSuper.equals(superObject)) {
+    if (declaredSuper.equals(getNativeType(OBJECT_TYPE))) {
+      compiler.report(JSError.make(t,n,MISSING_EXTENDS_TAG_WARNING,subObject.toString()));
+      registerMismatch(superObject,declaredSuper);
+    }
+ else {
+      mismatch(t.getSourceName(),n,"mismatch in declaration of superclass type",superObject,declaredSuper);
+    }
+    if (!subCtor.hasCachedValues()) {
+      subCtor.setPrototypeBasedOn(superObject);
+    }
+  }
+}

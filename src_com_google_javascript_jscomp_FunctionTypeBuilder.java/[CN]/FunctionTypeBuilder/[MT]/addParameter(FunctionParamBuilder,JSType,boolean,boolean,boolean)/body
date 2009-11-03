@@ -1,0 +1,27 @@
+{
+  boolean emittedWarning=false;
+  if (isOptional) {
+    if (!builder.addOptionalParams(paramType) && !warnedAboutArgList) {
+      reportWarning(VAR_ARGS_MUST_BE_LAST);
+      emittedWarning=true;
+    }
+  }
+ else   if (isVarArgs) {
+    if (!builder.addVarArgs(paramType) && !warnedAboutArgList) {
+      reportWarning(VAR_ARGS_MUST_BE_LAST);
+      emittedWarning=true;
+    }
+  }
+ else {
+    if (!builder.addRequiredParams(paramType) && !warnedAboutArgList) {
+      if (builder.hasVarArgs()) {
+        reportWarning(VAR_ARGS_MUST_BE_LAST);
+      }
+ else {
+        reportWarning(OPTIONAL_ARG_AT_END);
+      }
+      emittedWarning=true;
+    }
+  }
+  return emittedWarning;
+}

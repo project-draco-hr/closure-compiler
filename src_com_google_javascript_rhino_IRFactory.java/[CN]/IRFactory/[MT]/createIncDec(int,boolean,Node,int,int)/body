@@ -1,0 +1,28 @@
+{
+  child=makeReference(child);
+  if (child == null) {
+    String msg;
+    if (nodeType == Token.DEC) {
+      msg="msg.bad.decr";
+    }
+ else {
+      msg="msg.bad.incr";
+    }
+    parser.reportError(msg);
+    return null;
+  }
+  int childType=child.getType();
+switch (childType) {
+case Token.NAME:
+case Token.GETPROP:
+case Token.GETELEM:
+case Token.GET_REF:
+case Token.CALL:
+{
+      Node n=new Node(nodeType,child,lineno,charno);
+      n.putIntProp(Node.INCRDECR_PROP,post ? 1 : 0);
+      return n;
+    }
+}
+throw Kit.codeBug();
+}

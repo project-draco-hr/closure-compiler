@@ -1,0 +1,23 @@
+{
+  Multimap<String,JSModule> fileRefs=Multimaps.newLinkedHashMultimap();
+  for (  JSModule module : moduleDepths.keySet()) {
+    for (    CompilerInput jsFile : module.getInputs()) {
+      fileRefs.put(jsFile.getName(),module);
+    }
+  }
+  for (  String path : fileRefs.keySet()) {
+    Collection<JSModule> refModules=fileRefs.get(path);
+    if (refModules.size() > 1) {
+      JSModule depModule=getDeepestCommonDependencyInclusive(refModules);
+      CompilerInput file=refModules.iterator().next().getByName(path);
+      for (      JSModule module : refModules) {
+        if (module != depModule) {
+          module.removeByName(path);
+        }
+      }
+      if (!refModules.contains(depModule)) {
+        depModule.add(file);
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  type=type.restrictByNotNullOrUndefined();
+  if (type instanceof UnionType) {
+    for (    JSType alt : ((UnionType)type).getAlternates()) {
+      addInvalidatingType(alt);
+    }
+  }
+  invalidatingTypes.add(type);
+  if (type instanceof InstanceObjectType) {
+    invalidatingTypes.add(((ObjectType)type).getImplicitPrototype());
+  }
+}

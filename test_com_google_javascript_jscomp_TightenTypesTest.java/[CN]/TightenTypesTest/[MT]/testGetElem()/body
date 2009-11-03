@@ -1,0 +1,8 @@
+{
+  testSame("/** @constructor \n @param {*} var_args \n @return {!Array} */" + "function Array(var_args) {}\n","/** @constructor */ function Foo() {}\n" + "/** @constructor */ function Bar() {}\n" + "var a = [];\n"+ "a[0] = new Foo;\n"+ "a[1] = new Bar;\n"+ "var b = a[0];\n"+ "var c = [new Foo, new Bar];\n",null);
+  assertType("Array",getType("a"));
+  assertType("(Array,Bar,Foo)",getType("b"));
+  assertType("Array",getType("c"));
+  testSame("/** @constructor */ function Foo() {}\n" + "/** @constructor */ function Bar() {}\n" + "/** @constructor */ function Baz() {\n"+ "  this.arr = [];\n"+ "}\n"+ "var b = new Baz;\n"+ "b.arr[0] = new Foo;\n"+ "b.arr[1] = new Bar;\n"+ "var c = b.arr;\n");
+  assertType("Array",getType("c"));
+}

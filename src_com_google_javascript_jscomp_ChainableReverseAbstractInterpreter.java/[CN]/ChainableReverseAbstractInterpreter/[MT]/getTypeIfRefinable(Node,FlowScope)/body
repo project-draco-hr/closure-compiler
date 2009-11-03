@@ -1,0 +1,32 @@
+{
+switch (node.getType()) {
+case Token.NAME:
+    StaticSlot<JSType> nameVar=scope.getSlot(node.getString());
+  if (nameVar != null) {
+    JSType nameVarType=nameVar.getType();
+    if (nameVarType == null) {
+      nameVarType=node.getJSType();
+    }
+    return nameVarType;
+  }
+return null;
+case Token.GETPROP:
+String qualifiedName=node.getQualifiedName();
+if (qualifiedName == null) {
+return null;
+}
+StaticSlot<JSType> propVar=scope.getSlot(qualifiedName);
+JSType propVarType=null;
+if (propVar != null) {
+propVarType=propVar.getType();
+}
+if (propVarType == null) {
+propVarType=node.getJSType();
+}
+if (propVarType == null) {
+propVarType=getNativeType(UNKNOWN_TYPE);
+}
+return propVarType;
+}
+return null;
+}

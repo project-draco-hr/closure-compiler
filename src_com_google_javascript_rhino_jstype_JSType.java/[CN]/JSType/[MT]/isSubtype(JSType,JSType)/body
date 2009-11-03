@@ -1,0 +1,23 @@
+{
+  if (thatType.isUnknownType()) {
+    return true;
+  }
+  if (thisType.equals(thatType)) {
+    return true;
+  }
+  if (thatType.isAllType()) {
+    return true;
+  }
+  if (thatType instanceof UnionType) {
+    UnionType union=(UnionType)thatType;
+    for (    JSType element : union.alternates) {
+      if (thisType.isSubtype(element)) {
+        return true;
+      }
+    }
+  }
+  if (thatType instanceof NamedType) {
+    return thisType.isSubtype(((NamedType)thatType).referencedType);
+  }
+  return false;
+}

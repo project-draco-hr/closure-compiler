@@ -1,0 +1,40 @@
+{
+  if (inExterns) {
+    return;
+  }
+  if (!NodeUtil.nodeTypeMayHaveSideEffects(node)) {
+    return;
+  }
+  if (NodeUtil.isCall(node) || NodeUtil.isNew(node)) {
+    allFunctionCalls.add(node);
+  }
+  Node enclosingFunction=traversal.getEnclosingFunction();
+  if (enclosingFunction != null) {
+    FunctionInformation sideEffectInfo=functionSideEffectMap.get(enclosingFunction);
+    Preconditions.checkNotNull(sideEffectInfo);
+    if (NodeUtil.isAssignmentOp(node)) {
+      visitAssignmentOrUnaryOperatorLhs(sideEffectInfo,traversal.getScope(),node.getFirstChild());
+    }
+ else {
+switch (node.getType()) {
+case Token.CALL:
+case Token.NEW:
+        visitCall(sideEffectInfo,node);
+      break;
+case Token.DELPROP:
+case Token.DEC:
+case Token.INC:
+    visitAssignmentOrUnaryOperatorLhs(sideEffectInfo,traversal.getScope(),node.getFirstChild());
+  break;
+case Token.NAME:
+Preconditions.checkArgument(NodeUtil.isVarDeclaration(node));
+break;
+case Token.THROW:
+visitThrow(sideEffectInfo);
+break;
+default :
+throw new IllegalArgumentException("Unhandled side effect node type " + Token.name(node.getType()));
+}
+}
+}
+}

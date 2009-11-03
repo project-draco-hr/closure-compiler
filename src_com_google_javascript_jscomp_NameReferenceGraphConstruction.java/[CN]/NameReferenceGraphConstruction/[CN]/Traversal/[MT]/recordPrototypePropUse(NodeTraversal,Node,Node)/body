@@ -1,0 +1,23 @@
+{
+  Preconditions.checkArgument(NodeUtil.isGetProp(n));
+  Node instance=n.getFirstChild();
+  JSType instanceType=getType(instance);
+  JSType boxedType=instanceType.autoboxesTo();
+  instanceType=boxedType != null ? boxedType : instanceType;
+  Preconditions.checkState(instanceType instanceof ObjectType);
+  ObjectType objType=(ObjectType)instanceType;
+  if (!isExtern) {
+    Reference ref=new Reference(n,parent);
+    FunctionType constructor=objType.getConstructor();
+    if (constructor != null) {
+      String propName=n.getLastChild().getString();
+      if (!constructor.getPrototype().hasOwnProperty(propName)) {
+        recordSuperClassPrototypePropUse(constructor,propName,ref);
+      }
+      recordSubclassPrototypePropUse(constructor,propName,ref);
+    }
+ else {
+      recordUnknownUse(t,n,parent);
+    }
+  }
+}

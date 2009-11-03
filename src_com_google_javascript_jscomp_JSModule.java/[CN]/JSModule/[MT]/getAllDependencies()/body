@@ -1,0 +1,13 @@
+{
+  Set<JSModule> allDeps=Sets.newHashSet(deps);
+  List<JSModule> workList=Lists.newArrayList(deps);
+  while (workList.size() > 0) {
+    JSModule module=workList.remove(workList.size() - 1);
+    for (    JSModule dep : module.getDependencies()) {
+      if (allDeps.add(dep)) {
+        workList.add(dep);
+      }
+    }
+  }
+  return allDeps;
+}

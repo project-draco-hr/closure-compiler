@@ -1,0 +1,17 @@
+{
+  otherPass=new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      getLastCompiler().setNormalized();
+    }
+  }
+;
+  boolean exceptionCaught=false;
+  try {
+    test("while(1){}","while(1){}");
+  }
+ catch (  RuntimeException e) {
+    assertEquals("INTERNAL COMPILER ERROR.\n" + "Please report this problem.\n" + "Normalize constraints violated:\n"+ "WHILE node\n"+ "  Node: testcode:1:0\n"+ "null\n"+ "  Parent: testcode:1:0\n"+ "null\n",e.getMessage());
+    exceptionCaught=true;
+  }
+  assert(exceptionCaught);
+}

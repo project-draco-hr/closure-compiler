@@ -1,0 +1,25 @@
+{
+  List<Name> allDefines=Lists.newArrayList();
+  for (  Name name : namespace.getNameIndex().values()) {
+    if (name.docInfo != null && name.docInfo.isDefine()) {
+      allDefines.add(name);
+    }
+ else     if (name.refs != null) {
+      for (      Ref ref : name.refs) {
+        Node n=ref.node;
+        Node parent=ref.node.getParent();
+        JSDocInfo info=n.getJSDocInfo();
+        if (info == null && parent.getType() == Token.VAR && parent.hasOneChild()) {
+          info=parent.getJSDocInfo();
+        }
+        if (info != null && info.isDefine()) {
+          allDefines.add(name);
+          break;
+        }
+      }
+    }
+  }
+  CollectDefines pass=new CollectDefines(compiler,allDefines);
+  NodeTraversal.traverse(compiler,root,pass);
+  return pass.getAllDefines();
+}

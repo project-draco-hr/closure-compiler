@@ -1,0 +1,40 @@
+{
+switch (n.getType()) {
+case Token.GETPROP:
+case Token.GETELEM:
+{
+      Node dest=n.getFirstChild().getNext();
+      if (dest.getType() != Token.STRING) {
+        return;
+      }
+      String name=dest.getString();
+      if (parent.getType() == Token.ASSIGN && parent.getFirstChild() == n && n.getNext().getType() == Token.FUNCTION) {
+        addSignature(name,n.getNext(),t.getSourceName());
+      }
+ else {
+        getSignatureStore().removeSignature(name);
+        externMethodsWithoutSignatures.add(name);
+      }
+      externMethods.add(name);
+    }
+  break;
+case Token.OBJECTLIT:
+{
+  for (Node key=n.getFirstChild(); key != null; key=key.getNext().getNext()) {
+    if (key.getType() == Token.STRING) {
+      Node value=key.getNext();
+      String name=key.getString();
+      if (value.getType() == Token.FUNCTION) {
+        addSignature(name,value,t.getSourceName());
+      }
+ else {
+        getSignatureStore().removeSignature(name);
+        externMethodsWithoutSignatures.add(name);
+      }
+      externMethods.add(name);
+    }
+  }
+}
+break;
+}
+}

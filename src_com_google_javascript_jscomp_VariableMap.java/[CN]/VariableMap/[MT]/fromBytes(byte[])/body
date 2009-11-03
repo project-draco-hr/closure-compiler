@@ -1,0 +1,18 @@
+{
+  Iterable<String> lines;
+  try {
+    lines=CharStreams.readLines(CharStreams.newReaderSupplier(ByteStreams.newInputStreamSupplier(bytes),Charsets.UTF_8));
+  }
+ catch (  IOException e) {
+    throw new RuntimeException(e);
+  }
+  Map<String,String> map=new HashMap<String,String>();
+  for (  String line : lines) {
+    int pos=line.lastIndexOf(SEPARATOR);
+    if (pos <= 0 || pos == line.length() - 1) {
+      throw new ParseException("Bad line: " + line,0);
+    }
+    map.put(line.substring(0,pos),line.substring(pos + 1));
+  }
+  return new VariableMap(map);
+}

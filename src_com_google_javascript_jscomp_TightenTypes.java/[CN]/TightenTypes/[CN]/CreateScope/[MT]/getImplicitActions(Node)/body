@@ -1,0 +1,17 @@
+{
+switch (n.getType()) {
+case Token.CALL:
+    Node receiver=n.getFirstChild();
+  if (!inExterns && receiver.getType() == Token.GETPROP) {
+    return getImplicitActionsFromCall(n,receiver.getJSType());
+  }
+break;
+case Token.ASSIGN:
+Node lhs=n.getFirstChild();
+if (!inExterns && lhs.getType() == Token.GETPROP) {
+return getImplicitActionsFromProp(lhs.getFirstChild().getJSType(),lhs.getLastChild().getString(),n.getLastChild());
+}
+break;
+}
+return null;
+}

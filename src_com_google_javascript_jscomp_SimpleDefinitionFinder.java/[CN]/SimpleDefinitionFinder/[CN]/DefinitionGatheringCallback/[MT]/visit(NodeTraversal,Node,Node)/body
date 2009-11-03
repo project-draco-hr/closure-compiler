@@ -1,0 +1,26 @@
+{
+  if (inExterns && NodeUtil.isName(node) && parent.getType() == Token.LP) {
+    return;
+  }
+  Definition def=DefinitionsRemover.getDefinition(node,parent);
+  if (def != null) {
+    String name=getSimplifiedName(def.getLValue());
+    if (name != null) {
+      Node rValue=def.getRValue();
+      if ((rValue != null) && !NodeUtil.isImmutableValue(rValue) && !NodeUtil.isFunction(rValue)) {
+        Definition unknownDef=new UnknownDefinition(def.getLValue());
+        def=unknownDef;
+      }
+      nameDefinitionMultimap.put(name,def);
+      definitionSiteMap.put(node,new DefinitionSite(node,def,traversal.getModule(),traversal.inGlobalScope(),inExterns));
+    }
+  }
+  if (inExterns && (parent != null) && NodeUtil.isExpressionNode(parent)) {
+    String name=getSimplifiedName(node);
+    if (name != null) {
+      Definition definition=new ExternalNameOnlyDefinition(node);
+      nameDefinitionMultimap.put(name,definition);
+      definitionSiteMap.put(node,new DefinitionSite(node,definition,traversal.getModule(),traversal.inGlobalScope(),inExterns));
+    }
+  }
+}

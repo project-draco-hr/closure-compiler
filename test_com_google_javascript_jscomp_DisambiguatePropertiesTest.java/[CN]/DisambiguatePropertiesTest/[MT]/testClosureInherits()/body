@@ -1,0 +1,5 @@
+{
+  String js="" + "var goog = {};" + "/* @param {Function} childCtor Child class.\n"+ " * @param {Function} parentCtor Parent class. */\n"+ "goog.inherits = function(childCtor, parentCtor) {\n"+ "  /** @constructor */\n"+ "  function tempCtor() {};\n"+ "  tempCtor.prototype = parentCtor.prototype;\n"+ "  childCtor.superClass_ = parentCtor.prototype;\n"+ "  childCtor.prototype = new tempCtor();\n"+ "  childCtor.prototype.constructor = childCtor;\n"+ "};"+ "/** @constructor */ function Top() {}\n"+ "Top.prototype.f = function() {};"+ "/** @constructor \n@extends Top*/ function Foo() {}\n"+ "goog.inherits(Foo, Top);\n"+ "Foo.prototype.f = function() {"+ "  Foo.superClass_.f();"+ "};\n"+ "/** @constructor \n* @extends Foo */ function Bar() {}\n"+ "goog.inherits(Bar, Foo);\n"+ "Bar.prototype.f = function() {"+ "  Bar.superClass_.f();"+ "};\n"+ "(new Bar).f();\n";
+  testSets(false,js,"{f=[[Top.prototype]]}");
+  testSets(true,js,"{constructor=[[Bar.prototype, Foo.prototype]], " + "f=[[Bar.prototype], [Foo.prototype], [Top.prototype]]}");
+}

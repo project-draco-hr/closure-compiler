@@ -1,0 +1,21 @@
+{
+  Node pn=unaryExpr();
+  int lineno;
+  int charno;
+  for (; ; ) {
+    int tt=peekToken();
+    lineno=ts.getLineno();
+    charno=ts.getCharno();
+switch (tt) {
+case Token.MUL:
+case Token.DIV:
+case Token.MOD:
+      consumeToken();
+    decompiler.addToken(tt);
+  pn=nf.createBinary(tt,pn,unaryExpr(),lineno,charno);
+continue;
+}
+break;
+}
+return pn;
+}

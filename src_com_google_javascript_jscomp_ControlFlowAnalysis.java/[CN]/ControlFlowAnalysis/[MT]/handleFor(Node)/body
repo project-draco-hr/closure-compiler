@@ -1,0 +1,23 @@
+{
+  if (forNode.getChildCount() == 4) {
+    Node init=forNode.getFirstChild();
+    Node cond=init.getNext();
+    Node iter=cond.getNext();
+    Node body=iter.getNext();
+    createEdge(init,Branch.UNCOND,forNode);
+    createEdge(forNode,Branch.ON_TRUE,computeFallThrough(body));
+    createEdge(forNode,Branch.ON_FALSE,computeFollowNode(forNode));
+    createEdge(iter,Branch.UNCOND,forNode);
+    connectToPossibleExceptionHandler(init,init);
+    connectToPossibleExceptionHandler(forNode,cond);
+    connectToPossibleExceptionHandler(iter,iter);
+  }
+ else {
+    Node item=forNode.getFirstChild();
+    Node collection=item.getNext();
+    Node body=collection.getNext();
+    createEdge(forNode,Branch.ON_TRUE,computeFallThrough(body));
+    createEdge(forNode,Branch.ON_FALSE,computeFollowNode(forNode));
+    connectToPossibleExceptionHandler(forNode,collection);
+  }
+}

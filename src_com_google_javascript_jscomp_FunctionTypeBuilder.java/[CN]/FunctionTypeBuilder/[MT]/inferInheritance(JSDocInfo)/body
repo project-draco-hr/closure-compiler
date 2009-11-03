@@ -1,0 +1,43 @@
+{
+  if (info != null) {
+    isConstructor=info.isConstructor();
+    isInterface=info.isInterface();
+    if (info.hasBaseType()) {
+      if (isConstructor || isInterface) {
+        JSType maybeBaseType=info.getBaseType().evaluate(scope);
+        if (maybeBaseType instanceof ObjectType) {
+          baseType=(ObjectType)maybeBaseType;
+        }
+ else {
+          reportWarning(EXTENDS_NON_OBJECT,fnName,maybeBaseType.toString());
+        }
+      }
+ else {
+        reportWarning(EXTENDS_WITHOUT_TYPEDEF,fnName);
+      }
+    }
+    if (isConstructor || isInterface) {
+      implementedInterfaces=Lists.newArrayList();
+      for (      JSTypeExpression t : info.getImplementedInterfaces()) {
+        JSType interType=t.evaluate(scope);
+        if (interType instanceof ObjectType) {
+          implementedInterfaces.add((ObjectType)interType);
+        }
+ else {
+          reportError(BAD_IMPLEMENTED_TYPE,fnName);
+        }
+      }
+      if (baseType != null) {
+        JSType maybeFunctionType=baseType.getConstructor();
+        if (maybeFunctionType instanceof FunctionType) {
+          FunctionType functionType=baseType.getConstructor();
+          implementedInterfaces.addAll(functionType.getImplementedInterfaces());
+        }
+      }
+    }
+ else     if (info.getImplementedInterfaceCount() > 0) {
+      reportWarning(IMPLEMENTS_WITHOUT_CONSTRUCTOR,fnName);
+    }
+  }
+  return this;
+}

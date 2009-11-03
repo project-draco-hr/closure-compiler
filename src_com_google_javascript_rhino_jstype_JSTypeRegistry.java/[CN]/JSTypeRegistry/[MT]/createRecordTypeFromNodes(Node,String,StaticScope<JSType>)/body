@@ -1,0 +1,24 @@
+{
+  RecordTypeBuilder builder=new RecordTypeBuilder(this);
+  for (Node fieldTypeNode=n.getFirstChild(); fieldTypeNode != null; fieldTypeNode=fieldTypeNode.getNext()) {
+    Node fieldNameNode=fieldTypeNode;
+    boolean hasType=false;
+    if (fieldTypeNode.getType() == Token.COLON) {
+      fieldNameNode=fieldTypeNode.getFirstChild();
+      hasType=true;
+    }
+    String fieldName=fieldNameNode.getString();
+    if (fieldName.startsWith("'") || fieldName.startsWith("\"")) {
+      fieldName=fieldName.substring(1,fieldName.length() - 1);
+    }
+    JSType fieldType=null;
+    if (hasType) {
+      fieldType=createFromTypeNodes(fieldTypeNode.getLastChild(),sourceName,scope);
+    }
+ else {
+      fieldType=getNativeType(JSTypeNative.UNKNOWN_TYPE);
+    }
+    builder.addProperty(fieldName,fieldType);
+  }
+  return builder.build();
+}

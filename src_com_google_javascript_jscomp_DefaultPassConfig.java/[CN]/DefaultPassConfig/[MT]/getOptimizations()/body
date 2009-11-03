@@ -1,0 +1,63 @@
+{
+  List<PassFactory> passes=Lists.newArrayList();
+  if (!options.idGenerators.isEmpty()) {
+    passes.add(replaceIdGenerators);
+  }
+  if (options.optimizeArgumentsArray) {
+    passes.add(optimizeArgumentsArray);
+  }
+  if (options.optimizeParameters) {
+    passes.add(removeUselessParameters);
+  }
+  if (options.closurePass) {
+    passes.add(removeAbstractMethods);
+  }
+  if (options.collapseProperties) {
+    passes.add(undoConstantRenaming);
+    passes.add(collapseProperties);
+    passes.add(renameConstants.makeOneTimePass());
+  }
+  if (options.tightenTypes) {
+    passes.add(tightenTypesBuilder);
+  }
+  if (options.disambiguateProperties) {
+    passes.add(disambiguateProperties);
+  }
+  if (options.computeFunctionSideEffects) {
+    passes.add(markPureFunctions);
+  }
+ else   if (options.markNoSideEffectCalls) {
+    passes.add(markNoSideEffectCalls);
+  }
+  if (options.chainCalls) {
+    passes.add(chainCalls);
+  }
+  if (options.devirtualizePrototypeMethods) {
+    passes.add(devirtualizePrototypeMethods);
+  }
+  if (options.inlineConstantVars) {
+    passes.add(checkConsts);
+  }
+  assertAllOneTimePasses(passes);
+  if (options.smartNameRemoval || options.reportPath != null) {
+    passes.addAll(getCodeRemovingPasses(true));
+    passes.add(smartNamePass);
+  }
+  if (options.customPasses != null) {
+    passes.add(getCustomPasses(CustomPassExecutionTime.BEFORE_OPTIMIZATION_LOOP));
+  }
+  passes.add(createEmptyPass("beforeMainOptimizations"));
+  passes.addAll(getMainOptimizationLoop());
+  passes.add(createEmptyPass("beforeModuleMotion"));
+  if (options.crossModuleCodeMotion) {
+    passes.add(crossModuleCodeMotion);
+  }
+  if (options.crossModuleMethodMotion) {
+    passes.add(crossModuleMethodMotion);
+  }
+  passes.add(createEmptyPass("afterModuleMotion"));
+  if (options.customPasses != null) {
+    passes.add(getCustomPasses(CustomPassExecutionTime.AFTER_OPTIMIZATION_LOOP));
+  }
+  return passes;
+}

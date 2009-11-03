@@ -1,0 +1,22 @@
+{
+  List<Name> nameRefs=getReferencesAt(useSite);
+  if (nameRefs.isEmpty()) {
+    return null;
+  }
+  List<Definition> result=Lists.newArrayList();
+  for (  Name nameRef : nameRefs) {
+    List<Definition> decls=nameRef.getDeclarations();
+    if (!decls.isEmpty()) {
+      result.addAll(decls);
+    }
+ else {
+      result.add(new UnknownDefinition(useSite));
+    }
+  }
+  if (!result.isEmpty()) {
+    return result;
+  }
+ else {
+    return null;
+  }
+}

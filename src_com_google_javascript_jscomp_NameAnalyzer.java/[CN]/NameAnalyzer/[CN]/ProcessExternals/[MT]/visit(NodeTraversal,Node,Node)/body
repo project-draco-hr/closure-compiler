@@ -1,0 +1,14 @@
+{
+  NameInformation ns=null;
+  if (NodeUtil.isVarDeclaration(n)) {
+    ns=createNameInformation(t,n,parent);
+  }
+ else   if (NodeUtil.isFunctionDeclaration(n)) {
+    ns=createNameInformation(t,n.getFirstChild(),n);
+  }
+  if (ns != null) {
+    JsName jsName=getName(ns.name,true);
+    jsName.externallyDefined=true;
+    externalNames.add(ns.name);
+  }
+}

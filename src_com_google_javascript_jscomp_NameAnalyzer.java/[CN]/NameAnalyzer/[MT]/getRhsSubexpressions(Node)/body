@@ -1,0 +1,34 @@
+{
+switch (n.getType()) {
+case Token.EXPR_RESULT:
+    return getRhsSubexpressions(n.getFirstChild());
+case Token.FUNCTION:
+  return Collections.emptyList();
+case Token.NAME:
+{
+  Node rhs=n.getFirstChild();
+  if (rhs != null) {
+    return Lists.newArrayList(rhs);
+  }
+ else {
+    return Collections.emptyList();
+  }
+}
+case Token.ASSIGN:
+{
+Node lhs=n.getFirstChild();
+Node rhs=lhs.getNext();
+return Lists.newArrayList(lhs,rhs);
+}
+case Token.VAR:
+{
+List<Node> nodes=Lists.newArrayList();
+for (Node child : n.children()) {
+nodes.addAll(getRhsSubexpressions(child));
+}
+return nodes;
+}
+default :
+throw new IllegalArgumentException("AstChangeProxy::getRhs " + n);
+}
+}

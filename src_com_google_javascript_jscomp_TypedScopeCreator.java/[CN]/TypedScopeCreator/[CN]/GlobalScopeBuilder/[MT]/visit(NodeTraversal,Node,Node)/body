@@ -1,0 +1,101 @@
+{
+switch (n.getType()) {
+case Token.CALL:
+    SubclassRelationship relationship=codingConvention.getClassesDefinedByCall(n);
+  if (relationship != null) {
+    JSType superClass=typeRegistry.getType(relationship.superclassName);
+    JSType subClass=typeRegistry.getType(relationship.subclassName);
+    if (superClass instanceof ObjectType && subClass instanceof ObjectType) {
+      ObjectType superObject=(ObjectType)superClass;
+      ObjectType subObject=(ObjectType)subClass;
+      FunctionType superCtor=superObject.getConstructor();
+      FunctionType subCtor=subObject.getConstructor();
+      if (relationship.type == SubclassType.INHERITS) {
+        validator.expectSuperType(t,n,superObject,subObject);
+      }
+      if (superCtor != null && subCtor != null) {
+        codingConvention.applySubclassRelationship(superCtor,subCtor,relationship.type);
+      }
+    }
+  }
+String singletonGetterClassName=codingConvention.getSingletonGetterClassName(n);
+if (singletonGetterClassName != null) {
+JSType classType=typeRegistry.getType(singletonGetterClassName);
+if (classType instanceof ObjectType) {
+  ObjectType objectType=(ObjectType)classType;
+  FunctionType functionType=objectType.getConstructor();
+  if (functionType != null) {
+    FunctionType getterType=new FunctionType(typeRegistry,null,null,new FunctionParamBuilder(typeRegistry).build(),objectType,null);
+    codingConvention.applySingletonGetter(functionType,getterType,objectType);
+  }
+}
+}
+DelegateRelationship delegateRelationship=codingConvention.getDelegateRelationship(n);
+if (delegateRelationship != null) {
+JSType delegatorClass=typeRegistry.getType(delegateRelationship.delegator);
+JSType delegateBaseClass=typeRegistry.getType(delegateRelationship.delegateBase);
+JSType delegateSuperClass=typeRegistry.getType(codingConvention.getDelegateSuperclassName());
+if (delegatorClass instanceof ObjectType && delegateBaseClass instanceof ObjectType && delegateSuperClass instanceof ObjectType) {
+ObjectType delegatorObject=(ObjectType)delegatorClass;
+ObjectType delegateBaseObject=(ObjectType)delegateBaseClass;
+ObjectType delegateSuperObject=(ObjectType)delegateSuperClass;
+FunctionType delegatorCtor=delegatorObject.getConstructor();
+FunctionType delegateBaseCtor=delegateBaseObject.getConstructor();
+FunctionType delegateSuperCtor=delegateSuperObject.getConstructor();
+if (delegatorCtor != null && delegateBaseCtor != null && delegateSuperCtor != null) {
+FunctionParamBuilder functionParamBuilder=new FunctionParamBuilder(typeRegistry);
+functionParamBuilder.addRequiredParams(typeRegistry.getNativeType(U2U_CONSTRUCTOR_TYPE));
+FunctionType findDelegate=new FunctionType(typeRegistry,null,null,functionParamBuilder.build(),typeRegistry.createNullableType(delegateBaseClass),null);
+FunctionType delegateProxy=typeRegistry.createConstructorType(delegateBaseObject.getName(),null,null,null);
+delegateProxy.setPrototypeBasedOn(delegateBaseCtor);
+codingConvention.applyDelegateRelationship(delegateSuperObject,delegateBaseObject,delegatorObject,delegateProxy,findDelegate);
+delegateProxyMap.put(delegateProxy.getPrototype(),delegateBaseCtor.getPrototype());
+}
+}
+}
+ObjectLiteralCast objectLiteralCast=codingConvention.getObjectLiteralCast(t,n);
+if (objectLiteralCast != null) {
+JSType type=typeRegistry.getType(objectLiteralCast.typeName);
+if (type instanceof ObjectType && ((ObjectType)type).getConstructor() != null) {
+objectLiteralCast.objectNode.setJSType(type);
+}
+ else {
+compiler.report(JSError.make(t.getSourceName(),n,CONSTRUCTOR_EXPECTED));
+}
+}
+break;
+case Token.FUNCTION:
+if (!t.getInput().isExtern()) {
+nonExternFunctions.add(n);
+}
+if (parent.getType() == Token.ASSIGN || parent.getType() == Token.NAME) {
+return;
+}
+define(n,parent);
+break;
+case Token.ASSIGN:
+define(n,parent);
+checkForOldStyleTypedef(t,n);
+Node firstChild=n.getFirstChild();
+if (firstChild.getType() == Token.GETPROP && firstChild.isQualifiedName()) {
+maybeDeclareQualifiedName(t,n.getJSDocInfo(),firstChild,n,firstChild.getNext());
+}
+break;
+case Token.CATCH:
+define(n,parent);
+break;
+case Token.VAR:
+define(n,parent);
+if (n.hasOneChild()) {
+checkForOldStyleTypedef(t,n);
+checkForTypedef(t,n.getFirstChild(),n.getJSDocInfo());
+}
+break;
+case Token.GETPROP:
+if (parent.getType() == Token.EXPR_RESULT && n.isQualifiedName()) {
+checkForTypedef(t,n,n.getJSDocInfo());
+maybeDeclareQualifiedName(t,n.getJSDocInfo(),n,parent,null);
+}
+break;
+}
+}

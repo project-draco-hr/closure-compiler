@@ -1,0 +1,13 @@
+{
+  if (!set.contains(module)) {
+    if (inProgress.contains(module)) {
+      throw new IllegalArgumentException("Circular dependency involving module: " + module.getName());
+    }
+    inProgress.add(module);
+    for (    JSModule dep : module.getDependencies()) {
+      addModuleAndDeps(dep,list,set,inProgress);
+    }
+    list.add(module);
+    set.add(module);
+  }
+}

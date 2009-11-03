@@ -1,0 +1,49 @@
+{
+  Node parent=expr.getParent();
+  String tempName=getTempValueName();
+  Node first=expr.getFirstChild();
+  Node second=first.getNext();
+  Node last=expr.getLastChild();
+  expr.detachChildren();
+  Node cond=null;
+  Node trueExpr=new Node(Token.BLOCK);
+  Node falseExpr=new Node(Token.BLOCK);
+switch (expr.getType()) {
+case Token.HOOK:
+    cond=first;
+  trueExpr.addChildToFront(new Node(Token.EXPR_RESULT,buildResultExpression(second,needResult,tempName)));
+falseExpr.addChildToFront(new Node(Token.EXPR_RESULT,buildResultExpression(last,needResult,tempName)));
+break;
+case Token.AND:
+cond=buildResultExpression(first,needResult,tempName);
+trueExpr.addChildToFront(new Node(Token.EXPR_RESULT,buildResultExpression(last,needResult,tempName)));
+break;
+case Token.OR:
+cond=buildResultExpression(first,needResult,tempName);
+falseExpr.addChildToFront(new Node(Token.EXPR_RESULT,buildResultExpression(last,needResult,tempName)));
+break;
+default :
+throw new IllegalStateException("Unexpected.");
+}
+Node ifNode;
+if (falseExpr.hasChildren()) {
+ifNode=new Node(Token.IF,cond,trueExpr,falseExpr);
+}
+ else {
+ifNode=new Node(Token.IF,cond,trueExpr);
+}
+if (needResult) {
+Node tempVarNode=new Node(Token.VAR,Node.newString(Token.NAME,tempName));
+Node injectionPointParent=injectionPoint.getParent();
+injectionPointParent.addChildBefore(tempVarNode,injectionPoint);
+injectionPointParent.addChildAfter(ifNode,tempVarNode);
+Node replacementValueNode=Node.newString(Token.NAME,tempName);
+parent.replaceChild(expr,replacementValueNode);
+}
+ else {
+Preconditions.checkArgument(parent.getType() == Token.EXPR_RESULT);
+Node gramps=parent.getParent();
+gramps.replaceChild(parent,ifNode);
+}
+return ifNode;
+}

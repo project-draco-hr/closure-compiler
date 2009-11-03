@@ -1,0 +1,37 @@
+{
+  if (n.getType() == Token.EMPTY || n.getType() == Token.COMMA) {
+    return;
+  }
+  if (parent == null)   return;
+  int pt=parent.getType();
+  if (pt == Token.COMMA) {
+    if (n == parent.getLastChild()) {
+      for (      Node an : parent.getAncestors()) {
+        int ancestorType=an.getType();
+        if (ancestorType == Token.COMMA)         continue;
+        if (ancestorType != Token.EXPR_RESULT && ancestorType != Token.BLOCK)         return;
+ else         break;
+      }
+    }
+  }
+ else   if (pt != Token.EXPR_RESULT && pt != Token.BLOCK) {
+    if (pt == Token.FOR && parent.getChildCount() == 4 && (n == parent.getFirstChild() || n == parent.getFirstChild().getNext().getNext())) {
+    }
+ else {
+      return;
+    }
+  }
+  if (NodeUtil.isSimpleOperatorType(n.getType()) || !NodeUtil.mayHaveSideEffects(n)) {
+    if (n.isQualifiedName() && n.getJSDocInfo() != null) {
+      return;
+    }
+ else     if (NodeUtil.isExpressionNode(n)) {
+      return;
+    }
+    String msg="This code lacks side-effects. Is there a bug?";
+    if (n.getType() == Token.STRING) {
+      msg="Is there a missing '+' on the previous line?";
+    }
+    t.getCompiler().report(JSError.make(t,n,level,USELESS_CODE_ERROR,msg));
+  }
+}

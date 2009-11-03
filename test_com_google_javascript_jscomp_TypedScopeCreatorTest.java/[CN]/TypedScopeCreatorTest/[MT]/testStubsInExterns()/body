@@ -1,0 +1,9 @@
+{
+  testSame("/** @constructor */ function Extern() {}" + "Extern.prototype.bar;" + "var e = new Extern(); e.baz;","/** @constructor */ function Foo() {}" + "Foo.prototype.bar;" + "var f = new Foo(); f.baz;",null);
+  ObjectType e=(ObjectType)globalScope.getVar("e").getType();
+  assertEquals("?",e.getPropertyType("bar").toString());
+  assertEquals("?",e.getPropertyType("baz").toString());
+  ObjectType f=(ObjectType)globalScope.getVar("f").getType();
+  assertEquals("?",f.getPropertyType("bar").toString());
+  assertFalse(f.hasProperty("baz"));
+}

@@ -1,0 +1,24 @@
+{
+  Node current=ancestors.pop();
+  if (current.getNext() == null) {
+    current=ancestors.peek();
+    if (current.getType() == Token.FUNCTION) {
+      return next();
+    }
+  }
+ else {
+    current=current.getNext();
+    ancestors.push(current);
+    if (current.getType() == Token.FUNCTION) {
+      return next();
+    }
+    while (current.hasChildren()) {
+      current=current.getFirstChild();
+      ancestors.push(current);
+      if (current.getType() == Token.FUNCTION) {
+        return next();
+      }
+    }
+  }
+  return current;
+}

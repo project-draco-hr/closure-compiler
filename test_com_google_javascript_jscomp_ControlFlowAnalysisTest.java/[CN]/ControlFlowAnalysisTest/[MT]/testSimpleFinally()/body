@@ -1,0 +1,8 @@
+{
+  String src="try{var x; foo()}finally{}";
+  ControlFlowGraph<Node> cfg=createCfg(src);
+  assertDownEdge(cfg,Token.TRY,Token.BLOCK,Branch.UNCOND);
+  assertDownEdge(cfg,Token.BLOCK,Token.VAR,Branch.UNCOND);
+  assertCrossEdge(cfg,Token.EXPR_RESULT,Token.BLOCK,Branch.UNCOND);
+  assertNoEdge(cfg,Token.BLOCK,Token.BLOCK);
+}

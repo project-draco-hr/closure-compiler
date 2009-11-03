@@ -1,0 +1,35 @@
+{
+  if (OBJECT_PROPERTY_STRING.equals(n.getQualifiedName())) {
+    Node newName=Node.newString(Token.NAME,EXTERN_OBJECT_PROPERTY_STRING);
+    newName.copyInformationFrom(n);
+    parent.replaceChild(n,newName);
+    compiler.reportCodeChange();
+    return;
+  }
+  if (n.getType() != Token.NEW) {
+    return;
+  }
+  Node objectName=n.getFirstChild();
+  if (!EXTERN_OBJECT_PROPERTY_STRING.equals(objectName.getQualifiedName())) {
+    return;
+  }
+  if (n.getChildCount() != 3) {
+    compiler.report(JSError.make(t,n,INVALID_NUM_ARGUMENTS_ERROR,"" + n.getChildCount()));
+    return;
+  }
+  Node firstArgument=objectName.getNext();
+  if (!firstArgument.isQualifiedName()) {
+    compiler.report(JSError.make(t,firstArgument,QUALIFIED_NAME_EXPECTED_ERROR,Token.name(firstArgument.getType())));
+    return;
+  }
+  Node secondArgument=firstArgument.getNext();
+  if (secondArgument.getType() != Token.STRING) {
+    compiler.report(JSError.make(t,secondArgument,STRING_LITERAL_EXPECTED_ERROR,Token.name(secondArgument.getType())));
+    return;
+  }
+  Node newFirstArgument=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention().getGlobalObject(),firstArgument.getLineno(),firstArgument.getCharno());
+  Node newSecondArgument=NodeUtil.newQualifiedNameNode(firstArgument.getQualifiedName() + "." + firstArgument.getNext().getString(),secondArgument.getLineno(),secondArgument.getCharno());
+  n.replaceChild(firstArgument,newFirstArgument);
+  n.replaceChild(secondArgument,newSecondArgument);
+  compiler.reportCodeChange();
+}

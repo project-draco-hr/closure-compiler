@@ -1,0 +1,31 @@
+{
+  boolean callExpressionHasSideEffects=NodeUtil.mayHaveSideEffects(subExpression);
+  Node child=subExpression;
+  for (  Node parent : child.getAncestors()) {
+    if (parent == expressionRoot) {
+      return true;
+    }
+    int parentType=parent.getType();
+    if (isConditionalOp(parent)) {
+      if (child != parent.getFirstChild()) {
+        return false;
+      }
+    }
+ else {
+      if (parentType == Token.ASSIGN && parent.getFirstChild().getType() == Token.NAME) {
+      }
+ else {
+        for (        Node n : parent.children()) {
+          if (n == child) {
+            break;
+          }
+          if (isExpressionTreeUnsafe(n,callExpressionHasSideEffects)) {
+            return false;
+          }
+        }
+      }
+    }
+    child=parent;
+  }
+  throw new IllegalStateException("Unexpected.");
+}

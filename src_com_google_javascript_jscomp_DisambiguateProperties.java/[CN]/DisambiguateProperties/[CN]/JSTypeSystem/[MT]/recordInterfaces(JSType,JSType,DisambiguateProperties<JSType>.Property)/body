@@ -1,0 +1,33 @@
+{
+  if (type instanceof ObjectType) {
+    FunctionType constructor;
+    if (type instanceof FunctionType) {
+      constructor=(FunctionType)type;
+    }
+ else     if (type instanceof FunctionPrototypeType) {
+      constructor=((FunctionPrototypeType)type).getOwnerFunction();
+    }
+ else {
+      constructor=((ObjectType)type).getConstructor();
+    }
+    while (constructor != null) {
+      List<ObjectType> interfaces=constructor.getImplementedInterfaces();
+      for (      ObjectType itype : interfaces) {
+        JSType top=getTypeWithProperty(p.name,itype);
+        if (top != null) {
+          p.addType(itype,top,relatedType);
+        }
+ else {
+          recordInterfaces(itype,relatedType,p);
+        }
+        if (p.skipRenaming)         return;
+      }
+      if (constructor.isInterface() || constructor.isConstructor()) {
+        constructor=constructor.getSuperClassConstructor();
+      }
+ else {
+        constructor=null;
+      }
+    }
+  }
+}

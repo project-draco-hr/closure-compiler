@@ -1,0 +1,36 @@
+{
+  boolean hasStubDeclaration=idGenerator.hasGeneratedAnyIds();
+  for (  NameInfo nameInfo : allNameInfo) {
+    if (!nameInfo.isReferenced()) {
+      continue;
+    }
+    JSModule deepestCommonModuleRef=nameInfo.getDeepestCommonModuleRef();
+    if (deepestCommonModuleRef == null) {
+      compiler.report(JSError.make(NULL_COMMON_MODULE_ERROR));
+      continue;
+    }
+    Iterator<Symbol> declarations=nameInfo.getDeclarations().descendingIterator();
+    while (declarations.hasNext()) {
+      Symbol symbol=declarations.next();
+      if (!(symbol instanceof Property)) {
+        continue;
+      }
+      Property prop=(Property)symbol;
+      Node value=prop.getValue();
+      if (moduleGraph.dependsOn(deepestCommonModuleRef,prop.getModule()) && value.getType() == Token.FUNCTION) {
+        Node valueParent=prop.getValueParent();
+        Node proto=prop.getPrototype();
+        int stubId=idGenerator.newId();
+        valueParent.replaceChild(value,new Node(Token.CALL,Node.newString(Token.NAME,STUB_METHOD_NAME),Node.newNumber(stubId)));
+        Node unstubParent=compiler.getNodeForCodeInsertion(deepestCommonModuleRef);
+        unstubParent.addChildToFront(new Node(Token.EXPR_RESULT,new Node(Token.ASSIGN,new Node(Token.GETPROP,proto.cloneTree(),Node.newString(Token.STRING,nameInfo.name)),new Node(Token.CALL,Node.newString(Token.NAME,UNSTUB_METHOD_NAME),Node.newNumber(stubId),value))));
+        compiler.reportCodeChange();
+        logger.fine("Moved method: " + proto.getQualifiedName() + "."+ nameInfo.name+ " from module "+ prop.getModule()+ " to module "+ deepestCommonModuleRef);
+      }
+    }
+  }
+  if (!hasStubDeclaration && idGenerator.hasGeneratedAnyIds()) {
+    Node declarations=compiler.parseSyntheticCode(STUB_DECLARATIONS);
+    compiler.getNodeForCodeInsertion(null).addChildrenToFront(declarations.removeChildren());
+  }
+}

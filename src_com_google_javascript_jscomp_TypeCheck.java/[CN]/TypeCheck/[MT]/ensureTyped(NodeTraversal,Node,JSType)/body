@@ -1,0 +1,18 @@
+{
+  Preconditions.checkState(n.getType() != Token.FUNCTION || type instanceof FunctionType || type.isUnknownType());
+  JSDocInfo info=n.getJSDocInfo();
+  if (info != null) {
+    if (info.hasType()) {
+      JSType infoType=info.getType().evaluate(t.getScope());
+      validator.expectCanCast(t,n,infoType,type);
+      type=infoType;
+    }
+    if (info.isImplicitCast() && !inExterns) {
+      String propName=n.getType() == Token.GETPROP ? n.getLastChild().getString() : "(missing)";
+      compiler.report(JSError.make(t,n,ILLEGAL_IMPLICIT_CAST,propName));
+    }
+  }
+  if (n.getJSType() == null) {
+    n.setJSType(type);
+  }
+}

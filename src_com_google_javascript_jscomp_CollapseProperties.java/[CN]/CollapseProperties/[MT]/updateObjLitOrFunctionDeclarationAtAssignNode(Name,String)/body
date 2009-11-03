@@ -1,0 +1,35 @@
+{
+  Ref ref=n.declaration;
+  Node rvalue=ref.node.getNext();
+  Node varNode=new Node(Token.VAR);
+  Node varParent=ref.node.getAncestor(3);
+  Node gramps=ref.node.getAncestor(2);
+  boolean isObjLit=rvalue.getType() == Token.OBJECTLIT;
+  if (isObjLit && n.canEliminate()) {
+    varParent.replaceChild(gramps,varNode);
+    ref.node=null;
+  }
+ else {
+    if (rvalue.getType() == Token.FUNCTION) {
+      checkForHosedThisReferences(rvalue,n.docInfo,n);
+    }
+    ref.node.getParent().removeChild(rvalue);
+    Node nameNode=NodeUtil.newName(alias,ref.node.getAncestor(2),n.fullName());
+    if (ref.node.getLastChild().getBooleanProp(Node.IS_CONSTANT_NAME)) {
+      nameNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
+    }
+    varNode.addChildToBack(nameNode);
+    nameNode.addChildToFront(rvalue);
+    varParent.replaceChild(gramps,varNode);
+    ref.node=nameNode;
+  }
+  if (isObjLit) {
+    boolean discardKeys=n.aliasingGets == 0;
+    declareVarsForObjLitValues(alias,rvalue,varNode,varParent.getChildBefore(varNode),varParent,discardKeys);
+  }
+  addStubsForUndeclaredProperties(n,alias,varParent,varNode);
+  if (!varNode.hasChildren()) {
+    varParent.removeChild(varNode);
+  }
+  compiler.reportCodeChange();
+}

@@ -1,0 +1,27 @@
+{
+  Preconditions.checkArgument(NodeUtil.isCall(call));
+  Node getProp=call.getFirstChild();
+  if (!NodeUtil.isGetProp(getProp)) {
+    return;
+  }
+  String propQName=getProp.getQualifiedName();
+  if (propQName == null) {
+    return;
+  }
+  if (propQName.endsWith(".call") || propQName.endsWith(".apply")) {
+    graph.defineNameIfNotExists(getProp.getFirstChild().getQualifiedName(),isExtern).markExposedToCallOrApply();
+  }
+  if (!"goog.exportSymbol".equals(propQName)) {
+    return;
+  }
+  Node symbol=getProp.getNext();
+  if (!NodeUtil.isString(symbol)) {
+    return;
+  }
+  Node obj=symbol.getNext();
+  String qName=obj.getQualifiedName();
+  if (qName == null || obj.getNext() != null) {
+    return;
+  }
+  graph.defineNameIfNotExists(qName,false).markExported();
+}

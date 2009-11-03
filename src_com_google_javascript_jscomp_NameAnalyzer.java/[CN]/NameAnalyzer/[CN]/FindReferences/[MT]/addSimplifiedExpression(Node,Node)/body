@@ -1,0 +1,19 @@
+{
+  if (parent.getType() == Token.VAR) {
+    Node value=n.getFirstChild();
+    if (value != null) {
+      addSimplifiedChildren(value);
+    }
+  }
+ else   if (n.getType() == Token.ASSIGN && (parent.getType() == Token.EXPR_RESULT || parent.getType() == Token.FOR || parent.getType() == Token.RETURN)) {
+    for (    Node child : n.children()) {
+      addSimplifiedChildren(child);
+    }
+  }
+ else   if (n.getType() == Token.CALL && parent.getType() == Token.EXPR_RESULT) {
+    addSimplifiedChildren(n);
+  }
+ else {
+    addAllChildren(n);
+  }
+}

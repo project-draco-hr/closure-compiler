@@ -1,0 +1,8 @@
+{
+  Scope scope=t.getScope();
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false);
+  cfa.process(null,scope.getRootNode());
+  cfgStack.push(curCfg);
+  curCfg=cfa.getCfg();
+  new GraphReachability<Node,ControlFlowGraph.Branch>(curCfg).compute(curCfg.getEntry().getValue());
+}

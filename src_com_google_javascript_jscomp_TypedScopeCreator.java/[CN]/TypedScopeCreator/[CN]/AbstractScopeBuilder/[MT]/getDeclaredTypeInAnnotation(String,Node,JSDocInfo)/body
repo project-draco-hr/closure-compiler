@@ -1,0 +1,32 @@
+{
+  JSType jsType=null;
+  Node objNode=node.getType() == Token.GETPROP ? node.getFirstChild() : null;
+  if (info != null) {
+    if (info.hasType()) {
+      jsType=info.getType().evaluate(scope);
+    }
+ else     if (FunctionTypeBuilder.isFunctionTypeDeclaration(info)) {
+      String fnName=node.getQualifiedName();
+      if (info.isConstructor() && typeRegistry.getType(fnName) != null) {
+        return null;
+      }
+      FunctionTypeBuilder builder=new FunctionTypeBuilder(fnName,compiler,node,sourceName,scope).inferTemplateTypeName(info).inferReturnType(info).inferParameterTypes(info).inferInheritance(info);
+      boolean searchedForThisType=false;
+      if (objNode != null) {
+        if (objNode.getType() == Token.GETPROP && objNode.getLastChild().getString().equals("prototype")) {
+          builder.inferThisType(info,objNode.getFirstChild());
+          searchedForThisType=true;
+        }
+ else         if (objNode.getType() == Token.THIS) {
+          builder.inferThisType(info,objNode.getJSType());
+          searchedForThisType=true;
+        }
+      }
+      if (!searchedForThisType) {
+        builder.inferThisType(info,(Node)null);
+      }
+      jsType=builder.buildAndRegister();
+    }
+  }
+  return jsType;
+}

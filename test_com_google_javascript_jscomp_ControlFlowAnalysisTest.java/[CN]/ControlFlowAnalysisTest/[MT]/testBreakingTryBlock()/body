@@ -1,0 +1,11 @@
+{
+  String src="a: try { break a; } finally {} if(x) {}";
+  ControlFlowGraph<Node> cfg=createCfg(src);
+  assertCrossEdge(cfg,Token.BREAK,Token.IF,Branch.UNCOND);
+  src="a: try {} finally {break a;} if(x) {}";
+  cfg=createCfg(src);
+  assertCrossEdge(cfg,Token.BREAK,Token.IF,Branch.UNCOND);
+  src="a: try {} catch(e) {break a;} if(x) {}";
+  cfg=createCfg(src);
+  assertCrossEdge(cfg,Token.BREAK,Token.IF,Branch.UNCOND);
+}

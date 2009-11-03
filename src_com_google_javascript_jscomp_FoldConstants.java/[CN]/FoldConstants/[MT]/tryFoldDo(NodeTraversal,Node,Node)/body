@@ -1,0 +1,14 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.DO);
+  Node cond=NodeUtil.getConditionExpression(n);
+  if (!NodeUtil.isLiteralValue(cond) || NodeUtil.getBooleanValue(cond)) {
+    return;
+  }
+  if (hasBreakOrContinue(n)) {
+    return;
+  }
+  Preconditions.checkState(NodeUtil.isControlStructureCodeBlock(n,n.getFirstChild()));
+  Node block=n.removeFirstChild();
+  parent.replaceChild(n,block);
+  t.getCompiler().reportCodeChange();
+}

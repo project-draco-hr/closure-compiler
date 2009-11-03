@@ -1,0 +1,17 @@
+{
+  Compiler compiler=new Compiler();
+  if (knownConstants == null) {
+    knownConstants=Sets.newHashSet();
+  }
+  ExpressionDecomposer decomposer=new ExpressionDecomposer(compiler,compiler.getUniqueNameIdSupplier(),knownConstants);
+  Node tree=parse(compiler,code);
+  assertNotNull(tree);
+  Node externsRoot=parse(compiler,"function goo() {}" + "function foo() {}");
+  assertNotNull(externsRoot);
+  Node mainRoot=tree;
+  Node callSite=findCall(tree,fnName);
+  assertNotNull("Call to " + fnName + " was not found.",callSite);
+  compiler.resetUniqueNameId();
+  DecompositionType result=decomposer.canExposeExpression(callSite);
+  assertEquals(expectedResult,result);
+}

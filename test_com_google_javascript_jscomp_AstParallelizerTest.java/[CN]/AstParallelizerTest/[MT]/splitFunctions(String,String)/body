@@ -1,0 +1,15 @@
+{
+  Compiler compiler=new Compiler();
+  Node orginal=compiler.parseTestCode(input);
+  Node root=orginal.cloneTree();
+  AstParallelizer parallelizer=AstParallelizer.createNewFunctionLevelAstParallelizer(root,true);
+  List<Node> forest=parallelizer.split();
+  assertEquals(output.length,forest.size());
+  int i=0;
+  for (  Node n : forest) {
+    Node tree=compiler.parseTestCode(output[i++]);
+    assertEquals(compiler.toSource(tree),compiler.toSource(n));
+  }
+  parallelizer.join();
+  assertTrue(orginal.checkTreeEqualsSilent(root));
+}

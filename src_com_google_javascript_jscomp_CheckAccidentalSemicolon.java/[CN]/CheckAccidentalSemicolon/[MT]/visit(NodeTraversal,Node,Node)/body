@@ -1,0 +1,24 @@
+{
+  Node child;
+switch (n.getType()) {
+case Token.IF:
+case Token.WHILE:
+    child=n.getFirstChild().getNext();
+  break;
+case Token.FOR:
+child=n.getFirstChild().getNext().getNext();
+if (child.getNext() != null) {
+child=child.getNext();
+}
+break;
+default :
+return;
+}
+for (; child != null; child=child.getNext()) {
+if ((child.getType() == Token.BLOCK) && (!child.hasChildren())) {
+if (child.wasEmptyNode()) {
+t.getCompiler().report(JSError.make(t,n,level,SUSPICIOUS_SEMICOLON));
+}
+}
+}
+}

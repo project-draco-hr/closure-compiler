@@ -1,0 +1,30 @@
+{
+switch (n.getType()) {
+case Token.GETPROP:
+{
+      Node propNode=n.getFirstChild().getNext();
+      JSType jstype=getJSType(n.getFirstChild());
+      maybeMarkCandidate(propNode,jstype,t);
+      break;
+    }
+case Token.OBJECTLIT:
+  for (Node key=n.getFirstChild(); key != null; key=key.getNext().getNext()) {
+    if (key.getType() == Token.STRING) {
+      if (!key.isQuotedString()) {
+        JSType jstype=getJSType(n.getFirstChild());
+        maybeMarkCandidate(key,jstype,t);
+      }
+ else {
+        quotedNames.add(key.getString());
+      }
+    }
+  }
+break;
+case Token.GETELEM:
+Node child=n.getLastChild();
+if (child.getType() == Token.STRING) {
+quotedNames.add(child.getString());
+}
+break;
+}
+}

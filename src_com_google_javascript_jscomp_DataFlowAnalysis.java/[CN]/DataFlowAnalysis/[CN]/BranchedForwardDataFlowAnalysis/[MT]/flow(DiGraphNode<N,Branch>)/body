@@ -1,0 +1,12 @@
+{
+  BranchedFlowState<L> state=node.getAnnotation();
+  List<L> outBefore=state.out;
+  state.out=branchedFlowThrough(node.getValue(),state.in);
+  Preconditions.checkState(outBefore.size() == state.out.size());
+  for (int i=0; i < outBefore.size(); i++) {
+    if (!outBefore.get(i).equals(state.out.get(i))) {
+      return true;
+    }
+  }
+  return false;
+}

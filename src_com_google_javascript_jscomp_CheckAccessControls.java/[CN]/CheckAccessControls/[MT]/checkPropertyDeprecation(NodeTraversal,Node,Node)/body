@@ -1,0 +1,19 @@
+{
+  if (parent.getType() == Token.NEW) {
+    return;
+  }
+  JSType maybeObjectType=dereference(n.getFirstChild().getJSType());
+  String propertyName=n.getLastChild().getString();
+  if (maybeObjectType != null && maybeObjectType instanceof ObjectType) {
+    ObjectType objectType=(ObjectType)maybeObjectType;
+    String deprecationInfo=getPropertyDeprecationInfo(objectType,propertyName);
+    if (deprecationInfo != null && shouldEmitDeprecationWarning(t,n,parent)) {
+      if (!deprecationInfo.isEmpty()) {
+        compiler.report(JSError.make(t,n,DEPRECATED_PROP_REASON,propertyName,validator.getReadableJSTypeName(n.getFirstChild(),true),deprecationInfo));
+      }
+ else {
+        compiler.report(JSError.make(t,n,DEPRECATED_PROP,propertyName,validator.getReadableJSTypeName(n.getFirstChild(),true)));
+      }
+    }
+  }
+}

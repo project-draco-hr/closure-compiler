@@ -1,0 +1,14 @@
+{
+  if (callNode.getFirstChild().getType() != Token.NAME) {
+    if (NodeUtil.isFunctionObjectCall(callNode)) {
+      Node thisValue=callNode.getFirstChild().getNext();
+      if (thisValue == null || thisValue.getType() != Token.THIS) {
+        return false;
+      }
+    }
+ else     if (NodeUtil.isFunctionObjectApply(callNode)) {
+      return false;
+    }
+  }
+  return true;
+}
