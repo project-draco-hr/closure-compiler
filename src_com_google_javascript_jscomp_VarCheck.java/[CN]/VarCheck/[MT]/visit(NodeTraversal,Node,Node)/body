@@ -20,9 +20,14 @@
     }
  else {
       t.report(n,UNDEFINED_VAR_ERROR,varName);
-      Node nameNode=Node.newString(Token.NAME,varName);
-      getSynthesizedExternsRoot().addChildToBack(new Node(Token.VAR,nameNode));
-      scope.declare(varName,nameNode,null,getSynthesizedExternsInput());
+      if (sanityCheck) {
+        throw new IllegalStateException("Unexpected variable " + varName);
+      }
+ else {
+        Node nameNode=Node.newString(Token.NAME,varName);
+        getSynthesizedExternsRoot().addChildToBack(new Node(Token.VAR,nameNode));
+        scope.declare(varName,nameNode,null,getSynthesizedExternsInput());
+      }
     }
     return;
   }
@@ -38,7 +43,7 @@
     if (moduleGraph.dependsOn(currModule,varModule)) {
     }
  else {
-      if (nonStrictModuleChecks && scope.isGlobal()) {
+      if (!sanityCheck && scope.isGlobal()) {
         if (moduleGraph.dependsOn(varModule,currModule)) {
           t.report(n,VIOLATED_MODULE_DEP_ERROR,currModule.getName(),varModule.getName(),varName);
         }

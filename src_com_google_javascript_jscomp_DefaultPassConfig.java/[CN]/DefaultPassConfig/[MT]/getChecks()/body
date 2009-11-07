@@ -30,9 +30,10 @@
   if (options.syntheticBlockStartMarker != null) {
     checks.add(createSyntheticBlocks);
   }
-  if (options.checkSymbols) {
-    checks.add(checkVars);
+  if (!options.checkSymbols) {
+    options.setWarningLevel(DiagnosticGroups.UNDEFINED_VARIABLES,CheckLevel.OFF);
   }
+  checks.add(checkVars);
   if (options.checkShadowVars.isOn()) {
     checks.add(checkShadowVars);
   }

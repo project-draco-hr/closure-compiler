@@ -1,0 +1,8 @@
+{
+  Compiler compiler=compile(original);
+  assertEquals("Expected no warnings or errors\n" + "Errors: \n" + Join.join("\n",compiler.getErrors()) + "Warnings: \n"+ Join.join("\n",compiler.getWarnings()),0,compiler.getErrors().length + compiler.getWarnings().length);
+  Node root=compiler.getRoot().getLastChild();
+  Node expectedRoot=parse(compiled);
+  String explanation=expectedRoot.checkTreeEquals(root);
+  assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult: "+ compiler.toSource(root)+ "\n"+ explanation,explanation);
+}

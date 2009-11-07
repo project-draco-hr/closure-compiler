@@ -1,11 +1,11 @@
 {
-  final String filePath=error.sourceName;
-  if (error.level != CheckLevel.ERROR && filePath != null) {
-    boolean checkMe=false;
-    for (    String checkedPath : checkWarningsOnlyForPath) {
-      checkMe|=filePath.contains(checkedPath);
+  final String errorPath=error.sourceName;
+  if (error.level != CheckLevel.ERROR && errorPath != null) {
+    boolean inPath=false;
+    for (    String path : paths) {
+      inPath|=errorPath.contains(path);
     }
-    if (!checkMe) {
+    if (inPath ^ (showType == ShowType.INCLUDE)) {
       return CheckLevel.OFF;
     }
   }

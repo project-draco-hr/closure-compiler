@@ -2,9 +2,15 @@
   Preconditions.checkState(n.getChildCount() == 3);
   Preconditions.checkState(n.getType() == Token.FUNCTION);
   final Node fnName=n.getFirstChild();
-  traverseBranch(fnName,n);
+  boolean anonymous=parent != null && NodeUtil.isFunctionAnonymous(n);
+  if (!anonymous) {
+    traverseBranch(fnName,n);
+  }
   curNode=n;
   pushScope(n);
+  if (anonymous) {
+    traverseBranch(fnName,n);
+  }
   final Node args=fnName.getNext();
   final Node body=args.getNext();
   traverseBranch(args,n);

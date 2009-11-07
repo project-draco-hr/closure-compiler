@@ -11,8 +11,10 @@
   Node externs=externsAndJs.getFirstChild();
   Node expected=compiler.parseTestCode(expectedExtern);
   assertFalse(compiler.hasErrors());
-  (new VarCheck(compiler)).process(externs,root);
-  (new VariableTestCheck(compiler)).process(externs,root);
+  (new VarCheck(compiler,sanityCheck)).process(externs,root);
+  if (!sanityCheck) {
+    (new VariableTestCheck(compiler)).process(externs,root);
+  }
   String externsCode=compiler.toSource(externs);
   String expectedCode=compiler.toSource(expected);
   assertEquals(expectedCode,externsCode);

@@ -1,0 +1,16 @@
+{
+  CompilerRunner runner=new CompilerRunner(new String[]{});
+  Compiler compiler=runner.createCompiler();
+  JSSourceFile[] inputs=new JSSourceFile[original.length];
+  for (int i=0; i < inputs.length; i++) {
+    inputs[i]=JSSourceFile.fromCode("input" + i,original[i]);
+  }
+  compiler.init(externs,inputs,new CompilerOptions());
+  Node all=compiler.parseInputs();
+  Node n=all.getLastChild();
+  Node externs=all.getFirstChild();
+  (new Normalize(compiler,false)).process(externs,n);
+  (new MakeDeclaredNamesUnique.UndoConstantRenaming(compiler)).process(externs,n);
+  (MakeDeclaredNamesUnique.getContextualRenameInverter(compiler)).process(externs,n);
+  return n;
+}
