@@ -16,45 +16,50 @@
         sb.append(' ');
         sb.append(fn.getFunctionName());
       }
-      sb.append(" [source name: ");
-      sb.append(sof.getSourceName());
-      sb.append("] [encoded source length: ");
-      sb.append(sof.getEncodedSourceEnd() - sof.getEncodedSourceStart());
-      sb.append("] [base line: ");
-      sb.append(sof.getBaseLineno());
-      sb.append("] [end line: ");
-      sb.append(sof.getEndLineno());
-      sb.append(']');
+      if (printSource) {
+        sb.append(" [source name: ");
+        sb.append(sof.getSourceName());
+        sb.append("] [encoded source length: ");
+        sb.append(sof.getEncodedSourceEnd() - sof.getEncodedSourceStart());
+        sb.append("] [base line: ");
+        sb.append(sof.getBaseLineno());
+        sb.append("] [end line: ");
+        sb.append(sof.getEndLineno());
+        sb.append(']');
+      }
     }
  else     if (type == Token.NUMBER) {
       sb.append(' ');
       sb.append(getDouble());
     }
-    int lineno=getLineno();
-    if (lineno != -1) {
-      sb.append(' ');
-      sb.append(lineno);
+    if (printSource) {
+      int lineno=getLineno();
+      if (lineno != -1) {
+        sb.append(' ');
+        sb.append(lineno);
+      }
     }
-    int[] keys=getSortedPropTypes();
-    for (int i=0; i < keys.length; i++) {
-      int type=keys[i];
-      PropListItem x=lookupProperty(type);
-      sb.append(" [");
-      sb.append(propToString(type));
-      sb.append(": ");
-      String value;
+    if (printAnnotations) {
+      int[] keys=getSortedPropTypes();
+      for (int i=0; i < keys.length; i++) {
+        int type=keys[i];
+        PropListItem x=lookupProperty(type);
+        sb.append(" [");
+        sb.append(propToString(type));
+        sb.append(": ");
+        String value;
 switch (type) {
 case TARGETBLOCK_PROP:
-        value="target block property";
-      break;
+          value="target block property";
+        break;
 case LOCAL_BLOCK_PROP:
-    value="last local block";
-  break;
+      value="last local block";
+    break;
 case ISNUMBER_PROP:
 switch (x.intValue) {
 case BOTH:
-  value="both";
-break;
+    value="both";
+  break;
 case RIGHT:
 value="right";
 break;
@@ -90,11 +95,14 @@ break;
 sb.append(value);
 sb.append(']');
 }
+}
+if (printType) {
 if (jsType != null) {
 String jsTypeString=jsType.toString();
 if (jsTypeString != null) {
 sb.append(" : ");
 sb.append(jsTypeString);
+}
 }
 }
 }

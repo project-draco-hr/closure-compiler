@@ -1,8 +1,12 @@
 {
   if (n == null) {
-    return "[missing]\n";
+    return MISSING_SOURCE + "\n";
   }
   int lineNumber=n.getLineno();
   int columnNumber=n.getCharno();
-  return sourceName + ":" + lineNumber+ ":"+ columnNumber+ "\n"+ compiler.getSourceLine(sourceName,lineNumber)+ "\n";
+  String src=compiler.getSourceLine(sourceName,lineNumber);
+  if (src == null) {
+    src=MISSING_SOURCE;
+  }
+  return sourceName + ":" + lineNumber+ ":"+ columnNumber+ "\n"+ src+ "\n";
 }
