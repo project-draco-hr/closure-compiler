@@ -3,13 +3,14 @@
   if (size == 0) {
     return false;
   }
-  Reference decl=references.get(0);
-  if (!decl.isInitializingDeclaration()) {
+  Reference init=getInitializingReference();
+  if (init == null) {
     return false;
   }
-  BasicBlock declBlock=decl.getBasicBlock();
+  Preconditions.checkState(references.get(0).isDeclaration());
+  BasicBlock initBlock=init.getBasicBlock();
   for (int i=1; i < size; i++) {
-    if (!declBlock.provablyExecutesBefore(references.get(i).getBasicBlock())) {
+    if (!initBlock.provablyExecutesBefore(references.get(i).getBasicBlock())) {
       return false;
     }
   }

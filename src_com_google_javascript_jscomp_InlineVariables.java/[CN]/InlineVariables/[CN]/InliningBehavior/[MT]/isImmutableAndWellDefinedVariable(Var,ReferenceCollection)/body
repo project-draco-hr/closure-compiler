@@ -1,9 +1,19 @@
 {
   List<Reference> refSet=refInfo.references;
-  if (!isValidDeclaration(refSet.get(0))) {
+  int startingReadRef=1;
+  Reference refDecl=refSet.get(0);
+  if (!isValidDeclaration(refDecl)) {
     return false;
   }
-  for (int i=1; i < refSet.size(); i++) {
+  Reference refInit=refInfo.getInitializingReference();
+  if (!isValidInitialization(refInit)) {
+    return false;
+  }
+  if (refDecl != refInit) {
+    Preconditions.checkState(refInit == refSet.get(1));
+    startingReadRef=2;
+  }
+  for (int i=startingReadRef; i < refSet.size(); i++) {
     Reference ref=refSet.get(i);
     if (!isValidReference(ref)) {
       return false;
@@ -12,6 +22,7 @@
   if (!refInfo.isWellDefined()) {
     return false;
   }
-  Node value=refSet.get(0).getNameNode().getFirstChild();
+  Node value=refInit.getAssignedValue();
+  Preconditions.checkNotNull(value);
   return NodeUtil.isImmutableValue(value) && (value.getType() != Token.STRING || isStringWorthInlining(v,refInfo.references));
 }

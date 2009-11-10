@@ -1,0 +1,20 @@
+{
+  if (!identifyConstants.apply(var)) {
+    return false;
+  }
+  if (!refInfo.isAssignedOnce()) {
+    return false;
+  }
+  Reference init=refInfo.getInitializingReferenceForConstants();
+  if (init == null) {
+    return false;
+  }
+  Node value=init.getAssignedValue();
+  if (value == null) {
+    return false;
+  }
+  if (!NodeUtil.isImmutableValue(value)) {
+    return false;
+  }
+  return value.getType() != Token.STRING || isStringWorthInlining(var,refInfo.references);
+}

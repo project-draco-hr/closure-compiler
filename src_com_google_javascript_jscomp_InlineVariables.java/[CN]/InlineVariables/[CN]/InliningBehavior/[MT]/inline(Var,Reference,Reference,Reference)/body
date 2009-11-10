@@ -1,0 +1,11 @@
+{
+  Node value=init.getAssignedValue();
+  Preconditions.checkState(value != null);
+  inlineValue(v,reference,value.detachFromParent());
+  if (declaration != init) {
+    Node expressRoot=init.getGrandparent();
+    Preconditions.checkState(expressRoot.getType() == Token.EXPR_RESULT);
+    NodeUtil.removeChild(expressRoot.getParent(),expressRoot);
+  }
+  removeDeclaration(declaration);
+}

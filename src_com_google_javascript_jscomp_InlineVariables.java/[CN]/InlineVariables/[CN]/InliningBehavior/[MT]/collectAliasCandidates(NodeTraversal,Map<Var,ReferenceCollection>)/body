@@ -3,10 +3,10 @@
     for (Iterator<Var> it=t.getScope().getVars(); it.hasNext(); ) {
       Var v=it.next();
       ReferenceCollection referenceInfo=referenceMap.get(v);
-      if (referenceInfo != null && referenceInfo.references.size() >= 2 && referenceInfo.isWellDefined() && referenceInfo.isNeverReassigned()) {
-        Reference declaration=referenceInfo.references.get(0);
-        Node value=declaration.getNameNode().getFirstChild();
-        if (declaration.getParent().getType() == Token.VAR && value != null && value.getType() == Token.NAME) {
+      if (referenceInfo != null && referenceInfo.references.size() >= 2 && referenceInfo.isWellDefined() && referenceInfo.isAssignedOnce()) {
+        Reference init=referenceInfo.getInitializingReference();
+        Node value=init.getAssignedValue();
+        if (value != null && value.getType() == Token.NAME) {
           aliasCandidates.put(value,new AliasCandidate(v,referenceInfo));
         }
       }

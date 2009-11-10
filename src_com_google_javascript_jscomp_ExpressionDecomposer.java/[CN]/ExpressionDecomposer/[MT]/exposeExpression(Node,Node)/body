@@ -9,7 +9,7 @@
     int parentType=parent.getType();
     Preconditions.checkState(!isConditionalOp(parent) || child == parent.getFirstChild());
     if (parentType == Token.ASSIGN) {
-      if (parent.getFirstChild().getType() == Token.NAME) {
+      if (isSafeAssign(parent,state.sideEffects)) {
       }
  else {
         Node left=parent.getFirstChild();
@@ -24,12 +24,17 @@
       }
     }
  else     if (parentType == Token.CALL && NodeUtil.isGet(parent.getFirstChild())) {
-      Node functionExpression=parent.getFirstChild();
-      decomposeSubExpressions(functionExpression.getNext(),child,state);
-      if (isExpressionTreeUnsafe(functionExpression,state.sideEffects)) {
-        state.sideEffects=true;
-        Node replacement=rewriteCallExpression(parent,state);
-        parent=replacement;
+      if (!maybeExternMethod(parent.getFirstChild())) {
+        throw new IllegalStateException("External object method calls can not be decomposed.");
+      }
+ else {
+        Node functionExpression=parent.getFirstChild();
+        decomposeSubExpressions(functionExpression.getNext(),child,state);
+        if (isExpressionTreeUnsafe(functionExpression,state.sideEffects)) {
+          state.sideEffects=true;
+          Node replacement=rewriteCallExpression(parent,state);
+          parent=replacement;
+        }
       }
     }
  else {

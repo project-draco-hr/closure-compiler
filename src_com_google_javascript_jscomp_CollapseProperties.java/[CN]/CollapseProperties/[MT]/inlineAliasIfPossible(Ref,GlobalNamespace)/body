@@ -6,7 +6,7 @@
     ReferenceCollectingCallback collector=new ReferenceCollectingCallback(compiler,ReferenceCollectingCallback.DO_NOTHING_BEHAVIOR,Predicates.<Var>equalTo(aliasVar));
     (new NodeTraversal(compiler,collector)).traverseAtScope(scope);
     ReferenceCollection aliasRefs=collector.getReferenceCollection(aliasVar);
-    if (aliasRefs.isWellDefined() && aliasRefs.isNeverReassigned()) {
+    if (aliasRefs.isWellDefined() && aliasRefs.firstReferenceIsAssigningDeclaration() && aliasRefs.isAssignedOnce()) {
       int size=aliasRefs.references.size();
       Set<Node> newNodes=Sets.newHashSetWithExpectedSize(size - 1);
       for (int i=1; i < size; i++) {

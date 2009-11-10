@@ -12,6 +12,8 @@
   Node mainRoot=tree;
   Node callSite=findCall(tree,fnName);
   assertNotNull("Call to " + fnName + " was not found.",callSite);
+  DecompositionType result=decomposer.canExposeExpression(callSite);
+  assertTrue(result == DecompositionType.DECOMPOSABLE);
   compiler.resetUniqueNameId();
   decomposer.exposeExpression(callSite);
   String explanation=expectedRoot.checkTreeEquals(tree);

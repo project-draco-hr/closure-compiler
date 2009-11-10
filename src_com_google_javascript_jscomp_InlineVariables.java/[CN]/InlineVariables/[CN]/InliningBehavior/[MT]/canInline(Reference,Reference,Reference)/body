@@ -1,0 +1,17 @@
+{
+  if (!isValidDeclaration(declaration) || !isValidInitialization(initialization) || !isValidReference(reference)) {
+    return false;
+  }
+  if (declaration != initialization && initialization.getGrandparent().getType() != Token.EXPR_RESULT) {
+    return false;
+  }
+  if (declaration.getBasicBlock() != initialization.getBasicBlock() || declaration.getBasicBlock() != reference.getBasicBlock()) {
+    return false;
+  }
+  Node value=initialization.getAssignedValue();
+  Preconditions.checkState(value != null);
+  if (value.getType() == Token.GETPROP && reference.getParent().getType() == Token.CALL && reference.getParent().getFirstChild() == reference.getNameNode()) {
+    return false;
+  }
+  return canMoveAggressively(value) || canMoveModerately(initialization,reference);
+}

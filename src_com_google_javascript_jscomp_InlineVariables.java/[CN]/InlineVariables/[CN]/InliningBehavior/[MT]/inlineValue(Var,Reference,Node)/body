@@ -1,5 +1,11 @@
 {
-  ref.getParent().replaceChild(ref.getNameNode(),value);
+  Node parent=ref.getParent();
+  if (ref.isSimpleAssignmentToName()) {
+    ref.getGrandparent().replaceChild(parent,value);
+  }
+ else {
+    ref.getParent().replaceChild(ref.getNameNode(),value);
+  }
   blacklistVarReferencesInTree(value,v.scope);
   compiler.reportCodeChange();
 }

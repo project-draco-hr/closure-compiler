@@ -1,0 +1,13 @@
+{
+  if (initialization == null) {
+    return false;
+  }
+ else   if (initialization.isDeclaration()) {
+    return initialization.getNameNode().getFirstChild() != null;
+  }
+ else {
+    Node parent=initialization.getParent();
+    Preconditions.checkState(parent.getType() == Token.ASSIGN && parent.getFirstChild() == initialization.getNameNode());
+    return true;
+  }
+}

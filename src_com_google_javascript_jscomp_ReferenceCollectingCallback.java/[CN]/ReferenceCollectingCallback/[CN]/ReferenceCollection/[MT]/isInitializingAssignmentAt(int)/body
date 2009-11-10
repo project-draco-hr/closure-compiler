@@ -1,0 +1,13 @@
+{
+  if (index < references.size() && index > 0) {
+    Reference maybeDecl=references.get(index - 1);
+    if (maybeDecl.isVarDeclaration()) {
+      Preconditions.checkState(!maybeDecl.isInitializingDeclaration());
+      Reference maybeInit=references.get(index);
+      if (maybeInit.isSimpleAssignmentToName()) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

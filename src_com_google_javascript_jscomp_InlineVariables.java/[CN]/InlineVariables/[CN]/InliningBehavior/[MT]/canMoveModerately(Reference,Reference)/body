@@ -1,5 +1,15 @@
 {
-  Iterator<Node> it=new NodeIterators.LocalVarMotion(declaration.getNameNode(),declaration.getParent(),declaration.getGrandparent());
+  Iterator<Node> it;
+  if (initialization.getParent().getType() == Token.VAR) {
+    it=NodeIterators.LocalVarMotion.forVar(initialization.getNameNode(),initialization.getParent(),initialization.getGrandparent());
+  }
+ else   if (initialization.getParent().getType() == Token.ASSIGN) {
+    Preconditions.checkState(initialization.getGrandparent().getType() == Token.EXPR_RESULT);
+    it=NodeIterators.LocalVarMotion.forAssign(initialization.getNameNode(),initialization.getParent(),initialization.getGrandparent(),initialization.getGrandparent().getParent());
+  }
+ else {
+    throw new IllegalStateException("Unexpected initialiation parent");
+  }
   Node targetName=reference.getNameNode();
   while (it.hasNext()) {
     Node curNode=it.next();
