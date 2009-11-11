@@ -10,6 +10,9 @@
           JSSourceFile file=JSSourceFile.fromCode("additionalcode",additionalCode);
           Node scriptNode=root.getFirstChild();
           Node newScriptNode=new CompilerInput(file).getAstRoot(compiler);
+          if (addAdditionalNamespace) {
+            newScriptNode.getFirstChild().putBooleanProp(Node.IS_NAMESPACE,true);
+          }
           while (newScriptNode.getLastChild() != null) {
             Node lastChild=newScriptNode.getLastChild();
             newScriptNode.removeChild(lastChild);
@@ -20,6 +23,9 @@
           JSSourceFile file=JSSourceFile.fromCode("additionalendcode",additionalEndCode);
           Node scriptNode=root.getFirstChild();
           Node newScriptNode=new CompilerInput(file).getAstRoot(compiler);
+          if (addAdditionalNamespace) {
+            newScriptNode.getFirstChild().putBooleanProp(Node.IS_NAMESPACE,true);
+          }
           while (newScriptNode.getFirstChild() != null) {
             Node firstChild=newScriptNode.getFirstChild();
             newScriptNode.removeChild(firstChild);

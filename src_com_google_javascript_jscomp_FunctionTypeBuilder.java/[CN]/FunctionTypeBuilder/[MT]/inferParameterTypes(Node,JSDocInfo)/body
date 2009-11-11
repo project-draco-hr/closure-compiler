@@ -1,13 +1,34 @@
 {
   if (argsParent == null) {
-    return inferParameterTypes(info);
-  }
-  List<String> argsList=ImmutableList.of();
-  if (argsParent.getFirstChild() != null) {
-    argsList=Lists.newArrayList();
-    for (    Node n : argsParent.children()) {
-      argsList.add(n.getString());
+    if (info == null) {
+      return this;
+    }
+ else {
+      return inferParameterTypes(info);
     }
   }
-  return inferParameterTypes(argsList,info);
+  FunctionParamBuilder builder=new FunctionParamBuilder(typeRegistry);
+  boolean warnedAboutArgList=false;
+  Set<String> allJsDocParams=(info == null) ? Sets.<String>newHashSet() : Sets.newHashSet(info.getParameterNames());
+  boolean foundTemplateType=false;
+  for (  Node arg : argsParent.children()) {
+    String argumentName=arg.getString();
+    allJsDocParams.remove(argumentName);
+    JSType parameterType=info != null && info.hasParameterType(argumentName) ? info.getParameterType(argumentName).evaluate(scope) : typeRegistry.getNativeType(UNKNOWN_TYPE);
+    if (templateTypeName != null && parameterType.restrictByNotNullOrUndefined().isTemplateType()) {
+      if (foundTemplateType) {
+        reportError(TEMPLATE_TYPE_DUPLICATED,fnName);
+      }
+      foundTemplateType=true;
+    }
+    warnedAboutArgList|=addParameter(builder,parameterType,warnedAboutArgList,isOptionalParameter(arg,info),isVarArgsParameter(arg,info));
+  }
+  if (templateTypeName != null && !foundTemplateType) {
+    reportError(TEMPLATE_TYPE_EXPECTED,fnName);
+  }
+  for (  String inexistentName : allJsDocParams) {
+    reportWarning(INEXISTANT_PARAM,inexistentName,fnName);
+  }
+  parametersNode=builder.build();
+  return this;
 }
