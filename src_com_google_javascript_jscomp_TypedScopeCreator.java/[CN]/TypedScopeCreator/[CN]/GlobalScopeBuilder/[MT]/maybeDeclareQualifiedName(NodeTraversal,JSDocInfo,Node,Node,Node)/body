@@ -19,20 +19,7 @@
   }
   if (valueType == null) {
     if (parent.getType() == Token.EXPR_RESULT) {
-      ObjectType ownerType=getObjectSlot(ownerName);
-      JSType unknownType=typeRegistry.getNativeType(UNKNOWN_TYPE);
-      if (ownerType == null) {
-        defineSlot(n,parent,unknownType,false);
-      }
- else {
-        boolean isExtern=t.getInput().isExtern();
-        if (isExtern || ownerType.isFunctionPrototypeType()) {
-          ownerType.defineDeclaredProperty(propName,unknownType,isExtern);
-        }
- else {
-          typeRegistry.registerPropertyOnType(propName,ownerType);
-        }
-      }
+      stubDeclarations.add(new StubDeclaration(n,t.getInput().isExtern(),ownerName));
     }
  else     if (rhsValue != null && rhsValue.getType() == Token.TRUE) {
       ObjectType ownerType=getObjectSlot(ownerName);
