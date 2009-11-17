@@ -1,0 +1,18 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.LABEL);
+  Node last=n.getLastChild();
+switch (last.getType()) {
+case Token.LABEL:
+case Token.BLOCK:
+case Token.FOR:
+case Token.WHILE:
+case Token.DO:
+    return;
+default :
+  Node block=new Node(Token.BLOCK);
+n.replaceChild(last,block);
+block.addChildToFront(last);
+reportCodeChange("LABEL normalization");
+return;
+}
+}

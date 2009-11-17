@@ -1,0 +1,54 @@
+{
+  int numVars=0;
+  int arbitraryNameCounter=0;
+  for (Node key=objlit.getFirstChild(), nextKey; key != null; key=nextKey) {
+    Node value=key.getNext();
+    nextKey=value.getNext();
+    boolean isJsIdentifier=key.getType() != Token.NUMBER && TokenStream.isJSIdentifier(key.getString());
+    String propName=isJsIdentifier ? key.getString() : String.valueOf(++arbitraryNameCounter);
+    String propAlias=appendPropForAlias(alias,propName);
+    String qName=objlitName.fullName() + '.' + propName;
+    Node refNode=null;
+    if (discardKeys) {
+      objlit.removeChild(key);
+      objlit.removeChild(value);
+    }
+ else {
+      refNode=Node.newString(Token.NAME,propAlias);
+      if (key.getBooleanProp(Node.IS_CONSTANT_NAME)) {
+        refNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
+      }
+      objlit.replaceChildAfter(key,refNode);
+    }
+    Node nameNode=Node.newString(Token.NAME,propAlias);
+    nameNode.addChildToFront(value);
+    if (key.getBooleanProp(Node.IS_CONSTANT_NAME)) {
+      nameNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
+    }
+    Node newVar=new Node(Token.VAR,nameNode);
+    if (nameToAddAfter != null) {
+      varParent.addChildAfter(newVar,nameToAddAfter);
+    }
+ else {
+      varParent.addChildBefore(newVar,varNode);
+    }
+    compiler.reportCodeChange();
+    nameToAddAfter=newVar;
+    if (isJsIdentifier) {
+      Name p=nameMap.get(qName);
+      if (p != null) {
+        if (!discardKeys) {
+          Ref newAlias=p.declaration.cloneAndReclassify(Ref.Type.ALIASING_GET);
+          newAlias.node=refNode;
+          p.addRef(newAlias);
+        }
+        p.declaration.node=nameNode;
+        if (value.getType() == Token.FUNCTION) {
+          checkForHosedThisReferences(value,value.getJSDocInfo(),p);
+        }
+      }
+    }
+    numVars++;
+  }
+  return numVars;
+}
