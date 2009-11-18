@@ -1,6 +1,11 @@
 {
-  if (NodeUtil.isAssign(n)) {
+  if (NodeUtil.isAssignmentOp(n)) {
     Node lhs=n.getFirstChild();
+    Node rhs=lhs.getNext();
+    if (rhs != null) {
+      tryRemoveAssignment(t,rhs,exprRoot,state);
+      rhs=lhs.getNext();
+    }
     Scope scope=t.getScope();
     if (!NodeUtil.isName(lhs)) {
       return;
@@ -16,20 +21,31 @@
     if (state.getOut().isLive(var)) {
       return;
     }
-    if (state.getIn().isLive(var)) {
+    if (state.getIn().isLive(var) && isVariableStillLiveWithinExpression(n,exprRoot,var.name)) {
       return;
     }
-    Node rhs=n.getLastChild();
-    logger.info("Removing dead assignemnt to " + name + " in "+ t.getSourceName()+ " line "+ n.getLineno());
-    n.removeChild(rhs);
-    parent.replaceChild(n,rhs);
+    if (NodeUtil.isAssign(n)) {
+      n.removeChild(rhs);
+      n.getParent().replaceChild(n,rhs);
+    }
+ else     if (NodeUtil.isAssignmentOp(n)) {
+      n.removeChild(rhs);
+      n.removeChild(lhs);
+      Node op=new Node(NodeUtil.getOpFromAssignmentOp(n),lhs,rhs);
+      n.getParent().replaceChild(n,op);
+    }
+ else {
+      Preconditions.checkState(false,"Unknow statement");
+    }
     compiler.reportCodeChange();
     return;
   }
  else {
     for (Node c=n.getFirstChild(); c != null; ) {
       Node next=c.getNext();
-      tryRemoveAssignment(t,c,n,state);
+      if (!ControlFlowGraph.isEnteringNewCfgNode(c)) {
+        tryRemoveAssignment(t,c,exprRoot,state);
+      }
       c=next;
     }
     return;
