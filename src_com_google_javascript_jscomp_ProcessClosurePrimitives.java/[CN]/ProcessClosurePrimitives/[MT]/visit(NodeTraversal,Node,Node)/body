@@ -1,94 +1,99 @@
 {
 switch (n.getType()) {
 case Token.CALL:
-    if (parent.getType() == Token.EXPR_RESULT) {
-      Node left=n.getFirstChild();
-      if (left.getType() == Token.GETPROP) {
-        Node name=left.getFirstChild();
-        if (name.getType() == Token.NAME && GOOG.equals(name.getString())) {
-          String methodName=name.getNext().getString();
-          if ("require".equals(methodName)) {
-            Node arg=left.getNext();
-            if (verifyArgument(t,left,arg)) {
-              String ns=arg.getString();
-              ProvidedNode provided=providedNodes.get(ns);
-              if (provided == null) {
-                unrecognizedRequires.add(new UnrecognizedRequire(n,ns,t.getSourceName()));
-              }
+    boolean isExpr=parent.getType() == Token.EXPR_RESULT;
+  Node left=n.getFirstChild();
+if (left.getType() == Token.GETPROP) {
+  Node name=left.getFirstChild();
+  if (name.getType() == Token.NAME && GOOG.equals(name.getString())) {
+    String methodName=name.getNext().getString();
+    if ("base".equals(methodName)) {
+      processBaseClassCall(t,n);
+    }
+ else     if (!isExpr) {
+      break;
+    }
+ else     if ("require".equals(methodName)) {
+      Node arg=left.getNext();
+      if (verifyArgument(t,left,arg)) {
+        String ns=arg.getString();
+        ProvidedNode provided=providedNodes.get(ns);
+        if (provided == null) {
+          unrecognizedRequires.add(new UnrecognizedRequire(n,ns,t.getSourceName()));
+        }
  else {
-                JSModule module=t.getModule();
-                if (module != provided.module && !compiler.getModuleGraph().dependsOn(module,provided.module)) {
-                  compiler.report(JSError.make(t,n,XMODULE_REQUIRE_ERROR,ns,provided.module.getName(),module.getName()));
-                }
-              }
-              if (provided != null || requiresLevel.isOn()) {
-                parent.getParent().removeChild(parent);
-                compiler.reportCodeChange();
-              }
-            }
+          JSModule module=t.getModule();
+          if (module != provided.module && !compiler.getModuleGraph().dependsOn(module,provided.module)) {
+            compiler.report(JSError.make(t,n,XMODULE_REQUIRE_ERROR,ns,provided.module.getName(),module.getName()));
           }
- else           if ("provide".equals(methodName)) {
-            Node arg=left.getNext();
-            if (verifyProvide(t,left,arg)) {
-              String ns=arg.getString();
-              if (providedNodes.get(ns) != null) {
-                compiler.report(JSError.make(t,n,DUPLICATE_NAMESPACE_ERROR,ns));
-              }
- else               if (!providedNodes.containsKey(ns)) {
-                replaceProvide(t,parent,parent.getParent(),ns);
-              }
- else {
-                parent.getParent().removeChild(parent);
-                providedNodes.put(ns,new ProvidedNode(null,null,t.getModule()));
-              }
-              compiler.reportCodeChange();
-            }
-          }
- else           if ("exportSymbol".equals(methodName)) {
-            Node arg=left.getNext();
-            if (arg.getType() == Token.STRING) {
-              int dot=arg.getString().indexOf('.');
-              if (dot == -1) {
-                exportedVariables.add(arg.getString());
-              }
- else {
-                exportedVariables.add(arg.getString().substring(0,dot));
-              }
-            }
-          }
- else           if ("addDependency".equals(methodName)) {
-            CodingConvention convention=compiler.getCodingConvention();
-            List<String> typeDecls=convention.identifyTypeDeclarationCall(n);
-            if (typeDecls != null) {
-              for (              String typeDecl : typeDecls) {
-                compiler.getTypeRegistry().forwardDeclareType(typeDecl);
-              }
-            }
-            parent.replaceChild(n,Node.newNumber(0));
-            compiler.reportCodeChange();
-          }
- else           if ("setCssNameMapping".equals(methodName)) {
-            processSetCssNameMapping(t,n,parent);
-          }
+        }
+        if (provided != null || requiresLevel.isOn()) {
+          parent.getParent().removeChild(parent);
+          compiler.reportCodeChange();
         }
       }
     }
-  break;
-case Token.ASSIGN:
-if (t.inGlobalScope() && parent.getType() == Token.EXPR_RESULT) {
-  Node nameNode=n.getFirstChild();
-  String name=nameNode.getQualifiedName();
-  if (name != null) {
-    if (parent.getBooleanProp(Node.IS_NAMESPACE)) {
-      processProvideFromPreviousPass(t,name,parent);
-    }
+ else     if ("provide".equals(methodName)) {
+      Node arg=left.getNext();
+      if (verifyProvide(t,left,arg)) {
+        String ns=arg.getString();
+        if (providedNodes.get(ns) != null) {
+          compiler.report(JSError.make(t,n,DUPLICATE_NAMESPACE_ERROR,ns));
+        }
+ else         if (!providedNodes.containsKey(ns)) {
+          replaceProvide(t,parent,parent.getParent(),ns);
+        }
  else {
-      ProvidedNode pn=providedNodes.get(name);
-      if (pn != null) {
-        pn.addCandidate(parent,parent.getParent());
+          parent.getParent().removeChild(parent);
+          providedNodes.put(ns,new ProvidedNode(null,null,t.getModule()));
+        }
+        compiler.reportCodeChange();
       }
     }
+ else     if ("exportSymbol".equals(methodName)) {
+      Node arg=left.getNext();
+      if (arg.getType() == Token.STRING) {
+        int dot=arg.getString().indexOf('.');
+        if (dot == -1) {
+          exportedVariables.add(arg.getString());
+        }
+ else {
+          exportedVariables.add(arg.getString().substring(0,dot));
+        }
+      }
+    }
+ else     if ("addDependency".equals(methodName)) {
+      CodingConvention convention=compiler.getCodingConvention();
+      List<String> typeDecls=convention.identifyTypeDeclarationCall(n);
+      if (typeDecls != null) {
+        for (        String typeDecl : typeDecls) {
+          compiler.getTypeRegistry().forwardDeclareType(typeDecl);
+        }
+      }
+      parent.replaceChild(n,Node.newNumber(0));
+      compiler.reportCodeChange();
+    }
+ else     if ("setCssNameMapping".equals(methodName)) {
+      processSetCssNameMapping(t,n,parent);
+    }
   }
+}
+break;
+case Token.ASSIGN:
+if (t.inGlobalScope() && parent.getType() == Token.EXPR_RESULT) {
+Node nameNode=n.getFirstChild();
+String name=nameNode.getQualifiedName();
+if (name != null) {
+if (parent.getBooleanProp(Node.IS_NAMESPACE)) {
+  processProvideFromPreviousPass(t,name,parent);
+}
+ else {
+  ProvidedNode pn=providedNodes.get(name);
+  if (pn != null) {
+    pn.addCandidate(parent,parent.getParent());
+  }
+}
+}
 }
 break;
 case Token.NAME:
@@ -100,7 +105,7 @@ processProvideFromPreviousPass(t,name,parent);
  else {
 ProvidedNode pn=providedNodes.get(name);
 if (pn != null) {
-  pn.addCandidate(parent,parent.getParent());
+pn.addCandidate(parent,parent.getParent());
 }
 }
 }
@@ -116,6 +121,11 @@ compiler.report(JSError.make(t,n,FUNCTION_NAMESPACE_ERROR,name));
 break;
 case Token.NEW:
 trySimplifyNewDate(t,n,parent);
+break;
+case Token.GETPROP:
+if (n.getFirstChild().getType() == Token.NAME && parent.getType() != Token.CALL && parent.getType() != Token.ASSIGN && "goog.base".equals(n.getQualifiedName())) {
+reportBadBaseClassUse(t,n,"May only be called directly.");
+}
 break;
 }
 }

@@ -1,0 +1,18 @@
+{
+  Node scopeRoot=t.getScopeRoot();
+  if (NodeUtil.isFunctionDeclaration(scopeRoot)) {
+    return scopeRoot.getFirstChild();
+  }
+ else {
+    Node parent=scopeRoot.getParent();
+    if (parent != null) {
+      if (parent.getType() == Token.ASSIGN || parent.getLastChild() == scopeRoot && parent.getFirstChild().isQualifiedName()) {
+        return parent.getFirstChild();
+      }
+ else       if (parent.getType() == Token.NAME) {
+        return parent;
+      }
+    }
+  }
+  return null;
+}

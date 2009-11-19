@@ -30,8 +30,9 @@
   if (options.syntheticBlockStartMarker != null) {
     checks.add(createSyntheticBlocks);
   }
-  if (!options.checkSymbols) {
-    options.setWarningLevel(DiagnosticGroups.UNDEFINED_VARIABLES,CheckLevel.OFF);
+  WarningsGuard warningsGuard=options.getWarningsGuard();
+  if (!options.checkSymbols && (warningsGuard == null || !warningsGuard.disables(DiagnosticGroups.CHECK_VARIABLES))) {
+    options.setWarningLevel(DiagnosticGroups.CHECK_VARIABLES,CheckLevel.OFF);
   }
   checks.add(checkVars);
   if (options.checkShadowVars.isOn()) {

@@ -6,6 +6,13 @@
   for (int i=0; i < original.length; i++) {
     inputs[i]=JSSourceFile.fromCode("input" + i,original[i]);
   }
-  compiler.compile(externs,CompilerTestCase.createModuleChain(original),runner.createOptions());
+  CompilerOptions options=runner.createOptions();
+  try {
+    runner.setRunOptions(options);
+  }
+ catch (  IOException e) {
+    assert(false);
+  }
+  compiler.compile(externs,CompilerTestCase.createModuleChain(original),options);
   return compiler;
 }

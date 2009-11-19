@@ -1,0 +1,48 @@
+{
+  Node callee=n.getFirstChild();
+  Node thisArg=callee.getNext();
+  if (thisArg == null || thisArg.getType() != Token.THIS) {
+    reportBadBaseClassUse(t,n,"First argument must be 'this'.");
+    return;
+  }
+  Node enclosingFnNameNode=getEnclosingDeclNameNode(t);
+  if (enclosingFnNameNode == null) {
+    reportBadBaseClassUse(t,n,"Could not find enclosing method.");
+    return;
+  }
+  String enclosingQname=enclosingFnNameNode.getQualifiedName();
+  if (enclosingQname.indexOf(".prototype.") == -1) {
+    Node enclosingParent=enclosingFnNameNode.getParent();
+    Node maybeInheritsExpr=(enclosingParent.getType() == Token.ASSIGN ? enclosingParent.getParent() : enclosingParent).getNext();
+    Node baseClassNode=null;
+    if (maybeInheritsExpr != null && maybeInheritsExpr.getType() == Token.EXPR_RESULT && maybeInheritsExpr.getFirstChild().getType() == Token.CALL) {
+      Node callNode=maybeInheritsExpr.getFirstChild();
+      if ("goog.inherits".equals(callNode.getFirstChild().getQualifiedName()) && callNode.getLastChild().isQualifiedName()) {
+        baseClassNode=callNode.getLastChild();
+      }
+    }
+    if (baseClassNode == null) {
+      reportBadBaseClassUse(t,n,"Could not find goog.inherits for base class");
+      return;
+    }
+    n.replaceChild(callee,NodeUtil.newQualifiedNameNode(String.format("%s.call",baseClassNode.getQualifiedName()),callee,"goog.base"));
+    compiler.reportCodeChange();
+  }
+ else {
+    Node methodNameNode=thisArg.getNext();
+    if (methodNameNode == null || methodNameNode.getType() != Token.STRING) {
+      reportBadBaseClassUse(t,n,"Second argument must name a method.");
+      return;
+    }
+    String methodName=methodNameNode.getString();
+    String ending=".prototype." + methodName;
+    if (enclosingQname == null || !enclosingQname.endsWith(ending)) {
+      reportBadBaseClassUse(t,n,"Enclosing method does not match " + methodName);
+      return;
+    }
+    Node className=enclosingFnNameNode.getFirstChild().getFirstChild();
+    n.replaceChild(callee,NodeUtil.newQualifiedNameNode(String.format("%s.superClass_.%s.call",className.getQualifiedName(),methodName),callee,"goog.base"));
+    n.removeChild(methodNameNode);
+    compiler.reportCodeChange();
+  }
+}
