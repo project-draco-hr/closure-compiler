@@ -253,6 +253,12 @@ parser.addWarning("msg.missing.variable.name",lineno,charno);
 name=stream.getString();
 if (isBracketedParam) {
 token=next();
+if (JsDocToken.EQUALS == token) {
+token=next();
+if (JsDocToken.STRING == token) {
+token=next();
+}
+}
 if (JsDocToken.RB != token) {
 reportTypeSyntaxWarning("msg.jsdoc.missing.rb");
 }
@@ -260,7 +266,10 @@ reportTypeSyntaxWarning("msg.jsdoc.missing.rb");
 type=JSTypeExpression.makeOptionalArg(type);
 }
 }
-if (!jsdocBuilder.recordParameter(name,type)) {
+if (name.indexOf('.') > -1) {
+name=null;
+}
+ else if (!jsdocBuilder.recordParameter(name,type)) {
 if (jsdocBuilder.hasParameter(name)) {
 parser.addWarning("msg.dup.variable.name",name,lineno,charno);
 }
