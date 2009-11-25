@@ -13,6 +13,11 @@
     }
     return;
   }
+  if (NodeUtil.isFunctionDeclaration(parent)) {
+    if (!isHoistedFunction(parent)) {
+      t.report(n,AMBIGUOUS_FUNCTION_DECL);
+    }
+  }
   Scope scope=t.getScope();
   Scope.Var var=scope.getVar(varName);
   if (var == null) {

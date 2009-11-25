@@ -11,6 +11,10 @@
       if (toRemove.getType() == Token.LP && parent.getType() == Token.FUNCTION) {
       }
  else       if (toRemove.getType() == Token.FUNCTION && NodeUtil.isFunctionAnonymous(toRemove)) {
+        if (!preserveAnonymousFunctionNames) {
+          toRemove.getFirstChild().setString("");
+          compiler_.reportCodeChange();
+        }
       }
  else       if (parent != null && parent.getType() == Token.FOR && parent.getChildCount() < 4) {
       }

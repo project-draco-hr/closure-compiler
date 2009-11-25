@@ -3,10 +3,10 @@ switch (n.getType()) {
 case Token.DO:
     return computeFallThrough(n.getFirstChild());
 case Token.FOR:
-  if (n.getChildCount() == 4) {
-    return computeFallThrough(n.getFirstChild());
+  if (NodeUtil.isForIn(n)) {
+    return n;
   }
-return n;
+return computeFallThrough(n.getFirstChild());
 case Token.LABEL:
 return computeFallThrough(n.getLastChild());
 default :
