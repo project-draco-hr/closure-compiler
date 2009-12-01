@@ -5,11 +5,16 @@
   int numNamedParameter=parametersList.getChildCount();
   int highestIndex=numNamedParameter - 1;
   for (  Node ref : currentArgumentsAccess) {
-    if (ref.getParent().getType() != Token.GETELEM) {
+    Node getElem=ref.getParent();
+    if (getElem.getType() != Token.GETELEM) {
       return false;
     }
     Node index=ref.getNext();
     if (index.getType() != Token.NUMBER) {
+      return false;
+    }
+    Node getElemParent=getElem.getParent();
+    if (NodeUtil.isCall(getElemParent) && getElemParent.getFirstChild() == getElem) {
       return false;
     }
     int value=(int)index.getDouble();

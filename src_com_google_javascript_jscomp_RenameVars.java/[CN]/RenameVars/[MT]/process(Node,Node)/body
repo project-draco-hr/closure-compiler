@@ -11,19 +11,19 @@
   assignNames(varsByFrequency);
   boolean changed=false;
   for (  Node n : globalNameNodes) {
-    String oldName=n.getString();
-    Assignment a=assignments.get(oldName);
-    if (a.newName != null) {
-      n.setString(a.newName);
-      changed=changed || !a.newName.equals(oldName);
+    String newName=getNewGlobalName(n);
+    if (newName != null) {
+      n.setString(newName);
+      changed=true;
     }
   }
   int count=0;
   for (  Node n : localNameNodes) {
-    String oldName=localTempNames.get(count);
-    Assignment a=assignments.get(oldName);
-    n.setString(a.newName);
-    changed=changed || !a.newName.equals(oldName);
+    String newName=getNewLocalName(n,count);
+    if (newName != null) {
+      n.setString(newName);
+      changed=true;
+    }
     count++;
   }
   if (changed) {
