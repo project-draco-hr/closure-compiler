@@ -1,0 +1,20 @@
+{
+  Node root=newParse("\nvar foo =\n" + "{ \n" + "'A' : 'A', \n"+ "'B' : 'B', \n"+ "'C' :\n"+ "    'C' \n"+ "};\n");
+  Node firstVarDecl=root.getFirstChild();
+  Node firstVar=firstVarDecl.getFirstChild();
+  Node firstObjectLit=firstVar.getFirstChild();
+  Node firstKey=firstObjectLit.getFirstChild();
+  Node firstValue=firstKey.getNext();
+  Node secondKey=firstValue.getNext();
+  Node secondValue=secondKey.getNext();
+  Node thirdKey=secondValue.getNext();
+  Node thirdValue=thirdKey.getNext();
+  assertNodePosition(1,4,firstVar);
+  assertNodePosition(2,0,firstObjectLit);
+  assertNodePosition(3,0,firstKey);
+  assertNodePosition(3,6,firstValue);
+  assertNodePosition(4,0,secondKey);
+  assertNodePosition(4,6,secondValue);
+  assertNodePosition(5,0,thirdKey);
+  assertNodePosition(6,4,thirdValue);
+}

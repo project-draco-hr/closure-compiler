@@ -1,0 +1,16 @@
+{
+  CompilerEnvirons environment=new CompilerEnvirons();
+  TestErrorReporter testErrorReporter=new TestErrorReporter(null,warnings);
+  environment.setErrorReporter(testErrorReporter);
+  environment.setRecordingComments(true);
+  environment.setRecordingLocalJsDocComments(true);
+  Parser p=new Parser(environment,testErrorReporter);
+  AstRoot script=p.parse(code,null,0);
+  Config config=new Config(registry,extraAnnotations,true);
+  for (  Comment comment : script.getComments()) {
+    JsDocInfoParser jsdocParser=new JsDocInfoParser(new JsDocTokenStream(comment.getValue().substring(3),comment.getLineno()),script.getSourceName(),config,testErrorReporter);
+    jsdocParser.parse();
+    jsdocParser.retrieveAndResetParsedJSDocInfo();
+  }
+  assertTrue("some expected warnings were not reported",testErrorReporter.hasEncounteredAllWarnings());
+}

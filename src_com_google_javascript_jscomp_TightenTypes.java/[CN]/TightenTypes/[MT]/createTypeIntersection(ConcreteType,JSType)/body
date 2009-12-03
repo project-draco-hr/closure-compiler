@@ -1,5 +1,9 @@
 {
-  ConcreteType ret;
+  ConcreteJSTypePair key=new ConcreteJSTypePair(concreteType,jsType);
+  ConcreteType ret=typeIntersectionMemos.get(key);
+  if (ret != null) {
+    return ret;
+  }
   if (jsType == null || jsType.isUnknownType() || concreteType.isNone()) {
     ret=concreteType;
   }
@@ -22,5 +26,6 @@
       ret=ret.unionWith(instance);
     }
   }
+  typeIntersectionMemos.put(key,ret);
   return ret;
 }

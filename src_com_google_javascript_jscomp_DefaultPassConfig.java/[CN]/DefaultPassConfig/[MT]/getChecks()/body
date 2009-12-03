@@ -1,5 +1,14 @@
 {
   List<PassFactory> checks=Lists.newArrayList();
+  if (options.nameAnonymousFunctionsOnly) {
+    if (options.anonymousFunctionNaming == AnonymousFunctionNamingPolicy.MAPPED) {
+      checks.add(nameMappedAnonymousFunctions);
+    }
+ else     if (options.anonymousFunctionNaming == AnonymousFunctionNamingPolicy.UNMAPPED) {
+      checks.add(nameUnmappedAnonymousFunctions);
+    }
+    return checks;
+  }
   if (options.checkSuspiciousCode) {
     checks.add(suspiciousCode);
   }
@@ -73,6 +82,9 @@
     checks.add(checkStrictMode);
   }
   checks.add(processDefines);
+  if (options.instrumentationTemplate != null || options.recordFunctionInformation) {
+    checks.add(computeFunctionNames);
+  }
   assertAllOneTimePasses(checks);
   return checks;
 }

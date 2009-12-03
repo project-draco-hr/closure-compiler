@@ -1,8 +1,15 @@
 {
 switch (node.getType()) {
+case Token.WITH:
+    JSDocInfo info=node.getJSDocInfo();
+  boolean allowWith=info != null && info.getSuppressions().contains("with");
+if (!allowWith) {
+  report(node,USE_OF_WITH);
+}
+break;
 case Token.FUNCTION:
-    Deque<String> oldSwitchLabels=switchLabels;
-  switchLabels=new ArrayDeque<String>();
+Deque<String> oldSwitchLabels=switchLabels;
+switchLabels=new ArrayDeque<String>();
 Node body=node.getFirstChild().getNext().getNext();
 check(body,false,false);
 switchLabels=oldSwitchLabels;

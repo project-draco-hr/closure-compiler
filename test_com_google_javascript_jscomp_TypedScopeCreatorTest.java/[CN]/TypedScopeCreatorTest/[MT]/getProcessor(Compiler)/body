@@ -2,7 +2,10 @@
   registry=compiler.getTypeRegistry();
   return new CompilerPass(){
     public void process(    Node externs,    Node root){
-      NodeTraversal t=new NodeTraversal(compiler,callback,new MyScopeCreator(compiler));
+      ScopeCreator scopeCreator=new MemoizedScopeCreator(new TypedScopeCreator(compiler));
+      Scope topScope=scopeCreator.createScope(root.getParent(),null);
+      (new TypeInferencePass(compiler,compiler.getReverseAbstractInterpreter(),topScope,scopeCreator)).process(externs,root);
+      NodeTraversal t=new NodeTraversal(compiler,callback,scopeCreator);
       t.traverseRoots(Lists.newArrayList(externs,root));
     }
   }

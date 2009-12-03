@@ -1,0 +1,18 @@
+{
+  Node root=newParse("\nif (\n" + "      ((a \n" + "        | 3 \n"+ "       ) == \n"+ "       (b \n"+ "        & 2)) && \n"+ "      ((a \n"+ "         ^ 0xffff) \n"+ "       != \n"+ "       (c \n"+ "        << 1))) {\n"+ "}\n");
+  Node ifStmt=root.getFirstChild();
+  Node andTest=ifStmt.getFirstChild();
+  Node eqTest=andTest.getFirstChild();
+  Node notEqTest=eqTest.getNext();
+  Node bitOrTest=eqTest.getFirstChild();
+  Node bitAndTest=bitOrTest.getNext();
+  Node bitXorTest=notEqTest.getFirstChild();
+  Node bitShiftTest=bitXorTest.getNext();
+  assertNodePosition(1,0,ifStmt);
+  assertNodePosition(4,9,eqTest);
+  assertNodePosition(9,7,notEqTest);
+  assertNodePosition(3,8,bitOrTest);
+  assertNodePosition(6,8,bitAndTest);
+  assertNodePosition(8,9,bitXorTest);
+  assertNodePosition(11,8,bitShiftTest);
+}

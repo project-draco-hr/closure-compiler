@@ -1,0 +1,11 @@
+{
+  Node root=newParse("\nif (a && \n" + "    b() || \n" + "    /* comment */\n"+ "    c) {\n"+ "}\n");
+  Node ifStmt=root.getFirstChild();
+  Node orClause=ifStmt.getFirstChild();
+  Node andClause=orClause.getFirstChild();
+  Node cName=andClause.getNext();
+  assertNodePosition(1,0,ifStmt);
+  assertNodePosition(2,8,orClause);
+  assertNodePosition(1,6,andClause);
+  assertNodePosition(4,4,cName);
+}

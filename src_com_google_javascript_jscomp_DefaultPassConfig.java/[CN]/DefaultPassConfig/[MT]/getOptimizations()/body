@@ -59,5 +59,69 @@
   if (options.customPasses != null) {
     passes.add(getCustomPasses(CustomPassExecutionTime.AFTER_OPTIMIZATION_LOOP));
   }
+  if (options.flowSensitiveInlineVariables) {
+    passes.add(flowSensitiveInlineVariables);
+  }
+  if (options.collapseAnonymousFunctions) {
+    passes.add(collapseAnonymousFunctions);
+  }
+  if (options.moveFunctionDeclarations) {
+    passes.add(moveFunctionDeclarations);
+  }
+  if (options.anonymousFunctionNaming == AnonymousFunctionNamingPolicy.MAPPED) {
+    passes.add(nameMappedAnonymousFunctions);
+  }
+  if (options.extractPrototypeMemberDeclarations && (options.propertyRenaming != PropertyRenamingPolicy.HEURISTIC && options.propertyRenaming != PropertyRenamingPolicy.AGGRESSIVE_HEURISTIC)) {
+    passes.add(extractPrototypeMemberDeclarations);
+  }
+  if (options.coalesceVariableNames) {
+    passes.add(coalesceVariableNames);
+  }
+  if (options.ambiguateProperties && (options.propertyRenaming == PropertyRenamingPolicy.ALL_UNQUOTED)) {
+    passes.add(ambiguateProperties);
+  }
+  if (options.propertyRenaming != PropertyRenamingPolicy.OFF) {
+    passes.add(renameProperties);
+  }
+  if (options.convertToDottedProperties) {
+    passes.add(convertToDottedProperties);
+  }
+  if (options.rewriteFunctionExpressions) {
+    passes.add(rewriteFunctionExpressions);
+  }
+  if (!options.aliasableStrings.isEmpty() || options.aliasAllStrings) {
+    passes.add(aliasStrings);
+  }
+  if (options.aliasExternals) {
+    passes.add(aliasExternals);
+  }
+  if (options.aliasKeywords) {
+    passes.add(aliasKeywords);
+  }
+  if (options.collapseVariableDeclarations) {
+    passes.add(collapseVariableDeclarations);
+  }
+  passes.add(denormalize);
+  if (options.instrumentationTemplate != null) {
+    passes.add(instrumentFunctions);
+  }
+  if (options.variableRenaming != VariableRenamingPolicy.ALL) {
+    passes.add(invertContextualRenaming);
+  }
+  if (options.variableRenaming != VariableRenamingPolicy.OFF) {
+    passes.add(renameVars);
+  }
+  if (options.processObjectPropertyString) {
+    passes.add(objectPropertyStringPostprocess);
+  }
+  if (options.labelRenaming) {
+    passes.add(renameLabels);
+  }
+  if (options.anonymousFunctionNaming == AnonymousFunctionNamingPolicy.UNMAPPED) {
+    passes.add(nameUnmappedAnonymousFunctions);
+  }
+  if (options.checkSymbols) {
+    passes.add(sanityCheckVars);
+  }
   return passes;
 }

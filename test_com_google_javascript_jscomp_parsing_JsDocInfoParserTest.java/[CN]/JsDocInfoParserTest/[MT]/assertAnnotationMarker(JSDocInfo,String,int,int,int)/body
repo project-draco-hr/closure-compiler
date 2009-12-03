@@ -1,0 +1,21 @@
+{
+  Collection<JSDocInfo.Marker> markers=jsdoc.getMarkers();
+  assertTrue(markers.size() > 0);
+  int counter=0;
+  for (  JSDocInfo.Marker marker : markers) {
+    if (marker.annotation != null) {
+      if (annotationName.equals(marker.annotation.getItem())) {
+        if (counter == index) {
+          assertEquals(startLineno,marker.annotation.getStartLine());
+          assertEquals(startCharno,marker.annotation.getPositionOnStartLine());
+          assertEquals(startLineno,marker.annotation.getEndLine());
+          assertEquals(startCharno + annotationName.length(),marker.annotation.getPositionOnEndLine());
+          return marker;
+        }
+        counter++;
+      }
+    }
+  }
+  fail("No marker found");
+  return null;
+}

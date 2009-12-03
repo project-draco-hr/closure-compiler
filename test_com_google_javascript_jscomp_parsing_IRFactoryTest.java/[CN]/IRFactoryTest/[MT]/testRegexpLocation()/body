@@ -1,0 +1,18 @@
+{
+  Node root=newParse("\nvar path =\n" + "replace(\n" + "/a/g,"+ "'/');\n");
+  Node firstVarDecl=root.getFirstChild();
+  Node firstVar=firstVarDecl.getFirstChild();
+  Node firstInitializer=firstVar.getFirstChild();
+  Node callNode=firstVar.getFirstChild();
+  Node fnName=callNode.getFirstChild();
+  Node regexObject=fnName.getNext();
+  Node aString=regexObject.getFirstChild();
+  Node endRegexString=regexObject.getNext();
+  assertNodePosition(1,0,firstVarDecl);
+  assertNodePosition(1,4,firstVar);
+  assertNodePosition(2,7,callNode);
+  assertNodePosition(2,0,fnName);
+  assertNodePosition(3,0,regexObject);
+  assertNodePosition(3,0,aString);
+  assertNodePosition(3,5,endRegexString);
+}

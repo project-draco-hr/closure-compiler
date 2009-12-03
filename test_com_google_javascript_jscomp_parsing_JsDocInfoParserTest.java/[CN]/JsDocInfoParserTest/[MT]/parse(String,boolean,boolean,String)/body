@@ -1,0 +1,13 @@
+{
+  TestErrorReporter errorReporter=new TestErrorReporter(null,warnings);
+  Config config=new Config(registry,extraAnnotations,parseDocumentation);
+  JsDocInfoParser jsdocParser=new JsDocInfoParser(stream(comment),"testcode",config,errorReporter);
+  jsdocParser.parse();
+  assertTrue("expected warnings were not reported",errorReporter.hasEncounteredAllWarnings());
+  if (parseFileOverview) {
+    return jsdocParser.getFileOverviewJSDocInfo();
+  }
+ else {
+    return jsdocParser.retrieveAndResetParsedJSDocInfo();
+  }
+}

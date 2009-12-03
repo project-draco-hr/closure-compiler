@@ -13,7 +13,10 @@
     for (    ConcreteInstanceType instType : recvType.getFunctionInstanceTypes()) {
       thisType=thisType.unionWith(instType);
     }
-    allInstantiatedTypes.add(thisType);
+    boolean added=allInstantiatedTypes.add(thisType);
+    if (added) {
+      typeIntersectionMemos.clear();
+    }
   }
   List<ConcreteType> argTypes=Lists.newArrayList();
   for (Node arg=firstArgument; arg != null; arg=arg.getNext()) {

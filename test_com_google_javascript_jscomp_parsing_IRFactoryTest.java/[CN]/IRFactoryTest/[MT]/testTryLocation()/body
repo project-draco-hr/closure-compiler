@@ -1,0 +1,17 @@
+{
+  Node root=newParse("\ntry {\n" + "  var x = 1;\n" + "} catch\n"+ "   (err)\n"+ "{\n"+ "} finally {\n"+ "  var y = 2;\n"+ "}\n");
+  Node tryStmt=root.getFirstChild();
+  Node tryBlock=tryStmt.getFirstChild();
+  Node catchBlock=tryBlock.getNext();
+  Node catchVarBlock=catchBlock.getFirstChild();
+  Node catchVar=catchVarBlock.getFirstChild();
+  Node finallyBlock=catchBlock.getNext();
+  Node finallyStmt=finallyBlock.getFirstChild();
+  assertNodePosition(1,0,tryStmt);
+  assertNodePosition(1,4,tryBlock);
+  assertNodePosition(3,2,catchVarBlock);
+  assertNodePosition(4,4,catchVar);
+  assertNodePosition(3,0,catchBlock);
+  assertNodePosition(6,10,finallyBlock);
+  assertNodePosition(7,2,finallyStmt);
+}
