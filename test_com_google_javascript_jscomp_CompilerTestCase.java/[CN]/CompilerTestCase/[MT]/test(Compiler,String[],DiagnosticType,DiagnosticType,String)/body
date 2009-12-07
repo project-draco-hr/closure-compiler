@@ -41,18 +41,21 @@
   }
   if (error == null) {
     assertEquals("Unexpected error(s): " + Join.join("\n",compiler.getErrors()),0,compiler.getErrorCount());
-    ErrorManager symbolTableWarnings=new BlackHoleErrorManager(compiler);
+    ErrorManager symbolTableErrorManager=new BlackHoleErrorManager(compiler);
     Node expectedRoot=parseExpectedJs(expected);
     SymbolTable table=compiler.acquireSymbolTable();
     table.verify(expectedRoot,mainRoot);
     table.release();
+    JSError[] stErrors=symbolTableErrorManager.getErrors();
+    if (expectedSymbolTableError != null) {
+      assertEquals("There should be one error.",1,stErrors.length);
+      assertEquals(expectedSymbolTableError,stErrors[0].getType());
+    }
+ else {
+      assertEquals("Unexpected symbol table error(s): " + Join.join("\n",stErrors),0,stErrors.length);
+    }
     if (warning == null) {
       assertEquals("Unexpected warning(s): " + Join.join("\n",aggregateWarnings),0,aggregateWarningCount);
-    }
- else     if (symbolTableWarnings.getWarnings().length > 0) {
-      JSError[] warnings=symbolTableWarnings.getWarnings();
-      assertEquals("There should be one symbol table warning",1,warnings.length);
-      assertEquals(warning,warnings[0].getType());
     }
  else {
       assertEquals("There should be one warning, repeated " + numRepetitions + " time(s).",numRepetitions,aggregateWarningCount);

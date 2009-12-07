@@ -1,0 +1,13 @@
+{
+  TokenStream stream=stream(comment);
+  int stringsIndex=0;
+  for (  int token : tokens) {
+    int readToken=stream.getJSDocToken();
+    if (token != readToken) {
+      assertEquals(name(token),name(readToken));
+    }
+    if (token == ANNOTATION || token == STRING) {
+      assertEquals(strings.get(stringsIndex++),stream.getString());
+    }
+  }
+}

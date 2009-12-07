@@ -1,0 +1,50 @@
+{
+  super.setUp();
+  RecordTypeBuilder builder=new RecordTypeBuilder(registry);
+  builder.addProperty("a",NUMBER_TYPE);
+  builder.addProperty("b",STRING_TYPE);
+  recordType=builder.build();
+  enumType=new EnumType(registry,"Enum",NUMBER_TYPE);
+  elementsType=enumType.getElementsType();
+  functionType=new FunctionType(registry,null,null,null,NUMBER_TYPE);
+  dateMethod=new FunctionType(registry,null,null,new Node(Token.LP),NUMBER_TYPE,DATE_TYPE);
+  unresolvedNamedType=new NamedType(registry,"not.resolved.named.type",null,-1,-1);
+  namedGoogBar=new NamedType(registry,"goog.Bar",null,-1,-1);
+  subclassCtor=new FunctionType(registry,null,null,null,null,null,null,true,false);
+  subclassCtor.setPrototypeBasedOn(unresolvedNamedType);
+  subclassOfUnresolvedNamedType=subclassCtor.getInstanceType();
+  interfaceType=new FunctionType(registry,"Interface",null);
+  googBar=registry.createConstructorType("goog.Bar",null,null,null);
+  googBar.getPrototype().defineDeclaredProperty("date",DATE_TYPE,true);
+  googBar.setImplementedInterfaces(Lists.<ObjectType>newArrayList(interfaceType.getInstanceType()));
+  googBarInst=googBar.getInstanceType();
+  googSubBar=registry.createConstructorType("googSubBar",null,null,null);
+  googSubBar.setPrototypeBasedOn(googBar.getInstanceType());
+  googSubBarInst=googSubBar.getInstanceType();
+  googSubSubBar=registry.createConstructorType("googSubSubBar",null,null,null);
+  googSubSubBar.setPrototypeBasedOn(googSubBar.getInstanceType());
+  googSubSubBarInst=googSubSubBar.getInstanceType();
+  final ObjectType googObject=registry.createAnonymousObjectType();
+  googObject.defineDeclaredProperty("Bar",googBar,false);
+  namedGoogBar.resolve(null,new StaticScope<JSType>(){
+    public StaticSlot<JSType> getSlot(    String name){
+      if ("goog".equals(name)) {
+        return new SimpleSlot("goog",googObject,false);
+      }
+ else {
+        return null;
+      }
+    }
+    public StaticSlot<JSType> getOwnSlot(    String name){
+      return getSlot(name);
+    }
+    public StaticScope<JSType> getParentScope(){
+      return null;
+    }
+    public JSType getTypeOfThis(){
+      return null;
+    }
+  }
+);
+  types=ImmutableList.of(NO_OBJECT_TYPE,NO_TYPE,BOOLEAN_OBJECT_TYPE,BOOLEAN_TYPE,STRING_OBJECT_TYPE,STRING_TYPE,VOID_TYPE,UNKNOWN_TYPE,NULL_TYPE,NUMBER_OBJECT_TYPE,NUMBER_TYPE,DATE_TYPE,ERROR_TYPE,SYNTAX_ERROR_TYPE,dateMethod,functionType,unresolvedNamedType,googBar,googSubBar,googSubSubBar,namedGoogBar,googBar.getInstanceType(),subclassOfUnresolvedNamedType,subclassCtor,recordType,enumType,elementsType,googBar,googSubBar);
+}

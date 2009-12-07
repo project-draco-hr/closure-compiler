@@ -1,0 +1,13 @@
+{
+  otherPass=new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      SymbolTable st=getLastCompiler().acquireSymbolTable();
+      st.createScope(root,null);
+      Node script=root.getFirstChild();
+      script.removeChild(script.getFirstChild());
+      st.release();
+    }
+  }
+;
+  test("var x;",null,SymbolTable.VARIABLE_COUNT_MISMATCH);
+}

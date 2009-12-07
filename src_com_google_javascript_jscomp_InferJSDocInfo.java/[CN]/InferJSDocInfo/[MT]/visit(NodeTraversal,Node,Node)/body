@@ -1,28 +1,29 @@
 {
   JSDocInfo docInfo;
 switch (n.getType()) {
-case Token.FUNCTION:
-    JSType fnType=n.getJSType();
-  if (fnType == null) {
-    break;
+case Token.NAME:
+    if (parent == null) {
+      return;
+    }
+  if (parent.getType() != Token.VAR && !NodeUtil.isFunctionDeclaration(parent) && !(parent.getType() == Token.ASSIGN && n == parent.getFirstChild())) {
+    return;
   }
 docInfo=n.getJSDocInfo();
-if (docInfo == null && (parent.getType() == Token.ASSIGN || parent.getType() == Token.NAME)) {
+if (docInfo == null && !(parent.getType() == Token.VAR && !parent.hasOneChild())) {
 docInfo=parent.getJSDocInfo();
-if (docInfo == null) {
-  Node gramps=parent.getParent();
-  if (gramps != null && gramps.getType() == Token.VAR && gramps.hasOneChild()) {
-    docInfo=gramps.getJSDocInfo();
-  }
 }
+JSType varType=n.getJSType();
+if (varType == null && parent.getType() == Token.FUNCTION) {
+varType=parent.getJSType();
 }
-if (docInfo != null && fnType instanceof FunctionType) {
-FunctionType maybeCtorType=(FunctionType)fnType;
-maybeCtorType.setJSDocInfo(docInfo);
-if (maybeCtorType.isConstructor()) {
-maybeCtorType.getInstanceType().setJSDocInfo(docInfo);
+if (varType == null || docInfo == null) {
+return;
 }
+ObjectType objType=dereferenceToObject(varType);
+if (objType == null || objType.getJSDocInfo() != null) {
+return;
 }
+attachJSDocInfoToNominalTypeOrShape(objType,docInfo,n.getString());
 break;
 case Token.GETPROP:
 if (NodeUtil.isExpressionNode(parent) || (parent.getType() == Token.ASSIGN && parent.getFirstChild() == n)) {
@@ -31,10 +32,16 @@ if (docInfo == null) {
 docInfo=parent.getJSDocInfo();
 }
 if (docInfo != null) {
-JSType lhsType=n.getFirstChild().getJSType();
-if (lhsType != null && lhsType instanceof ObjectType) {
-ObjectType objectType=(ObjectType)lhsType;
-objectType.setPropertyJSDocInfo(n.getLastChild().getString(),docInfo,inExterns);
+ObjectType lhsType=dereferenceToObject(n.getFirstChild().getJSType());
+if (lhsType != null) {
+String propName=n.getLastChild().getString();
+if (lhsType.hasOwnProperty(propName)) {
+lhsType.setPropertyJSDocInfo(propName,docInfo,inExterns);
+}
+ObjectType propType=dereferenceToObject(lhsType.getPropertyType(propName));
+if (propType != null) {
+attachJSDocInfoToNominalTypeOrShape(propType,docInfo,n.getQualifiedName());
+}
 }
 }
 }

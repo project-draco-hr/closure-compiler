@@ -1,0 +1,17 @@
+{
+  RecordTypeBuilder builder=new RecordTypeBuilder(registry);
+  builder.addProperty("a",googSubBarInst);
+  JSType record=builder.build();
+  ObjectType subtypeProp=registry.createAnonymousObjectType();
+  subtypeProp.defineInferredProperty("a",googSubSubBarInst,false);
+  assertTrue(subtypeProp.isSubtype(record));
+  assertFalse(record.isSubtype(subtypeProp));
+  ObjectType supertypeProp=registry.createAnonymousObjectType();
+  supertypeProp.defineInferredProperty("a",googBarInst,false);
+  assertFalse(supertypeProp.isSubtype(record));
+  assertFalse(record.isSubtype(supertypeProp));
+  ObjectType declaredSubtypeProp=registry.createAnonymousObjectType();
+  declaredSubtypeProp.defineDeclaredProperty("a",googSubSubBarInst,false);
+  assertFalse(declaredSubtypeProp.isSubtype(record));
+  assertFalse(record.isSubtype(declaredSubtypeProp));
+}

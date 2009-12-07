@@ -1,0 +1,12 @@
+{
+  RecordTypeBuilder builder=new RecordTypeBuilder(registry);
+  builder.addProperty("xyz",UNKNOWN_TYPE);
+  JSType recordType=builder.build();
+  assertEquals(NO_OBJECT_TYPE,recordType.getGreatestSubtype(U2U_CONSTRUCTOR_TYPE));
+  googBar.defineDeclaredProperty("xyz",STRING_TYPE,false);
+  assertEquals(googBar,recordType.getGreatestSubtype(U2U_CONSTRUCTOR_TYPE));
+  assertEquals(googBar,U2U_CONSTRUCTOR_TYPE.getGreatestSubtype(recordType));
+  ObjectType googBarInst=googBar.getInstanceType();
+  assertEquals(NO_OBJECT_TYPE,recordType.getGreatestSubtype(googBarInst));
+  assertEquals(NO_OBJECT_TYPE,googBarInst.getGreatestSubtype(recordType));
+}

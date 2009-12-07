@@ -1,0 +1,19 @@
+{
+  ObjectType prototype=googBar.getPrototype();
+  ObjectType instance=googBar.getInstanceType();
+  assertEquals(instance.getImplicitPrototype(),prototype);
+  assertTrue(prototype.defineDeclaredProperty("declared",NUMBER_TYPE,false));
+  assertFalse(prototype.defineDeclaredProperty("declared",NUMBER_TYPE,false));
+  assertFalse(instance.defineDeclaredProperty("declared",NUMBER_TYPE,false));
+  assertEquals(NUMBER_TYPE,instance.getPropertyType("declared"));
+  assertTrue(prototype.defineInferredProperty("inferred1",STRING_TYPE,false));
+  assertTrue(prototype.defineInferredProperty("inferred1",NUMBER_TYPE,false));
+  assertEquals(createUnionType(NUMBER_TYPE,STRING_TYPE),instance.getPropertyType("inferred1"));
+  assertTrue(prototype.defineInferredProperty("inferred2",STRING_TYPE,false));
+  assertTrue(instance.defineInferredProperty("inferred2",NUMBER_TYPE,false));
+  assertEquals(createUnionType(NUMBER_TYPE,STRING_TYPE),instance.getPropertyType("inferred2"));
+  assertTrue(prototype.defineInferredProperty("prop",STRING_TYPE,false));
+  assertTrue(instance.defineDeclaredProperty("prop",NUMBER_TYPE,false));
+  assertEquals(NUMBER_TYPE,instance.getPropertyType("prop"));
+  assertEquals(STRING_TYPE,prototype.getPropertyType("prop"));
+}

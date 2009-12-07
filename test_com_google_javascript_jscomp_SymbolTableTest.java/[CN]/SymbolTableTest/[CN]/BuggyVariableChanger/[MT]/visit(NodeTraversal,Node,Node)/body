@@ -2,20 +2,20 @@
   Scope scope=t.getScope();
   if (node.getType() == Token.VAR) {
     compiler.reportCodeChange();
-    if (targetWarning == null) {
+    if (targetError == null) {
       parent.removeChild(node);
       for (Node child=node.getFirstChild(); child != null; child=child.getNext()) {
         scope.undeclare(scope.getVar(child.getString()));
       }
     }
- else     if (targetWarning == VARIABLE_COUNT_MISMATCH) {
+ else     if (targetError == VARIABLE_COUNT_MISMATCH) {
       parent.removeChild(node);
       scope.undeclare(scope.getVar(node.getFirstChild().getString()));
     }
- else     if (targetWarning == MISSING_VARIABLE) {
+ else     if (targetError == MISSING_VARIABLE) {
       node.getFirstChild().setString("z");
     }
- else     if (targetWarning == MOVED_VARIABLE) {
+ else     if (targetError == MOVED_VARIABLE) {
       Node oldName=node.getFirstChild();
       oldName.detachFromParent();
       node.addChildToFront(Node.newString(Token.NAME,"x"));

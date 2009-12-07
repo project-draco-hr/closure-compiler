@@ -1,0 +1,26 @@
+{
+  FunctionType googBarMethod=new FunctionType(registry,null,null,null,null,googBar);
+  FunctionType googBarParamFn=new FunctionType(registry,null,null,new JSTypeRegistry(null).createParameters(googBar),null,null);
+  FunctionType googBarReturnFn=new FunctionType(registry,null,null,null,googBar,null);
+  FunctionType googSubBarMethod=new FunctionType(registry,null,null,null,null,googSubBar);
+  FunctionType googSubBarParamFn=new FunctionType(registry,null,null,new JSTypeRegistry(null).createParameters(googSubBar),null,null);
+  FunctionType googSubBarReturnFn=new FunctionType(registry,null,null,null,googSubBar,null);
+  assertTrue(googBarMethod.isSubtype(googSubBarMethod));
+  assertTrue(googBarReturnFn.isSubtype(googSubBarReturnFn));
+  List<FunctionType> allFunctions=Lists.newArrayList(googBarMethod,googBarParamFn,googBarReturnFn,googSubBarMethod,googSubBarParamFn,googSubBarReturnFn);
+  for (int i=0; i < allFunctions.size(); i++) {
+    for (int j=0; j < allFunctions.size(); j++) {
+      FunctionType typeA=allFunctions.get(i);
+      FunctionType typeB=allFunctions.get(j);
+      assertEquals(String.format("equals(%s, %s)",typeA,typeB),i == j,typeA.equals(typeB));
+      if (i == j) {
+        assertEquals(typeA,typeA.getLeastSupertype(typeB));
+        assertEquals(typeA,typeA.getGreatestSubtype(typeB));
+      }
+ else {
+        assertEquals(String.format("sup(%s, %s)",typeA,typeB),U2U_CONSTRUCTOR_TYPE,typeA.getLeastSupertype(typeB));
+        assertEquals(String.format("inf(%s, %s)",typeA,typeB),NO_OBJECT_TYPE,typeA.getGreatestSubtype(typeB));
+      }
+    }
+  }
+}

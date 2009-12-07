@@ -1,0 +1,15 @@
+{
+  RecordTypeBuilder builder=new RecordTypeBuilder(registry);
+  builder.addProperty("a",NUMBER_TYPE);
+  builder.addProperty("b",STRING_TYPE);
+  builder.addProperty("c",STRING_TYPE);
+  JSType subRecordType=builder.build();
+  assertTrue(subRecordType.isSubtype(recordType));
+  assertFalse(recordType.isSubtype(subRecordType));
+  builder=new RecordTypeBuilder(registry);
+  builder.addProperty("a",OBJECT_TYPE);
+  builder.addProperty("b",STRING_TYPE);
+  JSType differentRecordType=builder.build();
+  assertFalse(differentRecordType.isSubtype(recordType));
+  assertFalse(recordType.isSubtype(differentRecordType));
+}

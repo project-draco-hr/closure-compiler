@@ -1,0 +1,10 @@
+{
+  testSame("/** Abstract method. \n * @type {!Function} */ var abstractMethod;" + "/** @constructor */ function Foo() {}" + "/** Block description. \n * @param {number} x */"+ "Foo.prototype.bar = abstractMethod;");
+  FunctionType abstractMethod=(FunctionType)findGlobalNameType("abstractMethod");
+  assertNull(abstractMethod.getJSDocInfo());
+  FunctionType ctor=(FunctionType)findGlobalNameType("Foo");
+  ObjectType proto=ctor.getInstanceType().getImplicitPrototype();
+  FunctionType method=(FunctionType)proto.getPropertyType("bar");
+  assertEquals("Block description.",method.getJSDocInfo().getBlockDescription());
+  assertEquals("Block description.",proto.getOwnPropertyJSDocInfo("bar").getBlockDescription());
+}

@@ -1,0 +1,10 @@
+{
+  JSType callType=dateMethod.getPropertyType("call");
+  assertTrue("call should be a function",callType instanceof FunctionType);
+  FunctionType callFn=(FunctionType)callType;
+  assertEquals("call should have the same return type as its function",NUMBER_TYPE,callFn.getReturnType());
+  Node params=callFn.getParametersNode();
+  assertEquals("call takes one argument in this case",1,params.getChildCount());
+  assertEquals("call's first arg is the @this type",registry.createOptionalNullableType(DATE_TYPE),params.getFirstChild().getJSType());
+  assertTrue("call's args must be optional",params.getFirstChild().isOptionalArg());
+}

@@ -1,0 +1,9 @@
+{
+  testSame("var goog = {};" + "/** Hello! \n * @constructor */ goog.Foo = function() {};" + "goog.Foo.bar = goog.Foo;"+ "/** Bye! \n * @param {string=} opt_x */"+ "goog.Foo.prototype.baz = goog.Foo;"+ "/** Blargh */ var x = new goog.Foo();");
+  assertEquals("Hello!",findGlobalNameType("x").getJSDocInfo().getBlockDescription());
+  assertEquals("Hello!",findGlobalNameType("goog.Foo").getJSDocInfo().getBlockDescription());
+  assertEquals("Hello!",findGlobalNameType("goog.Foo.bar").getJSDocInfo().getBlockDescription());
+  assertEquals("Hello!",findGlobalNameType("goog.Foo.prototype.baz").getJSDocInfo().getBlockDescription());
+  ObjectType proto=(ObjectType)findGlobalNameType("goog.Foo.prototype");
+  assertEquals("Bye!",proto.getPropertyType("baz").getJSDocInfo().getBlockDescription());
+}

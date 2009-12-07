@@ -1,0 +1,27 @@
+{
+  JSDocInfo info=new JSDocInfo();
+  info.setType(fromString("number"));
+  try {
+    info.setReturnType(fromString("boolean"));
+    fail("Expected exception");
+  }
+ catch (  IllegalStateException e) {
+  }
+  try {
+    info.setEnumParameterType(fromString("string"));
+    fail("Expected exception");
+  }
+ catch (  IllegalStateException e) {
+  }
+  try {
+    info.setTypedefType(fromString("string"));
+    fail("Expected exception");
+  }
+ catch (  IllegalStateException e) {
+  }
+  assertEquals(getNativeType(NUMBER_TYPE),resolve(info.getType()));
+  assertNull(info.getReturnType());
+  assertNull(info.getEnumParameterType());
+  assertNull(info.getTypedefType());
+  assertTrue(info.hasType());
+}

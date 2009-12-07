@@ -1,0 +1,26 @@
+{
+  FunctionType dateMethodEmpty=new FunctionType(registry,null,null,null,null,DATE_TYPE);
+  FunctionType dateMethodWithParam=new FunctionType(registry,null,null,new JSTypeRegistry(null).createParameters(NUMBER_TYPE),null,DATE_TYPE);
+  FunctionType dateMethodWithReturn=new FunctionType(registry,null,null,null,NUMBER_TYPE,DATE_TYPE);
+  FunctionType stringMethodEmpty=new FunctionType(registry,null,null,null,null,STRING_OBJECT_TYPE);
+  FunctionType stringMethodWithParam=new FunctionType(registry,null,null,new JSTypeRegistry(null).createParameters(NUMBER_TYPE),null,STRING_OBJECT_TYPE);
+  FunctionType stringMethodWithReturn=new FunctionType(registry,null,null,null,NUMBER_TYPE,STRING_OBJECT_TYPE);
+  assertFalse(stringMethodEmpty.isSubtype(dateMethodEmpty));
+  List<FunctionType> allFunctions=Lists.newArrayList(dateMethodEmpty,dateMethodWithParam,dateMethodWithReturn,stringMethodEmpty,stringMethodWithParam,stringMethodWithReturn);
+  for (int i=0; i < allFunctions.size(); i++) {
+    for (int j=0; j < allFunctions.size(); j++) {
+      FunctionType typeA=allFunctions.get(i);
+      FunctionType typeB=allFunctions.get(j);
+      assertEquals(String.format("equals(%s, %s)",typeA,typeB),i == j,typeA.equals(typeB));
+      assertEquals(String.format("isSubtype(%s, %s)",typeA,typeB),typeA.getTypeOfThis().equals(typeB.getTypeOfThis()),typeA.isSubtype(typeB));
+      if (i == j) {
+        assertEquals(typeA,typeA.getLeastSupertype(typeB));
+        assertEquals(typeA,typeA.getGreatestSubtype(typeB));
+      }
+ else {
+        assertEquals(String.format("sup(%s, %s)",typeA,typeB),U2U_CONSTRUCTOR_TYPE,typeA.getLeastSupertype(typeB));
+        assertEquals(String.format("inf(%s, %s)",typeA,typeB),NO_OBJECT_TYPE,typeA.getGreatestSubtype(typeB));
+      }
+    }
+  }
+}
