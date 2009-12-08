@@ -1,6 +1,6 @@
 {
   List<Reducer> reducers=ImmutableList.of(new ReturnConstantReducer(),new GetterReducer(),new SetterReducer(),new EmptyFunctionReducer(),new IdentityReducer());
-  Multimap<Reducer,Reduction> reductionMap=Multimaps.newHashMultimap();
+  Multimap<Reducer,Reduction> reductionMap=HashMultimap.create();
   NodeTraversal.traverse(compiler,root,new ReductionGatherer(reducers,reductionMap));
   for (  Reducer reducer : reducers) {
     Collection<Reduction> reductions=reductionMap.get(reducer);

@@ -8,8 +8,14 @@
   JSModule[] modules=null;
   Result result;
   setRunOptions(options);
-  if (!options.jsOutputFile.equals("")) {
-    out=new PrintStream(options.jsOutputFile);
+  if (inputCharset == Charsets.UTF_8) {
+    options.outputCharset=Charsets.US_ASCII;
+  }
+ else {
+    options.outputCharset=inputCharset;
+  }
+  if (!options.jsOutputFile.isEmpty()) {
+    out=new PrintStream(options.jsOutputFile,inputCharset.name());
   }
   ((PrintStreamErrorManager)compiler.getErrorManager()).setSummaryDetailLevel(FLAG_summary_detail_level.get());
   List<String> jsFiles=FLAG_js.get();

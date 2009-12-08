@@ -134,7 +134,7 @@ case Token.REGEXP:
 if (first.getType() != Token.STRING || last.getType() != Token.STRING) {
 throw new Error("Expected children to be strings");
 }
-String regexp=regexpEscape(first.getString());
+String regexp=regexpEscape(first.getString(),outputCharsetEncoder);
 if (childCount == 2) {
 add(regexp + last.getString());
 }
@@ -362,7 +362,7 @@ add(")");
 break;
 case Token.STRING:
 Preconditions.checkState(childCount == 0);
-add(jsString(n.getString()));
+add(jsString(n.getString(),outputCharsetEncoder));
 break;
 case Token.DELPROP:
 Preconditions.checkState(childCount == 1);
