@@ -5,7 +5,9 @@
   assertTrue("Unexpected parse error(s): " + Join.join("\n",compiler.getErrors()),root != null);
   Node externsRoot=root.getFirstChild();
   Node mainRoot=root.getLastChild();
-  Node mainRootClone=mainRoot.cloneTree();
+  Node rootClone=root.cloneTree();
+  Node externsRootClone=rootClone.getFirstChild();
+  Node mainRootClone=rootClone.getLastChild();
   int numRepetitions=getNumRepetitions();
   ErrorManager[] errorManagers=new ErrorManager[numRepetitions];
   int aggregateWarningCount=0;
@@ -75,7 +77,7 @@
     }
     if (normalizeEnabled) {
       Normalize normalize=new Normalize(compiler,false);
-      normalize.process(externsRoot,mainRootClone);
+      normalize.process(externsRootClone,mainRootClone);
     }
     if (mainRootClone.checkTreeEqualsSilent(mainRoot)) {
       assertFalse("compiler.reportCodeChange() was called " + "even though nothing changed",hasCodeChanged);

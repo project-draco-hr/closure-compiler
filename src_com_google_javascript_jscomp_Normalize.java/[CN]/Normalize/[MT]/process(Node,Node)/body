@@ -3,7 +3,8 @@
   NodeTraversal.traverse(compiler,root,this);
   if (MAKE_LOCAL_NAMES_UNIQUE) {
     MakeDeclaredNamesUnique renamer=new MakeDeclaredNamesUnique();
-    NodeTraversal.traverse(compiler,root,renamer);
+    NodeTraversal t=new NodeTraversal(compiler,renamer);
+    t.traverseRoots(externs,root);
   }
   removeDuplicateDeclarations(root);
 }
