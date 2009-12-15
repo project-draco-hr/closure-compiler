@@ -1,9 +1,8 @@
 {
-  JSType maybeObjectType=dereference(getprop.getFirstChild().getJSType());
+  ObjectType objectType=ObjectType.cast(dereference(getprop.getFirstChild().getJSType()));
   String propertyName=getprop.getLastChild().getString();
-  if (maybeObjectType != null && maybeObjectType instanceof ObjectType) {
+  if (objectType != null) {
     boolean isOverride=t.inGlobalScope() && parent.getType() == Token.ASSIGN && parent.getFirstChild() == getprop;
-    ObjectType objectType=(ObjectType)maybeObjectType;
     if (isOverride) {
       objectType=objectType.getImplicitPrototype();
     }

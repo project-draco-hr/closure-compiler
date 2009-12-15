@@ -1,16 +1,16 @@
 {
-  JSType maybeThisType=null;
+  ObjectType maybeThisType=null;
   if (info != null && info.hasThisType()) {
-    maybeThisType=info.getThisType().evaluate(scope);
+    maybeThisType=ObjectType.cast(info.getThisType().evaluate(scope));
   }
-  if (maybeThisType != null && maybeThisType instanceof ObjectType) {
-    thisType=(ObjectType)maybeThisType;
+  if (maybeThisType != null) {
+    thisType=maybeThisType;
   }
  else   if (owner != null && (info == null || !info.hasType())) {
     String ownerTypeName=owner.getQualifiedName();
-    JSType ownerType=typeRegistry.getType(scope,ownerTypeName,sourceName,owner.getLineno(),owner.getCharno());
-    if (ownerType instanceof ObjectType) {
-      thisType=(ObjectType)ownerType;
+    ObjectType ownerType=ObjectType.cast(typeRegistry.getType(scope,ownerTypeName,sourceName,owner.getLineno(),owner.getCharno()));
+    if (ownerType != null) {
+      thisType=ownerType;
     }
   }
   return this;

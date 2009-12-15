@@ -3,8 +3,8 @@
   if (jsType instanceof UnionType) {
     boolean found=false;
     for (    JSType alt : ((UnionType)jsType).getAlternates()) {
-      if (alt instanceof ObjectType) {
-        ObjectType altObj=(ObjectType)alt;
+      ObjectType altObj=ObjectType.cast(alt);
+      if (altObj != null) {
         actions.addAll(getImplicitActionsFromPropNonUnion(altObj,prop,fnNode));
         if (altObj.hasProperty(prop)) {
           found=true;
@@ -15,9 +15,9 @@
       return actions;
     }
   }
- else   if (jsType instanceof ObjectType && !jsType.isUnknownType()) {
-    ObjectType objType=(ObjectType)jsType;
-    if (objType.hasProperty(prop)) {
+ else {
+    ObjectType objType=ObjectType.cast(jsType);
+    if (objType != null && !objType.isUnknownType() && objType.hasProperty(prop)) {
       return getImplicitActionsFromPropNonUnion(objType,prop,fnNode);
     }
   }

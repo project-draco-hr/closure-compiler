@@ -7,8 +7,9 @@
     PrototypeObjectType globalThis=(PrototypeObjectType)getNativeType(JSTypeNative.GLOBAL_THIS);
     JSType windowType=getType("Window");
     if (globalThis.isUnknownType()) {
-      if (windowType instanceof ObjectType) {
-        globalThis.setImplicitPrototype((ObjectType)windowType);
+      ObjectType windowObjType=ObjectType.cast(windowType);
+      if (windowObjType != null) {
+        globalThis.setImplicitPrototype(windowObjType);
       }
  else {
         globalThis.setImplicitPrototype(getNativeObjectType(JSTypeNative.OBJECT_TYPE));

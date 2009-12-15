@@ -1,8 +1,8 @@
 {
   scope=traverseChildren(n,scope);
-  JSType objType=getJSType(n.getFirstChild()).restrictByNotNullOrUndefined();
-  if (objType instanceof ObjectType) {
-    JSType type=((ObjectType)objType).getParameterType();
+  ObjectType objType=ObjectType.cast(getJSType(n.getFirstChild()).restrictByNotNullOrUndefined());
+  if (objType != null) {
+    JSType type=objType.getParameterType();
     if (type != null) {
       n.setJSType(type);
     }

@@ -6,8 +6,8 @@
     }
   }
  else {
-    if (jsType instanceof ObjectType && ((ObjectType)jsType).getConstructor() != null && ((ObjectType)jsType).getConstructor().isInterface()) {
-      ObjectType instType=(ObjectType)jsType;
+    ObjectType instType=ObjectType.cast(jsType);
+    if (instType != null && instType.getConstructor() != null && instType.getConstructor().isInterface()) {
       Collection<FunctionType> implementors=getTypeRegistry().getDirectImplementors(instType);
       for (      FunctionType implementor : implementors) {
         ret=ret.unionWith(createTypeWithSubTypes(implementor.getInstanceType()));

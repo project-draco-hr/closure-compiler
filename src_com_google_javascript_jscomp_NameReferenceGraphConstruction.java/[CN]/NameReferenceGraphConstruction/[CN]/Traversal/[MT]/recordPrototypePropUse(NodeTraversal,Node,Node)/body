@@ -4,8 +4,8 @@
   JSType instanceType=getType(instance);
   JSType boxedType=instanceType.autoboxesTo();
   instanceType=boxedType != null ? boxedType : instanceType;
-  Preconditions.checkState(instanceType instanceof ObjectType);
-  ObjectType objType=(ObjectType)instanceType;
+  ObjectType objType=instanceType.toObjectType();
+  Preconditions.checkState(objType != null);
   if (!isExtern) {
     Reference ref=new Reference(n,parent);
     FunctionType constructor=objType.getConstructor();

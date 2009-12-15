@@ -3,15 +3,13 @@ switch (n.getType()) {
 case Token.CALL:
     SubclassRelationship relationship=codingConvention.getClassesDefinedByCall(n);
   if (relationship != null) {
-    JSType superClass=typeRegistry.getType(relationship.superclassName);
-    JSType subClass=typeRegistry.getType(relationship.subclassName);
-    if (superClass instanceof ObjectType && subClass instanceof ObjectType) {
-      ObjectType superObject=(ObjectType)superClass;
-      ObjectType subObject=(ObjectType)subClass;
-      FunctionType superCtor=superObject.getConstructor();
-      FunctionType subCtor=subObject.getConstructor();
+    ObjectType superClass=ObjectType.cast(typeRegistry.getType(relationship.superclassName));
+    ObjectType subClass=ObjectType.cast(typeRegistry.getType(relationship.subclassName));
+    if (superClass != null && subClass != null) {
+      FunctionType superCtor=superClass.getConstructor();
+      FunctionType subCtor=subClass.getConstructor();
       if (relationship.type == SubclassType.INHERITS) {
-        validator.expectSuperType(t,n,superObject,subObject);
+        validator.expectSuperType(t,n,superClass,subClass);
       }
       if (superCtor != null && subCtor != null) {
         codingConvention.applySubclassRelationship(superCtor,subCtor,relationship.type);
@@ -20,9 +18,8 @@ case Token.CALL:
   }
 String singletonGetterClassName=codingConvention.getSingletonGetterClassName(n);
 if (singletonGetterClassName != null) {
-JSType classType=typeRegistry.getType(singletonGetterClassName);
-if (classType instanceof ObjectType) {
-  ObjectType objectType=(ObjectType)classType;
+ObjectType objectType=ObjectType.cast(typeRegistry.getType(singletonGetterClassName));
+if (objectType != null) {
   FunctionType functionType=objectType.getConstructor();
   if (functionType != null) {
     FunctionType getterType=new FunctionType(typeRegistry,null,null,new FunctionParamBuilder(typeRegistry).build(),objectType,null);
@@ -32,20 +29,17 @@ if (classType instanceof ObjectType) {
 }
 DelegateRelationship delegateRelationship=codingConvention.getDelegateRelationship(n);
 if (delegateRelationship != null) {
-JSType delegatorClass=typeRegistry.getType(delegateRelationship.delegator);
-JSType delegateBaseClass=typeRegistry.getType(delegateRelationship.delegateBase);
-JSType delegateSuperClass=typeRegistry.getType(codingConvention.getDelegateSuperclassName());
-if (delegatorClass instanceof ObjectType && delegateBaseClass instanceof ObjectType && delegateSuperClass instanceof ObjectType) {
-ObjectType delegatorObject=(ObjectType)delegatorClass;
-ObjectType delegateBaseObject=(ObjectType)delegateBaseClass;
-ObjectType delegateSuperObject=(ObjectType)delegateSuperClass;
+ObjectType delegatorObject=ObjectType.cast(typeRegistry.getType(delegateRelationship.delegator));
+ObjectType delegateBaseObject=ObjectType.cast(typeRegistry.getType(delegateRelationship.delegateBase));
+ObjectType delegateSuperObject=ObjectType.cast(typeRegistry.getType(codingConvention.getDelegateSuperclassName()));
+if (delegatorObject != null && delegateBaseObject != null && delegateSuperObject != null) {
 FunctionType delegatorCtor=delegatorObject.getConstructor();
 FunctionType delegateBaseCtor=delegateBaseObject.getConstructor();
 FunctionType delegateSuperCtor=delegateSuperObject.getConstructor();
 if (delegatorCtor != null && delegateBaseCtor != null && delegateSuperCtor != null) {
 FunctionParamBuilder functionParamBuilder=new FunctionParamBuilder(typeRegistry);
 functionParamBuilder.addRequiredParams(typeRegistry.getNativeType(U2U_CONSTRUCTOR_TYPE));
-FunctionType findDelegate=new FunctionType(typeRegistry,null,null,functionParamBuilder.build(),typeRegistry.createNullableType(delegateBaseClass),null);
+FunctionType findDelegate=new FunctionType(typeRegistry,null,null,functionParamBuilder.build(),typeRegistry.createNullableType(delegateBaseObject),null);
 FunctionType delegateProxy=typeRegistry.createConstructorType(delegateBaseObject.getReferenceName(),null,null,null);
 delegateProxy.setPrototypeBasedOn(delegateBaseCtor);
 codingConvention.applyDelegateRelationship(delegateSuperObject,delegateBaseObject,delegatorObject,delegateProxy,findDelegate);
@@ -55,8 +49,8 @@ delegateProxyMap.put(delegateProxy.getPrototype(),delegateBaseCtor.getPrototype(
 }
 ObjectLiteralCast objectLiteralCast=codingConvention.getObjectLiteralCast(t,n);
 if (objectLiteralCast != null) {
-JSType type=typeRegistry.getType(objectLiteralCast.typeName);
-if (type instanceof ObjectType && ((ObjectType)type).getConstructor() != null) {
+ObjectType type=ObjectType.cast(typeRegistry.getType(objectLiteralCast.typeName));
+if (type != null && type.getConstructor() != null) {
 objectLiteralCast.objectNode.setJSType(type);
 }
  else {

@@ -1,0 +1,21 @@
+{
+  if (n.getType() == Token.FOR && n.getChildCount() == 3) {
+    Node body=n.getLastChild();
+    n.removeChild(body);
+    Node key=n.getFirstChild();
+    n.removeChild(key);
+    Node tmp=Node.newString(Token.NAME,"JSCompiler_IgnoreCajaProperties_" + counter++);
+    n.addChildToFront(new Node(Token.VAR,tmp));
+    Node assignment;
+    Node ifBody;
+    if (key.getType() == Token.VAR) {
+      ifBody=new Node(Token.BLOCK,key,new Node(Token.EXPR_RESULT,new Node(Token.ASSIGN,key.getFirstChild().cloneNode(),tmp.cloneTree())),body);
+    }
+ else {
+      ifBody=new Node(Token.BLOCK,new Node(Token.EXPR_RESULT,new Node(Token.ASSIGN,key,tmp.cloneTree())),body);
+    }
+    Node newBody=new Node(Token.BLOCK,new Node(Token.IF,new Node(Token.NOT,new Node(Token.CALL,new Node(Token.GETPROP,tmp.cloneTree(),Node.newString("match")),new Node(Token.REGEXP,Node.newString("___$")))),ifBody));
+    n.addChildToBack(newBody);
+    compiler.reportCodeChange();
+  }
+}

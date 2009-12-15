@@ -17,9 +17,9 @@
     propertyType=objType.findPropertyType(propName);
   }
   if ((propertyType == null || propertyType.isUnknownType()) && qualifiedName != null) {
-    JSType regType=registry.getType(qualifiedName);
-    if (regType instanceof ObjectType) {
-      propertyType=((ObjectType)regType).getConstructor();
+    ObjectType regType=ObjectType.cast(registry.getType(qualifiedName));
+    if (regType != null) {
+      propertyType=regType.getConstructor();
     }
   }
   return propertyType;

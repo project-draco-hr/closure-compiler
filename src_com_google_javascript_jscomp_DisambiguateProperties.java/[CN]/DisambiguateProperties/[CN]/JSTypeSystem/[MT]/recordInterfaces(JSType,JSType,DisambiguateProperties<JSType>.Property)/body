@@ -1,14 +1,15 @@
 {
-  if (type instanceof ObjectType) {
+  ObjectType objType=ObjectType.cast(type);
+  if (objType != null) {
     FunctionType constructor;
-    if (type instanceof FunctionType) {
-      constructor=(FunctionType)type;
+    if (objType instanceof FunctionType) {
+      constructor=(FunctionType)objType;
     }
- else     if (type instanceof FunctionPrototypeType) {
-      constructor=((FunctionPrototypeType)type).getOwnerFunction();
+ else     if (objType instanceof FunctionPrototypeType) {
+      constructor=((FunctionPrototypeType)objType).getOwnerFunction();
     }
  else {
-      constructor=((ObjectType)type).getConstructor();
+      constructor=objType.getConstructor();
     }
     while (constructor != null) {
       List<ObjectType> interfaces=constructor.getImplementedInterfaces();

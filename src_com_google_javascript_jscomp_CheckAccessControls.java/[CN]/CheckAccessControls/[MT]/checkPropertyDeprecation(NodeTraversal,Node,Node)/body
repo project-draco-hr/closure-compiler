@@ -2,10 +2,9 @@
   if (parent.getType() == Token.NEW) {
     return;
   }
-  JSType maybeObjectType=dereference(n.getFirstChild().getJSType());
+  ObjectType objectType=ObjectType.cast(dereference(n.getFirstChild().getJSType()));
   String propertyName=n.getLastChild().getString();
-  if (maybeObjectType != null && maybeObjectType instanceof ObjectType) {
-    ObjectType objectType=(ObjectType)maybeObjectType;
+  if (objectType != null) {
     String deprecationInfo=getPropertyDeprecationInfo(objectType,propertyName);
     if (deprecationInfo != null && shouldEmitDeprecationWarning(t,n,parent)) {
       if (!deprecationInfo.isEmpty()) {

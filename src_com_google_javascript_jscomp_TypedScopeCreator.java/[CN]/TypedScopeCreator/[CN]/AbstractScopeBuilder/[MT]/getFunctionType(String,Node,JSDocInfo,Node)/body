@@ -31,10 +31,10 @@
       if (lvalueNode != null && lvalueNode.getType() == Token.GETPROP && lvalueNode.isQualifiedName()) {
         Var var=scope.getVar(lvalueNode.getFirstChild().getQualifiedName());
         if (var != null) {
-          JSType ownerType=var.getType();
-          if (ownerType instanceof ObjectType) {
+          ObjectType ownerType=ObjectType.cast(var.getType());
+          if (ownerType != null) {
             String propName=lvalueNode.getLastChild().getString();
-            JSType propType=((ObjectType)ownerType).getPropertyType(propName);
+            JSType propType=ownerType.getPropertyType(propName);
             if (propType instanceof FunctionType) {
               functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferFromOverriddenFunction((FunctionType)propType,parametersNode).inferThisType(info,owner).buildAndRegister();
             }

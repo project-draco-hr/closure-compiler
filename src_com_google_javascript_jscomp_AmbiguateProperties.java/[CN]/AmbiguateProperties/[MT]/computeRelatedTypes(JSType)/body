@@ -13,7 +13,7 @@
     related=new BitSet(intForType.size());
     relatedBitsets.put(type,related);
   }
-  ObjectType parentType=(ObjectType)type;
+  ObjectType parentType=type.toObjectType();
   while (parentType != null) {
     related.set(getIntForType(parentType));
     parentType=parentType.getImplicitPrototype();
@@ -26,7 +26,7 @@
     constructor=((FunctionPrototypeType)type).getOwnerFunction();
   }
  else {
-    constructor=((ObjectType)type).getConstructor();
+    constructor=type.toObjectType().getConstructor();
   }
   if (constructor != null) {
     Set<ObjectType> interfaces=constructor.getAllImplementedInterfaces();

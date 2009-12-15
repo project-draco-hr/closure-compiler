@@ -48,13 +48,10 @@
         return;
       }
     }
-    JSType type=objectJsType.restrictByNotNullOrUndefined();
-    if (type instanceof ObjectType) {
-      ObjectType objectType=(ObjectType)type;
-      if (objectType.hasProperty(property)) {
-        if (!objectType.isPropertyTypeInferred(property) && !propertyIsImplicitCast(objectType,property)) {
-          validator.expectCanAssignToPropertyOf(t,assign,getJSType(rvalue),objectType.getPropertyType(property),object,property);
-        }
+    ObjectType type=ObjectType.cast(objectJsType.restrictByNotNullOrUndefined());
+    if (type != null) {
+      if (type.hasProperty(property) && !type.isPropertyTypeInferred(property) && !propertyIsImplicitCast(type,property)) {
+        validator.expectCanAssignToPropertyOf(t,assign,getJSType(rvalue),type.getPropertyType(property),object,property);
       }
       return;
     }

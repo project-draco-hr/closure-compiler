@@ -9,8 +9,9 @@
     }
     for (    JSType baseInterface : functionType.getImplementedInterfaces()) {
       boolean badImplementedType=false;
-      if (baseInterface instanceof ObjectType) {
-        FunctionType interfaceConstructor=((ObjectType)baseInterface).getConstructor();
+      ObjectType baseInterfaceObj=ObjectType.cast(baseInterface);
+      if (baseInterfaceObj != null) {
+        FunctionType interfaceConstructor=baseInterfaceObj.getConstructor();
         if (interfaceConstructor != null && !interfaceConstructor.isInterface()) {
           badImplementedType=true;
         }
