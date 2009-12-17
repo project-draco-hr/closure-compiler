@@ -8,15 +8,36 @@
     return;
   }
   Var coalescedVar=colorings.peek().getPartitionSuperNode(var);
-  if (vNode.getValue().equals(coalescedVar)) {
-    return;
+  if (!usePseudoNames) {
+    if (vNode.getValue().equals(coalescedVar)) {
+      return;
+    }
+    n.setString(coalescedVar.name);
+    compiler.reportCodeChange();
+    if (NodeUtil.isVar(parent)) {
+      removeVarDeclaration(n);
+    }
   }
-  if (var.getNameNode() == n) {
-    coalescedLog.append(n.getString()).append(" => ").append(coalescedVar.name).append(" in ").append(t.getSourceName()).append(':').append(n.getLineno()).append('\n');
-  }
-  n.setString(coalescedVar.name);
-  compiler.reportCodeChange();
-  if (NodeUtil.isVar(parent)) {
-    removeVarDeclaration(n);
+ else {
+    String pseudoName=null;
+    Set<String> allMergedNames=Sets.newTreeSet();
+    for (Iterator<Var> i=t.getScope().getVars(); i.hasNext(); ) {
+      Var iVar=i.next();
+      if (colorings.peek().getGraph().getNode(iVar) != null && coalescedVar.equals(colorings.peek().getPartitionSuperNode(iVar))) {
+        allMergedNames.add(iVar.name);
+      }
+    }
+    if (allMergedNames.size() == 1) {
+      return;
+    }
+    pseudoName=Join.join("_",allMergedNames);
+    while (t.getScope().isDeclared(pseudoName,true)) {
+      pseudoName+="$";
+    }
+    n.setString(pseudoName);
+    compiler.reportCodeChange();
+    if (!vNode.getValue().equals(coalescedVar) && NodeUtil.isVar(parent)) {
+      removeVarDeclaration(n);
+    }
   }
 }
