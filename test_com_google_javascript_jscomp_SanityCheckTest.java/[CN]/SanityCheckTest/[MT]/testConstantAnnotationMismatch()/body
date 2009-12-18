@@ -1,0 +1,21 @@
+{
+  otherPass=new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      getLastCompiler().reportCodeChange();
+      Node name=Node.newString(Token.NAME,"x");
+      name.putBooleanProp(Node.IS_CONSTANT_NAME,true);
+      root.addChildToBack(new Node(Token.EXPR_RESULT,name));
+      getLastCompiler().setNormalized();
+    }
+  }
+;
+  boolean exceptionCaught=false;
+  try {
+    test("var x;","var x; x;");
+  }
+ catch (  RuntimeException e) {
+    assertTrue(e.getMessage().contains("The name x is not consistently annotated as constant."));
+    exceptionCaught=true;
+  }
+  assertTrue(exceptionCaught);
+}

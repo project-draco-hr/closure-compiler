@@ -13,9 +13,7 @@
     passes.add(removeAbstractMethods);
   }
   if (options.collapseProperties) {
-    passes.add(undoConstantRenaming);
     passes.add(collapseProperties);
-    passes.add(renameConstants.makeOneTimePass());
   }
   if (options.tightenTypes) {
     passes.add(tightenTypesBuilder);
@@ -43,7 +41,7 @@
   }
   assertAllOneTimePasses(passes);
   if (options.smartNameRemoval || options.reportPath != null) {
-    passes.addAll(getCodeRemovingPasses(true));
+    passes.addAll(getCodeRemovingPasses());
     passes.add(smartNamePass);
   }
   if (options.customPasses != null) {

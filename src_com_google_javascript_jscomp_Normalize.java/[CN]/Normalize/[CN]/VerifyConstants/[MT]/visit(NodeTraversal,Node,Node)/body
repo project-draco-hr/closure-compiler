@@ -1,5 +1,5 @@
 {
-  if (n.getType() == Token.NAME || n.getType() == Token.STRING) {
+  if (n.getType() == Token.NAME) {
     String name=n.getString();
     if (n.getString().isEmpty()) {
       return;
@@ -7,7 +7,7 @@
     boolean isConst=n.getBooleanProp(Node.IS_CONSTANT_NAME);
     if (checkUserDeclarations) {
       boolean expectedConst=false;
-      if (NodeUtil.isConstantName(n)) {
+      if (NodeUtil.isConstantName(n) || compiler.getCodingConvention().isConstant(n.getString())) {
         expectedConst=true;
       }
  else {
@@ -36,7 +36,7 @@
       constantMap.put(name,isConst);
     }
  else {
-      Preconditions.checkState(value.booleanValue() == isConst,"The name " + name + "is not consistently annotated as "+ "constant.");
+      Preconditions.checkState(value.booleanValue() == isConst,"The name " + name + " is not consistently annotated as "+ "constant.");
     }
   }
 }
