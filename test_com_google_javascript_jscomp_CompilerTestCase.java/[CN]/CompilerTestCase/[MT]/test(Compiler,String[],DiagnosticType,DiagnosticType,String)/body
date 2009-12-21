@@ -45,8 +45,9 @@
     assertEquals("Unexpected error(s): " + Join.join("\n",compiler.getErrors()),0,compiler.getErrorCount());
     ErrorManager symbolTableErrorManager=new BlackHoleErrorManager(compiler);
     Node expectedRoot=parseExpectedJs(expected);
+    expectedRoot.detachFromParent();
     SymbolTable table=compiler.acquireSymbolTable();
-    table.verify(expectedRoot,mainRoot);
+    table.verify(new Node(Token.BLOCK,externsRoot.cloneTree(),expectedRoot),mainRoot.getParent());
     table.release();
     JSError[] stErrors=symbolTableErrorManager.getErrors();
     if (expectedSymbolTableError != null) {
@@ -105,7 +106,11 @@
     }
   }
  else {
-    assertEquals("There should be one error.",1,compiler.getErrorCount());
-    assertEquals(error,compiler.getErrors()[0].getType());
+    String errors="";
+    for (    JSError actualError : compiler.getErrors()) {
+      errors+=actualError.description + "\n";
+    }
+    assertEquals("There should be one error. " + errors,1,compiler.getErrorCount());
+    assertEquals(errors,error,compiler.getErrors()[0].getType());
   }
 }

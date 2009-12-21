@@ -59,6 +59,15 @@ break;
 return true;
 default :
 if (isSimpleOperatorType(n.getType())) break;
+if (isAssignmentOp(n)) {
+if (checkForStateChangeHelper(n.getFirstChild(),checkForNewObjects) || checkForStateChangeHelper(n.getLastChild(),checkForNewObjects)) {
+return true;
+}
+Node current=n.getFirstChild();
+for (; current.getType() == Token.GETPROP || current.getType() == Token.GETELEM; current=current.getFirstChild()) {
+}
+return !(isLiteralValue(current) || current.getType() == Token.FUNCTION);
+}
 return true;
 }
 for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {

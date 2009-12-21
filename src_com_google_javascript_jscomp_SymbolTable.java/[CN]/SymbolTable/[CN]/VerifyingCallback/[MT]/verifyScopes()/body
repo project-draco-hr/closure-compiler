@@ -7,6 +7,10 @@
   for (int i=0; i < expectedScopes.size(); i++) {
     Scope expectedScope=expectedScopes.get(i);
     Scope actualScope=actualScopes.get(i);
+    if (!checkNodesMatch(expectedScope.getRootNode(),actualScope.getRootNode())) {
+      compiler.report(JSError.make(SCOPE_MISMATCH,expectedScope.getRootNode().toStringTree(),actualScope.getRootNode().toStringTree()));
+      continue;
+    }
     if (expectedScope.getVarCount() != actualScope.getVarCount()) {
       compiler.report(JSError.make(VARIABLE_COUNT_MISMATCH,Integer.toString(expectedScope.getVarCount()),Integer.toString(actualScope.getVarCount())));
     }
@@ -15,10 +19,10 @@
       while (it.hasNext()) {
         Var var=it.next();
         Scope.Var actualVar=actualScope.getVar(var.getName());
-        if (actualVar == null) {
+        if (actualVar == null || expectedScope.getVar(var.getName()) != var) {
           compiler.report(JSError.make(MISSING_VARIABLE,var.getName()));
         }
- else         if (!isNodeAttached(actualVar.getNameNode())) {
+ else         if (!checkNodesMatch(var.getNameNode(),actualVar.getNameNode()) || !isNodeAttached(actualVar.getNameNode())) {
           compiler.report(JSError.make(MOVED_VARIABLE,var.getName()));
         }
       }
