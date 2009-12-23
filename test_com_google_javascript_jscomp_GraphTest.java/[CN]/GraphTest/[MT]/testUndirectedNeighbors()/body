@@ -1,0 +1,18 @@
+{
+  UndiGraph<String,String> graph=new LinkedUndirectedGraph<String,String>();
+  graph.createNode("a");
+  graph.createNode("b");
+  graph.createNode("c");
+  graph.createNode("d");
+  graph.connect("a","-","b");
+  graph.connect("a","--","b");
+  graph.connect("a","---","b");
+  graph.connect("a","-","c");
+  graph.connect("c","-","d");
+  assertSetEquals(graph.getNeighborNodes("a"),"b","c");
+  assertSetEquals(graph.getNeighborNodes("b"),"a");
+  assertSetEquals(graph.getNeighborNodes("c"),"a","d");
+  assertListCount(graph.getNeighborNodes("a"),"b",3);
+  graph.disconnect("a","b");
+  assertFalse(graph.isConnected("a","b"));
+}

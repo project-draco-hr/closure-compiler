@@ -1,0 +1,16 @@
+{
+  FlowScope childA=localEntry.createChildFlowScope();
+  childA.inferSlotType("localA",STRING_TYPE);
+  FlowScope childB=localEntry.createChildFlowScope();
+  childB.inferSlotType("globalB",BOOLEAN_TYPE);
+  assertEquals(STRING_TYPE,childA.getSlot("localA").getType());
+  assertEquals(BOOLEAN_TYPE,childB.getSlot("globalB").getType());
+  assertNull(childB.getSlot("localB").getType());
+  FlowScope joined=join(childB,childA);
+  assertEquals(STRING_TYPE,joined.getSlot("localA").getType());
+  assertEquals(BOOLEAN_TYPE,joined.getSlot("globalB").getType());
+  joined=join(childA,childB);
+  assertEquals(STRING_TYPE,joined.getSlot("localA").getType());
+  assertEquals(BOOLEAN_TYPE,joined.getSlot("globalB").getType());
+  assertEquals("Join should be symmetric",join(childB,childA),join(childA,childB));
+}

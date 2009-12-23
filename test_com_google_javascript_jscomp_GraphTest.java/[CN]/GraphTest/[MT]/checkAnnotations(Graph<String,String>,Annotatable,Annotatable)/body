@@ -1,0 +1,40 @@
+{
+  final Annotation A=new Annotation(){
+  }
+;
+  final Annotation B=new Annotation(){
+  }
+;
+  assertNull(a.getAnnotation());
+  assertNull(b.getAnnotation());
+  a.setAnnotation(A);
+  b.setAnnotation(B);
+  assertSame(A,a.getAnnotation());
+  assertSame(B,b.getAnnotation());
+  graph.clearEdgeAnnotations();
+  graph.clearNodeAnnotations();
+  assertNull(a.getAnnotation());
+  assertNull(b.getAnnotation());
+  a.setAnnotation(A);
+  b.setAnnotation(B);
+  graph.pushEdgeAnnotations();
+  graph.pushNodeAnnotations();
+  assertNull(a.getAnnotation());
+  assertNull(b.getAnnotation());
+  a.setAnnotation(B);
+  b.setAnnotation(B);
+  graph.pushEdgeAnnotations();
+  graph.pushNodeAnnotations();
+  a.setAnnotation(B);
+  b.setAnnotation(A);
+  assertSame(B,a.getAnnotation());
+  assertSame(A,b.getAnnotation());
+  graph.popEdgeAnnotations();
+  graph.popNodeAnnotations();
+  assertSame(B,a.getAnnotation());
+  assertSame(B,b.getAnnotation());
+  graph.popEdgeAnnotations();
+  graph.popNodeAnnotations();
+  assertSame(A,a.getAnnotation());
+  assertSame(B,b.getAnnotation());
+}

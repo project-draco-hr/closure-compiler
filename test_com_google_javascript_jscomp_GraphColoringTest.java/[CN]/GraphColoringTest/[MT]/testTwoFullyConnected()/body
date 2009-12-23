@@ -1,0 +1,23 @@
+{
+  final int count=100;
+  Graph<String,String> graph=new LinkedUndirectedGraph<String,String>();
+  for (int i=0; i < count; i++) {
+    graph.createNode("Node Left " + i);
+    graph.createNode("Node Right " + i);
+    for (int j=0; j < count; j++) {
+      graph.createNode("Node Left " + j);
+      graph.createNode("Node Right " + j);
+      if (i != j) {
+        graph.connect("Node Left " + i,null,"Node Left " + j);
+        graph.connect("Node Right " + i,null,"Node Right " + j);
+      }
+    }
+  }
+  assertEquals(count,new GreedyGraphColoring<String,String>(graph).color());
+  validateColoring(graph);
+  for (int i=0; i < count; i++) {
+    graph.connect("Node Left " + i,null,"Node Right " + i);
+  }
+  assertEquals(count,new GreedyGraphColoring<String,String>(graph).color());
+  validateColoring(graph);
+}

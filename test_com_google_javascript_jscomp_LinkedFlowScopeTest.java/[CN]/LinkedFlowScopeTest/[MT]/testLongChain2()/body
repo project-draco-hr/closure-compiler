@@ -1,0 +1,14 @@
+{
+  FlowScope chainA=localEntry.createChildFlowScope();
+  FlowScope chainB=localEntry.createChildFlowScope();
+  for (int i=0; i < LONG_CHAIN_LENGTH * 7; i++) {
+    localScope.declare("local" + i,null,null,null);
+    chainA.inferSlotType("local" + i,i % 2 == 0 ? NUMBER_TYPE : BOOLEAN_TYPE);
+    chainB.inferSlotType("local" + i,i % 3 == 0 ? STRING_TYPE : BOOLEAN_TYPE);
+    if (LONG_CHAIN_LENGTH % 7 == 0) {
+      chainA=chainA.createChildFlowScope();
+      chainB=chainB.createChildFlowScope();
+    }
+  }
+  verifyLongChains(chainA,chainB);
+}

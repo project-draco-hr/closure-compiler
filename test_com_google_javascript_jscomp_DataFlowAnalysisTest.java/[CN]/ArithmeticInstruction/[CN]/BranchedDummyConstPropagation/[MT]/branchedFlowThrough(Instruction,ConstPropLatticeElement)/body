@@ -1,0 +1,22 @@
+{
+  List<ConstPropLatticeElement> result=Lists.newArrayList();
+  List<DiGraphEdge<Instruction,Branch>> outEdges=getCfg().getOutEdges(node);
+  if (node.isArithmetic()) {
+    assertTrue(outEdges.size() < 2);
+    ConstPropLatticeElement aResult=flowThroughArithmeticInstruction((ArithmeticInstruction)node,input);
+    for (    DiGraphEdge<Instruction,Branch> _ : outEdges) {
+      result.add(aResult);
+    }
+  }
+ else {
+    BranchInstruction branchInst=(BranchInstruction)node;
+    for (    DiGraphEdge<Instruction,Branch> branch : outEdges) {
+      ConstPropLatticeElement edgeResult=new ConstPropLatticeElement(input);
+      if (branch.getValue() == Branch.ON_FALSE && branchInst.getCondition().isVariable()) {
+        edgeResult.constMap.put((Variable)branchInst.getCondition(),0);
+      }
+      result.add(edgeResult);
+    }
+  }
+  return result;
+}

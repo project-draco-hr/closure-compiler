@@ -1,0 +1,18 @@
+{
+  ConstPropLatticeElement result=new ConstPropLatticeElement();
+  if (a.isTop) {
+    return new ConstPropLatticeElement(a);
+  }
+  if (b.isTop) {
+    return new ConstPropLatticeElement(b);
+  }
+  for (  Variable var : a.constMap.keySet()) {
+    if (b.constMap.containsKey(var)) {
+      Integer number=b.constMap.get(var);
+      if (a.constMap.get(var).equals(number)) {
+        result.constMap.put(var,number);
+      }
+    }
+  }
+  return result;
+}

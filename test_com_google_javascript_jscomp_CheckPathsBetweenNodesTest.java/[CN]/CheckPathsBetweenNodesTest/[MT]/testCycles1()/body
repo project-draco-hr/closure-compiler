@@ -1,0 +1,20 @@
+{
+  DiGraph<String,String> g=new LinkedDirectedGraph<String,String>();
+  g.createDirectedGraphNode("a");
+  g.createDirectedGraphNode("b");
+  g.createDirectedGraphNode("c");
+  g.createDirectedGraphNode("d");
+  g.createDirectedGraphNode("e");
+  g.createDirectedGraphNode("f");
+  g.connect("a","-","b");
+  g.connect("b","-","c");
+  g.connect("c","-","d");
+  g.connect("d","-","e");
+  g.connect("e","-","f");
+  g.connect("f","-","b");
+  assertGood(createTest(g,"a","e",Predicates.equalTo("b"),ALL_EDGE));
+  assertGood(createTest(g,"a","e",Predicates.equalTo("c"),ALL_EDGE));
+  assertGood(createTest(g,"a","e",Predicates.equalTo("d"),ALL_EDGE));
+  assertGood(createTest(g,"a","e",Predicates.equalTo("e"),ALL_EDGE));
+  assertBad(createTest(g,"a","e",Predicates.equalTo("f"),ALL_EDGE));
+}

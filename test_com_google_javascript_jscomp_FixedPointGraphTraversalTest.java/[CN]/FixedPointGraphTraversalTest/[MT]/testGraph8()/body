@@ -1,0 +1,17 @@
+{
+  maxChange=2;
+  traversal.computeFixedPoint(graph,A);
+  try {
+    traversal=new FixedPointGraphTraversal<Counter,String>(new EdgeCallback<Counter,String>(){
+      public boolean traverseEdge(      Counter source,      String e,      Counter dest){
+        return true;
+      }
+    }
+);
+    traversal.computeFixedPoint(graph,A);
+    fail("Expecting Error: " + FixedPointGraphTraversal.NON_HALTING_ERROR_MSG);
+  }
+ catch (  IllegalStateException e) {
+    assertEquals(e.getMessage(),FixedPointGraphTraversal.NON_HALTING_ERROR_MSG);
+  }
+}

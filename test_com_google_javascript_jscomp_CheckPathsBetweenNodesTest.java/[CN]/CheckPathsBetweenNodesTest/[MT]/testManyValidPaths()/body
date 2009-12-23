@@ -1,0 +1,17 @@
+{
+  DiGraph<String,String> g=new LinkedDirectedGraph<String,String>();
+  g.createDirectedGraphNode("a");
+  g.createDirectedGraphNode("b");
+  g.createDirectedGraphNode("c1");
+  g.createDirectedGraphNode("c2");
+  g.createDirectedGraphNode("c3");
+  DiGraphNode<String,String> d=g.createDirectedGraphNode("d");
+  g.connect("a","-","b");
+  g.connect("b","-","c1");
+  g.connect("b","-","c2");
+  g.connect("c2","-","d");
+  g.connect("c1","-","d");
+  g.connect("a","-","c3");
+  g.connect("c3","-","d");
+  assertGood(createTest(g,"a","d",new PrefixPredicate("c"),ALL_EDGE));
+}

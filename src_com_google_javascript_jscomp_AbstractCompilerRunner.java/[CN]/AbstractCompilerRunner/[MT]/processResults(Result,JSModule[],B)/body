@@ -1,0 +1,70 @@
+{
+  if (FLAG_compute_phase_ordering.get()) {
+    return 0;
+  }
+  if (FLAG_print_ast.get()) {
+    if (compiler.getRoot() == null) {
+      return 1;
+    }
+ else {
+      ControlFlowGraph<Node> cfg=compiler.computeCFG();
+      DotFormatter.appendDot(compiler.getRoot(),cfg,out);
+      out.println();
+      return 0;
+    }
+  }
+  if (FLAG_print_tree.get()) {
+    if (compiler.getRoot() == null) {
+      out.println("Code contains errors; no tree was generated.");
+      return 1;
+    }
+ else {
+      compiler.getRoot().appendStringTree(out);
+      out.println("");
+      return 0;
+    }
+  }
+  if (result.success) {
+    if (modules == null) {
+      writeOutput(out,compiler,compiler.toSource(),FLAG_output_wrapper.get(),FLAG_output_wrapper_marker.get());
+      outputSourceMap(options,options.jsOutputFile);
+    }
+ else {
+      String moduleFilePrefix=FLAG_module_output_path_prefix.get();
+      maybeCreateDirsForPath(moduleFilePrefix);
+      Map<String,String> moduleWrappers=parseModuleWrappers(FLAG_module_wrapper.get(),modules);
+      PrintStream mapOut=null;
+      if (!shouldGenerateMapPerModule(options)) {
+        mapOut=openSourceMapStream(options,moduleFilePrefix,null);
+      }
+      for (      JSModule m : modules) {
+        if (shouldGenerateMapPerModule(options)) {
+          mapOut=openSourceMapStream(options,moduleFilePrefix,m.getName());
+        }
+        PrintStream ps=new PrintStream(new FileOutputStream(moduleFilePrefix + m.getName() + ".js"));
+        if (options.sourceMapOutputPath != null) {
+          compiler.getSourceMap().reset();
+        }
+        writeOutput(ps,compiler,compiler.toSource(m),moduleWrappers.get(m.getName()),"%s");
+        if (options.sourceMapOutputPath != null) {
+          compiler.getSourceMap().appendTo(mapOut,m.getName());
+        }
+        ps.close();
+        if (shouldGenerateMapPerModule(options) && mapOut != null) {
+          mapOut.close();
+          mapOut=null;
+        }
+      }
+      if (mapOut != null) {
+        mapOut.close();
+      }
+    }
+    if (options.externExportsPath != null) {
+      PrintStream eeOut=openExternExportsStream(options,options.jsOutputFile);
+      eeOut.append(result.externExport);
+      eeOut.close();
+    }
+    outputNameMaps(options);
+  }
+  return Math.min(result.errors.length,0x7f);
+}

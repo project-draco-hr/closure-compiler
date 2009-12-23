@@ -1,0 +1,19 @@
+{
+  UndiGraph<String,String> graph=new LinkedUndirectedGraph<String,String>();
+  graph.createNode("a");
+  graph.createNode("b");
+  graph.createNode("c");
+  graph.connect("a","--","b");
+  SubGraph<String,String> subGraph=graph.newSubGraph();
+  subGraph.addNode("a");
+  subGraph.addNode("b");
+  try {
+    subGraph.addNode("d");
+    fail("SubGraph should not allow add for node that is not in graph.");
+  }
+ catch (  IllegalArgumentException e) {
+  }
+  assertFalse(subGraph.isIndependentOf("a"));
+  assertFalse(subGraph.isIndependentOf("b"));
+  assertTrue(subGraph.isIndependentOf("c"));
+}

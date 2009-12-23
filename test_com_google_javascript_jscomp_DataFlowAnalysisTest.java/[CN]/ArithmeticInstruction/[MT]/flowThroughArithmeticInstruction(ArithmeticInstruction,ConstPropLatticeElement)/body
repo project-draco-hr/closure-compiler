@@ -1,0 +1,41 @@
+{
+  ConstPropLatticeElement out=new ConstPropLatticeElement(input);
+  Integer leftConst=null;
+  if (aInst.operand1.isNumber()) {
+    leftConst=((Number)aInst.operand1).value;
+  }
+ else {
+    if (input.constMap.containsKey(aInst.operand1)) {
+      leftConst=input.constMap.get(aInst.operand1);
+    }
+  }
+  Integer rightConst=null;
+  if (aInst.operand2.isNumber()) {
+    rightConst=((Number)aInst.operand2).value;
+  }
+ else {
+    if (input.constMap.containsKey(aInst.operand2)) {
+      rightConst=input.constMap.get(aInst.operand2);
+    }
+  }
+  if (leftConst != null && rightConst != null) {
+    Integer constResult=null;
+    if (aInst.operation == Operation.ADD) {
+      constResult=leftConst.intValue() + rightConst.intValue();
+    }
+ else     if (aInst.operation == Operation.SUB) {
+      constResult=leftConst.intValue() - rightConst.intValue();
+    }
+ else     if (aInst.operation == Operation.MUL) {
+      constResult=leftConst.intValue() * rightConst.intValue();
+    }
+ else     if (aInst.operation == Operation.DIV) {
+      constResult=leftConst.intValue() / rightConst.intValue();
+    }
+    out.constMap.put(aInst.result,constResult);
+  }
+ else {
+    out.constMap.remove(aInst.result);
+  }
+  return out;
+}

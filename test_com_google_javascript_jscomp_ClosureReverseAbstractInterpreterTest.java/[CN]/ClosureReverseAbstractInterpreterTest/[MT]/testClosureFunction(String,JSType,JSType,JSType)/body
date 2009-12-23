@@ -1,0 +1,14 @@
+{
+  Node n=compiler.parseTestCode("var a; " + function + "(a)");
+  Node call=n.getLastChild().getLastChild();
+  Node name=call.getLastChild();
+  Scope scope=new SyntacticScopeCreator(compiler).createScope(n,null);
+  FlowScope flowScope=LinkedFlowScope.createEntryLattice(scope);
+  assertEquals(Token.CALL,call.getType());
+  assertEquals(Token.NAME,name.getType());
+  GoogleCodingConvention convention=new GoogleCodingConvention();
+  flowScope.inferSlotType("a",type);
+  ClosureReverseAbstractInterpreter rai=new ClosureReverseAbstractInterpreter(convention,registry);
+  assertEquals(trueType,rai.getPreciserScopeKnowingConditionOutcome(call,flowScope,true).getSlot("a").getType());
+  assertEquals(falseType,rai.getPreciserScopeKnowingConditionOutcome(call,flowScope,false).getSlot("a").getType());
+}

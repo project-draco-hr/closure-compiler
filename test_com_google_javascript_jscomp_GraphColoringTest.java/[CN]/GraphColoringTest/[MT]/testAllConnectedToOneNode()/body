@@ -1,0 +1,16 @@
+{
+  final int count=10;
+  Graph<String,String> graph=new LinkedUndirectedGraph<String,String>();
+  graph.createNode("Center");
+  for (int i=0; i < count; i++) {
+    graph.createNode("Node " + i);
+    graph.connect("Center",null,"Node " + i);
+  }
+  GraphColoring<String,String> coloring=new GreedyGraphColoring<String,String>(graph);
+  assertEquals(2,coloring.color());
+  validateColoring(graph);
+  assertEquals("Center",coloring.getPartitionSuperNode("Center"));
+  for (int i=0; i < count; i++) {
+    assertEquals("Node 0",coloring.getPartitionSuperNode("Node " + i));
+  }
+}

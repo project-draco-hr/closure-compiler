@@ -1,0 +1,15 @@
+{
+  ConcreteFunctionType fun=createFunction("fun");
+  ConcreteType obj=fun.getInstanceType();
+  ConcreteType both=new ConcreteUnionType(fun,obj);
+  assertTrue(fun.isSingleton());
+  assertTrue(obj.isSingleton());
+  assertFalse(both.isSingleton());
+  assertFalse(NONE.isSingleton());
+  assertFalse(ALL.isSingleton());
+  checkUnionWith(fun,NONE,fun);
+  checkUnionWith(fun,ALL,ALL);
+  checkUnionWith(fun,obj,both);
+  checkUnionWith(both,NONE,both);
+  checkUnionWith(both,ALL,ALL);
+}

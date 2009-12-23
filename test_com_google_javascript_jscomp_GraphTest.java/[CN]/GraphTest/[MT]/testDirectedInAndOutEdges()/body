@@ -1,0 +1,18 @@
+{
+  DiGraph<String,String> graph=new LinkedDirectedGraph<String,String>();
+  graph.createNode("a");
+  graph.createNode("b");
+  graph.createNode("c");
+  graph.createNode("d");
+  graph.connect("a","->","b");
+  graph.connect("a","-->","b");
+  graph.connect("a","--->","b");
+  graph.connect("a","->","c");
+  graph.connect("c","->","d");
+  assertSetEquals(graph.getDirectedSuccNodes("a"),"b","c");
+  assertSetEquals(graph.getDirectedPredNodes("b"),"a");
+  assertSetEquals(graph.getDirectedPredNodes("c"),"a");
+  assertListCount(graph.getDirectedSuccNodes("a"),"b",3);
+  graph.disconnect("a","b");
+  assertFalse(graph.isConnected("a","b"));
+}

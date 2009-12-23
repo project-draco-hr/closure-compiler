@@ -1,0 +1,15 @@
+{
+  FlowScope childA=localEntry.createChildFlowScope();
+  childA.inferSlotType("localB",NUMBER_TYPE);
+  FlowScope childAB=childA.createChildFlowScope();
+  childAB.inferSlotType("localB",STRING_TYPE);
+  FlowScope childABC=childAB.createChildFlowScope();
+  childABC.inferSlotType("localA",BOOLEAN_TYPE);
+  assertNull(childABC.findUniqueRefinedSlot(childABC));
+  assertEquals(BOOLEAN_TYPE,childABC.findUniqueRefinedSlot(childAB).getType());
+  assertNull(childABC.findUniqueRefinedSlot(childA));
+  assertNull(childABC.findUniqueRefinedSlot(localEntry));
+  assertEquals(STRING_TYPE,childAB.findUniqueRefinedSlot(childA).getType());
+  assertEquals(STRING_TYPE,childAB.findUniqueRefinedSlot(localEntry).getType());
+  assertEquals(NUMBER_TYPE,childA.findUniqueRefinedSlot(localEntry).getType());
+}
