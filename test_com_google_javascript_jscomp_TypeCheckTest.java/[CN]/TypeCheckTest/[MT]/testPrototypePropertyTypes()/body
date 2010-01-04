@@ -1,0 +1,11 @@
+{
+  Node js1Node=parseAndTypeCheck("/** @constructor */function A() {\n" + "  /** @type string */ this.m1;\n" + "  /** @type Object? */ this.m2 = {};\n"+ "  /** @type boolean */ this.m3;\n"+ "}\n"+ "/** @type string */ A.prototype.m4;\n"+ "/** @type number */ A.prototype.m5 = 0;\n"+ "/** @type boolean */ A.prototype.m6;\n");
+  ObjectType instanceType=getInstanceType(js1Node);
+  assertEquals(NATIVE_PROPERTIES_COUNT + 6,instanceType.getPropertiesCount());
+  checkObjectType(instanceType,"m1",STRING_TYPE);
+  checkObjectType(instanceType,"m2",createUnionType(OBJECT_TYPE,NULL_TYPE));
+  checkObjectType(instanceType,"m3",BOOLEAN_TYPE);
+  checkObjectType(instanceType,"m4",STRING_TYPE);
+  checkObjectType(instanceType,"m5",NUMBER_TYPE);
+  checkObjectType(instanceType,"m6",BOOLEAN_TYPE);
+}

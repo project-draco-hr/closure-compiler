@@ -1,0 +1,9 @@
+{
+  Node externsNode=compiler.parseTestCode(externs);
+  Node n=compiler.parseTestCode(js);
+  Node externAndJsRoot=new Node(Token.BLOCK,externsNode,n);
+  externAndJsRoot.setIsSyntheticBlock(true);
+  assertEquals("parsing error: " + Join.join(", ",compiler.getErrors()),0,compiler.getErrorCount());
+  Scope s=makeTypeCheck().processForTesting(externsNode,n);
+  return new Pair<Node,Scope>(n,s);
+}

@@ -45,7 +45,7 @@
     ObjectType ownerType=getObjectSlot(ownerName);
     if (ownerType != null) {
       boolean isExtern=t.getInput().isExtern();
-      if ((!ownerType.hasOwnProperty(propName) || ownerType.isPropertyTypeInferred(propName)) && (isExtern || !ownerType.isInstanceType())) {
+      if ((!ownerType.hasOwnProperty(propName) || ownerType.isPropertyTypeInferred(propName)) && ((isExtern && !ownerType.isNativeObjectType()) || !ownerType.isInstanceType())) {
         ownerType.defineDeclaredProperty(propName,valueType,isExtern);
       }
     }

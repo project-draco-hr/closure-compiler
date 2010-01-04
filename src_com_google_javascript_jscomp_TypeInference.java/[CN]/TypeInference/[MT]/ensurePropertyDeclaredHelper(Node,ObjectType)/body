@@ -3,7 +3,7 @@
   String qName=getprop.getQualifiedName();
   if (qName != null) {
     Var var=syntacticScope.getVar(qName);
-    if (var != null && !var.isTypeInferred() && !objectType.hasOwnProperty(propName) && (!objectType.isInstanceType() || var.isExtern())) {
+    if (var != null && !var.isTypeInferred() && !objectType.hasOwnProperty(propName) && (!objectType.isInstanceType() || (var.isExtern() && !objectType.isNativeObjectType()))) {
       objectType.defineDeclaredProperty(propName,var.getType(),var.isExtern());
       return true;
     }

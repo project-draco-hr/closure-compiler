@@ -1,0 +1,8 @@
+{
+  Pair<Node,Scope> p=parseAndTypeCheckWithScope("" + "/** @constructor */\n" + "function Foo() {}\n"+ "/** @param {number} a */\n"+ "Foo.prototype.bar = function(a){};\n"+ "/** @param {Foo} f */\n"+ "function baz(f) {\n"+ "  Foo.prototype.bar.call(f, 3);\n"+ "}");
+  assertEquals(0,compiler.getErrorCount());
+  assertEquals(0,compiler.getWarningCount());
+  assertTrue(p.second.getVar("Foo").getType() instanceof FunctionType);
+  FunctionType fooType=(FunctionType)p.second.getVar("Foo").getType();
+  assertEquals("function (this:Foo, number): ?",fooType.getPrototype().getPropertyType("bar").toString());
+}
