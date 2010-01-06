@@ -8,11 +8,11 @@
       return;
     }
   }
-  BitSet related=relatedBitsets.get(type);
-  if (related == null) {
-    related=new BitSet(intForType.size());
-    relatedBitsets.put(type,related);
+  if (relatedBitsets.containsKey(type)) {
+    return;
   }
+  JSTypeBitSet related=new JSTypeBitSet(intForType.size());
+  relatedBitsets.put(type,related);
   ObjectType parentType=type.toObjectType();
   while (parentType != null) {
     related.set(getIntForType(parentType));
