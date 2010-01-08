@@ -32,12 +32,12 @@
         Var var=scope.getVar(lvalueNode.getFirstChild().getQualifiedName());
         if (var != null) {
           ObjectType ownerType=ObjectType.cast(var.getType());
+          FunctionType propType=null;
           if (ownerType != null) {
-            String propName=lvalueNode.getLastChild().getString();
-            JSType propType=ownerType.getPropertyType(propName);
-            if (propType instanceof FunctionType) {
-              functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferFromOverriddenFunction((FunctionType)propType,parametersNode).inferThisType(info,owner).buildAndRegister();
-            }
+            propType=findOverriddenFunction(ownerType,lvalueNode.getLastChild().getString());
+          }
+          if (propType != null) {
+            functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferFromOverriddenFunction(propType,parametersNode).inferThisType(info,owner).buildAndRegister();
           }
         }
       }

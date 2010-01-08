@@ -2,7 +2,7 @@
   RecentChange recentChange=new RecentChange();
   compiler.addChangeHandler(recentChange);
   Node root=compiler.parseInputs();
-  assertTrue("Unexpected parse error(s): " + Join.join("\n",compiler.getErrors()),root != null);
+  assertTrue("Unexpected parse error(s): " + Joiner.on("\n").join(compiler.getErrors()),root != null);
   Node externsRoot=root.getFirstChild();
   Node mainRoot=root.getLastChild();
   Node rootClone=root.cloneTree();
@@ -42,7 +42,7 @@
     }
   }
   if (error == null) {
-    assertEquals("Unexpected error(s): " + Join.join("\n",compiler.getErrors()),0,compiler.getErrorCount());
+    assertEquals("Unexpected error(s): " + Joiner.on("\n").join(compiler.getErrors()),0,compiler.getErrorCount());
     ErrorManager symbolTableErrorManager=new BlackHoleErrorManager(compiler);
     Node expectedRoot=parseExpectedJs(expected);
     expectedRoot.detachFromParent();
@@ -55,10 +55,10 @@
       assertEquals(expectedSymbolTableError,stErrors[0].getType());
     }
  else {
-      assertEquals("Unexpected symbol table error(s): " + Join.join("\n",stErrors),0,stErrors.length);
+      assertEquals("Unexpected symbol table error(s): " + Joiner.on("\n").join(stErrors),0,stErrors.length);
     }
     if (warning == null) {
-      assertEquals("Unexpected warning(s): " + Join.join("\n",aggregateWarnings),0,aggregateWarningCount);
+      assertEquals("Unexpected warning(s): " + Joiner.on("\n").join(aggregateWarnings),0,aggregateWarningCount);
     }
  else {
       assertEquals("There should be one warning, repeated " + numRepetitions + " time(s).",numRepetitions,aggregateWarningCount);
@@ -91,7 +91,7 @@
       assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult: "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
     }
  else     if (expected != null) {
-      assertEquals(Join.join("",expected),compiler.toSource(mainRoot));
+      assertEquals(Joiner.on("").join(expected),compiler.toSource(mainRoot));
     }
     Node normalizeCheckRootClone=root.cloneTree();
     Node normalizeCheckExternsRootClone=root.getFirstChild();

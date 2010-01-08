@@ -3,11 +3,10 @@
     skipAmbiguating=true;
     return;
   }
-  if (type == null) {
-    type=newType;
+  int typeInt=getIntForType(newType);
+  if (!typesSet.get(typeInt)) {
+    computeRelatedTypes(newType);
+    typesSet.set(typeInt);
+    relatedTypesSet.or(getRelatedTypesOnNonUnion(newType));
   }
- else {
-    type=type.getLeastSupertype(newType);
-  }
-  typesSet.set(getIntForType(newType));
 }
