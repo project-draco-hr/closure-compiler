@@ -1,0 +1,15 @@
+{
+  if (!n.getBooleanProp(Node.IS_NAMESPACE)) {
+    return false;
+  }
+  Node value=null;
+  if (n.getType() == Token.EXPR_RESULT) {
+    Node assign=n.getFirstChild();
+    value=assign.getLastChild();
+  }
+ else   if (n.getType() == Token.VAR) {
+    Node name=n.getFirstChild();
+    value=name.getFirstChild();
+  }
+  return value != null && value.getType() == Token.OBJECTLIT && !value.hasChildren();
+}
