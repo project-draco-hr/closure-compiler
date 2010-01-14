@@ -1,0 +1,15 @@
+{
+  try {
+    InputStream input=CompilerRunner.class.getResourceAsStream("/externs.zip");
+    ZipInputStream zip=new ZipInputStream(input);
+    List<JSSourceFile> externs=Lists.newLinkedList();
+    for (ZipEntry entry; (entry=zip.getNextEntry()) != null; ) {
+      LimitInputStream entryStream=new LimitInputStream(zip,entry.getSize());
+      externs.add(JSSourceFile.fromInputStream(entry.getName(),entryStream));
+    }
+    return externs;
+  }
+ catch (  IOException e) {
+    throw new BuildException(e);
+  }
+}
