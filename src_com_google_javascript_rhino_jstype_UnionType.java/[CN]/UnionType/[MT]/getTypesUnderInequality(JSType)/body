@@ -2,13 +2,13 @@
   UnionTypeBuilder thisRestricted=new UnionTypeBuilder(registry);
   UnionTypeBuilder thatRestricted=new UnionTypeBuilder(registry);
   for (  JSType element : alternates) {
-    Pair<JSType,JSType> p=element.getTypesUnderInequality(that);
-    if (p.first != null) {
-      thisRestricted.addAlternate(p.first);
+    TypePair p=element.getTypesUnderInequality(that);
+    if (p.typeA != null) {
+      thisRestricted.addAlternate(p.typeA);
     }
-    if (p.second != null) {
-      thatRestricted.addAlternate(p.second);
+    if (p.typeB != null) {
+      thatRestricted.addAlternate(p.typeB);
     }
   }
-  return Pair.of(thisRestricted.build(),thatRestricted.build());
+  return new TypePair(thisRestricted.build(),thatRestricted.build());
 }

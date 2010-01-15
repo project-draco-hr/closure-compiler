@@ -1,11 +1,11 @@
 {
   String js="var goog = {};" + "goog.foo = {};" + "goog.foo.bar = 5;";
-  Pair<Node,Scope> p=parseAndTypeCheckWithScope(js);
-  JSType googScopeType=p.second.getVar("goog").getType();
+  TypeCheckResult p=parseAndTypeCheckWithScope(js);
+  JSType googScopeType=p.scope.getVar("goog").getType();
   assertTrue(googScopeType instanceof ObjectType);
   assertTrue("foo property not present on goog type",((ObjectType)googScopeType).hasProperty("foo"));
   assertFalse("bar property present on goog type",((ObjectType)googScopeType).hasProperty("bar"));
-  Node varNode=p.first.getFirstChild();
+  Node varNode=p.root.getFirstChild();
   assertEquals(Token.VAR,varNode.getType());
   JSType googNodeType=varNode.getFirstChild().getJSType();
   assertTrue(googNodeType instanceof ObjectType);

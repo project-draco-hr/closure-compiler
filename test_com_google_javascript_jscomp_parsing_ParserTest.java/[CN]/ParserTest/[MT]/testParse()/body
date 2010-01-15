@@ -1,8 +1,8 @@
 {
   Node a=Node.newString(Token.NAME,"a");
   a.addChildToFront(Node.newString(Token.NAME,"b"));
-  List<Pair<String,Node>> testCases=ImmutableList.of(Pair.of("3;",createScript(new Node(Token.EXPR_RESULT,Node.newNumber(3.0)))),Pair.of("var a = b;",createScript(new Node(Token.VAR,a))),Pair.of("\"hell\\\no\\ world\\\n\\\n!\"",createScript(new Node(Token.EXPR_RESULT,Node.newString(Token.STRING,"hello world!")))));
-  for (  Pair<String,Node> testCase : testCases) {
-    assertNodeEquality(testCase.second,parse(testCase.first));
+  List<ParserResult> testCases=ImmutableList.of(new ParserResult("3;",createScript(new Node(Token.EXPR_RESULT,Node.newNumber(3.0)))),new ParserResult("var a = b;",createScript(new Node(Token.VAR,a))),new ParserResult("\"hell\\\no\\ world\\\n\\\n!\"",createScript(new Node(Token.EXPR_RESULT,Node.newString(Token.STRING,"hello world!")))));
+  for (  ParserResult testCase : testCases) {
+    assertNodeEquality(testCase.node,parse(testCase.code));
   }
 }

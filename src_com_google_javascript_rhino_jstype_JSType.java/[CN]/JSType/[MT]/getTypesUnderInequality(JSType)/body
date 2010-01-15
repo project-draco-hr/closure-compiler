@@ -1,14 +1,14 @@
 {
   if (that instanceof UnionType) {
-    Pair<JSType,JSType> p=that.getTypesUnderInequality(this);
-    return Pair.of(p.second,p.first);
+    TypePair p=that.getTypesUnderInequality(this);
+    return new TypePair(p.typeB,p.typeA);
   }
 switch (this.testForEquality(that)) {
 case TRUE:
-    return Pair.of(null,null);
+    return new TypePair(null,null);
 case FALSE:
 case UNKNOWN:
-  return Pair.of(this,that);
+  return new TypePair(this,that);
 }
 throw new IllegalStateException();
 }

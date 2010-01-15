@@ -1,7 +1,7 @@
 {
-  Pair<Node,Scope> ns=parseAndTypeCheckWithScope("/** @type {!Object} */var t; t.x; t;");
-  Node n=ns.getFirst();
-  Scope s=ns.getSecond();
+  TypeCheckResult ns=parseAndTypeCheckWithScope("/** @type {!Object} */var t; t.x; t;");
+  Node n=ns.root;
+  Scope s=ns.scope;
   JSType type=n.getLastChild().getLastChild().getJSType();
   assertFalse(type.isUnknownType());
   assertEquals(type,OBJECT_TYPE);
