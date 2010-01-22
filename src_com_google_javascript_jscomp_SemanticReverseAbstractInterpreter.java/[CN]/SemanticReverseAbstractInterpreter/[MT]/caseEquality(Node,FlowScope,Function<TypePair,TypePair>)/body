@@ -1,34 +1,3 @@
 {
-  Node left=condition.getFirstChild();
-  Node right=condition.getLastChild();
-  JSType leftType=getTypeIfRefinable(left,blindScope);
-  boolean leftIsRefineable;
-  if (leftType != null) {
-    leftIsRefineable=true;
-  }
- else {
-    leftIsRefineable=false;
-    leftType=left.getJSType();
-  }
-  JSType rightType=getTypeIfRefinable(right,blindScope);
-  boolean rightIsRefineable;
-  if (rightType != null) {
-    rightIsRefineable=true;
-  }
- else {
-    rightIsRefineable=false;
-    rightType=right.getJSType();
-  }
-  TypePair merged=merging.apply(new TypePair(leftType,rightType));
-  if (merged != null && ((leftIsRefineable && merged.typeA != null) || (rightIsRefineable && merged.typeB != null))) {
-    FlowScope informed=blindScope.createChildFlowScope();
-    if (leftIsRefineable && merged.typeA != null) {
-      declareNameInScope(informed,left,merged.typeA);
-    }
-    if (rightIsRefineable && merged.typeB != null) {
-      declareNameInScope(informed,right,merged.typeB);
-    }
-    return informed;
-  }
-  return blindScope;
+  return caseEquality(condition.getFirstChild(),condition.getLastChild(),blindScope,merging);
 }

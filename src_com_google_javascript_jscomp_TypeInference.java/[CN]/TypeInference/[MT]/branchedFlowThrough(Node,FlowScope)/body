@@ -26,7 +26,10 @@ case ON_FALSE:
     if (condition == null) {
       condition=NodeUtil.getConditionExpression(source);
       if (condition == null && source.getType() == Token.CASE) {
-        condition=createSwitchCaseConditionExpression(source);
+        condition=source;
+        if (conditionFlowScope == null) {
+          conditionFlowScope=traverse(condition.getFirstChild(),output.createChildFlowScope());
+        }
       }
     }
   if (condition != null) {

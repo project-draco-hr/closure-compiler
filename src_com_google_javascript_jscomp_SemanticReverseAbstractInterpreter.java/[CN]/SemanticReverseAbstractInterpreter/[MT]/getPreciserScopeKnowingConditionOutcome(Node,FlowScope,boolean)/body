@@ -1,11 +1,21 @@
 {
-switch (condition.getType()) {
+  int operatorToken=condition.getType();
+switch (operatorToken) {
 case Token.EQ:
 case Token.NE:
 case Token.SHEQ:
 case Token.SHNE:
-    Node left=condition.getFirstChild();
-  Node right=condition.getLastChild();
+case Token.CASE:
+    Node left;
+  Node right;
+if (operatorToken == Token.CASE) {
+  left=condition.getParent().getFirstChild();
+  right=condition.getFirstChild();
+}
+ else {
+  left=condition.getFirstChild();
+  right=condition.getLastChild();
+}
 Node typeOfNode=null;
 Node stringNode=null;
 if (left.getType() == Token.TYPEOF && right.getType() == Token.STRING) {
@@ -20,7 +30,7 @@ if (typeOfNode != null && stringNode != null) {
 Node operandNode=typeOfNode.getFirstChild();
 JSType operandType=getTypeIfRefinable(operandNode,blindScope);
 if (operandType != null) {
-boolean resultEqualsValue=condition.getType() == Token.EQ || condition.getType() == Token.SHEQ;
+boolean resultEqualsValue=operatorToken == Token.EQ || operatorToken == Token.SHEQ || operatorToken == Token.CASE;
 if (!outcome) {
 resultEqualsValue=!resultEqualsValue;
 }
@@ -28,7 +38,7 @@ return caseTypeOf(operandNode,operandType,stringNode.getString(),resultEqualsVal
 }
 }
 }
-switch (condition.getType()) {
+switch (operatorToken) {
 case Token.AND:
 if (outcome) {
 return caseAndOrNotShortCircuiting(condition.getFirstChild(),condition.getLastChild(),blindScope,true);
@@ -93,6 +103,15 @@ if (outcome && condition.getFirstChild().getType() == Token.STRING) {
 return caseIn(condition.getLastChild(),condition.getFirstChild().getString(),blindScope);
 }
 break;
+case Token.CASE:
+Node left=condition.getParent().getFirstChild();
+Node right=condition.getFirstChild();
+if (outcome) {
+return caseEquality(left,right,blindScope,SHEQ);
+}
+ else {
+return caseEquality(left,right,blindScope,SHNE);
+}
 }
 return nextPreciserScopeKnowingConditionOutcome(condition,blindScope,outcome);
 }
