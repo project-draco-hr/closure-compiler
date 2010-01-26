@@ -1,0 +1,14 @@
+{
+  setResolvedTypeInternal(this);
+  boolean changed=false;
+  ImmutableSet.Builder<JSType> resolvedTypes=ImmutableSet.builder();
+  for (  JSType alternate : alternates) {
+    JSType newAlternate=alternate.resolve(t,scope);
+    changed|=(alternate != newAlternate);
+    resolvedTypes.add(alternate);
+  }
+  if (changed) {
+    alternates=resolvedTypes.build();
+  }
+  return this;
+}

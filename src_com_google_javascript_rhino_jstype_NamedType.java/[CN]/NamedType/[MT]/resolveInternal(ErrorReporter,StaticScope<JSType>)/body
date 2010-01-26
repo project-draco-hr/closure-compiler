@@ -1,0 +1,16 @@
+{
+  boolean resolved=resolveViaRegistry(t,enclosing);
+  if (detectImplicitPrototypeCycle()) {
+    handleTypeCycle(t);
+  }
+  if (resolved) {
+    super.resolveInternal(t,enclosing);
+    return referencedType;
+  }
+  resolveViaProperties(t,enclosing);
+  if (detectImplicitPrototypeCycle()) {
+    handleTypeCycle(t);
+  }
+  super.resolveInternal(t,enclosing);
+  return referencedType;
+}

@@ -35,11 +35,11 @@
       Map<String,String> moduleWrappers=parseModuleWrappers(FLAG_module_wrapper.get(),modules);
       PrintStream mapOut=null;
       if (!shouldGenerateMapPerModule(options)) {
-        mapOut=openSourceMapStream(options,moduleFilePrefix,null);
+        mapOut=openSourceMapStream(options,moduleFilePrefix);
       }
       for (      JSModule m : modules) {
         if (shouldGenerateMapPerModule(options)) {
-          mapOut=openSourceMapStream(options,moduleFilePrefix,m.getName());
+          mapOut=openSourceMapStream(options,moduleFilePrefix + m.getName() + ".js");
         }
         PrintStream ps=new PrintStream(new FileOutputStream(moduleFilePrefix + m.getName() + ".js"));
         if (options.sourceMapOutputPath != null) {

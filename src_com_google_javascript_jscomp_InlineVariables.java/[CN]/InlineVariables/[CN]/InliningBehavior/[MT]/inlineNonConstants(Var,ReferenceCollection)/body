@@ -4,7 +4,13 @@
   Reference init=referenceInfo.getInitializingReference();
   int firstRefAfterInit=(declaration == init) ? 2 : 3;
   if (refCount > 1 && isImmutableAndWellDefinedVariable(v,referenceInfo)) {
-    Node value=init.getAssignedValue();
+    Node value;
+    if (init != null) {
+      value=init.getAssignedValue();
+    }
+ else {
+      value=NodeUtil.newUndefinedNode();
+    }
     Preconditions.checkNotNull(value);
     inlineWellDefinedVariable(v,value,referenceInfo.references);
     staleVars.add(v);

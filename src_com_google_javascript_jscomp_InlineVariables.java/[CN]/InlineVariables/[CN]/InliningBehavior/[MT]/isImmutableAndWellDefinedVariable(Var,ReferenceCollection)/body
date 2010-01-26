@@ -5,13 +5,24 @@
   if (!isValidDeclaration(refDecl)) {
     return false;
   }
-  Reference refInit=refInfo.getInitializingReference();
-  if (!isValidInitialization(refInit)) {
-    return false;
-  }
-  if (refDecl != refInit) {
-    Preconditions.checkState(refInit == refSet.get(1));
-    startingReadRef=2;
+  boolean isNeverAssigned=refInfo.isNeverAssigned();
+  if (!isNeverAssigned) {
+    Reference refInit=refInfo.getInitializingReference();
+    if (!isValidInitialization(refInit)) {
+      return false;
+    }
+    if (refDecl != refInit) {
+      Preconditions.checkState(refInit == refSet.get(1));
+      startingReadRef=2;
+    }
+    if (!refInfo.isWellDefined()) {
+      return false;
+    }
+    Node value=refInit.getAssignedValue();
+    Preconditions.checkNotNull(value);
+    if (!(NodeUtil.isImmutableValue(value) && (value.getType() != Token.STRING || isStringWorthInlining(v,refInfo.references)))) {
+      return false;
+    }
   }
   for (int i=startingReadRef; i < refSet.size(); i++) {
     Reference ref=refSet.get(i);
@@ -19,10 +30,5 @@
       return false;
     }
   }
-  if (!refInfo.isWellDefined()) {
-    return false;
-  }
-  Node value=refInit.getAssignedValue();
-  Preconditions.checkNotNull(value);
-  return NodeUtil.isImmutableValue(value) && (value.getType() != Token.STRING || isStringWorthInlining(v,refInfo.references));
+  return true;
 }
