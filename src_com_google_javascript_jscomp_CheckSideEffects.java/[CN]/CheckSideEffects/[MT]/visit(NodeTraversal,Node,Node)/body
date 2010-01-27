@@ -5,6 +5,12 @@
   if (parent == null)   return;
   int pt=parent.getType();
   if (pt == Token.COMMA) {
+    Node gramps=parent.getParent();
+    if (gramps.getType() == Token.CALL && parent == gramps.getFirstChild()) {
+      if (n == parent.getFirstChild() && parent.getChildCount() == 2 && n.getNext().getType() == Token.NAME && "eval".equals(n.getNext().getString())) {
+        return;
+      }
+    }
     if (n == parent.getLastChild()) {
       for (      Node an : parent.getAncestors()) {
         int ancestorType=an.getType();
