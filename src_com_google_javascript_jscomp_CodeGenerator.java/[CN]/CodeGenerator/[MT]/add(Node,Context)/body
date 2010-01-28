@@ -283,7 +283,12 @@ add(first);
 break;
 }
 case Token.CALL:
+if (first.getType() == Token.NAME && "eval".equals(first.getString()) && !first.getBooleanProp(Node.DIRECT_EVAL)) {
+add("(0,eval)");
+}
+ else {
 addLeftExpr(first,NodeUtil.precedence(type),context);
+}
 add("(");
 addList(first.getNext());
 add(")");

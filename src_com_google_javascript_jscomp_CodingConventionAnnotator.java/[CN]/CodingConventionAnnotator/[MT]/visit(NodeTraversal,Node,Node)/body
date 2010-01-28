@@ -1,19 +1,24 @@
 {
-switch (n.getType()) {
+  int nType=n.getType();
+switch (nType) {
 case Token.NAME:
 case Token.STRING:
-    if (convention.isConstant(n.getString())) {
-      n.putBooleanProp(Node.IS_CONSTANT_NAME,true);
-    }
-  break;
+    String nString=n.getString();
+  if (nType == Token.NAME && n.getParent().getType() == Token.CALL && "eval".equals(nString)) {
+    n.putBooleanProp(Node.DIRECT_EVAL,true);
+  }
+if (convention.isConstant(nString)) {
+  n.putBooleanProp(Node.IS_CONSTANT_NAME,true);
+}
+break;
 case Token.FUNCTION:
 JSDocInfo fnInfo=n.getJSDocInfo();
 if (fnInfo == null) {
 if (parent.getType() == Token.ASSIGN) {
-  fnInfo=parent.getJSDocInfo();
+fnInfo=parent.getJSDocInfo();
 }
  else if (parent.getType() == Token.NAME) {
-  fnInfo=parent.getParent().getJSDocInfo();
+fnInfo=parent.getParent().getJSDocInfo();
 }
 }
 Node args=n.getFirstChild().getNext();
