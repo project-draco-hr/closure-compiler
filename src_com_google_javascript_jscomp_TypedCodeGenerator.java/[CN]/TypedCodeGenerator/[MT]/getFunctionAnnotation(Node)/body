@@ -4,7 +4,8 @@
     return "";
   }
   FunctionType funType=(FunctionType)node.getJSType();
-  Node paramNode=funType.getSource().getFirstChild().getNext().getFirstChild();
+  Node fnNode=funType.getSource();
+  Node paramNode=NodeUtil.getFnParameters(fnNode).getFirstChild();
   for (  Node n : funType.getParameters()) {
     if (paramNode == null) {
       break;
@@ -32,6 +33,9 @@
  else     if (funType.isInterface()) {
       sb.append(" * @interface\n");
     }
+  }
+  if (fnNode.getBooleanProp(Node.IS_DISPATCHER)) {
+    sb.append(" * @javadispatch\n");
   }
   sb.append(" */\n");
   return sb.toString();
