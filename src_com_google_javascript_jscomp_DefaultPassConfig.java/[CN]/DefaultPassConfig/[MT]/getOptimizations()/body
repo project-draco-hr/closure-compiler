@@ -1,5 +1,6 @@
 {
   List<PassFactory> passes=Lists.newArrayList();
+  passes.add(createEmptyPass("beforeStandardOptimizations"));
   if (!options.idGenerators.isEmpty()) {
     passes.add(replaceIdGenerators);
   }
@@ -30,9 +31,6 @@
   if (options.chainCalls) {
     passes.add(chainCalls);
   }
-  if (options.devirtualizePrototypeMethods) {
-    passes.add(devirtualizePrototypeMethods);
-  }
   if (options.inlineConstantVars) {
     passes.add(checkConsts);
   }
@@ -43,6 +41,9 @@
   if (options.smartNameRemoval || options.reportPath != null) {
     passes.addAll(getCodeRemovingPasses());
     passes.add(smartNamePass);
+  }
+  if (options.devirtualizePrototypeMethods) {
+    passes.add(devirtualizePrototypeMethods);
   }
   if (options.customPasses != null) {
     passes.add(getCustomPasses(CustomPassExecutionTime.BEFORE_OPTIMIZATION_LOOP));
