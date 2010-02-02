@@ -1,7 +1,8 @@
 {
-  TypeInference typeInference=new TypeInference(compiler,computeCfg(n),reverseInterpreter,scope);
+  TypeInference typeInference=new TypeInference(compiler,computeCfg(n),reverseInterpreter,scope,escapedLocalVars.get(scope));
   try {
     typeInference.analyze();
+    escapedLocalVars.putAll(typeInference.getAssignedOuterLocalVars());
     compiler.getTypeRegistry().resolveTypesInScope(scope);
   }
  catch (  DataFlowAnalysis.MaxIterationsExceededException e) {

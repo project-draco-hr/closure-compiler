@@ -1,16 +1,3 @@
 {
-  super(cfg,new LinkedFlowScope.FlowScopeJoinOp());
-  this.compiler=compiler;
-  this.registry=compiler.getTypeRegistry();
-  this.reverseInterpreter=reverseInterpreter;
-  this.syntacticScope=functionScope;
-  this.functionScope=LinkedFlowScope.createEntryLattice(functionScope);
-  Iterator<Var> varIt=functionScope.getVars();
-  while (varIt.hasNext()) {
-    Var var=varIt.next();
-    if (var.getParentNode() != null && var.getType() == null && var.getParentNode().getType() == Token.VAR && !var.isExtern()) {
-      this.functionScope.inferSlotType(var.getName(),getNativeType(VOID_TYPE));
-    }
-  }
-  this.bottomScope=LinkedFlowScope.createEntryLattice(new Scope(functionScope.getRootNode(),functionScope.getTypeOfThis()));
+  this(compiler,cfg,reverseInterpreter,functionScope,ImmutableSet.<Var>of());
 }

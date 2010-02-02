@@ -4,6 +4,9 @@ switch (left.getType()) {
 case Token.NAME:
     String varName=left.getString();
   Var var=syntacticScope.getVar(varName);
+if (var != null && var.isLocal() && var.getScope() != syntacticScope) {
+  assignedOuterLocalVars.put(var.getScope(),var);
+}
 boolean isVarDeclaration=left.hasChildren();
 if (!isVarDeclaration || var == null || var.isTypeInferred()) {
 redeclare(scope,varName,resultType);
