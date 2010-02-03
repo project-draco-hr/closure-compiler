@@ -32,6 +32,9 @@
       }
       recentChange.reset();
       getProcessor(compiler).process(externsRoot,mainRoot);
+      if (checkLineNumbers) {
+        (new LineNumberCheck(compiler)).process(externsRoot,mainRoot);
+      }
       hasCodeChanged=hasCodeChanged || recentChange.hasCodeChanged();
       aggregateWarningCount+=errorManagers[i].getWarningCount();
       aggregateWarnings.addAll(Lists.newArrayList(compiler.getWarnings()));
