@@ -18,4 +18,11 @@
     JSType type=node.getJSType();
     typeInformation.add(Joiner.on("").join(Token.name(node.getType())," ",nameNode.getQualifiedName()," = ",(type != null) ? type.toString() : "null"));
   }
+  if (NodeUtil.isGetProp(node)) {
+    Node child=node.getFirstChild();
+    if (NodeUtil.isName(child) && child.getString().endsWith("$self")) {
+      JSType type=child.getJSType();
+      typeInformation.add(Joiner.on("").join(Token.name(child.getType())," ",child.getString()," = ",(type != null) ? type.toString() : "null"));
+    }
+  }
 }
