@@ -1,11 +1,18 @@
 {
-  if (!providedNodes.containsKey(name)) {
-    providedNodes.put(name,new ProvidedNode(parent,parent.getParent(),t.getModule()));
-    maybeProvidePrefixes(parent,parent.getParent(),name);
+  if (!providedNames.containsKey(name)) {
+    Node expr=new Node(Token.EXPR_RESULT);
+    expr.copyInformationFromForTree(parent);
+    parent.getParent().addChildBefore(expr,parent);
+    compiler.reportCodeChange();
+    registerAnyProvidedPrefixes(name,expr,t.getModule());
+    ProvidedName provided=new ProvidedName(name,expr,t.getModule(),true);
+    providedNames.put(name,provided);
+    provided.addDefinition(parent);
   }
  else {
     if (isNamespacePlaceholder(parent)) {
       parent.getParent().removeChild(parent);
+      compiler.reportCodeChange();
     }
   }
 }

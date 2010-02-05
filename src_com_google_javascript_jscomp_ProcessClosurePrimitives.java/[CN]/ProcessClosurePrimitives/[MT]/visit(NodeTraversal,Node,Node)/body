@@ -17,14 +17,14 @@ if (left.getType() == Token.GETPROP) {
       Node arg=left.getNext();
       if (verifyArgument(t,left,arg)) {
         String ns=arg.getString();
-        ProvidedNode provided=providedNodes.get(ns);
-        if (provided == null) {
+        ProvidedName provided=providedNames.get(ns);
+        if (provided == null || !provided.isExplicitlyProvided()) {
           unrecognizedRequires.add(new UnrecognizedRequire(n,ns,t.getSourceName()));
         }
  else {
           JSModule module=t.getModule();
-          if (module != provided.module && !compiler.getModuleGraph().dependsOn(module,provided.module)) {
-            compiler.report(JSError.make(t,n,XMODULE_REQUIRE_ERROR,ns,provided.module.getName(),module.getName()));
+          if (module != provided.firstModule && !compiler.getModuleGraph().dependsOn(module,provided.firstModule)) {
+            compiler.report(JSError.make(t,n,XMODULE_REQUIRE_ERROR,ns,provided.firstModule.getName(),module.getName()));
           }
         }
         if (provided != null || requiresLevel.isOn()) {
@@ -37,17 +37,19 @@ if (left.getType() == Token.GETPROP) {
       Node arg=left.getNext();
       if (verifyProvide(t,left,arg)) {
         String ns=arg.getString();
-        if (providedNodes.get(ns) != null) {
-          compiler.report(JSError.make(t,n,DUPLICATE_NAMESPACE_ERROR,ns));
-        }
- else         if (!providedNodes.containsKey(ns)) {
-          replaceProvide(t,parent,parent.getParent(),ns);
+        if (providedNames.containsKey(ns)) {
+          ProvidedName previouslyProvided=providedNames.get(ns);
+          if (!previouslyProvided.isExplicitlyProvided()) {
+            previouslyProvided.addProvide(parent,t.getModule(),true);
+          }
+ else {
+            compiler.report(JSError.make(t,n,DUPLICATE_NAMESPACE_ERROR,ns));
+          }
         }
  else {
-          parent.getParent().removeChild(parent);
-          providedNodes.put(ns,new ProvidedNode(null,null,t.getModule()));
+          registerAnyProvidedPrefixes(ns,parent,t.getModule());
+          providedNames.put(ns,new ProvidedName(ns,parent,t.getModule(),true));
         }
-        compiler.reportCodeChange();
       }
     }
  else     if ("exportSymbol".equals(methodName)) {
@@ -88,9 +90,9 @@ if (parent.getBooleanProp(Node.IS_NAMESPACE)) {
   processProvideFromPreviousPass(t,name,parent);
 }
  else {
-  ProvidedNode pn=providedNodes.get(name);
+  ProvidedName pn=providedNames.get(name);
   if (pn != null) {
-    pn.addCandidate(parent,parent.getParent());
+    pn.addDefinition(parent);
   }
 }
 }
@@ -103,9 +105,9 @@ if (parent.getBooleanProp(Node.IS_NAMESPACE)) {
 processProvideFromPreviousPass(t,name,parent);
 }
  else {
-ProvidedNode pn=providedNodes.get(name);
+ProvidedName pn=providedNames.get(name);
 if (pn != null) {
-pn.addCandidate(parent,parent.getParent());
+pn.addDefinition(parent);
 }
 }
 }
@@ -113,7 +115,7 @@ break;
 case Token.FUNCTION:
 if (t.inGlobalScope() && !NodeUtil.isFunctionAnonymous(n)) {
 String name=n.getFirstChild().getString();
-ProvidedNode pn=providedNodes.get(name);
+ProvidedName pn=providedNames.get(name);
 if (pn != null) {
 compiler.report(JSError.make(t,n,FUNCTION_NAMESPACE_ERROR,name));
 }
