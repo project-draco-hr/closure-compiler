@@ -7,10 +7,8 @@
       String parentName=curName.substring(0,curName.lastIndexOf('.'));
       if (!globalNames.contains(parentName)) {
         JsName parentJsName=getName(parentName,true);
-        curJsName.refersTo.add(parentName);
-        parentJsName.referencedBy.add(curName);
-        parentJsName.refersTo.add(curName);
-        curJsName.referencedBy.add(parentName);
+        recordReference(curJsName.name,parentJsName.name,RefType.REGULAR);
+        recordReference(parentJsName.name,curJsName.name,RefType.REGULAR);
         curJsName=parentJsName;
       }
       curName=parentName;

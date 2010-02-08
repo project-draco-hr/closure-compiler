@@ -9,14 +9,6 @@
   appendListItem(sb,"Referenced Classes: " + countOf(TriState.TRUE,TriState.TRUE));
   appendListItem(sb,"Referenced Functions: " + countOf(TriState.FALSE,TriState.TRUE));
   sb.append("</ul>");
-  for (int i=0; i < generations.size(); i++) {
-    Set<JsName> gen=generations.get(i);
-    sb.append("GENERATION " + i + ": "+ gen.size()+ " names\n<ul>");
-    for (    JsName jsName : gen) {
-      appendListItem(sb,nameLink(jsName.name));
-    }
-    sb.append("</ul>");
-  }
   sb.append("ALL NAMES<ul>\n");
   for (  JsName node : allNames.values()) {
     sb.append("<li>" + nameAnchor(node.name) + "<ul>");
@@ -30,23 +22,27 @@
         }
       }
     }
-    if (node.refersTo.size() > 0) {
-      sb.append("<li>REFERS TO: ");
-      Iterator<String> toIter=node.refersTo.iterator();
-      while (toIter.hasNext()) {
-        sb.append(nameLink(toIter.next()));
-        if (toIter.hasNext()) {
-          sb.append(", ");
+    if (referenceGraph.hasNode(node)) {
+      List<DiGraphEdge<JsName,RefType>> refersTo=referenceGraph.getOutEdges(node);
+      if (refersTo.size() > 0) {
+        sb.append("<li>REFERS TO: ");
+        Iterator<DiGraphEdge<JsName,RefType>> toIter=refersTo.iterator();
+        while (toIter.hasNext()) {
+          sb.append(nameLink(toIter.next().getDestination().getValue().name));
+          if (toIter.hasNext()) {
+            sb.append(", ");
+          }
         }
       }
-    }
-    if (node.referencedBy.size() > 0) {
-      sb.append("<li>REFERENCED BY: ");
-      Iterator<String> fromIter=node.referencedBy.iterator();
-      while (fromIter.hasNext()) {
-        sb.append(nameLink(fromIter.next()));
-        if (fromIter.hasNext()) {
-          sb.append(", ");
+      List<DiGraphEdge<JsName,RefType>> referencedBy=referenceGraph.getInEdges(node);
+      if (referencedBy.size() > 0) {
+        sb.append("<li>REFERENCED BY: ");
+        Iterator<DiGraphEdge<JsName,RefType>> fromIter=refersTo.iterator();
+        while (fromIter.hasNext()) {
+          sb.append(nameLink(fromIter.next().getDestination().getValue().name));
+          if (fromIter.hasNext()) {
+            sb.append(", ");
+          }
         }
       }
     }

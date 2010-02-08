@@ -1,0 +1,20 @@
+{
+  Node left=n.getFirstChild();
+  Node arg=left.getNext();
+  if (verifyProvide(t,left,arg)) {
+    String ns=arg.getString();
+    if (providedNames.containsKey(ns)) {
+      ProvidedName previouslyProvided=providedNames.get(ns);
+      if (!previouslyProvided.isExplicitlyProvided()) {
+        previouslyProvided.addProvide(parent,t.getModule(),true);
+      }
+ else {
+        compiler.report(JSError.make(t,n,DUPLICATE_NAMESPACE_ERROR,ns));
+      }
+    }
+ else {
+      registerAnyProvidedPrefixes(ns,parent,t.getModule());
+      providedNames.put(ns,new ProvidedName(ns,parent,t.getModule(),true));
+    }
+  }
+}

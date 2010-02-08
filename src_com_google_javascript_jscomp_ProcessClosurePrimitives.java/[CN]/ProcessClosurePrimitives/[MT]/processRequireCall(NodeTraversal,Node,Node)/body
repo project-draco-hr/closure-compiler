@@ -1,0 +1,21 @@
+{
+  Node left=n.getFirstChild();
+  Node arg=left.getNext();
+  if (verifyArgument(t,left,arg)) {
+    String ns=arg.getString();
+    ProvidedName provided=providedNames.get(ns);
+    if (provided == null || !provided.isExplicitlyProvided()) {
+      unrecognizedRequires.add(new UnrecognizedRequire(n,ns,t.getSourceName()));
+    }
+ else {
+      JSModule module=t.getModule();
+      if (module != provided.firstModule && !compiler.getModuleGraph().dependsOn(module,provided.firstModule)) {
+        compiler.report(JSError.make(t,n,XMODULE_REQUIRE_ERROR,ns,provided.firstModule.getName(),module.getName()));
+      }
+    }
+    if (provided != null || requiresLevel.isOn()) {
+      parent.detachFromParent();
+      compiler.reportCodeChange();
+    }
+  }
+}

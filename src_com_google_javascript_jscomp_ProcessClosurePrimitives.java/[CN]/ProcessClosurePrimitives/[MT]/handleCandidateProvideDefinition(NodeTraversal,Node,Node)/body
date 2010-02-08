@@ -1,0 +1,22 @@
+{
+  if (t.inGlobalScope()) {
+    String name=null;
+    if (n.getType() == Token.NAME && parent.getType() == Token.VAR) {
+      name=n.getString();
+    }
+ else     if (n.getType() == Token.ASSIGN && parent.getType() == Token.EXPR_RESULT) {
+      name=n.getFirstChild().getQualifiedName();
+    }
+    if (name != null) {
+      if (parent.getBooleanProp(Node.IS_NAMESPACE)) {
+        processProvideFromPreviousPass(t,name,parent);
+      }
+ else {
+        ProvidedName pn=providedNames.get(name);
+        if (pn != null) {
+          pn.addDefinition(parent,t.getModule());
+        }
+      }
+    }
+  }
+}

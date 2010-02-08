@@ -14,43 +14,10 @@ if (left.getType() == Token.GETPROP) {
       break;
     }
  else     if ("require".equals(methodName)) {
-      Node arg=left.getNext();
-      if (verifyArgument(t,left,arg)) {
-        String ns=arg.getString();
-        ProvidedName provided=providedNames.get(ns);
-        if (provided == null || !provided.isExplicitlyProvided()) {
-          unrecognizedRequires.add(new UnrecognizedRequire(n,ns,t.getSourceName()));
-        }
- else {
-          JSModule module=t.getModule();
-          if (module != provided.firstModule && !compiler.getModuleGraph().dependsOn(module,provided.firstModule)) {
-            compiler.report(JSError.make(t,n,XMODULE_REQUIRE_ERROR,ns,provided.firstModule.getName(),module.getName()));
-          }
-        }
-        if (provided != null || requiresLevel.isOn()) {
-          parent.getParent().removeChild(parent);
-          compiler.reportCodeChange();
-        }
-      }
+      processRequireCall(t,n,parent);
     }
  else     if ("provide".equals(methodName)) {
-      Node arg=left.getNext();
-      if (verifyProvide(t,left,arg)) {
-        String ns=arg.getString();
-        if (providedNames.containsKey(ns)) {
-          ProvidedName previouslyProvided=providedNames.get(ns);
-          if (!previouslyProvided.isExplicitlyProvided()) {
-            previouslyProvided.addProvide(parent,t.getModule(),true);
-          }
- else {
-            compiler.report(JSError.make(t,n,DUPLICATE_NAMESPACE_ERROR,ns));
-          }
-        }
- else {
-          registerAnyProvidedPrefixes(ns,parent,t.getModule());
-          providedNames.put(ns,new ProvidedName(ns,parent,t.getModule(),true));
-        }
-      }
+      processProvideCall(t,n,parent);
     }
  else     if ("exportSymbol".equals(methodName)) {
       Node arg=left.getNext();
@@ -82,35 +49,8 @@ if (left.getType() == Token.GETPROP) {
 }
 break;
 case Token.ASSIGN:
-if (t.inGlobalScope() && parent.getType() == Token.EXPR_RESULT) {
-Node nameNode=n.getFirstChild();
-String name=nameNode.getQualifiedName();
-if (name != null) {
-if (parent.getBooleanProp(Node.IS_NAMESPACE)) {
-  processProvideFromPreviousPass(t,name,parent);
-}
- else {
-  ProvidedName pn=providedNames.get(name);
-  if (pn != null) {
-    pn.addDefinition(parent);
-  }
-}
-}
-}
-break;
 case Token.NAME:
-if (t.inGlobalScope() && parent.getType() == Token.VAR) {
-String name=n.getString();
-if (parent.getBooleanProp(Node.IS_NAMESPACE)) {
-processProvideFromPreviousPass(t,name,parent);
-}
- else {
-ProvidedName pn=providedNames.get(name);
-if (pn != null) {
-pn.addDefinition(parent);
-}
-}
-}
+handleCandidateProvideDefinition(t,n,parent);
 break;
 case Token.FUNCTION:
 if (t.inGlobalScope() && !NodeUtil.isFunctionAnonymous(n)) {

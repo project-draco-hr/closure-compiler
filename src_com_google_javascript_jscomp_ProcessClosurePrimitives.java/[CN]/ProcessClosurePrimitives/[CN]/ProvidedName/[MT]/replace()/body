@@ -1,10 +1,12 @@
 {
   if (firstNode == null) {
+    replacementNode=candidateDefinition;
     return;
   }
   if (candidateDefinition != null && explicitNode != null) {
     explicitNode.detachFromParent();
     compiler.reportCodeChange();
+    replacementNode=candidateDefinition;
     if (NodeUtil.isExpressionNode(candidateDefinition)) {
       candidateDefinition.putBooleanProp(Node.IS_NAMESPACE,true);
       Node assignNode=candidateDefinition.getFirstChild();
@@ -19,20 +21,29 @@
         candidateDefinition.getParent().replaceChild(candidateDefinition,varNode);
         nameNode.setJSDocInfo(assignNode.getJSDocInfo());
         compiler.reportCodeChange();
+        replacementNode=varNode;
       }
     }
   }
  else {
-    Node declaration=createDeclarationNode();
-    if (explicitNode != firstNode) {
-      firstNode.getParent().addChildBefore(declaration,firstNode);
-      if (explicitNode != null) {
-        explicitNode.detachFromParent();
-      }
+    replacementNode=createDeclarationNode();
+    if (firstModule == minimumModule) {
+      firstNode.getParent().addChildBefore(replacementNode,firstNode);
     }
  else {
-      Preconditions.checkNotNull(explicitNode);
-      explicitNode.getParent().replaceChild(explicitNode,declaration);
+      int indexOfDot=namespace.indexOf('.');
+      if (indexOfDot == -1) {
+        compiler.getNodeForCodeInsertion(minimumModule).addChildToBack(replacementNode);
+      }
+ else {
+        ProvidedName parentName=providedNames.get(namespace.substring(0,indexOfDot));
+        Preconditions.checkNotNull(parentName);
+        Preconditions.checkNotNull(parentName.replacementNode);
+        parentName.replacementNode.getParent().addChildAfter(replacementNode,parentName.replacementNode);
+      }
+    }
+    if (explicitNode != null) {
+      explicitNode.detachFromParent();
     }
     compiler.reportCodeChange();
   }

@@ -7,10 +7,10 @@
     return;
   }
   if (nameInfo.onlyAffectsClassDef) {
-    recordReference(nameInfo.name,nameInfo.superclass);
+    recordReference(nameInfo.name,nameInfo.superclass,RefType.INHERITANCE);
     String nodeName=n.getQualifiedName();
     if (nodeName != null) {
-      recordReference(nameInfo.name,nodeName);
+      recordReference(nameInfo.name,nodeName,RefType.REGULAR);
     }
     return;
   }
@@ -26,31 +26,31 @@
   }
   String name=nameInfo.name;
   if (nameInfo.isExternallyReferenceable) {
-    recordReference(WINDOW,name);
+    recordReference(WINDOW,name,RefType.REGULAR);
     return;
   }
   if (NodeUtil.isLhs(n,parent)) {
     if (referring != null) {
-      recordReference(referringName,name);
+      recordReference(referringName,name,RefType.REGULAR);
     }
     return;
   }
   if (nodesToKeep.contains(n)) {
     NameInformation functionScope=getEnclosingFunctionDependencyScope(t);
     if (functionScope != null) {
-      recordReference(functionScope.name,name);
+      recordReference(functionScope.name,name,RefType.REGULAR);
     }
  else {
-      recordReference(WINDOW,name);
+      recordReference(WINDOW,name,RefType.REGULAR);
     }
   }
  else   if (referring != null) {
-    recordReference(referringName,name);
+    recordReference(referringName,name,RefType.REGULAR);
   }
  else {
     for (    Node ancestor : n.getAncestors()) {
       if (NodeUtil.isAssignmentOp(ancestor) || NodeUtil.isFunction(ancestor)) {
-        recordReference(WINDOW,name);
+        recordReference(WINDOW,name,RefType.REGULAR);
         break;
       }
     }

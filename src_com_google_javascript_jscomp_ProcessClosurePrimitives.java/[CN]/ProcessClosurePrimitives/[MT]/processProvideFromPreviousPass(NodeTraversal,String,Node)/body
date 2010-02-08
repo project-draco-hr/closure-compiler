@@ -4,10 +4,11 @@
     expr.copyInformationFromForTree(parent);
     parent.getParent().addChildBefore(expr,parent);
     compiler.reportCodeChange();
-    registerAnyProvidedPrefixes(name,expr,t.getModule());
-    ProvidedName provided=new ProvidedName(name,expr,t.getModule(),true);
+    JSModule module=t.getModule();
+    registerAnyProvidedPrefixes(name,expr,module);
+    ProvidedName provided=new ProvidedName(name,expr,module,true);
     providedNames.put(name,provided);
-    provided.addDefinition(parent);
+    provided.addDefinition(parent,module);
   }
  else {
     if (isNamespacePlaceholder(parent)) {

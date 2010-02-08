@@ -1,26 +1,7 @@
 {
-  Set<JsName> curGeneration=Sets.newHashSet();
   JsName window=getName(WINDOW,true);
-  window.generation=0;
   window.referenced=true;
-  curGeneration.add(window);
   JsName function=getName(FUNCTION,true);
-  function.generation=0;
   function.referenced=true;
-  curGeneration.add(function);
-  for (  String s : externalNames) {
-    JsName jsn=getName(s,true);
-    if (jsn.refersTo.size() > 0) {
-      jsn.generation=0;
-      jsn.referenced=true;
-      curGeneration.add(jsn);
-    }
-  }
-  generations.add(curGeneration);
-  int iters=0;
-  while (curGeneration.size() > 0 && iters < 100) {
-    curGeneration=referenceMore(curGeneration);
-    generations.add(curGeneration);
-    iters++;
-  }
+  FixedPointGraphTraversal.newTraversal(new ReferencePropagationCallback()).computeFixedPoint(referenceGraph);
 }
