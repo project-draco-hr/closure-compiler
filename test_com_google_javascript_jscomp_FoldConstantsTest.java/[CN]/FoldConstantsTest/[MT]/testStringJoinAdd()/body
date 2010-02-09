@@ -12,4 +12,10 @@
   fold("x = ['a', '5'].join(true)","x = \"atrue5\"");
   fold("x = ['a', '5'].join(false)","x = \"afalse5\"");
   fold("x = ['a', '5', 'c'].join('a very very very long chain')","x = [\"a\",\"5\",\"c\"].join(\"a very very very long chain\")");
+  foldSame("x = ['', foo].join(',')");
+  foldSame("x = ['', foo, ''].join(',')");
+  fold("x = ['', '', foo, ''].join(',')","x = [',', foo, ''].join(',')");
+  fold("x = ['', '', foo, '', ''].join(',')","x = [',', foo, ','].join(',')");
+  fold("x = ['', '', foo, '', '', bar].join(',')","x = [',', foo, ',', bar].join(',')");
+  fold("x = [1,2,3].join('abcdef')","x = '1abcdef2abcdef3'");
 }
