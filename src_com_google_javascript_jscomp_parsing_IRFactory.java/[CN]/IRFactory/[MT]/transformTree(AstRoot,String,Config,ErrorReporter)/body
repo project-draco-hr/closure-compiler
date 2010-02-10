@@ -5,10 +5,16 @@
   JSDocInfo fileOverviewInfo=null;
   if (node.getComments() != null) {
     for (    Comment comment : node.getComments()) {
-      if (comment.getCommentType() == JSDOC && (comment.getValue().contains("@fileoverview") || comment.getValue().contains("@preserve") || comment.getValue().contains("@license"))) {
-        JSDocInfo info=irFactory.parseJSDocInfo(comment.getValue(),comment.getLineno(),comment.getAbsolutePosition(),fileLevelJsDocBuilder,fileOverviewInfo);
-        if (info != null && fileOverviewInfo == null) {
-          fileOverviewInfo=info;
+      if (comment.getCommentType() == JSDOC) {
+        JsDocInfoParser jsDocParser=irFactory.createJsDocInfoParser(comment.getValue(),comment.getLineno(),comment.getAbsolutePosition(),fileLevelJsDocBuilder,fileOverviewInfo);
+        if (jsDocParser.getFileOverviewJSDocInfo() != fileOverviewInfo) {
+          fileOverviewInfo=jsDocParser.getFileOverviewJSDocInfo();
+        }
+ else {
+          JSDocInfo info=jsDocParser.retrieveAndResetParsedJSDocInfo();
+          if (info != null) {
+            irFactory.attachJsDoc(comment,info);
+          }
         }
       }
     }
@@ -18,9 +24,6 @@
       }
       irNode.setJSDocInfo(fileOverviewInfo);
     }
-    Comment[] comments=new Comment[node.getComments().size()];
-    comments=node.getComments().toArray(comments);
-    irFactory.parseAllJsDocInfo(irNode,comments,0);
   }
   return irNode;
 }
