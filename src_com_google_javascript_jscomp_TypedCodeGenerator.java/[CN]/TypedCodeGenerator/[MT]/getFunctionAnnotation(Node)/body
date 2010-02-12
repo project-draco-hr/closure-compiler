@@ -5,15 +5,17 @@
   }
   FunctionType funType=(FunctionType)node.getJSType();
   Node fnNode=funType.getSource();
-  Node paramNode=NodeUtil.getFnParameters(fnNode).getFirstChild();
-  for (  Node n : funType.getParameters()) {
-    if (paramNode == null) {
-      break;
+  if (fnNode != null) {
+    Node paramNode=NodeUtil.getFnParameters(fnNode).getFirstChild();
+    for (    Node n : funType.getParameters()) {
+      if (paramNode == null) {
+        break;
+      }
+      sb.append(" * @param {" + n.getJSType() + "} ");
+      sb.append(paramNode.getString());
+      sb.append("\n");
+      paramNode=paramNode.getNext();
     }
-    sb.append(" * @param {" + n.getJSType() + "} ");
-    sb.append(paramNode.getString());
-    sb.append("\n");
-    paramNode=paramNode.getNext();
   }
   JSType retType=funType.getReturnType();
   if (retType != null && !retType.isUnknownType() && !retType.isEmptyType()) {
@@ -34,7 +36,7 @@
       sb.append(" * @interface\n");
     }
   }
-  if (fnNode.getBooleanProp(Node.IS_DISPATCHER)) {
+  if (fnNode != null && fnNode.getBooleanProp(Node.IS_DISPATCHER)) {
     sb.append(" * @javadispatch\n");
   }
   sb.append(" */\n");

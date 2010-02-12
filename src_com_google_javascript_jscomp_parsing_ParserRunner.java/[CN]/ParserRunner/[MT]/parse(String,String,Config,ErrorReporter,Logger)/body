@@ -1,5 +1,4 @@
 {
-  initAnnotationNames();
   Context cx=Context.enter();
   cx.setErrorReporter(errorReporter);
   cx.setLanguageVersion(Context.VERSION_1_5);
@@ -8,7 +7,7 @@
   compilerEnv.setRecordingComments(true);
   compilerEnv.setRecordingLocalJsDocComments(true);
   compilerEnv.setWarnTrailingComma(true);
-  if (isIdeMode) {
+  if (config.isIdeMode) {
     compilerEnv.setReservedKeywordAsIdentifier(true);
     compilerEnv.setAllowMemberExprAsFunctionName(true);
   }
@@ -25,7 +24,6 @@
   }
   Node root=null;
   if (astRoot != null) {
-    Config config=new Config(typeRegistry,annotationNames,isIdeMode);
     root=IRFactory.transformTree(astRoot,sourceString,config,errorReporter);
     root.setIsSyntheticBlock(true);
   }
