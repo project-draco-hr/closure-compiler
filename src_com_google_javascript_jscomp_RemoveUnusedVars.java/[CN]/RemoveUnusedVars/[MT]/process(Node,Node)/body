@@ -1,17 +1,9 @@
 {
   warnedVars_.clear();
-  int i=0;
-  do {
-    numRemoved_=0;
-    referenced.clear();
-    traverseAndRemoveUnusedReferences(root);
-    if (numRemoved_ > 0) {
-      compiler_.reportCodeChange();
-      logger_.fine("RemoveUnusedVars(" + i + "): removed "+ numRemoved_);
-    }
-  }
- while (numRemoved_ > 0 && ++i < MAX_ITERATIONS);
-  if (i == MAX_ITERATIONS) {
-    logger_.warning("Reached max allowable iterations. Stopping.");
+  numRemoved_=0;
+  referenced.clear();
+  traverseAndRemoveUnusedReferences(root);
+  if (numRemoved_ > 0) {
+    compiler_.reportCodeChange();
   }
 }
