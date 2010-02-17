@@ -13,5 +13,14 @@
   if (value.getType() == Token.GETPROP && reference.getParent().getType() == Token.CALL && reference.getParent().getFirstChild() == reference.getNameNode()) {
     return false;
   }
+  if (value.getType() == Token.FUNCTION) {
+    Node callNode=reference.getParent();
+    if (reference.getParent().getType() == Token.CALL) {
+      SubclassRelationship relationship=compiler.getCodingConvention().getClassesDefinedByCall(callNode);
+      if (relationship != null) {
+        return false;
+      }
+    }
+  }
   return canMoveAggressively(value) || canMoveModerately(initialization,reference);
 }
