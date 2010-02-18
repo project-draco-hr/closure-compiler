@@ -1,0 +1,19 @@
+{
+  Preconditions.checkState(Thread.currentThread() == startThread);
+  ThreadTrace trace=getThreadTrace();
+  if (!trace.isInitialized()) {
+    return 0;
+  }
+  stopTimeMs=clock.currentTimeMillis();
+  if (extraTracingValues != null) {
+    for (int i=0; i < extraTracingValues.length; i++) {
+      long value=extraTracingStatistics.get(i).stop(startThread);
+      extraTracingValues[i]=value - extraTracingValues[i];
+    }
+  }
+  if (!trace.isInitialized()) {
+    return 0;
+  }
+  trace.endEvent(this,silence_threshold);
+  return stopTimeMs - startTimeMs;
+}

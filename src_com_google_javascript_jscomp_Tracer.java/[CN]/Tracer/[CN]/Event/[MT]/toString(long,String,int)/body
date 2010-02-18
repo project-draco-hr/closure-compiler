@@ -1,0 +1,33 @@
+{
+  StringBuilder sb=new StringBuilder(120);
+  if (prevEventTime == -1) {
+    appendSpaces(sb,digitsColWidth);
+  }
+ else {
+    sb.append(longToPaddedString(eventTime() - prevEventTime,digitsColWidth));
+  }
+  sb.append(' ');
+  sb.append(formatTime(eventTime()));
+  if (isStart) {
+    sb.append(" Start ");
+    appendSpaces(sb,digitsColWidth);
+    sb.append("   ");
+  }
+ else {
+    sb.append(" Done ");
+    long delta=tracer.stopTimeMs - tracer.startTimeMs;
+    sb.append(longToPaddedString(delta,digitsColWidth));
+    sb.append(" ms ");
+    if (tracer.extraTracingValues != null) {
+      for (int i=0; i < tracer.extraTracingValues.length; i++) {
+        delta=tracer.extraTracingValues[i];
+        sb.append(String.format("%4d",delta));
+        sb.append(extraTracingStatistics.get(i).getUnits());
+        sb.append(";  ");
+      }
+    }
+  }
+  sb.append(indent);
+  sb.append(tracer.toString());
+  return sb.toString();
+}

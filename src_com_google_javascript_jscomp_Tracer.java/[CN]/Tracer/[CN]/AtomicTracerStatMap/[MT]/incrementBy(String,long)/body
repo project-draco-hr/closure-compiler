@@ -1,0 +1,17 @@
+{
+  Long oldValue=map.get(key);
+  if (oldValue == null) {
+    oldValue=map.putIfAbsent(key,delta);
+    if (oldValue == null) {
+      return;
+    }
+ else {
+    }
+  }
+  while (true) {
+    if (map.replace(key,oldValue,oldValue + delta)) {
+      break;
+    }
+    oldValue=map.get(key);
+  }
+}

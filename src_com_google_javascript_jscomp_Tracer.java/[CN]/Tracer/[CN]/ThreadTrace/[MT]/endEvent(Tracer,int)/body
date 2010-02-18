@@ -1,0 +1,65 @@
+{
+  boolean wasOutstanding=outstandingEvents.remove(t);
+  if (!wasOutstanding) {
+    if (isOutstandingEventsTruncated) {
+      logger.log(Level.WARNING,"event not found, probably because the event stack " + "overflowed and was truncated",new Throwable());
+    }
+ else {
+      throw new IllegalStateException();
+    }
+  }
+  long elapsed=t.stopTimeMs - t.startTimeMs;
+  if (silenceThreshold == -1) {
+    silenceThreshold=defaultSilenceThreshold;
+  }
+  if (elapsed < silenceThreshold) {
+    boolean removed=false;
+    for (int i=0; i < events.size(); i++) {
+      Event e=events.get(i);
+      if (e.tracer == t) {
+        Preconditions.checkState(e.isStart);
+        events.remove(i);
+        removed=true;
+        break;
+      }
+    }
+    Preconditions.checkState(removed || isEventsTruncated);
+  }
+ else {
+    events.add(new Event(false,t));
+  }
+  if (t.type != null) {
+    Stat stat=stats.get(t.type);
+    if (stat == null) {
+      stat=new Stat();
+      if (!extraTracingStatistics.isEmpty()) {
+        stat.extraInfo=new int[extraTracingStatistics.size()];
+      }
+      stats.put(t.type,stat);
+    }
+    stat.count++;
+    if (typeToCountMap != null) {
+      typeToCountMap.incrementBy(t.type,1);
+    }
+    stat.clockTime+=elapsed;
+    if (typeToTimeMap != null) {
+      typeToTimeMap.incrementBy(t.type,elapsed);
+    }
+    if (stat.extraInfo != null && t.extraTracingValues != null) {
+      int overlapLength=Math.min(stat.extraInfo.length,t.extraTracingValues.length);
+      for (int i=0; i < overlapLength; i++) {
+        stat.extraInfo[i]+=t.extraTracingValues[i];
+        AtomicTracerStatMap map=extraTracingStatistics.get(i).getTracingStat();
+        if (map != null) {
+          map.incrementBy(t.type,t.extraTracingValues[i]);
+        }
+      }
+    }
+    if (elapsed < silenceThreshold) {
+      stat.silent++;
+      if (typeToSilentMap != null) {
+        typeToSilentMap.incrementBy(t.type,1);
+      }
+    }
+  }
+}

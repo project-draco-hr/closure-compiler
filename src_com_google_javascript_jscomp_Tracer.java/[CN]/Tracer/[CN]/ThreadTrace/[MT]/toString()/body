@@ -1,0 +1,44 @@
+{
+  int numDigits=getMaxDigits();
+  StringBuilder sb=new StringBuilder();
+  long etime=-1;
+  LinkedList<String> indent=prettyPrint ? new LinkedList<String>() : null;
+  for (  Event e : events) {
+    if (prettyPrint && !e.isStart && !indent.isEmpty()) {
+      indent.pop();
+    }
+    sb.append(" ");
+    if (prettyPrint) {
+      sb.append(e.toString(etime,Joiner.on("").join(indent),numDigits));
+    }
+ else {
+      sb.append(e.toString(etime,"",4));
+    }
+    etime=e.eventTime();
+    sb.append('\n');
+    if (prettyPrint && e.isStart) {
+      indent.push("|  ");
+    }
+  }
+  if (outstandingEvents.size() != 0) {
+    long now=clock.currentTimeMillis();
+    sb.append(" Unstopped timers:\n");
+    for (    Tracer t : outstandingEvents) {
+      sb.append("  ").append(t).append(" (").append(now - t.startTimeMs).append(" ms, started at ").append(formatTime(t.startTimeMs)).append(")\n");
+    }
+  }
+  for (  String key : stats.keySet()) {
+    Stat stat=stats.get(key);
+    if (stat.count > 1) {
+      sb.append(" TOTAL ").append(key).append(" ").append(stat.count).append(" (").append(stat.clockTime).append(" ms");
+      if (stat.extraInfo != null) {
+        for (int i=0; i < stat.extraInfo.length; i++) {
+          sb.append("; ");
+          sb.append(stat.extraInfo[i]).append(' ').append(extraTracingStatistics.get(i).getUnits());
+        }
+      }
+      sb.append(")\n");
+    }
+  }
+  return sb.toString();
+}

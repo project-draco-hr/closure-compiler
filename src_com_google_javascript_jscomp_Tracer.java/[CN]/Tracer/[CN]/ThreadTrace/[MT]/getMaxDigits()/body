@@ -1,0 +1,16 @@
+{
+  long etime=-1;
+  long max_time=0;
+  for (  Event e : events) {
+    if (etime != -1) {
+      long time=e.eventTime() - etime;
+      max_time=Math.max(max_time,time);
+    }
+    if (!e.isStart) {
+      long time=e.tracer.stopTimeMs - e.tracer.startTimeMs;
+      max_time=Math.max(max_time,time);
+    }
+    etime=e.eventTime();
+  }
+  return Math.max(3,numDigits(max_time));
+}
