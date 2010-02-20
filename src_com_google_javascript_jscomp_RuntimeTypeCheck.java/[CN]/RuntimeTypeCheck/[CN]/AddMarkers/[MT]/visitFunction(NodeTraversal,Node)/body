@@ -1,0 +1,11 @@
+{
+  FunctionType funType=(FunctionType)n.getJSType();
+  if (!funType.isConstructor()) {
+    return;
+  }
+  Node nodeToInsertAfter=findNodeToInsertAfter(n);
+  nodeToInsertAfter=addMarker(funType,nodeToInsertAfter,null);
+  for (  ObjectType interfaceType : Sets.newTreeSet(ALPHA,funType.getAllImplementedInterfaces())) {
+    nodeToInsertAfter=addMarker(funType,nodeToInsertAfter,interfaceType);
+  }
+}

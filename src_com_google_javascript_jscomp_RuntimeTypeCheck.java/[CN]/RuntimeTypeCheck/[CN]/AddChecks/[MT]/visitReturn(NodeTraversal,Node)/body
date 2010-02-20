@@ -1,0 +1,14 @@
+{
+  Node function=t.getEnclosingFunction();
+  FunctionType funType=(FunctionType)function.getJSType();
+  Node retValue=n.getFirstChild();
+  if (retValue == null) {
+    return;
+  }
+  Node checkNode=createCheckTypeCallNode(funType.getReturnType(),retValue.cloneTree());
+  if (checkNode == null) {
+    return;
+  }
+  n.replaceChild(retValue,checkNode);
+  compiler.reportCodeChange();
+}

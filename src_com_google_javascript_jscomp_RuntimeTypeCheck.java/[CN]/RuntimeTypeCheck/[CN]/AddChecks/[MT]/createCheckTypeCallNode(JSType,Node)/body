@@ -1,0 +1,12 @@
+{
+  Node arrayNode=new Node(Token.ARRAYLIT);
+  Iterable<JSType> alternates=type.isUnionType() ? Sets.newTreeSet(ALPHA,((UnionType)type).getAlternates()) : ImmutableList.of(type);
+  for (  JSType alternate : alternates) {
+    Node checkerNode=createCheckerNode(alternate);
+    if (checkerNode == null) {
+      return null;
+    }
+    arrayNode.addChildToBack(checkerNode);
+  }
+  return new Node(Token.CALL,jsCode("checkType"),expr,arrayNode);
+}

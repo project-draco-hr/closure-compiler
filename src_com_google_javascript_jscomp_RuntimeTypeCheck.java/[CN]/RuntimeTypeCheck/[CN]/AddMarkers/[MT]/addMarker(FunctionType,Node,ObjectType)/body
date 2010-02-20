@@ -1,0 +1,13 @@
+{
+  String className=funType.getInstanceType().getReferenceName();
+  if (className == null) {
+    return nodeToInsertAfter;
+  }
+  Node classNode=NodeUtil.newQualifiedNameNode(className,-1,-1);
+  Node marker=Node.newString(interfaceType == null ? "instance_of__" + className : "implements__" + interfaceType.getReferenceName());
+  Node assign=new Node(Token.EXPR_RESULT,new Node(Token.ASSIGN,new Node(Token.GETELEM,new Node(Token.GETPROP,classNode,Node.newString("prototype")),marker),new Node(Token.TRUE)));
+  nodeToInsertAfter.getParent().addChildAfter(assign,nodeToInsertAfter);
+  compiler.reportCodeChange();
+  nodeToInsertAfter=assign;
+  return nodeToInsertAfter;
+}

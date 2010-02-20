@@ -1,0 +1,21 @@
+{
+  if (type.isNullType()) {
+    return jsCode("nullChecker");
+  }
+ else   if (type.isBooleanValueType() || type.isNumberValueType() || type.isStringValueType()|| type.isVoidType()) {
+    return new Node(Token.CALL,jsCode("valueChecker"),Node.newString(type.toString()));
+  }
+ else   if (type.isInstanceType()) {
+    ObjectType objType=(ObjectType)type;
+    String refName=objType.getReferenceName();
+    String sourceName=NodeUtil.getSourceName(objType.getConstructor().getSource());
+    CompilerInput sourceInput=compiler.getInput(sourceName);
+    if (sourceInput == null || sourceInput.isExtern()) {
+      return new Node(Token.CALL,jsCode("externClassChecker"),Node.newString(refName));
+    }
+    return new Node(Token.CALL,jsCode(objType.getConstructor().isInterface() ? "interfaceChecker" : "classChecker"),Node.newString(refName));
+  }
+ else {
+    return null;
+  }
+}

@@ -1,0 +1,26 @@
+{
+  FunctionType funType=(FunctionType)n.getJSType();
+  Node block=n.getLastChild();
+  Node paramName=NodeUtil.getFnParameters(n).getFirstChild();
+  Node prev=null;
+  for (  Node paramType : funType.getParameters()) {
+    if (paramName == null) {
+      return;
+    }
+    Node checkNode=createCheckTypeCallNode(paramType.getJSType(),paramName.getString());
+    if (checkNode == null) {
+      paramName=paramName.getNext();
+      continue;
+    }
+    checkNode=new Node(Token.EXPR_RESULT,checkNode);
+    if (prev == null) {
+      block.addChildToFront(checkNode);
+    }
+ else {
+      block.addChildAfter(checkNode,prev);
+    }
+    compiler.reportCodeChange();
+    paramName=paramName.getNext();
+    prev=checkNode;
+  }
+}
