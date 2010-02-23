@@ -18,5 +18,11 @@
     }
     objType=objType.getImplicitPrototype();
   }
+  if (foundType == null) {
+    ObjectType maybeType=ObjectType.cast(registry.getGreatestSubtypeWithProperty(type,field));
+    if (maybeType != null && maybeType.hasOwnProperty(field)) {
+      foundType=maybeType;
+    }
+  }
   return foundType;
 }
