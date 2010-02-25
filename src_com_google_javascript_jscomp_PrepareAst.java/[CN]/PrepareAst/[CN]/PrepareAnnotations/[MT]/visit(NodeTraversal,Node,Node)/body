@@ -33,5 +33,22 @@ arg.putBooleanProp(Node.IS_VAR_ARGS_PARAM,true);
 }
 }
 break;
+case Token.OBJECTLIT:
+if (n.getType() == Token.OBJECTLIT) {
+for (Node key=n.getFirstChild(); key != null; key=key.getNext().getNext()) {
+Node value=key.getNext();
+if (key.getJSDocInfo() != null && key.getNext().getType() == Token.FUNCTION) {
+value.setJSDocInfo(key.getJSDocInfo());
+}
+}
+}
+break;
+}
+if (n.getJSDocInfo() != null && n.getJSDocInfo().isJavaDispatch()) {
+if (n.getType() == Token.ASSIGN) {
+Node fnNode=n.getLastChild();
+Preconditions.checkState(fnNode.getType() == Token.FUNCTION);
+fnNode.putBooleanProp(Node.IS_DISPATCHER,true);
+}
 }
 }
