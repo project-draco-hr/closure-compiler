@@ -1,0 +1,27 @@
+{
+  int result=0;
+  int runs=1;
+  if (FLAG_compute_phase_ordering.get()) {
+    runs=NUM_RUNS_TO_DETERMINE_OPTIMAL_ORDER;
+    PhaseOptimizer.randomizeLoops();
+  }
+  try {
+    for (int i=0; i < runs && result == 0; i++) {
+      runTimeStats.recordStartRun();
+      result=doRun();
+      runTimeStats.recordEndRun();
+    }
+  }
+ catch (  AbstractCommandLineRunner.FlagUsageException e) {
+    System.err.println(e.getMessage());
+    result=-1;
+  }
+catch (  Throwable t) {
+    t.printStackTrace();
+    result=-2;
+  }
+  if (FLAG_compute_phase_ordering.get()) {
+    runTimeStats.outputBestPhaseOrdering();
+  }
+  System.exit(result);
+}
