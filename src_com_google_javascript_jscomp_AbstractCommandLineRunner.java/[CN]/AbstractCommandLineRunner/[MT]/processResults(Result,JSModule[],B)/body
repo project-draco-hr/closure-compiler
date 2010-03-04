@@ -1,8 +1,8 @@
 {
-  if (FLAG_compute_phase_ordering.get()) {
+  if (config.computePhaseOrdering) {
     return 0;
   }
-  if (FLAG_print_pass_graph.get()) {
+  if (config.printPassGraph) {
     if (compiler.getRoot() == null) {
       return 1;
     }
@@ -12,7 +12,7 @@
       return 0;
     }
   }
-  if (FLAG_print_ast.get()) {
+  if (config.printAst) {
     if (compiler.getRoot() == null) {
       return 1;
     }
@@ -23,7 +23,7 @@
       return 0;
     }
   }
-  if (FLAG_print_tree.get()) {
+  if (config.printTree) {
     if (compiler.getRoot() == null) {
       out.println("Code contains errors; no tree was generated.");
       return 1;
@@ -36,13 +36,13 @@
   }
   if (result.success) {
     if (modules == null) {
-      writeOutput(out,compiler,compiler.toSource(),FLAG_output_wrapper.get(),FLAG_output_wrapper_marker.get());
+      writeOutput(out,compiler,compiler.toSource(),config.outputWrapper,config.outputWrapperMarker);
       outputSourceMap(options,options.jsOutputFile);
     }
  else {
-      String moduleFilePrefix=FLAG_module_output_path_prefix.get();
+      String moduleFilePrefix=config.moduleOutputPathPrefix;
       maybeCreateDirsForPath(moduleFilePrefix);
-      Map<String,String> moduleWrappers=parseModuleWrappers(FLAG_module_wrapper.get(),modules);
+      Map<String,String> moduleWrappers=parseModuleWrappers(config.moduleWrapper,modules);
       PrintStream mapOut=null;
       if (!shouldGenerateMapPerModule(options)) {
         mapOut=openSourceMapStream(options,moduleFilePrefix);

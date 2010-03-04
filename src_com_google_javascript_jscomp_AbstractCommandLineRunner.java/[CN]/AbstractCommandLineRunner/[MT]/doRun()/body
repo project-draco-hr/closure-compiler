@@ -1,5 +1,5 @@
 {
-  Compiler.setLoggingLevel(Level.parse(FLAG_logging_level.get()));
+  Compiler.setLoggingLevel(Level.parse(config.loggingLevel));
   List<JSSourceFile> externsList=createExterns();
   JSSourceFile[] externs=new JSSourceFile[externsList.size()];
   externsList.toArray(externs);
@@ -17,9 +17,9 @@
   if (!options.jsOutputFile.isEmpty()) {
     out=new PrintStream(options.jsOutputFile,inputCharset.name());
   }
-  ((PrintStreamErrorManager)compiler.getErrorManager()).setSummaryDetailLevel(FLAG_summary_detail_level.get());
-  List<String> jsFiles=FLAG_js.get();
-  List<String> moduleSpecs=FLAG_module.get();
+  ((PrintStreamErrorManager)compiler.getErrorManager()).setSummaryDetailLevel(config.summaryDetailLevel);
+  List<String> jsFiles=config.js;
+  List<String> moduleSpecs=config.module;
   if (!moduleSpecs.isEmpty()) {
     modules=createJsModules(moduleSpecs,jsFiles);
     result=compiler.compile(externs,modules,options);
