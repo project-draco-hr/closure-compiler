@@ -1,5 +1,12 @@
 {
-  CommandLineRunner runner=new CommandLineRunner(new String[]{});
+  String[] argStrings=args.toArray(new String[]{});
+  CommandLineRunner runner=null;
+  try {
+    runner=new CommandLineRunner(argStrings);
+  }
+ catch (  CmdLineException e) {
+    throw new RuntimeException(e);
+  }
   Compiler compiler=runner.createCompiler();
   JSSourceFile[] inputs=new JSSourceFile[original.length];
   for (int i=0; i < inputs.length; i++) {
