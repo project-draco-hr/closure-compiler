@@ -6,6 +6,16 @@
     if (scopeFuncName.equals(name)) {
       recursive=true;
     }
+    Node rootParent=rootNode.getParent();
+    if (rootParent.getType() == Token.ASSIGN) {
+      Node owner=rootParent.getFirstChild();
+      while (owner.getType() == Token.GETPROP) {
+        owner=owner.getFirstChild();
+      }
+      if (owner.getType() == Token.NAME && owner.getString().equals(name)) {
+        recursive=true;
+      }
+    }
   }
   if (!recursive) {
     info.addUsedModule(t.getModule());
