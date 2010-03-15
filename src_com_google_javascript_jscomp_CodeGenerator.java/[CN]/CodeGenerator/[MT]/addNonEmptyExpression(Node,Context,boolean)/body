@@ -13,7 +13,8 @@
     }
     if (count == 1) {
       Node firstAndOnlyChild=getFirstNonEmptyChild(n);
-      if (firstAndOnlyChild.getType() == Token.FUNCTION || firstAndOnlyChild.getType() == Token.DO) {
+      boolean alwaysWrapInBlock=cc.shouldPreserveExtraBlocks();
+      if (alwaysWrapInBlock || firstAndOnlyChild.getType() == Token.FUNCTION || firstAndOnlyChild.getType() == Token.DO) {
         cc.beginBlock();
         add(firstAndOnlyChild,Context.STATEMENT);
         cc.maybeLineBreak();
