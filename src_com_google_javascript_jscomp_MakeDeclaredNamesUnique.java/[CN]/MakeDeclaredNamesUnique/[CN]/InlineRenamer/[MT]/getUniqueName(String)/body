@@ -2,5 +2,8 @@
   if (name.isEmpty()) {
     return name;
   }
-  return namePrefix + name + "_"+ uniqueIdSupplier.get();
+  if (name.indexOf(ContextualRenamer.UNIQUE_ID_SEPARATOR) != -1) {
+    name=name.substring(0,name.lastIndexOf(ContextualRenamer.UNIQUE_ID_SEPARATOR));
+  }
+  return name + ContextualRenamer.UNIQUE_ID_SEPARATOR + idPrefix+ uniqueIdSupplier.get();
 }

@@ -1,7 +1,7 @@
 {
   if (node.getType() == Token.NAME) {
     String oldName=node.getString();
-    if (oldName.indexOf("$$") != -1) {
+    if (oldName.indexOf(ContextualRenamer.UNIQUE_ID_SEPARATOR) != -1) {
       Scope scope=t.getScope();
       Var var=t.getScope().getVar(oldName);
       if (var == null || var.isGlobal()) {
@@ -11,8 +11,13 @@
         node.setString(nameMap.get(var));
       }
  else {
-        String newName=oldName.substring(0,oldName.lastIndexOf("$$"));
-        if (var.scope.isDeclared(newName,false) || !TokenStream.isJSIdentifier(newName)) {
+        String newName=oldName.substring(0,oldName.lastIndexOf(ContextualRenamer.UNIQUE_ID_SEPARATOR));
+        String suffix=oldName.substring(oldName.lastIndexOf(ContextualRenamer.UNIQUE_ID_SEPARATOR) + ContextualRenamer.UNIQUE_ID_SEPARATOR.length(),oldName.length());
+        boolean recurseScopes=false;
+        if (!suffix.matches("\\d+")) {
+          recurseScopes=true;
+        }
+        if (var.scope.isDeclared(newName,recurseScopes) || !TokenStream.isJSIdentifier(newName)) {
           newName=oldName;
         }
  else {
