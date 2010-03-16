@@ -11,8 +11,9 @@
         node.setString(nameMap.get(var));
       }
  else {
-        String newName=oldName.substring(0,oldName.lastIndexOf(ContextualRenamer.UNIQUE_ID_SEPARATOR));
-        String suffix=oldName.substring(oldName.lastIndexOf(ContextualRenamer.UNIQUE_ID_SEPARATOR) + ContextualRenamer.UNIQUE_ID_SEPARATOR.length(),oldName.length());
+        int index=indexOfSeparator(oldName);
+        String newName=getOrginalNameInternal(oldName,index);
+        String suffix=getNameSuffix(oldName,index);
         boolean recurseScopes=false;
         if (!suffix.matches("\\d+")) {
           recurseScopes=true;
