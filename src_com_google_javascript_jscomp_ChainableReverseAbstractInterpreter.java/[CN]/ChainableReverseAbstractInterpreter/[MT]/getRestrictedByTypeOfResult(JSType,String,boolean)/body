@@ -1,3 +1,12 @@
 {
-  return type == null ? null : type.visit(new RestrictByOneTypeOfResultVisitor(value,resultEqualsValue));
+  if (type == null) {
+    if (resultEqualsValue) {
+      JSType result=getNativeTypeForTypeOf(value);
+      return result == null ? getNativeType(UNKNOWN_TYPE) : result;
+    }
+ else {
+      return null;
+    }
+  }
+  return type.visit(new RestrictByOneTypeOfResultVisitor(value,resultEqualsValue));
 }

@@ -9,10 +9,15 @@
   }
  else {
     StaticSlot<JSType> var=scope.getSlot(varName);
-    if (var != null && !(var.isTypeInferred() && unflowableVarNames.contains(varName))) {
-      type=var.getType();
-      if (type == null) {
-        type=getNativeType(UNKNOWN_TYPE);
+    if (var != null) {
+      boolean isInferred=var.isTypeInferred();
+      boolean unflowable=isInferred && unflowableVarNames.contains(varName);
+      boolean nonLocalInferredSlot=isInferred && syntacticScope.getParent() != null && var == syntacticScope.getParent().getSlot(varName);
+      if (!unflowable && !nonLocalInferredSlot) {
+        type=var.getType();
+        if (type == null) {
+          type=getNativeType(UNKNOWN_TYPE);
+        }
       }
     }
   }
