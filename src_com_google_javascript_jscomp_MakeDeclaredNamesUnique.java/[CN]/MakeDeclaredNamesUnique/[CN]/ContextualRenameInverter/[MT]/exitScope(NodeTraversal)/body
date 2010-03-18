@@ -1,0 +1,14 @@
+{
+  if (t.inGlobalScope()) {
+    return;
+  }
+  for (Iterator<Var> it=t.getScope().getVars(); it.hasNext(); ) {
+    Var v=it.next();
+    handleScopeVar(v);
+  }
+  Set<String> current=referencedNames;
+  referencedNames=referenceStack.pop();
+  if (!referenceStack.isEmpty()) {
+    referencedNames.addAll(current);
+  }
+}
