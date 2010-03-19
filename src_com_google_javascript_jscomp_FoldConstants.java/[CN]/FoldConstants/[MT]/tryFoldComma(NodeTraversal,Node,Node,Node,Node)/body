@@ -1,0 +1,17 @@
+{
+  if (!NodeUtil.mayHaveSideEffects(left)) {
+    n.removeChild(right);
+    parent.replaceChild(n,right);
+    t.getCompiler().reportCodeChange();
+  }
+ else {
+    if (parent.getType() == Token.EXPR_RESULT) {
+      n.detachChildren();
+      parent.replaceChild(n,left);
+      Node newStatement=new Node(Token.EXPR_RESULT,right);
+      newStatement.copyInformationFrom(n);
+      parent.getParent().addChildAfter(newStatement,parent);
+      t.getCompiler().reportCodeChange();
+    }
+  }
+}
