@@ -1,0 +1,11 @@
+{
+  Node oldNameNode=n.getFirstChild();
+  Node fnNameNode=oldNameNode.cloneNode();
+  Node var=new Node(Token.VAR,fnNameNode,n.getLineno(),n.getCharno());
+  var.copyInformationFrom(n);
+  oldNameNode.setString("");
+  Node parent=n.getParent();
+  parent.replaceChild(n,var);
+  fnNameNode.addChildToFront(n);
+  reportCodeChange("Function declaration");
+}
