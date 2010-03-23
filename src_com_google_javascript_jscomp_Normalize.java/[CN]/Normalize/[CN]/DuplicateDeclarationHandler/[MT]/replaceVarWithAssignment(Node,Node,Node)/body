@@ -4,7 +4,8 @@
     Node value=n.getFirstChild();
     n.removeChild(value);
     Node replacement=new Node(Token.ASSIGN,n,value);
-    gramps.replaceChild(parent,new Node(Token.EXPR_RESULT,replacement));
+    replacement.copyInformationFrom(parent);
+    gramps.replaceChild(parent,NodeUtil.newExpr(replacement));
   }
  else {
     if (NodeUtil.isStatementBlock(gramps)) {
@@ -16,7 +17,7 @@
     }
  else {
       Preconditions.checkState(gramps.getType() == Token.LABEL);
-      gramps.replaceChild(parent,new Node(Token.EMPTY));
+      throw new IllegalStateException("Unexpected LABEL");
     }
   }
   reportCodeChange("Duplicate VAR declaration");

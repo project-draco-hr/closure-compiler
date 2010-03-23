@@ -10,7 +10,9 @@ case Token.LABEL:
 case Token.FOR:
   if (!NodeUtil.isForIn(c) && c.getFirstChild().getType() != Token.EMPTY) {
     Node init=c.getFirstChild();
-    c.replaceChild(init,new Node(Token.EMPTY));
+    Node empty=new Node(Token.EMPTY);
+    empty.copyInformationFrom(c);
+    c.replaceChild(init,empty);
     Node newStatement;
     if (init.getType() == Token.VAR) {
       newStatement=init;

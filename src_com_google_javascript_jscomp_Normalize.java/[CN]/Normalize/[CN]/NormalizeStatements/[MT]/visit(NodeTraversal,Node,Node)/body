@@ -4,8 +4,10 @@ case Token.WHILE:
     if (CONVERT_WHILE_TO_FOR) {
       Node expr=n.getFirstChild();
       n.setType(Token.FOR);
-      n.addChildBefore(new Node(Token.EMPTY),expr);
-      n.addChildAfter(new Node(Token.EMPTY),expr);
+      Node empty=new Node(Token.EMPTY);
+      empty.copyInformationFrom(n);
+      n.addChildBefore(empty,expr);
+      n.addChildAfter(empty.cloneNode(),expr);
       reportCodeChange("WHILE node");
     }
   break;
