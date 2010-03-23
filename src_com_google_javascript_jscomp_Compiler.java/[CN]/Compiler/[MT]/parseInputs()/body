@@ -1,5 +1,5 @@
 {
-  boolean devMode=options_.devMode != DevMode.OFF;
+  boolean devMode=options.devMode != DevMode.OFF;
   if (externsRoot != null) {
     externsRoot.detachChildren();
   }
@@ -8,22 +8,22 @@
   }
   jsRoot=new Node(Token.BLOCK);
   jsRoot.setIsSyntheticBlock(true);
-  if (options_.tracer.isOn()) {
-    tracker=new PerformanceTracker(jsRoot,options_.tracer == TracerMode.ALL);
+  if (options.tracer.isOn()) {
+    tracker=new PerformanceTracker(jsRoot,options.tracer == TracerMode.ALL);
     addChangeHandler(tracker.getCodeChangeHandler());
   }
   Tracer tracer=newTracer("parseInputs");
   try {
     externsRoot=new Node(Token.BLOCK);
     externsRoot.setIsSyntheticBlock(true);
-    for (    CompilerInput input : externs_) {
+    for (    CompilerInput input : externs) {
       Node n=input.getAstRoot(this);
       if (hasErrors()) {
         return null;
       }
       externsRoot.addChildToBack(n);
     }
-    for (    CompilerInput input : inputs_) {
+    for (    CompilerInput input : inputs) {
       Node n=input.getAstRoot(this);
       if (hasErrors()) {
         return null;
@@ -37,7 +37,7 @@
           return null;
         }
       }
-      if (options_.sourceMapOutputPath != null || options_.nameReferenceReportPath != null) {
+      if (options.sourceMapOutputPath != null || options.nameReferenceReportPath != null) {
         SourceInformationAnnotator sia=new SourceInformationAnnotator(input.getName());
         NodeTraversal.traverse(this,n,sia);
       }
