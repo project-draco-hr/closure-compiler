@@ -1,0 +1,34 @@
+{
+  final Map<T,Integer> originalIndex=Maps.newHashMap();
+  for (int i=0; i < items.size(); i++) {
+    originalIndex.put(items.get(i),i);
+  }
+  PriorityQueue<T> inDegreeZero=new PriorityQueue<T>(items.size(),new Comparator<T>(){
+    @Override public int compare(    T a,    T b){
+      return originalIndex.get(a).intValue() - originalIndex.get(b).intValue();
+    }
+  }
+);
+  List<T> result=Lists.newArrayList();
+  Multiset<T> inDegree=HashMultiset.create();
+  Multimap<T,T> reverseDeps=ArrayListMultimap.create();
+  Multimaps.invertFrom(deps,reverseDeps);
+  for (  T item : items) {
+    Collection<T> itemDeps=deps.get(item);
+    inDegree.add(item,itemDeps.size());
+    if (itemDeps.isEmpty()) {
+      inDegreeZero.add(item);
+    }
+  }
+  while (!inDegreeZero.isEmpty()) {
+    T item=inDegreeZero.remove();
+    result.add(item);
+    for (    T inWaiting : reverseDeps.get(item)) {
+      inDegree.remove(inWaiting,1);
+      if (inDegree.count(inWaiting) == 0) {
+        inDegreeZero.add(inWaiting);
+      }
+    }
+  }
+  return result;
+}

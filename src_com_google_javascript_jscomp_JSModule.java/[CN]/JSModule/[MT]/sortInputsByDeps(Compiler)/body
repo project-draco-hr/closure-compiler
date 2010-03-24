@@ -5,12 +5,16 @@
       provides.put(provide,input);
     }
   }
-  List<CompilerInput> list=Lists.newArrayList();
-  Set<CompilerInput> set=Sets.newHashSet();
+  final Multimap<CompilerInput,CompilerInput> deps=HashMultimap.create();
   for (  CompilerInput input : inputs) {
-    addInputAndDeps(input,provides,compiler,list,set,Sets.<CompilerInput>newHashSet());
+    for (    String req : input.getRequires(compiler)) {
+      CompilerInput dep=provides.get(req);
+      if (dep != null) {
+        deps.put(input,dep);
+      }
+    }
   }
-  Preconditions.checkState(inputs.size() == list.size());
+  List<CompilerInput> sortedList=topologicalStableSort(inputs,deps);
   inputs.clear();
-  inputs.addAll(list);
+  inputs.addAll(sortedList);
 }
