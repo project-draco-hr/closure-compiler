@@ -8,6 +8,9 @@ case Token.NAME:
 case Token.GETPROP:
 case Token.GETELEM:
 return true;
+case Token.FUNCTION:
+Preconditions.checkState(NodeUtil.isAnonymousFunction(n));
+return false;
 }
 for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
 if (canBeSideEffected(c,knownConstants)) {
