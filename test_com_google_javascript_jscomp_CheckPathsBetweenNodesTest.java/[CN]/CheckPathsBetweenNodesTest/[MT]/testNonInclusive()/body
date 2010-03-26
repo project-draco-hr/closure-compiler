@@ -1,0 +1,11 @@
+{
+  DiGraph<String,String> g=new LinkedDirectedGraph<String,String>();
+  g.createDirectedGraphNode("a");
+  g.createDirectedGraphNode("b");
+  g.createDirectedGraphNode("c");
+  g.connect("a","-","b");
+  g.connect("b","-","c");
+  assertFalse(createNonInclusiveTest(g,"a","b",Predicates.equalTo("a"),ALL_EDGE).somePathsSatisfyPredicate());
+  assertFalse(createNonInclusiveTest(g,"a","b",Predicates.equalTo("b"),ALL_EDGE).somePathsSatisfyPredicate());
+  assertTrue(createNonInclusiveTest(g,"a","c",Predicates.equalTo("b"),ALL_EDGE).somePathsSatisfyPredicate());
+}
