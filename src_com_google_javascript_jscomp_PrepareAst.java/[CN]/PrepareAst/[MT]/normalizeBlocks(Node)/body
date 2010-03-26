@@ -2,7 +2,7 @@
   if (NodeUtil.isControlStructure(n) && n.getType() != Token.LABEL && n.getType() != Token.SWITCH) {
     for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
       if (NodeUtil.isControlStructureCodeBlock(n,c) && c.getType() != Token.BLOCK) {
-        Node newBlock=new Node(Token.BLOCK);
+        Node newBlock=new Node(Token.BLOCK,n.getLineno(),n.getCharno());
         newBlock.copyInformationFrom(n);
         n.replaceChild(c,newBlock);
         if (c.getType() != Token.EMPTY) {
