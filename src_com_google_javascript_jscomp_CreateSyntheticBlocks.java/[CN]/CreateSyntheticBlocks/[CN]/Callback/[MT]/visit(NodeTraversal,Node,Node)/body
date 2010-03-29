@@ -19,7 +19,7 @@
     return;
   }
   if (startMarkerStack.isEmpty()) {
-    compiler.report(JSError.make(t,n,UNMATCHED_END_MARKER,startMarkerName,endMarkerName));
+    compiler.report(t.makeError(n,UNMATCHED_END_MARKER,startMarkerName,endMarkerName));
     return;
   }
   StartMarker startMarker=startMarkerStack.pop();
@@ -28,7 +28,7 @@
     int type=ancestor.getType();
     if (type == Token.SCRIPT || type == Token.BLOCK) {
       if (ancestor != startMarker.ancestorBlock) {
-        compiler.report(JSError.make(t,n,UNMATCHED_END_MARKER,startMarkerName,endMarkerName));
+        compiler.report(t.makeError(n,UNMATCHED_END_MARKER,startMarkerName,endMarkerName));
         return;
       }
       break;

@@ -15,7 +15,7 @@
       boolean interfaceHasProperty=interfaceType.getPrototype().hasProperty(propertyName);
       foundInterfaceProperty=foundInterfaceProperty || interfaceHasProperty;
       if (reportMissingOverride.isOn() && !declaredOverride && interfaceHasProperty) {
-        compiler.report(JSError.make(t,n,reportMissingOverride,HIDDEN_INTERFACE_PROPERTY,propertyName,interfaceType.getTopMostDefiningType(propertyName).toString()));
+        compiler.report(t.makeError(n,reportMissingOverride,HIDDEN_INTERFACE_PROPERTY,propertyName,interfaceType.getTopMostDefiningType(propertyName).toString()));
       }
       if (!declaredOverride) {
         continue;
@@ -23,7 +23,7 @@
       if (interfaceHasProperty) {
         JSType interfacePropType=interfaceType.getPrototype().getPropertyType(propertyName);
         if (!propertyType.canAssignTo(interfacePropType)) {
-          compiler.report(JSError.make(t,n,HIDDEN_INTERFACE_PROPERTY_MISMATCH,propertyName,interfaceType.getTopMostDefiningType(propertyName).toString(),interfacePropType.toString(),propertyType.toString()));
+          compiler.report(t.makeError(n,HIDDEN_INTERFACE_PROPERTY_MISMATCH,propertyName,interfaceType.getTopMostDefiningType(propertyName).toString(),interfacePropType.toString(),propertyType.toString()));
         }
       }
     }
@@ -33,7 +33,7 @@
   }
   JSType topInstanceType=superClassHasProperty ? superClass.getTopMostDefiningType(propertyName) : null;
   if (reportMissingOverride.isOn() && ctorType.isConstructor() && !declaredOverride&& superClassHasProperty) {
-    compiler.report(JSError.make(t,n,reportMissingOverride,HIDDEN_SUPERCLASS_PROPERTY,propertyName,topInstanceType.toString()));
+    compiler.report(t.makeError(n,reportMissingOverride,HIDDEN_SUPERCLASS_PROPERTY,propertyName,topInstanceType.toString()));
   }
   if (!declaredOverride) {
     return;
@@ -41,10 +41,10 @@
   if (superClassHasProperty) {
     JSType superClassPropType=superClass.getPrototype().getPropertyType(propertyName);
     if (!propertyType.canAssignTo(superClassPropType)) {
-      compiler.report(JSError.make(t,n,HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,propertyName,topInstanceType.toString(),superClassPropType.toString(),propertyType.toString()));
+      compiler.report(t.makeError(n,HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,propertyName,topInstanceType.toString(),superClassPropType.toString(),propertyType.toString()));
     }
   }
  else   if (!foundInterfaceProperty) {
-    compiler.report(JSError.make(t,n,UNKNOWN_OVERRIDE,propertyName,ctorType.getInstanceType().toString()));
+    compiler.report(t.makeError(n,UNKNOWN_OVERRIDE,propertyName,ctorType.getInstanceType().toString()));
   }
 }

@@ -11,13 +11,13 @@ case 2:
         compiler.reportCodeChange();
       }
  else {
-        compiler.report(JSError.make(t,n,STRING_LITERAL_EXPECTED_ERROR,Token.name(first.getType())));
+        compiler.report(t.makeError(n,STRING_LITERAL_EXPECTED_ERROR,Token.name(first.getType())));
       }
     break;
 case 3:
   Node second=first.getNext();
 if (first.getType() == Token.STRING) {
-  compiler.report(JSError.make(t,n,UNEXPECTED_STRING_LITERAL_ERROR,first.getString(),second.getString()));
+  compiler.report(t.makeError(n,UNEXPECTED_STRING_LITERAL_ERROR,first.getString(),second.getString()));
 }
  else if (second.getType() == Token.STRING) {
   processStringNode(t,second);
@@ -27,11 +27,11 @@ if (first.getType() == Token.STRING) {
   compiler.reportCodeChange();
 }
  else {
-  compiler.report(JSError.make(t,n,STRING_LITERAL_EXPECTED_ERROR,Token.name(second.getType())));
+  compiler.report(t.makeError(n,STRING_LITERAL_EXPECTED_ERROR,Token.name(second.getType())));
 }
 break;
 default :
-compiler.report(JSError.make(t,n,INVALID_NUM_ARGUMENTS_ERROR,String.valueOf(count)));
+compiler.report(t.makeError(n,INVALID_NUM_ARGUMENTS_ERROR,String.valueOf(count)));
 }
 }
 }

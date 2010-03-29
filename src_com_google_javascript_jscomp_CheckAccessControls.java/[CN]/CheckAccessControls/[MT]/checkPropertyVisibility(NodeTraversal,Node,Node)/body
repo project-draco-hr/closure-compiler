@@ -23,10 +23,10 @@
       JSDocInfo overridingInfo=parent.getJSDocInfo();
       Visibility overridingVisibility=overridingInfo == null ? Visibility.INHERITED : overridingInfo.getVisibility();
       if (visibility == Visibility.PRIVATE && !sameInput) {
-        compiler.report(JSError.make(t,getprop,PRIVATE_OVERRIDE,objectType.toString()));
+        compiler.report(t.makeError(getprop,PRIVATE_OVERRIDE,objectType.toString()));
       }
  else       if (overridingVisibility != Visibility.INHERITED && overridingVisibility != visibility) {
-        compiler.report(JSError.make(t,getprop,VISIBILITY_MISMATCH,visibility.name(),objectType.toString(),overridingVisibility.name()));
+        compiler.report(t.makeError(getprop,VISIBILITY_MISMATCH,visibility.name(),objectType.toString(),overridingVisibility.name()));
       }
     }
  else {
@@ -37,11 +37,11 @@
         if (docInfo.isConstructor() && isValidPrivateConstructorAccess(parent)) {
           return;
         }
-        compiler.report(JSError.make(t,getprop,BAD_PRIVATE_PROPERTY_ACCESS,propertyName,validator.getReadableJSTypeName(getprop.getFirstChild(),true)));
+        compiler.report(t.makeError(getprop,BAD_PRIVATE_PROPERTY_ACCESS,propertyName,validator.getReadableJSTypeName(getprop.getFirstChild(),true)));
       }
  else       if (visibility == Visibility.PROTECTED) {
         if (currentClass == null || !currentClass.isSubtype(ownerType)) {
-          compiler.report(JSError.make(t,getprop,BAD_PROTECTED_PROPERTY_ACCESS,propertyName,validator.getReadableJSTypeName(getprop.getFirstChild(),true)));
+          compiler.report(t.makeError(getprop,BAD_PROTECTED_PROPERTY_ACCESS,propertyName,validator.getReadableJSTypeName(getprop.getFirstChild(),true)));
         }
       }
     }

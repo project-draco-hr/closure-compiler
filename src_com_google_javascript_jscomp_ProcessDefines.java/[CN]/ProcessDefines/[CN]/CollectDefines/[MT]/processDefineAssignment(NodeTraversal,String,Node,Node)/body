@@ -1,9 +1,9 @@
 {
   if (value == null || !NodeUtil.isValidDefineValue(value,allDefines.keySet())) {
-    compiler.report(JSError.make(t,value,INVALID_DEFINE_INIT_ERROR,name));
+    compiler.report(t.makeError(value,INVALID_DEFINE_INIT_ERROR,name));
   }
  else   if (!isAssignAllowed()) {
-    compiler.report(JSError.make(t,valueParent,NON_GLOBAL_DEFINE_INIT_ERROR,name));
+    compiler.report(t.makeError(valueParent,NON_GLOBAL_DEFINE_INIT_ERROR,name));
   }
  else {
     DefineInfo info=allDefines.get(name);
@@ -16,7 +16,7 @@
       return true;
     }
  else {
-      compiler.report(JSError.make(t,valueParent,DEFINE_NOT_ASSIGNABLE_ERROR,name,info.getReasonWhyNotAssignable()));
+      compiler.report(t.makeError(valueParent,DEFINE_NOT_ASSIGNABLE_ERROR,name,info.getReasonWhyNotAssignable()));
     }
   }
   return false;

@@ -14,17 +14,17 @@
     return;
   }
   if (n.getChildCount() != 3) {
-    compiler.report(JSError.make(t,n,INVALID_NUM_ARGUMENTS_ERROR,"" + n.getChildCount()));
+    compiler.report(t.makeError(n,INVALID_NUM_ARGUMENTS_ERROR,"" + n.getChildCount()));
     return;
   }
   Node firstArgument=objectName.getNext();
   if (!firstArgument.isQualifiedName()) {
-    compiler.report(JSError.make(t,firstArgument,QUALIFIED_NAME_EXPECTED_ERROR,Token.name(firstArgument.getType())));
+    compiler.report(t.makeError(firstArgument,QUALIFIED_NAME_EXPECTED_ERROR,Token.name(firstArgument.getType())));
     return;
   }
   Node secondArgument=firstArgument.getNext();
   if (secondArgument.getType() != Token.STRING) {
-    compiler.report(JSError.make(t,secondArgument,STRING_LITERAL_EXPECTED_ERROR,Token.name(secondArgument.getType())));
+    compiler.report(t.makeError(secondArgument,STRING_LITERAL_EXPECTED_ERROR,Token.name(secondArgument.getType())));
     return;
   }
   Node newFirstArgument=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention().getGlobalObject(),firstArgument.getLineno(),firstArgument.getCharno());
