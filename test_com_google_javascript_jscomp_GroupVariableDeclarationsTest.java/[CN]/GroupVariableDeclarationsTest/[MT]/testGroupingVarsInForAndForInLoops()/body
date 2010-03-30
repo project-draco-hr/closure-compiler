@@ -1,0 +1,15 @@
+{
+  test("var a = 1; for (var x = 0; x < 10; ++x) {a++;} var y;","var a = 1, x, y; for (x = 0; x < 10; ++x) {a++;}");
+  test("var a = 1, x; for (x = 0; x < 10; ++x) {a++;} var y;","var a = 1, x, y; for (x = 0; x < 10; ++x) {a++;}");
+  test("var a = 1, x; for (x; x < 10; ++x) {a++;} var y;","var a = 1, x, y; for (x; x < 10; ++x) {a++;}");
+  test("var a = 1; for (; a < 10; ++a) {alert(a);} var y;","var a = 1, y; for (; a < 10; ++a) {alert(a);}");
+  test("var a = 1; for (var x; x < 10; ++x) {a += 2;} var y = 5;","var a = 1, x, y; for (; x < 10; ++x) {a += 2;} y = 5;");
+  test("var a = 1; " + "for (var a1 = 0, a2 = 10; a1 < 10 && a2 > 0; ++a1, --a2) {}" + "var x = 5;","var a = 1, x;" + "for (var a1 = 0, a2 = 10; a1 < 10 && a2 > 0; ++a1, --a2) {} " + "x = 5;");
+  test("var a = 1; " + "for (var a1 = 0, a2; a1 < 10 && a2 > 0; ++a1, --a2) {}" + "var x = 5;","var a = 1, a1, a2, x;" + "for (a1 = 0; a1 < 10 && a2 > 0; ++a1, --a2) {}" + "x = 5;");
+  test("var a = 1; " + "for (var a1, a2; a1 < 10 && a2 > 0; ++a1, --a2) {}" + "var x = 5;","var a = 1, a1, a2, x;" + "for (; a1 < 10 && a2 > 0; ++a1, --a2) {}" + "x = 5;");
+  test("var a = [1, 2, 3, 4]; for (var z in a) {alert(z);} var y;","var a = [1, 2, 3, 4], z, y; for (z in a) {alert(z);}");
+  test("var a = [1, 2, 3, 4]; for (var z in a) {alert(z);} var y = 5;","var a = [1, 2, 3, 4], z, y; for (z in a) {alert(z);} y = 5;");
+  test("var a; for (var z in a = [1, 2, 3, 4]) {alert(z);} var y, x = 5;","var a, z, y, x; for (z in a = [1, 2, 3, 4]) {alert(z);} x = 5;");
+  test("var a; for (var z = 1 in a = [1, 2, 3, 4]) {alert(z);} var y, x = 5;","var a, z, y, x; for (z = 1 in a = [1, 2, 3, 4]) {alert(z);} x = 5;");
+  test("var a, z; for (z in a = [1, 2, 3, 4]) {alert(z);} var y, x = 5;","var a, z, y, x; for (z in a = [1, 2, 3, 4]) {alert(z);} x = 5;");
+}

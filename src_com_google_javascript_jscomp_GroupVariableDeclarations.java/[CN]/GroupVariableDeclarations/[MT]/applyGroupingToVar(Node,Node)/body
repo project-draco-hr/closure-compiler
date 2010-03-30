@@ -1,0 +1,47 @@
+{
+  Node child=groupVar.getFirstChild();
+  Node initializedName=null;
+  while (child != null) {
+    if (child.hasChildren()) {
+      if (initializedName != null) {
+        return;
+      }
+      initializedName=child;
+    }
+    child=child.getNext();
+  }
+  Node groupVarParent=groupVar.getParent();
+  if (initializedName != null) {
+    Node clone=initializedName.cloneNode();
+    groupVar.replaceChild(initializedName,clone);
+    Node initializedVal=initializedName.getFirstChild();
+    initializedName.removeChild(initializedVal);
+    Node assignmentNode=new Node(Token.ASSIGN,initializedName);
+    assignmentNode.addChildAfter(initializedVal,initializedName);
+    if (groupVarParent.getType() == Token.FOR) {
+      groupVarParent.replaceChild(groupVar,assignmentNode);
+    }
+ else {
+      Node exprNode=NodeUtil.newExpr(assignmentNode);
+      groupVarParent.replaceChild(groupVar,exprNode);
+    }
+  }
+ else {
+    if (groupVarParent.getType() == Token.FOR) {
+      if (NodeUtil.isForIn(groupVarParent)) {
+        Node nameNodeClone=groupVar.getFirstChild().cloneNode();
+        groupVarParent.replaceChild(groupVar,nameNodeClone);
+      }
+ else {
+        Node emptyNode=new Node(Token.EMPTY);
+        groupVarParent.replaceChild(groupVar,emptyNode);
+      }
+    }
+ else {
+      groupVarParent.removeChild(groupVar);
+    }
+  }
+  Node children=groupVar.removeChildren();
+  firstVar.addChildrenToBack(children);
+  compiler.reportCodeChange();
+}

@@ -1,0 +1,19 @@
+{
+  Set<Node> varNodes=Sets.newLinkedHashSet();
+  Iterator<Var> scopeVarIter=t.getScope().getVars();
+  while (scopeVarIter.hasNext()) {
+    Node parentNode=scopeVarIter.next().getParentNode();
+    if (parentNode.getType() == Token.VAR) {
+      varNodes.add(parentNode);
+    }
+  }
+  if (varNodes.size() <= 1) {
+    return;
+  }
+  Iterator<Node> varNodeIter=varNodes.iterator();
+  Node firstVarNode=varNodeIter.next();
+  while (varNodeIter.hasNext()) {
+    Node varNode=varNodeIter.next();
+    applyGroupingToVar(firstVarNode,varNode);
+  }
+}
