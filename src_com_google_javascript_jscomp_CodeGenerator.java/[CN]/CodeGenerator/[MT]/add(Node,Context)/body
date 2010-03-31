@@ -74,6 +74,10 @@ add("var ");
 addList(first,false,getContextForNoInOperator(context));
 }
 break;
+case Token.LABEL_NAME:
+Preconditions.checkState(!n.getString().isEmpty());
+addIdentifier(n.getString());
+break;
 case Token.NAME:
 if (first == null || first.getType() == Token.EMPTY) {
 addIdentifier(n.getString());
@@ -326,6 +330,7 @@ case Token.CONTINUE:
 Preconditions.checkState(childCount <= 1);
 add("continue");
 if (childCount == 1) {
+Preconditions.checkState(first.getType() == Token.LABEL_NAME);
 add(" ");
 add(first);
 }
@@ -340,6 +345,7 @@ case Token.BREAK:
 Preconditions.checkState(childCount <= 1);
 add("break");
 if (childCount == 1) {
+Preconditions.checkState(first.getType() == Token.LABEL_NAME);
 add(" ");
 add(first);
 }
@@ -425,6 +431,7 @@ addCaseBody(first);
 break;
 case Token.LABEL:
 Preconditions.checkState(childCount == 2);
+Preconditions.checkState(first.getType() == Token.LABEL_NAME);
 add(first);
 add(":");
 addNonEmptyExpression(last,getContextForNonEmptyExpression(context),true);
