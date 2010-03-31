@@ -1,0 +1,21 @@
+{
+  if (!(ast instanceof JsAst)) {
+    Preconditions.checkNotNull(compiler,"Expected setCompiler to be called first");
+    DepsFinder finder=new DepsFinder();
+    Node root=getAstRoot(compiler);
+    if (root == null) {
+      return;
+    }
+    finder.visitTree(getAstRoot(compiler));
+    provides.addAll(finder.provides);
+    requires.addAll(finder.requires);
+  }
+ else {
+    if (!generatedDependencyInfoFromSource) {
+      DependencyInfo info=(new JsFileParser(errorManager)).parseFile(getName(),getName(),getCode());
+      provides.addAll(info.getProvides());
+      requires.addAll(info.getRequires());
+      generatedDependencyInfoFromSource=true;
+    }
+  }
+}

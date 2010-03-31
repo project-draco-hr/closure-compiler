@@ -1,0 +1,16 @@
+{
+  depMatcher.reset(line);
+  if (depMatcher.matches()) {
+    String addDependencyParams=depMatcher.group(1);
+    depArgsMatch.reset(addDependencyParams);
+    if (!depArgsMatch.matches()) {
+      throw new ParseException("Invalid arguments to goog.addDependency(). Found: " + addDependencyParams,true);
+    }
+    String path=parseJsString(depArgsMatch.group(1));
+    DependencyInfo depInfo=new SimpleDependencyInfo(path,filePath,parseJsStringArray(depArgsMatch.group(2)),parseJsStringArray(depArgsMatch.group(3)));
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine("Found dep: " + depInfo);
+    }
+    depInfos.add(depInfo);
+  }
+}

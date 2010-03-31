@@ -1,0 +1,17 @@
+{
+  this.filePath=filePath;
+  parseSucceeded=true;
+  stripCommentsMatcher.reset(fileContents);
+  fileContents=stripCommentsMatcher.replaceAll("");
+  lineNum=0;
+  for (  String line : fileContents.split("\n")) {
+    ++lineNum;
+    try {
+      parseLine(line);
+    }
+ catch (    ParseException e) {
+      errorManager.report(e.isFatal() ? CheckLevel.ERROR : CheckLevel.WARNING,JSError.make(filePath,lineNum,0,e.isFatal() ? PARSE_ERROR : PARSE_WARNING,e.getMessage(),line));
+      parseSucceeded=parseSucceeded && !e.isFatal();
+    }
+  }
+}

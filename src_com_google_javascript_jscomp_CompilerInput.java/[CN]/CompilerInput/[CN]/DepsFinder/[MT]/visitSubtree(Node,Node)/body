@@ -1,0 +1,19 @@
+{
+  if (n.getType() == Token.CALL) {
+    String require=codingConvention.extractClassNameIfRequire(n,parent);
+    if (require != null) {
+      requires.add(require);
+    }
+    String provide=codingConvention.extractClassNameIfProvide(n,parent);
+    if (provide != null) {
+      provides.add(provide);
+    }
+    return;
+  }
+ else   if (parent != null && parent.getType() != Token.EXPR_RESULT && parent.getType() != Token.SCRIPT) {
+    return;
+  }
+  for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+    visitSubtree(child,n);
+  }
+}

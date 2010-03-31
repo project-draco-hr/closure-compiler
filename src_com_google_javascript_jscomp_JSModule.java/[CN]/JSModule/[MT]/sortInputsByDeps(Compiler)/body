@@ -1,13 +1,14 @@
 {
   final Map<String,CompilerInput> provides=Maps.newHashMap();
   for (  CompilerInput input : inputs) {
-    for (    String provide : input.getProvides(compiler)) {
+    input.setCompiler(compiler);
+    for (    String provide : input.getProvides()) {
       provides.put(provide,input);
     }
   }
   final Multimap<CompilerInput,CompilerInput> deps=HashMultimap.create();
   for (  CompilerInput input : inputs) {
-    for (    String req : input.getRequires(compiler)) {
+    for (    String req : input.getRequires()) {
       CompilerInput dep=provides.get(req);
       if (dep != null) {
         deps.put(input,dep);
