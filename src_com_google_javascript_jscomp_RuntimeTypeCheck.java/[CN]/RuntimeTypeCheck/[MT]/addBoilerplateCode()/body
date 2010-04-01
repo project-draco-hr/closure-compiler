@@ -1,6 +1,7 @@
 {
   String boilerplateCode=getBoilerplateCode(logFunction);
   Node js=compiler.parseSyntheticCode(boilerplateCode);
+  NodeTraversal.traverse(compiler,js,new Normalize.NormalizeStatements(compiler,false));
   compiler.getNodeForCodeInsertion(null).addChildrenToFront(js.removeChildren());
   compiler.reportCodeChange();
 }
