@@ -1,25 +1,41 @@
 {
   Node parent=expr.getParent();
+  boolean isLhsOfAssignOp=NodeUtil.isAssignmentOp(parent) && !NodeUtil.isAssign(parent) && parent.getFirstChild() == expr;
+  Node firstExtractedNode=null;
+  if (isLhsOfAssignOp && NodeUtil.isGet(expr)) {
+    for (    Node n : expr.children()) {
+      if (n.getType() != Token.STRING && !isConstantName(n,knownConstants)) {
+        Node extractedNode=extractExpression(n,injectionPoint);
+        if (firstExtractedNode == null) {
+          firstExtractedNode=extractedNode;
+        }
+      }
+    }
+  }
   String tempName=getTempConstantValueName();
   Node replacementValueNode=Node.newString(Token.NAME,tempName);
-  parent.replaceChild(expr,replacementValueNode);
+  Node tempNameValue;
+  if (isLhsOfAssignOp) {
+    Preconditions.checkState(NodeUtil.isName(expr) || NodeUtil.isGet(expr));
+    Node opNode=new Node(NodeUtil.getOpFromAssignmentOp(parent)).copyInformationFrom(parent);
+    Node rightOperand=parent.getLastChild();
+    parent.setType(Token.ASSIGN);
+    parent.replaceChild(rightOperand,opNode);
+    opNode.addChildToFront(replacementValueNode);
+    opNode.addChildToBack(rightOperand);
+    tempNameValue=expr.cloneTree();
+  }
+ else {
+    parent.replaceChild(expr,replacementValueNode);
+    tempNameValue=expr;
+  }
   Node tempNameNode=Node.newString(Token.NAME,tempName);
-  tempNameNode.addChildrenToBack(expr);
+  tempNameNode.addChildToBack(tempNameValue);
   Node tempVarNode=new Node(Token.VAR,tempNameNode);
   Node injectionPointParent=injectionPoint.getParent();
   injectionPointParent.addChildBefore(tempVarNode,injectionPoint);
-  if (NodeUtil.isAssignmentOp(parent) && !NodeUtil.isAssign(parent)) {
-    Node gParent=parent.getParent();
-    Node assignBack=new Node(Token.ASSIGN,expr.cloneTree(),tempNameNode.cloneNode());
-    if (NodeUtil.isExpressionNode(gParent)) {
-      gParent.getParent().addChildAfter(NodeUtil.newExpr(assignBack),gParent);
-    }
- else {
-      Node comma=new Node(Token.COMMA);
-      gParent.replaceChild(parent,comma);
-      comma.addChildrenToFront(assignBack);
-      comma.addChildrenToFront(parent);
-    }
+  if (firstExtractedNode == null) {
+    firstExtractedNode=tempVarNode;
   }
-  return tempVarNode;
+  return firstExtractedNode;
 }
