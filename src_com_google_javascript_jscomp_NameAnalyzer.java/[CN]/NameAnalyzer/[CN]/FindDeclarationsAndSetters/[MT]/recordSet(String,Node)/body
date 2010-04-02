@@ -2,4 +2,10 @@
   JsName jsn=getName(name,true);
   JsNameRefNode nameRefNode=new JsNameRefNode(jsn,node);
   refNodes.add(nameRefNode);
+  if (node.getType() == Token.GETELEM) {
+    recordWriteOnProperties(name);
+  }
+ else   if (name.indexOf('.') != -1) {
+    recordWriteOnProperties(name.substring(0,name.lastIndexOf('.')));
+  }
 }

@@ -1,0 +1,24 @@
+{
+  union.union("A","B");
+  union.union("A","B");
+  union.union("B","A");
+  union.union("D","E");
+  union.union("F","F");
+  Set<String> aSet=union.findAll("A");
+  assertEquals(2,aSet.size());
+  assertTrue(aSet.contains("A"));
+  assertTrue(aSet.contains("B"));
+  assertFalse(aSet.contains("C"));
+  assertFalse(aSet.contains("D"));
+  assertFalse(aSet.contains("E"));
+  assertFalse(aSet.contains("F"));
+  union.union("B","C");
+  assertTrue(aSet.contains("C"));
+  assertEquals(3,aSet.size());
+  try {
+    union.findAll("Z");
+    fail("findAll() on unknown element should not be allowed.");
+  }
+ catch (  IllegalArgumentException e) {
+  }
+}

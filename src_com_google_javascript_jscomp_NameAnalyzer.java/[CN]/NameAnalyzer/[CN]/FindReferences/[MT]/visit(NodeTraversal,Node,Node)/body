@@ -45,7 +45,13 @@
     }
   }
  else   if (referring != null) {
-    recordReference(referringName,name,RefType.REGULAR);
+    if ((parent.getType() == Token.NAME || parent.getType() == Token.ASSIGN) && scopes.get(parent) == referring) {
+      recordAlias(referringName,name);
+    }
+ else {
+      RefType depType=referring.onlyAffectsClassDef ? RefType.INHERITANCE : RefType.REGULAR;
+      recordReference(referringName,name,depType);
+    }
   }
  else {
     for (    Node ancestor : n.getAncestors()) {

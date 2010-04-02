@@ -1,0 +1,26 @@
+{
+  recordReference(fromName,toName,RefType.REGULAR);
+  AliasSet toNameAliasSet=aliases.get(toName);
+  AliasSet fromNameAliasSet=aliases.get(fromName);
+  AliasSet resultSet=null;
+  if (toNameAliasSet == null && fromNameAliasSet == null) {
+    resultSet=new AliasSet(toName,fromName);
+  }
+ else   if (toNameAliasSet != null && fromNameAliasSet != null) {
+    resultSet=toNameAliasSet;
+    resultSet.names.addAll(fromNameAliasSet.names);
+    for (    String name : fromNameAliasSet.names) {
+      aliases.put(name,resultSet);
+    }
+  }
+ else   if (toNameAliasSet != null) {
+    resultSet=toNameAliasSet;
+    resultSet.names.add(fromName);
+  }
+ else {
+    resultSet=fromNameAliasSet;
+    resultSet.names.add(toName);
+  }
+  aliases.put(fromName,resultSet);
+  aliases.put(toName,resultSet);
+}

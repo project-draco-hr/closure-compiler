@@ -6,7 +6,17 @@
     Node nameNode=n.getFirstChild();
     NameInformation ns=createNameInformation(t,nameNode,n);
     if (ns != null) {
-      recordDepScope(parent,ns);
+      if (parent.getType() == Token.FOR && !NodeUtil.isForIn(parent)) {
+        if (parent.getFirstChild().getNext() != n) {
+          recordDepScope(n,ns);
+        }
+ else {
+          recordDepScope(nameNode,ns);
+        }
+      }
+ else {
+        recordDepScope(parent,ns);
+      }
     }
   }
  else   if (NodeUtil.isVarDeclaration(n)) {
