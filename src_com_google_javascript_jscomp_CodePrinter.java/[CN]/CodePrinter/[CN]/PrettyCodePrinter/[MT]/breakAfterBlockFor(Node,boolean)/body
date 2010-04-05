@@ -1,0 +1,20 @@
+{
+  Preconditions.checkState(n.getType() == Token.BLOCK);
+  Node parent=n.getParent();
+  if (parent != null) {
+    int type=parent.getType();
+switch (type) {
+case Token.DO:
+      return false;
+case Token.FUNCTION:
+    return false;
+case Token.TRY:
+  return n != parent.getFirstChild();
+case Token.CATCH:
+return !NodeUtil.hasFinally(getTryForCatch(parent));
+case Token.IF:
+return n == parent.getLastChild();
+}
+}
+return true;
+}
