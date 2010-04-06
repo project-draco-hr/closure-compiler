@@ -1,0 +1,15 @@
+{
+  Preconditions.checkState(jsRoot == null);
+  try {
+    init(externs,inputs,options);
+    if (hasErrors()) {
+      return getResult();
+    }
+    return compile();
+  }
+  finally {
+    Tracer t=newTracer("generateReport");
+    errorManager.generateReport();
+    stopTracer(t,"generateReport");
+  }
+}

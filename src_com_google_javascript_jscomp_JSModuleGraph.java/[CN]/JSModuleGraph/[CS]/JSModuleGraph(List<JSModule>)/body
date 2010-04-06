@@ -1,0 +1,19 @@
+{
+  moduleDepths=Maps.newHashMapWithExpectedSize(modulesInDepOrder.size());
+  modulesByDepth=Lists.newArrayList();
+  for (  JSModule module : modulesInDepOrder) {
+    int depth=0;
+    for (    JSModule dep : module.getDependencies()) {
+      Integer depDepth=moduleDepths.get(dep);
+      if (depDepth == null) {
+        throw new ModuleDependenceException(String.format("Modules not in dependency order: %s preceded %s",module.getName(),dep.getName()),module,dep);
+      }
+      depth=Math.max(depth,depDepth + 1);
+    }
+    moduleDepths.put(module,depth);
+    if (depth == modulesByDepth.size()) {
+      modulesByDepth.add(new ArrayList<JSModule>());
+    }
+    modulesByDepth.get(depth).add(module);
+  }
+}

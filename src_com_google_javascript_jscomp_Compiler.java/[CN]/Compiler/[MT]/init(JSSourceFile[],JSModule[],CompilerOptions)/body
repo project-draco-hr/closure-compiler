@@ -1,17 +1,3 @@
 {
-  initOptions(options);
-  checkFirstModule(modules);
-  fillEmptyModules(modules);
-  this.externs=makeCompilerInput(externs,true);
-  this.modules=modules;
-  try {
-    this.moduleGraph=new JSModuleGraph(modules);
-  }
- catch (  JSModuleGraph.ModuleDependenceException e) {
-    report(JSError.make(MODULE_DEPENDENCY_ERROR,e.getModule().getName(),e.getDependentModule().getName()));
-    return;
-  }
-  this.inputs=getAllInputsFromModules();
-  initBasedOnOptions();
-  initInputsByNameMap();
+  initModules(Lists.<JSSourceFile>newArrayList(externs),Lists.<JSModule>newArrayList(modules),options);
 }
