@@ -10,6 +10,16 @@
   if (NodeUtil.isAssign(def) && !NodeUtil.isExprAssign(def.getParent())) {
     return false;
   }
+  if (checkRightOf(def,defCfgNode,SIDE_EFFECT_PREDICATE)) {
+    return false;
+  }
+  if (checkLeftOf(use,useCfgNode,SIDE_EFFECT_PREDICATE)) {
+    return false;
+  }
+  CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch> pathCheck=new CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch>(cfg,cfg.getDirectedGraphNode(defCfgNode),cfg.getDirectedGraphNode(useCfgNode),SIDE_EFFECT_PREDICATE,Predicates.<DiGraphEdge<Node,ControlFlowGraph.Branch>>alwaysTrue(),false);
+  if (pathCheck.somePathsSatisfyPredicate()) {
+    return false;
+  }
   if (NodeUtil.mayHaveSideEffects(def.getLastChild())) {
     return false;
   }
