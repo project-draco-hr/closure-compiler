@@ -5,7 +5,11 @@ case Token.LC:
 case Token.BANG:
   return createFromTypeNodes(n.getFirstChild(),sourceName,scope).restrictByNotNullOrUndefined();
 case Token.QMARK:
-return createNullableType(createFromTypeNodes(n.getFirstChild(),sourceName,scope));
+Node firstChild=n.getFirstChild();
+if (firstChild == null) {
+return getNativeType(UNKNOWN_TYPE);
+}
+return createNullableType(createFromTypeNodes(firstChild,sourceName,scope));
 case Token.EQUALS:
 return createOptionalType(createFromTypeNodes(n.getFirstChild(),sourceName,scope));
 case Token.ELLIPSIS:
