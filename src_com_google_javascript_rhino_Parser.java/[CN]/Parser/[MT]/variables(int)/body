@@ -38,9 +38,6 @@
  else       if (dupState == ScriptOrFnNode.DUPLICATE_VAR)       addStrictWarning("msg.var.redecl",s);
     }
     name=nf.createTaggedName(s,info,lineno,charno);
-    if (info != null && info.hasEnumParameterType()) {
-      typeRegistry.identifyEnumName(s);
-    }
     if (matchToken(Token.ASSIGN)) {
       decompiler.addToken(Token.ASSIGN);
       init=assignExpr(context == Token.FOR);
@@ -48,9 +45,6 @@
     }
     nf.addChildToBack(pn,name);
     if (!matchToken(Token.COMMA))     break;
-  }
-  if (varInfo != null && varInfo.hasEnumParameterType() && pn.getChildCount() == 1) {
-    typeRegistry.identifyEnumName(pn.getFirstChild().getString());
   }
   return pn;
 }
