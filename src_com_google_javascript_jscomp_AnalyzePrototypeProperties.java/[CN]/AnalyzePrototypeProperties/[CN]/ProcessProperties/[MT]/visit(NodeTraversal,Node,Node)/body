@@ -21,14 +21,27 @@
  else   if (n.getType() == Token.NAME) {
     String name=n.getString();
     Var var=t.getScope().getVar(name);
-    if (var != null && var.isGlobal() && var.getInitialValue() != null && var.getInitialValue().getType() == Token.FUNCTION) {
-      if (t.inGlobalScope()) {
-        if (!processGlobalFunctionDeclaration(t,n,parent,parent.getParent())) {
-          addGlobalUseOfSymbol(name,t.getModule(),VAR);
+    if (var != null) {
+      if (var.isGlobal()) {
+        if (var.getInitialValue() != null && var.getInitialValue().getType() == Token.FUNCTION) {
+          if (t.inGlobalScope()) {
+            if (!processGlobalFunctionDeclaration(t,n,parent,parent.getParent())) {
+              addGlobalUseOfSymbol(name,t.getModule(),VAR);
+            }
+          }
+ else {
+            addSymbolUse(name,t.getModule(),VAR);
+          }
         }
       }
  else {
-        addSymbolUse(name,t.getModule(),VAR);
+        int level=0;
+        for (Scope s=t.getScope(); s != var.getScope(); s=s.getParent()) {
+          level++;
+        }
+        for (level=symbolStack.size() < level ? symbolStack.size() : level; level != 0; level--) {
+          symbolStack.get(symbolStack.size() - level).readClosureVariables=true;
+        }
       }
     }
   }

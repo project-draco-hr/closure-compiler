@@ -1,6 +1,7 @@
 {
   StringBuilder sb=new StringBuilder("/**\n");
-  if (node.getJSType().isUnknownType()) {
+  JSType type=node.getJSType();
+  if (type == null || type.isUnknownType()) {
     return "";
   }
   FunctionType funType=(FunctionType)node.getJSType();
@@ -22,9 +23,12 @@
     sb.append(" * @return {" + retType + "}\n");
   }
   if (funType.isConstructor() || funType.isInterface()) {
-    ObjectType superInstance=funType.getSuperClassConstructor().getInstanceType();
-    if (!superInstance.toString().equals("Object")) {
-      sb.append(" * @extends {" + superInstance + "}\n");
+    FunctionType superConstructor=funType.getSuperClassConstructor();
+    if (superConstructor != null) {
+      ObjectType superInstance=funType.getSuperClassConstructor().getInstanceType();
+      if (!superInstance.toString().equals("Object")) {
+        sb.append(" * @extends {" + superInstance + "}\n");
+      }
     }
     for (    ObjectType interfaze : funType.getImplementedInterfaces()) {
       sb.append(" * @implements {" + interfaze + "}\n");

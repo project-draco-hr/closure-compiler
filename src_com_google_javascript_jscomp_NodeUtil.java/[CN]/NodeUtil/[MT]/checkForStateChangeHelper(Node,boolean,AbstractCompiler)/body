@@ -34,33 +34,22 @@ break;
 case Token.FUNCTION:
 return !isFunctionAnonymous(n);
 case Token.NEW:
-{
 if (checkForNewObjects) {
 return true;
 }
-if (n.isNoSideEffectsCall()) {
+if (!constructorCallHasSideEffects(n)) {
 break;
-}
-Node constructor=n.getFirstChild();
-if (Token.NAME == constructor.getType()) {
-String className=constructor.getString();
-if (CONSTRUCTORS_WITHOUT_SIDE_EFFECTS.contains(className)) {
-break;
-}
-}
- else {
-}
 }
 return true;
 case Token.CALL:
-if (n.isNoSideEffectsCall()) {
+if (!functionCallHasSideEffects(n,compiler)) {
 break;
 }
 return true;
 default :
 if (isSimpleOperatorType(n.getType())) break;
 if (isAssignmentOp(n)) {
-if (checkForStateChangeHelper(n.getFirstChild(),checkForNewObjects) || checkForStateChangeHelper(n.getLastChild(),checkForNewObjects)) {
+if (checkForStateChangeHelper(n.getFirstChild(),checkForNewObjects,compiler) || checkForStateChangeHelper(n.getLastChild(),checkForNewObjects,compiler)) {
 return true;
 }
 Node current=n.getFirstChild();
@@ -71,7 +60,7 @@ return !(isLiteralValue(current) || current.getType() == Token.FUNCTION);
 return true;
 }
 for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
-if (checkForStateChangeHelper(c,checkForNewObjects)) {
+if (checkForStateChangeHelper(c,checkForNewObjects,compiler)) {
 return true;
 }
 }

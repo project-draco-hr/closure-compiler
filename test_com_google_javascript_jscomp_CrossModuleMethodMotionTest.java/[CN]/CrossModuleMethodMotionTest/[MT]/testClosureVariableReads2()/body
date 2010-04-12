@@ -1,0 +1,3 @@
+{
+  test(createModuleChain("function Foo() {}" + "Foo.prototype.b1 = function() {" + "  var x = 1;"+ "  Foo.prototype.b2 = function() {"+ "    Foo.prototype.b3 = function() {"+ "      x;"+ "    }"+ "  }"+ "};","var y = new Foo(); y.b1();","y = new Foo(); z.b2();","y = new Foo(); z.b3();"),new String[]{STUB_DECLARATIONS + "function Foo() {}" + "Foo.prototype.b1 = JSCompiler_stubMethod(0);","Foo.prototype.b1 = JSCompiler_unstubMethod(0, function() {" + "  var x = 1;" + "  Foo.prototype.b2 = function() {"+ "    Foo.prototype.b3 = function() {"+ "      x;"+ "    }"+ "  }"+ "});"+ "var y = new Foo(); y.b1();","y = new Foo(); z.b2();","y = new Foo(); z.b3();"});
+}

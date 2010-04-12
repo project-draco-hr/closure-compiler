@@ -1,0 +1,49 @@
+{
+  this.filePath=filePath;
+  parseSucceeded=true;
+  BufferedReader lineBuffer=new BufferedReader(fileContents);
+  String line=null;
+  lineNum=0;
+  boolean inMultilineComment=false;
+  try {
+    while (null != (line=lineBuffer.readLine())) {
+      ++lineNum;
+      try {
+        String revisedLine=line;
+        if (inMultilineComment) {
+          endMultilineCommentMatcher.reset(line);
+          if (endMultilineCommentMatcher.lookingAt()) {
+            revisedLine=endMultilineCommentMatcher.replaceFirst("");
+            inMultilineComment=false;
+          }
+ else {
+            revisedLine="";
+          }
+        }
+        if (!inMultilineComment) {
+          commentMatcher.reset(line);
+          if (commentMatcher.find()) {
+            do {
+              if (commentMatcher.group(1) != null && commentMatcher.group(3) == null) {
+                inMultilineComment=true;
+              }
+            }
+ while (commentMatcher.find());
+            revisedLine=commentMatcher.replaceAll("");
+          }
+        }
+        if (!revisedLine.isEmpty()) {
+          parseLine(revisedLine);
+        }
+      }
+ catch (      ParseException e) {
+        errorManager.report(e.isFatal() ? CheckLevel.ERROR : CheckLevel.WARNING,JSError.make(filePath,lineNum,0,e.isFatal() ? PARSE_ERROR : PARSE_WARNING,e.getMessage(),line));
+        parseSucceeded=parseSucceeded && !e.isFatal();
+      }
+    }
+  }
+ catch (  IOException e) {
+    errorManager.report(CheckLevel.ERROR,JSError.make(filePath,0,0,PARSE_ERROR,"Error reading file: " + filePath));
+    parseSucceeded=false;
+  }
+}
