@@ -1,0 +1,9 @@
+{
+  Node n=parseAndTypeCheck("/** @constructor */ var T = function() {};" + "/** @type {!T} */var t; t.x; t;");
+  JSType type=n.getLastChild().getLastChild().getJSType();
+  assertFalse(type.isUnknownType());
+  assertTrue(type instanceof ObjectType);
+  ObjectType objectType=(ObjectType)type;
+  assertFalse(objectType.hasProperty("x"));
+  assertEquals(Sets.newHashSet(objectType),registry.getTypesWithProperty("x"));
+}

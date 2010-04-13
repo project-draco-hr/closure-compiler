@@ -1,0 +1,9 @@
+{
+  Node js1Node=parseAndTypeCheck("/** @constructor */function A() {}" + "A.prototype = {m1: 5, m2: true};" + "A.prototype.m3 = 'third property!';");
+  ObjectType instanceType=getInstanceType(js1Node);
+  assertEquals("A",instanceType.toString());
+  assertEquals(NATIVE_PROPERTIES_COUNT + 3,instanceType.getPropertiesCount());
+  checkObjectType(instanceType,"m1",NUMBER_TYPE);
+  checkObjectType(instanceType,"m2",BOOLEAN_TYPE);
+  checkObjectType(instanceType,"m3",STRING_TYPE);
+}

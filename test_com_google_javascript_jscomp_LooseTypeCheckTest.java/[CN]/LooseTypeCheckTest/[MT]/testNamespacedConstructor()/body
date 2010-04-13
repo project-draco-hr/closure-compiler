@@ -1,0 +1,8 @@
+{
+  Node root=parseAndTypeCheck("var goog = {};" + "/** @constructor */ goog.MyClass = function() {};" + "/** @return {!goog.MyClass} */ "+ "function foo() { return new goog.MyClass(); }");
+  JSType typeOfFoo=root.getLastChild().getJSType();
+  assert(typeOfFoo instanceof FunctionType);
+  JSType retType=((FunctionType)typeOfFoo).getReturnType();
+  assert(retType instanceof ObjectType);
+  assertEquals("goog.MyClass",((ObjectType)retType).getReferenceName());
+}
