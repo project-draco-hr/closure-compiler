@@ -2,7 +2,13 @@
   List<Name> allDefines=Lists.newArrayList();
   for (  Name name : namespace.getNameIndex().values()) {
     if (name.docInfo != null && name.docInfo.isDefine()) {
-      allDefines.add(name);
+      if (isValidDefineType(name.docInfo.getType())) {
+        allDefines.add(name);
+      }
+ else {
+        JSError error=JSError.make(name.declaration.sourceName,name.declaration.node,INVALID_DEFINE_TYPE_ERROR);
+        compiler.report(error);
+      }
     }
  else     if (name.refs != null) {
       for (      Ref ref : name.refs) {

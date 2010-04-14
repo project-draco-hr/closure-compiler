@@ -4,7 +4,7 @@
     isInterface=info.isInterface();
     if (info.hasBaseType()) {
       if (isConstructor || isInterface) {
-        baseType=ObjectType.cast(info.getBaseType().evaluate(scope));
+        baseType=ObjectType.cast(info.getBaseType().evaluate(scope,typeRegistry));
         if (baseType == null) {
           reportWarning(EXTENDS_NON_OBJECT,fnName,baseType.toString());
         }
@@ -16,7 +16,7 @@
     if (isConstructor || isInterface) {
       implementedInterfaces=Lists.newArrayList();
       for (      JSTypeExpression t : info.getImplementedInterfaces()) {
-        ObjectType interType=ObjectType.cast(t.evaluate(scope));
+        ObjectType interType=ObjectType.cast(t.evaluate(scope,typeRegistry));
         if (interType != null) {
           implementedInterfaces.add(interType);
         }

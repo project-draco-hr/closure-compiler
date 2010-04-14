@@ -1,0 +1,22 @@
+{
+  Node nameNode=null;
+switch (node.getType()) {
+case Token.NAME:
+    nameNode=node;
+  break;
+case Token.VAR:
+if (node.hasOneChild()) {
+  nameNode=node.getFirstChild();
+}
+break;
+case Token.ASSIGN:
+nameNode=node.getFirstChild();
+break;
+}
+if (nameNode != null) {
+JSDocInfo info=node.getJSDocInfo();
+if (info != null && info.hasEnumParameterType()) {
+registry.identifyEnumName(nameNode.getQualifiedName());
+}
+}
+}
