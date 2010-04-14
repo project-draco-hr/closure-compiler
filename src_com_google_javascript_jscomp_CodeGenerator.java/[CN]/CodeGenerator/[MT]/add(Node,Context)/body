@@ -157,6 +157,9 @@ add(".");
 add((String)n.getProp(Node.NAME_PROP));
 break;
 case Token.FUNCTION:
+if (n.getClass() != Node.class) {
+throw new Error("Unexpected Node subclass.");
+}
 Preconditions.checkState(childCount == 3);
 boolean funcNeedsParens=(context == Context.START_OF_EXPR);
 if (funcNeedsParens) {
@@ -174,6 +177,9 @@ break;
 case Token.SCRIPT:
 case Token.BLOCK:
 {
+if (n.getClass() != Node.class) {
+throw new Error("Unexpected Node subclass.");
+}
 boolean stripBlock=n.isSyntheticBlock() || ((context != Context.PRESERVE_BLOCK) && (n.getChildCount() < 2));
 if (!stripBlock) {
 cc.beginBlock();

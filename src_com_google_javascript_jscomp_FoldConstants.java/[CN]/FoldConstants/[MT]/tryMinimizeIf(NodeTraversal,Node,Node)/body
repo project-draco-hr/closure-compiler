@@ -12,7 +12,7 @@
         if (isLowerPrecedenceInExpression(t,cond,OR_PRECEDENCE) && isLowerPrecedenceInExpression(t,expr.getFirstChild(),OR_PRECEDENCE)) {
           return;
         }
-        Node or=new Node(Token.OR,cond.removeFirstChild(),expr.removeFirstChild());
+        Node or=new Node(Token.OR,cond.removeFirstChild(),expr.removeFirstChild()).copyInformationFrom(n);
         Node newExpr=NodeUtil.newExpr(or);
         parent.replaceChild(n,newExpr);
         t.getCompiler().reportCodeChange();
@@ -22,7 +22,7 @@
         return;
       }
       n.removeChild(cond);
-      Node and=new Node(Token.AND,cond,expr.removeFirstChild());
+      Node and=new Node(Token.AND,cond,expr.removeFirstChild()).copyInformationFrom(n);
       Node newExpr=NodeUtil.newExpr(and);
       parent.replaceChild(n,newExpr);
       t.getCompiler().reportCodeChange();
@@ -43,7 +43,7 @@
     n.removeChild(cond);
     thenExpr.detachFromParent();
     elseExpr.detachFromParent();
-    Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr);
+    Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr).copyInformationFrom(n);
     Node returnNode=new Node(Token.RETURN,hookNode);
     parent.replaceChild(n,returnNode);
     t.getCompiler().reportCodeChange();
@@ -63,8 +63,8 @@
           Node thenExpr=thenOp.removeFirstChild();
           Node elseExpr=elseOp.getLastChild();
           elseOp.removeChild(elseExpr);
-          Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr);
-          Node assign=new Node(thenOp.getType(),assignName,hookNode);
+          Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr).copyInformationFrom(n);
+          Node assign=new Node(thenOp.getType(),assignName,hookNode).copyInformationFrom(thenOp);
           Node expr=NodeUtil.newExpr(assign);
           parent.replaceChild(n,expr);
           t.getCompiler().reportCodeChange();
@@ -74,7 +74,7 @@
         n.removeChild(cond);
         thenOp.detachFromParent();
         elseOp.detachFromParent();
-        Node hookNode=new Node(Token.HOOK,cond,thenOp,elseOp);
+        Node hookNode=new Node(Token.HOOK,cond,thenOp,elseOp).copyInformationFrom(n);
         Node expr=NodeUtil.newExpr(hookNode);
         parent.replaceChild(n,expr);
         t.getCompiler().reportCodeChange();
@@ -93,7 +93,7 @@
       Node thenExpr=name1.removeChildren();
       Node elseExpr=elseAssign.getLastChild().detachFromParent();
       cond.detachFromParent();
-      Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr);
+      Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr).copyInformationFrom(n);
       var.detachFromParent();
       name1.addChildrenToBack(hookNode);
       parent.replaceChild(n,var);
@@ -109,7 +109,7 @@
       Node thenExpr=thenAssign.getLastChild().detachFromParent();
       Node elseExpr=name2.removeChildren();
       cond.detachFromParent();
-      Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr);
+      Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr).copyInformationFrom(n);
       var.detachFromParent();
       name2.addChildrenToBack(hookNode);
       parent.replaceChild(n,var);

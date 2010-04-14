@@ -3,13 +3,13 @@
   Node functionNode=parent.getLastChild();
   Node expr=parent.getParent();
   Node block=expr.getParent();
-  Node newNameNode=Node.newString(Token.NAME,newMethodName);
+  Node newNameNode=Node.newString(Token.NAME,newMethodName).copyInformationFrom(parent.getFirstChild());
   parent.removeChild(functionNode);
   newNameNode.addChildToFront(functionNode);
   block.replaceChild(expr,new Node(Token.VAR,newNameNode));
   String self=newMethodName + "$self";
   Node argList=functionNode.getFirstChild().getNext();
-  argList.addChildToFront(Node.newString(Token.NAME,self));
+  argList.addChildToFront(Node.newString(Token.NAME,self).copyInformationFrom(functionNode));
   Node body=functionNode.getLastChild();
   replaceReferencesToThis(body,self);
   fixFunctionType(functionNode);

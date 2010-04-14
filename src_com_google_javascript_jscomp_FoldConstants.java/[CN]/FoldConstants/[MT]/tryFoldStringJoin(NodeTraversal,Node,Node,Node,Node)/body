@@ -11,6 +11,7 @@
   List<Node> arrayFoldedChildren=Lists.newLinkedList();
   StringBuilder sb=null;
   int foldedSize=0;
+  Node prev=null;
   Node elem=arrayNode.getFirstChild();
   while (elem != null) {
     if (NodeUtil.isImmutableValue(elem)) {
@@ -24,18 +25,21 @@
     }
  else {
       if (sb != null) {
+        Preconditions.checkNotNull(prev);
         foldedSize+=sb.length() + 2;
-        arrayFoldedChildren.add(Node.newString(sb.toString()));
+        arrayFoldedChildren.add(Node.newString(sb.toString()).copyInformationFrom(prev));
         sb=null;
       }
       foldedSize+=InlineCostEstimator.getCost(elem);
       arrayFoldedChildren.add(elem);
     }
+    prev=elem;
     elem=elem.getNext();
   }
   if (sb != null) {
+    Preconditions.checkNotNull(prev);
     foldedSize+=sb.length() + 2;
-    arrayFoldedChildren.add(Node.newString(sb.toString()));
+    arrayFoldedChildren.add(Node.newString(sb.toString()).copyInformationFrom(prev));
   }
   foldedSize+=arrayFoldedChildren.size() - 1;
   int originalSize=InlineCostEstimator.getCost(n);
@@ -51,7 +55,7 @@ return;
 }
 arrayNode.detachChildren();
 if (foldedStringNode.getType() != Token.STRING) {
-Node replacement=new Node(Token.ADD,Node.newString(""),foldedStringNode);
+Node replacement=new Node(Token.ADD,Node.newString("").copyInformationFrom(right),foldedStringNode);
 foldedStringNode=replacement;
 }
 parent.replaceChild(n,foldedStringNode);

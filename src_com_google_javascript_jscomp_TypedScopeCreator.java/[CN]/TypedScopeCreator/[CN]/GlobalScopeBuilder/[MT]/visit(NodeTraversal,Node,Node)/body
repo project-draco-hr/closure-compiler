@@ -22,7 +22,7 @@ ObjectType objectType=ObjectType.cast(typeRegistry.getType(singletonGetterClassN
 if (objectType != null) {
   FunctionType functionType=objectType.getConstructor();
   if (functionType != null) {
-    FunctionType getterType=new FunctionType(typeRegistry,null,null,new FunctionParamBuilder(typeRegistry).build(),objectType,null);
+    FunctionType getterType=typeRegistry.createFunctionType(objectType);
     codingConvention.applySingletonGetter(functionType,getterType,objectType);
   }
 }
@@ -39,7 +39,7 @@ FunctionType delegateSuperCtor=delegateSuperObject.getConstructor();
 if (delegatorCtor != null && delegateBaseCtor != null && delegateSuperCtor != null) {
 FunctionParamBuilder functionParamBuilder=new FunctionParamBuilder(typeRegistry);
 functionParamBuilder.addRequiredParams(typeRegistry.getNativeType(U2U_CONSTRUCTOR_TYPE));
-FunctionType findDelegate=new FunctionType(typeRegistry,null,null,functionParamBuilder.build(),typeRegistry.createDefaultObjectUnion(delegateBaseObject),null);
+FunctionType findDelegate=typeRegistry.createFunctionType(typeRegistry.createDefaultObjectUnion(delegateBaseObject),functionParamBuilder.build());
 FunctionType delegateProxy=typeRegistry.createConstructorType(delegateBaseObject.getReferenceName(),null,null,null);
 delegateProxy.setPrototypeBasedOn(delegateBaseCtor);
 codingConvention.applyDelegateRelationship(delegateSuperObject,delegateBaseObject,delegatorObject,delegateProxy,findDelegate);
