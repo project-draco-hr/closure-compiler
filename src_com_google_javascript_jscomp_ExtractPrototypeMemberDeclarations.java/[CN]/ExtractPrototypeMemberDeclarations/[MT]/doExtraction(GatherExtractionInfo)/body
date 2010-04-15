@@ -1,6 +1,7 @@
 {
-  Node var=new Node(Token.VAR,Node.newString(Token.NAME,prototypeAlias));
-  compiler.getNodeForCodeInsertion(null).addChildrenToFront(var);
+  Node injectionPoint=compiler.getNodeForCodeInsertion(null);
+  Node var=NodeUtil.newVarNode(prototypeAlias,null).copyInformationFromForTree(injectionPoint);
+  injectionPoint.addChildrenToFront(var);
   for (  ExtractionInstance instance : info.instances) {
     extractInstance(instance);
   }

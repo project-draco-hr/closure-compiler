@@ -14,15 +14,9 @@
             moduleVarParentMap.put(deepestDependency,destParent);
           }
           Node declParent=decl.node.getParent();
-          if (declParent.getType() == Token.VAR && declParent.getChildCount() > 1) {
-            declParent.removeChild(decl.node);
-            Node var=new Node(Token.VAR,decl.node);
-            destParent.addChildToFront(var);
-          }
- else {
-            declParent.detachFromParent();
-            destParent.addChildToFront(declParent);
-          }
+          Preconditions.checkState(declParent.getType() != Token.VAR || declParent.hasOneChild(),"AST not normalized.");
+          declParent.detachFromParent();
+          destParent.addChildToFront(declParent);
           compiler.reportCodeChange();
         }
       }

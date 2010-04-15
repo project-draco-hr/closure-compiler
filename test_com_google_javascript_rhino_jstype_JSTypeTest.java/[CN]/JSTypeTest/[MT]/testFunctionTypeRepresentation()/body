@@ -6,5 +6,5 @@
   assertEquals("function (this:String, *): string",STRING_OBJECT_FUNCTION_TYPE.toString());
   assertEquals("function (...[number]): boolean",registry.createFunctionType(BOOLEAN_TYPE,true,NUMBER_TYPE).toString());
   assertEquals("function (number, ...[string]): boolean",registry.createFunctionType(BOOLEAN_TYPE,true,NUMBER_TYPE,STRING_TYPE).toString());
-  assertEquals("function (this:Date, number): (boolean|number|string)",new FunctionType(registry,null,null,new JSTypeRegistry(null).createParameters(NUMBER_TYPE),NUMBER_STRING_BOOLEAN,DATE_TYPE).toString());
+  assertEquals("function (this:Date, number): (boolean|number|string)",new FunctionBuilder(registry).withParamsNode(registry.createParameters(NUMBER_TYPE)).withReturnType(NUMBER_STRING_BOOLEAN).withTypeOfThis(DATE_TYPE).build().toString());
 }

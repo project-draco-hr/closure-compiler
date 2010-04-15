@@ -24,9 +24,9 @@
         Node valueParent=prop.getValueParent();
         Node proto=prop.getPrototype();
         int stubId=idGenerator.newId();
-        valueParent.replaceChild(value,new Node(Token.CALL,Node.newString(Token.NAME,STUB_METHOD_NAME),Node.newNumber(stubId)));
+        valueParent.replaceChild(value,new Node(Token.CALL,Node.newString(Token.NAME,STUB_METHOD_NAME),Node.newNumber(stubId)).copyInformationFromForTree(value));
         Node unstubParent=compiler.getNodeForCodeInsertion(deepestCommonModuleRef);
-        unstubParent.addChildToFront(new Node(Token.EXPR_RESULT,new Node(Token.ASSIGN,new Node(Token.GETPROP,proto.cloneTree(),Node.newString(Token.STRING,nameInfo.name)),new Node(Token.CALL,Node.newString(Token.NAME,UNSTUB_METHOD_NAME),Node.newNumber(stubId),value))));
+        unstubParent.addChildToFront(new Node(Token.EXPR_RESULT,new Node(Token.ASSIGN,new Node(Token.GETPROP,proto.cloneTree(),Node.newString(Token.STRING,nameInfo.name)),new Node(Token.CALL,Node.newString(Token.NAME,UNSTUB_METHOD_NAME),Node.newNumber(stubId),value))).copyInformationFromForTree(value));
         compiler.reportCodeChange();
         logger.fine("Moved method: " + proto.getQualifiedName() + "."+ nameInfo.name+ " from module "+ prop.getModule()+ " to module "+ deepestCommonModuleRef);
       }

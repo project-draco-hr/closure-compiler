@@ -1,0 +1,14 @@
+{
+  super(registry,name,registry.getNativeObjectType(JSTypeNative.FUNCTION_INSTANCE_TYPE),nativeType);
+  Preconditions.checkArgument(source == null || Token.FUNCTION == source.getType());
+  this.source=source;
+  this.kind=isConstructor ? Kind.CONSTRUCTOR : Kind.ORDINARY;
+  if (isConstructor) {
+    this.typeOfThis=typeOfThis != null && typeOfThis.isNoObjectType() ? typeOfThis : new InstanceObjectType(registry,this,nativeType);
+  }
+ else {
+    this.typeOfThis=typeOfThis != null ? typeOfThis : registry.getNativeObjectType(JSTypeNative.UNKNOWN_TYPE);
+  }
+  this.call=arrowType;
+  this.templateTypeName=templateTypeName;
+}

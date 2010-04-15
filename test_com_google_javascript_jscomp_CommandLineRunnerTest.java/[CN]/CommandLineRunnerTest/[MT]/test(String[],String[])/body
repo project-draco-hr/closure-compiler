@@ -1,13 +1,3 @@
 {
-  Compiler compiler=compile(original);
-  assertEquals("Expected no warnings or errors\n" + "Errors: \n" + Joiner.on("\n").join(compiler.getErrors()) + "Warnings: \n"+ Joiner.on("\n").join(compiler.getWarnings()),0,compiler.getErrors().length + compiler.getWarnings().length);
-  Node root=compiler.getRoot().getLastChild();
-  if (useStringComparison) {
-    assertEquals(Joiner.on("").join(compiled),compiler.toSource());
-  }
- else {
-    Node expectedRoot=parse(compiled);
-    String explanation=expectedRoot.checkTreeEquals(root);
-    assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult: "+ compiler.toSource(root)+ "\n"+ explanation,explanation);
-  }
+  test(original,compiled,null);
 }

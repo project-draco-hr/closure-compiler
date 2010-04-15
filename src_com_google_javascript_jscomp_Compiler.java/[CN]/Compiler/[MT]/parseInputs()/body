@@ -23,12 +23,22 @@
       }
       externsRoot.addChildToBack(n);
     }
-    for (    CompilerInput input : inputs) {
+    List<CompilerInput> annotatedExterns=Lists.newArrayList();
+    Iterator<CompilerInput> inputIterator=inputs.iterator();
+    while (inputIterator.hasNext()) {
+      CompilerInput input=inputIterator.next();
       Node n=input.getAstRoot(this);
       if (hasErrors()) {
         return null;
       }
       if (n == null) {
+        continue;
+      }
+      if (n.getJSDocInfo() != null && n.getJSDocInfo().isExterns()) {
+        externsRoot.addChildToBack(n);
+        input.setIsExtern(true);
+        inputIterator.remove();
+        externs.add(input);
         continue;
       }
       if (devMode) {

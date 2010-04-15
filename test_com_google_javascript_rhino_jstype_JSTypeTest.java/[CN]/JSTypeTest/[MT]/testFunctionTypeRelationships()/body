@@ -1,10 +1,10 @@
 {
-  FunctionType dateMethodEmpty=new FunctionType(registry,null,null,null,null,DATE_TYPE);
-  FunctionType dateMethodWithParam=new FunctionType(registry,null,null,new JSTypeRegistry(null).createParameters(NUMBER_TYPE),null,DATE_TYPE);
-  FunctionType dateMethodWithReturn=new FunctionType(registry,null,null,null,NUMBER_TYPE,DATE_TYPE);
-  FunctionType stringMethodEmpty=new FunctionType(registry,null,null,null,null,STRING_OBJECT_TYPE);
-  FunctionType stringMethodWithParam=new FunctionType(registry,null,null,new JSTypeRegistry(null).createParameters(NUMBER_TYPE),null,STRING_OBJECT_TYPE);
-  FunctionType stringMethodWithReturn=new FunctionType(registry,null,null,null,NUMBER_TYPE,STRING_OBJECT_TYPE);
+  FunctionType dateMethodEmpty=new FunctionBuilder(registry).withTypeOfThis(DATE_TYPE).build();
+  FunctionType dateMethodWithParam=new FunctionBuilder(registry).withParamsNode(registry.createParameters(NUMBER_TYPE)).withTypeOfThis(DATE_TYPE).build();
+  FunctionType dateMethodWithReturn=new FunctionBuilder(registry).withReturnType(NUMBER_TYPE).withTypeOfThis(DATE_TYPE).build();
+  FunctionType stringMethodEmpty=new FunctionBuilder(registry).withTypeOfThis(STRING_OBJECT_TYPE).build();
+  FunctionType stringMethodWithParam=new FunctionBuilder(registry).withParamsNode(registry.createParameters(NUMBER_TYPE)).withTypeOfThis(STRING_OBJECT_TYPE).build();
+  FunctionType stringMethodWithReturn=new FunctionBuilder(registry).withReturnType(NUMBER_TYPE).withTypeOfThis(STRING_OBJECT_TYPE).build();
   assertFalse(stringMethodEmpty.isSubtype(dateMethodEmpty));
   List<FunctionType> allFunctions=Lists.newArrayList(dateMethodEmpty,dateMethodWithParam,dateMethodWithReturn,stringMethodEmpty,stringMethodWithParam,stringMethodWithReturn);
   for (int i=0; i < allFunctions.size(); i++) {
