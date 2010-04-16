@@ -7,8 +7,10 @@
     Node resultNode=getReplacementReturnStatement(current,resultName);
     Node name=Node.newString(Token.LABEL_NAME,labelName);
     Node breakNode=new Node(Token.BREAK,name);
+    breakNode.copyInformationFromForTree(current);
     parent.replaceChild(current,breakNode);
     if (resultNode != null) {
+      resultNode.copyInformationFromForTree(current);
       parent.addChildBefore(resultNode,breakNode);
     }
     current=breakNode;

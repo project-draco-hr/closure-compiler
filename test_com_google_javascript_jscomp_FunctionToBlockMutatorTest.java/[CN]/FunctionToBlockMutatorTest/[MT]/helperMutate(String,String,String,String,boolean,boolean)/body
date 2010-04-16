@@ -2,8 +2,10 @@
   final Compiler compiler=new Compiler();
   final FunctionToBlockMutator mutator=new FunctionToBlockMutator(compiler,compiler.getUniqueNameIdSupplier());
   Node expectedRoot=parse(compiler,expectedResult);
+  Preconditions.checkState(compiler.getErrorCount() == 0);
   final Node expected=expectedRoot.getFirstChild();
   final Node tree=parse(compiler,code);
+  Preconditions.checkState(compiler.getErrorCount() == 0);
   Node externsRoot=new Node(Token.EMPTY);
   Node mainRoot=tree;
   MarkNoSideEffectCalls mark=new MarkNoSideEffectCalls(compiler);
@@ -14,6 +16,7 @@
   Method tester=new Method(){
     public boolean call(    NodeTraversal t,    Node n,    Node parent){
       Node result=mutator.mutate(fnName,fnNode,n,resultName,needsDefaultResult,isCallInLoop);
+      validateSourceInfo(compiler,result);
       String explanation=expected.checkTreeEquals(result);
       assertNull("\nExpected: " + compiler.toSource(expected) + "\nResult: "+ compiler.toSource(result)+ "\n"+ explanation,explanation);
       return true;

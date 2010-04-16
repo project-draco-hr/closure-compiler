@@ -13,7 +13,7 @@
     }
   }
   String tempName=getTempConstantValueName();
-  Node replacementValueNode=Node.newString(Token.NAME,tempName);
+  Node replacementValueNode=Node.newString(Token.NAME,tempName).copyInformationFrom(expr);
   Node tempNameValue;
   if (isLhsOfAssignOp) {
     Preconditions.checkState(NodeUtil.isName(expr) || NodeUtil.isGet(expr));
@@ -29,9 +29,7 @@
     parent.replaceChild(expr,replacementValueNode);
     tempNameValue=expr;
   }
-  Node tempNameNode=Node.newString(Token.NAME,tempName);
-  tempNameNode.addChildToBack(tempNameValue);
-  Node tempVarNode=new Node(Token.VAR,tempNameNode);
+  Node tempVarNode=NodeUtil.newVarNode(tempName,tempNameValue);
   Node injectionPointParent=injectionPoint.getParent();
   injectionPointParent.addChildBefore(tempVarNode,injectionPoint);
   if (firstExtractedNode == null) {
