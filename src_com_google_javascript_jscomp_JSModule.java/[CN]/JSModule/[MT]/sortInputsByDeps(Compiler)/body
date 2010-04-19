@@ -1,21 +1,8 @@
 {
-  final Map<String,CompilerInput> provides=Maps.newHashMap();
   for (  CompilerInput input : inputs) {
     input.setCompiler(compiler);
-    for (    String provide : input.getProvides()) {
-      provides.put(provide,input);
-    }
   }
-  final Multimap<CompilerInput,CompilerInput> deps=HashMultimap.create();
-  for (  CompilerInput input : inputs) {
-    for (    String req : input.getRequires()) {
-      CompilerInput dep=provides.get(req);
-      if (dep != null) {
-        deps.put(input,dep);
-      }
-    }
-  }
-  List<CompilerInput> sortedList=topologicalStableSort(inputs,deps);
+  List<CompilerInput> sortedList=(new SortedDependencies<CompilerInput>(Collections.<CompilerInput>unmodifiableList(inputs))).getSortedList();
   inputs.clear();
   inputs.addAll(sortedList);
 }

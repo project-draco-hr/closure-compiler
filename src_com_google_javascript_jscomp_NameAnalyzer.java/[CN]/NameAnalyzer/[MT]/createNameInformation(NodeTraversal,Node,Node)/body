@@ -14,12 +14,20 @@
     rootNameNode=rootNameNode.getFirstChild();
   }
   if (NodeUtil.isCall(parent) && t.inGlobalScope()) {
-    SubclassRelationship classes=compiler.getCodingConvention().getClassesDefinedByCall(parent);
+    CodingConvention convention=compiler.getCodingConvention();
+    SubclassRelationship classes=convention.getClassesDefinedByCall(parent);
     if (classes != null) {
       NameInformation nameInfo=new NameInformation();
       nameInfo.name=classes.subclassName;
       nameInfo.onlyAffectsClassDef=true;
       nameInfo.superclass=classes.superclassName;
+      return nameInfo;
+    }
+    String singletonGetterClass=convention.getSingletonGetterClassName(parent);
+    if (singletonGetterClass != null) {
+      NameInformation nameInfo=new NameInformation();
+      nameInfo.name=singletonGetterClass;
+      nameInfo.onlyAffectsClassDef=true;
       return nameInfo;
     }
   }

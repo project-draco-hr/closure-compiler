@@ -1,10 +1,4 @@
 {
-  final Multimap<JSModule,JSModule> deps=HashMultimap.create();
-  for (  JSModule module : modules) {
-    for (    JSModule dep : module.getDependencies()) {
-      deps.put(module,dep);
-    }
-  }
-  List<JSModule> sortedList=topologicalStableSort(Lists.newArrayList(modules),deps);
+  List<JSModule> sortedList=(new SortedDependencies<JSModule>(Lists.newArrayList(modules))).getSortedList();
   return sortedList.toArray(new JSModule[sortedList.size()]);
 }

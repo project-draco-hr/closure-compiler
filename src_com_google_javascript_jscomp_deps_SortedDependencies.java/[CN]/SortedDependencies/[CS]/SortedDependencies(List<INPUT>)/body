@@ -1,0 +1,23 @@
+{
+  final Map<String,INPUT> provides=Maps.newHashMap();
+  noProvides=Lists.newArrayList();
+  for (  INPUT input : inputs) {
+    Collection<String> currentProvides=input.getProvides();
+    if (currentProvides.isEmpty()) {
+      noProvides.add(input);
+    }
+    for (    String provide : currentProvides) {
+      provides.put(provide,input);
+    }
+  }
+  final Multimap<INPUT,INPUT> deps=HashMultimap.create();
+  for (  INPUT input : inputs) {
+    for (    String req : input.getRequires()) {
+      INPUT dep=provides.get(req);
+      if (dep != null) {
+        deps.put(input,dep);
+      }
+    }
+  }
+  sortedList=topologicalStableSort(inputs,deps);
+}
