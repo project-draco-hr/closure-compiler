@@ -5,6 +5,7 @@
     GlobalScopeBuilder scopeBuilder=new GlobalScopeBuilder(newScope);
     NodeTraversal.traverse(compiler,root,scopeBuilder);
     scopeBuilder.resolveStubDeclarations();
+    scopeBuilder.resolveTypes();
     for (    Node functionNode : scopeBuilder.nonExternFunctions) {
       JSType type=functionNode.getJSType();
       if (type != null && type instanceof FunctionType) {
@@ -19,8 +20,9 @@
   }
  else {
     newScope=new Scope(parent,root);
-    (new LocalScopeBuilder(newScope)).build();
+    LocalScopeBuilder scopeBuilder=new LocalScopeBuilder(newScope);
+    scopeBuilder.build();
+    scopeBuilder.resolveTypes();
   }
-  typeRegistry.resolveTypesInScope(newScope);
   return newScope;
 }
