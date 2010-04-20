@@ -23,6 +23,13 @@
       }
       externsRoot.addChildToBack(n);
     }
+    if (options.sortClosureDependencies) {
+      for (      CompilerInput input : inputs) {
+        input.setCompiler(this);
+      }
+      SortedDependencies<CompilerInput> sorter=new SortedDependencies<CompilerInput>(inputs);
+      inputs=Lists.newArrayList(sorter.getSortedList());
+    }
     List<CompilerInput> annotatedExterns=Lists.newArrayList();
     Iterator<CompilerInput> inputIterator=inputs.iterator();
     while (inputIterator.hasNext()) {

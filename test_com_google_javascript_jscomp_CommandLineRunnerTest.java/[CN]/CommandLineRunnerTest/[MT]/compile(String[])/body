@@ -3,10 +3,6 @@
   CommandLineRunner runner=new CommandLineRunner(argStrings);
   Compiler compiler=runner.createCompiler();
   lastCompiler=compiler;
-  JSSourceFile[] inputs=new JSSourceFile[original.length];
-  for (int i=0; i < original.length; i++) {
-    inputs[i]=JSSourceFile.fromCode("input" + i,original[i]);
-  }
   CompilerOptions options=runner.createOptions();
   try {
     runner.setRunOptions(options);
@@ -17,6 +13,15 @@
 catch (  IOException e) {
     assert(false);
   }
-  compiler.compile(externs,CompilerTestCase.createModuleChain(original),options);
+  if (useModules) {
+    compiler.compile(externs,CompilerTestCase.createModuleChain(original),options);
+  }
+ else {
+    JSSourceFile[] inputs=new JSSourceFile[original.length];
+    for (int i=0; i < original.length; i++) {
+      inputs[i]=JSSourceFile.fromCode("input" + i,original[i]);
+    }
+    compiler.compile(externs,inputs,options);
+  }
   return compiler;
 }
