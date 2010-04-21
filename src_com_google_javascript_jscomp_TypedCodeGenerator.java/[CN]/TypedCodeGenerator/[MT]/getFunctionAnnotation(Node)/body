@@ -1,11 +1,11 @@
 {
+  Preconditions.checkState(fnNode.getType() == Token.FUNCTION);
   StringBuilder sb=new StringBuilder("/**\n");
-  JSType type=node.getJSType();
+  JSType type=fnNode.getJSType();
   if (type == null || type.isUnknownType()) {
     return "";
   }
-  FunctionType funType=(FunctionType)node.getJSType();
-  Node fnNode=funType.getSource();
+  FunctionType funType=(FunctionType)fnNode.getJSType();
   if (fnNode != null) {
     Node paramNode=NodeUtil.getFnParameters(fnNode).getFirstChild();
     for (    Node n : funType.getParameters()) {
@@ -30,7 +30,11 @@
         sb.append(" * @extends {" + superInstance + "}\n");
       }
     }
+    Set<String> interfaces=Sets.newTreeSet();
     for (    ObjectType interfaze : funType.getImplementedInterfaces()) {
+      interfaces.add(interfaze.toString());
+    }
+    for (    String interfaze : interfaces) {
       sb.append(" * @implements {" + interfaze + "}\n");
     }
     if (funType.isConstructor()) {
