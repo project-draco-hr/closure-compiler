@@ -2,13 +2,13 @@
   Preconditions.checkState(n.getChildCount() == 3);
   Preconditions.checkState(n.getType() == Token.FUNCTION);
   final Node fnName=n.getFirstChild();
-  boolean anonymous=parent != null && NodeUtil.isFunctionAnonymous(n);
-  if (!anonymous) {
+  boolean isFunctionExpression=(parent != null) && NodeUtil.isFunctionExpression(n);
+  if (!isFunctionExpression) {
     traverseBranch(fnName,n);
   }
   curNode=n;
   pushScope(n);
-  if (anonymous) {
+  if (isFunctionExpression) {
     traverseBranch(fnName,n);
   }
   final Node args=fnName.getNext();

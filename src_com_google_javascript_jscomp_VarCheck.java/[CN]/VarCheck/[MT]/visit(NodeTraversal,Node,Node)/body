@@ -5,7 +5,7 @@
   String varName=n.getString();
   if (varName.isEmpty()) {
     Preconditions.checkState(NodeUtil.isFunction(parent));
-    if (!NodeUtil.isAnonymousFunction(parent)) {
+    if (!NodeUtil.isFunctionExpression(parent)) {
       t.report(n,INVALID_FUNCTION_DECL);
     }
     return;
@@ -13,7 +13,7 @@
   Scope scope=t.getScope();
   Scope.Var var=scope.getVar(varName);
   if (var == null) {
-    if (NodeUtil.isAnonymousFunction(parent)) {
+    if (NodeUtil.isFunctionExpression(parent)) {
     }
  else {
       t.report(n,UNDEFINED_VAR_ERROR,varName);

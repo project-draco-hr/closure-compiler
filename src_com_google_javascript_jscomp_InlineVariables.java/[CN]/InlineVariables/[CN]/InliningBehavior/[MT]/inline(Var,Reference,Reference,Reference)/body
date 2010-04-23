@@ -1,11 +1,17 @@
 {
   Node value=init.getAssignedValue();
   Preconditions.checkState(value != null);
+  boolean isFunctionDeclaration=NodeUtil.isFunctionDeclaration(value);
   inlineValue(v,reference,value.detachFromParent());
   if (declaration != init) {
     Node expressRoot=init.getGrandparent();
     Preconditions.checkState(expressRoot.getType() == Token.EXPR_RESULT);
     NodeUtil.removeChild(expressRoot.getParent(),expressRoot);
   }
-  removeDeclaration(declaration);
+  if (!isFunctionDeclaration) {
+    removeDeclaration(declaration);
+  }
+ else {
+    compiler.reportCodeChange();
+  }
 }

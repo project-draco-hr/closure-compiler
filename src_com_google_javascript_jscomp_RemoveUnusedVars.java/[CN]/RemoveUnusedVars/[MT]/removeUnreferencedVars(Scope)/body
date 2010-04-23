@@ -10,8 +10,8 @@
       Preconditions.checkState(toRemove.getType() == Token.VAR || toRemove.getType() == Token.FUNCTION || toRemove.getType() == Token.LP && parent.getType() == Token.FUNCTION,"We should only declare vars and functions and function args");
       if (toRemove.getType() == Token.LP && parent.getType() == Token.FUNCTION) {
       }
- else       if (toRemove.getType() == Token.FUNCTION && NodeUtil.isFunctionAnonymous(toRemove)) {
-        if (!preserveAnonymousFunctionNames) {
+ else       if (NodeUtil.isFunctionExpression(toRemove)) {
+        if (!preserveFunctionExpressionNames) {
           toRemove.getFirstChild().setString("");
           compiler_.reportCodeChange();
         }
