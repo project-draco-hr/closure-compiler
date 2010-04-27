@@ -4,8 +4,16 @@
   }
   Node node=new Node(Token.OBJECTLIT);
   for (  ObjectProperty el : literalNode.getElements()) {
-    node.addChildToBack(transformAsString(el.getLeft()));
-    node.addChildToBack(transform(el.getRight()));
+    if (el.isGetter()) {
+      reportGetter(el);
+    }
+ else     if (el.isSetter()) {
+      reportSetter(el);
+    }
+ else {
+      node.addChildToBack(transformAsString(el.getLeft()));
+      node.addChildToBack(transform(el.getRight()));
+    }
   }
   return node;
 }
