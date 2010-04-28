@@ -1,0 +1,16 @@
+{
+switch (expr.getType()) {
+case Token.ADD:
+    Node left=expr.getFirstChild();
+  Node right=left.getNext();
+prefix=buildReplacement(left,prefix,keyBuilder);
+return buildReplacement(right,prefix,keyBuilder);
+case Token.STRING:
+keyBuilder.append(expr.getString());
+return prefix;
+default :
+keyBuilder.append(placeholderToken);
+prefix=new Node(Token.ADD,prefix,Node.newString(placeholderToken));
+return new Node(Token.ADD,prefix,expr.cloneTree());
+}
+}

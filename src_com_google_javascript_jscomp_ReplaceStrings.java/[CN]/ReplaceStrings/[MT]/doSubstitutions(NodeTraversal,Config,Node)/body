@@ -1,0 +1,15 @@
+{
+  Preconditions.checkState(n.getType() == Token.NEW || n.getType() == Token.CALL);
+  if (config.parameter != Config.REPLACE_ALL_VALUE) {
+    Node arg=n.getChildAtIndex(config.parameter);
+    if (arg != null) {
+      replaceExpression(t,arg,n);
+    }
+  }
+ else {
+    Node firstParam=n.getFirstChild().getNext();
+    for (Node arg=firstParam; arg != null; arg=arg.getNext()) {
+      arg=replaceExpression(t,arg,n);
+    }
+  }
+}
