@@ -1,0 +1,23 @@
+{
+  if (isCallToScopeMethod(n)) {
+    scopeCalls.add(n);
+  }
+  if (t.getScopeDepth() == 2) {
+    if (n.getType() == Token.NAME && parent.getType() == Token.VAR) {
+      if (n.hasChildren() && n.isQualifiedName()) {
+        aliases.put(n.getString(),n.getFirstChild());
+        aliasDefinitions.add(n);
+        t.getScope().undeclare(t.getScope().getVar(n.getString()));
+        return;
+      }
+    }
+  }
+  if (t.getScopeDepth() >= 2) {
+    if (n.getType() == Token.NAME) {
+      Node aliasedNode=aliases.get(n.getString());
+      if (t.getScope().getVar(n.getString()) == null && aliasedNode != null) {
+        aliasUsages.add(new AliasedNode(n,aliasedNode));
+      }
+    }
+  }
+}
