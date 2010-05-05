@@ -1,0 +1,39 @@
+{
+  Node left=callNode.getFirstChild();
+  Node firstParam=left.getNext();
+  AssertionFunctionSpec assertionFunctionSpec=assertionFunctionsMap.get(left.getQualifiedName());
+  if (assertionFunctionSpec == null || firstParam == null) {
+    return scope;
+  }
+  Node assertedNode=assertionFunctionSpec.getAssertedParam(firstParam);
+  if (assertedNode == null) {
+    return scope;
+  }
+  JSTypeNative assertedType=assertionFunctionSpec.getAssertedType();
+  if (assertedType == null) {
+switch (assertedNode.getType()) {
+case Token.NAME:
+      JSType type=getJSType(assertedNode);
+    JSType narrowed=type.restrictByNotNullOrUndefined();
+  if (type != narrowed) {
+    scope=scope.createChildFlowScope();
+    redeclare(scope,assertedNode.getString(),narrowed);
+  }
+break;
+case Token.AND:
+case Token.OR:
+BooleanOutcomePair conditionOutcomes=traverseWithinShortCircuitingBinOp(assertedNode,scope);
+scope=reverseInterpreter.getPreciserScopeKnowingConditionOutcome(assertedNode,conditionOutcomes.getOutcomeFlowScope(assertedNode.getType(),true),true);
+break;
+}
+}
+ else if (assertedNode.getType() == Token.NAME) {
+JSType type=getJSType(assertedNode);
+JSType narrowed=type.getGreatestSubtype(getNativeType(assertedType));
+if (type != narrowed) {
+scope=scope.createChildFlowScope();
+redeclare(scope,assertedNode.getString(),narrowed);
+}
+}
+return scope;
+}

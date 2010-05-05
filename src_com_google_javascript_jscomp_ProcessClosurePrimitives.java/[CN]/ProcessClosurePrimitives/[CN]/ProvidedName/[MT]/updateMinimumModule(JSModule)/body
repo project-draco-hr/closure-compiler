@@ -1,10 +1,11 @@
 {
-  if (moduleGraph != null) {
-    if (minimumModule == null) {
-      minimumModule=newModule;
-    }
+  if (minimumModule == null) {
+    minimumModule=newModule;
+  }
+ else   if (moduleGraph != null) {
+    minimumModule=moduleGraph.getDeepestCommonDependencyInclusive(minimumModule,newModule);
+  }
  else {
-      minimumModule=moduleGraph.getDeepestCommonDependencyInclusive(minimumModule,newModule);
-    }
+    Preconditions.checkState(newModule == minimumModule,"Missing module graph");
   }
 }

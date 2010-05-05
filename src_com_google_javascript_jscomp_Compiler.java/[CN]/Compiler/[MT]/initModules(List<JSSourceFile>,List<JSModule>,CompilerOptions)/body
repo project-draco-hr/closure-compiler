@@ -4,14 +4,19 @@
   fillEmptyModules(modules);
   this.externs=makeCompilerInput(externs,true);
   this.modules=modules;
-  try {
-    this.moduleGraph=new JSModuleGraph(modules);
+  if (modules.size() > 1) {
+    try {
+      this.moduleGraph=new JSModuleGraph(modules);
+    }
+ catch (    JSModuleGraph.ModuleDependenceException e) {
+      report(JSError.make(MODULE_DEPENDENCY_ERROR,e.getModule().getName(),e.getDependentModule().getName()));
+      return;
+    }
   }
- catch (  JSModuleGraph.ModuleDependenceException e) {
-    report(JSError.make(MODULE_DEPENDENCY_ERROR,e.getModule().getName(),e.getDependentModule().getName()));
-    return;
+ else {
+    this.moduleGraph=null;
   }
-  this.inputs=getAllInputsFromModules();
+  this.inputs=getAllInputsFromModules(modules);
   initBasedOnOptions();
   initInputsByNameMap();
 }
