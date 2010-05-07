@@ -3,6 +3,10 @@
     Set<String> suppressions=new HashSet<String>();
     while (true) {
       if (match(JsDocToken.STRING)) {
+        String name=stream.getString();
+        if (!suppressionNames.contains(name)) {
+          parser.addWarning("msg.jsdoc.suppress.unknown",name,stream.getLineno(),stream.getCharno());
+        }
         suppressions.add(stream.getString());
         token=next();
       }

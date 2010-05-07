@@ -27,8 +27,7 @@
       for (      CompilerInput input : inputs) {
         input.setCompiler(this);
       }
-      SortedDependencies<CompilerInput> sorter=new SortedDependencies<CompilerInput>(inputs);
-      inputs=Lists.newArrayList(sorter.getSortedDependenciesOf(sorter.getInputsWithoutProvides()));
+      inputs=(moduleGraph == null ? new JSModuleGraph(modules) : moduleGraph).manageDependencies(inputs);
     }
     boolean liftedExterns=false;
     for (    CompilerInput input : inputs) {
