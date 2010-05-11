@@ -1,25 +1,27 @@
 {
   Traversal traversal=new Traversal();
   NodeTraversal.traverse(compiler,root,traversal);
-  for (  AliasedNode entry : traversal.getAliasUsages()) {
-    entry.getAliasReference().getParent().replaceChild(entry.getAliasReference(),entry.getAliasDefinition().cloneTree());
-  }
-  for (  Node aliasDefinition : traversal.getAliasDefinitions()) {
-    if (aliasDefinition.getParent().getType() == Token.VAR && aliasDefinition.getParent().getChildCount() == 1) {
-      aliasDefinition.getParent().detachFromParent();
+  if (!traversal.hasErrors()) {
+    for (    AliasedNode entry : traversal.getAliasUsages()) {
+      entry.getAliasReference().getParent().replaceChild(entry.getAliasReference(),entry.getAliasDefinition().cloneTree());
     }
+    for (    Node aliasDefinition : traversal.getAliasDefinitions()) {
+      if (aliasDefinition.getParent().getType() == Token.VAR && aliasDefinition.getParent().getChildCount() == 1) {
+        aliasDefinition.getParent().detachFromParent();
+      }
  else {
-      aliasDefinition.detachFromParent();
+        aliasDefinition.detachFromParent();
+      }
     }
-  }
-  for (  Node scopeCall : traversal.getScopeCalls()) {
-    Node expressionWithScopeCall=scopeCall.getParent();
-    Node scopeClosureBlock=scopeCall.getLastChild().getLastChild();
-    scopeClosureBlock.detachFromParent();
-    expressionWithScopeCall.getParent().replaceChild(expressionWithScopeCall,scopeClosureBlock);
-    NodeUtil.tryMergeBlock(scopeClosureBlock);
-  }
-  if (traversal.getAliasUsages().size() > 0 || traversal.getAliasDefinitions().size() > 0 || traversal.getScopeCalls().size() > 0) {
-    compiler.reportCodeChange();
+    for (    Node scopeCall : traversal.getScopeCalls()) {
+      Node expressionWithScopeCall=scopeCall.getParent();
+      Node scopeClosureBlock=scopeCall.getLastChild().getLastChild();
+      scopeClosureBlock.detachFromParent();
+      expressionWithScopeCall.getParent().replaceChild(expressionWithScopeCall,scopeClosureBlock);
+      NodeUtil.tryMergeBlock(scopeClosureBlock);
+    }
+    if (traversal.getAliasUsages().size() > 0 || traversal.getAliasDefinitions().size() > 0 || traversal.getScopeCalls().size() > 0) {
+      compiler.reportCodeChange();
+    }
   }
 }
