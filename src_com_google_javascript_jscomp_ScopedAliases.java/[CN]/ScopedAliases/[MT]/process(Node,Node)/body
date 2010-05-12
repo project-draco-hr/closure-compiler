@@ -2,8 +2,8 @@
   Traversal traversal=new Traversal();
   NodeTraversal.traverse(compiler,root,traversal);
   if (!traversal.hasErrors()) {
-    for (    AliasedNode entry : traversal.getAliasUsages()) {
-      entry.getAliasReference().getParent().replaceChild(entry.getAliasReference(),entry.getAliasDefinition().cloneTree());
+    for (    AliasUsage aliasUsage : traversal.getAliasUsages()) {
+      aliasUsage.applyAlias();
     }
     for (    Node aliasDefinition : traversal.getAliasDefinitions()) {
       if (aliasDefinition.getParent().getType() == Token.VAR && aliasDefinition.getParent().getChildCount() == 1) {

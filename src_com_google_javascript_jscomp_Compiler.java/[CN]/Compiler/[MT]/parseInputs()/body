@@ -26,6 +26,9 @@
     if (options.manageClosureDependencies) {
       for (      CompilerInput input : inputs) {
         input.setCompiler(this);
+        for (        String provide : input.getProvides()) {
+          getTypeRegistry().forwardDeclareType(provide);
+        }
       }
       inputs=(moduleGraph == null ? new JSModuleGraph(modules) : moduleGraph).manageDependencies(inputs);
     }
