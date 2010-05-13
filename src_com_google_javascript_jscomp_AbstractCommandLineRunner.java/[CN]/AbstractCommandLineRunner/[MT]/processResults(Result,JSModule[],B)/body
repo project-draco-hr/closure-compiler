@@ -37,7 +37,7 @@
   if (result.success) {
     if (modules == null) {
       writeOutput(out,compiler,compiler.toSource(),config.outputWrapper,config.outputWrapperMarker);
-      outputSourceMap(options,options.jsOutputFile);
+      outputSourceMap(options);
     }
  else {
       String moduleFilePrefix=config.moduleOutputPathPrefix;
@@ -45,11 +45,11 @@
       Map<String,String> moduleWrappers=parseModuleWrappers(config.moduleWrapper,modules);
       PrintStream mapOut=null;
       if (!shouldGenerateMapPerModule(options)) {
-        mapOut=openSourceMapStream(options,moduleFilePrefix);
+        mapOut=toPrintStream(expandSourceMapPath(options,null));
       }
       for (      JSModule m : modules) {
         if (shouldGenerateMapPerModule(options)) {
-          mapOut=openSourceMapStream(options,moduleFilePrefix + m.getName() + ".js");
+          mapOut=toPrintStream(expandSourceMapPath(options,m));
         }
         PrintStream ps=new PrintStream(new FileOutputStream(moduleFilePrefix + m.getName() + ".js"));
         if (options.sourceMapOutputPath != null) {
