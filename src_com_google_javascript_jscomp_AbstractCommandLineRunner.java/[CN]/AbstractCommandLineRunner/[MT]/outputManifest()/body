@@ -1,0 +1,15 @@
+{
+  String outputManifest=config.outputManifest;
+  if (Strings.isEmpty(outputManifest)) {
+    return;
+  }
+  if (shouldGenerateManifestPerModule()) {
+    Iterable<JSModule> modules=compiler.getModuleGraph().getAllModules();
+    for (    JSModule module : modules) {
+      printManifestTo(module.getInputs(),expandManifest(module));
+    }
+  }
+ else {
+    printManifestTo(compiler.getInputsInOrder(),expandManifest(null));
+  }
+}
