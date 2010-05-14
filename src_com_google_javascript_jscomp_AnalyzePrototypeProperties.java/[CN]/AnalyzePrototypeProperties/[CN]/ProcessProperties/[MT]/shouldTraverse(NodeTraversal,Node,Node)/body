@@ -1,10 +1,13 @@
 {
   if (isPrototypePropertyAssign(n)) {
-    symbolStack.push(getNameInfoForName(n.getFirstChild().getLastChild().getString(),PROPERTY));
+    symbolStack.push(new NameContext(getNameInfoForName(n.getFirstChild().getLastChild().getString(),PROPERTY)));
   }
- else   if (isGlobalFunctionDeclaration(t,n,parent)) {
+ else   if (isGlobalFunctionDeclaration(t,n)) {
     String name=parent.getType() == Token.NAME ? parent.getString() : n.getFirstChild().getString();
-    symbolStack.push(getNameInfoForName(name,VAR));
+    symbolStack.push(new NameContext(getNameInfoForName(name,VAR)));
+  }
+ else   if (NodeUtil.isFunction(n)) {
+    symbolStack.push(new NameContext(anonymousNode));
   }
   return true;
 }
