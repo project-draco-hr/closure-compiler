@@ -18,11 +18,14 @@
   }
   if (t.getScopeDepth() == 2) {
     if (n.getType() == Token.NAME && parent.getType() == Token.VAR) {
-      if (n.hasChildren() && n.isQualifiedName()) {
+      if (n.hasChildren() && n.getFirstChild().isQualifiedName()) {
         aliases.put(n.getString(),n.getFirstChild());
         aliasDefinitions.add(n);
         t.getScope().undeclare(t.getScope().getVar(n.getString()));
         return;
+      }
+ else {
+        report(t,n,GOOG_SCOPE_NON_ALIAS_LOCAL,n.getString());
       }
     }
   }

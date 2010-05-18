@@ -1,0 +1,23 @@
+{
+  if (isFunctionType() && that.isFunctionType()) {
+    if (equals(that)) {
+      return this;
+    }
+    if (isOrdinaryFunction() && that.isOrdinaryFunction() && that instanceof FunctionType) {
+      FunctionType other=(FunctionType)that;
+      if (call.hasEqualParameters(other.call) && Objects.equal(typeOfThis,other.typeOfThis)) {
+        JSType newReturnType=leastSuper ? call.returnType.getLeastSupertype(other.call.returnType) : call.returnType.getGreatestSubtype(other.call.returnType);
+        return new FunctionType(registry,null,null,new ArrowType(registry,call.parameters,newReturnType,call.returnTypeInferred || other.call.returnTypeInferred),typeOfThis,null,false,false);
+      }
+    }
+    JSType functionInstance=registry.getNativeType(JSTypeNative.FUNCTION_INSTANCE_TYPE);
+    if (functionInstance.equals(that)) {
+      return leastSuper ? that : this;
+    }
+ else     if (functionInstance.equals(this)) {
+      return leastSuper ? this : that;
+    }
+    return leastSuper ? registry.getNativeType(JSTypeNative.U2U_CONSTRUCTOR_TYPE) : registry.getNativeType(JSTypeNative.NO_OBJECT_TYPE);
+  }
+  return leastSuper ? super.getLeastSupertype(that) : super.getGreatestSubtype(that);
+}

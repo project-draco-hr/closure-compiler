@@ -1,0 +1,10 @@
+{
+  FunctionType retString=new FunctionBuilder(registry).withParamsNode(registry.createParameters()).withInferredReturnType(STRING_TYPE).build();
+  FunctionType retNumber=new FunctionBuilder(registry).withParamsNode(registry.createParameters()).withReturnType(NUMBER_TYPE).build();
+  assertLeastSupertype("function (): (number|string)",retString,retNumber);
+  assertGreatestSubtype("function (): None",retString,retNumber);
+  assertTrue(retString.isReturnTypeInferred());
+  assertFalse(retNumber.isReturnTypeInferred());
+  assertTrue(((FunctionType)retString.getLeastSupertype(retNumber)).isReturnTypeInferred());
+  assertTrue(((FunctionType)retString.getGreatestSubtype(retString)).isReturnTypeInferred());
+}

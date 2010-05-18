@@ -4,7 +4,7 @@
   }
   StringBuilder b=new StringBuilder(32);
   b.append("function (");
-  int paramNum=(call == null || call.parameters == null) ? 0 : call.parameters.getChildCount();
+  int paramNum=call.parameters.getChildCount();
   boolean hasKnownTypeOfThis=!typeOfThis.isUnknownType();
   if (hasKnownTypeOfThis) {
     b.append("this:");
@@ -33,10 +33,7 @@
       p=p.getNext();
     }
   }
-  b.append(")");
-  if (call != null && call.returnType != null) {
-    b.append(": ");
-    b.append(call.returnType);
-  }
+  b.append("): ");
+  b.append(call.returnType);
   return b.toString();
 }
