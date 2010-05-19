@@ -1,0 +1,24 @@
+{
+  JsMessage replacement=bundle.getMessage(message.getId());
+  if (replacement == null) {
+    if (strictReplacement) {
+      compiler.report(JSError.make(message.getSourceName(),definition.getMessageNode(),BUNDLE_DOES_NOT_HAVE_THE_MESSAGE,message.getId()));
+      return;
+    }
+ else {
+      replacement=message;
+    }
+  }
+  Node newValue;
+  Node msgNode=definition.getMessageNode();
+  try {
+    newValue=getNewValueNode(replacement,msgNode);
+  }
+ catch (  MalformedException e) {
+    compiler.report(JSError.make(message.getSourceName(),e.getNode(),MESSAGE_TREE_MALFORMED,e.getMessage()));
+    newValue=msgNode;
+  }
+  if (newValue != msgNode) {
+    definition.getMessageParentNode().replaceChild(msgNode,newValue);
+  }
+}

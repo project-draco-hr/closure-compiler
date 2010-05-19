@@ -1,0 +1,45 @@
+{
+  if (node.getType() != Token.CALL) {
+    throw new MalformedException("Message must be initialized using " + MSG_FUNCTION_NAME + " function.",node);
+  }
+  Node fnNameNode=node.getFirstChild();
+  if (!MSG_FUNCTION_NAME.equals(fnNameNode.getQualifiedName())) {
+    throw new MalformedException("Message initialized using unrecognized function. " + "Please use " + MSG_FUNCTION_NAME + "() instead.",fnNameNode);
+  }
+  Node stringLiteralNode=fnNameNode.getNext();
+  if (stringLiteralNode == null) {
+    throw new MalformedException("Message string literal expected",stringLiteralNode);
+  }
+  parseMessageTextNode(builder,stringLiteralNode);
+  Node objLitNode=stringLiteralNode.getNext();
+  Set<String> phNames=Sets.newHashSet();
+  if (objLitNode != null) {
+    if (objLitNode.getType() != Token.OBJECTLIT) {
+      throw new MalformedException("OBJLIT node expected",objLitNode);
+    }
+    for (Node aNode=objLitNode.getFirstChild(); aNode != null; aNode=aNode.getNext().getNext()) {
+      if (aNode.getType() != Token.STRING) {
+        throw new MalformedException("STRING node expected as OBJLIT key",aNode);
+      }
+      String phName=aNode.getString();
+      if (!isLowerCamelCaseWithNumericSuffixes(phName)) {
+        throw new MalformedException("Placeholder name not in lowerCamelCase: " + phName,aNode);
+      }
+      if (phNames.contains(phName)) {
+        throw new MalformedException("Duplicate placeholder name: " + phName,aNode);
+      }
+      phNames.add(phName);
+    }
+  }
+  Set<String> usedPlaceholders=builder.getPlaceholders();
+  for (  String phName : usedPlaceholders) {
+    if (!phNames.contains(phName)) {
+      throw new MalformedException("Unrecognized message placeholder referenced: " + phName,objLitNode);
+    }
+  }
+  for (  String phName : phNames) {
+    if (!usedPlaceholders.contains(phName)) {
+      throw new MalformedException("Unused message placeholder: " + phName,objLitNode);
+    }
+  }
+}

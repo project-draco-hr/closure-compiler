@@ -1,0 +1,28 @@
+{
+  String value=extractStringFromStringExprNode(node);
+  while (true) {
+    int phBegin=value.indexOf(PH_JS_PREFIX);
+    if (phBegin < 0) {
+      builder.appendStringPart(value);
+      return;
+    }
+ else {
+      if (phBegin > 0) {
+        builder.appendStringPart(value.substring(0,phBegin));
+      }
+      int phEnd=value.indexOf(PH_JS_SUFFIX,phBegin);
+      if (phEnd < 0) {
+        throw new MalformedException("Placeholder incorrectly formatted in: " + builder.getKey(),node);
+      }
+      String phName=value.substring(phBegin + PH_JS_PREFIX.length(),phEnd);
+      builder.appendPlaceholderReference(phName);
+      int nextPos=phEnd + PH_JS_SUFFIX.length();
+      if (nextPos < value.length()) {
+        value=value.substring(nextPos);
+      }
+ else {
+        return;
+      }
+    }
+  }
+}

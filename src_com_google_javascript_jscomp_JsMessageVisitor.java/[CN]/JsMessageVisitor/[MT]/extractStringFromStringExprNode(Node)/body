@@ -1,0 +1,14 @@
+{
+switch (node.getType()) {
+case Token.STRING:
+    return node.getString();
+case Token.ADD:
+  StringBuilder sb=new StringBuilder();
+for (Node child : node.children()) {
+  sb.append(extractStringFromStringExprNode(child));
+}
+return sb.toString();
+default :
+throw new MalformedException("STRING or ADD node expected; found: " + getReadableTokenName(node),node);
+}
+}

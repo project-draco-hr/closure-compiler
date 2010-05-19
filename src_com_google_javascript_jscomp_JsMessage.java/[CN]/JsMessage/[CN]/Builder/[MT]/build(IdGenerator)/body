@@ -1,0 +1,20 @@
+{
+  boolean isAnonymous=false;
+  boolean isExternal=false;
+  String id=null;
+  if (getKey() == null) {
+    key=JsMessageVisitor.MSG_PREFIX + fingerprint(getParts());
+    isAnonymous=true;
+  }
+  if (!isAnonymous) {
+    String externalId=getExternalMessageId(key);
+    if (externalId != null) {
+      isExternal=true;
+      id=externalId;
+    }
+  }
+  if (!isExternal) {
+    id=idGenerator == null ? key : idGenerator.generateId(key,parts);
+  }
+  return new JsMessage(sourceName,key,isAnonymous,isExternal,id,parts,placeholders,desc,hidden);
+}

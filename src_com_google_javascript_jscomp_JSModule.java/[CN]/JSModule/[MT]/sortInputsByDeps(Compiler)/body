@@ -2,7 +2,12 @@
   for (  CompilerInput input : inputs) {
     input.setCompiler(compiler);
   }
-  List<CompilerInput> sortedList=(new SortedDependencies<CompilerInput>(Collections.<CompilerInput>unmodifiableList(inputs))).getSortedList();
-  inputs.clear();
-  inputs.addAll(sortedList);
+  try {
+    List<CompilerInput> sortedList=(new SortedDependencies<CompilerInput>(Collections.<CompilerInput>unmodifiableList(inputs))).getSortedList();
+    inputs.clear();
+    inputs.addAll(sortedList);
+  }
+ catch (  CircularDependencyException e) {
+    compiler.report(JSError.make(CIRCULAR_DEPENDENCY_ERROR,e.getMessage()));
+  }
 }

@@ -1,0 +1,28 @@
+{
+  int suffixStart=input.length();
+  while (suffixStart > 0) {
+    char ch='\0';
+    int numberStart=suffixStart;
+    while (numberStart > 0) {
+      ch=input.charAt(numberStart - 1);
+      if (Character.isDigit(ch)) {
+        numberStart--;
+      }
+ else {
+        break;
+      }
+    }
+    if ((numberStart > 0) && (numberStart < suffixStart) && (ch == '_')) {
+      suffixStart=numberStart - 1;
+    }
+ else {
+      break;
+    }
+  }
+  if (suffixStart == input.length()) {
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL,input);
+  }
+ else {
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL,input.substring(0,suffixStart)) + input.substring(suffixStart);
+  }
+}

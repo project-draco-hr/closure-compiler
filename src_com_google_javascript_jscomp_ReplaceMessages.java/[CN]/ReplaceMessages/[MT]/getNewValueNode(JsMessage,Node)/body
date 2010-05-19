@@ -1,0 +1,16 @@
+{
+switch (origValueNode.getType()) {
+case Token.FUNCTION:
+    updateFunctionNode(message,origValueNode);
+  return origValueNode;
+case Token.STRING:
+origValueNode.setString(message.toString());
+return origValueNode;
+case Token.ADD:
+return Node.newString(message.toString());
+case Token.CALL:
+return replaceCallNode(message,origValueNode);
+default :
+throw new MalformedException("Expected FUNCTION, STRING, or ADD node; found: " + origValueNode.getType(),origValueNode);
+}
+}

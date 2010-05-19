@@ -20,4 +20,9 @@
     }
   }
   sortedList=topologicalStableSort(inputs,deps);
+  if (sortedList.size() < inputs.size()) {
+    List<INPUT> subGraph=Lists.newArrayList(inputs);
+    subGraph.removeAll(sortedList);
+    throw new CircularDependencyException(cycleToString(findCycle(subGraph,deps)));
+  }
 }

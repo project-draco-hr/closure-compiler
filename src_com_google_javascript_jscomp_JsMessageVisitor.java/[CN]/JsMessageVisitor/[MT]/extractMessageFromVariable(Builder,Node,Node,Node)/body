@@ -1,0 +1,20 @@
+{
+  Node valueNode=nameNode.getFirstChild();
+switch (valueNode.getType()) {
+case Token.STRING:
+case Token.ADD:
+    maybeInitMetaDataFromJsDocOrHelpVar(builder,parentNode,grandParentNode);
+  builder.appendStringPart(extractStringFromStringExprNode(valueNode));
+break;
+case Token.FUNCTION:
+maybeInitMetaDataFromJsDocOrHelpVar(builder,parentNode,grandParentNode);
+extractFromFunctionNode(builder,valueNode);
+break;
+case Token.CALL:
+maybeInitMetaDataFromJsDoc(builder,parentNode);
+extractFromCallNode(builder,valueNode);
+break;
+default :
+throw new MalformedException("Cannot parse value of message " + builder.getKey(),valueNode);
+}
+}

@@ -1,0 +1,38 @@
+{
+  Set<String> phNames=Sets.newHashSet();
+  for (  Node fnChild : node.children()) {
+switch (fnChild.getType()) {
+case Token.NAME:
+      break;
+case Token.LP:
+    for (    Node argumentNode : fnChild.children()) {
+      if (argumentNode.getType() == Token.NAME) {
+        String phName=argumentNode.getString();
+        if (phNames.contains(phName)) {
+          throw new MalformedException("Duplicate placeholder name: " + phName,argumentNode);
+        }
+ else {
+          phNames.add(phName);
+        }
+      }
+    }
+  break;
+case Token.BLOCK:
+Node returnNode=fnChild.getFirstChild();
+if (returnNode.getType() != Token.RETURN) {
+throw new MalformedException("RETURN node expected; found: " + getReadableTokenName(returnNode),returnNode);
+}
+for (Node child : returnNode.children()) {
+extractFromReturnDescendant(builder,child);
+}
+for (String phName : builder.getPlaceholders()) {
+if (!phNames.contains(phName)) {
+throw new MalformedException("Unrecognized message placeholder referenced: " + phName,returnNode);
+}
+}
+break;
+default :
+throw new MalformedException("NAME, LP, or BLOCK node expected; found: " + getReadableTokenName(node),fnChild);
+}
+}
+}

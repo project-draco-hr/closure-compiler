@@ -30,7 +30,13 @@
           getTypeRegistry().forwardDeclareType(provide);
         }
       }
-      inputs=(moduleGraph == null ? new JSModuleGraph(modules) : moduleGraph).manageDependencies(inputs);
+      try {
+        inputs=(moduleGraph == null ? new JSModuleGraph(modules) : moduleGraph).manageDependencies(inputs);
+      }
+ catch (      CircularDependencyException e) {
+        report(JSError.make(JSModule.CIRCULAR_DEPENDENCY_ERROR,e.getMessage()));
+        return null;
+      }
     }
     boolean liftedExterns=false;
     for (    CompilerInput input : inputs) {

@@ -1,0 +1,17 @@
+{
+switch (node.getType()) {
+case Token.STRING:
+    builder.appendStringPart(node.getString());
+  break;
+case Token.NAME:
+builder.appendPlaceholderReference(node.getString());
+break;
+case Token.ADD:
+for (Node child : node.children()) {
+extractFromReturnDescendant(builder,child);
+}
+break;
+default :
+throw new MalformedException("STRING, NAME, or ADD node expected; found: " + getReadableTokenName(node),node);
+}
+}

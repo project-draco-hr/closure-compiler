@@ -1,0 +1,27 @@
+{
+  CharSequence part=partsIterator.next();
+  Node partNode=null;
+  if (part instanceof JsMessage.PlaceholderReference) {
+    JsMessage.PlaceholderReference phRef=(JsMessage.PlaceholderReference)part;
+    for (    Node node : argListNode.children()) {
+      if (node.getType() == Token.NAME) {
+        String arg=node.getString();
+        if (arg.equalsIgnoreCase(phRef.getName())) {
+          partNode=Node.newString(Token.NAME,arg);
+        }
+      }
+    }
+    if (partNode == null) {
+      throw new MalformedException("Unrecognized message placeholder referenced: " + phRef.getName(),argListNode);
+    }
+  }
+ else {
+    partNode=Node.newString(part.toString());
+  }
+  if (partsIterator.hasNext()) {
+    return new Node(Token.ADD,partNode,constructAddOrStringNode(partsIterator,argListNode));
+  }
+ else {
+    return partNode;
+  }
+}

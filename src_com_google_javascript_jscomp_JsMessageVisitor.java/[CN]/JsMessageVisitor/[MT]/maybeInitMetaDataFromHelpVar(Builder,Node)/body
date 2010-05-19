@@ -1,0 +1,19 @@
+{
+  if ((sibling != null) && (sibling.getType() == Token.VAR)) {
+    Node nameNode=sibling.getFirstChild();
+    String name=nameNode.getString();
+    if (name.equals(builder.getKey() + DESC_SUFFIX)) {
+      Node valueNode=nameNode.getFirstChild();
+      String desc=extractStringFromStringExprNode(valueNode);
+      if (desc.startsWith(HIDDEN_DESC_PREFIX)) {
+        builder.setDesc(desc.substring(HIDDEN_DESC_PREFIX.length()).trim());
+        builder.setIsHidden(true);
+      }
+ else {
+        builder.setDesc(desc);
+      }
+      return true;
+    }
+  }
+  return false;
+}
