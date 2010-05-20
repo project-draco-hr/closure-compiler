@@ -1,0 +1,10 @@
+{
+  extractMessagesSafely("var MSG_WITH_CAMELCASE = goog.getMsg(" + "'Slide {$slideNumber}:', {'slideNumber': opt_index + 1});");
+  assertEquals(1,messages.size());
+  JsMessage msg=messages.get(0);
+  assertEquals("MSG_WITH_CAMELCASE",msg.getKey());
+  assertEquals("Slide {$slideNumber}:",msg.toString());
+  List<CharSequence> parts=msg.parts();
+  assertEquals(3,parts.size());
+  assertEquals("slideNumber",((JsMessage.PlaceholderReference)parts.get(1)).getName());
+}

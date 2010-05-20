@@ -1,0 +1,7 @@
+{
+  registerMessage(new JsMessage.Builder("MSG_B").appendStringPart("Ola, ").appendPlaceholderReference("chimp").build());
+  process("var MSG_B = function(chump) {return chump + 'x'};");
+  assertEquals(1,compiler.getErrors().length);
+  JSError error=compiler.getErrors()[0];
+  assertEquals("Message parse tree malformed. " + "Unrecognized message placeholder referenced: chimp",error.description);
+}

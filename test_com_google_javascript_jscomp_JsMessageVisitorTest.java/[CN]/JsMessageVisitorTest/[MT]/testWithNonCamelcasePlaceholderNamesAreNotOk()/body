@@ -1,0 +1,9 @@
+{
+  extractMessages("var MSG_WITH_CAMELCASE = goog.getMsg(" + "'Slide {$slide_number}:', {'slide_number': opt_index + 1});");
+  assertEquals(0,messages.size());
+  JSError[] errors=compiler.getErrors();
+  assertEquals(1,errors.length);
+  JSError error=errors[0];
+  assertEquals(JsMessageVisitor.MESSAGE_TREE_MALFORMED,error.getType());
+  assertEquals("Message parse tree malformed. Placeholder name not in " + "lowerCamelCase: slide_number",error.description);
+}

@@ -1,0 +1,9 @@
+{
+  extractMessages("var MSG_HELLO = goog.getMsg('a' + + 'b')");
+  assertEquals(1,compiler.getErrorCount());
+  assertEquals(0,compiler.getWarningCount());
+  assertEquals(0,messages.size());
+  JSError mailformedTreeError=compiler.getErrors()[0];
+  assertEquals(JsMessageVisitor.MESSAGE_TREE_MALFORMED,mailformedTreeError.getType());
+  assertEquals("Message parse tree malformed. " + "STRING or ADD node expected; found: POS",mailformedTreeError.description);
+}

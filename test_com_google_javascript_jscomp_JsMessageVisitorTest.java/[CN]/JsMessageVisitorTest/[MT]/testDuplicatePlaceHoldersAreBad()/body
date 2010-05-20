@@ -1,0 +1,9 @@
+{
+  extractMessages("var MSG_FOO = goog.getMsg(" + "'{$foo}:', {'foo': 1, 'foo' : 2});");
+  assertEquals(0,messages.size());
+  JSError[] errors=compiler.getErrors();
+  assertEquals(1,errors.length);
+  JSError error=errors[0];
+  assertEquals(JsMessageVisitor.MESSAGE_TREE_MALFORMED,error.getType());
+  assertEquals("Message parse tree malformed. Duplicate placeholder " + "name: foo",error.description);
+}

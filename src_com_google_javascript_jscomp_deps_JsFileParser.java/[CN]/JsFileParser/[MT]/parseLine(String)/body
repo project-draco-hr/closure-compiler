@@ -1,6 +1,8 @@
 {
+  boolean hasProvidesOrRequires=false;
   googMatcher.reset(line);
   while (googMatcher.find()) {
+    hasProvidesOrRequires=true;
     boolean isRequire=googMatcher.group(1).charAt(0) == 'r';
     String arg=parseJsString(googMatcher.group(2));
     if (isRequire) {
@@ -12,4 +14,5 @@
       provides.add(arg);
     }
   }
+  return !shortcutMode || hasProvidesOrRequires || CharMatcher.WHITESPACE.matchesAllOf(line);
 }

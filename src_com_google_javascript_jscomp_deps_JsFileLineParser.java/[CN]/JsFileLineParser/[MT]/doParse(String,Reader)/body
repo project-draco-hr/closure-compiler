@@ -11,9 +11,9 @@
       try {
         String revisedLine=line;
         if (inMultilineComment) {
-          endMultilineCommentMatcher.reset(line);
-          if (endMultilineCommentMatcher.lookingAt()) {
-            revisedLine=endMultilineCommentMatcher.replaceFirst("");
+          int endOfComment=revisedLine.indexOf("*/");
+          if (endOfComment != -1) {
+            revisedLine=revisedLine.substring(endOfComment + 2);
             inMultilineComment=false;
           }
  else {
@@ -21,19 +21,33 @@
           }
         }
         if (!inMultilineComment) {
-          commentMatcher.reset(line);
-          if (commentMatcher.find()) {
-            do {
-              if (commentMatcher.group(1) != null && commentMatcher.group(3) == null) {
+          while (true) {
+            int startOfLineComment=revisedLine.indexOf("//");
+            int startOfMultilineComment=revisedLine.indexOf("/*");
+            if (startOfLineComment != -1 && (startOfMultilineComment == -1 || startOfLineComment < startOfMultilineComment)) {
+              revisedLine=revisedLine.substring(0,startOfLineComment);
+              break;
+            }
+ else             if (startOfMultilineComment != -1) {
+              int endOfMultilineComment=revisedLine.indexOf("*/",startOfMultilineComment + 2);
+              if (endOfMultilineComment == -1) {
+                revisedLine=revisedLine.substring(0,startOfMultilineComment);
                 inMultilineComment=true;
+                break;
+              }
+ else {
+                revisedLine=revisedLine.substring(0,startOfMultilineComment) + revisedLine.substring(endOfMultilineComment + 2);
               }
             }
- while (commentMatcher.find());
-            revisedLine=commentMatcher.replaceAll("");
+ else {
+              break;
+            }
           }
         }
         if (!revisedLine.isEmpty()) {
-          parseLine(revisedLine);
+          if (!parseLine(revisedLine)) {
+            break;
+          }
         }
       }
  catch (      ParseException e) {
