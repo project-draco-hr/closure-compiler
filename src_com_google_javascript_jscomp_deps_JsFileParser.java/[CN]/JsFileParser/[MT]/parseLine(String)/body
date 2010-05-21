@@ -1,17 +1,19 @@
 {
   boolean hasProvidesOrRequires=false;
-  googMatcher.reset(line);
-  while (googMatcher.find()) {
-    hasProvidesOrRequires=true;
-    boolean isRequire=googMatcher.group(1).charAt(0) == 'r';
-    String arg=parseJsString(googMatcher.group(2));
-    if (isRequire) {
-      if (!"goog".equals(arg)) {
-        requires.add(arg);
+  if (line.indexOf("provide") != -1 || line.indexOf("require") != -1) {
+    googMatcher.reset(line);
+    while (googMatcher.find()) {
+      hasProvidesOrRequires=true;
+      boolean isRequire=googMatcher.group(1).charAt(0) == 'r';
+      String arg=parseJsString(googMatcher.group(2));
+      if (isRequire) {
+        if (!"goog".equals(arg)) {
+          requires.add(arg);
+        }
       }
-    }
  else {
-      provides.add(arg);
+        provides.add(arg);
+      }
     }
   }
   return !shortcutMode || hasProvidesOrRequires || CharMatcher.WHITESPACE.matchesAllOf(line);
