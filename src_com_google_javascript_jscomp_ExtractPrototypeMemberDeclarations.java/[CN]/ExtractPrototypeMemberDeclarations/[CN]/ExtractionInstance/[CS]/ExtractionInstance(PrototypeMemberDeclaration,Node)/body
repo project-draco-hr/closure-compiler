@@ -3,6 +3,9 @@
   declarations.add(head);
   delta=PER_EXTRACTION_INSTANCE_OVERHEAD + PER_PROTOTYPE_MEMBER_DELTA;
   for (Node cur=head.node.getNext(); cur != null; cur=cur.getNext()) {
+    if (NodeUtil.isFunction(cur)) {
+      continue;
+    }
     PrototypeMemberDeclaration prototypeMember=PrototypeMemberDeclaration.extractDeclaration(cur);
     if (prototypeMember == null || !head.isSameClass(prototypeMember)) {
       break;

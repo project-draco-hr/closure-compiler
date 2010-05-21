@@ -1,5 +1,8 @@
 {
   List<PassFactory> checks=Lists.newArrayList();
+  if (options.closurePass) {
+    checks.add(closureGoogScopeAliases);
+  }
   if (options.nameAnonymousFunctionsOnly) {
     if (options.anonymousFunctionNaming == AnonymousFunctionNamingPolicy.MAPPED) {
       checks.add(nameMappedAnonymousFunctions);
@@ -82,6 +85,7 @@
   if (options.closurePass) {
     checks.add(closureReplaceGetCssName);
   }
+  checks.add(options.messageBundle != null ? replaceMessages : createEmptyPass("replaceMessages"));
   checks.add(processDefines);
   if (options.instrumentationTemplate != null || options.recordFunctionInformation) {
     checks.add(computeFunctionNames);
