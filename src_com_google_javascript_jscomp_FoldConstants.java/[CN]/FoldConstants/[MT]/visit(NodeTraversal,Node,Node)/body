@@ -102,18 +102,28 @@ break;
 }
 return;
 }
- else if (type == Token.NEW) {
+if (type == Token.NEW) {
+tryFoldStandardConstructors(t,n);
+type=n.getType();
+}
+if (type == Token.NEW || type == Token.CALL) {
 if (Token.NAME == left.getType()) {
 String className=left.getString();
 if ("RegExp".equals(className)) {
-tryFoldRegularExpressionConstructor(t,n,parent);
+if (tryFoldRegularExpressionConstructor(t,n,parent)) {
+return;
+}
 }
  else if (left.getNext() == null) {
 if ("Array".equals(className)) {
-tryFoldLiteralConstructor(t,n,parent,className,Token.ARRAYLIT);
+if (tryFoldLiteralConstructor(t,n,parent,className,Token.ARRAYLIT)) {
+return;
+}
 }
  else if ("Object".equals(className)) {
-tryFoldLiteralConstructor(t,n,parent,className,Token.OBJECTLIT);
+if (tryFoldLiteralConstructor(t,n,parent,className,Token.OBJECTLIT)) {
+return;
+}
 }
 }
 }

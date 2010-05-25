@@ -1,0 +1,13 @@
+{
+  Preconditions.checkState(n.getType() == Token.NEW);
+  if (n.getFirstChild().getType() == Token.NAME) {
+    String className=n.getFirstChild().getString();
+    if (STANDARD_OBJECT_CONSTRUCTORS.contains(className)) {
+      Scope.Var var=t.getScope().getVar(className);
+      if (var == null || var.isGlobal()) {
+        n.setType(Token.CALL);
+        compiler.reportCodeChange();
+      }
+    }
+  }
+}

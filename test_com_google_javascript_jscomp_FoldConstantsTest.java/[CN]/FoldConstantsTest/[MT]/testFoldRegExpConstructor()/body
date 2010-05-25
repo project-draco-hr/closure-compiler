@@ -1,19 +1,20 @@
 {
-  fold("x = new RegExp","x = new RegExp");
-  fold("x = new RegExp(\"\")","x = new RegExp(\"\")");
-  fold("x = new RegExp(\"\", \"i\")","x = new RegExp(\"\",\"i\")");
-  fold("x = new RegExp(\"foobar\", \"bogus\")","x = new RegExp(\"foobar\",\"bogus\")",FoldConstants.INVALID_REGULAR_EXPRESSION_FLAGS);
-  fold("x = new RegExp(\"foobar\", \"g\")","x = new RegExp(\"foobar\",\"g\")");
-  fold("x = new RegExp(\"foobar\", \"ig\")","x = new RegExp(\"foobar\",\"ig\")");
+  fold("x = new RegExp","x = RegExp()");
+  fold("x = new RegExp(\"\")","x = RegExp(\"\")");
+  fold("x = new RegExp(\"\", \"i\")","x = RegExp(\"\",\"i\")");
+  fold("x = new RegExp(\"foobar\", \"bogus\")","x = RegExp(\"foobar\",\"bogus\")",FoldConstants.INVALID_REGULAR_EXPRESSION_FLAGS);
+  fold("x = new RegExp(\"foobar\", \"g\")","x = RegExp(\"foobar\",\"g\")");
+  fold("x = new RegExp(\"foobar\", \"ig\")","x = RegExp(\"foobar\",\"ig\")");
   fold("x = new RegExp(\"foobar\")","x = /foobar/");
+  fold("x = RegExp(\"foobar\")","x = /foobar/");
   fold("x = new RegExp(\"foobar\", \"i\")","x = /foobar/i");
   fold("x = new RegExp(\"\\\\.\", \"i\")","x = /\\./i");
   fold("x = new RegExp(\"/\", \"\")","x = /\\//");
   fold("x = new RegExp(\"///\", \"\")","x = /\\/\\/\\//");
   fold("x = new RegExp(\"\\\\\\/\", \"\")","x = /\\//");
-  fold("x = new RegExp(\"\\u2028\")","x = new RegExp(\"\\u2028\")");
+  fold("x = new RegExp(\"\\u2028\")","x = RegExp(\"\\u2028\")");
   fold("x = new RegExp(\"\\\\\\\\u2028\")","x = /\\\\u2028/");
   String longRegexp="";
   for (int i=0; i < 200; i++)   longRegexp+="x";
-  foldSame("x = new RegExp(\"" + longRegexp + "\")");
+  foldSame("x = RegExp(\"" + longRegexp + "\")");
 }
