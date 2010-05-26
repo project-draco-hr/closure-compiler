@@ -1,0 +1,6 @@
+{
+  Iterator<JsMessage> msgs=extractMessages("var MSG_MONEY = function(amount) {","  return 'You owe $' + amount +","         ' to the credit card company.';","};","var MSG_TIME = goog.getMsg('You need to finish your work in ' +","                           '{$duration} hours.', {'duration': d});","var MSG_NAG = 'Clean your room.\\n\\nWash your clothes.';","var MSG_NAG_HELP = 'Just some ' +","                   'nags.';").iterator();
+  assertEquals(new JsMessage.Builder("MSG_MONEY").appendStringPart("You owe $").appendPlaceholderReference("amount").appendStringPart(" to the credit card company.").build(),msgs.next());
+  assertEquals(new JsMessage.Builder("MSG_TIME").appendStringPart("You need to finish your work in ").appendPlaceholderReference("duration").appendStringPart(" hours.").build(),msgs.next());
+  assertEquals(new JsMessage.Builder("MSG_NAG").appendStringPart("Clean your room.\n\nWash your clothes.").setDesc("Just some nags.").build(),msgs.next());
+}
