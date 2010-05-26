@@ -3,7 +3,7 @@
     RecordType thatRecord=(RecordType)that;
     RecordTypeBuilder builder=new RecordTypeBuilder(registry);
     for (    String property : properties.keySet()) {
-      if (thatRecord.hasProperty(property) && !thatRecord.getPropertyType(property).equals(getPropertyType(property))) {
+      if (thatRecord.hasProperty(property) && !thatRecord.getPropertyType(property).isEquivalentTo(getPropertyType(property))) {
         return registry.getNativeObjectType(JSTypeNative.NO_TYPE);
       }
       builder.addProperty(property,getPropertyType(property));
@@ -23,7 +23,7 @@
       UnionTypeBuilder builder=new UnionTypeBuilder(registry);
       for (      ObjectType alt : registry.getTypesWithProperty(propName)) {
         JSType altPropType=alt.getPropertyType(propName);
-        if (altPropType != null && !alt.equals(this) && alt.isSubtype(that) && (propType.isUnknownType() || altPropType.isUnknownType() || altPropType.equals(propType))) {
+        if (altPropType != null && !alt.isEquivalentTo(this) && alt.isSubtype(that) && (propType.isUnknownType() || altPropType.isUnknownType() || altPropType.isEquivalentTo(propType))) {
           builder.addAlternate(alt);
         }
       }

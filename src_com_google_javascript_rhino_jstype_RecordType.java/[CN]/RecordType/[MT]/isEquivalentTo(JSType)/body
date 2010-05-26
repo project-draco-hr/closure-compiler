@@ -1,0 +1,17 @@
+{
+  if (!(other instanceof RecordType)) {
+    return false;
+  }
+  RecordType otherRecord=(RecordType)other;
+  Set<String> keySet=properties.keySet();
+  Map<String,JSType> otherProps=otherRecord.properties;
+  if (!otherProps.keySet().equals(keySet)) {
+    return false;
+  }
+  for (  String key : keySet) {
+    if (!otherProps.get(key).isEquivalentTo(properties.get(key))) {
+      return false;
+    }
+  }
+  return true;
+}

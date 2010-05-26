@@ -2,11 +2,11 @@
   JSType applyType=dateMethod.getPropertyType("apply");
   assertTrue("apply should be a function",applyType instanceof FunctionType);
   FunctionType applyFn=(FunctionType)applyType;
-  assertEquals("apply should have the same return type as its function",NUMBER_TYPE,applyFn.getReturnType());
+  assertTypeEquals("apply should have the same return type as its function",NUMBER_TYPE,applyFn.getReturnType());
   Node params=applyFn.getParametersNode();
   assertEquals("apply takes two args",2,params.getChildCount());
-  assertEquals("apply's first arg is the @this type",registry.createOptionalNullableType(DATE_TYPE),params.getFirstChild().getJSType());
-  assertEquals("apply's second arg is an Array",registry.createOptionalNullableType(OBJECT_TYPE),params.getLastChild().getJSType());
+  assertTypeEquals("apply's first arg is the @this type",registry.createOptionalNullableType(DATE_TYPE),params.getFirstChild().getJSType());
+  assertTypeEquals("apply's second arg is an Array",registry.createOptionalNullableType(OBJECT_TYPE),params.getLastChild().getJSType());
   assertTrue("apply's args must be optional",params.getFirstChild().isOptionalArg());
   assertTrue("apply's args must be optional",params.getLastChild().isOptionalArg());
 }

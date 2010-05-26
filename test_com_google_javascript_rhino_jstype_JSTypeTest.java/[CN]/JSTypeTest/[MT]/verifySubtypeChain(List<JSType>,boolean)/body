@@ -4,10 +4,10 @@
       JSType typeI=typeChain.get(i);
       JSType typeJ=typeChain.get(j);
       if (i == j) {
-        assertTrue(typeI + " should equal itself",typeI.equals(typeI));
+        assertTrue(typeI + " should equal itself",typeI.isEquivalentTo(typeI));
       }
  else {
-        assertFalse(typeI + " should not equal " + typeJ,typeI.equals(typeJ));
+        assertFalse(typeI + " should not equal " + typeJ,typeI.isEquivalentTo(typeJ));
       }
       if (checkSubtyping) {
         if (i <= j) {
@@ -18,8 +18,8 @@
         }
         JSType expectedSupremum=i < j ? typeI : typeJ;
         JSType expectedInfimum=i > j ? typeI : typeJ;
-        assertEquals(expectedSupremum + " should be the least supertype of " + typeI+ " and "+ typeJ,expectedSupremum,typeI.getLeastSupertype(typeJ));
-        assertEquals(expectedInfimum + " should be the greatest subtype of " + typeI+ " and "+ typeJ,expectedInfimum,typeI.getGreatestSubtype(typeJ));
+        assertTypeEquals(expectedSupremum + " should be the least supertype of " + typeI+ " and "+ typeJ,expectedSupremum,typeI.getLeastSupertype(typeJ));
+        assertTypeEquals(expectedInfimum + " should be the greatest subtype of " + typeI+ " and "+ typeJ,expectedInfimum,typeI.getGreatestSubtype(typeJ));
       }
     }
   }
