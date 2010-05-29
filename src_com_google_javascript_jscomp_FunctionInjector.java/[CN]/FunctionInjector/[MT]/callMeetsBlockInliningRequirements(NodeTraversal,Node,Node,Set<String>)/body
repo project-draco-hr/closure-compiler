@@ -1,10 +1,10 @@
 {
-  boolean fnContainsVars=NodeUtil.isNodeTypeReferenced(NodeUtil.getFunctionBody(fnNode),Token.VAR);
+  boolean fnContainsVars=NodeUtil.has(NodeUtil.getFunctionBody(fnNode),new NodeUtil.MatchDeclaration(),new NodeUtil.MatchShallowStatement());
   boolean callerContainsFunction=false;
   if (!t.inGlobalScope()) {
     Node fnCaller=t.getScopeRoot();
     Node fnCallerBody=fnCaller.getLastChild();
-    callerContainsFunction=NodeUtil.containsFunctionDeclaration(fnCallerBody);
+    callerContainsFunction=NodeUtil.containsFunction(fnCallerBody);
   }
   if (fnContainsVars && callerContainsFunction) {
     return false;

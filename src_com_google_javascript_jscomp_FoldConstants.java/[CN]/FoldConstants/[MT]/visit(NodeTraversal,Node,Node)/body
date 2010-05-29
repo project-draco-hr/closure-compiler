@@ -45,9 +45,6 @@ parent.replaceChild(n,n.removeFirstChild());
 t.getCompiler().reportCodeChange();
 return;
 }
-if (type == Token.NOT && tryMinimizeNot(t,n,parent)) {
-return;
-}
 if (!NodeUtil.isLiteralValue(left)) {
 return;
 }
@@ -107,14 +104,8 @@ tryFoldStandardConstructors(t,n);
 type=n.getType();
 }
 if (type == Token.NEW || type == Token.CALL) {
-if (Token.NAME == left.getType()) {
+if (Token.NAME == left.getType() && left.getNext() == null) {
 String className=left.getString();
-if ("RegExp".equals(className)) {
-if (tryFoldRegularExpressionConstructor(t,n,parent)) {
-return;
-}
-}
- else if (left.getNext() == null) {
 if ("Array".equals(className)) {
 if (tryFoldLiteralConstructor(t,n,parent,className,Token.ARRAYLIT)) {
 return;
@@ -127,13 +118,10 @@ return;
 }
 }
 }
-}
 if (type == Token.EXPR_RESULT) {
-tryMinimizeCondition(t,left,n);
 return;
 }
 if (type == Token.RETURN) {
-tryReduceReturn(t,n);
 return;
 }
 Node right=left.getNext();
@@ -153,28 +141,20 @@ return;
 }
 }
 if (type == Token.IF || type == Token.HOOK) {
-tryMinimizeCondition(t,n.getFirstChild(),n);
-boolean changes=tryFoldHookIf(t,n,parent);
-if (type == Token.IF && !changes) {
-tryMinimizeIf(t,n,parent);
-}
+tryFoldHookIf(t,n,parent);
 return;
 }
 if (type == Token.DO) {
-tryMinimizeCondition(t,NodeUtil.getConditionExpression(n),n);
 tryFoldDo(t,n,parent);
 return;
 }
 if (type == Token.WHILE) {
-tryMinimizeCondition(t,NodeUtil.getConditionExpression(n),n);
 tryFoldWhile(t,n,parent);
 return;
 }
 if (type == Token.FOR) {
 Node condition=NodeUtil.getConditionExpression(n);
 if (condition != null) {
-tryMinimizeCondition(t,condition,n);
-condition=NodeUtil.getConditionExpression(n);
 this.tryFoldForCondition(condition,n);
 }
 tryFoldFor(t,n,parent);

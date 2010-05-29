@@ -1,0 +1,40 @@
+{
+switch (node.getType()) {
+case Token.RETURN:
+    return tryReduceReturn(node);
+case Token.NOT:
+  return tryMinimizeNot(node);
+case Token.IF:
+tryMinimizeCondition(node.getFirstChild());
+return tryMinimizeIf(node);
+case Token.EXPR_RESULT:
+tryMinimizeCondition(node.getFirstChild());
+return node;
+case Token.HOOK:
+tryMinimizeCondition(node.getFirstChild());
+return node;
+case Token.WHILE:
+case Token.DO:
+case Token.FOR:
+if (NodeUtil.getConditionExpression(node) != null) {
+tryMinimizeCondition(NodeUtil.getConditionExpression(node));
+}
+return node;
+case Token.NEW:
+case Token.CALL:
+{
+Node left=node.getFirstChild();
+if (left != null) {
+if (Token.NAME == left.getType()) {
+String className=left.getString();
+if ("RegExp".equals(className)) {
+return tryFoldRegularExpressionConstructor(node);
+}
+}
+}
+}
+return node;
+default :
+return node;
+}
+}

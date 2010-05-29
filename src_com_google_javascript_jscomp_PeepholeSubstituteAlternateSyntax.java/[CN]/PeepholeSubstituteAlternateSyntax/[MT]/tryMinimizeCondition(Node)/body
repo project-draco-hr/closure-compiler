@@ -1,0 +1,51 @@
+{
+  Node parent=n.getParent();
+switch (n.getType()) {
+case Token.NOT:
+    Node first=n.getFirstChild();
+switch (first.getType()) {
+case Token.NOT:
+{
+      Node newRoot=first.removeFirstChild();
+      parent.replaceChild(n,newRoot);
+      n=newRoot;
+      reportCodeChange();
+      return tryMinimizeCondition(n);
+    }
+case Token.AND:
+case Token.OR:
+{
+    Node leftParent=first.getFirstChild();
+    Node rightParent=first.getLastChild();
+    if (leftParent.getType() != Token.NOT || rightParent.getType() != Token.NOT) {
+      break;
+    }
+    Node left=leftParent.removeFirstChild();
+    Node right=rightParent.removeFirstChild();
+    int newOp=(first.getType() == Token.AND) ? Token.OR : Token.AND;
+    Node newRoot=new Node(newOp,left,right);
+    parent.replaceChild(n,newRoot);
+    n=newRoot;
+    reportCodeChange();
+  }
+break;
+}
+break;
+case Token.OR:
+case Token.AND:
+break;
+default :
+if (NodeUtil.isLiteralValue(n)) {
+boolean result=NodeUtil.getBooleanValue(n);
+int equivalentResult=result ? 1 : 0;
+return maybeReplaceChildWithNumber(n,parent,equivalentResult);
+}
+return n;
+}
+for (Node c=n.getFirstChild(); c != null; ) {
+Node next=c.getNext();
+tryMinimizeCondition(c);
+c=next;
+}
+return n;
+}

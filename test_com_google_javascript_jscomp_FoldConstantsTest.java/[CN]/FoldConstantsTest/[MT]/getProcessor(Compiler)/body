@@ -2,6 +2,9 @@
   return new CompilerPass(){
     public void process(    Node externs,    Node js){
       NodeTraversal.traverse(compiler,js,new FoldConstants(compiler));
+      ImmutableSet<AbstractPeepholeOptimization> peepholeOptimizations=ImmutableSet.<AbstractPeepholeOptimization>of(new PeepholeSubstituteAlternateSyntax());
+      PeepholeOptimizationsPass peepholePass=new PeepholeOptimizationsPass(compiler,peepholeOptimizations);
+      peepholePass.process(externs,js);
     }
   }
 ;

@@ -25,6 +25,12 @@
         if (NodeUtil.referencesThis(block)) {
           fs.setReferencesThis(true);
         }
+        if (NodeUtil.containsFunction(block)) {
+          fs.setHasInnerFunctions(true);
+          if (hasLocalNames(fnNode)) {
+            fs.setInline(false);
+          }
+        }
       }
       if (fs.canInline() && !fs.canInlineDirectly()) {
         if (!blockFunctionInliningEnabled) {

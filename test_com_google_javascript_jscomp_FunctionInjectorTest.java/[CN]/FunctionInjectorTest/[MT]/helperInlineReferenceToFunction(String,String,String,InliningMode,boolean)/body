@@ -22,7 +22,7 @@
   assertNotNull(fnNode);
   Method tester=new Method(){
     public boolean call(    NodeTraversal t,    Node n,    Node parent){
-      CanInlineResult canInline=injector.canInlineReferenceToFunction(t,n,fnNode,unsafe,mode,NodeUtil.referencesThis(fnNode));
+      CanInlineResult canInline=injector.canInlineReferenceToFunction(t,n,fnNode,unsafe,mode,NodeUtil.referencesThis(fnNode),NodeUtil.containsFunction(NodeUtil.getFunctionBody(fnNode)));
       assertTrue("canInlineReferenceToFunction should not be CAN_NOT_INLINE",CanInlineResult.NO != canInline);
       if (decompose) {
         assertTrue("canInlineReferenceToFunction " + "should be CAN_INLINE_AFTER_DECOMPOSITION",CanInlineResult.AFTER_DECOMPOSITION == canInline);

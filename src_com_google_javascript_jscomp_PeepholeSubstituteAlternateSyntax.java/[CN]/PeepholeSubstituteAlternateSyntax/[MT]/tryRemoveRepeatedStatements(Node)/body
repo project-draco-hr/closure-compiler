@@ -1,0 +1,23 @@
+{
+  Preconditions.checkState(n.getType() == Token.IF);
+  Node parent=n.getParent();
+  if (!NodeUtil.isStatementBlock(parent)) {
+    return;
+  }
+  Node cond=n.getFirstChild();
+  Node trueBranch=cond.getNext();
+  Node falseBranch=trueBranch.getNext();
+  Preconditions.checkNotNull(trueBranch);
+  Preconditions.checkNotNull(falseBranch);
+  while (true) {
+    Node lastTrue=trueBranch.getLastChild();
+    Node lastFalse=falseBranch.getLastChild();
+    if (lastTrue == null || lastFalse == null || !areNodesEqualForInlining(lastTrue,lastFalse)) {
+      break;
+    }
+    lastTrue.detachFromParent();
+    lastFalse.detachFromParent();
+    parent.addChildAfter(lastTrue,n);
+    reportCodeChange();
+  }
+}

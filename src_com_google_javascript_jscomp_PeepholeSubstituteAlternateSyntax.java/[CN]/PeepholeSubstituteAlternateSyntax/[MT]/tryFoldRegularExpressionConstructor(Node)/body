@@ -1,0 +1,31 @@
+{
+  Node parent=n.getParent();
+  Node constructor=n.getFirstChild();
+  Node pattern=constructor.getNext();
+  Node flags=null != pattern ? pattern.getNext() : null;
+  if (null == pattern || (null != flags && null != flags.getNext())) {
+    return n;
+  }
+  if (pattern.getType() == Token.STRING && !"".equals(pattern.getString()) && pattern.getString().length() < 100 && (null == flags || flags.getType() == Token.STRING) && !containsUnicodeEscape(pattern.getString())) {
+    pattern=makeForwardSlashBracketSafe(pattern);
+    Node regexLiteral;
+    if (null == flags || "".equals(flags.getString())) {
+      regexLiteral=new Node(Token.REGEXP,pattern);
+    }
+ else {
+      if (!areValidRegexpFlags(flags.getString())) {
+        error(INVALID_REGULAR_EXPRESSION_FLAGS,flags);
+        return n;
+      }
+      if (!areSafeFlagsToFold(flags.getString())) {
+        return n;
+      }
+      n.removeChild(flags);
+      regexLiteral=new Node(Token.REGEXP,pattern,flags);
+    }
+    parent.replaceChild(n,regexLiteral);
+    reportCodeChange();
+    return regexLiteral;
+  }
+  return n;
+}

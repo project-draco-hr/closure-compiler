@@ -4,13 +4,12 @@
   }
 switch (n.getType()) {
 case Token.VAR:
-    if (n.hasOneChild()) {
-      Node nameNode=n.getFirstChild();
-      if (nameNode.getType() == Token.NAME && nameNode.hasChildren() && nameNode.getFirstChild().getType() == Token.FUNCTION) {
-        maybeAddFunction(new FunctionVar(n),t.getModule());
-      }
-    }
-  break;
+    Preconditions.checkState(n.hasOneChild());
+  Node nameNode=n.getFirstChild();
+if (nameNode.getType() == Token.NAME && nameNode.hasChildren() && nameNode.getFirstChild().getType() == Token.FUNCTION) {
+  maybeAddFunction(new FunctionVar(n),t.getModule());
+}
+break;
 case Token.FUNCTION:
 Preconditions.checkState(NodeUtil.isStatementBlock(parent) || parent.getType() == Token.LABEL);
 if (!NodeUtil.isFunctionExpression(n)) {
