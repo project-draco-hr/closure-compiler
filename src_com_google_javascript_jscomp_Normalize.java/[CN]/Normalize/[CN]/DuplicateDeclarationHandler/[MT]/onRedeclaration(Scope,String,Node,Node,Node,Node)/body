@@ -1,8 +1,11 @@
 {
   Preconditions.checkState(n.getType() == Token.NAME);
   Var v=s.getVar(name);
-  Preconditions.checkState(v == null || v.getParentNode().getType() != Token.CATCH);
-  if (v != null && parent.getType() == Token.FUNCTION) {
+  if (v != null && v.getParentNode().getType() == Token.CATCH) {
+    name=MakeDeclaredNamesUnique.ContextualRenameInverter.getOrginalName(name);
+    compiler.report(JSError.make(NodeUtil.getSourceName(nodeWithLineNumber),nodeWithLineNumber,CATCH_BLOCK_VAR_ERROR,name));
+  }
+ else   if (v != null && parent.getType() == Token.FUNCTION) {
     if (v.getParentNode().getType() == Token.VAR) {
       s.undeclare(v);
       s.declare(name,n,n.getJSType(),v.input);
