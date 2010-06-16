@@ -1,0 +1,11 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.WHILE);
+  Node cond=NodeUtil.getConditionExpression(n);
+  if (NodeUtil.getBooleanValue(cond) != TernaryValue.FALSE) {
+    return n;
+  }
+  NodeUtil.redeclareVarsInsideBranch(n);
+  NodeUtil.removeChild(n.getParent(),n);
+  reportCodeChange();
+  return null;
+}

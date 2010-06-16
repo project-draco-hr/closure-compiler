@@ -1,0 +1,19 @@
+{
+  JSType parameterType=parameterNode.getJSType();
+  String typeString;
+  if (parameterType.isUnknownType()) {
+    typeString="*";
+  }
+ else {
+    if (parameterNode.isOptionalArg()) {
+      typeString=parameterType.restrictByNotNullOrUndefined() + "=";
+    }
+ else     if (parameterNode.isVarArgs()) {
+      typeString="..." + parameterType.restrictByNotNullOrUndefined();
+    }
+ else {
+      typeString=parameterType.toString();
+    }
+  }
+  return typeString;
+}

@@ -1,9 +1,5 @@
 {
   int type=n.getType();
-  if (type == Token.BLOCK) {
-    tryFoldBlock(t,n,parent);
-    return;
-  }
   Node left=n.getFirstChild();
   if (left == null) {
     return;
@@ -45,12 +41,13 @@ parent.replaceChild(n,n.removeFirstChild());
 t.getCompiler().reportCodeChange();
 return;
 }
-if (!NodeUtil.isLiteralValue(left)) {
+TernaryValue leftVal=NodeUtil.getBooleanValue(left);
+if (leftVal == TernaryValue.UNKNOWN) {
 return;
 }
 switch (type) {
 case Token.NOT:
-int result=NodeUtil.getBooleanValue(left) ? Token.FALSE : Token.TRUE;
+int result=leftVal.toBoolean(true) ? Token.FALSE : Token.TRUE;
 parent.replaceChild(n,new Node(result));
 t.getCompiler().reportCodeChange();
 break;
@@ -140,26 +137,6 @@ t.getCompiler().reportCodeChange();
 return;
 }
 }
-if (type == Token.IF || type == Token.HOOK) {
-tryFoldHookIf(t,n,parent);
-return;
-}
-if (type == Token.DO) {
-tryFoldDo(t,n,parent);
-return;
-}
-if (type == Token.WHILE) {
-tryFoldWhile(t,n,parent);
-return;
-}
-if (type == Token.FOR) {
-Node condition=NodeUtil.getConditionExpression(n);
-if (condition != null) {
-this.tryFoldForCondition(condition,n);
-}
-tryFoldFor(t,n,parent);
-return;
-}
 if (type == Token.AND || type == Token.OR) {
 tryFoldAndOr(t,n,left,right,parent);
 return;
@@ -179,10 +156,6 @@ return;
 if (type == Token.CALL) {
 tryFoldStringJoin(t,n,left,right,parent);
 tryFoldStringIndexOf(t,n,left,right,parent);
-return;
-}
-if (type == Token.COMMA) {
-tryFoldComma(t,n,left,right,parent);
 return;
 }
 if (type == Token.ASSIGN) {

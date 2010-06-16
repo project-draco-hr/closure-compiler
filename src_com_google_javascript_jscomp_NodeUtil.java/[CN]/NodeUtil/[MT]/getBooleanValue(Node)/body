@@ -1,27 +1,27 @@
 {
 switch (n.getType()) {
 case Token.STRING:
-    return n.getString().length() > 0;
+    return TernaryValue.forBoolean(n.getString().length() > 0);
 case Token.NUMBER:
-  return n.getDouble() != 0;
+  return TernaryValue.forBoolean(n.getDouble() != 0);
 case Token.NULL:
 case Token.FALSE:
 case Token.VOID:
-return false;
+return TernaryValue.FALSE;
 case Token.NAME:
 String name=n.getString();
 if ("undefined".equals(name) || "NaN".equals(name)) {
-return false;
+return TernaryValue.FALSE;
 }
  else if ("Infinity".equals(name)) {
-return true;
+return TernaryValue.TRUE;
 }
 break;
 case Token.TRUE:
 case Token.ARRAYLIT:
 case Token.OBJECTLIT:
 case Token.REGEXP:
-return true;
+return TernaryValue.TRUE;
 }
-throw new IllegalArgumentException("Non-literal value: " + n);
+return TernaryValue.UNKNOWN;
 }

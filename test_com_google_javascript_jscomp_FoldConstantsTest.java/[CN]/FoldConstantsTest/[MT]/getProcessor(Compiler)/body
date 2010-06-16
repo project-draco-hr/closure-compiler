@@ -1,9 +1,20 @@
 {
   return new CompilerPass(){
     public void process(    Node externs,    Node js){
+      if (runFoldConstantsFirst) {
+        runFoldConstants(externs,js);
+        runPeepholePasses(externs,js);
+      }
+ else {
+        runPeepholePasses(externs,js);
+        runFoldConstants(externs,js);
+      }
+    }
+    private void runFoldConstants(    Node externs,    Node js){
       NodeTraversal.traverse(compiler,js,new FoldConstants(compiler));
-      ImmutableSet<AbstractPeepholeOptimization> peepholeOptimizations=ImmutableSet.<AbstractPeepholeOptimization>of(new PeepholeSubstituteAlternateSyntax());
-      PeepholeOptimizationsPass peepholePass=new PeepholeOptimizationsPass(compiler,peepholeOptimizations);
+    }
+    private void runPeepholePasses(    Node externs,    Node js){
+      PeepholeOptimizationsPass peepholePass=new PeepholeOptimizationsPass(compiler,new PeepholeSubstituteAlternateSyntax(),new PeepholeRemoveDeadCode());
       peepholePass.process(externs,js);
     }
   }

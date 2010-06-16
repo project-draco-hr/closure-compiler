@@ -1,0 +1,18 @@
+{
+  for (Node c=n.getFirstChild(); c != null; ) {
+    Node next=c.getNext();
+    if (!NodeUtil.mayHaveSideEffects(c)) {
+      n.removeChild(c);
+      reportCodeChange();
+    }
+    c=next;
+  }
+  if (n.isSyntheticBlock() || n.getParent() == null) {
+    return n;
+  }
+  if (NodeUtil.tryMergeBlock(n)) {
+    reportCodeChange();
+    return null;
+  }
+  return n;
+}

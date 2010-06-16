@@ -38,7 +38,7 @@
         return null;
       }
     }
-    boolean liftedExterns=false;
+    boolean staleInputs=false;
     for (    CompilerInput input : inputs) {
       Node n=input.getAstRoot(this);
       if (hasErrors()) {
@@ -47,15 +47,22 @@
       if (n == null) {
         continue;
       }
-      if (n.getJSDocInfo() != null && n.getJSDocInfo().isExterns()) {
-        externsRoot.addChildToBack(n);
-        input.setIsExtern(true);
-        input.getModule().remove(input);
-        externs.add(input);
-        liftedExterns=true;
+      if (n.getJSDocInfo() != null) {
+        JSDocInfo info=n.getJSDocInfo();
+        if (info.isExterns()) {
+          externsRoot.addChildToBack(n);
+          input.setIsExtern(true);
+          input.getModule().remove(input);
+          externs.add(input);
+          staleInputs=true;
+        }
+ else         if (info.isNoCompile()) {
+          input.getModule().remove(input);
+          staleInputs=true;
+        }
       }
     }
-    if (liftedExterns) {
+    if (staleInputs) {
       fillEmptyModules(modules);
       rebuildInputsFromModules();
     }

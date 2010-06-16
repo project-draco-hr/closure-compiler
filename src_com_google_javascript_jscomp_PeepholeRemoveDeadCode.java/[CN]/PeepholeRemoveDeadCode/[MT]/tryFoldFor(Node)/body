@@ -1,0 +1,17 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.FOR);
+  if (n.getChildCount() != 4) {
+    return n;
+  }
+  if (n.getFirstChild().getType() != Token.EMPTY) {
+    return n;
+  }
+  Node cond=NodeUtil.getConditionExpression(n);
+  if (NodeUtil.getBooleanValue(cond) != TernaryValue.FALSE) {
+    return n;
+  }
+  NodeUtil.redeclareVarsInsideBranch(n);
+  NodeUtil.removeChild(n.getParent(),n);
+  reportCodeChange();
+  return null;
+}

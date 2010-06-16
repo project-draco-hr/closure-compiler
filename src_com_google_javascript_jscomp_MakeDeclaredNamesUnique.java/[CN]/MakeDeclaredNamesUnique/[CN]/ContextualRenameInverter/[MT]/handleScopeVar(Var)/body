@@ -1,18 +1,16 @@
 {
   String name=v.getName();
-  if (containsSeparator(name)) {
-    String newName=getOrginalName(name);
-    if (TokenStream.isJSIdentifier(newName) && !referencedNames.contains(newName) && !newName.equals(ARGUMENTS)) {
-      referencedNames.remove(name);
-      referencedNames.add(newName);
-      List<Node> references=nameMap.get(name);
-      Preconditions.checkState(references != null);
-      for (      Node n : references) {
-        Preconditions.checkState(n.getType() == Token.NAME);
-        n.setString(newName);
-      }
-      compiler.reportCodeChange();
+  if (containsSeparator(name) && !getOrginalName(name).isEmpty()) {
+    String newName=findReplacementName(name);
+    referencedNames.remove(name);
+    referencedNames.add(newName);
+    List<Node> references=nameMap.get(name);
+    Preconditions.checkState(references != null);
+    for (    Node n : references) {
+      Preconditions.checkState(n.getType() == Token.NAME);
+      n.setString(newName);
     }
+    compiler.reportCodeChange();
     nameMap.remove(name);
   }
 }

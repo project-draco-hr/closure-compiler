@@ -1,0 +1,23 @@
+{
+  Node parent=n.getParent();
+  Node left=n.getFirstChild();
+  Node right=left.getNext();
+  if (!NodeUtil.mayHaveSideEffects(left)) {
+    n.removeChild(right);
+    parent.replaceChild(n,right);
+    reportCodeChange();
+    return right;
+  }
+ else {
+    if (parent.getType() == Token.EXPR_RESULT) {
+      n.detachChildren();
+      parent.replaceChild(n,left);
+      Node newStatement=new Node(Token.EXPR_RESULT,right);
+      newStatement.copyInformationFrom(n);
+      parent.getParent().addChildAfter(newStatement,parent);
+      reportCodeChange();
+      return left;
+    }
+  }
+  return n;
+}

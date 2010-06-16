@@ -1,0 +1,19 @@
+{
+  Preconditions.checkArgument(NodeUtil.isFunction(function));
+  JSDocInfo functionJSDocInfo=function.getJSType().getJSDocInfo();
+  FunctionType functionType=(FunctionType)function.getJSType();
+  JSType returnType=functionType.getReturnType();
+  if (!functionType.isConstructor() && (returnType == null || returnType.isUnknownType())) {
+    reportUnknownReturnType(function);
+  }
+  Node astParameterIterator=NodeUtil.getFnParameters(function).getFirstChild();
+  Node typeParameterIterator=functionType.getParametersNode().getFirstChild();
+  while (astParameterIterator != null) {
+    JSType parameterType=typeParameterIterator.getJSType();
+    if (parameterType == null || parameterType.isUnknownType()) {
+      reportUnknownParameterType(function,astParameterIterator);
+    }
+    astParameterIterator=astParameterIterator.getNext();
+    typeParameterIterator=typeParameterIterator.getNext();
+  }
+}

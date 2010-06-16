@@ -7,9 +7,19 @@
     return null;
   }
   Node definitionParent=definitionMap.get(qualifiedName);
-  Node definition=definitionParent.getLastChild();
-  if (definition.getType() != Token.FUNCTION) {
-    return null;
-  }
-  return definition;
+  Node definition;
+switch (definitionParent.getType()) {
+case Token.ASSIGN:
+    definition=definitionParent.getLastChild();
+  break;
+case Token.VAR:
+definition=definitionParent.getLastChild().getLastChild();
+break;
+default :
+return null;
+}
+if (definition.getType() != Token.FUNCTION) {
+return null;
+}
+return definition;
 }

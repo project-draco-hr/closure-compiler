@@ -35,8 +35,9 @@ case Token.OR:
 case Token.AND:
 break;
 default :
-if (NodeUtil.isLiteralValue(n)) {
-boolean result=NodeUtil.getBooleanValue(n);
+TernaryValue nVal=NodeUtil.getBooleanValue(n);
+if (nVal != TernaryValue.UNKNOWN) {
+boolean result=nVal.toBoolean(true);
 int equivalentResult=result ? 1 : 0;
 return maybeReplaceChildWithNumber(n,parent,equivalentResult);
 }

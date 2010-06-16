@@ -1,0 +1,25 @@
+{
+switch (subtree.getType()) {
+case Token.COMMA:
+    return tryFoldComma(subtree);
+case Token.BLOCK:
+  return tryFoldBlock(subtree);
+case Token.IF:
+case Token.HOOK:
+return tryFoldHookIf(subtree);
+case Token.WHILE:
+return tryFoldWhile(subtree);
+case Token.FOR:
+{
+Node condition=NodeUtil.getConditionExpression(subtree);
+if (condition != null) {
+tryFoldForCondition(condition);
+}
+}
+return tryFoldFor(subtree);
+case Token.DO:
+return tryFoldDo(subtree);
+default :
+return subtree;
+}
+}

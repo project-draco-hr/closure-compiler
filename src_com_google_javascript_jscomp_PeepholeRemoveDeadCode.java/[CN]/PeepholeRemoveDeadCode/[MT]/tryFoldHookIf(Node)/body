@@ -1,0 +1,111 @@
+{
+  Node parent=n.getParent();
+  int type=n.getType();
+  Node cond=n.getFirstChild();
+  Node thenBody=cond.getNext();
+  Node elseBody=thenBody.getNext();
+  boolean changes=false;
+  if (type == Token.IF) {
+    if (elseBody != null && !NodeUtil.mayHaveSideEffects(elseBody)) {
+      n.removeChild(elseBody);
+      elseBody=null;
+      reportCodeChange();
+      changes=true;
+    }
+    if (!NodeUtil.mayHaveSideEffects(thenBody) && elseBody != null) {
+      n.removeChild(elseBody);
+      n.replaceChild(thenBody,elseBody);
+      Node notCond=new Node(Token.NOT);
+      n.replaceChild(cond,notCond);
+      notCond.addChildToFront(cond);
+      cond=notCond;
+      thenBody=cond.getNext();
+      elseBody=null;
+      reportCodeChange();
+      changes=true;
+    }
+    if (!NodeUtil.mayHaveSideEffects(thenBody) && elseBody == null) {
+      if (NodeUtil.mayHaveSideEffects(cond)) {
+        n.removeChild(cond);
+        Node replacement=NodeUtil.newExpr(cond);
+        parent.replaceChild(n,replacement);
+        reportCodeChange();
+        return replacement;
+      }
+ else {
+        NodeUtil.removeChild(parent,n);
+        reportCodeChange();
+        return null;
+      }
+    }
+  }
+ else {
+    Preconditions.checkState(type == Token.HOOK);
+    if (NodeUtil.isExpressionNode(parent)) {
+      if (!NodeUtil.mayHaveSideEffects(thenBody)) {
+        Node ifNode=new Node(Token.IF);
+        if (cond.getType() == Token.NOT) {
+          Node expr=cond.getFirstChild();
+          cond.removeChild(expr);
+          ifNode.addChildToBack(expr);
+        }
+ else {
+          Node not=new Node(Token.NOT).copyInformationFrom(cond);
+          n.removeChild(cond);
+          not.addChildToBack(cond);
+          ifNode.addChildToBack(not);
+        }
+        n.removeChild(elseBody);
+        ifNode.addChildToBack(new Node(Token.BLOCK,NodeUtil.newExpr(elseBody)).copyInformationFrom(elseBody));
+        parent.getParent().replaceChild(parent,ifNode);
+        reportCodeChange();
+        return ifNode;
+      }
+ else       if (!NodeUtil.mayHaveSideEffects(elseBody)) {
+        Node ifNode=new Node(Token.IF);
+        n.removeChild(cond);
+        ifNode.addChildToBack(cond);
+        n.removeChild(thenBody);
+        ifNode.addChildToBack(new Node(Token.BLOCK,NodeUtil.newExpr(thenBody)).copyInformationFrom(thenBody));
+        parent.getParent().replaceChild(parent,ifNode);
+        reportCodeChange();
+        return ifNode;
+      }
+    }
+  }
+  if (!NodeUtil.isLiteralValue(cond)) {
+    return n;
+  }
+  TernaryValue condValue=NodeUtil.getBooleanValue(cond);
+  if (condValue == TernaryValue.UNKNOWN) {
+    return n;
+  }
+  boolean condTrue=condValue.toBoolean(true);
+  if (n.getChildCount() == 2) {
+    Preconditions.checkState(type == Token.IF);
+    if (condTrue) {
+      Node thenStmt=n.getFirstChild().getNext();
+      n.removeChild(thenStmt);
+      parent.replaceChild(n,thenStmt);
+      reportCodeChange();
+      return thenStmt;
+    }
+ else {
+      NodeUtil.redeclareVarsInsideBranch(n);
+      NodeUtil.removeChild(parent,n);
+      reportCodeChange();
+      return null;
+    }
+  }
+ else {
+    Node firstBranch=n.getFirstChild().getNext();
+    Node secondBranch=firstBranch.getNext();
+    Node branch=condTrue ? firstBranch : secondBranch;
+    Node notBranch=condTrue ? secondBranch : firstBranch;
+    NodeUtil.redeclareVarsInsideBranch(notBranch);
+    n.removeChild(branch);
+    parent.replaceChild(n,branch);
+    reportCodeChange();
+    return branch;
+  }
+}

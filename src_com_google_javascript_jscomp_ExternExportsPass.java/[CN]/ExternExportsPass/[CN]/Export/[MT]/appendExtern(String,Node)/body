@@ -1,0 +1,18 @@
+{
+  List<String> pathPrefixes=computePathPrefixes(path);
+  for (int i=0; i < pathPrefixes.size(); ++i) {
+    String pathPrefix=pathPrefixes.get(i);
+    boolean isCompletePathPrefix=(i == pathPrefixes.size() - 1);
+    boolean skipPathPrefix=pathPrefix.endsWith(".prototype") || (alreadyExportedPaths.contains(pathPrefix) && !isCompletePathPrefix);
+    if (!skipPathPrefix) {
+      Node initializer;
+      if (isCompletePathPrefix && functionToExport != null) {
+        initializer=createExternFunction(functionToExport);
+      }
+ else {
+        initializer=new Node(Token.OBJECTLIT);
+      }
+      appendPathDefinition(pathPrefix,initializer);
+    }
+  }
+}
