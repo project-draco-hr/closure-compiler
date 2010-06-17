@@ -2,14 +2,14 @@
   Node child=n.getFirstChild();
   JSType childType=getJSType(child).restrictByNotNullOrUndefined();
   if (!childType.canBeCalled()) {
-    t.report(n,NOT_CALLABLE,childType.toString());
+    report(t,n,NOT_CALLABLE,childType.toString());
     ensureTyped(t,n);
     return;
   }
   if (childType instanceof FunctionType) {
     FunctionType functionType=(FunctionType)childType;
     if (functionType.isConstructor() && !functionType.isNativeObjectType()) {
-      t.report(n,CONSTRUCTOR_NOT_CALLABLE,childType.toString());
+      report(t,n,CONSTRUCTOR_NOT_CALLABLE,childType.toString());
     }
     visitParameterList(t,n,functionType);
     ensureTyped(t,n,functionType.getReturnType());

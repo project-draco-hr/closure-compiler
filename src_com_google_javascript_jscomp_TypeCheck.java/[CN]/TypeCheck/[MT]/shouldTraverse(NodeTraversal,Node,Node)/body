@@ -1,25 +1,13 @@
 {
-  JSDocInfo info;
+  checkNoTypeCheckSection(n,true);
 switch (n.getType()) {
-case Token.SCRIPT:
-case Token.VAR:
-    info=n.getJSDocInfo();
-  if (info != null && info.isNoTypeCheck()) {
-    return false;
-  }
-break;
 case Token.FUNCTION:
-info=n.getJSDocInfo();
-info=(info == null) ? parent.getJSDocInfo() : info;
-if (info != null && info.isNoTypeCheck()) {
-return false;
-}
-final TypeCheck outerThis=this;
-final Scope outerScope=t.getScope();
+    final TypeCheck outerThis=this;
+  final Scope outerScope=t.getScope();
 final FunctionType functionType=(FunctionType)n.getJSType();
 final String functionPrivateName=n.getFirstChild().getString();
 if (functionPrivateName != null && functionPrivateName.length() > 0 && outerScope.isDeclared(functionPrivateName,false) && !(outerScope.getVar(functionPrivateName).getType() instanceof FunctionType)) {
-t.report(n,FUNCTION_MASKS_VARIABLE,functionPrivateName);
+report(t,n,FUNCTION_MASKS_VARIABLE,functionPrivateName);
 }
 break;
 }

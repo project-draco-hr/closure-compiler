@@ -98,7 +98,7 @@ break;
 case Token.BITNOT:
 childType=getJSType(n.getFirstChild());
 if (!childType.matchesInt32Context()) {
-t.report(n,BIT_OPERATION,NodeUtil.opToStr(n.getType()),childType.toString());
+report(t,n,BIT_OPERATION,NodeUtil.opToStr(n.getType()),childType.toString());
 }
 ensureTyped(t,n,NUMBER_TYPE);
 break;
@@ -120,7 +120,7 @@ if (result != TernaryValue.UNKNOWN) {
 if (n.getType() == Token.NE) {
 result=result.not();
 }
-t.report(n,DETERMINISTIC_TEST,leftType.toString(),rightType.toString(),result.toString());
+report(t,n,DETERMINISTIC_TEST,leftType.toString(),rightType.toString(),result.toString());
 }
 ensureTyped(t,n,BOOLEAN_TYPE);
 break;
@@ -133,7 +133,7 @@ rightType=getJSType(n.getLastChild());
 JSType leftTypeRestricted=leftType.restrictByNotNullOrUndefined();
 JSType rightTypeRestricted=rightType.restrictByNotNullOrUndefined();
 if (!leftTypeRestricted.canTestForShallowEqualityWith(rightTypeRestricted)) {
-t.report(n,DETERMINISTIC_TEST_NO_RESULT,leftType.toString(),rightType.toString());
+report(t,n,DETERMINISTIC_TEST_NO_RESULT,leftType.toString(),rightType.toString());
 }
 ensureTyped(t,n,BOOLEAN_TYPE);
 break;
@@ -210,7 +210,7 @@ visitBinaryOperator(n.getType(),t,n);
 break;
 case Token.DELPROP:
 if (!isReference(n.getFirstChild())) {
-t.report(n,BAD_DELETE);
+report(t,n,BAD_DELETE);
 }
 ensureTyped(t,n,BOOLEAN_TYPE);
 break;
@@ -270,7 +270,7 @@ ensureTyped(t,n);
 }
 break;
 default :
-t.report(n,UNEXPECTED_TOKEN,Token.name(n.getType()));
+report(t,n,UNEXPECTED_TOKEN,Token.name(n.getType()));
 ensureTyped(t,n);
 break;
 }
@@ -278,4 +278,5 @@ typeable=typeable && !inExterns;
 if (typeable) {
 doPercentTypedAccounting(t,n);
 }
+checkNoTypeCheckSection(n,false);
 }
