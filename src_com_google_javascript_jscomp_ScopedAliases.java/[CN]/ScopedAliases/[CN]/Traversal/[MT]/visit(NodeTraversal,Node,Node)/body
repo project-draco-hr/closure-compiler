@@ -17,7 +17,8 @@
     }
   }
   if (t.getScopeDepth() == 2) {
-    if (n.getType() == Token.NAME && parent.getType() == Token.VAR) {
+    int type=n.getType();
+    if (type == Token.NAME && parent.getType() == Token.VAR) {
       if (n.hasChildren() && n.getFirstChild().isQualifiedName()) {
         aliases.put(n.getString(),n.getFirstChild());
         aliasDefinitions.add(n);
@@ -28,22 +29,25 @@
         report(t,n,GOOG_SCOPE_NON_ALIAS_LOCAL,n.getString());
       }
     }
+    if (type == Token.NAME && NodeUtil.isAssignmentOp(parent)) {
+      report(t,n,GOOG_SCOPE_ALIAS_REDEFINED,n.getString());
+    }
+    if (type == Token.RETURN) {
+      report(t,n,GOOG_SCOPE_USES_RETURN);
+    }
+ else     if (type == Token.THIS) {
+      report(t,n,GOOG_SCOPE_REFERENCES_THIS);
+    }
+ else     if (type == Token.THROW) {
+      report(t,n,GOOG_SCOPE_USES_THROW);
+    }
   }
   if (t.getScopeDepth() >= 2) {
     if (n.getType() == Token.NAME) {
-      if (NodeUtil.isAssignmentOp(parent)) {
-        report(t,n,GOOG_SCOPE_ALIAS_REDEFINED,n.getString());
-      }
       Node aliasedNode=aliases.get(n.getString());
       if (t.getScope().getVar(n.getString()) == null && aliasedNode != null) {
         aliasUsages.add(new AliasedNode(n,aliasedNode));
       }
-    }
-    if (n.getType() == Token.RETURN) {
-      report(t,n,GOOG_SCOPE_USES_RETURN);
-    }
-    if (n.getType() == Token.THIS) {
-      report(t,n,GOOG_SCOPE_REFERENCES_THIS);
     }
     JSDocInfo info=n.getJSDocInfo();
     if (info != null) {

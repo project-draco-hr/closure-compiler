@@ -1,5 +1,4 @@
 {
-  checkForFunctionsWithUnknownTypes(exportedFunction);
   List<Node> externParameters=Lists.newLinkedList();
   Node actualParameterIterator=NodeUtil.getFnParameters(exportedFunction).getFirstChild();
   while (actualParameterIterator != null) {
@@ -7,6 +6,7 @@
     actualParameterIterator=actualParameterIterator.getNext();
   }
   Node externFunction=NodeUtil.newFunctionNode("",externParameters,new Node(Token.BLOCK),-1,-1);
+  checkForFunctionsWithUnknownTypes(exportedFunction);
   externFunction.setJSType(exportedFunction.getJSType());
   return externFunction;
 }

@@ -16,17 +16,23 @@
       }
     }
  else {
-      if (!alternate.isUnknownType()) {
-        Iterator<JSType> it=alternates.iterator();
-        while (it.hasNext()) {
-          JSType current=it.next();
-          if (!current.isUnknownType()) {
-            if (alternate.isSubtype(current)) {
-              return this;
-            }
- else             if (current.isSubtype(alternate)) {
-              it.remove();
-            }
+      if (alternates.size() > MAX_UNION_SIZE) {
+        return this;
+      }
+      Iterator<JSType> it=alternates.iterator();
+      while (it.hasNext()) {
+        JSType current=it.next();
+        if (alternate.isUnknownType() || current.isUnknownType()) {
+          if (alternate.isEquivalentTo(current)) {
+            return this;
+          }
+        }
+ else {
+          if (alternate.isSubtype(current)) {
+            return this;
+          }
+ else           if (current.isSubtype(alternate)) {
+            it.remove();
           }
         }
       }

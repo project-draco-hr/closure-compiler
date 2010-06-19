@@ -1,14 +1,22 @@
 {
-  if (result == null) {
-    throw new IllegalStateException("build() has already been called on this Builder.");
+  com.google.javascript.jscomp.Instrumentation result=new com.google.javascript.jscomp.Instrumentation(this);
+  result.hasReportDefined=hasReportDefined;
+  result.reportDefined_=reportDefined_;
+  result.hasReportCall=hasReportCall;
+  result.reportCall_=reportCall_;
+  result.hasReportExit=hasReportExit;
+  result.reportExit_=reportExit_;
+  if (isDeclarationToRemoveMutable) {
+    declarationToRemove_=java.util.Collections.unmodifiableList(declarationToRemove_);
+    isDeclarationToRemoveMutable=false;
   }
-  if (result.declarationToRemove_ != java.util.Collections.EMPTY_LIST) {
-    result.declarationToRemove_=java.util.Collections.unmodifiableList(result.declarationToRemove_);
+  result.declarationToRemove_=declarationToRemove_;
+  if (isInitMutable) {
+    init_=java.util.Collections.unmodifiableList(init_);
+    isInitMutable=false;
   }
-  if (result.init_ != java.util.Collections.EMPTY_LIST) {
-    result.init_=java.util.Collections.unmodifiableList(result.init_);
-  }
-  com.google.javascript.jscomp.Instrumentation returnMe=result;
-  result=null;
-  return returnMe;
+  result.init_=init_;
+  result.hasAppNameSetter=hasAppNameSetter;
+  result.appNameSetter_=appNameSetter_;
+  return result;
 }

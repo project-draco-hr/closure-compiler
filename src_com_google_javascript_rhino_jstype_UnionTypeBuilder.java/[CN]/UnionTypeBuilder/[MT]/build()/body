@@ -12,14 +12,13 @@
       }
     }
  else {
-      Set<JSType> alternateSet=ImmutableSet.copyOf(alternates);
-      int size=alternateSet.size();
+      int size=alternates.size();
       if (size > MAX_UNION_SIZE) {
         result=registry.getNativeType(UNKNOWN_TYPE);
       }
  else {
         if (size > 1) {
-          result=new UnionType(registry,alternateSet);
+          result=new UnionType(registry,getAlternateListCopy());
         }
  else         if (size == 1) {
           result=alternates.iterator().next();
