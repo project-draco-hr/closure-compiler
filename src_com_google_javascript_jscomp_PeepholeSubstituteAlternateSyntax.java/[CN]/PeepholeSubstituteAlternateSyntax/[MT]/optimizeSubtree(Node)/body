@@ -21,19 +21,12 @@ tryMinimizeCondition(NodeUtil.getConditionExpression(node));
 }
 return node;
 case Token.NEW:
-case Token.CALL:
-{
-Node left=node.getFirstChild();
-if (left != null) {
-if (Token.NAME == left.getType()) {
-String className=left.getString();
-if ("RegExp".equals(className)) {
-return tryFoldRegularExpressionConstructor(node);
-}
-}
-}
-}
+node=tryFoldStandardConstructors(node);
+if (node.getType() != Token.CALL) {
 return node;
+}
+case Token.CALL:
+return tryFoldLiteralConstructor(node);
 default :
 return node;
 }

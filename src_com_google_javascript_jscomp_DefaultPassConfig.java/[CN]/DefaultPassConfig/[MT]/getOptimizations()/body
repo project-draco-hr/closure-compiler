@@ -88,9 +88,6 @@
   if (options.extractPrototypeMemberDeclarations && (options.propertyRenaming != PropertyRenamingPolicy.HEURISTIC && options.propertyRenaming != PropertyRenamingPolicy.AGGRESSIVE_HEURISTIC)) {
     passes.add(extractPrototypeMemberDeclarations);
   }
-  if (options.coalesceVariableNames) {
-    passes.add(coalesceVariableNames);
-  }
   if (options.ambiguateProperties && (options.propertyRenaming == PropertyRenamingPolicy.ALL_UNQUOTED)) {
     passes.add(ambiguateProperties);
   }
@@ -115,10 +112,13 @@
   if (options.aliasKeywords) {
     passes.add(aliasKeywords);
   }
+  passes.add(denormalize);
+  if (options.coalesceVariableNames) {
+    passes.add(coalesceVariableNames);
+  }
   if (options.collapseVariableDeclarations) {
     passes.add(collapseVariableDeclarations);
   }
-  passes.add(denormalize);
   if (options.instrumentationTemplate != null) {
     passes.add(instrumentFunctions);
   }

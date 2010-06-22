@@ -1,0 +1,18 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.INSTANCEOF);
+  if (NodeUtil.isLiteralValue(left) && !NodeUtil.mayHaveSideEffects(right)) {
+    Node replacementNode=null;
+    if (NodeUtil.isImmutableValue(left)) {
+      replacementNode=new Node(Token.FALSE);
+    }
+ else     if (right.getType() == Token.NAME && "Object".equals(right.getString())) {
+      replacementNode=new Node(Token.TRUE);
+    }
+    if (replacementNode != null) {
+      n.getParent().replaceChild(n,replacementNode);
+      reportCodeChange();
+      return replacementNode;
+    }
+  }
+  return n;
+}

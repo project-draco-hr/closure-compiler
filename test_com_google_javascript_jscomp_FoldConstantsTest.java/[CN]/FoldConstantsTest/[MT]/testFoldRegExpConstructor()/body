@@ -1,4 +1,5 @@
 {
+  enableNormalize();
   fold("x = new RegExp","x = RegExp()");
   fold("x = new RegExp(\"\")","x = RegExp(\"\")");
   fold("x = new RegExp(\"\", \"i\")","x = RegExp(\"\",\"i\")");
@@ -17,4 +18,6 @@
   String longRegexp="";
   for (int i=0; i < 200; i++)   longRegexp+="x";
   foldSame("x = RegExp(\"" + longRegexp + "\")");
+  disableNormalize();
+  foldSame("x = new RegExp(\"foobar\")");
 }

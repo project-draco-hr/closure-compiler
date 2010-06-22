@@ -1,0 +1,75 @@
+{
+  Preconditions.checkState(n.hasOneChild());
+  Node left=n.getFirstChild();
+  Node parent=n.getParent();
+  if (left == null) {
+    return n;
+  }
+  if (NodeUtil.isExpressionNode(parent)) {
+    parent.replaceChild(n,n.removeFirstChild());
+    reportCodeChange();
+    return null;
+  }
+  TernaryValue leftVal=NodeUtil.getBooleanValue(left);
+  if (leftVal == TernaryValue.UNKNOWN) {
+    return n;
+  }
+switch (n.getType()) {
+case Token.NOT:
+    int result=leftVal.toBoolean(true) ? Token.FALSE : Token.TRUE;
+  Node replacementNode=new Node(result);
+parent.replaceChild(n,replacementNode);
+reportCodeChange();
+return replacementNode;
+case Token.NEG:
+try {
+if (left.getType() == Token.NAME) {
+if (left.getString().equals("Infinity")) {
+return n;
+}
+ else if (left.getString().equals("NaN")) {
+n.removeChild(left);
+parent.replaceChild(n,left);
+reportCodeChange();
+return left;
+}
+}
+double negNum=-left.getDouble();
+Node negNumNode=Node.newNumber(negNum);
+parent.replaceChild(n,negNumNode);
+reportCodeChange();
+return negNumNode;
+}
+ catch (UnsupportedOperationException ex) {
+error(NEGATING_A_NON_NUMBER_ERROR,left);
+return n;
+}
+case Token.BITNOT:
+try {
+double val=left.getDouble();
+if (val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {
+int intVal=(int)val;
+if (intVal == val) {
+Node notIntValNode=Node.newNumber(~intVal);
+parent.replaceChild(n,notIntValNode);
+reportCodeChange();
+return notIntValNode;
+}
+ else {
+error(FRACTIONAL_BITWISE_OPERAND,left);
+return n;
+}
+}
+ else {
+error(BITWISE_OPERAND_OUT_OF_RANGE,left);
+return n;
+}
+}
+ catch (UnsupportedOperationException ex) {
+error(NEGATING_A_NON_NUMBER_ERROR,left);
+return n;
+}
+default :
+return n;
+}
+}

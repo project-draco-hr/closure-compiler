@@ -1,0 +1,41 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.CALL);
+  Node left=n.getFirstChild();
+  if (left == null) {
+    return n;
+  }
+  Node right=left.getNext();
+  if (right == null) {
+    return n;
+  }
+  if (!NodeUtil.isGetProp(left) || !NodeUtil.isImmutableValue(right)) {
+    return n;
+  }
+  Node lstringNode=left.getFirstChild();
+  Node functionName=lstringNode.getNext();
+  if ((lstringNode.getType() != Token.STRING) || (!functionName.getString().equals("indexOf") && !functionName.getString().equals("lastIndexOf"))) {
+    return n;
+  }
+  String lstring=NodeUtil.getStringValue(lstringNode);
+  boolean isIndexOf=functionName.getString().equals("indexOf");
+  Node firstArg=right;
+  Node secondArg=right.getNext();
+  String searchValue=NodeUtil.getStringValue(firstArg);
+  if (searchValue == null) {
+    return n;
+  }
+  int fromIndex=isIndexOf ? 0 : lstring.length();
+  if (secondArg != null) {
+    if ((secondArg.getNext() != null) || (secondArg.getType() != Token.NUMBER)) {
+      return n;
+    }
+ else {
+      fromIndex=(int)secondArg.getDouble();
+    }
+  }
+  int indexVal=isIndexOf ? lstring.indexOf(searchValue,fromIndex) : lstring.lastIndexOf(searchValue,fromIndex);
+  Node newNode=Node.newNumber(indexVal);
+  n.getParent().replaceChild(n,newNode);
+  reportCodeChange();
+  return newNode;
+}

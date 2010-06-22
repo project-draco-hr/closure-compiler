@@ -1,0 +1,13 @@
+{
+  Preconditions.checkState(n.getType() == Token.NEW);
+  if (isASTNormalized()) {
+    if (n.getFirstChild().getType() == Token.NAME) {
+      String className=n.getFirstChild().getString();
+      if (STANDARD_OBJECT_CONSTRUCTORS.contains(className)) {
+        n.setType(Token.CALL);
+        reportCodeChange();
+      }
+    }
+  }
+  return n;
+}

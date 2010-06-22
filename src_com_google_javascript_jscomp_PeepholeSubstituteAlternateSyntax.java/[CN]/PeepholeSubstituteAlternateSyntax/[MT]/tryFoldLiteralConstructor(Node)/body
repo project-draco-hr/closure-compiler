@@ -1,0 +1,28 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.CALL || n.getType() == Token.NEW);
+  Node constructorNameNode=n.getFirstChild();
+  Node newLiteralNode=null;
+  if (isASTNormalized() && Token.NAME == constructorNameNode.getType()) {
+    String className=constructorNameNode.getString();
+    if ("RegExp".equals(className)) {
+      return tryFoldRegularExpressionConstructor(n);
+    }
+ else {
+      boolean constructorHasArguments=constructorNameNode.getNext() != null;
+      if (!constructorHasArguments) {
+        if ("Array".equals(className)) {
+          newLiteralNode=new Node(Token.ARRAYLIT);
+        }
+ else         if ("Object".equals(className)) {
+          newLiteralNode=new Node(Token.OBJECTLIT);
+        }
+      }
+      if (newLiteralNode != null) {
+        n.getParent().replaceChild(n,newLiteralNode);
+        reportCodeChange();
+        return newLiteralNode;
+      }
+    }
+  }
+  return n;
+}

@@ -1,0 +1,16 @@
+{
+  if (left.getType() == Token.STRING || right.getType() == Token.STRING) {
+    String leftString=NodeUtil.getStringValue(left);
+    String rightString=NodeUtil.getStringValue(right);
+    if (leftString != null && rightString != null) {
+      Node newStringNode=Node.newString(leftString + rightString);
+      n.getParent().replaceChild(n,newStringNode);
+      reportCodeChange();
+      return newStringNode;
+    }
+  }
+ else {
+    return tryFoldArithmetic(n,left,right);
+  }
+  return n;
+}

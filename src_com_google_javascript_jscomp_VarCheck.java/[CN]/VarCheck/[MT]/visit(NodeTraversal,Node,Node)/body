@@ -16,7 +16,9 @@
     if (NodeUtil.isFunctionExpression(parent)) {
     }
  else {
-      t.report(n,UNDEFINED_VAR_ERROR,varName);
+      if (!t.getInput().isExtern()) {
+        t.report(n,UNDEFINED_VAR_ERROR,varName);
+      }
       if (sanityCheck) {
         throw new IllegalStateException("Unexpected variable " + varName);
       }

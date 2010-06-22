@@ -1,0 +1,25 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.GETPROP);
+  if (right.getType() == Token.STRING && right.getString().equals("length")) {
+    int knownLength=-1;
+switch (left.getType()) {
+case Token.ARRAYLIT:
+      if (NodeUtil.mayHaveSideEffects(left)) {
+        return n;
+      }
+    knownLength=left.getChildCount();
+  break;
+case Token.STRING:
+knownLength=left.getString().length();
+break;
+default :
+return n;
+}
+Preconditions.checkState(knownLength != -1);
+Node lengthNode=Node.newNumber(knownLength);
+n.getParent().replaceChild(n,lengthNode);
+reportCodeChange();
+return lengthNode;
+}
+return n;
+}
