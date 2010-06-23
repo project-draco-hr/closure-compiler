@@ -1,5 +1,8 @@
 {
-  if (returnType == null || parametersNode == null) {
+  if (returnType == null) {
+    returnType=typeRegistry.getNativeType(UNKNOWN_TYPE);
+  }
+  if (parametersNode == null) {
     throw new IllegalStateException("All Function types must have params and a return type");
   }
   FunctionType fnType;
@@ -14,7 +17,7 @@
     maybeSetBaseType(fnType);
   }
  else {
-    fnType=new FunctionBuilder(typeRegistry).withName(fnName).withSourceNode(sourceNode).withParamsNode(parametersNode).withReturnType(returnType).withTypeOfThis(thisType).withTemplateName(templateTypeName).build();
+    fnType=new FunctionBuilder(typeRegistry).withName(fnName).withSourceNode(sourceNode).withParamsNode(parametersNode).withReturnType(returnType,returnTypeInferred).withTypeOfThis(thisType).withTemplateName(templateTypeName).build();
     maybeSetBaseType(fnType);
   }
   if (implementedInterfaces != null) {

@@ -18,6 +18,7 @@
   boolean isFnLiteral=rValue != null && rValue.getType() == Token.FUNCTION;
   Node fnRoot=isFnLiteral ? rValue : null;
   Node parametersNode=isFnLiteral ? rValue.getFirstChild().getNext() : null;
+  Node fnBlock=isFnLiteral ? parametersNode.getNext() : null;
   if (functionType == null && info != null && info.hasType()) {
     JSType type=info.getType().evaluate(scope,typeRegistry);
     type=type.restrictByNotNullOrUndefined();
@@ -34,17 +35,18 @@
           ObjectType ownerType=ObjectType.cast(var.getType());
           FunctionType propType=null;
           if (ownerType != null) {
-            propType=findOverriddenFunction(ownerType,lvalueNode.getLastChild().getString());
+            String propName=lvalueNode.getLastChild().getString();
+            propType=findOverriddenFunction(ownerType,propName);
           }
           if (propType != null) {
-            functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferFromOverriddenFunction(propType,parametersNode).inferThisType(info,owner).buildAndRegister();
+            functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferFromOverriddenFunction(propType,parametersNode).inferThisType(info,owner).inferReturnStatements(fnBlock).buildAndRegister();
           }
         }
       }
     }
   }
   if (functionType == null) {
-    functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferTemplateTypeName(info).inferReturnType(info).inferInheritance(info).inferThisType(info,owner).inferParameterTypes(parametersNode,info).buildAndRegister();
+    functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferTemplateTypeName(info).inferReturnType(info).inferInheritance(info).inferThisType(info,owner).inferParameterTypes(parametersNode,info).inferReturnStatements(fnBlock).buildAndRegister();
   }
   if (rValue != null) {
     setDeferredType(rValue,functionType);

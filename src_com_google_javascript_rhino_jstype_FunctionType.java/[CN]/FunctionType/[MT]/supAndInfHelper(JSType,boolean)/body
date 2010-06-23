@@ -7,7 +7,7 @@
       FunctionType other=(FunctionType)that;
       if (call.hasEqualParameters(other.call) && isEquivalent(typeOfThis,other.typeOfThis)) {
         JSType newReturnType=leastSuper ? call.returnType.getLeastSupertype(other.call.returnType) : call.returnType.getGreatestSubtype(other.call.returnType);
-        return new FunctionType(registry,null,null,new ArrowType(registry,call.parameters,newReturnType,call.returnTypeInferred || other.call.returnTypeInferred),typeOfThis,null,false,false);
+        return cloneWithNewReturnType(newReturnType,call.returnTypeInferred || other.call.returnTypeInferred);
       }
     }
     JSType functionInstance=registry.getNativeType(JSTypeNative.FUNCTION_INSTANCE_TYPE);

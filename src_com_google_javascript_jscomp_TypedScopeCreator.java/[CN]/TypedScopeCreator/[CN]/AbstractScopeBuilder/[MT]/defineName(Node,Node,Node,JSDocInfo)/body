@@ -3,7 +3,12 @@
   if (value != null && value.getType() == Token.FUNCTION) {
     String functionName=name.getString();
     FunctionType functionType=getFunctionType(functionName,value,info,null);
-    defineSlot(name,var,functionType);
+    if (functionType.isReturnTypeInferred() && scope.isLocal()) {
+      defineSlot(name,var,null);
+    }
+ else {
+      defineSlot(name,var,functionType);
+    }
   }
  else {
     JSType type=null;
