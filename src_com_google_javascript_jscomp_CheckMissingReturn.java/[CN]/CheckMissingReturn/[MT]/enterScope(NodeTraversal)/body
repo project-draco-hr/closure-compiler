@@ -1,5 +1,6 @@
 {
-  if (!explicitReturnExpected(t.getScopeRoot())) {
+  JSType returnType=explicitReturnExpected(t.getScopeRoot());
+  if (returnType == null) {
     return;
   }
   if (fastAllPathsReturnCheck(t.getControlFlowGraph())) {
@@ -7,6 +8,6 @@
   }
   CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch> test=new CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch>(t.getControlFlowGraph(),t.getControlFlowGraph().getEntry(),t.getControlFlowGraph().getImplicitReturn(),IS_RETURN,GOES_THROUGH_TRUE_CONDITION_PREDICATE);
   if (!test.allPathsSatisfyPredicate()) {
-    compiler.report(t.makeError(t.getScopeRoot(),level,MISSING_RETURN_STATEMENT));
+    compiler.report(t.makeError(t.getScopeRoot(),level,MISSING_RETURN_STATEMENT,returnType.toString()));
   }
 }

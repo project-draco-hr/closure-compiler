@@ -1,0 +1,19 @@
+{
+  if (n.getType() == Token.LABEL) {
+    Node labeledStatement=n.getLastChild();
+    if (labeledStatement.getType() != Token.BLOCK) {
+      return isOneExactlyFunctionOrDo(labeledStatement);
+    }
+ else {
+      if (getNonEmptyChildCount(n,2) == 1) {
+        return isOneExactlyFunctionOrDo(getFirstNonEmptyChild(n));
+      }
+ else {
+        return false;
+      }
+    }
+  }
+ else {
+    return (n.getType() == Token.FUNCTION || n.getType() == Token.DO);
+  }
+}

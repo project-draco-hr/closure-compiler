@@ -4,7 +4,7 @@
     throw new Error("Missing BLOCK child.");
   }
   if (n.getType() == Token.BLOCK) {
-    int count=getNonEmptyChildCount(n);
+    int count=getNonEmptyChildCount(n,2);
     if (count == 0) {
       if (cc.shouldPreserveExtraBlocks()) {
         cc.beginBlock();
@@ -18,7 +18,7 @@
     if (count == 1) {
       Node firstAndOnlyChild=getFirstNonEmptyChild(n);
       boolean alwaysWrapInBlock=cc.shouldPreserveExtraBlocks();
-      if (alwaysWrapInBlock || firstAndOnlyChild.getType() == Token.FUNCTION || firstAndOnlyChild.getType() == Token.DO) {
+      if (alwaysWrapInBlock || isOneExactlyFunctionOrDo(firstAndOnlyChild)) {
         cc.beginBlock();
         add(firstAndOnlyChild,Context.STATEMENT);
         cc.maybeLineBreak();
