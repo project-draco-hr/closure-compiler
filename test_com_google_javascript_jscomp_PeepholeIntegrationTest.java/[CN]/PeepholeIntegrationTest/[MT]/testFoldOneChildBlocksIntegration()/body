@@ -1,0 +1,15 @@
+{
+  fold("function(){switch(x){default:{break}}}","function(){switch(x){default:break}}");
+  fold("function(){switch(x){default:x;case 1:return 2}}","function(){switch(x){default:case 1:return 2}}");
+  fold("if(x){if(true){foo();foo()}else{bar();bar()}}","if(x){foo();foo()}");
+  fold("if(x){if(false){foo();foo()}else{bar();bar()}}","if(x){bar();bar()}");
+  fold("if(x()){}","x()");
+  fold("if(x()){} else {x()}","x()||x()");
+  fold("if(x){}","");
+  fold("if(a()){A()} else if (b()) {} else {C()}","if(a())A();else b()||C()");
+  fold("if(a()){} else if (b()) {} else {C()}","a()||b()||C()");
+  fold("if(a()){A()} else if (b()) {} else if (c()) {} else{D()}","if(a())A();else b()||c()||D()");
+  fold("if(a()){} else if (b()) {} else if (c()) {} else{D()}","a()||b()||c()||D()");
+  fold("if(a()){A()} else if (b()) {} else if (c()) {} else{}","if(a())A();else b()||c()");
+  fold("function foo(){if(x()){}}","function foo(){x()}");
+}
