@@ -28,25 +28,18 @@
     }
   }
   if (functionType == null) {
-    if (info == null || !FunctionTypeBuilder.isFunctionTypeDeclaration(info)) {
-      if (lvalueNode != null && lvalueNode.getType() == Token.GETPROP && lvalueNode.isQualifiedName()) {
-        Var var=scope.getVar(lvalueNode.getFirstChild().getQualifiedName());
-        if (var != null) {
-          ObjectType ownerType=ObjectType.cast(var.getType());
-          FunctionType propType=null;
-          if (ownerType != null) {
-            String propName=lvalueNode.getLastChild().getString();
-            propType=findOverriddenFunction(ownerType,propName);
-          }
-          if (propType != null) {
-            functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferFromOverriddenFunction(propType,parametersNode).inferThisType(info,owner).inferReturnStatements(fnBlock).buildAndRegister();
-          }
+    FunctionType overriddenPropType=null;
+    if (lvalueNode != null && lvalueNode.getType() == Token.GETPROP && lvalueNode.isQualifiedName()) {
+      Var var=scope.getVar(lvalueNode.getFirstChild().getQualifiedName());
+      if (var != null) {
+        ObjectType ownerType=ObjectType.cast(var.getType());
+        if (ownerType != null) {
+          String propName=lvalueNode.getLastChild().getString();
+          overriddenPropType=findOverriddenFunction(ownerType,propName);
         }
       }
     }
-  }
-  if (functionType == null) {
-    functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferTemplateTypeName(info).inferReturnType(info).inferInheritance(info).inferThisType(info,owner).inferParameterTypes(parametersNode,info).inferReturnStatements(fnBlock).buildAndRegister();
+    functionType=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferFromOverriddenFunction(overriddenPropType,parametersNode).inferTemplateTypeName(info).inferReturnType(info).inferInheritance(info).inferThisType(info,owner).inferParameterTypes(parametersNode,info).inferReturnStatementsAsLastResort(fnBlock).buildAndRegister();
   }
   if (rValue != null) {
     setDeferredType(rValue,functionType);

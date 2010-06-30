@@ -1,5 +1,9 @@
 {
+  if (oldType == null) {
+    return this;
+  }
   returnType=oldType.getReturnType();
+  returnTypeInferred=oldType.isReturnTypeInferred();
   if (paramsParent == null) {
     parametersNode=oldType.getParametersNode();
     if (parametersNode == null) {
@@ -10,12 +14,19 @@
     FunctionParamBuilder paramBuilder=new FunctionParamBuilder(typeRegistry);
     Iterator<Node> oldParams=oldType.getParameters().iterator();
     boolean warnedAboutArgList=false;
+    boolean oldParamsNodeHasVarArgs=false;
     for (Node currentParam=paramsParent.getFirstChild(); currentParam != null; currentParam=currentParam.getNext()) {
       if (oldParams.hasNext()) {
-        paramBuilder.newParameterFromNode(oldParams.next());
+        Node oldParam=oldParams.next();
+        Node newParam=paramBuilder.newParameterFromNode(oldParam);
+        if (currentParam.getNext() != null && newParam.isVarArgs()) {
+          newParam.setVarArgs(false);
+          newParam.setOptionalArg(true);
+          oldParamsNodeHasVarArgs=true;
+        }
       }
  else {
-        warnedAboutArgList|=addParameter(paramBuilder,typeRegistry.getNativeType(UNKNOWN_TYPE),warnedAboutArgList,codingConvention.isOptionalParameter(currentParam),codingConvention.isVarArgsParameter(currentParam));
+        warnedAboutArgList|=addParameter(paramBuilder,typeRegistry.getNativeType(UNKNOWN_TYPE),warnedAboutArgList,codingConvention.isOptionalParameter(currentParam) || oldParamsNodeHasVarArgs,codingConvention.isVarArgsParameter(currentParam));
       }
     }
     parametersNode=paramBuilder.build();

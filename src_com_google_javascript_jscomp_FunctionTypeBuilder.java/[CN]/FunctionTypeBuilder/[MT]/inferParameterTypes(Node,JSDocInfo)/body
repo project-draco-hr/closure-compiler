@@ -7,6 +7,10 @@
       return inferParameterTypes(info);
     }
   }
+  Node oldParameterType=null;
+  if (parametersNode != null) {
+    oldParameterType=parametersNode.getFirstChild();
+  }
   FunctionParamBuilder builder=new FunctionParamBuilder(typeRegistry);
   boolean warnedAboutArgList=false;
   Set<String> allJsDocParams=(info == null) ? Sets.<String>newHashSet() : Sets.newHashSet(info.getParameterNames());
@@ -14,14 +18,30 @@
   for (  Node arg : argsParent.children()) {
     String argumentName=arg.getString();
     allJsDocParams.remove(argumentName);
-    JSType parameterType=info != null && info.hasParameterType(argumentName) ? info.getParameterType(argumentName).evaluate(scope,typeRegistry) : typeRegistry.getNativeType(UNKNOWN_TYPE);
+    JSType parameterType=null;
+    boolean isOptionalParam=isOptionalParameter(arg,info);
+    boolean isVarArgs=isVarArgsParameter(arg,info);
+    if (info != null && info.hasParameterType(argumentName)) {
+      parameterType=info.getParameterType(argumentName).evaluate(scope,typeRegistry);
+    }
+ else     if (oldParameterType != null && oldParameterType.getJSType() != null) {
+      parameterType=oldParameterType.getJSType();
+      isOptionalParam=oldParameterType.isOptionalArg();
+      isVarArgs=oldParameterType.isVarArgs();
+    }
+ else {
+      parameterType=typeRegistry.getNativeType(UNKNOWN_TYPE);
+    }
     if (templateTypeName != null && parameterType.restrictByNotNullOrUndefined().isTemplateType()) {
       if (foundTemplateType) {
         reportError(TEMPLATE_TYPE_DUPLICATED,fnName);
       }
       foundTemplateType=true;
     }
-    warnedAboutArgList|=addParameter(builder,parameterType,warnedAboutArgList,isOptionalParameter(arg,info),isVarArgsParameter(arg,info));
+    warnedAboutArgList|=addParameter(builder,parameterType,warnedAboutArgList,isOptionalParam,isVarArgs);
+    if (oldParameterType != null) {
+      oldParameterType=oldParameterType.getNext();
+    }
   }
   if (templateTypeName != null && !foundTemplateType) {
     reportError(TEMPLATE_TYPE_EXPECTED,fnName);

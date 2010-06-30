@@ -1,5 +1,8 @@
 {
-  returnType=info != null && info.hasReturnType() ? info.getReturnType().evaluate(scope,typeRegistry) : null;
+  if (info != null && info.hasReturnType()) {
+    returnType=info.getReturnType().evaluate(scope,typeRegistry);
+    returnTypeInferred=false;
+  }
   if (templateTypeName != null && returnType != null && returnType.restrictByNotNullOrUndefined().isTemplateType()) {
     reportError(TEMPLATE_TYPE_EXPECTED,fnName);
   }
