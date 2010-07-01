@@ -4,12 +4,14 @@
     addModuleInformation(null);
   }
  else {
-    for (    JSModule m : Sets.newTreeSet(new Comparator<JSModule>(){
+    TreeSet<JSModule> modules=Sets.newTreeSet(new Comparator<JSModule>(){
       public int compare(      JSModule o1,      JSModule o2){
         return o1.getName().compareTo(o2.getName());
       }
     }
-,moduleGraph.getAllModules())) {
+);
+    Iterables.addAll(modules,moduleGraph.getAllModules());
+    for (    JSModule m : modules) {
       addModuleInformation(m);
     }
   }
