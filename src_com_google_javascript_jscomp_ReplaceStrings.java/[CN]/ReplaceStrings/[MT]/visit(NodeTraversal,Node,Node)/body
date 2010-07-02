@@ -18,11 +18,13 @@ if (rhs.getType() == Token.NAME || rhs.getType() == Token.STRING) {
   Collection<String> classes=methods.get(methodName);
   if (classes != null) {
     Node lhs=calledFn.getFirstChild();
-    JSType type=lhs.getJSType().restrictByNotNullOrUndefined();
-    Config config=findMatchingClass(type,classes);
-    if (config != null) {
-      doSubstitutions(t,config,n);
-      return;
+    if (lhs.getJSType() != null) {
+      JSType type=lhs.getJSType().restrictByNotNullOrUndefined();
+      Config config=findMatchingClass(type,classes);
+      if (config != null) {
+        doSubstitutions(t,config,n);
+        return;
+      }
     }
   }
 }

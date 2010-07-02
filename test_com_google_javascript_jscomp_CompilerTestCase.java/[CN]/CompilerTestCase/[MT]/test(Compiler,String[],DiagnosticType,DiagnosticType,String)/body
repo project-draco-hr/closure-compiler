@@ -22,9 +22,7 @@
         check.processForTesting(externsRoot,mainRoot);
       }
       if (normalizeEnabled && i == 0) {
-        Normalize normalize=new Normalize(compiler,false);
-        normalize.process(externsRoot,mainRoot);
-        compiler.setNormalized();
+        normalizeActualCode(compiler,externsRoot,mainRoot);
       }
       if (markNoSideEffects && i == 0) {
         MarkNoSideEffectCalls mark=new MarkNoSideEffectCalls(compiler);
@@ -77,8 +75,7 @@
       }
     }
     if (normalizeEnabled) {
-      Normalize normalize=new Normalize(compiler,false);
-      normalize.process(externsRootClone,mainRootClone);
+      normalizeActualCode(compiler,externsRootClone,mainRootClone);
     }
     if (mainRootClone.checkTreeEqualsSilent(mainRoot)) {
       assertFalse("compiler.reportCodeChange() was called " + "even though nothing changed",hasCodeChanged);
