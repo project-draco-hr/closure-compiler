@@ -1,8 +1,17 @@
 {
-  if (parent != null && parent.getType() == Token.SCRIPT && n.getType() == Token.FUNCTION) {
-    String functionName=NodeUtil.getFunctionName(n);
-    if (isTestFunction(n,functionName) && t.inGlobalScope()) {
-      exportTestFunction(functionName,n,parent);
+  if (parent != null && parent.getType() == Token.SCRIPT && t.inGlobalScope()) {
+    if (NodeUtil.isFunctionDeclaration(n)) {
+      String functionName=NodeUtil.getFunctionName(n);
+      if (isTestFunction(n,functionName)) {
+        exportTestFunction(functionName,n,parent);
+      }
+    }
+ else     if (isVarDeclaredFunction(n)) {
+      Node functionNode=n.getFirstChild().getFirstChild();
+      String functionName=NodeUtil.getFunctionName(functionNode);
+      if (isTestFunction(functionNode,functionName)) {
+        exportTestFunction(functionName,n,parent);
+      }
     }
   }
 }
