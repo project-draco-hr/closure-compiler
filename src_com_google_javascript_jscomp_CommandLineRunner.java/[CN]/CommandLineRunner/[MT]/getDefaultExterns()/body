@@ -1,10 +1,15 @@
 {
   InputStream input=CommandLineRunner.class.getResourceAsStream("/externs.zip");
   ZipInputStream zip=new ZipInputStream(input);
-  List<JSSourceFile> externs=Lists.newLinkedList();
+  Map<String,JSSourceFile> externsMap=Maps.newHashMap();
   for (ZipEntry entry=null; (entry=zip.getNextEntry()) != null; ) {
     LimitInputStream entryStream=new LimitInputStream(zip,entry.getSize());
-    externs.add(JSSourceFile.fromInputStream(entry.getName(),entryStream));
+    externsMap.put(entry.getName(),JSSourceFile.fromInputStream("externs.zip//" + entry.getName(),entryStream));
+  }
+  Preconditions.checkState(externsMap.keySet().equals(Sets.newHashSet(DEFAULT_EXTERNS_NAMES)),"Externs zip must match our hard-coded list of externs.");
+  List<JSSourceFile> externs=Lists.newArrayList();
+  for (  String key : DEFAULT_EXTERNS_NAMES) {
+    externs.add(externsMap.get(key));
   }
   return externs;
 }

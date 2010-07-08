@@ -14,8 +14,9 @@
  else {
     options.outputCharset=inputCharset;
   }
-  if (!options.jsOutputFile.isEmpty()) {
-    out=new PrintStream(options.jsOutputFile,inputCharset.name());
+  boolean writeOutputToFile=!options.jsOutputFile.isEmpty();
+  if (writeOutputToFile) {
+    out=toPrintStream(options.jsOutputFile,inputCharset.name());
   }
   List<String> jsFiles=config.js;
   List<String> moduleSpecs=config.module;
@@ -29,5 +30,9 @@
     inputList.toArray(inputs);
     result=compiler.compile(externs,inputs,options);
   }
-  return processResults(result,modules,options);
+  int errCode=processResults(result,modules,options);
+  if (writeOutputToFile) {
+    out.close();
+  }
+  return errCode;
 }
