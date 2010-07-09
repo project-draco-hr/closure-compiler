@@ -8,7 +8,7 @@
     }
  else {
       out.append(DotFormatter.toDot(compiler.getPassConfig().getPassGraph()));
-      out.println();
+      out.append('\n');
       return 0;
     }
   }
@@ -19,18 +19,18 @@
  else {
       ControlFlowGraph<Node> cfg=compiler.computeCFG();
       DotFormatter.appendDot(compiler.getRoot(),cfg,out);
-      out.println();
+      out.append('\n');
       return 0;
     }
   }
   if (config.printTree) {
     if (compiler.getRoot() == null) {
-      out.println("Code contains errors; no tree was generated.");
+      out.append("Code contains errors; no tree was generated.\n");
       return 1;
     }
  else {
       compiler.getRoot().appendStringTree(out);
-      out.println("");
+      out.append("\n");
       return 0;
     }
   }
@@ -43,23 +43,23 @@
       String moduleFilePrefix=config.moduleOutputPathPrefix;
       maybeCreateDirsForPath(moduleFilePrefix);
       Map<String,String> moduleWrappers=parseModuleWrappers(config.moduleWrapper,modules);
-      PrintStream mapOut=null;
+      Writer mapOut=null;
       if (!shouldGenerateMapPerModule(options)) {
-        mapOut=toPrintStream(expandSourceMapPath(options,null));
+        mapOut=toWriter(expandSourceMapPath(options,null));
       }
       for (      JSModule m : modules) {
         if (shouldGenerateMapPerModule(options)) {
-          mapOut=toPrintStream(expandSourceMapPath(options,m));
+          mapOut=toWriter(expandSourceMapPath(options,m));
         }
-        PrintStream ps=toPrintStream(moduleFilePrefix + m.getName() + ".js");
+        Writer writer=toWriter(moduleFilePrefix + m.getName() + ".js");
         if (options.sourceMapOutputPath != null) {
           compiler.getSourceMap().reset();
         }
-        writeOutput(ps,compiler,compiler.toSource(m),moduleWrappers.get(m.getName()),"%s");
+        writeOutput(writer,compiler,compiler.toSource(m),moduleWrappers.get(m.getName()),"%s");
         if (options.sourceMapOutputPath != null) {
           compiler.getSourceMap().appendTo(mapOut,m.getName());
         }
-        ps.close();
+        writer.close();
         if (shouldGenerateMapPerModule(options) && mapOut != null) {
           mapOut.close();
           mapOut=null;
@@ -70,7 +70,7 @@
       }
     }
     if (options.externExportsPath != null) {
-      PrintStream eeOut=openExternExportsStream(options,options.jsOutputFile);
+      Writer eeOut=openExternExportsStream(options,options.jsOutputFile);
       eeOut.append(result.externExport);
       eeOut.close();
     }

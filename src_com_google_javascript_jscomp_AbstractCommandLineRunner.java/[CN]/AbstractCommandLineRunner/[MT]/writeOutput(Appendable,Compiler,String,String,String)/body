@@ -4,21 +4,20 @@
     String prefix="";
     if (pos > 0) {
       prefix=wrapper.substring(0,pos);
-      out.print(prefix);
+      out.append(prefix);
     }
-    out.print(code);
+    out.append(code);
     int suffixStart=pos + codePlaceholder.length();
-    if (suffixStart == wrapper.length()) {
-      out.println();
+    if (suffixStart != wrapper.length()) {
+      out.append(wrapper.substring(suffixStart));
     }
- else {
-      out.println(wrapper.substring(suffixStart));
-    }
+    out.append('\n');
     if (compiler != null && compiler.getSourceMap() != null) {
       compiler.getSourceMap().setWrapperPrefix(prefix);
     }
   }
  else {
-    out.println(code);
+    out.append(code);
+    out.append('\n');
   }
 }

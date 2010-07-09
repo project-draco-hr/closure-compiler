@@ -7,13 +7,13 @@
   if (shouldGenerateManifestPerModule()) {
     Iterable<JSModule> modules=graph.getAllModules();
     for (    JSModule module : modules) {
-      PrintStream out=toPrintStream(expandManifest(module));
+      Writer out=toWriter(expandManifest(module));
       printManifestTo(module.getInputs(),out);
       out.close();
     }
   }
  else {
-    PrintStream out=toPrintStream(expandManifest(null));
+    Writer out=toWriter(expandManifest(null));
     if (graph == null) {
       printManifestTo(compiler.getInputsInOrder(),out);
     }
