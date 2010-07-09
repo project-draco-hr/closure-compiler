@@ -4,7 +4,15 @@ case Token.VAR:
     removeVarDeclarationsByNameOrRvalue(t,n,parent);
   break;
 case Token.NAME:
-maybeRemoveReferenceToRemovedVariable(t,n,parent);
+if (qualifiedNameBeginsWithStripType(n)) {
+  maybeReplaceDirectReferenceToStrippedType(t,n);
+}
+ else {
+  maybeRemoveReferenceToRemovedVariable(t,n,parent);
+}
+break;
+case Token.GETPROP:
+maybeReplaceDirectReferenceToStrippedType(t,n);
 break;
 case Token.ASSIGN:
 case Token.ASSIGN_BITOR:

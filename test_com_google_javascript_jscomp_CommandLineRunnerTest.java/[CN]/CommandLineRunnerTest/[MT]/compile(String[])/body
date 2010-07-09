@@ -4,9 +4,13 @@
   for (int i=0; i < original.length; i++) {
     args.add("--js");
     args.add("/path/to/input" + i + ".js");
-    if (useModules) {
+    if (useModules == ModulePattern.CHAIN) {
       args.add("--module");
       args.add("mod" + i + ":1"+ (i > 0 ? (":mod" + (i - 1)) : ""));
+    }
+ else     if (useModules == ModulePattern.STAR) {
+      args.add("--module");
+      args.add("mod" + i + ":1"+ (i > 0 ? ":mod0" : ""));
     }
   }
   String[] argStrings=args.toArray(new String[]{});
@@ -24,8 +28,8 @@
 catch (  IOException e) {
     assert(false);
   }
-  if (useModules) {
-    compiler.compile(externs,CompilerTestCase.createModuleChain(original),options);
+  if (useModules != ModulePattern.NONE) {
+    compiler.compile(externs,useModules == ModulePattern.STAR ? CompilerTestCase.createModuleStar(original) : CompilerTestCase.createModuleChain(original),options);
   }
  else {
     JSSourceFile[] inputs=new JSSourceFile[original.length];

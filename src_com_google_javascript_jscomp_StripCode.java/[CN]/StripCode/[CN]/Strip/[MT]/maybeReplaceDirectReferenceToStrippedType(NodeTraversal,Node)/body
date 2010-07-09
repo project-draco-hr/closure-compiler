@@ -1,0 +1,15 @@
+{
+  if (stripTypes.contains(n.getQualifiedName())) {
+    Node parent=n.getParent();
+    if (NodeUtil.isGet(parent) || NodeUtil.isCall(parent) || NodeUtil.isNew(parent)|| NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) {
+      return;
+    }
+    int parentType=parent.getType();
+    if (parentType == Token.INC || parentType == Token.DEC) {
+      t.report(n,STRIP_ASSIGNMENT_ERROR,n.getQualifiedName());
+      return;
+    }
+    n.getParent().replaceChild(n,NodeUtil.newUndefinedNode(n));
+    t.getCompiler().reportCodeChange();
+  }
+}

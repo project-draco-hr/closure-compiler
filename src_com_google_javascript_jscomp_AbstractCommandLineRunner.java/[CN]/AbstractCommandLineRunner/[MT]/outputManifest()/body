@@ -3,13 +3,23 @@
   if (Strings.isEmpty(outputManifest)) {
     return;
   }
+  JSModuleGraph graph=compiler.getModuleGraph();
   if (shouldGenerateManifestPerModule()) {
-    Iterable<JSModule> modules=compiler.getModuleGraph().getAllModules();
+    Iterable<JSModule> modules=graph.getAllModules();
     for (    JSModule module : modules) {
-      printManifestTo(module.getInputs(),expandManifest(module));
+      PrintStream out=toPrintStream(expandManifest(module));
+      printManifestTo(module.getInputs(),out);
+      out.close();
     }
   }
  else {
-    printManifestTo(compiler.getInputsInOrder(),expandManifest(null));
+    PrintStream out=toPrintStream(expandManifest(null));
+    if (graph == null) {
+      printManifestTo(compiler.getInputsInOrder(),out);
+    }
+ else {
+      printModuleGraphManifestTo(graph,out);
+    }
+    out.close();
   }
 }
