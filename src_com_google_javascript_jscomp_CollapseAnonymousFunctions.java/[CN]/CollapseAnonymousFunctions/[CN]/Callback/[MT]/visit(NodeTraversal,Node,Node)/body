@@ -15,6 +15,9 @@
     NodeUtil.copyNameAnnotations(name,fnName);
     name.removeChild(value);
     parent.replaceChild(n,value);
+    if (!t.inGlobalScope() && NodeUtil.isHoistedFunctionDeclaration(value)) {
+      parent.addChildToFront(value.detachFromParent());
+    }
     compiler.reportCodeChange();
   }
 }
