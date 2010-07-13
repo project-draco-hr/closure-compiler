@@ -1,15 +1,21 @@
 {
-  Object sourceFile=node.getProp(Node.SOURCEFILE_PROP);
+  String sourceFile=(String)node.getProp(Node.SOURCEFILE_PROP);
   if (sourceFile == null || node.getLineno() < 0) {
     return;
   }
+  String escapedSourceFile;
+  if (lastSourceFile != sourceFile) {
+    lastSourceFile=sourceFile;
+    lastSourceFileEscaped=escapeString(sourceFile);
+  }
+  escapedSourceFile=lastSourceFileEscaped;
   Mapping mapping=new Mapping();
   mapping.id=mappings.size();
-  mapping.sourceFile=sourceFile.toString();
+  mapping.sourceFile=escapedSourceFile;
   mapping.originalPosition=new Position(node.getLineno(),node.getCharno());
-  Object originalName=node.getProp(Node.ORIGINALNAME_PROP);
+  String originalName=(String)node.getProp(Node.ORIGINALNAME_PROP);
   if (originalName != null) {
-    mapping.originalName=originalName.toString();
+    mapping.originalName=escapeString(originalName);
   }
   int offsetLine=offsetPosition.getLineNumber();
   int startOffsetPosition=offsetPosition.getCharacterIndex();
