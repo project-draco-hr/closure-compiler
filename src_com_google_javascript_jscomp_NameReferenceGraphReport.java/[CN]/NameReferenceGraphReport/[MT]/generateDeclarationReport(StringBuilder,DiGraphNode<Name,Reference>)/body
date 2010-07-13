@@ -1,0 +1,23 @@
+{
+  String declName=declarationNode.getValue().getQualifiedName();
+  JSType declType=declarationNode.getValue().getType();
+  builder.append("<LI> ");
+  builder.append("<A NAME=\"" + declName + "\">");
+  builder.append(declName);
+  builder.append("\n");
+  generateType(builder,declType);
+  List<DefinitionsRemover.Definition> defs=declarationNode.getValue().getDeclarations();
+  if (defs.size() == 0) {
+    builder.append("<br>No definitions found<br>");
+  }
+ else {
+    builder.append("<ul>");
+    for (    DefinitionsRemover.Definition def : defs) {
+      Node fnDef=def.getRValue();
+      String sourceFileName=getSourceFile(fnDef);
+      builder.append("<li> Defined: ");
+      generateSourceReferenceLink(builder,sourceFileName,fnDef.getLineno(),fnDef.getCharno());
+    }
+    builder.append("</ul>");
+  }
+}
