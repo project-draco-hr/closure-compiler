@@ -3,11 +3,12 @@
     return;
   }
   int i=0;
+  int childCount=n.getChildCount();
   for (  Node iParameter : fnType.getParameters()) {
     JSType iParameterType=getJSType(iParameter);
     iParameterType=iParameterType.restrictByNotNullOrUndefined();
     if (iParameterType.isTemplateType()) {
-      if (i + 1 >= n.getChildCount()) {
+      if (i + 1 >= childCount) {
         return;
       }
       Node iArgument=n.getChildAtIndex(i + 1);
@@ -26,7 +27,7 @@
             FunctionType jParameterFnType=(FunctionType)jParameterType;
             if (jParameterFnType.getTypeOfThis().equals(iParameterType)) {
               foundTemplateTypeOfThisParameter=true;
-              if (j + 1 >= n.getChildCount()) {
+              if (j + 1 >= childCount) {
                 return;
               }
               Node jArgument=n.getChildAtIndex(j + 1);
