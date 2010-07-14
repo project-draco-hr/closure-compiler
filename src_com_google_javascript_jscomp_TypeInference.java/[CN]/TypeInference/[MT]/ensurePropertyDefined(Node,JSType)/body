@@ -1,10 +1,14 @@
 {
-  ObjectType objectType=ObjectType.cast(getJSType(getprop.getFirstChild()).restrictByNotNullOrUndefined());
-  if (objectType != null) {
+  String propName=getprop.getLastChild().getString();
+  JSType nodeType=getJSType(getprop.getFirstChild());
+  ObjectType objectType=ObjectType.cast(nodeType.restrictByNotNullOrUndefined());
+  if (objectType == null) {
+    registry.registerPropertyOnType(propName,nodeType);
+  }
+ else {
     if (ensurePropertyDeclaredHelper(getprop,objectType)) {
       return;
     }
-    String propName=getprop.getLastChild().getString();
     if (!objectType.isPropertyTypeDeclared(propName)) {
       if (objectType.hasProperty(propName) || !objectType.isInstanceType()) {
         if ("prototype".equals(propName)) {
