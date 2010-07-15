@@ -1,0 +1,27 @@
+{
+  for (Iterator<Var> it=scope.getVars(); it.hasNext(); ) {
+    Var var=it.next();
+    if (!referenced.contains(var)) {
+      boolean assignedToUnknownValue=false;
+      boolean hasPropertyAssign=false;
+      if (var.getParentNode().getType() == Token.VAR) {
+        Node value=var.getInitialValue();
+        assignedToUnknownValue=value != null && !NodeUtil.isLiteralValue(value);
+      }
+ else {
+        assignedToUnknownValue=true;
+      }
+      for (      Assign assign : assigns.get(var)) {
+        if (assign.isPropertyAssign) {
+          hasPropertyAssign=true;
+        }
+ else         if (!NodeUtil.isLiteralValue(assign.assignNode.getLastChild())) {
+          assignedToUnknownValue=true;
+        }
+      }
+      if (assignedToUnknownValue && hasPropertyAssign) {
+        markReferencedVar(var);
+      }
+    }
+  }
+}

@@ -13,7 +13,7 @@
  else       if (NodeUtil.isFunctionExpression(toRemove)) {
         if (!preserveFunctionExpressionNames) {
           toRemove.getFirstChild().setString("");
-          compiler.reportCodeChange();
+          finishRemove(var);
         }
       }
  else       if (parent != null && parent.getType() == Token.FOR && parent.getChildCount() < 4) {
@@ -21,16 +21,16 @@
  else       if (toRemove.getType() == Token.VAR && nameNode.hasChildren() && NodeUtil.mayHaveSideEffects(nameNode.getFirstChild())) {
         if (toRemove.getChildCount() == 1) {
           parent.replaceChild(toRemove,new Node(Token.EXPR_RESULT,nameNode.removeFirstChild()));
-          numRemoved++;
+          finishRemove(var);
         }
       }
  else       if (toRemove.getType() == Token.VAR && toRemove.getChildCount() > 1) {
         toRemove.removeChild(nameNode);
-        numRemoved++;
+        finishRemove(var);
       }
  else       if (parent != null) {
         NodeUtil.removeChild(parent,toRemove);
-        numRemoved++;
+        finishRemove(var);
       }
     }
   }

@@ -1,0 +1,10 @@
+{
+  Node replacement=assignNode.getLastChild().detachFromParent();
+  for (Node current=assignNode.getFirstChild(); current.getType() != Token.NAME; current=current.getFirstChild()) {
+    if (current.getType() == Token.GETELEM) {
+      replacement=new Node(Token.COMMA,current.getLastChild().detachFromParent(),replacement);
+      replacement.copyInformationFrom(current);
+    }
+  }
+  assignNode.getParent().replaceChild(assignNode,replacement);
+}

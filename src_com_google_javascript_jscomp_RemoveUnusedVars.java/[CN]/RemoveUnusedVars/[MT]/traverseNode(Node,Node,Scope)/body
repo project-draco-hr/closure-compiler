@@ -9,8 +9,14 @@ case Token.FUNCTION:
 case Token.NAME:
 if (parent.getType() != Token.VAR) {
   Var var=scope.getVar(n.getString());
-  if (var != null) {
-    markReferencedVar(var);
+  if (var != null && !referenced.contains(var)) {
+    Assign maybeAssign=Assign.maybeCreateAssign(n);
+    if (maybeAssign == null) {
+      markReferencedVar(var);
+    }
+ else {
+      assigns.put(var,maybeAssign);
+    }
   }
 }
 break;
