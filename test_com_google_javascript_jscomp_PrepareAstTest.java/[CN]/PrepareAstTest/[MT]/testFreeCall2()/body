@@ -1,0 +1,9 @@
+{
+  Node root=parseExpectedJs("x.foo();");
+  Node script=root.getFirstChild();
+  Preconditions.checkState(script.getType() == Token.SCRIPT);
+  Node firstExpr=script.getFirstChild();
+  Node call=firstExpr.getFirstChild();
+  Preconditions.checkState(call.getType() == Token.CALL);
+  assertFalse(call.getBooleanProp(Node.FREE_CALL));
+}

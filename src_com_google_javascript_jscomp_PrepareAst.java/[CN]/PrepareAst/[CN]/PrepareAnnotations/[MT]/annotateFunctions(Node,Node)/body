@@ -1,0 +1,23 @@
+{
+  Preconditions.checkState(n.getType() == Token.FUNCTION);
+  JSDocInfo fnInfo=n.getJSDocInfo();
+  if (fnInfo == null) {
+    if (parent.getType() == Token.ASSIGN) {
+      fnInfo=parent.getJSDocInfo();
+    }
+ else     if (parent.getType() == Token.NAME) {
+      fnInfo=parent.getParent().getJSDocInfo();
+    }
+  }
+  Node args=n.getFirstChild().getNext();
+  for (Node arg=args.getFirstChild(); arg != null; arg=arg.getNext()) {
+    String argName=arg.getString();
+    JSTypeExpression typeExpr=fnInfo == null ? null : fnInfo.getParameterType(argName);
+    if (convention.isOptionalParameter(arg) || typeExpr != null && typeExpr.isOptionalArg()) {
+      arg.putBooleanProp(Node.IS_OPTIONAL_PARAM,true);
+    }
+    if (convention.isVarArgsParameter(arg) || typeExpr != null && typeExpr.isVarArgs()) {
+      arg.putBooleanProp(Node.IS_VAR_ARGS_PARAM,true);
+    }
+  }
+}

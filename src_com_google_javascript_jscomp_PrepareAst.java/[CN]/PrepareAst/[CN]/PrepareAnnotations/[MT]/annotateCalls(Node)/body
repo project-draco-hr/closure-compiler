@@ -1,0 +1,10 @@
+{
+  Preconditions.checkState(n.getType() == Token.CALL);
+  Node first=n.getFirstChild();
+  if (!NodeUtil.isGet(first)) {
+    n.putBooleanProp(Node.FREE_CALL,true);
+  }
+  if (first.getType() == Token.NAME && "eval".equals(first.getString())) {
+    first.putBooleanProp(Node.DIRECT_EVAL,true);
+  }
+}
