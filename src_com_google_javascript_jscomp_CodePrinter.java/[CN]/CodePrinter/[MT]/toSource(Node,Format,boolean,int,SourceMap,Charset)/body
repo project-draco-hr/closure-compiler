@@ -1,11 +1,11 @@
 {
   boolean createSourceMap=(sourceMap != null);
-  CodeConsumer cp=outputFormat == Format.COMPACT ? new CompactCodePrinter(lineBreak,lineLengthThreshold,createSourceMap) : new PrettyCodePrinter(lineLengthThreshold,createSourceMap);
-  CodeGenerator cg=outputFormat == Format.TYPED ? new TypedCodeGenerator(cp,outputCharset) : new CodeGenerator(cp,outputCharset);
+  MappedCodePrinter mcp=outputFormat == Format.COMPACT ? new CompactCodePrinter(lineBreak,lineLengthThreshold,createSourceMap) : new PrettyCodePrinter(lineLengthThreshold,createSourceMap);
+  CodeGenerator cg=outputFormat == Format.TYPED ? new TypedCodeGenerator(mcp,outputCharset) : new CodeGenerator(mcp,outputCharset);
   cg.add(root);
-  String code=((HasGetCode)cp).getCode();
+  String code=mcp.getCode();
   if (createSourceMap) {
-    cp.generateSourceMap(sourceMap);
+    mcp.generateSourceMap(sourceMap);
   }
   return code;
 }

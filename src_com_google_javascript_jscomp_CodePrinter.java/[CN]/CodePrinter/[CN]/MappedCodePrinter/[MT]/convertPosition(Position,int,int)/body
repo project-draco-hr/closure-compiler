@@ -1,14 +1,10 @@
 {
-  int pLine=position.getLineNumber();
-  int pChar=position.getCharacterIndex();
-  if (position.getLineNumber() == lineIndex) {
-    if (position.getCharacterIndex() >= characterPosition) {
-      pLine++;
-      pChar-=characterPosition;
-    }
+  int originalLine=position.getLineNumber();
+  int originalChar=position.getCharacterIndex();
+  if (originalLine == lineIndex && originalChar >= characterPosition) {
+    return new Position(originalLine + 1,originalChar - characterPosition);
   }
-  if (position.getLineNumber() > lineIndex) {
-    pLine++;
+ else {
+    return position;
   }
-  return new Position(pLine,pChar);
 }
