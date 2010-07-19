@@ -11,6 +11,21 @@
         Definition unknownDef=new UnknownDefinition(def.getLValue());
         def=unknownDef;
       }
+      if (inExterns) {
+        List<Definition> stubsToRemove=Lists.newArrayList();
+        String qualifiedName=node.getQualifiedName();
+        for (        Definition prevDef : nameDefinitionMultimap.get(name)) {
+          if (prevDef instanceof ExternalNameOnlyDefinition && node.getJSDocInfo() == null) {
+            String prevName=prevDef.getLValue().getQualifiedName();
+            if (qualifiedName.equals(prevName)) {
+              stubsToRemove.add(prevDef);
+            }
+          }
+        }
+        for (        Definition prevDef : stubsToRemove) {
+          nameDefinitionMultimap.remove(name,prevDef);
+        }
+      }
       nameDefinitionMultimap.put(name,def);
       definitionSiteMap.put(node,new DefinitionSite(node,def,traversal.getModule(),traversal.inGlobalScope(),inExterns));
     }
@@ -18,9 +33,22 @@
   if (inExterns && (parent != null) && NodeUtil.isExpressionNode(parent)) {
     String name=getSimplifiedName(node);
     if (name != null) {
-      Definition definition=new ExternalNameOnlyDefinition(node);
-      nameDefinitionMultimap.put(name,definition);
-      definitionSiteMap.put(node,new DefinitionSite(node,definition,traversal.getModule(),traversal.inGlobalScope(),inExterns));
+      boolean dropStub=false;
+      if (node.getJSDocInfo() == null) {
+        String qualifiedName=node.getQualifiedName();
+        for (        Definition prevDef : nameDefinitionMultimap.get(name)) {
+          String prevName=prevDef.getLValue().getQualifiedName();
+          if (qualifiedName.equals(prevName)) {
+            dropStub=true;
+            break;
+          }
+        }
+      }
+      if (!dropStub) {
+        Definition definition=new ExternalNameOnlyDefinition(node);
+        nameDefinitionMultimap.put(name,definition);
+        definitionSiteMap.put(node,new DefinitionSite(node,definition,traversal.getModule(),traversal.inGlobalScope(),inExterns));
+      }
     }
   }
 }
