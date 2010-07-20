@@ -1,0 +1,16 @@
+{
+  assertDefinitionNode(n,Token.VAR);
+  JSDocInfo info=n.getJSDocInfo();
+  if (n.hasMoreThanOneChild()) {
+    if (info != null) {
+      compiler.report(JSError.make(sourceName,n,MULTIPLE_VAR_DEF));
+    }
+    for (    Node name : n.children()) {
+      defineName(name,n,parent,name.getJSDocInfo());
+    }
+  }
+ else {
+    Node name=n.getFirstChild();
+    defineName(name,n,parent,(info != null) ? info : name.getJSDocInfo());
+  }
+}

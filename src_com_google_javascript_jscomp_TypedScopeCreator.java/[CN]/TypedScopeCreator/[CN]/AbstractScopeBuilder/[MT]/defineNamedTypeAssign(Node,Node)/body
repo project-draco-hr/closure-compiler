@@ -1,0 +1,16 @@
+{
+  assertDefinitionNode(n,Token.ASSIGN);
+  JSDocInfo info=n.getJSDocInfo();
+  Node rvalue=n.getLastChild();
+  Node lvalue=n.getFirstChild();
+  info=(info != null) ? info : rvalue.getJSDocInfo();
+  if (rvalue.getType() == Token.FUNCTION || info != null && info.isConstructor()) {
+    getFunctionType(lvalue.getQualifiedName(),rvalue,info,lvalue);
+  }
+ else   if (info != null && info.hasEnumParameterType()) {
+    JSType type=getEnumType(lvalue.getQualifiedName(),n,rvalue,info.getEnumParameterType().evaluate(scope,typeRegistry));
+    if (type != null) {
+      setDeferredType(lvalue,type);
+    }
+  }
+}

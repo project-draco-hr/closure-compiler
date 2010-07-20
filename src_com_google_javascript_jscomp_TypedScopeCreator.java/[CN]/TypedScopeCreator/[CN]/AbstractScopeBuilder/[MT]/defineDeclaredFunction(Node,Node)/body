@@ -1,0 +1,11 @@
+{
+  assertDefinitionNode(n,Token.FUNCTION);
+  JSDocInfo info=n.getJSDocInfo();
+  int parentType=parent.getType();
+  Preconditions.checkState((scope.isLocal() || parentType != Token.ASSIGN) && parentType != Token.NAME,"function defined as standalone function when it is being " + "assigned");
+  String functionName=n.getFirstChild().getString();
+  FunctionType functionType=getFunctionType(functionName,n,info,null);
+  if (NodeUtil.isFunctionDeclaration(n)) {
+    defineSlot(n.getFirstChild(),n,functionType);
+  }
+}
