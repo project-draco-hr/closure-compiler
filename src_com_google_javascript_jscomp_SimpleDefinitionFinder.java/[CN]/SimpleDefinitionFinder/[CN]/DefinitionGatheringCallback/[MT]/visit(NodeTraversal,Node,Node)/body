@@ -2,13 +2,13 @@
   if (inExterns && NodeUtil.isName(node) && parent.getType() == Token.LP) {
     return;
   }
-  Definition def=DefinitionsRemover.getDefinition(node,parent);
+  Definition def=DefinitionsRemover.getDefinition(node,inExterns);
   if (def != null) {
     String name=getSimplifiedName(def.getLValue());
     if (name != null) {
       Node rValue=def.getRValue();
       if ((rValue != null) && !NodeUtil.isImmutableValue(rValue) && !NodeUtil.isFunction(rValue)) {
-        Definition unknownDef=new UnknownDefinition(def.getLValue());
+        Definition unknownDef=new UnknownDefinition(def.getLValue(),inExterns);
         def=unknownDef;
       }
       if (inExterns) {

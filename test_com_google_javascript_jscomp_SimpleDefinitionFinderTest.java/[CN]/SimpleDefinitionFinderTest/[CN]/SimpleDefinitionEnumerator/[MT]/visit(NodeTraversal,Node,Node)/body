@@ -9,13 +9,18 @@
     sb.append(" -> ");
     Multiset<String> defstrs=TreeMultiset.create();
     for (    Definition def : defs) {
+      String defstr;
       Node rValue=def.getRValue();
       if (rValue != null) {
-        defstrs.add(Token.name(rValue.getType()));
+        defstr=Token.name(rValue.getType());
       }
  else {
-        defstrs.add("<null>");
+        defstr="<null>";
       }
+      if (def.isExtern()) {
+        defstr="EXTERN " + defstr;
+      }
+      defstrs.add(defstr);
     }
     sb.append(defstrs.toString());
     found.add(sb.toString());

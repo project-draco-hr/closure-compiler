@@ -1,0 +1,28 @@
+{
+  Node parent=n.getParent();
+  if (parent == null) {
+    return null;
+  }
+  if (NodeUtil.isVarDeclaration(n) && n.hasChildren()) {
+    return new VarDefinition(n,isExtern);
+  }
+ else   if (NodeUtil.isFunction(parent) && parent.getFirstChild() == n) {
+    if (!NodeUtil.isFunctionExpression(parent)) {
+      return new NamedFunctionDefinition(parent,isExtern);
+    }
+ else     if (!n.getString().equals("")) {
+      return new FunctionExpressionDefinition(parent,isExtern);
+    }
+  }
+ else   if (NodeUtil.isAssign(parent) && parent.getFirstChild() == n) {
+    return new AssignmentDefinition(parent,isExtern);
+  }
+ else   if (NodeUtil.isObjectLitKey(n,parent)) {
+    return new ObjectLiteralPropertyDefinition(parent,n,n.getNext(),isExtern);
+  }
+ else   if (parent.getType() == Token.LP) {
+    Node function=parent.getParent();
+    return new FunctionArgumentDefinition(function,n,isExtern);
+  }
+  return null;
+}
