@@ -48,9 +48,6 @@ googMsgNodes.remove(msgNode);
 compiler.report(traversal.makeError(node,checkLevel,MESSAGE_NOT_INITIALIZED_USING_NEW_SYNTAX));
 }
 boolean isUnnamedMsg=isUnnamedMessageName(messageKey);
-if (!isUnnamedMsg && needToCheckDuplications) {
-checkIfMessageDuplicated(traversal.getSourceName(),messageKey,msgNode);
-}
 Builder builder=new Builder(isUnnamedMsg ? null : messageKey);
 builder.setSourceName(traversal.getSourceName());
 try {
@@ -66,6 +63,9 @@ compiler.report(traversal.makeError(ex.getNode(),MESSAGE_TREE_MALFORMED,ex.getMe
 return;
 }
 JsMessage extractedMessage=builder.build(idGenerator);
+if (needToCheckDuplications && !isUnnamedMsg && !extractedMessage.isExternal()) {
+checkIfMessageDuplicated(traversal.getSourceName(),messageKey,msgNode);
+}
 if (extractedMessage.isEmpty()) {
 compiler.report(traversal.makeError(node,MESSAGE_HAS_NO_TEXT,messageKey));
 }
