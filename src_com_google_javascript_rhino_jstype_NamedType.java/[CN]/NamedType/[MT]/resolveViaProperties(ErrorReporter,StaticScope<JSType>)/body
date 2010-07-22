@@ -1,49 +1,13 @@
 {
-  String[] componentNames=reference.split("\\.",-1);
-  if (componentNames[0].length() == 0) {
-    handleUnresolvedType(t);
-    return;
-  }
-  StaticSlot<JSType> slot=enclosing.getSlot(componentNames[0]);
-  if (slot == null) {
-    handleUnresolvedType(t);
-    return;
-  }
-  JSType slotType=slot.getType();
-  if (slotType == null || slotType.isAllType() || slotType.isNoType()) {
-    handleUnresolvedType(t);
-    return;
-  }
-  JSType value=getTypedefType(t,slot,componentNames[0]);
-  if (value == null) {
-    handleUnresolvedType(t);
-    return;
-  }
-  for (int i=1; i < componentNames.length; i++) {
-    ObjectType parentClass=ObjectType.cast(value);
-    if (parentClass == null) {
-      handleUnresolvedType(t);
-      return;
-    }
-    if (componentNames[i].length() == 0) {
-      handleUnresolvedType(t);
-      return;
-    }
-    value=parentClass.getPropertyType(componentNames[i]);
-  }
-  if (value instanceof FunctionType) {
+  JSType value=lookupViaProperties(t,enclosing);
+  if ((value instanceof FunctionType) && (value.isConstructor() || value.isInterface())) {
     FunctionType functionType=(FunctionType)value;
-    if (functionType.isConstructor() || functionType.isInterface()) {
-      setReferencedType(functionType.getInstanceType(),t,enclosing);
-    }
- else {
-      handleUnresolvedType(t);
-    }
+    setReferencedType(functionType.getInstanceType(),t,enclosing);
   }
  else   if (value instanceof EnumType) {
     setReferencedType(((EnumType)value).getElementsType(),t,enclosing);
   }
  else {
-    handleUnresolvedType(t);
+    handleUnresolvedType(t,value == null || value.isUnknownType());
   }
 }
