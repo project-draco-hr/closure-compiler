@@ -34,7 +34,7 @@ return true;
 }
 break;
 case Token.FUNCTION:
-return !isFunctionExpression(n);
+return checkForNewObjects || !isFunctionExpression(n);
 case Token.NEW:
 if (checkForNewObjects) {
 return true;
@@ -59,7 +59,7 @@ return true;
 Node current=n.getFirstChild();
 for (; current.getType() == Token.GETPROP || current.getType() == Token.GETELEM; current=current.getFirstChild()) {
 }
-return !(isLiteralValue(current) || current.getType() == Token.FUNCTION);
+return !isLiteralValue(current,true);
 }
 return true;
 }

@@ -4,11 +4,13 @@ case Token.ARRAYLIT:
 case Token.OBJECTLIT:
 case Token.REGEXP:
     for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-      if (!isLiteralValue(child)) {
+      if (!isLiteralValue(child,includeFunctions)) {
         return false;
       }
     }
   return true;
+case Token.FUNCTION:
+return includeFunctions && !NodeUtil.isFunctionDeclaration(n);
 default :
 return isImmutableValue(n);
 }

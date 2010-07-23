@@ -1,14 +1,17 @@
 {
   Preconditions.checkArgument(originalTypeofNode.getType() == Token.TYPEOF);
   Node argumentNode=originalTypeofNode.getFirstChild();
-  if (argumentNode == null || !NodeUtil.isLiteralValue(argumentNode)) {
+  if (argumentNode == null || !NodeUtil.isLiteralValue(argumentNode,true)) {
     return originalTypeofNode;
   }
   String typeNameString=null;
 switch (argumentNode.getType()) {
-case Token.STRING:
-    typeNameString="string";
+case Token.FUNCTION:
+    typeNameString="function";
   break;
+case Token.STRING:
+typeNameString="string";
+break;
 case Token.NUMBER:
 typeNameString="number";
 break;

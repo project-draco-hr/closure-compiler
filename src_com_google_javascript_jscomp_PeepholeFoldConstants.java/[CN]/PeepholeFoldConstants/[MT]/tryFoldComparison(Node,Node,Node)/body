@@ -1,16 +1,16 @@
 {
-  if (!NodeUtil.isLiteralValue(left) || !NodeUtil.isLiteralValue(right)) {
+  if (!NodeUtil.isLiteralValue(left,false) || !NodeUtil.isLiteralValue(right,false)) {
     if (n.getType() != Token.GT && n.getType() != Token.LT) {
       return n;
     }
   }
   int op=n.getType();
   boolean result;
-  boolean rightLiteral=NodeUtil.isLiteralValue(right);
-  boolean undefinedRight=((Token.NAME == right.getType() && right.getString().equals("undefined")) || (Token.VOID == right.getType() && NodeUtil.isLiteralValue(right.getFirstChild())));
+  boolean rightLiteral=NodeUtil.isLiteralValue(right,false);
+  boolean undefinedRight=((Token.NAME == right.getType() && right.getString().equals("undefined")) || (Token.VOID == right.getType() && NodeUtil.isLiteralValue(right.getFirstChild(),false)));
 switch (left.getType()) {
 case Token.VOID:
-    if (!NodeUtil.isLiteralValue(left.getFirstChild())) {
+    if (!NodeUtil.isLiteralValue(left.getFirstChild(),false)) {
       return n;
     }
  else     if (!rightLiteral) {
