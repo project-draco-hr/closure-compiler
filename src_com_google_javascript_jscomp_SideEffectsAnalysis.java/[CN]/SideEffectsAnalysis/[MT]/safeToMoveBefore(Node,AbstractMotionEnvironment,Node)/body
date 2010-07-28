@@ -1,0 +1,21 @@
+{
+  Preconditions.checkNotNull(locationAbstraction);
+  Preconditions.checkArgument(!nodeHasAncestor(destination,source));
+  if (isPure(source)) {
+    return true;
+  }
+  LocationSummary sourceLocationSummary=locationAbstraction.calculateLocationSummary(source);
+  EffectLocation sourceModSet=sourceLocationSummary.getModSet();
+  if (!sourceModSet.isEmpty() && !nodesHaveSameControlFlow(source,destination)) {
+    return false;
+  }
+  EffectLocation sourceRefSet=sourceLocationSummary.getRefSet();
+  Set<Node> environmentNodes=environment.calculateEnvironment();
+  LocationSummary environmentLocationSummary=locationAbstraction.calculateLocationSummary(environmentNodes);
+  EffectLocation environmentModSet=environmentLocationSummary.getModSet();
+  EffectLocation environmentRefSet=environmentLocationSummary.getRefSet();
+  if (!environmentModSet.intersectsLocation(sourceRefSet) && !environmentRefSet.intersectsLocation(sourceModSet) && !environmentModSet.intersectsLocation(sourceModSet)) {
+    return true;
+  }
+  return false;
+}

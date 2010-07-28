@@ -2,7 +2,8 @@
   JSType rvalueType=getJSType(rvalue);
   String abstractMethodName=compiler.getCodingConvention().getAbstractMethodName();
   if (!rvalueType.isOrdinaryFunction() && !(rvalue.isQualifiedName() && rvalue.getQualifiedName().equals(abstractMethodName))) {
-    compiler.report(t.makeError(object,INTERFACE_FUNCTION_MEMBERS_ONLY,abstractMethodName));
+    String abstractMethodMessage=(abstractMethodName != null) ? ", or " + abstractMethodName : "";
+    compiler.report(t.makeError(object,INVALID_INTERFACE_MEMBER_DECLARATION,abstractMethodMessage));
   }
   if (assign.getLastChild().getType() == Token.FUNCTION && !NodeUtil.isEmptyBlock(assign.getLastChild().getLastChild())) {
     compiler.report(t.makeError(object,INTERFACE_FUNCTION_NOT_EMPTY,abstractMethodName));

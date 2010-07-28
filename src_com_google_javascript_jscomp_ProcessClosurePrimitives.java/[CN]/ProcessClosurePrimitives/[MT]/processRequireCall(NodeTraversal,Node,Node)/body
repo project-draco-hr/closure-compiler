@@ -8,9 +8,11 @@
       unrecognizedRequires.add(new UnrecognizedRequire(n,ns,t.getSourceName()));
     }
  else {
+      JSModule providedModule=provided.explicitModule;
+      Preconditions.checkNotNull(providedModule);
       JSModule module=t.getModule();
-      if (moduleGraph != null && module != provided.firstModule && !moduleGraph.dependsOn(module,provided.firstModule)) {
-        compiler.report(t.makeError(n,XMODULE_REQUIRE_ERROR,ns,provided.firstModule.getName(),module.getName()));
+      if (moduleGraph != null && module != providedModule && !moduleGraph.dependsOn(module,providedModule)) {
+        compiler.report(t.makeError(n,XMODULE_REQUIRE_ERROR,ns,providedModule.getName(),module.getName()));
       }
     }
     if (provided != null || requiresLevel.isOn()) {
