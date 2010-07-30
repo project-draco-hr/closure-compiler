@@ -1,0 +1,10 @@
+{
+  String source="function A(){};\n" + "A();\n";
+  CallGraph callgraph=compileAndRunForward(source);
+  CallGraph.Function mainFunction=callgraph.getMainFunction();
+  assertTrue(mainFunction.isMain());
+  assertNotNull(mainFunction.getBodyNode());
+  assertTrue(mainFunction.getBodyNode().getType() == Token.BLOCK);
+  CallGraph.Function functionA=callgraph.getUniqueFunctionWithName("A");
+  assertFalse(functionA.isMain());
+}

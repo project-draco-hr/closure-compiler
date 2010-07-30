@@ -1,0 +1,6 @@
+{
+  String source="function A() {}\n" + "var B = function() {\n" + "(function (){A()})()\n"+ "};\n"+ "A();\n"+ "B();\n";
+  CallGraph callgraph=compileAndRunBackward(source);
+  Collection<CallGraph.Callsite> allCallsites=callgraph.getAllCallsites();
+  assertEquals(4,allCallsites.size());
+}

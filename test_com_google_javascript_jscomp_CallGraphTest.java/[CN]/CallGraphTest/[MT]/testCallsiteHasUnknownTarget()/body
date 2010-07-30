@@ -1,0 +1,12 @@
+{
+  String source="var A = externalnamespace.prop;\n" + "function B(){A();};\n" + "B();\n";
+  CallGraph callgraph=compileAndRunForward(source);
+  Function mainFunction=callgraph.getMainFunction();
+  Function functionB=callgraph.getUniqueFunctionWithName("B");
+  Callsite callInMain=mainFunction.getCallsitesInFunction().iterator().next();
+  assertFalse(callInMain.hasUnknownTarget());
+  assertEquals("B",callInMain.getAstNode().getFirstChild().getString());
+  Callsite callInB=functionB.getCallsitesInFunction().iterator().next();
+  assertTrue(callInB.hasUnknownTarget());
+  assertEquals(0,callInB.getPossibleTargets().size());
+}

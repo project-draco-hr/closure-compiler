@@ -1,0 +1,32 @@
+{
+  for (  Function function : getAllFunctions()) {
+    for (    Callsite callsite : callsitesByContainingFunction.get(function)) {
+      Collection<Definition> definitions=lookupDefinitionsForTargetsOfCall(callsite.getAstNode(),definitionProvider);
+      if (definitions == null) {
+        callsite.hasUnknownTarget=true;
+      }
+ else {
+        for (        Definition definition : definitions) {
+          if (definition.isExtern()) {
+            callsite.hasExternTarget=true;
+          }
+ else {
+            Node target=definition.getRValue();
+            if (target != null && NodeUtil.isFunction(target)) {
+              Function targetFunction=functionsByNode.get(target);
+              if (computeForwardGraph) {
+                targetFunctionsByCallsite.put(callsite,targetFunction);
+              }
+              if (computeBackwardGraph) {
+                callsitesByTargetingFunction.put(targetFunction,callsite);
+              }
+            }
+ else {
+              callsite.hasUnknownTarget=true;
+            }
+          }
+        }
+      }
+    }
+  }
+}

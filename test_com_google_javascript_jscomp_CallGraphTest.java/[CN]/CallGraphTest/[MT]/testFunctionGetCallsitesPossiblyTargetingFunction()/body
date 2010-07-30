@@ -1,0 +1,20 @@
+{
+  String source="function A(){B()};\n" + "function B(){C();C();};\n" + "function C(){C()};\n"+ "A();\n";
+  CallGraph callgraph=compileAndRunBackward(source);
+  Function main=callgraph.getMainFunction();
+  Function functionA=callgraph.getUniqueFunctionWithName("A");
+  Function functionB=callgraph.getUniqueFunctionWithName("B");
+  Function functionC=callgraph.getUniqueFunctionWithName("C");
+  assertEquals(0,main.getCallsitesPossiblyTargetingFunction().size());
+  Collection<Callsite> callsitesTargetingA=functionA.getCallsitesPossiblyTargetingFunction();
+  assertEquals(1,callsitesTargetingA.size());
+  assertEquals(main,callsitesTargetingA.iterator().next().getContainingFunction());
+  Collection<Callsite> callsitesTargetingB=functionB.getCallsitesPossiblyTargetingFunction();
+  assertEquals(1,callsitesTargetingB.size());
+  assertEquals(functionA,callsitesTargetingB.iterator().next().getContainingFunction());
+  Collection<Callsite> callsitesTargetingC=functionC.getCallsitesPossiblyTargetingFunction();
+  assertEquals(3,callsitesTargetingC.size());
+  Collection<Callsite> expectedFunctionsCallingC=Sets.newHashSet(functionB.getCallsitesInFunction());
+  expectedFunctionsCallingC.addAll(functionC.getCallsitesInFunction());
+  assertTrue(callsitesTargetingC.containsAll(expectedFunctionsCallingC));
+}

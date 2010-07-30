@@ -1,0 +1,12 @@
+{
+  String source="var A = function(){}\n" + "function B(){ExternalFunction(6);};\n" + "A();\n";
+  CallGraph callgraph=compileAndRunForward(source);
+  Function mainFunction=callgraph.getMainFunction();
+  Function functionB=callgraph.getUniqueFunctionWithName("B");
+  Callsite callInMain=mainFunction.getCallsitesInFunction().iterator().next();
+  assertFalse(callInMain.hasExternTarget());
+  Callsite callInB=functionB.getCallsitesInFunction().iterator().next();
+  assertEquals("ExternalFunction",callInB.getAstNode().getFirstChild().getString());
+  assertTrue(callInB.hasExternTarget());
+  assertEquals(0,callInB.getPossibleTargets().size());
+}

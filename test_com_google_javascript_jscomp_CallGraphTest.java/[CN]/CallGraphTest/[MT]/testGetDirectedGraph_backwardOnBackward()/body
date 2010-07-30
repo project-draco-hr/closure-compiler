@@ -1,0 +1,28 @@
+{
+  String source="function A(){};\n" + "function B(){ExternalFunction(6); C(); D();}\n" + "function C(){B(); A();};\n"+ "function D(){A();};\n"+ "function E(){C()};\n"+ "A();\n";
+  CallGraph callgraph=compileAndRunBackward(source);
+  final Set<Function> poisonedFunctions=Sets.newHashSet();
+  for (  Callsite callsite : callgraph.getAllCallsites()) {
+    if (callsite.hasExternTarget()) {
+      poisonedFunctions.add(callsite.getContainingFunction());
+    }
+  }
+  EdgeCallback<CallGraph.Function,CallGraph.Callsite> edgeCallback=new EdgeCallback<CallGraph.Function,CallGraph.Callsite>(){
+    @Override public boolean traverseEdge(    Function callee,    Callsite callsite,    Function caller){
+      boolean changed;
+      if (poisonedFunctions.contains(callee)) {
+        changed=poisonedFunctions.add(caller);
+      }
+ else {
+        changed=false;
+      }
+      return changed;
+    }
+  }
+;
+  FixedPointGraphTraversal.newTraversal(edgeCallback).computeFixedPoint(callgraph.getBackwardDirectedGraph());
+  assertEquals(3,poisonedFunctions.size());
+  assertTrue(poisonedFunctions.contains(callgraph.getUniqueFunctionWithName("B")));
+  assertTrue(poisonedFunctions.contains(callgraph.getUniqueFunctionWithName("C")));
+  assertTrue(poisonedFunctions.contains(callgraph.getUniqueFunctionWithName("E")));
+}

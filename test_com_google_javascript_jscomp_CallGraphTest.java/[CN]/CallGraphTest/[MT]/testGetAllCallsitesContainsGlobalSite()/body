@@ -1,0 +1,9 @@
+{
+  String source="function A(){}\n" + "A();\n";
+  CallGraph callgraph=compileAndRunBackward(source);
+  Collection<CallGraph.Callsite> allCallsites=callgraph.getAllCallsites();
+  assertEquals(1,allCallsites.size());
+  Node callsiteNode=allCallsites.iterator().next().getAstNode();
+  assertEquals(Token.CALL,callsiteNode.getType());
+  assertEquals("A",callsiteNode.getFirstChild().getString());
+}

@@ -1,0 +1,14 @@
+{
+  String source="function A(){B()};\n" + "function B(){};\n" + "A();\n";
+  CallGraph callgraph=compileAndRunForward(source);
+  Function mainFunction=callgraph.getMainFunction();
+  Function functionA=callgraph.getUniqueFunctionWithName("A");
+  Function functionB=callgraph.getUniqueFunctionWithName("B");
+  Callsite callInMain=mainFunction.getCallsitesInFunction().iterator().next();
+  Collection<Function> targetsOfCallInMain=callInMain.getPossibleTargets();
+  assertEquals(1,targetsOfCallInMain.size());
+  assertTrue(targetsOfCallInMain.contains(functionA));
+  Callsite callInA=functionA.getCallsitesInFunction().iterator().next();
+  Collection<Function> targetsOfCallInA=callInA.getPossibleTargets();
+  assertTrue(targetsOfCallInA.contains(functionB));
+}

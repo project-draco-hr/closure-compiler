@@ -1,0 +1,13 @@
+{
+  String source="function A(){B()};\n" + "function B(){C();C();};\n" + "function C(){C()};\n"+ "A();\n";
+  CallGraph callgraph=compileAndRunForward(source);
+  Function functionA=callgraph.getUniqueFunctionWithName("A");
+  UnsupportedOperationException caughtException=null;
+  try {
+    functionA.getCallsitesPossiblyTargetingFunction();
+  }
+ catch (  UnsupportedOperationException e) {
+    caughtException=e;
+  }
+  assertNotNull(caughtException);
+}

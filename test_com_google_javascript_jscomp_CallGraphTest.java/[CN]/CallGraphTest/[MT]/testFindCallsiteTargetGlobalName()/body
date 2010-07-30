@@ -1,0 +1,11 @@
+{
+  String source="function A() {}\n" + "function B() {}\n" + "function C() {A()}\n";
+  CallGraph callgraph=compileAndRunForward(source);
+  CallGraph.Function functionC=callgraph.getUniqueFunctionWithName("C");
+  assertNotNull(functionC);
+  CallGraph.Callsite callsiteInC=functionC.getCallsitesInFunction().iterator().next();
+  assertNotNull(callsiteInC);
+  Collection<CallGraph.Function> targetsOfCallsiteInC=callsiteInC.getPossibleTargets();
+  assertNotNull(targetsOfCallsiteInC);
+  assertEquals(1,targetsOfCallsiteInC.size());
+}

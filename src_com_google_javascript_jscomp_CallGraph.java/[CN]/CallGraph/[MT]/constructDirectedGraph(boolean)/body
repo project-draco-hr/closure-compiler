@@ -1,0 +1,24 @@
+{
+  DiGraph<Function,Callsite> digraph=new LinkedDirectedGraph<Function,Callsite>();
+  for (  Function function : getAllFunctions()) {
+    digraph.createNode(function);
+  }
+  if (computeForwardGraph) {
+    for (    Function caller : getAllFunctions()) {
+      for (      Callsite callsite : caller.getCallsitesInFunction()) {
+        for (        Function callee : callsite.getPossibleTargets()) {
+          digraphConnect(digraph,caller,callsite,callee,forward);
+        }
+      }
+    }
+  }
+ else {
+    for (    Function callee : getAllFunctions()) {
+      for (      Callsite callsite : callee.getCallsitesPossiblyTargetingFunction()) {
+        Function caller=callsite.getContainingFunction();
+        digraphConnect(digraph,caller,callsite,callee,forward);
+      }
+    }
+  }
+  return digraph;
+}

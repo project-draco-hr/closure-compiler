@@ -1,0 +1,7 @@
+{
+  String source="function A(){B()};\n" + "function B(){};\n";
+  CallGraph callgraph=compileAndRunForward(source);
+  Function functionA=callgraph.getUniqueFunctionWithName("A");
+  Callsite callToB=functionA.getCallsitesInFunction().iterator().next();
+  assertTrue(callToB.getAstNode().getType() == Token.CALL);
+}

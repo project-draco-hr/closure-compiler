@@ -1,0 +1,15 @@
+{
+  String source="function A(){B()};\n" + "function B(){};\n" + "A();\n";
+  CallGraph callgraph=compileAndRunBackward(source);
+  Function mainFunction=callgraph.getMainFunction();
+  Function functionA=callgraph.getUniqueFunctionWithName("A");
+  Callsite callInMain=mainFunction.getCallsitesInFunction().iterator().next();
+  UnsupportedOperationException caughtException=null;
+  try {
+    callInMain.getPossibleTargets();
+  }
+ catch (  UnsupportedOperationException e) {
+    return;
+  }
+  fail();
+}

@@ -1,0 +1,9 @@
+{
+  String source="function A(){};\n" + "A();\n";
+  CallGraph callgraph=compileAndRunForward(source);
+  CallGraph.Function mainFunction=callgraph.getMainFunction();
+  assertEquals(mainFunction.getAstNode(),mainFunction.getBodyNode());
+  CallGraph.Function functionA=callgraph.getUniqueFunctionWithName("A");
+  assertTrue(functionA.getBodyNode().getType() == Token.BLOCK);
+  assertEquals(NodeUtil.getFunctionBody(functionA.getAstNode()),functionA.getBodyNode());
+}
