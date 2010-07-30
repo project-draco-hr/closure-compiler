@@ -1,5 +1,5 @@
 {
-  test("var a;var b=3;var c=function(){};var x=A();var y; var z;" + "function A(){B()}; function B(){C(b)}; function C(){};" + "function X(){Y()}; function Y(z){Z(x)}; function Z(){y};"+ "P=function(){A()};"+ "try{0}catch(e){a}","var a;var b=3;A();function A(){B()}" + "function B(){C(b)}" + "function C(){}"+ "P=function(){A()}"+ ";try{0}catch(e){a}");
+  test("var a;var b=3;var c=function(){};var x=A();var y; var z;" + "function A(){B()} function B(){C(b)} function C(){} " + "function X(){Y()} function Y(z){Z(x)} function Z(){y} "+ "P=function(){A()}; "+ "try{0}catch(e){a}","var a;var b=3;A();function A(){B()}" + "function B(){C(b)}" + "function C(){}"+ "P=function(){A()}"+ ";try{0}catch(e){a}");
   test("var i=0;var j=0;if(i>0){var k=1;}","var i=0;if(i>0);");
   test("for (var i in booyah) {" + "  if (i > 0) x += ', ';" + "  var arg = 'foo';"+ "  if (arg.length > 40) {"+ "    var unused = 'bar';"+ "    arg = arg.substr(0, 40) + '...';"+ "  }"+ "  x += arg;"+ "}","for(var i in booyah){if(i>0)x+=\", \";" + "var arg=\"foo\";if(arg.length>40)arg=arg.substr(0,40)+\"...\";" + "x+=arg}");
   test("function A(){}" + "if(0){function B(){}}win.setTimeout(function(){A()})","function A(){}" + "if(0);win.setTimeout(function(){A()})");
@@ -12,8 +12,8 @@
   test("function A(){}function B(){" + "var c,d,e,f,g,h;" + "function C(){print(c)}"+ "var handler=function(){print(d)};"+ "var handler2=function(){handler()};"+ "e=function(){print(e)};"+ "if(1){function G(){print(g)}}"+ "arr=[function(){print(h)}];"+ "return function(){print(f)}}B()","function B(){" + "var d,e,f,h;" + "e=function(){print(e)};"+ "if(1);"+ "arr=[function(){print(h)}];"+ "return function(){print(f)}}B()");
   test("var a,b=1; function _A1() {this.foo(a)}","var a;function _A1(){this.foo(a)}");
   test("undefinedVar = 1","undefinedVar=1");
-  test("var a,b=foo(),c=i++,d;var e=boo();var f;print(d);","var b=foo(),c=i++,d;boo();print(d)");
+  test("var a,b=foo(),c=i++,d;var e=boo();var f;print(d);","foo(); i++; var d; boo(); print(d)");
   test("var a,b=foo()","foo()");
   test("var b=foo(),a","foo()");
-  test("var a,b=foo(a)","var a,b=foo(a)");
+  test("var a,b=foo(a)","var a; foo(a);");
 }
