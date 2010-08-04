@@ -1,0 +1,16 @@
+{
+  Node next=n.getNext();
+  if (isSimpleAssignment(n) && isConditionalStatement(next)) {
+    Node lhsAssign=getSimpleAssignmentName(n);
+    Node condition=getConditionalStatementCondition(next);
+    if (NodeUtil.isName(lhsAssign) && NodeUtil.isName(condition) && lhsAssign.getString().equals(condition.getString())) {
+      Node rhsAssign=getSimpleAssignmentValue(n);
+      TernaryValue value=NodeUtil.getExpressionBooleanValue(rhsAssign);
+      if (value != TernaryValue.UNKNOWN) {
+        int replacementConditionNodeType=(value.toBoolean(true)) ? Token.TRUE : Token.FALSE;
+        condition.getParent().replaceChild(condition,new Node(replacementConditionNodeType));
+        reportCodeChange();
+      }
+    }
+  }
+}

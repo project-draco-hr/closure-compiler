@@ -6,13 +6,13 @@
   Node elseBody=thenBody.getNext();
   boolean changes=false;
   if (type == Token.IF) {
-    if (elseBody != null && !NodeUtil.mayHaveSideEffects(elseBody)) {
+    if (elseBody != null && !mayHaveSideEffects(elseBody)) {
       n.removeChild(elseBody);
       elseBody=null;
       reportCodeChange();
       changes=true;
     }
-    if (!NodeUtil.mayHaveSideEffects(thenBody) && elseBody != null) {
+    if (!mayHaveSideEffects(thenBody) && elseBody != null) {
       n.removeChild(elseBody);
       n.replaceChild(thenBody,elseBody);
       Node notCond=new Node(Token.NOT);
@@ -24,8 +24,8 @@
       reportCodeChange();
       changes=true;
     }
-    if (!NodeUtil.mayHaveSideEffects(thenBody) && elseBody == null) {
-      if (NodeUtil.mayHaveSideEffects(cond)) {
+    if (!mayHaveSideEffects(thenBody) && elseBody == null) {
+      if (mayHaveSideEffects(cond)) {
         n.removeChild(cond);
         Node replacement=NodeUtil.newExpr(cond);
         parent.replaceChild(n,replacement);
@@ -42,7 +42,7 @@
  else {
     Preconditions.checkState(type == Token.HOOK);
     if (NodeUtil.isExpressionNode(parent)) {
-      if (!NodeUtil.mayHaveSideEffects(thenBody)) {
+      if (!mayHaveSideEffects(thenBody)) {
         Node ifNode=new Node(Token.IF);
         if (cond.getType() == Token.NOT) {
           Node expr=cond.getFirstChild();
@@ -61,7 +61,7 @@
         reportCodeChange();
         return ifNode;
       }
- else       if (!NodeUtil.mayHaveSideEffects(elseBody)) {
+ else       if (!mayHaveSideEffects(elseBody)) {
         Node ifNode=new Node(Token.IF);
         n.removeChild(cond);
         ifNode.addChildToBack(cond);
@@ -73,12 +73,33 @@
       }
     }
   }
-  if (!NodeUtil.isLiteralValue(cond,true)) {
-    return n;
-  }
-  TernaryValue condValue=NodeUtil.getBooleanValue(cond);
+  TernaryValue condValue=NodeUtil.getExpressionBooleanValue(cond);
   if (condValue == TernaryValue.UNKNOWN) {
     return n;
+  }
+  if (mayHaveSideEffects(cond)) {
+    if (n.getType() == Token.HOOK) {
+      Node replacement=new Node(Token.BLOCK).copyInformationFrom(n);
+      n.detachChildren();
+      replacement.addChildToFront(new Node(Token.EXPR_RESULT,cond).copyInformationFrom(cond));
+      Node branchToKeep=condValue.toBoolean(true) ? thenBody : elseBody;
+      replacement.addChildToBack(NodeUtil.newExpr(branchToKeep).copyInformationFrom(branchToKeep));
+      parent.getParent().replaceChild(parent,replacement);
+      reportCodeChange();
+      return replacement;
+    }
+    Preconditions.checkState(n.getType() == Token.IF);
+    boolean newConditionValue=condValue == TernaryValue.TRUE;
+    if (!newConditionValue && elseBody == null) {
+      elseBody=new Node(Token.BLOCK).copyInformationFrom(n);
+      n.addChildToBack(elseBody);
+    }
+    Node newCond=new Node(newConditionValue ? Token.TRUE : Token.FALSE);
+    n.replaceChild(cond,newCond);
+    Node branchToKeep=newConditionValue ? thenBody : elseBody;
+    branchToKeep.addChildToFront(new Node(Token.EXPR_RESULT,cond).copyInformationFrom(cond));
+    reportCodeChange();
+    cond=newCond;
   }
   boolean condTrue=condValue.toBoolean(true);
   if (n.getChildCount() == 2) {

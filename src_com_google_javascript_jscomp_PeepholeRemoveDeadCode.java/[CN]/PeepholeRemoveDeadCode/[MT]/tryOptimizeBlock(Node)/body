@@ -1,9 +1,12 @@
 {
   for (Node c=n.getFirstChild(); c != null; ) {
     Node next=c.getNext();
-    if (!NodeUtil.mayHaveSideEffects(c)) {
+    if (!mayHaveSideEffects(c)) {
       n.removeChild(c);
       reportCodeChange();
+    }
+ else {
+      tryOptimizeConditionalAfterAssign(c);
     }
     c=next;
   }

@@ -1,0 +1,13 @@
+{
+  fold("if (b=true) x=1;","b=true;x=1");
+  fold("if (b=/ab/) x=1;","b=/ab/;x=1");
+  fold("if (b=/ab/){ x=1; } else { x=2; }","b=/ab/;x=1");
+  fold("var b;b=/ab/;if(b)x=1;","var b;b=/ab/;x=1");
+  foldSame("var b;b=f();if(b)x=1;");
+  fold("var b=/ab/;if(b)x=1;","var b=/ab/;x=1");
+  foldSame("var b=f();if(b)x=1;");
+  foldSame("b=b++;if(b)x=b;");
+  fold("(b=0,b=1);if(b)x=b;","b=0;b=1;x=b;");
+  fold("b=1;if(foo,b)x=b;","b=1;x=b;");
+  foldSame("b=1;if(foo=1,b)x=b;");
+}
