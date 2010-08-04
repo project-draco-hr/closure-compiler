@@ -1,6 +1,7 @@
 {
   int result=0;
   int runs=1;
+  Throwable error=null;
   if (config.computePhaseOrdering) {
     runs=NUM_RUNS_TO_DETERMINE_OPTIMAL_ORDER;
     PhaseOptimizer.randomizeLoops();
@@ -12,16 +13,8 @@
       runTimeStats.recordEndRun();
     }
   }
- catch (  AbstractCommandLineRunner.FlagUsageException e) {
-    System.err.println(e.getMessage());
-    result=-1;
+ catch (  Throwable t) {
+    error=t;
   }
-catch (  Throwable t) {
-    t.printStackTrace();
-    result=-2;
-  }
-  if (config.computePhaseOrdering) {
-    runTimeStats.outputBestPhaseOrdering();
-  }
-  System.exit(result);
+  exit(runTimeStats,error);
 }
