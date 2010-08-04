@@ -1,0 +1,26 @@
+{
+  ReferenceCollectingCallback callback=new ReferenceCollectingCallback(compiler,ReferenceCollectingCallback.DO_NOTHING_BEHAVIOR);
+  NodeTraversal.traverse(compiler,root,callback);
+  for (  Var variable : callback.getReferencedVariables()) {
+    ReferenceCollection referenceCollection=callback.getReferenceCollection(variable);
+    VariableVisibility visibility;
+    if (variableIsParameter(variable)) {
+      visibility=VariableVisibility.PARAMETER;
+    }
+ else     if (variable.isLocal()) {
+      if (referenceCollection.isEscaped()) {
+        visibility=VariableVisibility.CAPTURED_LOCAL;
+      }
+ else {
+        visibility=VariableVisibility.LOCAL;
+      }
+    }
+ else     if (variable.isGlobal()) {
+      visibility=VariableVisibility.GLOBAL;
+    }
+ else {
+      throw new IllegalStateException("Un-handled variable visibility for " + variable);
+    }
+    visibilityByDeclaringNameNode.put(variable.getNameNode(),visibility);
+  }
+}

@@ -1,0 +1,7 @@
+{
+  String source="function global() {\n" + "  function inner() {\n" + "  }\n"+ "  function innerCaptured() {\n"+ "    (function(){innerCaptured()})()\n"+ "  }\n"+ "}\n";
+  analyze(source);
+  assertFunctionHasVisibility("global",VariableVisibility.GLOBAL);
+  assertFunctionHasVisibility("inner",VariableVisibility.LOCAL);
+  assertFunctionHasVisibility("innerCaptured",VariableVisibility.CAPTURED_LOCAL);
+}

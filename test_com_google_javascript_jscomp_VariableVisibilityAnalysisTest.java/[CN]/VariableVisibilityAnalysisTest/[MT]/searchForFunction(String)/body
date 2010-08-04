@@ -1,0 +1,14 @@
+{
+  Preconditions.checkArgument(functionName != null);
+  final Node[] foundNode=new Node[1];
+  AbstractPostOrderCallback findFunction=new AbstractPostOrderCallback(){
+    @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
+      if (NodeUtil.isFunction(n) && functionName.equals(NodeUtil.getFunctionName(n))) {
+        foundNode[0]=n;
+      }
+    }
+  }
+;
+  new NodeTraversal(lastCompiler,findFunction).traverse(lastCompiler.jsRoot);
+  return foundNode[0];
+}
