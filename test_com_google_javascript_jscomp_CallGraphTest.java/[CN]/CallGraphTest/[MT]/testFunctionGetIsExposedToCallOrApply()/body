@@ -1,0 +1,10 @@
+{
+  String source="function A(){};\n" + "function B(){};\n" + "function C(){};\n"+ "var x;\n"+ "A.call(x);\n"+ "B.apply(x);\n"+ "C();\n";
+  CallGraph callGraph=compileAndRunForward(source);
+  Function functionA=callGraph.getUniqueFunctionWithName("A");
+  Function functionB=callGraph.getUniqueFunctionWithName("B");
+  Function functionC=callGraph.getUniqueFunctionWithName("C");
+  assertTrue(functionA.isExposedToCallOrApply());
+  assertTrue(functionB.isExposedToCallOrApply());
+  assertFalse(functionC.isExposedToCallOrApply());
+}
