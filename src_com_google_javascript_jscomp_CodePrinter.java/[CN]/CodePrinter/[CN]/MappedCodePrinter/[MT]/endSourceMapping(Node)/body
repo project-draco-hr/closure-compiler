@@ -1,11 +1,9 @@
 {
-  if (createSrcMap && node.getProp(Node.SOURCEFILE_PROP) != null && node.getLineno() > 0) {
+  if (createSrcMap && !mappings.isEmpty() && mappings.peek().node == node) {
+    Mapping mapping=mappings.pop();
     int line=getCurrentLineIndex();
     int index=getCurrentCharIndex();
-    if (index >= 0) {
-      Preconditions.checkState(!mappings.isEmpty(),"Mismatch in start and end of mapping");
-      Mapping mapping=mappings.pop();
-      mapping.end=new Position(line,index);
-    }
+    Preconditions.checkState(line >= 0);
+    mapping.end=new Position(line,index);
   }
 }

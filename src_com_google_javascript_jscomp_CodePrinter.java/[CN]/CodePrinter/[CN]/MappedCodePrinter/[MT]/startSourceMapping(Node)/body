@@ -1,13 +1,14 @@
 {
-  if (createSrcMap && node.getProp(Node.SOURCEFILE_PROP) != null && node.getLineno() > 0) {
+  Preconditions.checkState(sourceMapDetailLevel != null);
+  Preconditions.checkState(node != null);
+  if (createSrcMap && node.getProp(Node.SOURCEFILE_PROP) != null && node.getLineno() > 0 && sourceMapDetailLevel.apply(node)) {
     int line=getCurrentLineIndex();
     int index=getCurrentCharIndex();
-    if (index >= 0) {
-      Mapping mapping=new Mapping();
-      mapping.node=node;
-      mapping.start=new Position(line,index);
-      mappings.push(mapping);
-      allMappings.add(mapping);
-    }
+    Preconditions.checkState(line >= 0);
+    Mapping mapping=new Mapping();
+    mapping.node=node;
+    mapping.start=new Position(line,index);
+    mappings.push(mapping);
+    allMappings.add(mapping);
   }
 }
