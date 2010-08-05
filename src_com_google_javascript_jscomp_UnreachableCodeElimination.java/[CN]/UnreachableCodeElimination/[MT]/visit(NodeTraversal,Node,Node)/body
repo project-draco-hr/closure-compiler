@@ -16,11 +16,28 @@
       n=body;
     }
   }
-  GraphNode<Node,Branch> gNode=curCfg.getNode(n);
+  DiGraphNode<Node,Branch> gNode=curCfg.getDirectedGraphNode(n);
   if (gNode == null) {
     return;
   }
   if (gNode.getAnnotation() != GraphReachability.REACHABLE || (removeNoOpStatements && !NodeUtil.mayHaveSideEffects(n))) {
     removeDeadExprStatementSafely(n,parent);
+    return;
   }
+switch (n.getType()) {
+case Token.RETURN:
+    if (n.hasChildren()) {
+      break;
+    }
+case Token.BREAK:
+case Token.CONTINUE:
+  List<DiGraphEdge<Node,Branch>> outEdges=gNode.getOutEdges();
+if (outEdges.size() == 1 && (n.getNext() == null || n.getNext().getType() == Token.FUNCTION)) {
+  Preconditions.checkState(outEdges.get(0).getValue() == Branch.UNCOND);
+  Node fallThrough=ControlFlowAnalysis.computeFollowNode(n);
+  if (outEdges.get(0).getDestination().getValue() == fallThrough) {
+    removeDeadExprStatementSafely(n,parent);
+  }
+}
+}
 }

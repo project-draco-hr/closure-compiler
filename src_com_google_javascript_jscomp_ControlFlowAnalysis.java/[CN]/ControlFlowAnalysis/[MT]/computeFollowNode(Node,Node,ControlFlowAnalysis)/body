@@ -1,11 +1,11 @@
 {
   Node parent=node.getParent();
-  if (parent == null || parent.getType() == Token.FUNCTION || node == root) {
+  if (parent == null || parent.getType() == Token.FUNCTION || (cfa != null && node == cfa.root)) {
     return null;
   }
 switch (parent.getType()) {
 case Token.IF:
-    return computeFollowNode(fromNode,parent);
+    return computeFollowNode(fromNode,parent,cfa);
 case Token.CASE:
 case Token.DEFAULT:
   if (parent.getNext() != null) {
@@ -20,7 +20,7 @@ case Token.DEFAULT:
     }
   }
  else {
-    return computeFollowNode(fromNode,parent);
+    return computeFollowNode(fromNode,parent,cfa);
   }
 break;
 case Token.FOR:
@@ -39,7 +39,7 @@ if (NodeUtil.hasFinally(parent)) {
 return computeFallThrough(parent.getLastChild());
 }
  else {
-return computeFollowNode(fromNode,parent);
+return computeFollowNode(fromNode,parent,cfa);
 }
 }
  else if (NodeUtil.getCatchBlock(parent) == node) {
@@ -47,14 +47,16 @@ if (NodeUtil.hasFinally(parent)) {
 return computeFallThrough(node.getNext());
 }
  else {
-return computeFollowNode(fromNode,parent);
+return computeFollowNode(fromNode,parent,cfa);
 }
 }
  else if (parent.getLastChild() == node) {
-for (Node finallyNode : finallyMap.get(parent)) {
-createEdge(fromNode,Branch.UNCOND,finallyNode);
+if (cfa != null) {
+for (Node finallyNode : cfa.finallyMap.get(parent)) {
+cfa.createEdge(fromNode,Branch.UNCOND,finallyNode);
 }
-return computeFollowNode(fromNode,parent);
+}
+return computeFollowNode(fromNode,parent,cfa);
 }
 }
 Node nextSibling=node.getNext();
@@ -65,6 +67,6 @@ if (nextSibling != null) {
 return computeFallThrough(nextSibling);
 }
  else {
-return computeFollowNode(fromNode,parent);
+return computeFollowNode(fromNode,parent,cfa);
 }
 }
