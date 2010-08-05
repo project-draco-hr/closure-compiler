@@ -1,6 +1,23 @@
 {
-  NodeTraversal.traverse(compiler,root,new FindAbstractMethods());
+  List<Callback> passes=Lists.newArrayList();
+  if (removeAbstractMethods) {
+    passes.add(new FindAbstractMethods());
+  }
+  if (removeAssertionCalls) {
+    passes.add(new FindAssertionCalls());
+  }
+  CombinedCompilerPass.traverse(compiler,root,passes);
   for (  RemovableAssignment assignment : abstractMethodAssignmentNodes) {
     assignment.remove();
+  }
+  for (  Node call : assertionCalls) {
+    Node parent=call.getParent();
+    if (NodeUtil.isExpressionNode(parent)) {
+      parent.getParent().removeChild(parent);
+    }
+ else {
+      parent.replaceChild(call,call.getFirstChild().getNext().detachFromParent());
+    }
+    compiler.reportCodeChange();
   }
 }
