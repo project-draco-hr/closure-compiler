@@ -1,4 +1,11 @@
 {
+  if (!shouldCheck(n)) {
+    return false;
+  }
+  if (scopeNeedsInit) {
+    initScope(t.getControlFlowGraph());
+    scopeNeedsInit=false;
+  }
   GraphNode<Node,Branch> gNode=t.getControlFlowGraph().getNode(n);
   if (gNode != null && gNode.getAnnotation() != GraphReachability.REACHABLE) {
     if (n.getLineno() != -1 && n.getType() != Token.EMPTY && n.getType() != Token.BREAK) {
