@@ -3,9 +3,8 @@
   Preconditions.checkState(n.getType() == Token.FUNCTION);
   final Node body=n.getLastChild();
   Preconditions.checkState(body.getNext() == null && body.getType() == Token.BLOCK);
-  Scope fnScope=new SyntacticScopeCreator(compiler).createScope(n,scope);
+  Scope fnScope=new SyntacticScopeCreator(compiler).createScope(n,parentScope);
   traverseNode(body,n,fnScope);
-  interpretAssigns(fnScope);
-  removeUnreferencedFunctionArgs(n,fnScope);
-  removeUnreferencedVars(fnScope);
+  collectMaybeUnreferencedVars(fnScope);
+  allFunctionScopes.add(fnScope);
 }

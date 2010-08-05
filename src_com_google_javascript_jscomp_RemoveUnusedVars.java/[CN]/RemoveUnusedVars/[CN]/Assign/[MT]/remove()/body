@@ -1,10 +1,22 @@
 {
-  Node replacement=assignNode.getLastChild().detachFromParent();
-  for (Node current=assignNode.getFirstChild(); current.getType() != Token.NAME; current=current.getFirstChild()) {
-    if (current.getType() == Token.GETELEM) {
-      replacement=new Node(Token.COMMA,current.getLastChild().detachFromParent(),replacement);
-      replacement.copyInformationFrom(current);
+  Node parent=assignNode.getParent();
+  if (mayHaveSecondarySideEffects) {
+    Node replacement=assignNode.getLastChild().detachFromParent();
+    for (Node current=assignNode.getFirstChild(); current.getType() != Token.NAME; current=current.getFirstChild()) {
+      if (current.getType() == Token.GETELEM) {
+        replacement=new Node(Token.COMMA,current.getLastChild().detachFromParent(),replacement);
+        replacement.copyInformationFrom(current);
+      }
+    }
+    parent.replaceChild(assignNode,replacement);
+  }
+ else {
+    Node gramps=parent.getParent();
+    if (parent.getType() == Token.EXPR_RESULT) {
+      gramps.removeChild(parent);
+    }
+ else {
+      parent.replaceChild(assignNode,assignNode.getLastChild().detachFromParent());
     }
   }
-  assignNode.getParent().replaceChild(assignNode,replacement);
 }

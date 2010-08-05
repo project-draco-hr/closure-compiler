@@ -1,15 +1,13 @@
 {
-  Preconditions.checkState(name.getType() == Token.NAME);
+  Preconditions.checkState(NodeUtil.isAssignmentOp(assignNode));
   boolean isPropAssign=false;
-  Node previous=name;
-  Node current=name.getParent();
-  while (previous == current.getFirstChild() && NodeUtil.isGet(current)) {
-    previous=current;
-    current=current.getParent();
+  Node current=assignNode.getFirstChild();
+  while (NodeUtil.isGet(current)) {
+    current=current.getFirstChild();
     isPropAssign=true;
   }
-  if (previous == current.getFirstChild() && NodeUtil.isAssignmentOp(current)) {
-    return new Assign(current,isPropAssign);
+  if (current.getType() == Token.NAME) {
+    return new Assign(assignNode,current,isPropAssign);
   }
   return null;
 }

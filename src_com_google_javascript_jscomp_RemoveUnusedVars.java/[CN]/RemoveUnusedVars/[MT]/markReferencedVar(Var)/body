@@ -1,9 +1,9 @@
 {
-  referenced.add(var);
-  Node parent=var.getParentNode();
-  if (parent.getType() == Token.FUNCTION) {
-    if (!traverseFunctionWhenFirstSeen(parent,var.getScope())) {
-      traverseFunction(parent,var.scope);
+  if (referenced.add(var)) {
+    for (    Continuation c : continuations.get(var)) {
+      c.apply();
     }
+    return true;
   }
+  return false;
 }

@@ -2,7 +2,11 @@
   Scope scope=new SyntacticScopeCreator(compiler).createScope(root,null);
   traverseNode(root,null,scope);
   if (removeGlobals) {
-    interpretAssigns(scope);
-    removeUnreferencedVars(scope);
+    collectMaybeUnreferencedVars(scope);
+  }
+  interpretAssigns();
+  removeUnreferencedVars();
+  for (  Scope fnScope : allFunctionScopes) {
+    removeUnreferencedFunctionArgs(fnScope);
   }
 }
