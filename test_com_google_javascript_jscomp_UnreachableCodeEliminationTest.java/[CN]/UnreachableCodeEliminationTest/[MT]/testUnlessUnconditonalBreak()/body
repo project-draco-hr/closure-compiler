@@ -1,13 +1,13 @@
 {
   test("switch (a) { case 'a': break }","switch (a) { case 'a': }");
-  testSame("switch (a) { case 'a': break; case foo(): }");
-  testSame("switch (a) { default: break; case 'a': }");
-  testSame("switch (a) { case 'a': break; default: }");
+  test("switch (a) { case 'a': break; case foo(): }","switch (a) { case 'a':        case foo(): }");
+  test("switch (a) { default: break; case 'a': }","switch (a) { default:        case 'a': }");
+  testSame("switch (a) { case 'a': alert(a); break; default: alert(a); }");
+  testSame("switch (a) { default: alert(a); break; case 'a': alert(a); }");
   test("X: {switch (a) { case 'a': break X}}","X: {switch (a) { case 'a': }}");
   testSame("X: {switch (a) { case 'a': if (a()) {break X}  a = 1}}");
   test("X: {switch (a) { case 'a': if (a()) {break X}}}","X: {switch (a) { case 'a': if (a()) {}}}");
   test("X: {switch (a) { case 'a': if (a()) {break X}}}","X: {switch (a) { case 'a': if (a()) {}}}");
-  test("switch (a) { case 'a': break; case 'b': break; case 'c': break }","switch (a) { case 'a': break; case 'b': break; case 'c': }");
   testSame("do { break } while(1);");
   testSame("for(;1;) { break }");
 }
