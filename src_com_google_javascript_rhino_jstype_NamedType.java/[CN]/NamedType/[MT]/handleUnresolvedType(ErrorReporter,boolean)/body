@@ -1,10 +1,15 @@
 {
-  boolean beForgiving=forgiving || (ignoreForwardReferencedTypes && registry.isForwardDeclaredType(reference));
-  if (!beForgiving && registry.isLastGeneration()) {
-    t.warning("Unknown type " + reference,sourceName,lineno,null,charno);
+  if (registry.isLastGeneration()) {
+    boolean beForgiving=forgiving || (ignoreForwardReferencedTypes && registry.isForwardDeclaredType(reference));
+    if (!beForgiving && registry.isLastGeneration()) {
+      t.warning("Unknown type " + reference,sourceName,lineno,null,charno);
+    }
+ else {
+      referencedType=registry.getNativeObjectType(JSTypeNative.CHECKED_UNKNOWN_TYPE);
+    }
+    setResolvedTypeInternal(referencedType);
   }
  else {
-    referencedType=registry.getNativeObjectType(JSTypeNative.CHECKED_UNKNOWN_TYPE);
+    setResolvedTypeInternal(this);
   }
-  setResolvedTypeInternal(referencedType);
 }

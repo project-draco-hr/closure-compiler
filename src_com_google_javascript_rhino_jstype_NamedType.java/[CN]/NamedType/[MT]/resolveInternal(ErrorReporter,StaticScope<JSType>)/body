@@ -5,12 +5,12 @@
   }
   if (resolved) {
     super.resolveInternal(t,enclosing);
-    return referencedType;
+    return registry.isLastGeneration() ? referencedType : this;
   }
   resolveViaProperties(t,enclosing);
   if (detectImplicitPrototypeCycle()) {
     handleTypeCycle(t);
   }
   super.resolveInternal(t,enclosing);
-  return referencedType;
+  return registry.isLastGeneration() ? referencedType : this;
 }
