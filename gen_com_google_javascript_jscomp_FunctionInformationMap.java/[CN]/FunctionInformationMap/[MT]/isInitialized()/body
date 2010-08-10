@@ -1,9 +1,18 @@
 {
+  byte isInitialized=memoizedIsInitialized;
+  if (isInitialized != -1)   return isInitialized == 1;
   for (int i=0; i < getEntryCount(); i++) {
-    if (!getEntry(i).isInitialized())     return false;
+    if (!getEntry(i).isInitialized()) {
+      memoizedIsInitialized=0;
+      return false;
+    }
   }
   for (int i=0; i < getModuleCount(); i++) {
-    if (!getModule(i).isInitialized())     return false;
+    if (!getModule(i).isInitialized()) {
+      memoizedIsInitialized=0;
+      return false;
+    }
   }
+  memoizedIsInitialized=1;
   return true;
 }

@@ -1,5 +1,14 @@
 {
-  if (!hasName())   return false;
-  if (!hasCompiledSource())   return false;
+  byte isInitialized=memoizedIsInitialized;
+  if (isInitialized != -1)   return isInitialized == 1;
+  if (!hasName()) {
+    memoizedIsInitialized=0;
+    return false;
+  }
+  if (!hasCompiledSource()) {
+    memoizedIsInitialized=0;
+    return false;
+  }
+  memoizedIsInitialized=1;
   return true;
 }
