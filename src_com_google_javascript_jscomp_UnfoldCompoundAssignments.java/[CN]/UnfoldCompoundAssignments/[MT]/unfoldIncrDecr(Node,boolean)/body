@@ -1,0 +1,12 @@
+{
+  Preconditions.checkArgument(isPrefix(node) || valueIsDiscarded(node),"Unfolding postfix ++/-- requires that the result be ignored.");
+  Node lhs=node.getFirstChild().cloneTree();
+  if (isIncrement) {
+    lhs=new Node(Token.POS,lhs);
+  }
+  node.setType(Token.ASSIGN);
+  Node rhs=new Node(isIncrement ? Token.ADD : Token.SUB,lhs,Node.newNumber(1));
+  rhs.copyInformationFromForTree(node);
+  node.addChildToBack(rhs);
+  compiler.reportCodeChange();
+}
