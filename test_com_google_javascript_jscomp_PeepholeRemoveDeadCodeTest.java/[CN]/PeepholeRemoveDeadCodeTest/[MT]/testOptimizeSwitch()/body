@@ -1,0 +1,18 @@
+{
+  fold("switch(a){}","");
+  fold("switch(foo()){}","foo()");
+  fold("switch(a){default:}","");
+  fold("switch(a){default:break;}","");
+  fold("switch(a){default:var b;break;}","var b");
+  fold("switch(a){case 1: default:}","");
+  fold("switch(a){default: case 1:}","");
+  fold("switch(a){default: break; case 1:break;}","");
+  fold("switch(a){default: var b; break; case 1: var c; break;}","var c; var b;");
+  foldSame("function f() {switch(a){default: return; case 1: break;}}");
+  foldSame("function f() {switch(a){case 1: foo();}}");
+  foldSame("function f() {switch(a){case 3: case 2: case 1: foo();}}");
+  foldSame("function f() {switch(a){case 2: case 1: default: foo();}}");
+  foldSame("switch(a){case 1: var c =2; break;}");
+  foldSame("function f() {switch(a){case 1: return;}}");
+  foldSame("x:switch(a){case 1: break x;}");
+}

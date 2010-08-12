@@ -1,0 +1,30 @@
+{
+  Preconditions.checkState(n.getType() == Token.SWITCH);
+  Node defaultCase=findDefaultCase(n);
+  if (defaultCase != null && isUselessCase(defaultCase)) {
+    NodeUtil.redeclareVarsInsideBranch(defaultCase);
+    n.removeChild(defaultCase);
+    reportCodeChange();
+    defaultCase=null;
+  }
+  if (defaultCase == null) {
+    Node next=null;
+    for (Node c=n.getFirstChild().getNext(); c != null; c=next) {
+      next=c.getNext();
+      if (!mayHaveSideEffects(c.getFirstChild()) && isUselessCase(c)) {
+        NodeUtil.redeclareVarsInsideBranch(c);
+        n.removeChild(c);
+        reportCodeChange();
+      }
+    }
+  }
+  if (n.hasOneChild()) {
+    Node condition=n.removeFirstChild();
+    Node parent=n.getParent();
+    Node replacement=new Node(Token.EXPR_RESULT,condition).copyInformationFrom(n);
+    parent.replaceChild(n,replacement);
+    reportCodeChange();
+    return replacement;
+  }
+  return null;
+}
