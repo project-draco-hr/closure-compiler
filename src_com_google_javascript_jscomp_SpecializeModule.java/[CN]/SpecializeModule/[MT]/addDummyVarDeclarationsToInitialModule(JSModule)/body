@@ -1,0 +1,12 @@
+{
+  CompilerInput lastInputInFirstModule=module.getInputs().get(module.getInputs().size() - 1);
+  Node dummyVarParent=lastInputInFirstModule.getAstRoot(compiler);
+  for (  Node modifiedFunction : functionInfoBySpecializedFunctionNode.keySet()) {
+    if (specializationState.getRemovedFunctions().contains(modifiedFunction)) {
+      OriginalFunctionInformation originalInfo=functionInfoBySpecializedFunctionNode.get(modifiedFunction);
+      if (originalInfo.name != null && originalInfo.originalWasDeclaration()) {
+        dummyVarParent.addChildToBack(originalInfo.generateDummyDeclaration());
+      }
+    }
+  }
+}

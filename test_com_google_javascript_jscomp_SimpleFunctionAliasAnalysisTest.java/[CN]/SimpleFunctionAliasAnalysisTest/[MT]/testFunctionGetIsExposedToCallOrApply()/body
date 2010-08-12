@@ -1,0 +1,12 @@
+{
+  String source="function A(){};\n" + "function B(){};\n" + "function C(){};\n"+ "var x;\n"+ "A.call(x);\n"+ "B.apply(x);\n"+ "C();\n";
+  compileAndRun(source);
+  assertFunctionExposedToCallOrApply(true,"A");
+  assertFunctionExposedToCallOrApply(true,"B");
+  assertFunctionExposedToCallOrApply(false,"C");
+  source="var ns = {};" + "ns.A = function(){};\n" + "ns.B = function(){};\n"+ "ns.C = function(){};\n"+ "var x;\n"+ "ns.A.call(x);\n"+ "ns.B.apply(x);\n"+ "ns.C();\n";
+  compileAndRun(source);
+  assertFunctionExposedToCallOrApply(true,"ns.A");
+  assertFunctionExposedToCallOrApply(true,"ns.B");
+  assertFunctionExposedToCallOrApply(false,"ns.C");
+}

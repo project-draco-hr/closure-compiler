@@ -1,0 +1,18 @@
+{
+  Preconditions.checkArgument(NodeUtil.isFunction(functionNode));
+  if (!nodeIsInGlobalScope(functionNode) || initialModuleAliasAnalysis.isAliased(functionNode)) {
+    return false;
+  }
+  if (NodeUtil.isStatement(functionNode)) {
+    return true;
+  }
+  Node parent=functionNode.getParent();
+  Node gramps=parent.getParent();
+  if (NodeUtil.isName(parent) && NodeUtil.isVar(gramps)) {
+    return true;
+  }
+  if (NodeUtil.isExprAssign(gramps) && parent.getChildAtIndex(1) == functionNode) {
+    return true;
+  }
+  return false;
+}

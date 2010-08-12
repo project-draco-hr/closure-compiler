@@ -1,0 +1,13 @@
+{
+  lastCompiler=compiler;
+  return new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      SimpleDefinitionFinder defFinder=new SimpleDefinitionFinder(compiler);
+      defFinder.process(externs,root);
+      SimpleFunctionAliasAnalysis functionAliasAnalysis=new SimpleFunctionAliasAnalysis();
+      functionAliasAnalysis.analyze(defFinder);
+      lastState=new SpecializationState(functionAliasAnalysis);
+    }
+  }
+;
+}

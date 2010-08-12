@@ -1,0 +1,17 @@
+{
+  specializedInputRootsByOriginal=Maps.newLinkedHashMap();
+  functionInfoBySpecializedFunctionNode=Maps.newLinkedHashMap();
+  Node syntheticModuleJsRoot=new Node(Token.BLOCK);
+  syntheticModuleJsRoot.setIsSyntheticBlock(true);
+  for (  CompilerInput input : module.getInputs()) {
+    Node originalInputRoot=input.getAstRoot(compiler);
+    Node copiedInputRoot=originalInputRoot.cloneTree();
+    copiedInputRoot.copyInformationFromForTree(originalInputRoot);
+    specializedInputRootsByOriginal.put(originalInputRoot,copiedInputRoot);
+    matchTopLevelFunctions(originalInputRoot,copiedInputRoot);
+    syntheticModuleJsRoot.addChildToBack(copiedInputRoot);
+  }
+  Node syntheticExternsAndJsRoot=new Node(Token.BLOCK);
+  syntheticExternsAndJsRoot.addChildToBack(syntheticModuleJsRoot);
+  return syntheticModuleJsRoot;
+}

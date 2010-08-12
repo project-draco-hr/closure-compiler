@@ -58,6 +58,16 @@
     passes.add(getCustomPasses(CustomPassExecutionTime.BEFORE_OPTIMIZATION_LOOP));
   }
   passes.add(createEmptyPass("beforeMainOptimizations"));
+  if (options.specializeInitialModule) {
+    passes.addAll(getMainOptimizationLoop());
+    if (options.crossModuleCodeMotion) {
+      passes.add(crossModuleCodeMotion);
+    }
+    if (options.crossModuleMethodMotion) {
+      passes.add(crossModuleMethodMotion);
+    }
+    passes.add(specializeInitialModule.makeOneTimePass());
+  }
   passes.addAll(getMainOptimizationLoop());
   passes.add(createEmptyPass("beforeModuleMotion"));
   if (options.crossModuleCodeMotion) {

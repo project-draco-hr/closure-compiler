@@ -4,6 +4,9 @@
   Node expr=parent.getParent();
   Node block=expr.getParent();
   Node newNameNode=Node.newString(Token.NAME,newMethodName).copyInformationFrom(parent.getFirstChild());
+  if (specializationState != null) {
+    specializationState.reportRemovedFunction(functionNode);
+  }
   parent.removeChild(functionNode);
   newNameNode.addChildToFront(functionNode);
   block.replaceChild(expr,new Node(Token.VAR,newNameNode));

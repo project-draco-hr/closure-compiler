@@ -1,0 +1,19 @@
+{
+  for (  JSModule directDependent : getDirectDependents(module)) {
+    CompilerInput firstInput=directDependent.getInputs().get(0);
+    Node firstInputRootNode=firstInput.getAstRoot(compiler);
+    List<Node> possiblyModifiedFunctions=Lists.newArrayList(functionInfoBySpecializedFunctionNode.keySet());
+    Collections.reverse(possiblyModifiedFunctions);
+    for (    Node modifiedFunction : possiblyModifiedFunctions) {
+      boolean declarationWasSpecialized=specializationState.getSpecializedFunctions().contains(modifiedFunction);
+      boolean declarationWasRemoved=specializationState.getRemovedFunctions().contains(modifiedFunction);
+      if (declarationWasSpecialized || declarationWasRemoved) {
+        OriginalFunctionInformation originalInfo=functionInfoBySpecializedFunctionNode.get(modifiedFunction);
+        if (originalInfo.name != null) {
+          Node newDefinition=originalInfo.generateFixupDefinition();
+          firstInputRootNode.addChildrenToFront(newDefinition);
+        }
+      }
+    }
+  }
+}

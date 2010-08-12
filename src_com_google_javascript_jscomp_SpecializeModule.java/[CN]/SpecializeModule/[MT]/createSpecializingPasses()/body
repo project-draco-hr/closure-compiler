@@ -1,0 +1,9 @@
+{
+  Collection<SpecializationAwareCompilerPass> passes=Lists.newLinkedList();
+  for (  PassFactory passFactory : specializationPassFactories) {
+    CompilerPass pass=passFactory.createInternal(compiler);
+    Preconditions.checkState(pass instanceof SpecializationAwareCompilerPass);
+    passes.add((SpecializationAwareCompilerPass)pass);
+  }
+  return passes;
+}

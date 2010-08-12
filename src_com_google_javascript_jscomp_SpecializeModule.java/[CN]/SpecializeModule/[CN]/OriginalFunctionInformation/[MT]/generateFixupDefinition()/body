@@ -1,0 +1,14 @@
+{
+  Node functionCopy=copiedOriginalFunction();
+  Node nameNode;
+  if (isAssignFunction) {
+    nameNode=NodeUtil.newQualifiedNameNode(name,functionCopy,name);
+  }
+ else {
+    nameNode=functionCopy.getFirstChild();
+    functionCopy.replaceChild(nameNode,NodeUtil.newName("",nameNode));
+  }
+  Node assignment=new Node(Token.ASSIGN,nameNode,functionCopy);
+  assignment.copyInformationFrom(functionCopy);
+  return NodeUtil.newExpr(assignment);
+}

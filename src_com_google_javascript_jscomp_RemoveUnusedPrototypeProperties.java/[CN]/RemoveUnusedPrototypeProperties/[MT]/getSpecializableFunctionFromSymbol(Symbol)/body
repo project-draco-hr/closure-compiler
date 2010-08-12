@@ -1,0 +1,25 @@
+{
+  Preconditions.checkNotNull(specializationState);
+  Node specializableFunction=null;
+  if (symbol instanceof GlobalFunction) {
+    specializableFunction=((GlobalFunction)symbol).getFunctionNode();
+  }
+ else   if (symbol instanceof AssignmentProperty) {
+    Node propertyValue=((AssignmentProperty)symbol).getValue();
+    if (NodeUtil.isFunction(propertyValue)) {
+      specializableFunction=propertyValue;
+    }
+  }
+ else   if (symbol instanceof LiteralProperty) {
+    return null;
+  }
+ else {
+    Preconditions.checkState(false,"Should be unreachable.");
+  }
+  if (specializableFunction != null && specializationState.canFixupFunction(specializableFunction)) {
+    return specializableFunction;
+  }
+ else {
+    return null;
+  }
+}

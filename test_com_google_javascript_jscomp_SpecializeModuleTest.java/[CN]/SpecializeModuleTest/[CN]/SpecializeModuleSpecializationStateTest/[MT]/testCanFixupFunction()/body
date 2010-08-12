@@ -1,0 +1,10 @@
+{
+  testSame("function F(){}\n" + "var G = function(a){};\n" + "var ns = {};"+ "ns.H = function(){};"+ "var ns2 = {I : function anon1(){}};"+ "(function anon2(){})();");
+  assertTrue(lastState.canFixupFunction(findFunction("F")));
+  assertTrue(lastState.canFixupFunction(findFunction("G")));
+  assertTrue(lastState.canFixupFunction(findFunction("ns.H")));
+  assertFalse(lastState.canFixupFunction(findFunction("anon1")));
+  assertFalse(lastState.canFixupFunction(findFunction("anon2")));
+  testSame("function A(){}\n" + "var aliasA = A;\n");
+  assertFalse(lastState.canFixupFunction(findFunction("A")));
+}
