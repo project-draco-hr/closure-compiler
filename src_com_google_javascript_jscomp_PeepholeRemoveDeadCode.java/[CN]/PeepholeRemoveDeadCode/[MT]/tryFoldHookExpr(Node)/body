@@ -1,0 +1,42 @@
+{
+  Preconditions.checkState(NodeUtil.isExpressionNode(n));
+  Node hook=n.getFirstChild();
+  if (hook.getType() != Token.HOOK) {
+    return n;
+  }
+  Node parent=n.getParent();
+  Preconditions.checkNotNull(parent);
+  Node cond=hook.getFirstChild();
+  Node thenBody=cond.getNext();
+  Node elseBody=thenBody.getNext();
+  if (!mayHaveSideEffects(thenBody)) {
+    Node ifNode=new Node(Token.IF);
+    if (cond.getType() == Token.NOT) {
+      Node expr=cond.getFirstChild();
+      cond.removeChild(expr);
+      ifNode.addChildToBack(expr);
+    }
+ else {
+      Node not=new Node(Token.NOT).copyInformationFrom(cond);
+      hook.removeChild(cond);
+      not.addChildToBack(cond);
+      ifNode.addChildToBack(not);
+    }
+    hook.removeChild(elseBody);
+    ifNode.addChildToBack(new Node(Token.BLOCK,NodeUtil.newExpr(elseBody)).copyInformationFrom(elseBody));
+    parent.replaceChild(n,ifNode);
+    reportCodeChange();
+    return ifNode;
+  }
+ else   if (!mayHaveSideEffects(elseBody)) {
+    Node ifNode=new Node(Token.IF);
+    hook.removeChild(cond);
+    ifNode.addChildToBack(cond);
+    hook.removeChild(thenBody);
+    ifNode.addChildToBack(new Node(Token.BLOCK,NodeUtil.newExpr(thenBody)).copyInformationFrom(thenBody));
+    parent.replaceChild(n,ifNode);
+    reportCodeChange();
+    return ifNode;
+  }
+  return n;
+}

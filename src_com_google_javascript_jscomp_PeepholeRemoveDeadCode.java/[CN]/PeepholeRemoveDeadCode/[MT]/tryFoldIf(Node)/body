@@ -1,0 +1,84 @@
+{
+  Preconditions.checkState(n.getType() == Token.IF);
+  Node parent=n.getParent();
+  Preconditions.checkNotNull(parent);
+  int type=n.getType();
+  Node cond=n.getFirstChild();
+  Node thenBody=cond.getNext();
+  Node elseBody=thenBody.getNext();
+  if (elseBody != null && !mayHaveSideEffects(elseBody)) {
+    n.removeChild(elseBody);
+    elseBody=null;
+    reportCodeChange();
+  }
+  if (!mayHaveSideEffects(thenBody) && elseBody != null) {
+    n.removeChild(elseBody);
+    n.replaceChild(thenBody,elseBody);
+    Node notCond=new Node(Token.NOT);
+    n.replaceChild(cond,notCond);
+    notCond.addChildToFront(cond);
+    cond=notCond;
+    thenBody=cond.getNext();
+    elseBody=null;
+    reportCodeChange();
+  }
+  if (!mayHaveSideEffects(thenBody) && elseBody == null) {
+    if (mayHaveSideEffects(cond)) {
+      n.removeChild(cond);
+      Node replacement=NodeUtil.newExpr(cond);
+      parent.replaceChild(n,replacement);
+      reportCodeChange();
+      return replacement;
+    }
+ else {
+      NodeUtil.removeChild(parent,n);
+      reportCodeChange();
+      return null;
+    }
+  }
+  TernaryValue condValue=NodeUtil.getExpressionBooleanValue(cond);
+  if (condValue == TernaryValue.UNKNOWN) {
+    return n;
+  }
+  if (mayHaveSideEffects(cond)) {
+    boolean newConditionValue=condValue == TernaryValue.TRUE;
+    if (!newConditionValue && elseBody == null) {
+      elseBody=new Node(Token.BLOCK).copyInformationFrom(n);
+      n.addChildToBack(elseBody);
+    }
+    Node newCond=new Node(newConditionValue ? Token.TRUE : Token.FALSE);
+    n.replaceChild(cond,newCond);
+    Node branchToKeep=newConditionValue ? thenBody : elseBody;
+    branchToKeep.addChildToFront(new Node(Token.EXPR_RESULT,cond).copyInformationFrom(cond));
+    reportCodeChange();
+    cond=newCond;
+  }
+  boolean condTrue=condValue.toBoolean(true);
+  if (n.getChildCount() == 2) {
+    Preconditions.checkState(type == Token.IF);
+    if (condTrue) {
+      Node thenStmt=n.getFirstChild().getNext();
+      n.removeChild(thenStmt);
+      parent.replaceChild(n,thenStmt);
+      reportCodeChange();
+      return thenStmt;
+    }
+ else {
+      NodeUtil.redeclareVarsInsideBranch(n);
+      NodeUtil.removeChild(parent,n);
+      reportCodeChange();
+      return null;
+    }
+  }
+ else {
+    Node trueBranch=n.getFirstChild().getNext();
+    Node falseBranch=trueBranch.getNext();
+    Node branchToKeep=condTrue ? trueBranch : falseBranch;
+    Node branchToRemove=condTrue ? falseBranch : trueBranch;
+    NodeUtil.redeclareVarsInsideBranch(branchToRemove);
+    n.removeChild(branchToKeep);
+    parent.replaceChild(n,branchToKeep);
+    reportCodeChange();
+    return branchToKeep;
+  }
+}

@@ -4,14 +4,7 @@
   fold("if (undefined){ x = 1; } else { x = 2; }","x=2");
   fold("if (null){ x = 1; } else { x = 2; }","x=2");
   fold("if (void 0){ x = 1; } else { x = 2; }","x=2");
+  fold("if (void foo()){ x = 1; } else { x = 2; }","void foo();x=2");
   fold("if (false){ x = 1; } else if (true) { x = 3; } else { x = 2; }","x=3");
-  fold("var x = (true) ? 1 : 0","var x=1");
-  fold("var y = (true) ? ((false) ? 12 : (cond ? 1 : 2)) : 13","var y=cond?1:2");
   fold("if (x){ x = 1; } else if (false) { x = 3; }","if(x)x=1");
-  foldSame("var z=x?void 0:y()");
-  foldSame("z=x?void 0:y()");
-  foldSame("z*=x?void 0:y()");
-  foldSame("var z=x?y():void 0");
-  foldSame("(w?x:void 0).y=z");
-  foldSame("(w?x:void 0).y+=z");
 }

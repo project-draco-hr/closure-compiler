@@ -1,0 +1,26 @@
+{
+  Preconditions.checkState(n.getType() == Token.HOOK);
+  Node parent=n.getParent();
+  Preconditions.checkNotNull(parent);
+  Node cond=n.getFirstChild();
+  Node thenBody=cond.getNext();
+  Node elseBody=thenBody.getNext();
+  TernaryValue condValue=NodeUtil.getExpressionBooleanValue(cond);
+  if (condValue == TernaryValue.UNKNOWN) {
+    return n;
+  }
+  n.detachChildren();
+  Node branchToKeep=condValue.toBoolean(true) ? thenBody : elseBody;
+  Node replacement;
+  if (mayHaveSideEffects(cond)) {
+    replacement=new Node(Token.COMMA).copyInformationFrom(n);
+    replacement.addChildToFront(cond);
+    replacement.addChildToBack(branchToKeep);
+  }
+ else {
+    replacement=branchToKeep;
+  }
+  parent.replaceChild(n,replacement);
+  reportCodeChange();
+  return replacement;
+}

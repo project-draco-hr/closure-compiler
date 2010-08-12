@@ -1,26 +1,28 @@
 {
   Preconditions.checkArgument(n.getType() == Token.BITAND || n.getType() == Token.BITOR);
-  if (left.getType() == Token.NUMBER && right.getType() == Token.NUMBER) {
-    double resultDouble;
-    double lval=left.getDouble();
-    double rval=right.getDouble();
-    if (lval < Integer.MIN_VALUE || lval > Integer.MAX_VALUE || rval < Integer.MIN_VALUE || rval > Integer.MAX_VALUE) {
-      return n;
-    }
-    int lvalInt=(int)lval;
-    if (lvalInt != lval) {
-      return n;
-    }
-    int rvalInt=(int)rval;
-    if (rvalInt != rval) {
-      return n;
-    }
+  if (left.getType() != Token.NUMBER || right.getType() != Token.NUMBER) {
+    return n;
+  }
+  double resultDouble;
+  double lval=left.getDouble();
+  double rval=right.getDouble();
+  if (lval < Integer.MIN_VALUE || lval > Integer.MAX_VALUE || rval < Integer.MIN_VALUE || rval > Integer.MAX_VALUE) {
+    return n;
+  }
+  int lvalInt=(int)lval;
+  if (lvalInt != lval) {
+    return n;
+  }
+  int rvalInt=(int)rval;
+  if (rvalInt != rval) {
+    return n;
+  }
 switch (n.getType()) {
 case Token.BITAND:
-      resultDouble=lvalInt & rvalInt;
-    break;
+    resultDouble=lvalInt & rvalInt;
+  break;
 case Token.BITOR:
-  resultDouble=lvalInt | rvalInt;
+resultDouble=lvalInt | rvalInt;
 break;
 default :
 throw new Error("Unknown bitwise operator");
@@ -28,6 +30,5 @@ throw new Error("Unknown bitwise operator");
 Node newNumber=Node.newNumber(resultDouble);
 n.getParent().replaceChild(n,newNumber);
 reportCodeChange();
-}
-return n;
+return newNumber;
 }

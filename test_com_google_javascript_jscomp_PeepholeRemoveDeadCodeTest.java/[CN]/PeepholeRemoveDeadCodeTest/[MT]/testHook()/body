@@ -1,0 +1,18 @@
+{
+  fold("true ? a() : b()","a()");
+  fold("false ? a() : b()","b()");
+  fold("a() ? b() : true","if (a()) b()");
+  fold("a() ? true : b()","if (!a()) b()");
+  fold("(a = true) ? b() : c()","a = true; b()");
+  fold("(a = false) ? b() : c()","a = false; c()");
+  fold("do {f()} while((a = true) ? b() : c())","do {f()} while((a = true) , b())");
+  fold("do {f()} while((a = false) ? b() : c())","do {f()} while((a = false) , c())");
+  fold("var x = (true) ? 1 : 0","var x=1");
+  fold("var y = (true) ? ((false) ? 12 : (cond ? 1 : 2)) : 13","var y=cond?1:2");
+  foldSame("var z=x?void 0:y()");
+  foldSame("z=x?void 0:y()");
+  foldSame("z*=x?void 0:y()");
+  foldSame("var z=x?y():void 0");
+  foldSame("(w?x:void 0).y=z");
+  foldSame("(w?x:void 0).y+=z");
+}
