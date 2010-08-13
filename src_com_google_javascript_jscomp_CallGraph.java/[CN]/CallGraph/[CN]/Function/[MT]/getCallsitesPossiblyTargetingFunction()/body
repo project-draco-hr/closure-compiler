@@ -1,8 +1,13 @@
 {
   if (computeBackwardGraph) {
-    return CallGraph.this.callsitesByTargetingFunction.get(this);
+    if (callsitesPossiblyTargetingFunction != null) {
+      return callsitesPossiblyTargetingFunction;
+    }
+ else {
+      return ImmutableList.of();
+    }
   }
  else {
-    throw new UnsupportedOperationException("Cannot call " + "getCallsitesPossiblyTargetingFunction() on a Function " + "from a backward-forward CallGraph");
+    throw new UnsupportedOperationException("Cannot call " + "getCallsitesPossiblyTargetingFunction() on a Function " + "from a non-backward CallGraph");
   }
 }

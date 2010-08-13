@@ -1,0 +1,25 @@
+{
+  mainFunction=createFunction(jsRoot);
+  NodeTraversal.traverse(compiler,jsRoot,new AbstractPostOrderCallback(){
+    @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
+      int nodeType=n.getType();
+      if (nodeType == Token.CALL || nodeType == Token.NEW) {
+        Callsite callsite=createCallsite(n);
+        Node containingFunctionNode=t.getScopeRoot();
+        Function containingFunction=functionsByNode.get(containingFunctionNode);
+        if (containingFunction == null) {
+          containingFunction=createFunction(containingFunctionNode);
+        }
+        callsite.containingFunction=containingFunction;
+        containingFunction.addCallsiteInFunction(callsite);
+        connectCallsiteToTargets(callsite,provider);
+      }
+ else       if (NodeUtil.isFunction(n)) {
+        if (!functionsByNode.containsKey(n)) {
+          createFunction(n);
+        }
+      }
+    }
+  }
+);
+}
