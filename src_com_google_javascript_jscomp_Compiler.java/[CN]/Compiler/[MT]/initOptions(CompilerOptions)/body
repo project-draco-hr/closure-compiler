@@ -10,4 +10,14 @@
       setErrorManager(printer);
     }
   }
+  List<WarningsGuard> guards=Lists.newArrayList();
+  guards.add(new SuppressDocWarningsGuard(getDiagnosticGroups().getRegisteredGroups()));
+  WarningsGuard warningsGuard=options.getWarningsGuard();
+  if (warningsGuard != null) {
+    guards.add(options.getWarningsGuard());
+  }
+  if (!options.checkSymbols && (warningsGuard == null || !warningsGuard.disables(DiagnosticGroups.CHECK_VARIABLES))) {
+    guards.add(new DiagnosticGroupWarningsGuard(DiagnosticGroups.CHECK_VARIABLES,CheckLevel.OFF));
+  }
+  this.warningsGuard=new ComposeWarningsGuard(guards);
 }
