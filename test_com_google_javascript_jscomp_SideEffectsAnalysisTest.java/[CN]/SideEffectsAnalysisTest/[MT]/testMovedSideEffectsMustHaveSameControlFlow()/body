@@ -1,0 +1,14 @@
+{
+  assertSafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "if (l) {"+ "src: a++;"+ "env: 3;"+ "dest: 3;"+ "}"+ "}");
+  assertUnsafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "if (l) {"+ "src: a++;"+ "env: 3;"+ "}"+ "if (l) {"+ "dest: 3;"+ "}"+ "}");
+  assertUnsafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "if (l) {"+ "src: a++;"+ "env: 3;"+ "} else {"+ "dest: 3;"+ "}"+ "}");
+  assertSafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "while (l) {"+ "src: a++;"+ "env: 3;"+ "dest: 3;"+ "}"+ "}");
+  assertUnsafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "while (l) {"+ "src: a++;"+ "env: l;"+ "break;"+ "dest: 3;"+ "}"+ "}");
+  assertUnsafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "while (l) {"+ "src: a++;"+ "env: 3;"+ "continue;"+ "dest: 3;"+ "}"+ "}");
+  assertUnsafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "while (l) {"+ "src: a++;"+ "env: 3;"+ "return;"+ "dest: 3;"+ "}"+ "}");
+  assertSafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "do {"+ "src: a++;"+ "env: 3;"+ "dest: 3;"+ "} while(l)"+ "}");
+  assertUnsafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "do {"+ "src: a++;"+ "env: 3;"+ "} while(l)"+ "dest: 3;"+ "}");
+  assertUnsafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "switch(l) {"+ "case 17:"+ "src: a++;"+ "env: 3;"+ "dest: 3;"+ "break;"+ "}"+ "}");
+  assertUnsafeMoveVisibility("var a;" + "function f() {" + "var l;"+ "switch(l) {"+ "case 17:"+ "src: a++;"+ "env: 3;"+ "break;"+ "case 18:"+ "dest: 3;"+ "break;"+ "}"+ "}");
+  assertUnsafeMoveVisibility("var a;" + "function f() {" + "src: a++;"+ "env: 3;"+ "}"+ "function g() {"+ "dest: 3;"+ "}");
+}

@@ -1,0 +1,22 @@
+{
+  int visibilityRefLocations=VISIBILITY_LOCATION_NONE;
+  int visibilityModLocations=VISIBILITY_LOCATION_NONE;
+  for (  Node reference : findStorageLocationReferences(node)) {
+    int effectMask;
+    if (NodeUtil.isName(reference)) {
+      effectMask=effectMaskForVariableReference(reference);
+    }
+ else {
+      effectMask=HEAP_LOCATION_MASK;
+    }
+    if (storageNodeIsLValue(reference)) {
+      visibilityModLocations|=effectMask;
+    }
+    if (storageNodeIsRValue(reference)) {
+      visibilityRefLocations|=effectMask;
+    }
+  }
+  VisibilityBasedEffectLocation modSet=new VisibilityBasedEffectLocation(visibilityModLocations);
+  VisibilityBasedEffectLocation refSet=new VisibilityBasedEffectLocation(visibilityRefLocations);
+  return new LocationSummary(modSet,refSet);
+}

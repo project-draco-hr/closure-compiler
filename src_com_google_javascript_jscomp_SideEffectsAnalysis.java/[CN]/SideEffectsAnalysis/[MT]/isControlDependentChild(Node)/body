@@ -1,0 +1,28 @@
+{
+  Node parent=child.getParent();
+  if (parent == null) {
+    return false;
+  }
+  ArrayList<Node> siblings=Lists.newArrayList(parent.children());
+  int indexOfChildInParent=siblings.indexOf(child);
+switch (parent.getType()) {
+case Token.IF:
+case Token.HOOK:
+    return (indexOfChildInParent == 1 || indexOfChildInParent == 2);
+case Token.WHILE:
+case Token.DO:
+  return true;
+case Token.FOR:
+return indexOfChildInParent != 0;
+case Token.SWITCH:
+return indexOfChildInParent > 0;
+case Token.AND:
+return true;
+case Token.OR:
+return true;
+case Token.FUNCTION:
+return true;
+default :
+return false;
+}
+}

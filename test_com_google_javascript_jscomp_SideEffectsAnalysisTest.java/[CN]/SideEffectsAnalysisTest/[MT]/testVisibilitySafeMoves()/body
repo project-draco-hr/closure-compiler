@@ -1,0 +1,18 @@
+{
+  assertSafeMoveVisibility("src: 1; env: ; dest: 3;");
+  assertSafeMoveVisibility("src: 1; env: 2; dest: 3;");
+  assertSafeMoveVisibility("var x; src: 1; env: x; dest: 3;");
+  assertSafeMoveVisibility("var x; src: x; env: 1; dest: 3;");
+  assertSafeMoveVisibility("var x; src: 1; env: x++; dest: 3;");
+  assertSafeMoveVisibility("var x; src: x++; env: 1; dest: 3;");
+  assertSafeMoveVisibility("var x;" + "function f(){" + "var y;"+ "src: x;"+ "env: y++;"+ "dest: 3;"+ "}");
+  assertSafeMoveVisibility("var x;" + "function f(){" + "var y;"+ "src: x++;"+ "env: y;"+ "dest: 3;"+ "}");
+  assertSafeMoveVisibility("var x;" + "var y;" + "function f(){"+ "var y;"+ "src: x;"+ "env: y++;"+ "dest: 3;"+ "}");
+  assertSafeMoveVisibility("var x;" + "var y;" + "function f(){"+ "var y;"+ "src: x++;"+ "env: y;"+ "dest: 3;"+ "}");
+  assertSafeMoveVisibility("function f(){" + "var x;" + "var y;"+ "src: x;"+ "env: y++;"+ "dest: 3;"+ "function inner() {"+ "x"+ "}"+ "}");
+  assertSafeMoveVisibility("function f(){" + "var x;" + "var y;"+ "src: x++;"+ "env: y;"+ "dest: 3;"+ "function inner() {"+ "x"+ "}"+ "}");
+  assertSafeMoveVisibility("var x = {};" + "function f(){" + "var y;"+ "src: x.a;"+ "env: y++;"+ "dest: 3;"+ "}");
+  assertSafeMoveVisibility("var x = {};" + "function f(){" + "var y;"+ "src: x.a++;"+ "env: y;"+ "dest: 3;"+ "}");
+  assertSafeMoveVisibility("var x = {};" + "src: x.a;" + "env: (function() {"+ "x.a++;"+ "});"+ "dest: 3;");
+  assertSafeMoveVisibility("var x = {};" + "src: x.a++;" + "env: (function() {"+ "x.a;"+ "});"+ "dest: 3;");
+}

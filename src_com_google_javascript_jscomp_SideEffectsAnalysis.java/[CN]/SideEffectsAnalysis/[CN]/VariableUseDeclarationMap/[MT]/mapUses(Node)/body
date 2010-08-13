@@ -1,0 +1,12 @@
+{
+  referencesByNameNode=Maps.newHashMap();
+  ReferenceCollectingCallback callback=new ReferenceCollectingCallback(compiler,ReferenceCollectingCallback.DO_NOTHING_BEHAVIOR);
+  NodeTraversal.traverse(compiler,root,callback);
+  for (  Var variable : callback.getReferencedVariables()) {
+    ReferenceCollection referenceCollection=callback.getReferenceCollection(variable);
+    for (    Reference reference : referenceCollection.references) {
+      Node referenceNameNode=reference.getNameNode();
+      referencesByNameNode.put(referenceNameNode,variable.getNameNode());
+    }
+  }
+}

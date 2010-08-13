@@ -4,6 +4,9 @@
   if (isPure(source)) {
     return true;
   }
+  if (nodeHasCall(source)) {
+    return false;
+  }
   LocationSummary sourceLocationSummary=locationAbstraction.calculateLocationSummary(source);
   EffectLocation sourceModSet=sourceLocationSummary.getModSet();
   if (!sourceModSet.isEmpty() && !nodesHaveSameControlFlow(source,destination)) {
@@ -11,6 +14,11 @@
   }
   EffectLocation sourceRefSet=sourceLocationSummary.getRefSet();
   Set<Node> environmentNodes=environment.calculateEnvironment();
+  for (  Node environmentNode : environmentNodes) {
+    if (nodeHasCall(environmentNode)) {
+      return false;
+    }
+  }
   LocationSummary environmentLocationSummary=locationAbstraction.calculateLocationSummary(environmentNodes);
   EffectLocation environmentModSet=environmentLocationSummary.getModSet();
   EffectLocation environmentRefSet=environmentLocationSummary.getRefSet();

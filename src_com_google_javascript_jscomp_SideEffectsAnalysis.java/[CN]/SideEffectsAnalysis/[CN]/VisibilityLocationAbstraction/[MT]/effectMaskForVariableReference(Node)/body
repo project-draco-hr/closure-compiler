@@ -1,0 +1,28 @@
+{
+  Preconditions.checkArgument(NodeUtil.isName(variableReference));
+  int effectMask=VISIBILITY_LOCATION_NONE;
+  Node declaringNameNode=variableUseMap.findDeclaringNameNodeForUse(variableReference);
+  if (declaringNameNode != null) {
+    VariableVisibility visibility=variableVisibilityAnalysis.getVariableVisibility(declaringNameNode);
+switch (visibility) {
+case LOCAL:
+      effectMask=LOCAL_VARIABLE_LOCATION_MASK;
+    break;
+case CAPTURED_LOCAL:
+  effectMask=CAPTURED_LOCAL_VARIABLE_LOCATION_MASK;
+break;
+case PARAMETER:
+effectMask=HEAP_LOCATION_MASK;
+break;
+case GLOBAL:
+effectMask=GLOBAL_VARIABLE_LOCATION_MASK;
+break;
+default :
+throw new IllegalStateException("Unrecognized variable" + " visibility: " + visibility);
+}
+}
+ else {
+effectMask=UNKNOWN_LOCATION_MASK;
+}
+return effectMask;
+}

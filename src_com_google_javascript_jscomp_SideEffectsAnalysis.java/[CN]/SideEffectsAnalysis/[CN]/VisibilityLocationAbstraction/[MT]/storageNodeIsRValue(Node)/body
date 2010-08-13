@@ -1,0 +1,9 @@
+{
+  Preconditions.checkArgument(isStorageNode(node));
+  Node parent=node.getParent();
+  if (storageNodeIsLValue(node)) {
+    boolean nonSimpleAssign=NodeUtil.isAssignmentOp(parent) && parent.getType() != Token.ASSIGN;
+    return (nonSimpleAssign || parent.getType() == Token.DEC || parent.getType() == Token.INC);
+  }
+  return true;
+}

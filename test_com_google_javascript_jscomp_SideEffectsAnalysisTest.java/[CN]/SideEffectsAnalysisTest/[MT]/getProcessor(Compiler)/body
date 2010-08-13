@@ -1,5 +1,14 @@
 {
   currentCompiler=compiler;
-  currentProcessor=new SideEffectsAnalysis();
-  return currentProcessor;
+  currentAnalysis=new SideEffectsAnalysis(compiler,currentLocationAbstractionIdentifier);
+  return new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      if (currentLocationAbstractionIdentifier == LocationAbstractionMode.VISIBILITY_BASED) {
+        final VarCheck varCheck=new VarCheck(compiler);
+        varCheck.process(externs,root);
+      }
+      currentAnalysis.process(externs,root);
+    }
+  }
+;
 }

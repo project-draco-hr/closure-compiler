@@ -1,3 +1,25 @@
 {
-  return false;
+  Node node1DeepestControlDependentBlock=closestControlDependentAncestor(node1);
+  Node node2DeepestControlDependentBlock=closestControlDependentAncestor(node2);
+  if (node1DeepestControlDependentBlock == node2DeepestControlDependentBlock) {
+    if (node2DeepestControlDependentBlock != null) {
+      if (node2DeepestControlDependentBlock.getType() == Token.CASE) {
+        return false;
+      }
+      Predicate<Node> isEarlyExitPredicate=new Predicate<Node>(){
+        @Override public boolean apply(        Node input){
+          int nodeType=input.getType();
+          return nodeType == Token.RETURN || nodeType == Token.BREAK || nodeType == Token.CONTINUE;
+        }
+      }
+;
+      return !NodeUtil.has(node2DeepestControlDependentBlock,isEarlyExitPredicate,NOT_FUNCTION_PREDICATE);
+    }
+ else {
+      return true;
+    }
+  }
+ else {
+    return false;
+  }
 }
