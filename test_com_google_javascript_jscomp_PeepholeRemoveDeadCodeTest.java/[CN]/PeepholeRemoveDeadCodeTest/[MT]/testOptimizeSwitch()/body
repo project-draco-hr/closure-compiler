@@ -11,7 +11,10 @@
   foldSame("function f() {switch(a){default: return; case 1: break;}}");
   foldSame("function f() {switch(a){case 1: foo();}}");
   foldSame("function f() {switch(a){case 3: case 2: case 1: foo();}}");
-  foldSame("function f() {switch(a){case 2: case 1: default: foo();}}");
+  fold("function f() {switch(a){case 2: case 1: default: foo();}}","function f() {switch(a){default: foo();}}");
+  fold("switch(a){case 1: default:break; case 2: foo()}","switch(a){case 2: foo()}");
+  foldSame("switch(a){case 1: goo(); default:break; case 2: foo()}");
+  foldSame("switch(a){case 1: goo(); case 2:break; case 3: foo()}");
   foldSame("switch(a){case 1: var c =2; break;}");
   foldSame("function f() {switch(a){case 1: return;}}");
   foldSame("x:switch(a){case 1: break x;}");

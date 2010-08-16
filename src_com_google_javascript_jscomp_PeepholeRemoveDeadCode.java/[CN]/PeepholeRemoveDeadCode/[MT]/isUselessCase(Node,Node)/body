@@ -1,4 +1,12 @@
 {
+  Preconditions.checkState(previousCase == null || previousCase.getNext() == caseNode);
+  Node switchNode=caseNode.getParent();
+  if (switchNode.getLastChild() != caseNode && previousCase != null) {
+    Node previousBlock=previousCase.getLastChild();
+    if (!previousBlock.hasChildren() || !isExit(previousBlock.getLastChild())) {
+      return false;
+    }
+  }
   Node executingCase=caseNode;
   while (executingCase != null) {
     Preconditions.checkState(executingCase.getType() == Token.DEFAULT || executingCase.getType() == Token.CASE);

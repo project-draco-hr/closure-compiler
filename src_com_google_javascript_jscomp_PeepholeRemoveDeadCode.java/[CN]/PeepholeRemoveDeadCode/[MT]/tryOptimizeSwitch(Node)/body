@@ -1,20 +1,16 @@
 {
   Preconditions.checkState(n.getType() == Token.SWITCH);
-  Node defaultCase=findDefaultCase(n);
-  if (defaultCase != null && isUselessCase(defaultCase)) {
-    NodeUtil.redeclareVarsInsideBranch(defaultCase);
-    n.removeChild(defaultCase);
-    reportCodeChange();
-    defaultCase=null;
-  }
+  Node defaultCase=tryOptimizeDefaultCase(n);
   if (defaultCase == null) {
     Node next=null;
+    Node prev=null;
     for (Node c=n.getFirstChild().getNext(); c != null; c=next) {
       next=c.getNext();
-      if (!mayHaveSideEffects(c.getFirstChild()) && isUselessCase(c)) {
-        NodeUtil.redeclareVarsInsideBranch(c);
-        n.removeChild(c);
-        reportCodeChange();
+      if (!mayHaveSideEffects(c.getFirstChild()) && isUselessCase(c,prev)) {
+        removeCase(n,c);
+      }
+ else {
+        prev=c;
       }
     }
   }

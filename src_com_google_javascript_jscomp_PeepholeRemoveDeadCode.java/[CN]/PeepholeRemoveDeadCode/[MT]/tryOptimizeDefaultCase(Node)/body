@@ -1,0 +1,26 @@
+{
+  Preconditions.checkState(n.getType() == Token.SWITCH);
+  Node lastNonRemovable=n.getFirstChild();
+  for (Node c=n.getFirstChild().getNext(); c != null; c=c.getNext()) {
+    if (c.getType() == Token.DEFAULT) {
+      Node caseToRemove=lastNonRemovable.getNext();
+      for (Node next; caseToRemove != c; caseToRemove=next) {
+        next=caseToRemove.getNext();
+        removeCase(n,caseToRemove);
+      }
+      Node prevCase=(lastNonRemovable == n.getFirstChild()) ? null : lastNonRemovable;
+      if (isUselessCase(c,prevCase)) {
+        removeCase(n,c);
+        return null;
+      }
+      return c;
+    }
+ else {
+      Preconditions.checkState(c.getType() == Token.CASE);
+      if (c.getLastChild().hasChildren() || mayHaveSideEffects(c.getFirstChild())) {
+        lastNonRemovable=c;
+      }
+    }
+  }
+  return null;
+}
