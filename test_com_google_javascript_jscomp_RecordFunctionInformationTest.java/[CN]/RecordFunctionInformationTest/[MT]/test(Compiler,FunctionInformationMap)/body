@@ -1,11 +1,4 @@
 {
-  Node root=compiler.parseInputs();
-  Node externsRoot=root.getFirstChild();
-  Node mainRoot=externsRoot.getNext();
-  FunctionNames functionNames=new FunctionNames(compiler);
-  functionNames.process(externsRoot,mainRoot);
-  RecordFunctionInformation processor=new RecordFunctionInformation(compiler,functionNames);
-  processor.process(externsRoot,mainRoot);
-  FunctionInformationMap result=processor.getMap();
-  assertTrue("\nExpected: " + expected.toString() + "\nResult: "+ result.toString()+ "\n",result.equals(expected));
+  Node root=root(compiler);
+  test(compiler,externs(root),main(root),expected);
 }
