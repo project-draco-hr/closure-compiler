@@ -2,9 +2,12 @@
   Preconditions.checkState(NodeUtil.isAssignmentOp(assignNode));
   boolean isPropAssign=false;
   Node current=assignNode.getFirstChild();
-  while (NodeUtil.isGet(current)) {
+  if (NodeUtil.isGet(current)) {
     current=current.getFirstChild();
     isPropAssign=true;
+    if (current.getType() == Token.GETPROP && current.getLastChild().getString().equals("prototype")) {
+      current=current.getFirstChild();
+    }
   }
   if (current.getType() == Token.NAME) {
     return new Assign(assignNode,current,isPropAssign);
