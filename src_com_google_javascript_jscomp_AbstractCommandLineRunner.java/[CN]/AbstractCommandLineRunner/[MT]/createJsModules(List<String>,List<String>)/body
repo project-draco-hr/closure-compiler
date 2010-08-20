@@ -1,4 +1,7 @@
 {
+  if (isInTestMode()) {
+    return modulesSupplierForTesting.get();
+  }
   Preconditions.checkState(specs != null);
   Preconditions.checkState(!specs.isEmpty());
   Preconditions.checkState(jsFiles != null);
@@ -54,5 +57,5 @@
   if (nextJsFileIndex < totalNumJsFiles) {
     throw new FlagUsageException("Too many js files specified. Expected " + nextJsFileIndex + " but found "+ totalNumJsFiles);
   }
-  return modulesByName.values().toArray(new JSModule[modulesByName.size()]);
+  return Lists.newArrayList(modulesByName.values());
 }

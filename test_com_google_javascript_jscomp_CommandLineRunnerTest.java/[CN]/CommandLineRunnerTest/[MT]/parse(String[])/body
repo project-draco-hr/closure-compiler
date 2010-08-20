@@ -2,9 +2,9 @@
   String[] argStrings=args.toArray(new String[]{});
   CommandLineRunner runner=new CommandLineRunner(argStrings);
   Compiler compiler=runner.createCompiler();
-  JSSourceFile[] inputs=new JSSourceFile[original.length];
-  for (int i=0; i < inputs.length; i++) {
-    inputs[i]=JSSourceFile.fromCode("input" + i,original[i]);
+  List<JSSourceFile> inputs=Lists.newArrayList();
+  for (int i=0; i < original.length; i++) {
+    inputs.add(JSSourceFile.fromCode("input" + i,original[i]));
   }
   compiler.init(externs,inputs,new CompilerOptions());
   Node all=compiler.parseInputs();

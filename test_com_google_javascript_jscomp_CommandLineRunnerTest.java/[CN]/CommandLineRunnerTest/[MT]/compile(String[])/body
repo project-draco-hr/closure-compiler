@@ -1,42 +1,27 @@
 {
-  args.add("--js_output_file");
-  args.add("/path/to/out.js");
-  for (int i=0; i < original.length; i++) {
-    args.add("--js");
-    args.add("/path/to/input" + i + ".js");
-    if (useModules == ModulePattern.CHAIN) {
-      args.add("--module");
-      args.add("mod" + i + ":1"+ (i > 0 ? (":mod" + (i - 1)) : ""));
+  CommandLineRunner runner=createCommandLineRunner(original);
+  assertTrue(runner.shouldRunCompiler());
+  Supplier<List<JSSourceFile>> inputsSupplier=null;
+  Supplier<List<JSModule>> modulesSupplier=null;
+  if (useModules == ModulePattern.NONE) {
+    List<JSSourceFile> inputs=Lists.newArrayList();
+    for (int i=0; i < original.length; i++) {
+      inputs.add(JSSourceFile.fromCode("input" + i,original[i]));
     }
- else     if (useModules == ModulePattern.STAR) {
-      args.add("--module");
-      args.add("mod" + i + ":1"+ (i > 0 ? ":mod0" : ""));
-    }
+    inputsSupplier=Suppliers.ofInstance(inputs);
   }
-  String[] argStrings=args.toArray(new String[]{});
-  CommandLineRunner runner=new CommandLineRunner(argStrings);
-  Compiler compiler=runner.createCompiler();
-  lastCommandLineRunner=runner;
-  lastCompiler=compiler;
-  CompilerOptions options=runner.createOptions();
-  try {
-    runner.setRunOptions(options);
+ else   if (useModules == ModulePattern.STAR) {
+    modulesSupplier=Suppliers.<List<JSModule>>ofInstance(Lists.<JSModule>newArrayList(CompilerTestCase.createModuleStar(original)));
   }
- catch (  AbstractCommandLineRunner.FlagUsageException e) {
-    fail("Unexpected exception " + e);
-  }
-catch (  IOException e) {
-    assert(false);
-  }
-  if (useModules != ModulePattern.NONE) {
-    compiler.compile(externs,useModules == ModulePattern.STAR ? CompilerTestCase.createModuleStar(original) : CompilerTestCase.createModuleChain(original),options);
+ else   if (useModules == ModulePattern.CHAIN) {
+    modulesSupplier=Suppliers.<List<JSModule>>ofInstance(Lists.<JSModule>newArrayList(CompilerTestCase.createModuleChain(original)));
   }
  else {
-    JSSourceFile[] inputs=new JSSourceFile[original.length];
-    for (int i=0; i < original.length; i++) {
-      inputs[i]=JSSourceFile.fromCode("input" + i,original[i]);
-    }
-    compiler.compile(externs,inputs,options);
+    throw new IllegalArgumentException("Unknown module type: " + useModules);
   }
-  return compiler;
+  runner.enableTestMode(Suppliers.<List<JSSourceFile>>ofInstance(externs),inputsSupplier,modulesSupplier,Receivers.<Integer>collect(exitCodes));
+  runner.run();
+  lastCompiler=runner.getCompiler();
+  lastCommandLineRunner=runner;
+  return lastCompiler;
 }

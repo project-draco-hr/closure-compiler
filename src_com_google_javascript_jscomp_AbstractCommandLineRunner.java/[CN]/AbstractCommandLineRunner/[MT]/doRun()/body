@@ -1,11 +1,9 @@
 {
   Compiler.setLoggingLevel(Level.parse(config.loggingLevel));
-  List<JSSourceFile> externsList=createExterns();
-  JSSourceFile[] externs=new JSSourceFile[externsList.size()];
-  externsList.toArray(externs);
+  List<JSSourceFile> externs=createExterns();
   compiler=createCompiler();
   B options=createOptions();
-  JSModule[] modules=null;
+  List<JSModule> modules=null;
   Result result;
   setRunOptions(options);
   boolean writeOutputToFile=!options.jsOutputFile.isEmpty();
@@ -16,12 +14,10 @@
   List<String> moduleSpecs=config.module;
   if (!moduleSpecs.isEmpty()) {
     modules=createJsModules(moduleSpecs,jsFiles);
-    result=compiler.compile(externs,modules,options);
+    result=compiler.compileModules(externs,modules,options);
   }
  else {
-    List<JSSourceFile> inputList=createSourceInputs(jsFiles);
-    JSSourceFile[] inputs=new JSSourceFile[inputList.size()];
-    inputList.toArray(inputs);
+    List<JSSourceFile> inputs=createSourceInputs(jsFiles);
     result=compiler.compile(externs,inputs,options);
   }
   int errCode=processResults(result,modules,options);
