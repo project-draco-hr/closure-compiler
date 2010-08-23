@@ -1,6 +1,7 @@
 {
   Preconditions.checkArgument(isPrefix(node) || valueIsDiscarded(node),"Unfolding postfix ++/-- requires that the result be ignored.");
   Node lhs=node.getFirstChild().cloneTree();
+  Preconditions.checkArgument(!NodeUtil.mayHaveSideEffects(lhs),"Cannot unfold compound assignment if LHS can have side effects");
   if (isIncrement) {
     lhs=new Node(Token.POS,lhs);
   }

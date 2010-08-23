@@ -1,7 +1,8 @@
 {
+  Node lhs=node.getFirstChild();
+  Preconditions.checkArgument(!NodeUtil.mayHaveSideEffects(lhs),"Cannot unfold compound assignment if LHS can have side effects");
   Node newRhs=node.cloneTree();
   newRhs.setType(NodeUtil.getOpFromAssignmentOp(node));
-  Node lhs=node.getFirstChild();
   node.replaceChildAfter(lhs,newRhs);
   node.setType(Token.ASSIGN);
   compiler.reportCodeChange();
