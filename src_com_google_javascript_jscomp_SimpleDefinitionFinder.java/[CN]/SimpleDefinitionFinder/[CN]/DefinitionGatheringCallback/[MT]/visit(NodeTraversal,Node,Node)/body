@@ -14,16 +14,18 @@
       if (inExterns) {
         List<Definition> stubsToRemove=Lists.newArrayList();
         String qualifiedName=node.getQualifiedName();
-        for (        Definition prevDef : nameDefinitionMultimap.get(name)) {
-          if (prevDef instanceof ExternalNameOnlyDefinition && node.getJSDocInfo() == null) {
-            String prevName=prevDef.getLValue().getQualifiedName();
-            if (qualifiedName.equals(prevName)) {
-              stubsToRemove.add(prevDef);
+        if (qualifiedName != null) {
+          for (          Definition prevDef : nameDefinitionMultimap.get(name)) {
+            if (prevDef instanceof ExternalNameOnlyDefinition && node.getJSDocInfo() == null) {
+              String prevName=prevDef.getLValue().getQualifiedName();
+              if (qualifiedName.equals(prevName)) {
+                stubsToRemove.add(prevDef);
+              }
             }
           }
-        }
-        for (        Definition prevDef : stubsToRemove) {
-          nameDefinitionMultimap.remove(name,prevDef);
+          for (          Definition prevDef : stubsToRemove) {
+            nameDefinitionMultimap.remove(name,prevDef);
+          }
         }
       }
       nameDefinitionMultimap.put(name,def);
