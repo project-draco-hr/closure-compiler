@@ -1,0 +1,23 @@
+{
+  int maxLine=prepMappings();
+  out.append("{\n");
+  appendFirstField(out,"version","2");
+  appendField(out,"file",escapeString(name));
+  appendField(out,"lineCount",String.valueOf(maxLine + 1));
+  appendFieldStart(out,"lineMaps");
+  out.append("[");
+  (new LineMapper(out)).appendLineMappings();
+  out.append("]");
+  appendFieldEnd(out);
+  appendFieldStart(out,"sources");
+  out.append("[");
+  addSourceNameMap(out);
+  out.append("]");
+  appendFieldEnd(out);
+  appendFieldStart(out,"mappings");
+  out.append("[");
+  (new MappingWriter()).appendMappings(out);
+  out.append("]");
+  appendFieldEnd(out);
+  out.append("\n}\n");
+}

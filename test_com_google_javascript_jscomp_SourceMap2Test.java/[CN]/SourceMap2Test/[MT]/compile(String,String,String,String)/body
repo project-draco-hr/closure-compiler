@@ -1,0 +1,29 @@
+{
+  Compiler compiler=new Compiler();
+  CompilerOptions options=new CompilerOptions();
+  options.sourceMapOutputPath="testcode_source_map.out";
+  options.sourceMapFormat=SourceMap.Format.EXPERIMENTIAL;
+  options.sourceMapDetailLevel=detailLevel;
+  options.ideMode=true;
+  JSSourceFile[] inputs={JSSourceFile.fromCode(fileName1,js1)};
+  if (js2 != null && fileName2 != null) {
+    JSSourceFile[] multiple={JSSourceFile.fromCode(fileName1,js1),JSSourceFile.fromCode(fileName2,js2)};
+    inputs=multiple;
+  }
+  Result result=compiler.compile(EXTERNS,inputs,options);
+  assertTrue(result.success);
+  String source=compiler.toSource();
+  StringBuilder sb=new StringBuilder();
+  try {
+    ((SourceMap2)result.sourceMap).validate(true);
+    result.sourceMap.appendTo(sb,"testcode");
+  }
+ catch (  IOException e) {
+    throw new RuntimeException("unexpected exception",e);
+  }
+  RunResult rr=new RunResult();
+  rr.generatedSource=source;
+  rr.sourceMap=result.sourceMap;
+  rr.sourceMapFileContent=sb.toString();
+  return rr;
+}

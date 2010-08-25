@@ -1,0 +1,21 @@
+{
+  Preconditions.checkState(reps > 0);
+  int relativeIdLength=getRelativeMappingIdLength(id,lastId);
+  int relativeId=getRelativeMappingId(id,relativeIdLength,lastId);
+  String relativeIdString=valueToBase64(relativeId,relativeIdLength);
+  if (reps > 16 || relativeIdLength > 4) {
+    String repsString=valueToBase64(reps - 1,1);
+    for (int i=0; i < repsString.length(); i++) {
+      out.append('!');
+    }
+    String sizeId=valueToBase64(relativeIdString.length() - 1,1);
+    out.append(sizeId);
+    out.append(repsString);
+  }
+ else {
+    int prefix=((reps - 1) << 2) + (relativeIdString.length() - 1);
+    Preconditions.checkState(prefix < 64 && prefix >= 0,"prefix (%s) reps(%s) map id size(%s)",prefix,reps,relativeIdString.length());
+    out.append(valueToBase64(prefix,1));
+  }
+  out.append(relativeIdString);
+}
