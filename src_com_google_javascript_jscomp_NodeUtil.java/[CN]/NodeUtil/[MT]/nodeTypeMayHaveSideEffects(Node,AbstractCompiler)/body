@@ -1,0 +1,20 @@
+{
+  if (isAssignmentOp(n)) {
+    return true;
+  }
+switch (n.getType()) {
+case Token.DELPROP:
+case Token.DEC:
+case Token.INC:
+case Token.THROW:
+    return true;
+case Token.CALL:
+  return NodeUtil.functionCallHasSideEffects(n,compiler);
+case Token.NEW:
+return NodeUtil.constructorCallHasSideEffects(n,compiler);
+case Token.NAME:
+return n.hasChildren();
+default :
+return false;
+}
+}

@@ -1,12 +1,20 @@
 {
   Preconditions.checkArgument(n.getType() == Token.FOR);
-  if (n.getChildCount() != 4) {
+  if (NodeUtil.isForIn(n)) {
     return n;
+  }
+  Node init=n.getFirstChild();
+  Node cond=init.getNext();
+  Node increment=cond.getNext();
+  if (init.getType() != Token.EMPTY && init.getType() != Token.VAR) {
+    init=trySimpilifyUnusedResult(init,false);
+  }
+  if (increment.getType() != Token.EMPTY) {
+    increment=trySimpilifyUnusedResult(increment,false);
   }
   if (n.getFirstChild().getType() != Token.EMPTY) {
     return n;
   }
-  Node cond=NodeUtil.getConditionExpression(n);
   if (NodeUtil.getBooleanValue(cond) != TernaryValue.FALSE) {
     return n;
   }

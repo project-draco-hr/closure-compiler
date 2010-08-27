@@ -1,0 +1,35 @@
+{
+  fold("Math.random()","");
+  fold("Math.random(f() + g())","f(); g();");
+  fold("Math.random(f(),g(),h())","f();g();h();");
+  foldSame("f();");
+  foldSame("(function () {})();");
+  fold("(function () {});","");
+  fold("(function f() {});","");
+  fold("(function () {foo();});","");
+  fold("+f()","f()");
+  fold("a=(+f(),g())","a=(f(),g())");
+  fold("a=(true,g())","a=g()");
+  fold("f(),true","f()");
+  fold("f() + g()","f();g()");
+  fold("for(;;+f()){}","for(;;f()){}");
+  fold("for(+f();;g()){}","for(f();;g()){}");
+  fold("for(;;Math.random(f(),g(),h())){}","for(;;f(),g(),h()){}");
+  fold("g() && +f()","g() && f()");
+  fold("g() || +f()","g() || f()");
+  fold("x ? g() : +f()","x ? g() : f()");
+  fold("+x()","x()");
+  fold("+x() * 2","x()");
+  fold("-(+x() * 2)","x()");
+  fold("2 -(+x() * 2)","x()");
+  fold("x().foo","x()");
+  foldSame("x().foo()");
+  foldSame("x++");
+  foldSame("++x");
+  foldSame("x--");
+  foldSame("--x");
+  foldSame("x = 2");
+  foldSame("x *= 2");
+  foldSame("function f() {}");
+  foldSame("var x;");
+}
