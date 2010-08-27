@@ -19,7 +19,12 @@
  else {
     throw new IllegalArgumentException("Unknown module type: " + useModules);
   }
-  runner.enableTestMode(Suppliers.<List<JSSourceFile>>ofInstance(externs),inputsSupplier,modulesSupplier,Receivers.<Integer>collect(exitCodes));
+  runner.enableTestMode(Suppliers.<List<JSSourceFile>>ofInstance(externs),inputsSupplier,modulesSupplier,new Function<Integer,Boolean>(){
+    @Override public Boolean apply(    Integer code){
+      return exitCodes.add(code);
+    }
+  }
+);
   runner.run();
   lastCompiler=runner.getCompiler();
   lastCommandLineRunner=runner;
