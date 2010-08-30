@@ -8,7 +8,10 @@
   setRunOptions(options);
   boolean writeOutputToFile=!options.jsOutputFile.isEmpty();
   if (writeOutputToFile) {
-    out=toWriter(options.jsOutputFile,inputCharset.name());
+    out=fileNameToOutputWriter(options.jsOutputFile);
+  }
+ else   if (out instanceof OutputStream) {
+    out=streamToOutputWriter((OutputStream)out);
   }
   List<String> jsFiles=config.js;
   List<String> moduleSpecs=config.module;
@@ -21,8 +24,8 @@
     result=compiler.compile(externs,inputs,options);
   }
   int errCode=processResults(result,modules,options);
-  if (writeOutputToFile) {
-    ((Writer)out).close();
+  if (out instanceof Closeable) {
+    ((Closeable)out).close();
   }
   return errCode;
 }

@@ -45,13 +45,13 @@
       Map<String,String> moduleWrappers=parseModuleWrappers(config.moduleWrapper,modules);
       Writer mapOut=null;
       if (!shouldGenerateMapPerModule(options)) {
-        mapOut=toWriter(expandSourceMapPath(options,null));
+        mapOut=fileNameToOutputWriter(expandSourceMapPath(options,null));
       }
       for (      JSModule m : modules) {
         if (shouldGenerateMapPerModule(options)) {
-          mapOut=toWriter(expandSourceMapPath(options,m));
+          mapOut=fileNameToOutputWriter(expandSourceMapPath(options,m));
         }
-        Writer writer=toWriter(moduleFilePrefix + m.getName() + ".js");
+        Writer writer=fileNameToOutputWriter(moduleFilePrefix + m.getName() + ".js");
         if (options.sourceMapOutputPath != null) {
           compiler.getSourceMap().reset();
         }
