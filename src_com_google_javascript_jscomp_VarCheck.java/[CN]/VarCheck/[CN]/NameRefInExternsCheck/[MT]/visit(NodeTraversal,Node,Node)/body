@@ -11,11 +11,17 @@ case Token.GETPROP:
       Scope.Var var=scope.getVar(n.getString());
       if (var == null) {
         t.report(n,UNDEFINED_EXTERN_VAR_ERROR,n.getString());
+        varsToDeclareInExterns.add(n.getString());
       }
     }
   break;
 default :
 t.report(n,NAME_REFERENCE_IN_EXTERNS_ERROR,n.getString());
+Scope scope=t.getScope();
+Scope.Var var=scope.getVar(n.getString());
+if (var == null) {
+varsToDeclareInExterns.add(n.getString());
+}
 break;
 }
 }

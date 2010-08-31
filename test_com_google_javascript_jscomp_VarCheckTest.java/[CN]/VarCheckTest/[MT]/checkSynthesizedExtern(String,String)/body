@@ -1,21 +1,3 @@
 {
-  Compiler compiler=new Compiler();
-  CompilerOptions options=new CompilerOptions();
-  options.setWarningLevel(DiagnosticGroup.forType(VarCheck.UNDEFINED_VAR_ERROR),CheckLevel.OFF);
-  compiler.init(new JSSourceFile[]{},new JSSourceFile[]{JSSourceFile.fromCode("input",input)},options);
-  compiler.parseInputs();
-  assertFalse(compiler.hasErrors());
-  Node externsAndJs=compiler.getRoot();
-  Node root=externsAndJs.getLastChild();
-  Node rootOriginal=root.cloneTree();
-  Node externs=externsAndJs.getFirstChild();
-  Node expected=compiler.parseTestCode(expectedExtern);
-  assertFalse(compiler.hasErrors());
-  (new VarCheck(compiler,sanityCheck)).process(externs,root);
-  if (!sanityCheck) {
-    (new VariableTestCheck(compiler)).process(externs,root);
-  }
-  String externsCode=compiler.toSource(externs);
-  String expectedCode=compiler.toSource(expected);
-  assertEquals(expectedCode,externsCode);
+  checkSynthesizedExtern("",input,expectedExtern);
 }

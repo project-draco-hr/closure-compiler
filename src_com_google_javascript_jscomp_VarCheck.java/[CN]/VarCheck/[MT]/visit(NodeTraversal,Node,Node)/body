@@ -10,6 +10,10 @@
     }
     return;
   }
+  if ((parent.getType() == Token.VAR || NodeUtil.isFunctionDeclaration(parent)) && varsToDeclareInExterns.contains(varName)) {
+    createSynthesizedExternVar(varName);
+    parent.addSuppression("duplicate");
+  }
   Scope scope=t.getScope();
   Scope.Var var=scope.getVar(varName);
   if (var == null) {
@@ -23,12 +27,8 @@
         throw new IllegalStateException("Unexpected variable " + varName);
       }
  else {
-        Node nameNode=Node.newString(Token.NAME,varName);
-        if (compiler.getCodingConvention().isConstant(varName)) {
-          nameNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
-        }
-        getSynthesizedExternsRoot().addChildToBack(new Node(Token.VAR,nameNode));
-        scope.getGlobalScope().declare(varName,nameNode,null,getSynthesizedExternsInput());
+        createSynthesizedExternVar(varName);
+        scope.getGlobalScope().declare(varName,n,null,getSynthesizedExternsInput());
       }
     }
     return;
