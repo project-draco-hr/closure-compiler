@@ -1,0 +1,20 @@
+{
+  fold("function f() { while(x) { return }}","function f() { while(x) { break }}");
+  foldSame("function f() { while(x) { return 5 } }");
+  foldSame("function f() { a: { return 5 } }");
+  fold("function f() { while(x) { return 5}  return 5}","function f() { while(x) { break }    return 5}");
+  fold("function f() { while(x) { return x}  return x}","function f() { while(x) { break }    return x}");
+  fold("function f() { while(x) { if (y) { return }}} ","function f() { while(x) { if (y) { break  }}} ");
+  fold("function f() { while(x) { if (y) { return }} return} ","function f() { while(x) { if (y) { break  }} return} ");
+  fold("function f() { while(x) { if (y) { return 5 }} return 5} ","function f() { while(x) { if (y) { break    }} return 5} ");
+  fold("function f() { while(x) { if (y) { return x } x = 1} return x} ","function f() { while(x) { if (y) { break    } x = 1} return x} ");
+  fold("function f() { while(x) { if (y) { return x } return x} return x}","function f() { while(x) { if (y) { break    } break   } return x}");
+  foldSame("function f() { while(x) { while (y) { return } } }");
+  foldSame("function f() { while(1) { return 7}  return 5}");
+  foldSame("function f() {" + "  try { while(x) {return f()}} catch (e) { } return f()}");
+  foldSame("function f() {" + "  try { while(x) {return f()}} finally {alert(1)} return f()}");
+  fold("function f() {" + "  try { while(x) { return f() } return f() } catch (e) { } }","function f() {" + "  try { while(x) { break } return f() } catch (e) { } }");
+  foldSame("function f() {" + "  try { while(x) { return foo() } } finally { alert(1) } " + "  return foo()}");
+  fold("function f() {" + "  try { while(x) { return 1 } } finally { alert(1) } return 1}","function f() {" + "  try { while(x) { break    } } finally { alert(1) } return 1}");
+  foldSame("function f() { try{ return a } finally { a = 2 } return a; }");
+}
