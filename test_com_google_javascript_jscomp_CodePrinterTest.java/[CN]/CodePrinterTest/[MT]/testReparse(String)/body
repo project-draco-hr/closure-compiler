@@ -1,5 +1,7 @@
 {
+  Compiler compiler=new Compiler();
   Node parse1=parse(code);
   Node parse2=parse(new CodePrinter.Builder(parse1).build());
-  assertTrue(code,parse1.checkTreeEqualsSilent(parse2));
+  String explanation=parse1.checkTreeEquals(parse2);
+  assertNull("\nExpected: " + compiler.toSource(parse1) + "\nResult: "+ compiler.toSource(parse2)+ "\n"+ explanation,explanation);
 }
