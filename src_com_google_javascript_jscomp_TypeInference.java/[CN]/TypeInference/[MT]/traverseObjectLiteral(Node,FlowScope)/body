@@ -1,8 +1,5 @@
 {
-  if (n.getJSType() != null) {
-    return scope;
-  }
-  ObjectType objectType=registry.createAnonymousObjectType();
+  ObjectType objectType=(ObjectType)n.getJSType();
   for (Node name=n.getFirstChild(); name != null; name=name.getNext().getNext()) {
     Node value=name.getNext();
     scope=traverse(name,scope);
@@ -16,6 +13,5 @@
       return scope;
     }
   }
-  n.setJSType(objectType);
   return scope;
 }

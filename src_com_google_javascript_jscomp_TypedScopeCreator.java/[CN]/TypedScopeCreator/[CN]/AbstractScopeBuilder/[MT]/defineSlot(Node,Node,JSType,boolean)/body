@@ -24,7 +24,7 @@
       ObjectType globalThis=typeRegistry.getNativeObjectType(JSTypeNative.GLOBAL_THIS);
       boolean isExtern=input.isExtern();
       if (inferred) {
-        globalThis.defineInferredProperty(variableName,type == null ? typeRegistry.getNativeType(JSTypeNative.NO_TYPE) : type,isExtern);
+        globalThis.defineInferredProperty(variableName,type == null ? getNativeType(JSTypeNative.NO_TYPE) : type,isExtern);
       }
  else {
         globalThis.defineDeclaredProperty(variableName,type,isExtern);
@@ -34,7 +34,7 @@
       FunctionType fnType=(FunctionType)type;
       if (fnType.isConstructor() || fnType.isInterface()) {
         FunctionType superClassCtor=fnType.getSuperClassConstructor();
-        scope.declare(variableName + ".prototype",n,fnType.getPrototype(),compiler.getInput(sourceName),superClassCtor == null || superClassCtor.getInstanceType().equals(typeRegistry.getNativeType(OBJECT_TYPE)));
+        scope.declare(variableName + ".prototype",n,fnType.getPrototype(),compiler.getInput(sourceName),superClassCtor == null || superClassCtor.getInstanceType().equals(getNativeType(OBJECT_TYPE)));
       }
     }
   }

@@ -36,20 +36,8 @@ case Token.NEG:
 scope=traverse(n.getFirstChild(),scope);
 n.setJSType(getNativeType(NUMBER_TYPE));
 break;
-case Token.NULL:
-n.setJSType(getNativeType(NULL_TYPE));
-break;
-case Token.VOID:
-n.setJSType(getNativeType(VOID_TYPE));
-break;
 case Token.ARRAYLIT:
 scope=traverseArrayLiteral(n,scope);
-break;
-case Token.REF_SPECIAL:
-n.setJSType(getNativeType(UNKNOWN_TYPE));
-break;
-case Token.REGEXP:
-n.setJSType(getNativeType(REGEXP_TYPE));
 break;
 case Token.THIS:
 n.setJSType(scope.getTypeOfThis());
@@ -77,7 +65,6 @@ case Token.SUB:
 case Token.DEC:
 case Token.INC:
 case Token.BITNOT:
-case Token.NUMBER:
 scope=traverseChildren(n,scope);
 n.setJSType(getNativeType(NUMBER_TYPE));
 break;
@@ -90,7 +77,6 @@ case Token.COMMA:
 scope=traverseChildren(n,scope);
 n.setJSType(getJSType(n.getLastChild()));
 break;
-case Token.STRING:
 case Token.TYPEOF:
 scope=traverseChildren(n,scope);
 n.setJSType(getNativeType(STRING_TYPE));
@@ -106,8 +92,6 @@ case Token.SHEQ:
 case Token.SHNE:
 case Token.INSTANCEOF:
 case Token.IN:
-case Token.TRUE:
-case Token.FALSE:
 scope=traverseChildren(n,scope);
 n.setJSType(getNativeType(BOOLEAN_TYPE));
 break;

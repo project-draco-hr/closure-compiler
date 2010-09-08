@@ -1,8 +1,9 @@
 {
-  Node n=compiler.parseTestCode("function() {" + js + "}");
+  Node root=compiler.parseTestCode("(function() {" + js + "});");
   assertEquals("parsing error: " + Joiner.on(", ").join(compiler.getErrors()),0,compiler.getErrorCount());
-  n=n.getFirstChild();
-  Scope assumedScope=new SyntacticScopeCreator(compiler).createScope(n,null);
+  Node n=root.getFirstChild().getFirstChild();
+  TypedScopeCreator scopeCreator=new TypedScopeCreator(compiler);
+  Scope assumedScope=scopeCreator.createScope(n,scopeCreator.createScope(root,null));
   for (  Map.Entry<String,JSType> entry : assumptions.entrySet()) {
     assumedScope.declare(entry.getKey(),null,entry.getValue(),null);
   }

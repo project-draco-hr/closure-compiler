@@ -21,17 +21,6 @@
     if (parent.getType() == Token.EXPR_RESULT) {
       stubDeclarations.add(new StubDeclaration(n,t.getInput().isExtern(),ownerName));
     }
- else     if (rhsValue != null && rhsValue.getType() == Token.TRUE) {
-      ObjectType ownerType=getObjectSlot(ownerName);
-      if (ownerType instanceof FunctionType) {
-        JSType ownerTypeOfThis=((FunctionType)ownerType).getTypeOfThis();
-        String delegateName=codingConvention.getDelegateSuperclassName();
-        JSType delegateType=delegateName == null ? null : typeRegistry.getType(delegateName);
-        if (delegateType != null && ownerTypeOfThis.isSubtype(delegateType)) {
-          defineSlot(n,parent,typeRegistry.getNativeType(BOOLEAN_TYPE),true);
-        }
-      }
-    }
     return;
   }
   boolean inferred=true;
@@ -50,5 +39,16 @@
       }
     }
     defineSlot(n,parent,valueType,inferred);
+  }
+ else   if (rhsValue != null && rhsValue.getType() == Token.TRUE) {
+    ObjectType ownerType=getObjectSlot(ownerName);
+    if (ownerType instanceof FunctionType) {
+      JSType ownerTypeOfThis=((FunctionType)ownerType).getTypeOfThis();
+      String delegateName=codingConvention.getDelegateSuperclassName();
+      JSType delegateType=delegateName == null ? null : typeRegistry.getType(delegateName);
+      if (delegateType != null && ownerTypeOfThis.isSubtype(delegateType)) {
+        defineSlot(n,parent,getNativeType(BOOLEAN_TYPE),true);
+      }
+    }
   }
 }

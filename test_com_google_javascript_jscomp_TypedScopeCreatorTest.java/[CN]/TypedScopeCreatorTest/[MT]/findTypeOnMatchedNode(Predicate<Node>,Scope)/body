@@ -1,0 +1,15 @@
+{
+  Node root=scope.getRootNode();
+  Deque<Node> queue=Lists.newLinkedList();
+  queue.push(root);
+  while (!queue.isEmpty()) {
+    Node current=queue.pop();
+    if (matcher.apply(current) && current.getJSType() != null) {
+      return current.getJSType();
+    }
+    for (    Node child : current.children()) {
+      queue.push(child);
+    }
+  }
+  return null;
+}
