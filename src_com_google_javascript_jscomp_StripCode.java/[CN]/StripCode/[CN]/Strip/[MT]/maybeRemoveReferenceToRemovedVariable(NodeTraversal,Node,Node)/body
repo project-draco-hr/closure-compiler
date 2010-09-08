@@ -5,23 +5,7 @@ case Token.VAR:
 case Token.GETPROP:
 case Token.GETELEM:
   if (parent.getFirstChild() == n && isReferenceToRemovedVar(t,n)) {
-    Node ancestor=parent.getParent();
-    Node ancestorChild=parent;
-    while (true) {
-      if (NodeUtil.isExpressionNode(ancestor)) {
-        Node ancParent=ancestor.getParent();
-        replaceWithEmpty(ancestor,ancParent);
-        break;
-      }
-      int type=ancestor.getType();
-      if (type != Token.GETPROP && type != Token.GETELEM && type != Token.CALL) {
-        replaceWithNull(ancestorChild,ancestor);
-        break;
-      }
-      ancestorChild=ancestor;
-      ancestor=ancestor.getParent();
-    }
-    compiler.reportCodeChange();
+    replaceHighestNestedCallWithNull(parent,parent.getParent());
   }
 break;
 case Token.ASSIGN:
