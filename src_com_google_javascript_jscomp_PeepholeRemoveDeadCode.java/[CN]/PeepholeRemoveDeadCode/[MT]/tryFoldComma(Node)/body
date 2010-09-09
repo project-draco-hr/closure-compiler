@@ -2,7 +2,7 @@
   Node parent=n.getParent();
   Node left=n.getFirstChild();
   Node right=left.getNext();
-  left=trySimpilifyUnusedResult(left,false);
+  left=trySimpilifyUnusedResult(left);
   if (left == null || !mayHaveSideEffects(left)) {
     n.removeChild(right);
     parent.replaceChild(n,right);
@@ -10,7 +10,7 @@
     return right;
   }
  else {
-    if (parent.getType() == Token.EXPR_RESULT) {
+    if (parent.getType() == Token.EXPR_RESULT && parent.getParent().getType() != Token.LABEL) {
       n.detachChildren();
       parent.replaceChild(n,left);
       Node newStatement=new Node(Token.EXPR_RESULT,right);
