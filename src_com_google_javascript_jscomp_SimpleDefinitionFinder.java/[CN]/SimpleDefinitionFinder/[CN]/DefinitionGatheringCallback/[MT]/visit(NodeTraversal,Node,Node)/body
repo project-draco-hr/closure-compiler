@@ -16,7 +16,7 @@
         String qualifiedName=node.getQualifiedName();
         if (qualifiedName != null) {
           for (          Definition prevDef : nameDefinitionMultimap.get(name)) {
-            if (prevDef instanceof ExternalNameOnlyDefinition && node.getJSDocInfo() == null) {
+            if (prevDef instanceof ExternalNameOnlyDefinition && !jsdocContainsDeclarations(node)) {
               String prevName=prevDef.getLValue().getQualifiedName();
               if (qualifiedName.equals(prevName)) {
                 stubsToRemove.add(prevDef);
@@ -36,7 +36,7 @@
     String name=getSimplifiedName(node);
     if (name != null) {
       boolean dropStub=false;
-      if (node.getJSDocInfo() == null) {
+      if (!jsdocContainsDeclarations(node)) {
         String qualifiedName=node.getQualifiedName();
         if (qualifiedName != null) {
           for (          Definition prevDef : nameDefinitionMultimap.get(name)) {
