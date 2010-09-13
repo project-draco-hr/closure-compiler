@@ -1,0 +1,34 @@
+{
+  attachLiteralTypes(n);
+switch (n.getType()) {
+case Token.CALL:
+    checkForClassDefiningCalls(t,n,parent);
+  break;
+case Token.FUNCTION:
+if (t.getInput() == null || !t.getInput().isExtern()) {
+  nonExternFunctions.add(n);
+}
+if (parent.getType() != Token.ASSIGN && parent.getType() != Token.NAME) {
+defineDeclaredFunction(n,parent);
+}
+break;
+case Token.ASSIGN:
+defineNamedTypeAssign(n,parent);
+Node firstChild=n.getFirstChild();
+if (firstChild.getType() == Token.GETPROP && firstChild.isQualifiedName()) {
+maybeDeclareQualifiedName(t,n.getJSDocInfo(),firstChild,n,firstChild.getNext());
+}
+break;
+case Token.CATCH:
+defineCatch(n,parent);
+break;
+case Token.VAR:
+defineVar(n,parent);
+break;
+case Token.GETPROP:
+if (parent.getType() == Token.EXPR_RESULT && n.isQualifiedName()) {
+maybeDeclareQualifiedName(t,n.getJSDocInfo(),n,parent,null);
+}
+break;
+}
+}

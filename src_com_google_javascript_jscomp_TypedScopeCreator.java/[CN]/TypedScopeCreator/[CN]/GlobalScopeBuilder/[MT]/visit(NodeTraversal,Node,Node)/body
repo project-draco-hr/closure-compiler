@@ -1,40 +1,13 @@
 {
-  attachLiteralTypes(n);
+  super.visit(t,n,parent);
 switch (n.getType()) {
-case Token.CALL:
-    checkForClassDefiningCalls(t,n,parent);
-  break;
-case Token.FUNCTION:
-if (!t.getInput().isExtern()) {
-  nonExternFunctions.add(n);
-}
-if (parent.getType() == Token.ASSIGN || parent.getType() == Token.NAME) {
-return;
-}
-defineDeclaredFunction(n,parent);
-break;
 case Token.ASSIGN:
-defineNamedTypeAssign(n,parent);
-checkForOldStyleTypedef(t,n);
-Node firstChild=n.getFirstChild();
-if (firstChild.getType() == Token.GETPROP && firstChild.isQualifiedName()) {
-maybeDeclareQualifiedName(t,n.getJSDocInfo(),firstChild,n,firstChild.getNext());
-}
-break;
-case Token.CATCH:
-defineCatch(n,parent);
-break;
+    checkForOldStyleTypedef(t,n);
+  break;
 case Token.VAR:
-defineVar(n,parent);
 if (n.hasOneChild()) {
-checkForOldStyleTypedef(t,n);
-checkForTypedef(t,n.getFirstChild(),n.getJSDocInfo());
-}
-break;
-case Token.GETPROP:
-if (parent.getType() == Token.EXPR_RESULT && n.isQualifiedName()) {
-checkForTypedef(t,n,n.getJSDocInfo());
-maybeDeclareQualifiedName(t,n.getJSDocInfo(),n,parent,null);
+  checkForOldStyleTypedef(t,n);
+  checkForTypedef(t,n.getFirstChild(),n.getJSDocInfo());
 }
 break;
 }
