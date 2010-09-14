@@ -8,45 +8,51 @@
     JSType iParameterType=getJSType(iParameter);
     iParameterType=iParameterType.restrictByNotNullOrUndefined();
     if (iParameterType.isTemplateType()) {
-      if (i + 1 >= childCount) {
-        return;
-      }
-      Node iArgument=n.getChildAtIndex(i + 1);
-      JSType iArgumentType=getJSType(iArgument);
-      if (iArgumentType != null) {
-        iArgumentType=iArgumentType.restrictByNotNullOrUndefined();
+      JSType iArgumentType=null;
+      boolean foundTemplateTypeArgument=false;
+      if (i + 1 < childCount) {
+        foundTemplateTypeArgument=true;
+        Node iArgument=n.getChildAtIndex(i + 1);
+        iArgumentType=getJSType(iArgument).restrictByNotNullOrUndefined();
         if (!(iArgumentType instanceof ObjectType)) {
           compiler.report(JSError.make(NodeUtil.getSourceName(iArgument),iArgument,TEMPLATE_TYPE_NOT_OBJECT_TYPE));
           return;
         }
-        boolean foundTemplateTypeOfThisParameter=false;
-        int j=0;
-        for (        Node jParameter : fnType.getParameters()) {
-          JSType jParameterType=getJSType(jParameter);
-          if (jParameterType instanceof FunctionType) {
-            FunctionType jParameterFnType=(FunctionType)jParameterType;
-            if (jParameterFnType.getTypeOfThis().equals(iParameterType)) {
-              foundTemplateTypeOfThisParameter=true;
-              if (j + 1 >= childCount) {
-                return;
-              }
-              Node jArgument=n.getChildAtIndex(j + 1);
-              JSType jArgumentType=getJSType(jArgument);
-              if (jArgument.getType() == Token.FUNCTION && jArgumentType instanceof FunctionType) {
+      }
+      boolean foundTemplateTypeOfThisParameter=false;
+      int j=0;
+      for (      Node jParameter : fnType.getParameters()) {
+        JSType jParameterType=getJSType(jParameter);
+        if (jParameterType instanceof FunctionType) {
+          FunctionType jParameterFnType=(FunctionType)jParameterType;
+          if (jParameterFnType.getTypeOfThis().equals(iParameterType)) {
+            foundTemplateTypeOfThisParameter=true;
+            if (j + 1 >= childCount) {
+              return;
+            }
+            Node jArgument=n.getChildAtIndex(j + 1);
+            JSType jArgumentType=getJSType(jArgument);
+            if (jArgument.getType() == Token.FUNCTION && jArgumentType instanceof FunctionType) {
+              if (foundTemplateTypeArgument) {
                 FunctionType jArgumentFnType=(FunctionType)jArgumentType;
                 if (jArgumentFnType.getTypeOfThis().isUnknownType()) {
                   jArgument.setJSType(registry.createFunctionTypeWithNewThisType(jArgumentFnType,(ObjectType)iArgumentType));
                 }
               }
+ else {
+                if (NodeUtil.referencesThis(NodeUtil.getFunctionBody(jArgument))) {
+                  compiler.report(JSError.make(NodeUtil.getSourceName(n),n,FUNCTION_LITERAL_UNDEFINED_THIS));
+                }
+              }
             }
           }
-          j++;
         }
-        if (!foundTemplateTypeOfThisParameter) {
-          Node source=fnType.getSource();
-          compiler.report(JSError.make(NodeUtil.getSourceName(source),source,TEMPLATE_TYPE_OF_THIS_EXPECTED));
-          return;
-        }
+        j++;
+      }
+      if (!foundTemplateTypeOfThisParameter) {
+        Node source=fnType.getSource();
+        compiler.report(JSError.make(NodeUtil.getSourceName(source),source,TEMPLATE_TYPE_OF_THIS_EXPECTED));
+        return;
       }
     }
     i++;
