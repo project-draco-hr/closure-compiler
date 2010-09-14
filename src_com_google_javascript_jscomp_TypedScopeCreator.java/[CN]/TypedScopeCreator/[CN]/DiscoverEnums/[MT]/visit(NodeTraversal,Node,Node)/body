@@ -1,22 +1,16 @@
 {
   Node nameNode=null;
 switch (node.getType()) {
-case Token.NAME:
-    nameNode=node;
-  break;
 case Token.VAR:
-if (node.hasOneChild()) {
-  nameNode=node.getFirstChild();
+    for (Node child=node.getFirstChild(); child != null; child=child.getNext()) {
+      identifyEnumInNameNode(child,NodeUtil.getInfoForNameNode(child));
+    }
+  break;
+case Token.EXPR_RESULT:
+Node maybeAssign=node.getFirstChild();
+if (maybeAssign.getType() == Token.ASSIGN) {
+identifyEnumInNameNode(maybeAssign.getFirstChild(),maybeAssign.getJSDocInfo());
 }
 break;
-case Token.ASSIGN:
-nameNode=node.getFirstChild();
-break;
-}
-if (nameNode != null) {
-JSDocInfo info=node.getJSDocInfo();
-if (info != null && info.hasEnumParameterType()) {
-registry.identifyEnumName(nameNode.getQualifiedName());
-}
 }
 }
