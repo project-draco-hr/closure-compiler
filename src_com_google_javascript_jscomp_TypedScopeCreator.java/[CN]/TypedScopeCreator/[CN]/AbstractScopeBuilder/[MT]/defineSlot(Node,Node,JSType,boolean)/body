@@ -10,8 +10,15 @@
   }
   String variableName=n.getQualifiedName();
   Preconditions.checkArgument(!variableName.isEmpty());
-  if (scope.isDeclared(variableName,false)) {
-    Var oldVar=scope.getVar(variableName);
+  Scope scopeToDeclareIn=scope;
+  if (n.getType() == Token.GETPROP && !scope.isGlobal() && isQnameRootedInGlobalScope(n)) {
+    Scope globalScope=scope.getGlobalScope();
+    if (!globalScope.isDeclared(variableName,false)) {
+      scopeToDeclareIn=scope.getGlobalScope();
+    }
+  }
+  if (scopeToDeclareIn.isDeclared(variableName,false)) {
+    Var oldVar=scopeToDeclareIn.getVar(variableName);
     validator.expectUndeclaredVariable(sourceName,n,parent,oldVar,variableName,type);
   }
  else {
@@ -19,7 +26,7 @@
       setDeferredType(n,type);
     }
     CompilerInput input=compiler.getInput(sourceName);
-    scope.declare(variableName,n,type,input,inferred);
+    scopeToDeclareIn.declare(variableName,n,type,input,inferred);
     if (shouldDeclareOnGlobalThis) {
       ObjectType globalThis=typeRegistry.getNativeObjectType(JSTypeNative.GLOBAL_THIS);
       boolean isExtern=input.isExtern();
@@ -30,11 +37,11 @@
         globalThis.defineDeclaredProperty(variableName,type,isExtern);
       }
     }
-    if (scope.isGlobal() && type instanceof FunctionType) {
+    if (scopeToDeclareIn.isGlobal() && type instanceof FunctionType) {
       FunctionType fnType=(FunctionType)type;
       if (fnType.isConstructor() || fnType.isInterface()) {
         FunctionType superClassCtor=fnType.getSuperClassConstructor();
-        scope.declare(variableName + ".prototype",n,fnType.getPrototype(),compiler.getInput(sourceName),superClassCtor == null || superClassCtor.getInstanceType().equals(getNativeType(OBJECT_TYPE)));
+        scopeToDeclareIn.declare(variableName + ".prototype",n,fnType.getPrototype(),compiler.getInput(sourceName),superClassCtor == null || superClassCtor.getInstanceType().equals(getNativeType(OBJECT_TYPE)));
       }
     }
   }
