@@ -9,38 +9,43 @@
       }
     }
   }
-  for (  DiGraphNode<Node,Branch> cfgNode : cfg.getDirectedGraphNodes()) {
-    FlowState<LiveVariableLattice> state=cfgNode.getAnnotation();
-    if (cfg.isImplicitReturn(cfgNode)) {
-      continue;
-    }
-    int varsInScope=scope.getVarCount();
-    ArrayList<CombinedLiveRangeChecker> rangesToCheck=new ArrayList<CombinedLiveRangeChecker>(varsInScope * varsInScope);
-    for (Iterator<Var> i1=scope.getVars(); i1.hasNext(); ) {
-      Var v1=i1.next();
-      for (Iterator<Var> i2=scope.getVars(); i2.hasNext(); ) {
-        Var v2=i2.next();
-        if (v1 == v2 || !interferenceGraph.hasNode(v1) || !interferenceGraph.hasNode(v2)) {
-          continue;
+  for (Iterator<Var> i1=scope.getVars(); i1.hasNext(); ) {
+    Var v1=i1.next();
+    NEXT_VAR_PAIR:     for (Iterator<Var> i2=scope.getVars(); i2.hasNext(); ) {
+      Var v2=i2.next();
+      if (v1.index >= v2.index) {
+        continue;
+      }
+      if (!interferenceGraph.hasNode(v1) || !interferenceGraph.hasNode(v2)) {
+        continue NEXT_VAR_PAIR;
+      }
+      if (v1.getParentNode().getType() == Token.LP && v2.getParentNode().getType() == Token.LP) {
+        interferenceGraph.connectIfNotFound(v1,null,v2);
+        continue NEXT_VAR_PAIR;
+      }
+      NEXT_CROSS_CFG_NODE:       for (      DiGraphNode<Node,Branch> cfgNode : cfg.getDirectedGraphNodes()) {
+        if (cfg.isImplicitReturn(cfgNode)) {
+          continue NEXT_CROSS_CFG_NODE;
         }
-        boolean v1OutLive=state.getOut().isLive(v1);
-        boolean v2OutLive=state.getOut().isLive(v2);
-        if (v1.getParentNode().getType() == Token.LP && v2.getParentNode().getType() == Token.LP) {
+        FlowState<LiveVariableLattice> state=cfgNode.getAnnotation();
+        if ((state.getIn().isLive(v1) && state.getIn().isLive(v2)) || (state.getOut().isLive(v1) && state.getOut().isLive(v2))) {
           interferenceGraph.connectIfNotFound(v1,null,v2);
-        }
- else         if ((state.getIn().isLive(v1) && state.getIn().isLive(v2)) || (v1OutLive && v2OutLive)) {
-          interferenceGraph.connectIfNotFound(v1,null,v2);
-        }
- else {
-          LiveRangeChecker checker1=new LiveRangeChecker(v1,v2OutLive ? null : v2);
-          LiveRangeChecker checker2=new LiveRangeChecker(v2,v1OutLive ? null : v1);
-          rangesToCheck.add(new CombinedLiveRangeChecker(checker1,checker2));
+          continue NEXT_VAR_PAIR;
         }
       }
-    }
-    checkRanges(rangesToCheck,cfgNode.getValue());
-    for (    CombinedLiveRangeChecker range : rangesToCheck) {
-      range.connectIfCrossed(interferenceGraph);
+      NEXT_INTRA_CFG_NODE:       for (      DiGraphNode<Node,Branch> cfgNode : cfg.getDirectedGraphNodes()) {
+        if (cfg.isImplicitReturn(cfgNode)) {
+          continue NEXT_INTRA_CFG_NODE;
+        }
+        FlowState<LiveVariableLattice> state=cfgNode.getAnnotation();
+        boolean v1OutLive=state.getOut().isLive(v1);
+        boolean v2OutLive=state.getOut().isLive(v2);
+        CombinedLiveRangeChecker checker=new CombinedLiveRangeChecker(new LiveRangeChecker(v1,v2OutLive ? null : v2),new LiveRangeChecker(v2,v1OutLive ? null : v1));
+        NodeTraversal.traverse(compiler,cfgNode.getValue(),checker);
+        if (checker.connectIfCrossed(interferenceGraph)) {
+          continue NEXT_VAR_PAIR;
+        }
+      }
     }
   }
   return interferenceGraph;
