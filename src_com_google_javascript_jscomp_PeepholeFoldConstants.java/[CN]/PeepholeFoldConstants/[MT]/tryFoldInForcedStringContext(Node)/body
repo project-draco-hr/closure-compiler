@@ -1,0 +1,30 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.NEW);
+  Node objectType=n.getFirstChild();
+  if (objectType.getType() != Token.NAME) {
+    return n;
+  }
+  if (objectType.getString().equals("String")) {
+    Node value=objectType.getNext();
+    String stringValue=null;
+    if (value == null) {
+      stringValue="";
+    }
+ else {
+      if (!NodeUtil.isImmutableValue(value)) {
+        return n;
+      }
+      stringValue=NodeUtil.getStringValue(value);
+    }
+    if (stringValue == null) {
+      return n;
+    }
+    Node parent=n.getParent();
+    Node newString=Node.newString(stringValue);
+    parent.replaceChild(n,newString);
+    newString.copyInformationFrom(parent);
+    reportCodeChange();
+    return newString;
+  }
+  return n;
+}
