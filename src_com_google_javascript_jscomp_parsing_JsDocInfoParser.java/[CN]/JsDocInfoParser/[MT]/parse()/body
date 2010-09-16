@@ -3,11 +3,19 @@
   int charno;
   JSTypeExpression type;
   state=State.SEARCHING_ANNOTATION;
+  skipEOLs();
   JsDocToken token=next();
-  ExtractionInfo blockInfo=extractBlockComment(token);
-  token=blockInfo.token;
-  if (blockInfo.string.length() > 0) {
-    jsdocBuilder.recordBlockDescription(blockInfo.string);
+  if (jsdocBuilder.shouldParseDocumentation()) {
+    ExtractionInfo blockInfo=extractBlockComment(token);
+    token=blockInfo.token;
+    if (!blockInfo.string.isEmpty()) {
+      jsdocBuilder.recordBlockDescription(blockInfo.string);
+    }
+  }
+ else {
+    if (token != JsDocToken.ANNOTATION && token != JsDocToken.EOC) {
+      jsdocBuilder.recordBlockDescription("");
+    }
   }
   retry:   for (; ; ) {
 switch (token) {
@@ -25,31 +33,36 @@ case ANNOTATION:
           jsdocBuilder.markAnnotation(annotationName,lineno,charno);
 switch (annotation) {
 case AUTHOR:
-            ExtractionInfo authorInfo=extractSingleLineBlock();
-          String author=authorInfo.string;
-        if (author.length() == 0) {
-          parser.addWarning("msg.jsdoc.authormissing",stream.getLineno(),stream.getCharno());
-        }
+            if (jsdocBuilder.shouldParseDocumentation()) {
+              ExtractionInfo authorInfo=extractSingleLineBlock();
+              String author=authorInfo.string;
+              if (author.length() == 0) {
+                parser.addWarning("msg.jsdoc.authormissing",stream.getLineno(),stream.getCharno());
+              }
  else {
-          jsdocBuilder.addAuthor(author);
-        }
-      token=authorInfo.token;
-    continue retry;
+                jsdocBuilder.addAuthor(author);
+              }
+              token=authorInfo.token;
+            }
+ else {
+              token=eatTokensUntilEOL(token);
+            }
+          continue retry;
 case CONSTANT:
-  if (!jsdocBuilder.recordConstancy()) {
-    parser.addWarning("msg.jsdoc.const",stream.getLineno(),stream.getCharno());
-  }
-token=eatTokensUntilEOL();
-continue retry;
+        if (!jsdocBuilder.recordConstancy()) {
+          parser.addWarning("msg.jsdoc.const",stream.getLineno(),stream.getCharno());
+        }
+      token=eatTokensUntilEOL();
+    continue retry;
 case CONSTRUCTOR:
-if (!jsdocBuilder.recordConstructor()) {
-if (jsdocBuilder.isInterfaceRecorded()) {
-parser.addWarning("msg.jsdoc.interface.constructor",stream.getLineno(),stream.getCharno());
-}
+  if (!jsdocBuilder.recordConstructor()) {
+    if (jsdocBuilder.isInterfaceRecorded()) {
+      parser.addWarning("msg.jsdoc.interface.constructor",stream.getLineno(),stream.getCharno());
+    }
  else {
-parser.addWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
-}
-}
+      parser.addWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
+    }
+  }
 token=eatTokensUntilEOL();
 continue retry;
 case DEPRECATED:
@@ -88,12 +101,18 @@ token=descriptionInfo.token;
 continue retry;
 }
 case FILE_OVERVIEW:
+String fileOverview="";
+if (jsdocBuilder.shouldParseDocumentation()) {
 ExtractionInfo fileOverviewInfo=extractMultilineTextualBlock(token,WhitespaceOption.TRIM);
-String fileOverview=fileOverviewInfo.string;
+fileOverview=fileOverviewInfo.string;
+token=fileOverviewInfo.token;
+}
+ else {
+token=eatTokensUntilEOL(token);
+}
 if (!jsdocBuilder.recordFileOverview(fileOverview) || fileOverviewJSDocInfo != null) {
 parser.addWarning("msg.jsdoc.fileoverview.extra",stream.getLineno(),stream.getCharno());
 }
-token=fileOverviewInfo.token;
 continue retry;
 case LICENSE:
 case PRESERVE:
@@ -243,12 +262,17 @@ continue retry;
 }
 token=current();
 jsdocBuilder.recordThrowType(type);
+if (jsdocBuilder.shouldParseDocumentation()) {
 ExtractionInfo descriptionInfo=extractMultilineTextualBlock(token);
 String description=descriptionInfo.string;
 if (description.length() > 0) {
 jsdocBuilder.recordThrowDescription(type,description);
 }
 token=descriptionInfo.token;
+}
+ else {
+token=eatTokensUntilEOL(token);
+}
 continue retry;
 case PARAM:
 skipEOLs();
@@ -309,12 +333,17 @@ token=eatTokensUntilEOL(token);
 continue retry;
 }
 jsdocBuilder.markName(name,lineno,charno);
+if (jsdocBuilder.shouldParseDocumentation()) {
 ExtractionInfo paramDescriptionInfo=extractMultilineTextualBlock(token);
 String paramDescription=paramDescriptionInfo.string;
 if (paramDescription.length() > 0) {
 jsdocBuilder.recordParameterDescription(name,paramDescription);
 }
 token=paramDescriptionInfo.token;
+}
+ else {
+token=eatTokensUntilEOL(token);
+}
 continue retry;
 case PRESERVE_TRY:
 if (!jsdocBuilder.recordPreserveTry()) {
@@ -359,6 +388,7 @@ parser.addWarning("msg.jsdoc.implicitcast",stream.getLineno(),stream.getCharno()
 token=eatTokensUntilEOL();
 continue retry;
 case SEE:
+if (jsdocBuilder.shouldParseDocumentation()) {
 ExtractionInfo referenceInfo=extractSingleLineBlock();
 String reference=referenceInfo.string;
 if (reference.length() == 0) {
@@ -368,6 +398,10 @@ parser.addWarning("msg.jsdoc.seemissing",stream.getLineno(),stream.getCharno());
 jsdocBuilder.addReference(reference);
 }
 token=referenceInfo.token;
+}
+ else {
+token=eatTokensUntilEOL(token);
+}
 continue retry;
 case SUPPRESS:
 token=parseSuppressTag(next());
@@ -428,12 +462,17 @@ parser.addWarning("msg.jsdoc.incompat.type",lineno,charno);
 break;
 }
 token=current();
+if (jsdocBuilder.shouldParseDocumentation()) {
 ExtractionInfo returnDescriptionInfo=extractMultilineTextualBlock(token);
 String returnDescription=returnDescriptionInfo.string;
 if (returnDescription.length() > 0) {
 jsdocBuilder.recordReturnDescription(returnDescription);
 }
 token=returnDescriptionInfo.token;
+}
+ else {
+token=eatTokensUntilEOL(token);
+}
 continue retry;
 case THIS:
 if (!jsdocBuilder.recordThisType(type)) {
