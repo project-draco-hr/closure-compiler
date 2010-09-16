@@ -1,7 +1,8 @@
 {
-  ObjectType objectType=(ObjectType)n.getJSType();
-  Preconditions.checkNotNull(objectType);
-  if (objectType.hasReferenceName()) {
+  JSType type=n.getJSType();
+  Preconditions.checkNotNull(type);
+  ObjectType objectType=ObjectType.cast(type);
+  if (objectType == null || objectType.hasReferenceName()) {
     return scope;
   }
   for (Node name=n.getFirstChild(); name != null; name=name.getNext().getNext()) {
