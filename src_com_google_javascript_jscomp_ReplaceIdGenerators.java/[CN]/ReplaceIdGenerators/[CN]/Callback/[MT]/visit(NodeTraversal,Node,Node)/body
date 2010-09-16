@@ -7,6 +7,7 @@
   if (nameGenerator == null) {
     return;
   }
+  List<Replacement> idGeneratorMap=idGeneratorMaps.get(callName);
   if (!t.inGlobalScope()) {
     compiler.report(t.makeError(n,NON_GLOBAL_ID_GENERATOR_CALL));
     return;
@@ -19,5 +20,6 @@
   }
   String nextName=nameGenerator.generateNextName();
   parent.replaceChild(n,Node.newString(nextName));
+  idGeneratorMap.add(new Replacement(nextName,t.getSourceName(),t.getLineNumber()));
   compiler.reportCodeChange();
 }
