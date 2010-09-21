@@ -1,0 +1,36 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.CALL);
+  Preconditions.checkArgument(stringNode.getType() == Token.STRING);
+  int start, length;
+  String stringAsString=stringNode.getString();
+  if (arg1 != null && arg1.getType() == Token.NUMBER) {
+    start=(int)arg1.getDouble();
+  }
+ else {
+    return n;
+  }
+  Node arg2=arg1.getNext();
+  if (arg2 != null) {
+    if (arg2.getType() == Token.NUMBER) {
+      length=(int)arg2.getDouble();
+    }
+ else {
+      return n;
+    }
+    if (arg2.getNext() != null) {
+      return n;
+    }
+  }
+ else {
+    length=stringAsString.length() - start;
+  }
+  if ((start + length) > stringAsString.length() || (length < 0) || (start < 0)) {
+    return n;
+  }
+  String result=stringAsString.substring(start,start + length);
+  Node resultNode=Node.newString(result);
+  Node parent=n.getParent();
+  parent.replaceChild(n,resultNode);
+  reportCodeChange();
+  return resultNode;
+}

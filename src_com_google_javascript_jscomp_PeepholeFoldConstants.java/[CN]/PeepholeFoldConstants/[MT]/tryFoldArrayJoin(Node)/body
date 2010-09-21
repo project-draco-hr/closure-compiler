@@ -1,16 +1,16 @@
 {
-  Node left=n.getFirstChild();
-  if (left == null) {
+  Node callTarget=n.getFirstChild();
+  if (callTarget == null) {
     return n;
   }
-  Node right=left.getNext();
+  Node right=callTarget.getNext();
   if (right == null) {
     return n;
   }
-  if (!NodeUtil.isGetProp(left) || !NodeUtil.isImmutableValue(right)) {
+  if (!NodeUtil.isGetProp(callTarget) || !NodeUtil.isImmutableValue(right)) {
     return n;
   }
-  Node arrayNode=left.getFirstChild();
+  Node arrayNode=callTarget.getFirstChild();
   Node functionName=arrayNode.getNext();
   if ((arrayNode.getType() != Token.ARRAYLIT) || !functionName.getString().equals("join")) {
     return n;

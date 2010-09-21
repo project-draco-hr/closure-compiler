@@ -1,0 +1,30 @@
+{
+  Preconditions.checkArgument(subtree.getType() == Token.CALL);
+  Node callTarget=subtree.getFirstChild();
+  if (callTarget == null) {
+    return subtree;
+  }
+  Node firstArg=callTarget.getNext();
+  if (firstArg == null) {
+    return subtree;
+  }
+  if (!NodeUtil.isGet(callTarget) || !NodeUtil.isImmutableValue(firstArg)) {
+    return subtree;
+  }
+  Node stringNode=callTarget.getFirstChild();
+  Node functionName=stringNode.getNext();
+  if ((stringNode.getType() != Token.STRING) || ((functionName.getType() != Token.STRING))) {
+    return subtree;
+  }
+  String functionNameString=functionName.getString();
+  if (functionNameString.equals("indexOf") || functionNameString.equals("lastIndexOf")) {
+    subtree=tryFoldStringIndexOf(subtree,functionNameString,stringNode,firstArg);
+  }
+ else   if (functionNameString.equals("substr")) {
+    subtree=tryFoldStringSubstr(subtree,stringNode,firstArg);
+  }
+ else   if (functionNameString.equals("substring")) {
+    subtree=tryFoldStringSubstring(subtree,stringNode,firstArg);
+  }
+  return subtree;
+}
