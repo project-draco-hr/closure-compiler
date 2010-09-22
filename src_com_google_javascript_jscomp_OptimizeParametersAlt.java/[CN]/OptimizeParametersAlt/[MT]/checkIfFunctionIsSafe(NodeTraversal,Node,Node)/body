@@ -1,0 +1,31 @@
+{
+  String name=null;
+  Scope scope=t.getScope();
+  if (checkIfFunctionCannotBeOptimized(node,parent)) {
+    return;
+  }
+  Node child=node.getFirstChild();
+  name=child.getString();
+  LinkedList<FormalParameter> parameters=new LinkedList<FormalParameter>();
+  Node paramNode=child.getNext().getFirstChild();
+  while (paramNode != null) {
+    parameters.add(new FormalParameter(paramNode));
+    paramNode=paramNode.getNext();
+  }
+  boolean doNotOptimize=parameters.isEmpty();
+  Declaration declaration=new Declaration(node,parameters,doNotOptimize);
+  addDeclaration(name,scope,declaration);
+  if (parent != null) {
+    Node grandparent=parent.getParent();
+    if (grandparent != null && NodeUtil.isVar(grandparent)) {
+      name=grandparent.getFirstChild().getString();
+      addDeclaration(name,scope,declaration);
+    }
+    if (NodeUtil.isAssign(parent) && parent.getLastChild() == node) {
+      if (NodeUtil.isName(parent.getFirstChild())) {
+        name=parent.getFirstChild().getString();
+        addDeclaration(name,scope,declaration);
+      }
+    }
+  }
+}

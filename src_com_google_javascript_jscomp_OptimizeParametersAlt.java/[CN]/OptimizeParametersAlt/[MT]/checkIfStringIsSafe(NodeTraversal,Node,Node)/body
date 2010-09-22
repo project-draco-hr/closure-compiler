@@ -1,0 +1,15 @@
+{
+  Preconditions.checkState(node.getType() == Token.STRING);
+  if (node.getString().isEmpty()) {
+    return;
+  }
+  if (NodeUtil.isGet(parent)) {
+    Node obj=parent.getFirstChild();
+    Node grandparent=parent.getParent();
+    if (obj.getNext() == node && NodeUtil.isThis(obj) && NodeUtil.isCall(grandparent) && grandparent.getFirstChild() == parent) {
+      registerCall(node.getString(),grandparent,t.getScope());
+      return;
+    }
+  }
+  blacklist.add(node.getString());
+}
