@@ -1,0 +1,35 @@
+{
+  if (token == JsDocToken.LC) {
+    Set<String> modifies=new HashSet<String>();
+    while (true) {
+      if (match(JsDocToken.STRING)) {
+        String name=stream.getString();
+        if (!modifiesAnnotationKeywords.contains(name) && !jsdocBuilder.hasParameter(name)) {
+          parser.addWarning("msg.jsdoc.modifies.unknown",name,stream.getLineno(),stream.getCharno());
+        }
+        modifies.add(stream.getString());
+        token=next();
+      }
+ else {
+        parser.addWarning("msg.jsdoc.modifies",stream.getLineno(),stream.getCharno());
+        return token;
+      }
+      if (match(JsDocToken.PIPE)) {
+        token=next();
+      }
+ else {
+        break;
+      }
+    }
+    if (!match(JsDocToken.RC)) {
+      parser.addWarning("msg.jsdoc.modifies",stream.getLineno(),stream.getCharno());
+    }
+ else {
+      token=next();
+      if (!jsdocBuilder.recordModifies(modifies)) {
+        parser.addWarning("msg.jsdoc.modifies.duplicate",stream.getLineno(),stream.getCharno());
+      }
+    }
+  }
+  return token;
+}
