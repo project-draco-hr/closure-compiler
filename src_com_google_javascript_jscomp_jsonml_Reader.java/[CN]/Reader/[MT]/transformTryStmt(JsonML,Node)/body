@@ -1,0 +1,20 @@
+{
+  Preconditions.checkState(insertExprResultState == true);
+  Node node=createNode(Token.TRY,element);
+  parent.addChildToBack(node);
+  JsonML child=element.getChild(0);
+  transformElement(child,node);
+  Node block=new Node(Token.BLOCK);
+  node.addChildToBack(block);
+  child=element.getChild(1);
+  if (child.getType() == TagType.CatchClause) {
+    transformElement(child,block);
+  }
+ else {
+    nodeIndex++;
+  }
+  if (element.childrenSize() == 3) {
+    child=element.getChild(2);
+    transformElement(child,node);
+  }
+}

@@ -1,0 +1,16 @@
+{
+  JsonML element=new JsonML(type);
+  currentParent.appendChild(element);
+  Node child=node.getFirstChild();
+  if (type == TagType.Case) {
+    processNode(child,element);
+    child=child.getNext();
+  }
+  Preconditions.checkNotNull(child);
+  Preconditions.checkState(child.getType() == Token.BLOCK);
+  child=child.getFirstChild();
+  while (child != null) {
+    processNode(child,element);
+    child=child.getNext();
+  }
+}

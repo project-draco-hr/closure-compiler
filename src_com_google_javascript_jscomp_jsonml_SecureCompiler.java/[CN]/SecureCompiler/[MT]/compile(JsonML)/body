@@ -1,0 +1,11 @@
+{
+  if (report != null) {
+    throw new IllegalStateException(COMPILATION_ALREADY_COMPLETED_MSG);
+  }
+  sourceAst=new JsonMLAst(source);
+  CompilerInput input=new CompilerInput(sourceAst,"[[jsonmlsource]]",false);
+  JSModule module=new JSModule("[[jsonmlmodule]]");
+  module.add(input);
+  Result result=compiler.compile(new JSSourceFile[]{},new JSModule[]{module},options);
+  report=generateReport(result);
+}

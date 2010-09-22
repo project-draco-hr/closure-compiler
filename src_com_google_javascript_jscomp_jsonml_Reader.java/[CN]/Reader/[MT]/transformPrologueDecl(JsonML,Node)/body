@@ -1,0 +1,16 @@
+{
+  String directive=getStringAttribute(element,TagAttr.DIRECTIVE);
+  if (ALLOWED_DIRECTIVES.contains(directive)) {
+    Set<String> directives=parent.getDirectives();
+    if (directives == null) {
+      directives=Sets.newHashSet();
+    }
+    directives.add(directive);
+    parent.setDirectives(directives);
+  }
+ else {
+    Node node=new Node(Token.EXPR_RESULT);
+    parent.addChildToBack(node);
+    node.addChildToBack(Node.newString(Token.STRING,directive));
+  }
+}

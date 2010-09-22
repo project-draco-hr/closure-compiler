@@ -1,0 +1,22 @@
+{
+  Object value=element.getAttribute(attr);
+  if (value == null) {
+    if (type == null || optional) {
+      return null;
+    }
+    throw new JsonMLException("Missing " + attr.name() + " attribute for "+ element.getType().name()+ " element.");
+  }
+  if (type.equals(Double.class)) {
+    if (value instanceof Number) {
+      return type.cast(((Number)value).doubleValue());
+    }
+    if (value instanceof String) {
+      return type.cast(Double.valueOf((String)value));
+    }
+    throw new JsonMLException("Wrong type of " + attr.name() + " attribute. "+ "Received: "+ value.getClass()+ ". Expected: "+ type.getName());
+  }
+  if (type.isInstance(value)) {
+    return type.cast(value);
+  }
+  throw new JsonMLException("Wrong type of " + attr.name() + "attribute. "+ "Received: "+ value.getClass()+ ". Expected: "+ type.getName());
+}

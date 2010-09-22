@@ -1,0 +1,16 @@
+{
+  Object name=getObjectAttribute(element,TagAttr.NAME);
+  Node node=null;
+  if (name instanceof Number) {
+    node=Node.newNumber(((Number)name).doubleValue());
+  }
+ else   if (name instanceof String) {
+    node=Node.newString(Token.STRING,(String)name);
+  }
+ else {
+    throw new IllegalStateException("The name of the property has invalid type.");
+  }
+  setPosition(node);
+  parent.addChildToBack(node);
+  transformElement(element.getChild(0),parent);
+}

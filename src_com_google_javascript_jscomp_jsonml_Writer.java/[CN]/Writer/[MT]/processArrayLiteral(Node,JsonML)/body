@@ -1,0 +1,23 @@
+{
+  JsonML element=new JsonML(TagType.ArrayExpr);
+  currentParent.appendChild(element);
+  Iterator<Node> it=node.children().iterator();
+  int[] skipIndexes=(int[])node.getProp(Node.SKIP_INDEXES_PROP);
+  int i=0;
+  int j=0;
+  int nextToSkip=0;
+  while (it.hasNext()) {
+    while (skipIndexes != null && j < skipIndexes.length) {
+      if (i == skipIndexes[j]) {
+        element.appendChild(new JsonML(TagType.Empty));
+        ++i;
+        ++j;
+      }
+ else {
+        break;
+      }
+    }
+    processNode(it.next(),element);
+    ++i;
+  }
+}

@@ -1,0 +1,23 @@
+{
+  JsonML element=new JsonML(TagType.ObjectExpr);
+  currentParent.appendChild(element);
+  Iterator<Node> it=node.children().iterator();
+  while (it.hasNext()) {
+    JsonML item=new JsonML(TagType.DataProp);
+    Node child=it.next();
+    Object name=null;
+switch (child.getType()) {
+case Token.STRING:
+      name=child.getString();
+    break;
+case Token.NUMBER:
+  name=child.getDouble();
+break;
+default :
+throw new IllegalArgumentException("Illegal type of node.");
+}
+item.setAttribute(TagAttr.NAME,name);
+processNode(it.next(),item);
+element.appendChild(item);
+}
+}

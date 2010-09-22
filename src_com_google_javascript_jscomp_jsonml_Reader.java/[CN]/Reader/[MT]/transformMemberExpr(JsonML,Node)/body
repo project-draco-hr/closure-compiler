@@ -1,0 +1,17 @@
+{
+  String op=getAttribute(element,TagAttr.OP,String.class);
+  int type;
+  if (op.equals(".")) {
+    type=Token.GETPROP;
+  }
+ else   if (op.equals("[]")) {
+    type=Token.GETELEM;
+  }
+ else {
+    throw new JsonMLException("Invalid OP argument: " + op);
+  }
+  Node node=createNode(type,element);
+  parent.addChildToBack(node);
+  transformElement(element.getChild(0),node);
+  transformElement(element.getChild(1),node);
+}

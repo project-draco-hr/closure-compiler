@@ -1,0 +1,20 @@
+{
+  if (element.getType() == TagType.EmptyStmt || element.getType() == TagType.Empty) {
+    nodeIndex++;
+    Node block=new Node(Token.BLOCK);
+    parent.addChildToBack(block);
+    block.putBooleanProp(Node.EMPTY_BLOCK,true);
+  }
+ else   if (element.getType() != TagType.BlockStmt) {
+    Node block=new Node(Token.BLOCK);
+    parent.addChildToBack(block);
+    boolean state=insertExprResultState;
+    insertExprResultState=true;
+    transformElement(element,block);
+    insertExprResultState=state;
+  }
+ else {
+    nodeIndex++;
+    transformBlock(element,parent);
+  }
+}

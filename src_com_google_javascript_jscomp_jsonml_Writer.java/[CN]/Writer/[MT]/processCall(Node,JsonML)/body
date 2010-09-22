@@ -1,0 +1,35 @@
+{
+  Iterator<Node> it=node.children().iterator();
+  Node child=it.next();
+  JsonML element;
+switch (child.getType()) {
+case Token.GETPROP:
+case Token.GETELEM:
+    element=new JsonML(TagType.InvokeExpr);
+  element.setAttribute(TagAttr.OP,child.getType() == Token.GETPROP ? "." : "[]");
+currentParent.appendChild(element);
+Node grandchild=child.getFirstChild();
+processNode(grandchild,element);
+processNode(grandchild.getNext(),element);
+break;
+case Token.NAME:
+if (child.getString().equals("eval")) {
+element=new JsonML(TagType.EvalExpr);
+}
+ else {
+element=new JsonML(TagType.IdExpr);
+element.setAttribute(TagAttr.NAME,child.getString());
+element=new JsonML(TagType.CallExpr,element);
+}
+currentParent.appendChild(element);
+break;
+default :
+element=new JsonML(TagType.CallExpr);
+currentParent.appendChild(element);
+processNode(child,element);
+break;
+}
+while (it.hasNext()) {
+processNode(it.next(),element);
+}
+}

@@ -1,0 +1,39 @@
+{
+  Node node=null;
+  Type type=Type.get(getStringAttribute(element,TagAttr.TYPE));
+switch (type) {
+case BOOLEAN:
+{
+      Boolean value=getAttribute(element,TagAttr.VALUE,Boolean.class);
+      if (value) {
+        node=new Node(Token.TRUE);
+      }
+ else {
+        node=new Node(Token.FALSE);
+      }
+      break;
+    }
+case NULL:
+{
+    getAttribute(element,TagAttr.VALUE,null);
+    node=new Node(Token.NULL);
+    break;
+  }
+case NUMBER:
+{
+  Double value=getAttribute(element,TagAttr.VALUE,Double.class);
+  node=Node.newNumber(value);
+  break;
+}
+case STRING:
+{
+String value=getStringAttribute(element,TagAttr.VALUE);
+node=Node.newString(value);
+break;
+}
+default :
+throw new JsonMLException("Unrecognized type attribute.");
+}
+setPosition(node);
+parent.addChildToBack(node);
+}
