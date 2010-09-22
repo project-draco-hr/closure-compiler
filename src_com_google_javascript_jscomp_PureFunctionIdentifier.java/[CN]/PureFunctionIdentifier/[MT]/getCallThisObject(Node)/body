@@ -1,14 +1,13 @@
 {
-  Node foo=callSite.getFirstChild();
-  if (!NodeUtil.isGetProp(foo)) {
+  Node callTarget=callSite.getFirstChild();
+  if (!NodeUtil.isGet(callTarget)) {
     return null;
   }
-  Node object=null;
-  String propString=foo.getLastChild().getString();
+  String propString=callTarget.getLastChild().getString();
   if (propString.equals("call") || propString.equals("apply")) {
-    return foo.getNext();
+    return callTarget.getNext();
   }
  else {
-    return foo.getFirstChild();
+    return callTarget.getFirstChild();
   }
 }

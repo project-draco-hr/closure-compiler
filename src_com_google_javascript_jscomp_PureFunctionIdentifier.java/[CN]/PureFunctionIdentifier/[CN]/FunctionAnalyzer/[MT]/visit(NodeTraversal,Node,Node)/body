@@ -13,7 +13,7 @@
     FunctionInformation sideEffectInfo=functionSideEffectMap.get(enclosingFunction);
     Preconditions.checkNotNull(sideEffectInfo);
     if (NodeUtil.isAssignmentOp(node)) {
-      visitAssignmentOrUnaryOperatorLhs(sideEffectInfo,traversal.getScope(),node.getFirstChild());
+      visitAssignmentOrUnaryOperator(sideEffectInfo,traversal.getScope(),node,node.getFirstChild(),node.getLastChild());
     }
  else {
 switch (node.getType()) {
@@ -24,10 +24,16 @@ case Token.NEW:
 case Token.DELPROP:
 case Token.DEC:
 case Token.INC:
-    visitAssignmentOrUnaryOperatorLhs(sideEffectInfo,traversal.getScope(),node.getFirstChild());
+    visitAssignmentOrUnaryOperator(sideEffectInfo,traversal.getScope(),node,node.getFirstChild(),null);
   break;
 case Token.NAME:
 Preconditions.checkArgument(NodeUtil.isVarDeclaration(node));
+Node value=node.getFirstChild();
+if (value != null && !isKnownLocalValue(value)) {
+Scope scope=traversal.getScope();
+Var var=scope.getVar(node.getString());
+sideEffectInfo.blacklistLocal(var);
+}
 break;
 case Token.THROW:
 visitThrow(sideEffectInfo);

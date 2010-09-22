@@ -1,0 +1,43 @@
+{
+switch (value.getType()) {
+case Token.ASSIGN:
+case Token.COMMA:
+    return isKnownLocalValue(value.getLastChild());
+case Token.AND:
+case Token.OR:
+  return isKnownLocalValue(value.getFirstChild()) && isKnownLocalValue(value.getLastChild());
+case Token.HOOK:
+return isKnownLocalValue(value.getFirstChild().getNext()) && isKnownLocalValue(value.getLastChild());
+case Token.INC:
+case Token.DEC:
+if (value.getBooleanProp(Node.INCRDECR_PROP)) {
+return isKnownLocalValue(value.getFirstChild());
+}
+ else {
+return true;
+}
+case Token.THIS:
+return false;
+case Token.NAME:
+return NodeUtil.isImmutableValue(value);
+case Token.GETELEM:
+case Token.GETPROP:
+return false;
+case Token.CALL:
+return false;
+case Token.NEW:
+return true;
+case Token.FUNCTION:
+case Token.REGEXP:
+case Token.ARRAYLIT:
+case Token.OBJECTLIT:
+return true;
+case Token.IN:
+return true;
+default :
+if (NodeUtil.isAssignmentOp(value) || NodeUtil.isSimpleOperator(value) || NodeUtil.isImmutableValue(value)) {
+return true;
+}
+throw new IllegalStateException("Unexpected expression node" + value + "\n parent:"+ value.getParent());
+}
+}

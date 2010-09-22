@@ -1,0 +1,12 @@
+{
+  Node root=this.parseExpectedJs("var test = " + js + ";");
+  Preconditions.checkState(root.getType() == Token.BLOCK);
+  Node script=root.getFirstChild();
+  Preconditions.checkState(script.getType() == Token.SCRIPT);
+  Node var=script.getFirstChild();
+  Preconditions.checkState(var.getType() == Token.VAR);
+  Node name=var.getFirstChild();
+  Preconditions.checkState(name.getType() == Token.NAME);
+  Node value=name.getFirstChild();
+  return PureFunctionIdentifier.isKnownLocalValue(value);
+}
