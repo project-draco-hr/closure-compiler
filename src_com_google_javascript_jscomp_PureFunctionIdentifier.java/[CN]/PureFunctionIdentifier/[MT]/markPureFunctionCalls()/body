@@ -2,14 +2,32 @@
   for (  Node callNode : allFunctionCalls) {
     Node name=callNode.getFirstChild();
     Collection<Definition> defs=getCallableDefinitions(definitionProvider,name);
-    boolean hasSideEffects=true;
-    if (defs != null) {
-      hasSideEffects=false;
+    SideEffectFlags flags=new SideEffectFlags();
+    if (defs == null) {
+      flags.setMutatesGlobalState();
+      flags.setThrows();
+      flags.setReturnsTainted();
+    }
+ else {
+      flags.clearAllFlags();
       for (      Definition def : defs) {
         FunctionInformation functionInfo=functionSideEffectMap.get(def.getRValue());
         Preconditions.checkNotNull(functionInfo);
-        if ((NodeUtil.isCall(callNode) && functionInfo.mayHaveSideEffects()) || (NodeUtil.isNew(callNode) && (functionInfo.mutatesGlobalState() || functionInfo.functionThrows()))) {
-          hasSideEffects=true;
+        if (functionInfo.mutatesGlobalState()) {
+          flags.setMutatesGlobalState();
+        }
+        if (functionInfo.functionThrows) {
+          flags.setThrows();
+        }
+        if (!NodeUtil.isNew(callNode)) {
+          if (functionInfo.taintsThis) {
+            flags.setMutatesThis();
+          }
+        }
+        if (functionInfo.taintsReturn) {
+          flags.setReturnsTainted();
+        }
+        if (flags.areAllFlagsSet()) {
           break;
         }
       }
@@ -17,16 +35,14 @@
     if (NodeUtil.isCall(callNode)) {
       Preconditions.checkState(compiler != null);
       if (!NodeUtil.functionCallHasSideEffects(callNode,compiler)) {
-        hasSideEffects=false;
+        flags.clearSideEffectFlags();
       }
     }
  else     if (NodeUtil.isNew(callNode)) {
       if (!NodeUtil.constructorCallHasSideEffects(callNode)) {
-        hasSideEffects=false;
+        flags.clearSideEffectFlags();
       }
     }
-    if (!hasSideEffects) {
-      callNode.setIsNoSideEffectsCall();
-    }
+    callNode.setSideEffectFlags(flags.valueOf());
   }
 }

@@ -2,7 +2,7 @@
   if (inExterns) {
     return;
   }
-  if (!NodeUtil.nodeTypeMayHaveSideEffects(node)) {
+  if (!NodeUtil.nodeTypeMayHaveSideEffects(node) && node.getType() != Token.RETURN) {
     return;
   }
   if (NodeUtil.isCall(node) || NodeUtil.isNew(node)) {
@@ -37,6 +37,11 @@ sideEffectInfo.blacklistLocal(var);
 break;
 case Token.THROW:
 visitThrow(sideEffectInfo);
+break;
+case Token.RETURN:
+if (node.hasChildren() && !isKnownLocalValue(node.getFirstChild())) {
+sideEffectInfo.setTaintsReturn();
+}
 break;
 default :
 throw new IllegalArgumentException("Unhandled side effect node type " + Token.name(node.getType()));
