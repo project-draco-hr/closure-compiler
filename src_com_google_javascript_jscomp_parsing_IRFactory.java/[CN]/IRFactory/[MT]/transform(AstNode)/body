@@ -1,13 +1,8 @@
 {
-  String jsDoc=node.getJsDoc();
-  NodeWithJsDoc nodeWithJsDoc=null;
-  if (jsDoc != null) {
-    nodeWithJsDoc=new NodeWithJsDoc();
-    nodesWithJsDoc.put(jsDoc,nodeWithJsDoc);
-  }
+  JSDocInfo jsDocInfo=handleJsDoc(node);
   Node irNode=justTransform(node);
-  if (nodeWithJsDoc != null) {
-    nodeWithJsDoc.node=irNode;
+  if (jsDocInfo != null) {
+    irNode.setJSDocInfo(jsDocInfo);
   }
   if (irNode.getType() == Token.FUNCTION && irNode.getFirstChild().getLineno() != -1) {
     irNode.setLineno(irNode.getFirstChild().getLineno());
