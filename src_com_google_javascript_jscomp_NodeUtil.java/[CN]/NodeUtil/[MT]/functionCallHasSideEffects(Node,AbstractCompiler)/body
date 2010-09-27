@@ -11,6 +11,9 @@
     }
   }
  else   if (nameNode.getType() == Token.GETPROP) {
+    if (callNode.isOnlyModifiesThisCall() && evaluatesToLocalValue(nameNode.getFirstChild())) {
+      return false;
+    }
     if (nameNode.getFirstChild().getType() == Token.NAME) {
       String namespaceName=nameNode.getFirstChild().getString();
       if (namespaceName.equals("Math")) {

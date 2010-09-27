@@ -2,6 +2,9 @@
   Preconditions.checkArgument(!functionSideEffectMap.containsKey(node));
   FunctionInformation sideEffectInfo=new FunctionInformation(inExterns);
   functionSideEffectMap.put(node,sideEffectInfo);
+  if (inExterns) {
+    sideEffectInfo.setTaintsReturn();
+  }
   JSDocInfo info=getJSDocInfoForFunction(node,parent,gramp);
   if (info != null) {
     boolean hasSpecificSideEffects=false;

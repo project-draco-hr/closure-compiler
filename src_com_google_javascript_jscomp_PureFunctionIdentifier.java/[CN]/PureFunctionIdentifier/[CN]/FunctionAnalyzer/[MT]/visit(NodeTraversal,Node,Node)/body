@@ -29,7 +29,7 @@ case Token.INC:
 case Token.NAME:
 Preconditions.checkArgument(NodeUtil.isVarDeclaration(node));
 Node value=node.getFirstChild();
-if (value != null && !isKnownLocalValue(value)) {
+if (value != null && !NodeUtil.evaluatesToLocalValue(value)) {
 Scope scope=traversal.getScope();
 Var var=scope.getVar(node.getString());
 sideEffectInfo.blacklistLocal(var);
@@ -39,7 +39,7 @@ case Token.THROW:
 visitThrow(sideEffectInfo);
 break;
 case Token.RETURN:
-if (node.hasChildren() && !isKnownLocalValue(node.getFirstChild())) {
+if (node.hasChildren() && !NodeUtil.evaluatesToLocalValue(node.getFirstChild())) {
 sideEffectInfo.setTaintsReturn();
 }
 break;

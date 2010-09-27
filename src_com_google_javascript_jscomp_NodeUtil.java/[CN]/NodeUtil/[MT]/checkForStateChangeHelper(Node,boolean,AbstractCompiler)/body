@@ -53,13 +53,26 @@ if (isSimpleOperatorType(n.getType())) {
 break;
 }
 if (isAssignmentOp(n)) {
+Node assignTarget=n.getFirstChild();
+if (isName(assignTarget)) {
+return true;
+}
 if (checkForStateChangeHelper(n.getFirstChild(),checkForNewObjects,compiler) || checkForStateChangeHelper(n.getLastChild(),checkForNewObjects,compiler)) {
 return true;
 }
-Node current=n.getFirstChild();
-for (; current.getType() == Token.GETPROP || current.getType() == Token.GETELEM; current=current.getFirstChild()) {
+if (isGet(assignTarget)) {
+Node current=assignTarget.getFirstChild();
+if (evaluatesToLocalValue(current)) {
+return false;
+}
+while (isGet(current)) {
+current=current.getFirstChild();
 }
 return !isLiteralValue(current,true);
+}
+ else {
+return !isLiteralValue(assignTarget,true);
+}
 }
 return true;
 }
