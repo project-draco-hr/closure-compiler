@@ -3,7 +3,18 @@
   FunctionInformation sideEffectInfo=new FunctionInformation(inExterns);
   functionSideEffectMap.put(node,sideEffectInfo);
   if (inExterns) {
-    sideEffectInfo.setTaintsReturn();
+    JSType jstype=node.getJSType();
+    boolean knownLocalResult=false;
+    if (jstype != null && jstype.isFunctionType()) {
+      FunctionType functionType=(FunctionType)jstype;
+      JSType jstypeReturn=functionType.getReturnType();
+      if (isLocalValueType(jstypeReturn,true)) {
+        knownLocalResult=true;
+      }
+    }
+    if (!knownLocalResult) {
+      sideEffectInfo.setTaintsReturn();
+    }
   }
   JSDocInfo info=getJSDocInfoForFunction(node,parent,gramp);
   if (info != null) {
