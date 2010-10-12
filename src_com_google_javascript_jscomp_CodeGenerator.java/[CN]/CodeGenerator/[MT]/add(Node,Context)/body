@@ -182,6 +182,7 @@ boolean preserveBlock=context == Context.PRESERVE_BLOCK;
 if (preserveBlock) {
 cc.beginBlock();
 }
+boolean preferLineBreaks=type == Token.SCRIPT || (type == Token.BLOCK && !preserveBlock && n.getParent() != null && n.getParent().getType() == Token.SCRIPT);
 for (Node c=first; c != null; c=c.getNext()) {
 add(c,Context.STATEMENT);
 if (c.getType() == Token.VAR) {
@@ -190,7 +191,7 @@ cc.endStatement();
 if (c.getType() == Token.FUNCTION) {
 cc.maybeLineBreak();
 }
-if (type == Token.SCRIPT) {
+if (preferLineBreaks) {
 cc.notePreferredLineBreak();
 }
 }
