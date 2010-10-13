@@ -1,0 +1,20 @@
+{
+  Node n=compiler.parseTestCode(js);
+  Node externs=new Node(Token.BLOCK);
+  Node externAndJsRoot=new Node(Token.BLOCK,externs,n);
+  externAndJsRoot.setIsSyntheticBlock(true);
+  assertEquals("parsing error: " + Joiner.on(", ").join(compiler.getErrors()),0,compiler.getErrorCount());
+  new ProcessClosurePrimitives(compiler,CheckLevel.ERROR,true).process(null,n);
+  CodingConvention convention=compiler.getCodingConvention();
+  new TypeCheck(compiler,new ClosureReverseAbstractInterpreter(convention,registry).append(new SemanticReverseAbstractInterpreter(convention,registry)).getFirst(),registry).processForTesting(null,n);
+  assertEquals(0,compiler.getErrorCount());
+  if (descriptions == null) {
+    assertEquals("unexpected warning(s) : " + Joiner.on(", ").join(compiler.getWarnings()),0,compiler.getWarningCount());
+  }
+ else {
+    assertEquals(descriptions.size(),compiler.getWarningCount());
+    for (int i=0; i < descriptions.size(); i++) {
+      assertEquals(descriptions.get(i),compiler.getWarnings()[i].description);
+    }
+  }
+}
