@@ -21,10 +21,19 @@ case Token.EMPTY:
 case Token.THROW:
   return true;
 case Token.OBJECTLIT:
+if (checkForNewObjects) {
+  return true;
+}
+for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+if (checkForStateChangeHelper(c.getFirstChild(),checkForNewObjects,compiler)) {
+  return true;
+}
+}
+return false;
 case Token.ARRAYLIT:
 case Token.REGEXP:
 if (checkForNewObjects) {
-  return true;
+return true;
 }
 break;
 case Token.VAR:

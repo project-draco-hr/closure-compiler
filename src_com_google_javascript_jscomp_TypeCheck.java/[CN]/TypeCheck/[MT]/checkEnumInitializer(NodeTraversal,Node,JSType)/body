@@ -1,11 +1,8 @@
 {
   if (value.getType() == Token.OBJECTLIT) {
-    value=value.getFirstChild();
-    value=(value == null) ? null : value.getNext();
-    while (value != null) {
-      validator.expectCanAssignTo(t,value,getJSType(value),primitiveType,"element type must match enum's type");
-      value=value.getNext();
-      value=(value == null) ? null : value.getNext();
+    for (Node key=value.getFirstChild(); key != null; key=key.getNext()) {
+      Node propValue=key.getFirstChild();
+      validator.expectCanAssignTo(t,propValue,getJSType(propValue),primitiveType,"element type must match enum's type");
     }
   }
  else   if (value.getJSType() instanceof EnumType) {

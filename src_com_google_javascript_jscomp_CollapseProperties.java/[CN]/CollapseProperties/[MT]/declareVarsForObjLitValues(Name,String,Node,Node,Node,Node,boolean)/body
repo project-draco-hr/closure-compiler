@@ -2,8 +2,8 @@
   int numVars=0;
   int arbitraryNameCounter=0;
   for (Node key=objlit.getFirstChild(), nextKey; key != null; key=nextKey) {
-    Node value=key.getNext();
-    nextKey=value.getNext();
+    Node value=key.getFirstChild();
+    nextKey=key.getNext();
     boolean isJsIdentifier=key.getType() != Token.NUMBER && TokenStream.isJSIdentifier(key.getString());
     String propName=isJsIdentifier ? key.getString() : String.valueOf(++arbitraryNameCounter);
     String propAlias=appendPropForAlias(alias,propName);
@@ -11,14 +11,14 @@
     Node refNode=null;
     if (discardKeys) {
       objlit.removeChild(key);
-      objlit.removeChild(value);
+      value.detachFromParent();
     }
  else {
       refNode=Node.newString(Token.NAME,propAlias);
       if (key.getBooleanProp(Node.IS_CONSTANT_NAME)) {
         refNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
       }
-      objlit.replaceChildAfter(key,refNode);
+      key.replaceChild(value,refNode);
     }
     Node nameNode=Node.newString(Token.NAME,propAlias);
     nameNode.addChildToFront(value);
