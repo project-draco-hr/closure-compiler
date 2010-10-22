@@ -3,11 +3,20 @@
     if (isEquivalentTo(that)) {
       return this;
     }
-    if (isOrdinaryFunction() && that.isOrdinaryFunction() && that instanceof FunctionType) {
-      FunctionType other=(FunctionType)that;
-      if (call.hasEqualParameters(other.call) && isEquivalent(typeOfThis,other.typeOfThis)) {
-        JSType newReturnType=leastSuper ? call.returnType.getLeastSupertype(other.call.returnType) : call.returnType.getGreatestSubtype(other.call.returnType);
-        return cloneWithNewReturnType(newReturnType,call.returnTypeInferred || other.call.returnTypeInferred);
+    FunctionType other=null;
+    if (that instanceof FunctionType) {
+      other=(FunctionType)that;
+    }
+    if (other != null && isOrdinaryFunction() && that.isOrdinaryFunction() && !this.call.hasUnknownParamsOrReturn() && !other.call.hasUnknownParamsOrReturn()) {
+      if (this.isSubtype(that)) {
+        return leastSuper ? that : this;
+      }
+ else       if (that.isSubtype(this)) {
+        return leastSuper ? this : that;
+      }
+      FunctionType merged=tryMergeFunctionPiecewise(other,leastSuper);
+      if (merged != null) {
+        return merged;
       }
     }
     JSType functionInstance=registry.getNativeType(JSTypeNative.FUNCTION_INSTANCE_TYPE);
@@ -17,7 +26,9 @@
  else     if (functionInstance.isEquivalentTo(this)) {
       return leastSuper ? this : that;
     }
-    return leastSuper ? registry.getNativeType(JSTypeNative.U2U_CONSTRUCTOR_TYPE) : registry.getNativeType(JSTypeNative.NO_OBJECT_TYPE);
+    FunctionType greatestFn=registry.getNativeFunctionType(JSTypeNative.U2U_CONSTRUCTOR_TYPE);
+    FunctionType leastFn=registry.getNativeFunctionType(JSTypeNative.LEAST_FUNCTION_TYPE);
+    return leastSuper ? greatestFn : leastFn;
   }
   return leastSuper ? super.getLeastSupertype(that) : super.getGreatestSubtype(that);
 }
