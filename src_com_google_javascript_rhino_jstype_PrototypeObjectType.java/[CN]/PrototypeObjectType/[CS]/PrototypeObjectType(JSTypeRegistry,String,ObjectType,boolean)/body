@@ -3,13 +3,10 @@
   this.properties=Maps.newTreeMap();
   this.className=className;
   this.nativeType=nativeType;
-  if (nativeType) {
-    this.implicitPrototype=implicitPrototype;
-  }
- else   if (implicitPrototype == null) {
-    this.implicitPrototype=registry.getNativeObjectType(JSTypeNative.OBJECT_TYPE);
+  if (nativeType || implicitPrototype != null) {
+    setImplicitPrototype(implicitPrototype);
   }
  else {
-    this.implicitPrototype=implicitPrototype;
+    setImplicitPrototype(registry.getNativeObjectType(JSTypeNative.OBJECT_TYPE));
   }
 }
