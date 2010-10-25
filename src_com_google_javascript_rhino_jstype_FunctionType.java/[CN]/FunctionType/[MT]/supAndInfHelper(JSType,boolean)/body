@@ -8,10 +8,12 @@
       other=(FunctionType)that;
     }
     if (other != null && isOrdinaryFunction() && that.isOrdinaryFunction() && !this.call.hasUnknownParamsOrReturn() && !other.call.hasUnknownParamsOrReturn()) {
-      if (this.isSubtype(that)) {
+      boolean isSubtypeOfThat=this.isSubtype(that);
+      boolean isSubtypeOfThis=that.isSubtype(this);
+      if (isSubtypeOfThat && !isSubtypeOfThis) {
         return leastSuper ? that : this;
       }
- else       if (that.isSubtype(this)) {
+ else       if (isSubtypeOfThis && !isSubtypeOfThat) {
         return leastSuper ? this : that;
       }
       FunctionType merged=tryMergeFunctionPiecewise(other,leastSuper);
