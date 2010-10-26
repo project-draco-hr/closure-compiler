@@ -1,0 +1,25 @@
+{
+  JSDocInfo info=objectLit.getJSDocInfo();
+  if (info != null && info.getLendsName() != null) {
+    String lendsName=info.getLendsName();
+    Var lendsVar=scope.getVar(lendsName);
+    if (lendsVar == null) {
+      compiler.report(JSError.make(sourceName,objectLit,UNKNOWN_LENDS,lendsName));
+    }
+ else {
+      JSType type=lendsVar.getType();
+      if (type == null) {
+        type=typeRegistry.getNativeType(UNKNOWN_TYPE);
+      }
+      if (!type.isSubtype(typeRegistry.getNativeType(OBJECT_TYPE))) {
+        compiler.report(JSError.make(sourceName,objectLit,LENDS_ON_NON_OBJECT,lendsName,type.toString()));
+      }
+ else {
+        objectLit.setJSType(type);
+      }
+    }
+  }
+  if (objectLit.getJSType() == null) {
+    objectLit.setJSType(typeRegistry.createAnonymousObjectType());
+  }
+}

@@ -2,7 +2,11 @@
   JSType type=n.getJSType();
   Preconditions.checkNotNull(type);
   ObjectType objectType=ObjectType.cast(type);
-  if (objectType == null || objectType.hasReferenceName()) {
+  if (objectType == null) {
+    return scope;
+  }
+  boolean hasLendsName=n.getJSDocInfo() != null && n.getJSDocInfo().getLendsName() != null;
+  if (objectType.hasReferenceName() && !hasLendsName) {
     return scope;
   }
   for (Node name=n.getFirstChild(); name != null; name=name.getNext()) {
