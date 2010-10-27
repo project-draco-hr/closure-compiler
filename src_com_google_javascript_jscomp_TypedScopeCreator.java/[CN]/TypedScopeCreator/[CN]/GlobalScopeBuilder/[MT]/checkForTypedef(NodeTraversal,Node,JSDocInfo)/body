@@ -6,12 +6,12 @@
   if (typedef == null) {
     return;
   }
-  typeRegistry.forwardDeclareType(typedef);
+  typeRegistry.declareType(typedef,getNativeType(UNKNOWN_TYPE));
   JSType realType=info.getTypedefType().evaluate(scope,typeRegistry);
   if (realType == null) {
     compiler.report(JSError.make(t.getSourceName(),candidate,MALFORMED_TYPEDEF,typedef));
   }
-  typeRegistry.declareType(typedef,realType);
+  typeRegistry.overwriteDeclaredType(typedef,realType);
   if (candidate.getType() == Token.GETPROP) {
     defineSlot(candidate,candidate.getParent(),getNativeType(NO_TYPE),false);
   }

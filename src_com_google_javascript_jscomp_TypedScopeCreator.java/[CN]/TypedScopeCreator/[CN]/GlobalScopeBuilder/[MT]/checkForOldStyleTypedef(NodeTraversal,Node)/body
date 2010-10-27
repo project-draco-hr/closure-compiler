@@ -1,7 +1,7 @@
 {
   String typedef=codingConvention.identifyTypeDefAssign(candidate);
   if (typedef != null) {
-    typeRegistry.forwardDeclareType(typedef);
+    typeRegistry.declareType(typedef,getNativeType(UNKNOWN_TYPE));
     JSDocInfo info=candidate.getJSDocInfo();
     JSType realType=null;
     if (info != null && info.getType() != null) {
@@ -10,6 +10,6 @@
     if (realType == null) {
       compiler.report(JSError.make(t.getSourceName(),candidate,MALFORMED_TYPEDEF,typedef));
     }
-    typeRegistry.declareType(typedef,realType);
+    typeRegistry.overwriteDeclaredType(typedef,realType);
   }
 }
