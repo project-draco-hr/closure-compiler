@@ -1,0 +1,19 @@
+{
+  Node nameNode=null;
+switch (node.getType()) {
+case Token.VAR:
+    for (Node child=node.getFirstChild(); child != null; child=child.getNext()) {
+      identifyNameNode(child,child.getFirstChild(),NodeUtil.getInfoForNameNode(child));
+    }
+  break;
+case Token.EXPR_RESULT:
+Node firstChild=node.getFirstChild();
+if (firstChild.getType() == Token.ASSIGN) {
+identifyNameNode(firstChild.getFirstChild(),firstChild.getLastChild(),firstChild.getJSDocInfo());
+}
+ else {
+identifyNameNode(firstChild,null,firstChild.getJSDocInfo());
+}
+break;
+}
+}
