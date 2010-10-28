@@ -2,7 +2,10 @@
   setResolvedTypeInternal(this);
   call=(ArrowType)safeResolve(call,t,scope);
   prototype=(FunctionPrototypeType)safeResolve(prototype,t,scope);
-  typeOfThis=(ObjectType)safeResolve(typeOfThis,t,scope);
+  JSType maybeTypeOfThis=safeResolve(typeOfThis,t,scope);
+  if (maybeTypeOfThis instanceof ObjectType) {
+    typeOfThis=(ObjectType)maybeTypeOfThis;
+  }
   boolean changed=false;
   ImmutableList.Builder<ObjectType> resolvedInterfaces=ImmutableList.builder();
   for (  ObjectType iface : implementedInterfaces) {
