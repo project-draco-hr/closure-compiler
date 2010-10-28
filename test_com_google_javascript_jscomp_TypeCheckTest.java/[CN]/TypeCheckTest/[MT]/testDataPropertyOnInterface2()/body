@@ -1,3 +1,4 @@
 {
-  testTypes("/** @interface */ function T() {};\n" + "/** @type {number} */T.prototype.x;");
+  reportMissingOverrides=CheckLevel.OFF;
+  testTypes("/** @interface */ function T() {};\n" + "/** @type {number} */T.prototype.x;\n" + "/** @constructor \n"+ " *  @implements {T} \n"+ " */\n"+ "function C() {}\n"+ "C.prototype.x = 'foo';","mismatch of the x property type and the type of the property it " + "overrides from interface T\n" + "original: number\n"+ "override: string");
 }
