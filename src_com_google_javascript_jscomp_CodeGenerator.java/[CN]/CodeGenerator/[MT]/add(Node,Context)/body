@@ -384,7 +384,9 @@ add(")");
 }
 break;
 case Token.STRING:
-Preconditions.checkState(childCount == ((n.getParent() != null && n.getParent().getType() == Token.OBJECTLIT) ? 1 : 0),n.getParent().toStringTree());
+if (childCount != ((n.getParent() != null && n.getParent().getType() == Token.OBJECTLIT) ? 1 : 0)) {
+throw new IllegalStateException("Unexpected String children: " + n.getParent().toStringTree());
+}
 add(jsString(n.getString(),outputCharsetEncoder));
 break;
 case Token.DELPROP:
