@@ -1,0 +1,51 @@
+{
+  Preconditions.checkState(left.getType() == Token.NUMBER);
+  Preconditions.checkState(right.getType() == Token.NUMBER);
+  double result;
+  double lval=left.getDouble();
+  double rval=right.getDouble();
+switch (opType) {
+case Token.BITAND:
+    if (!areValidInts(lval,rval)) {
+      return null;
+    }
+  result=(int)lval & (int)rval;
+break;
+case Token.BITOR:
+if (!areValidInts(lval,rval)) {
+return null;
+}
+result=(int)lval | (int)rval;
+break;
+case Token.ADD:
+result=lval + rval;
+break;
+case Token.SUB:
+result=lval - rval;
+break;
+case Token.MUL:
+result=lval * rval;
+break;
+case Token.MOD:
+if (rval == 0) {
+error(DIVIDE_BY_0_ERROR,right);
+return null;
+}
+result=lval % rval;
+break;
+case Token.DIV:
+if (rval == 0) {
+error(DIVIDE_BY_0_ERROR,right);
+return null;
+}
+result=lval / rval;
+break;
+default :
+throw new Error("Unexpected arithmetic operator");
+}
+if (String.valueOf(result).length() <= String.valueOf(lval).length() + String.valueOf(rval).length() + 1 && Math.abs(result) <= MAX_FOLD_NUMBER) {
+Node newNumber=Node.newNumber(result);
+return newNumber;
+}
+return null;
+}
