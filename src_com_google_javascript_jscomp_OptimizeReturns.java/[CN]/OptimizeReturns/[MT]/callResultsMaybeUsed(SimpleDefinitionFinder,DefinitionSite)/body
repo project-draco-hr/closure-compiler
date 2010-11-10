@@ -1,0 +1,30 @@
+{
+  Definition definition=definitionSite.definition;
+  Node rValue=definition.getRValue();
+  if (rValue == null || !NodeUtil.isFunction(rValue)) {
+    return true;
+  }
+  if (!isSimpleFunctionDeclaration(rValue)) {
+    return true;
+  }
+  if (maybeExported(compiler,definition)) {
+    return true;
+  }
+  Collection<UseSite> useSites=defFinder.getUseSites(definition);
+  for (  UseSite site : useSites) {
+    Node useNodeParent=site.node.getParent();
+    if (isCall(site)) {
+      Node callNode=useNodeParent;
+      Preconditions.checkState(callNode.getType() == Token.CALL);
+      if (isValueUsed(callNode)) {
+        return true;
+      }
+    }
+ else {
+      if (!NodeUtil.isVar(useNodeParent)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

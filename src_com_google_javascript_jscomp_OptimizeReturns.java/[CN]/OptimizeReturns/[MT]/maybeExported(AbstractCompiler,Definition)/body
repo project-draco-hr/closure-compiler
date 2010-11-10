@@ -1,0 +1,21 @@
+{
+  Node lValue=definition.getLValue();
+  if (lValue == null) {
+    return true;
+  }
+  String partialName;
+  if (NodeUtil.isGetProp(lValue)) {
+    partialName=lValue.getLastChild().getString();
+  }
+ else   if (NodeUtil.isName(lValue)) {
+    partialName=lValue.getString();
+  }
+ else {
+    return true;
+  }
+  CodingConvention codingConvention=compiler.getCodingConvention();
+  if (codingConvention.isExported(partialName)) {
+    return true;
+  }
+  return false;
+}
