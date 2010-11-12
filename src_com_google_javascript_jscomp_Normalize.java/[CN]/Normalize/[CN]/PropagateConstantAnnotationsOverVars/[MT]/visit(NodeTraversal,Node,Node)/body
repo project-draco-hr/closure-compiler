@@ -8,7 +8,9 @@
     if (var != null) {
       info=var.getJSDocInfo();
     }
-    if ((info != null && info.isConstant()) && !n.getBooleanProp(Node.IS_CONSTANT_NAME)) {
+    boolean shouldBeConstant=(info != null && info.isConstant()) || NodeUtil.isConstantByConvention(compiler.getCodingConvention(),n,parent);
+    boolean isMarkedConstant=n.getBooleanProp(Node.IS_CONSTANT_NAME);
+    if (shouldBeConstant && !isMarkedConstant) {
       n.putBooleanProp(Node.IS_CONSTANT_NAME,true);
       if (assertOnChange) {
         String name=n.getString();
