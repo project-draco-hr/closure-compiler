@@ -1,0 +1,33 @@
+{
+  Definition definition=definitionSite.definition;
+  if (definitionSite.inExterns) {
+    return false;
+  }
+  Node rValue=definition.getRValue();
+  if (rValue == null || !NodeUtil.isFunction(rValue) || NodeUtil.isVarArgsFunction(rValue)) {
+    return false;
+  }
+  if (!OptimizeReturns.isSimpleFunctionDeclaration(rValue)) {
+    return false;
+  }
+  if (OptimizeReturns.maybeExported(compiler,definition)) {
+    return false;
+  }
+  Collection<UseSite> useSites=defFinder.getUseSites(definition);
+  if (useSites.isEmpty()) {
+    return false;
+  }
+  for (  UseSite site : useSites) {
+    if (!isCallSite(site.node)) {
+      return false;
+    }
+    Node nameNode=site.node;
+    Collection<Definition> singleSiteDefinitions=defFinder.getDefinitionsReferencedAt(nameNode);
+    if (singleSiteDefinitions.size() > 1) {
+      return false;
+    }
+    Preconditions.checkState(!singleSiteDefinitions.isEmpty());
+    Preconditions.checkState(singleSiteDefinitions.contains(definition));
+  }
+  return true;
+}

@@ -1,0 +1,27 @@
+{
+  List<Parameter> parameters=Lists.newArrayList();
+  boolean firstCall=true;
+  Definition definition=defSite.definition;
+  Collection<UseSite> useSites=defFinder.getUseSites(definition);
+  for (  UseSite site : useSites) {
+    Preconditions.checkState(isCallSite(site.node));
+    Node call=site.node.getParent();
+    Node cur=call.getFirstChild();
+    if (firstCall) {
+      buildParameterList(parameters,cur);
+      firstCall=false;
+    }
+ else {
+      findConstantParameters(parameters,cur);
+    }
+  }
+  for (  UseSite site : useSites) {
+    Preconditions.checkState(isCallSite(site.node));
+    Node call=site.node.getParent();
+    optimizeCallSite(parameters,call);
+  }
+  Node function=definition.getRValue();
+  if (NodeUtil.isFunction(function)) {
+    optimizeFunctionDefinition(parameters,function);
+  }
+}

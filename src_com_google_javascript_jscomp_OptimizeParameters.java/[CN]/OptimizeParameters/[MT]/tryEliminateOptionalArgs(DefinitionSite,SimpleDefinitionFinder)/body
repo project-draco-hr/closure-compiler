@@ -1,0 +1,14 @@
+{
+  int maxArgs=-1;
+  Definition definition=defSite.definition;
+  Collection<UseSite> useSites=defFinder.getUseSites(definition);
+  for (  UseSite site : useSites) {
+    Preconditions.checkState(isCallSite(site.node));
+    Node call=site.node.getParent();
+    int numArgs=call.getChildCount() - 1;
+    if (numArgs > maxArgs) {
+      maxArgs=numArgs;
+    }
+  }
+  eliminateParamsAfter(definition.getRValue(),maxArgs);
+}

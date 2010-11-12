@@ -1,0 +1,11 @@
+{
+  if (argNode != null) {
+    eliminateParamsAfter(fnNode,argNode.getNext());
+    argNode.detachFromParent();
+    Node var=new Node(Token.VAR,argNode).copyInformationFrom(argNode);
+    fnNode.getLastChild().addChildrenToFront(var);
+    compiler.reportCodeChange();
+    return true;
+  }
+  return false;
+}

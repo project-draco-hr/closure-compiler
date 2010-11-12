@@ -1,15 +1,5 @@
 {
-  if (nameGraph == null) {
-    NameReferenceGraphConstruction c=new NameReferenceGraphConstruction(compiler);
-    c.process(externs,root);
-    nameGraph=c.getNameReferenceGraph();
-  }
-  for (  DiGraphNode<Name,Reference> node : nameGraph.getDirectedGraphNodes()) {
-    Name name=node.getValue();
-    if (name.canChangeSignature()) {
-      List<DiGraphEdge<Name,Reference>> edges=node.getInEdges();
-      tryEliminateConstantArgs(name,edges);
-      tryEliminateOptionalArgs(name,edges);
-    }
-  }
+  SimpleDefinitionFinder defFinder=new SimpleDefinitionFinder(compiler);
+  defFinder.process(externs,root);
+  process(defFinder);
 }

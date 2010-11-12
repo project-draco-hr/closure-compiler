@@ -5,14 +5,5 @@
     formalArgPtr=formalArgPtr.getNext();
     argIndex--;
   }
-  while (formalArgPtr != null) {
-    Node next=formalArgPtr.getNext();
-    function.getFirstChild().getNext().removeChild(formalArgPtr);
-    Node var=new Node(Token.VAR,formalArgPtr);
-    function.getLastChild().addChildrenToFront(var);
-    compiler.reportCodeChange();
-    paramRemoved=true;
-    formalArgPtr=next;
-  }
-  return paramRemoved;
+  return eliminateParamsAfter(function,formalArgPtr);
 }
