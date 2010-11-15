@@ -3,7 +3,12 @@
   boolean isObjLitKey=NodeUtil.isObjectLitKey(n,parent);
   boolean isProperty=isObjLitKey || (parent.getType() == Token.GETPROP && parent.getLastChild() == n);
   if (n.getType() == Token.NAME || isProperty) {
-    if (NodeUtil.isConstantByConvention(compiler.getCodingConvention(),n,parent)) {
+    boolean isMarkedConstant=n.getBooleanProp(Node.IS_CONSTANT_NAME);
+    if (!isMarkedConstant && NodeUtil.isConstantByConvention(compiler.getCodingConvention(),n,parent)) {
+      if (assertOnChange) {
+        String name=n.getString();
+        throw new IllegalStateException("Unexpected const change.\n" + "  name: " + name + "\n"+ "  parent:"+ n.getParent().toStringTree());
+      }
       n.putBooleanProp(Node.IS_CONSTANT_NAME,true);
     }
   }

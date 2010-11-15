@@ -11,11 +11,11 @@
     boolean shouldBeConstant=(info != null && info.isConstant()) || NodeUtil.isConstantByConvention(compiler.getCodingConvention(),n,parent);
     boolean isMarkedConstant=n.getBooleanProp(Node.IS_CONSTANT_NAME);
     if (shouldBeConstant && !isMarkedConstant) {
-      n.putBooleanProp(Node.IS_CONSTANT_NAME,true);
       if (assertOnChange) {
         String name=n.getString();
-        throw new IllegalStateException("Unexpected const change.\n" + "  name: " + name + "\n"+ "  gramps:"+ n.getParent().getParent().toStringTree());
+        throw new IllegalStateException("Unexpected const change.\n" + "  name: " + name + "\n"+ "  parent:"+ n.getParent().toStringTree());
       }
+      n.putBooleanProp(Node.IS_CONSTANT_NAME,true);
     }
   }
 }

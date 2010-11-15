@@ -23,13 +23,13 @@
     }
     Node call;
     if (useExportSymbol) {
-      call=new Node(Token.CALL,NodeUtil.newQualifiedNameNode(exportSymbolFunction,context.getNode(),export));
+      call=new Node(Token.CALL,NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),exportSymbolFunction,context.getNode(),export));
       call.addChildToBack(Node.newString(export));
-      call.addChildToBack(NodeUtil.newQualifiedNameNode(export,context.getNode(),export));
+      call.addChildToBack(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),export,context.getNode(),export));
     }
  else {
       String property=getPropertyName(node);
-      call=new Node(Token.CALL,new Node[]{NodeUtil.newQualifiedNameNode(exportPropertyFunction,context.getNode(),exportPropertyFunction),NodeUtil.newQualifiedNameNode(parent,context.getNode(),exportPropertyFunction),Node.newString(property),NodeUtil.newQualifiedNameNode(export,context.getNode(),exportPropertyFunction)});
+      call=new Node(Token.CALL,new Node[]{NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),exportPropertyFunction,context.getNode(),exportPropertyFunction),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),parent,context.getNode(),exportPropertyFunction),Node.newString(property),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),export,context.getNode(),exportPropertyFunction)});
     }
     Node expression=new Node(Token.EXPR_RESULT,call);
     annotate(expression);
