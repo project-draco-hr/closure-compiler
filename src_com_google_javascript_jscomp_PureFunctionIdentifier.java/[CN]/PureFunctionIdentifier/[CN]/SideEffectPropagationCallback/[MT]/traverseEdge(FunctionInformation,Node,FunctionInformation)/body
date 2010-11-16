@@ -14,11 +14,9 @@
       Node objectNode=getCallThisObject(callSite);
       if (objectNode != null && NodeUtil.isName(objectNode) && !isCallOrApply(callSite)) {
         String name=objectNode.getString();
-        if (!caller.knownLocals.contains(name)) {
-          if (!caller.mutatesGlobalState()) {
-            caller.setTaintsGlobalState();
-            changed=true;
-          }
+        if (!caller.mutatesGlobalState()) {
+          caller.setTaintsGlobalState();
+          changed=true;
         }
       }
  else       if (objectNode != null && NodeUtil.isThis(objectNode)) {
