@@ -1,20 +1,32 @@
 {
-  int exitCode=0;
+  int result=0;
   int runs=1;
-  Throwable error=null;
   if (config.computePhaseOrdering) {
     runs=NUM_RUNS_TO_DETERMINE_OPTIMAL_ORDER;
     PhaseOptimizer.randomizeLoops();
   }
   try {
-    for (int i=0; i < runs && exitCode == 0; i++) {
+    for (int i=0; i < runs && result == 0; i++) {
       runTimeStats.recordStartRun();
-      exitCode=doRun();
+      result=doRun();
       runTimeStats.recordEndRun();
     }
   }
- catch (  Throwable t) {
-    error=t;
+ catch (  AbstractCommandLineRunner.FlagUsageException e) {
+    System.err.println(e.getMessage());
+    result=-1;
   }
-  exit(runTimeStats,error,exitCode);
+catch (  Throwable t) {
+    t.printStackTrace();
+    result=-2;
+  }
+  if (config.computePhaseOrdering) {
+    runTimeStats.outputBestPhaseOrdering();
+  }
+  if (testMode) {
+    exitCodeReceiverForTesting.apply(result);
+  }
+ else {
+    System.exit(result);
+  }
 }
