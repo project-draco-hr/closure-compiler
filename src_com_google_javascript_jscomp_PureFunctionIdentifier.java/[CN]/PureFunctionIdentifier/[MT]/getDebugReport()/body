@@ -6,18 +6,18 @@
   functionNames.process(null,externs);
   functionNames.process(null,root);
   sb.append("Pure functions:\n");
-  for (  Map.Entry<Node,FunctionInformation> entry : functionSideEffectMap.entrySet()) {
+  for (  Map.Entry<Node,FunctionSideEffectData> entry : functionSideEffectMap.entrySet()) {
     Node function=entry.getKey();
-    FunctionInformation functionInfo=entry.getValue();
+    FunctionSideEffectData functionInfo=entry.getValue();
     boolean isPure=functionInfo.mayBePure() && !functionInfo.mayHaveSideEffects();
     if (isPure) {
       sb.append("  " + functionNames.getFunctionName(function) + "\n");
     }
   }
   sb.append("\n");
-  for (  Map.Entry<Node,FunctionInformation> entry : functionSideEffectMap.entrySet()) {
+  for (  Map.Entry<Node,FunctionSideEffectData> entry : functionSideEffectMap.entrySet()) {
     Node function=entry.getKey();
-    FunctionInformation functionInfo=entry.getValue();
+    FunctionSideEffectData functionInfo=entry.getValue();
     Set<String> depFunctionNames=Sets.newHashSet();
     for (    Node callSite : functionInfo.getCallsInFunctionBody()) {
       Collection<Definition> defs=getCallableDefinitions(definitionProvider,callSite.getFirstChild());

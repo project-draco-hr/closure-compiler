@@ -1,0 +1,50 @@
+{
+  final boolean isReturnResult=lValue.equals(KeywordValueEntry.RETURN);
+  final Predicate<Node> taintingPredicate=new Predicate<Node>(){
+    @Override public boolean apply(    Node value){
+switch (value.getType()) {
+case Token.ASSIGN:
+        Preconditions.checkState(!NodeUtil.isImmutableValue(value.getLastChild()));
+      Node lhs=value.getFirstChild();
+    if (NodeUtil.isName(lhs) && info.getScope().isDeclared(lhs.getString(),false)) {
+      addValue(lhs);
+      return true;
+    }
+  return false;
+case Token.THIS:
+addValue(KeywordValueEntry.THIS);
+return true;
+case Token.NAME:
+if (info.getScope().isDeclared(value.getString(),false)) {
+addValue(value);
+return true;
+}
+return false;
+case Token.CALL:
+addCall(value);
+return true;
+case Token.GETELEM:
+case Token.GETPROP:
+return false;
+default :
+throw new IllegalStateException("unexpected");
+}
+}
+private void addCall(Node callNode){
+Preconditions.checkState(callNode.getType() == Token.CALL);
+info.addInfluence(new CallValueEntry(callNode),lValue);
+}
+private void addValue(Node name){
+ValueEntry value=new NameValueEntry(name);
+addValue(value);
+}
+private void addValue(ValueEntry value){
+info.addInfluence(value,lValue);
+if (!isReturnResult) {
+info.addInfluence(lValue,value);
+}
+}
+}
+;
+return NodeUtil.evaluatesToLocalValue(rValue,taintingPredicate);
+}

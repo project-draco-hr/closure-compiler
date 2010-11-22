@@ -10,7 +10,7 @@
   }
   Node enclosingFunction=traversal.getEnclosingFunction();
   if (enclosingFunction != null) {
-    FunctionInformation sideEffectInfo=functionSideEffectMap.get(enclosingFunction);
+    FunctionSideEffectData sideEffectInfo=functionSideEffectMap.get(enclosingFunction);
     Preconditions.checkNotNull(sideEffectInfo);
     if (NodeUtil.isAssignmentOp(node)) {
       visitAssignmentOrUnaryOperator(sideEffectInfo,traversal.getScope(),node,node.getFirstChild(),node.getLastChild());
@@ -29,17 +29,17 @@ case Token.INC:
 case Token.NAME:
 Preconditions.checkArgument(NodeUtil.isVarDeclaration(node));
 Node value=node.getFirstChild();
-if (value != null && !NodeUtil.evaluatesToLocalValue(value)) {
+if (value != null && !analyzeSet(new NameValueEntry(node),value,sideEffectInfo)) {
 Scope scope=traversal.getScope();
 Var var=scope.getVar(node.getString());
-sideEffectInfo.blacklistLocal(var);
+sideEffectInfo.addNonLocalValue(var);
 }
 break;
 case Token.THROW:
 visitThrow(sideEffectInfo);
 break;
 case Token.RETURN:
-if (node.hasChildren() && !NodeUtil.evaluatesToLocalValue(node.getFirstChild())) {
+if (node.hasChildren() && !analyzeSet(KeywordValueEntry.RETURN,node.getFirstChild(),sideEffectInfo)) {
 sideEffectInfo.setTaintsReturn();
 }
 break;

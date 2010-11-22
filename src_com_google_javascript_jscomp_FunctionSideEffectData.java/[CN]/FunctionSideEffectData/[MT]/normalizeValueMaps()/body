@@ -1,0 +1,15 @@
+{
+  if (!mutatesGlobalState() || !taintsReturn) {
+    for (    ValueEntry entry : nonLocalValues.toArray(new ValueEntry[0])) {
+      propagateNonLocal(entry);
+    }
+  }
+  if (!mutatesGlobalState()) {
+    for (    ValueEntry entry : modifiedLocals.toArray(new ValueEntry[0])) {
+      propagateModified(entry);
+    }
+  }
+  if (isInformationStable()) {
+    clearLocalityState();
+  }
+}

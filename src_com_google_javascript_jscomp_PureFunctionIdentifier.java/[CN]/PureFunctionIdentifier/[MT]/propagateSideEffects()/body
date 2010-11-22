@@ -1,9 +1,9 @@
 {
-  DiGraph<FunctionInformation,Node> sideEffectGraph=new LinkedDirectedGraph<FunctionInformation,Node>();
-  for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
+  DiGraph<FunctionSideEffectData,Node> sideEffectGraph=new LinkedDirectedGraph<FunctionSideEffectData,Node>();
+  for (  FunctionSideEffectData functionInfo : functionSideEffectMap.values()) {
     sideEffectGraph.createNode(functionInfo);
   }
-  for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
+  for (  FunctionSideEffectData functionInfo : functionSideEffectMap.values()) {
     if (!functionInfo.mayHaveSideEffects()) {
       continue;
     }
@@ -16,14 +16,14 @@
       }
       for (      Definition def : defs) {
         Node defValue=def.getRValue();
-        FunctionInformation dep=functionSideEffectMap.get(defValue);
+        FunctionSideEffectData dep=functionSideEffectMap.get(defValue);
         Preconditions.checkNotNull(dep);
         sideEffectGraph.connect(dep,callSite,functionInfo);
       }
     }
   }
   FixedPointGraphTraversal.newTraversal(new SideEffectPropagationCallback()).computeFixedPoint(sideEffectGraph);
-  for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
+  for (  FunctionSideEffectData functionInfo : functionSideEffectMap.values()) {
     if (functionInfo.mayBePure()) {
       functionInfo.setIsPure();
     }

@@ -1,0 +1,35 @@
+{
+  if (NodeUtil.isName(lhs)) {
+    Var var=scope.getVar(lhs.getString());
+    if (var == null || var.scope != scope) {
+      sideEffectInfo.setTaintsGlobalState();
+    }
+ else {
+      Preconditions.checkState(NodeUtil.isAssignmentOp(op) || isIncDec(op) || op.getType() == Token.DELPROP);
+      if (rhs != null && NodeUtil.isAssign(op) && !analyzeSet(new NameValueEntry(lhs),rhs,sideEffectInfo)) {
+        sideEffectInfo.addNonLocalValue(var);
+      }
+    }
+  }
+ else   if (NodeUtil.isGet(lhs)) {
+    if (NodeUtil.isThis(lhs.getFirstChild())) {
+      sideEffectInfo.setTaintsThis();
+    }
+ else {
+      Var var=null;
+      Node objectNode=lhs.getFirstChild();
+      if (NodeUtil.isName(objectNode)) {
+        var=scope.getVar(objectNode.getString());
+      }
+      if (var == null || var.scope != scope) {
+        sideEffectInfo.setTaintsUnknown();
+      }
+ else {
+        sideEffectInfo.addModified(var);
+      }
+    }
+  }
+ else {
+    sideEffectInfo.setTaintsUnknown();
+  }
+}

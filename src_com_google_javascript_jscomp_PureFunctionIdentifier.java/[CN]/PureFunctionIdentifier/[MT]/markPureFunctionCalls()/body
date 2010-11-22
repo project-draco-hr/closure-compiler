@@ -11,20 +11,20 @@
  else {
       flags.clearAllFlags();
       for (      Definition def : defs) {
-        FunctionInformation functionInfo=functionSideEffectMap.get(def.getRValue());
+        FunctionSideEffectData functionInfo=functionSideEffectMap.get(def.getRValue());
         Preconditions.checkNotNull(functionInfo);
         if (functionInfo.mutatesGlobalState()) {
           flags.setMutatesGlobalState();
         }
-        if (functionInfo.functionThrows) {
+        if (functionInfo.functionThrows()) {
           flags.setThrows();
         }
         if (!NodeUtil.isNew(callNode)) {
-          if (functionInfo.taintsThis) {
+          if (functionInfo.mutatesThis()) {
             flags.setMutatesThis();
           }
         }
-        if (functionInfo.taintsReturn) {
+        if (functionInfo.hasNonLocalReturnValue()) {
           flags.setReturnsTainted();
         }
         if (flags.areAllFlagsSet()) {

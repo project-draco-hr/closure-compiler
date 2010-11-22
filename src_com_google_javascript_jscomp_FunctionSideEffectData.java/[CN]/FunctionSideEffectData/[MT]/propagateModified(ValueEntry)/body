@@ -1,0 +1,33 @@
+{
+  Preconditions.checkState(nonLocalValues != null);
+  Preconditions.checkState(modifiedLocals != null);
+  boolean changed=false;
+  if (nonLocalValues != null && nonLocalValues.contains(value)) {
+    if (!mutatesGlobalState()) {
+      setTaintsUnknown();
+      changed=true;
+    }
+  }
+ else   if (value == KeywordValueEntry.THIS) {
+    if (!taintsThis) {
+      setTaintsThis();
+      changed=true;
+    }
+  }
+ else   if (value == KeywordValueEntry.ARGUMENTS) {
+    if (!taintsArguments) {
+      setTaintsArguments();
+      changed=true;
+    }
+  }
+  Collection<ValueEntry> dependents=getValueInfluenceMap().get(value);
+  if (dependents != null) {
+    for (    ValueEntry dependent : dependents) {
+      if (!modifiedLocals.contains(dependent)) {
+        modifiedLocals.add(dependent);
+        changed=propagateModified(dependent) || changed;
+      }
+    }
+  }
+  return changed;
+}

@@ -1,0 +1,27 @@
+{
+  Preconditions.checkState(nonLocalValues != null);
+  Preconditions.checkState(modifiedLocals != null);
+  boolean changed=false;
+  if (modifiedLocals.contains(value)) {
+    if (!mutatesGlobalState()) {
+      setTaintsGlobalState();
+      changed=true;
+    }
+  }
+  if (value == KeywordValueEntry.RETURN) {
+    if (!taintsReturn) {
+      setTaintsReturn();
+      changed=true;
+    }
+  }
+  Collection<ValueEntry> dependents=getValueInfluenceMap().get(value);
+  if (dependents != null) {
+    for (    ValueEntry dependent : dependents) {
+      if (!nonLocalValues.contains(dependent)) {
+        nonLocalValues.add(dependent);
+        changed=propagateNonLocal(dependent) || changed;
+      }
+    }
+  }
+  return changed;
+}
