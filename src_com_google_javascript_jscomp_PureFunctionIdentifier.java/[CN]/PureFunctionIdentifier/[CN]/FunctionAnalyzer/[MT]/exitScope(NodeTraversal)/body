@@ -1,7 +1,27 @@
 {
-  if (t.inGlobalScope() || inExterns) {
+  if (t.inGlobalScope()) {
     return;
   }
-  FunctionSideEffectData sideEffectInfo=functionSideEffectMap.get(t.getScopeRoot());
-  sideEffectInfo.normalizeValueMaps();
+  FunctionInformation sideEffectInfo=functionSideEffectMap.get(t.getScopeRoot());
+  if (sideEffectInfo.mutatesGlobalState()) {
+    sideEffectInfo.resetLocalVars();
+    return;
+  }
+  for (Iterator<Var> i=t.getScope().getVars(); i.hasNext(); ) {
+    Var v=i.next();
+    boolean localVar=false;
+    if (v.getParentNode().getType() == Token.VAR) {
+      sideEffectInfo.knownLocals.add(v.getName());
+      localVar=true;
+    }
+    if (!localVar || sideEffectInfo.blacklisted.contains(v)) {
+      if (sideEffectInfo.taintedLocals.contains(v)) {
+        sideEffectInfo.setTaintsUnknown();
+        sideEffectInfo.resetLocalVars();
+        break;
+      }
+    }
+  }
+  sideEffectInfo.taintedLocals=null;
+  sideEffectInfo.blacklisted=null;
 }

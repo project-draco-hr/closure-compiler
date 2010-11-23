@@ -1,0 +1,37 @@
+{
+  Preconditions.checkArgument(callSite.getType() == Token.CALL || callSite.getType() == Token.NEW);
+  boolean changed=false;
+  if (!caller.mutatesGlobalState() && callee.mutatesGlobalState()) {
+    caller.setTaintsGlobalState();
+    changed=true;
+  }
+  if (!caller.functionThrows() && callee.functionThrows()) {
+    caller.setFunctionThrows();
+    changed=true;
+  }
+  if (callee.mutatesThis()) {
+    if (callSite.getType() != Token.NEW) {
+      Node objectNode=getCallThisObject(callSite);
+      if (objectNode != null && NodeUtil.isName(objectNode) && !isCallOrApply(callSite)) {
+        String name=objectNode.getString();
+        if (!caller.mutatesGlobalState()) {
+          caller.setTaintsGlobalState();
+          changed=true;
+        }
+      }
+ else       if (objectNode != null && NodeUtil.isThis(objectNode)) {
+        if (!caller.mutatesThis()) {
+          caller.setTaintsThis();
+          changed=true;
+        }
+      }
+ else       if (objectNode != null && NodeUtil.evaluatesToLocalValue(objectNode) && !isCallOrApply(callSite)) {
+      }
+ else       if (!caller.mutatesGlobalState()) {
+        caller.setTaintsGlobalState();
+        changed=true;
+      }
+    }
+  }
+  return changed;
+}
