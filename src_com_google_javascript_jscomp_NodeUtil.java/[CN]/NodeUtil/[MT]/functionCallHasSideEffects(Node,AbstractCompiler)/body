@@ -13,6 +13,9 @@
     }
   }
  else   if (nameNode.getType() == Token.GETPROP) {
+    if (callNode.hasOneChild() && OBJECT_METHODS_WITHOUT_SIDEEFFECTS.contains(nameNode.getLastChild().getString())) {
+      return false;
+    }
     if (callNode.isOnlyModifiesThisCall() && evaluatesToLocalValue(nameNode.getFirstChild())) {
       return false;
     }
