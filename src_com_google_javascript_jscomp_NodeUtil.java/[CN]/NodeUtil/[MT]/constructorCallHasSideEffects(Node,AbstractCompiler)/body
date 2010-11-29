@@ -1,5 +1,7 @@
 {
-  Preconditions.checkArgument(callNode.getType() == Token.NEW,"Expected NEW node, got " + Token.name(callNode.getType()));
+  if (callNode.getType() != Token.NEW) {
+    throw new IllegalStateException("Expected NEW node, got " + Token.name(callNode.getType()));
+  }
   if (callNode.isNoSideEffectsCall()) {
     return false;
   }

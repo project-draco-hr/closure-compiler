@@ -1,0 +1,19 @@
+{
+  Preconditions.checkState(NodeUtil.isFunction(function));
+  if (NodeUtil.isFunctionDeclaration(function)) {
+    return function.getFirstChild();
+  }
+ else {
+    Node parent=function.getParent();
+    if (NodeUtil.isVarDeclaration(parent)) {
+      return parent;
+    }
+ else     if (NodeUtil.isAssign(parent)) {
+      return parent.getFirstChild();
+    }
+ else     if (NodeUtil.isObjectLitKey(parent,parent.getParent())) {
+      return parent;
+    }
+  }
+  return null;
+}

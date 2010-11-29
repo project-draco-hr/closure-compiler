@@ -1,0 +1,29 @@
+{
+  if (DefinitionsRemover.isDefinitionNode(node)) {
+    DefinitionSite defSite=definitionSiteMap.get(node);
+    if (defSite != null) {
+      Definition def=defSite.definition;
+      String name=getSimplifiedName(def.getLValue());
+      if (name != null) {
+        this.definitionSiteMap.remove(node);
+        this.nameDefinitionMultimap.remove(name,node);
+      }
+    }
+  }
+ else {
+    Node useSite=node;
+    if (NodeUtil.isGetProp(useSite)) {
+      String propName=useSite.getLastChild().getString();
+      if (propName.equals("apply") || propName.equals("call")) {
+        useSite=useSite.getFirstChild();
+      }
+    }
+    String name=getSimplifiedName(useSite);
+    if (name != null) {
+      this.nameUseSiteMultimap.remove(name,new UseSite(useSite,null));
+    }
+  }
+  for (  Node child : node.children()) {
+    removeReferences(child);
+  }
+}

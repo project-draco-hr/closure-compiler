@@ -4,7 +4,7 @@
   Definition definition=defSite.definition;
   Collection<UseSite> useSites=defFinder.getUseSites(definition);
   for (  UseSite site : useSites) {
-    Preconditions.checkState(isCallSite(site.node));
+    Preconditions.checkState(SimpleDefinitionFinder.isCallOrNewSite(site));
     Node call=site.node.getParent();
     Node cur=call.getFirstChild();
     if (firstCall) {
@@ -16,7 +16,7 @@
     }
   }
   for (  UseSite site : useSites) {
-    Preconditions.checkState(isCallSite(site.node));
+    Preconditions.checkState(SimpleDefinitionFinder.isCallOrNewSite(site));
     Node call=site.node.getParent();
     optimizeCallSite(parameters,call);
   }

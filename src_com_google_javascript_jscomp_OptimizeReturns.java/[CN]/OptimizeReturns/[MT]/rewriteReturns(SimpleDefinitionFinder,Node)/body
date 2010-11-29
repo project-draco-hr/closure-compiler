@@ -3,8 +3,12 @@
   NodeUtil.visitPostOrder(fnNode.getLastChild(),new NodeUtil.Visitor(){
     @Override public void visit(    Node node){
       if (node.getType() == Token.RETURN && node.hasOneChild()) {
+        boolean keepValue=NodeUtil.mayHaveSideEffects(node.getFirstChild(),compiler);
+        if (!keepValue) {
+          defFinder.removeReferences(node.getFirstChild());
+        }
         Node result=node.removeFirstChild();
-        if (NodeUtil.mayHaveSideEffects(result,compiler)) {
+        if (keepValue) {
           node.getParent().addChildBefore(new Node(Token.EXPR_RESULT,result).copyInformationFrom(result),node);
         }
         compiler.reportCodeChange();
