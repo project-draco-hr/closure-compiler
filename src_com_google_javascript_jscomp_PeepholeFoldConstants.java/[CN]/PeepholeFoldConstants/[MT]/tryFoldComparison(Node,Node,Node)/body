@@ -17,41 +17,18 @@ case Token.VOID:
       return n;
     }
  else {
-      boolean nullRight=(Token.NULL == right.getType());
-      boolean equivalent=undefinedRight || nullRight;
-switch (op) {
-case Token.EQ:
-        result=equivalent;
-      break;
-case Token.NE:
-    result=!equivalent;
+      result=compareToUndefined(right,op);
+    }
   break;
-case Token.SHEQ:
-result=undefinedRight;
-break;
-case Token.SHNE:
-result=!undefinedRight;
-break;
-case Token.LT:
-case Token.GT:
-case Token.LE:
-case Token.GE:
-result=false;
-break;
-default :
-return n;
-}
-}
-break;
 case Token.NULL:
 if (undefinedRight) {
-result=(op == Token.EQ);
-break;
+  result=compareToUndefined(left,op);
+  break;
 }
 case Token.TRUE:
 case Token.FALSE:
 if (undefinedRight) {
-result=false;
+result=compareToUndefined(left,op);
 break;
 }
 case Token.THIS:
@@ -74,7 +51,7 @@ return n;
 break;
 case Token.STRING:
 if (undefinedRight) {
-result=false;
+result=compareToUndefined(left,op);
 break;
 }
 if (Token.STRING != right.getType()) {
@@ -95,7 +72,7 @@ return n;
 break;
 case Token.NUMBER:
 if (undefinedRight) {
-result=false;
+result=compareToUndefined(left,op);
 break;
 }
 if (Token.NUMBER != right.getType()) {
@@ -132,30 +109,7 @@ case Token.NAME:
 if (rightLiteral) {
 boolean undefinedLeft=(left.getString().equals("undefined"));
 if (undefinedLeft) {
-boolean nullRight=(Token.NULL == right.getType());
-boolean equivalent=undefinedRight || nullRight;
-switch (op) {
-case Token.EQ:
-result=equivalent;
-break;
-case Token.NE:
-result=!equivalent;
-break;
-case Token.SHEQ:
-result=undefinedRight;
-break;
-case Token.SHNE:
-result=!undefinedRight;
-break;
-case Token.LT:
-case Token.GT:
-case Token.LE:
-case Token.GE:
-result=false;
-break;
-default :
-return n;
-}
+result=compareToUndefined(right,op);
 break;
 }
 }

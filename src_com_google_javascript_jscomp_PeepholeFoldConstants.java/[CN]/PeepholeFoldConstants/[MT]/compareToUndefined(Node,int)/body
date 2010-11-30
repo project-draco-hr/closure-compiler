@@ -1,0 +1,29 @@
+{
+  boolean result;
+  boolean valueUndefined=((Token.NAME == value.getType() && value.getString().equals("undefined")) || (Token.VOID == value.getType() && NodeUtil.isLiteralValue(value.getFirstChild(),false)));
+  boolean valueNull=(Token.NULL == value.getType());
+  boolean equivalent=valueUndefined || valueNull;
+switch (op) {
+case Token.EQ:
+    result=equivalent;
+  break;
+case Token.NE:
+result=!equivalent;
+break;
+case Token.SHEQ:
+result=valueUndefined;
+break;
+case Token.SHNE:
+result=!valueUndefined;
+break;
+case Token.LT:
+case Token.GT:
+case Token.LE:
+case Token.GE:
+result=false;
+break;
+default :
+throw new IllegalStateException("unexpected.");
+}
+return result;
+}
