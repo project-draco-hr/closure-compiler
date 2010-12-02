@@ -1,5 +1,11 @@
 {
   List<String> names=Lists.newArrayList("Error(?)","goog.debug.Trace.startTracer(*)","goog.debug.Logger.getLogger(?)","goog.debug.Logger.prototype.info(?)");
   pass=new ReplaceStrings(compiler,"`",names);
-  return pass;
+  return new CompilerPass(){
+    public void process(    Node externs,    Node js){
+      new CollapseProperties(compiler,true,true).process(externs,js);
+      pass.process(externs,js);
+    }
+  }
+;
 }
