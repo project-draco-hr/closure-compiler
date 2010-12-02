@@ -26,10 +26,10 @@
       setDeferredType(n,type);
     }
     CompilerInput input=compiler.getInput(sourceName);
-    scopeToDeclareIn.declare(variableName,n,type,input,inferred);
+    boolean isExtern=input.isExtern();
+    Var newVar=scopeToDeclareIn.declare(variableName,n,type,input,inferred);
     if (shouldDeclareOnGlobalThis) {
       ObjectType globalThis=typeRegistry.getNativeObjectType(JSTypeNative.GLOBAL_THIS);
-      boolean isExtern=input.isExtern();
       if (inferred) {
         globalThis.defineInferredProperty(variableName,type == null ? getNativeType(JSTypeNative.NO_TYPE) : type,isExtern);
       }
@@ -37,11 +37,14 @@
         globalThis.defineDeclaredProperty(variableName,type,isExtern);
       }
     }
-    if (scopeToDeclareIn.isGlobal() && type instanceof FunctionType) {
+    if (type instanceof FunctionType && !type.isEmptyType()) {
       FunctionType fnType=(FunctionType)type;
-      if (fnType.isConstructor() || fnType.isInterface()) {
+      if ((fnType.isConstructor() || fnType.isInterface()) && !fnType.equals(getNativeType(U2U_CONSTRUCTOR_TYPE))) {
         FunctionType superClassCtor=fnType.getSuperClassConstructor();
-        scopeToDeclareIn.declare(variableName + ".prototype",n,fnType.getPrototype(),compiler.getInput(sourceName),superClassCtor == null || superClassCtor.getInstanceType().equals(getNativeType(OBJECT_TYPE)));
+        scopeToDeclareIn.declare(variableName + ".prototype",n,fnType.getPrototype(),input,superClassCtor == null || superClassCtor.getInstanceType().equals(getNativeType(OBJECT_TYPE)));
+        if (newVar.getInitialValue() == null && !isExtern) {
+          compiler.report(JSError.make(sourceName,n,fnType.isConstructor() ? CTOR_INITIALIZER : IFACE_INITIALIZER,variableName));
+        }
       }
     }
   }
