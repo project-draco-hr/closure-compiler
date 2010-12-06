@@ -1,0 +1,19 @@
+{
+  Definition definition=getFunctionDefinition(function);
+  for (  UseSite site : defFinder.getUseSites(definition)) {
+    if (!isModifableCallSite(site)) {
+      continue;
+    }
+    Node arg=NodeUtil.getArgumentForCallOrNew(site.node.getParent(),argIndex);
+    while (arg != null) {
+      Node next=arg.getNext();
+      if (next != null && !NodeUtil.mayHaveSideEffects(next)) {
+        arg.getParent().removeChildAfter(arg);
+        compiler.reportCodeChange();
+      }
+ else {
+        arg=next;
+      }
+    }
+  }
+}

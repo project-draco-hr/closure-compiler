@@ -1,19 +1,23 @@
 {
   Node function=fnScope.getRootNode();
   Preconditions.checkState(function.getType() == Token.FUNCTION);
-  Node argList=function.getFirstChild().getNext();
-  Node lastArg;
-  while ((lastArg=argList.getLastChild()) != null) {
-    Var var=fnScope.getVar(lastArg.getString());
-    if (!referenced.contains(var)) {
-      if (var == null) {
-        throw new IllegalStateException("Function parameter not declared in scope: " + lastArg.getString());
+  Node argList=getFunctionArgList(function);
+  boolean modifyCallers=modifyCallSites && callSiteOptimizer.canModifyCallers(function);
+  if (!modifyCallers) {
+    Node lastArg;
+    while ((lastArg=argList.getLastChild()) != null) {
+      Var var=fnScope.getVar(lastArg.getString());
+      if (!referenced.contains(var)) {
+        Preconditions.checkNotNull(var == null);
+        argList.removeChild(lastArg);
+        compiler.reportCodeChange();
       }
-      argList.removeChild(lastArg);
-      compiler.reportCodeChange();
-    }
  else {
-      break;
+        break;
+      }
     }
+  }
+ else {
+    callSiteOptimizer.optimize(fnScope,referenced);
   }
 }
