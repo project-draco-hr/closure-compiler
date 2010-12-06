@@ -4,17 +4,25 @@
   }
   Node node=newNode(Token.OBJECTLIT);
   for (  ObjectProperty el : literalNode.getElements()) {
+    if (!config.acceptES5) {
+      if (el.isGetter()) {
+        reportGetter(el);
+        continue;
+      }
+ else       if (el.isSetter()) {
+        reportSetter(el);
+        continue;
+      }
+    }
+    Node key=transformAsString(el.getLeft());
     if (el.isGetter()) {
-      reportGetter(el);
+      key.setType(Token.GET);
     }
  else     if (el.isSetter()) {
-      reportSetter(el);
+      key.setType(Token.SET);
     }
- else {
-      Node key=transformAsString(el.getLeft());
-      key.addChildToFront(transform(el.getRight()));
-      node.addChildToBack(key);
-    }
+    key.addChildToFront(transform(el.getRight()));
+    node.addChildToBack(key);
   }
   return node;
 }
