@@ -8,9 +8,7 @@
     JSType iParameterType=getJSType(iParameter).restrictByNotNullOrUndefined();
     if (iParameterType.isTemplateType()) {
       JSType iArgumentType=null;
-      boolean foundTemplateTypeArgument=false;
       if (i + 1 < childCount) {
-        foundTemplateTypeArgument=true;
         Node iArgument=n.getChildAtIndex(i + 1);
         iArgumentType=getJSType(iArgument).restrictByNotNullOrUndefined();
         if (!(iArgumentType instanceof ObjectType)) {
@@ -32,10 +30,13 @@
             Node jArgument=n.getChildAtIndex(j + 1);
             JSType jArgumentType=getJSType(jArgument);
             if (jArgument.getType() == Token.FUNCTION && jArgumentType instanceof FunctionType) {
-              if (foundTemplateTypeArgument) {
+              if (iArgumentType != null && !iArgumentType.isNoType()) {
                 FunctionType jArgumentFnType=(FunctionType)jArgumentType;
                 if (jArgumentFnType.getTypeOfThis().isUnknownType()) {
                   jArgument.setJSType(registry.createFunctionTypeWithNewThisType(jArgumentFnType,(ObjectType)iArgumentType));
+                }
+                if (!NodeUtil.referencesThis(NodeUtil.getFunctionBody(jArgument))) {
+                  compiler.report(JSError.make(NodeUtil.getSourceName(n),n,FUNCTION_LITERAL_UNREAD_THIS));
                 }
               }
  else {
