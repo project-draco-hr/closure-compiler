@@ -1,5 +1,8 @@
 {
   Compiler compiler=new Compiler();
+  CompilerOptions options=new CompilerOptions();
+  options.languageIn=LanguageMode.ECMASCRIPT5;
+  compiler.initOptions(options);
   Node n=compiler.parseTestCode(js);
   if (checkTypes) {
     DefaultPassConfig passConfig=new DefaultPassConfig(null);
@@ -11,6 +14,6 @@
     CompilerPass inferTypes=passConfig.inferTypes.create(compiler);
     inferTypes.process(externs,n);
   }
-  assertEquals("Errors for: " + js,0,compiler.getErrorCount());
+  checkUnexpectedErrorsOrWarnings(compiler,0);
   return n;
 }
