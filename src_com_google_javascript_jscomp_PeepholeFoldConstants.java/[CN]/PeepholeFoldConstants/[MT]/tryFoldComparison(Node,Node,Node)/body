@@ -21,19 +21,14 @@ case Token.VOID:
     }
   break;
 case Token.NULL:
+case Token.TRUE:
+case Token.FALSE:
 if (undefinedRight) {
   result=compareToUndefined(left,op);
   break;
 }
-case Token.TRUE:
-case Token.FALSE:
-if (undefinedRight) {
-result=compareToUndefined(left,op);
-break;
-}
-case Token.THIS:
-int tt=right.getType();
-if (tt != Token.THIS && tt != Token.TRUE && tt != Token.FALSE && tt != Token.NULL) {
+int rhType=right.getType();
+if (rhType != Token.TRUE && rhType != Token.FALSE && rhType != Token.NULL) {
 return n;
 }
 switch (op) {
@@ -44,6 +39,35 @@ break;
 case Token.SHNE:
 case Token.NE:
 result=left.getType() != right.getType();
+break;
+case Token.GE:
+case Token.LE:
+case Token.GT:
+case Token.LT:
+Boolean compareResult=compareAsNumbers(op,left,right);
+if (compareResult != null) {
+result=compareResult;
+}
+ else {
+return n;
+}
+break;
+default :
+return n;
+}
+break;
+case Token.THIS:
+if (right.getType() != Token.THIS) {
+return n;
+}
+switch (op) {
+case Token.SHEQ:
+case Token.EQ:
+result=true;
+break;
+case Token.SHNE:
+case Token.NE:
+result=false;
 break;
 default :
 return n;
@@ -78,31 +102,12 @@ break;
 if (Token.NUMBER != right.getType()) {
 return n;
 }
-double lv=left.getDouble();
-double rv=right.getDouble();
-switch (op) {
-case Token.SHEQ:
-case Token.EQ:
-result=lv == rv;
-break;
-case Token.SHNE:
-case Token.NE:
-result=lv != rv;
-break;
-case Token.LE:
-result=lv <= rv;
-break;
-case Token.LT:
-result=lv < rv;
-break;
-case Token.GE:
-result=lv >= rv;
-break;
-case Token.GT:
-result=lv > rv;
-break;
-default :
-return n;
+Boolean compareResult=compareAsNumbers(op,left,right);
+if (compareResult != null) {
+result=compareResult;
+}
+ else {
+return null;
 }
 break;
 case Token.NAME:
