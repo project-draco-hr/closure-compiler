@@ -1,10 +1,15 @@
 {
 switch (n.getType()) {
-case Token.NAME:
 case Token.STRING:
     return n.getString();
+case Token.NAME:
+  String name=n.getString();
+if ("undefined".equals(name) || "Infinity".equals(name) || "NaN".equals(name)) {
+  return name;
+}
+break;
 case Token.NUMBER:
-  double value=n.getDouble();
+double value=n.getDouble();
 long longValue=(long)value;
 if (longValue == value) {
 return Long.toString(longValue);
