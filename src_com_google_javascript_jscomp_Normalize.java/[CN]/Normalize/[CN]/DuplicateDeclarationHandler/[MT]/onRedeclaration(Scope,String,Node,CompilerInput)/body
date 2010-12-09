@@ -1,9 +1,17 @@
 {
   Preconditions.checkState(n.getType() == Token.NAME);
+  Node parent=n.getParent();
   Var v=s.getVar(name);
+  if (v != null && s.isGlobal()) {
+    if (v.isExtern() && !input.isExtern()) {
+      if (hasOkDuplicateDeclaration.add(v)) {
+        return;
+      }
+    }
+  }
   if (v != null && v.getParentNode().getType() == Token.CATCH) {
     name=MakeDeclaredNamesUnique.ContextualRenameInverter.getOrginalName(name);
-    compiler.report(JSError.make(NodeUtil.getSourceName(nodeWithLineNumber),nodeWithLineNumber,CATCH_BLOCK_VAR_ERROR,name));
+    compiler.report(JSError.make(input.getName(),n,CATCH_BLOCK_VAR_ERROR,name));
   }
  else   if (v != null && parent.getType() == Token.FUNCTION) {
     if (v.getParentNode().getType() == Token.VAR) {
@@ -14,6 +22,6 @@
   }
  else   if (parent.getType() == Token.VAR) {
     Preconditions.checkState(parent.hasOneChild());
-    replaceVarWithAssignment(n,parent,gramps);
+    replaceVarWithAssignment(n,parent,parent.getParent());
   }
 }

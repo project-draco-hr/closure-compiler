@@ -1,4 +1,5 @@
 {
+  Node parent=n.getParent();
   if (scope.isGlobal()) {
     Scope.Var origVar=scope.getVar(name);
     Node origParent=origVar.getParentNode();
@@ -12,10 +13,10 @@
     }
     allowDupe=info != null && info.getSuppressions().contains("duplicate");
     if (!allowDupe) {
-      compiler.report(JSError.make(sourceName,nodeWithLineNumber,VAR_MULTIPLY_DECLARED_ERROR,name,(origVar.input != null ? origVar.input.getName() : "??")));
+      compiler.report(JSError.make(sourceName,n,VAR_MULTIPLY_DECLARED_ERROR,name,(origVar.input != null ? origVar.input.getName() : "??")));
     }
   }
  else   if (name.equals(ARGUMENTS) && !NodeUtil.isVarDeclaration(n)) {
-    compiler.report(JSError.make(sourceName,nodeWithLineNumber,VAR_ARGUMENTS_SHADOWED_ERROR));
+    compiler.report(JSError.make(sourceName,n,VAR_ARGUMENTS_SHADOWED_ERROR));
   }
 }

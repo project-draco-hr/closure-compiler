@@ -11,10 +11,10 @@
       global.aliasAccessor=true;
     }
   }
-  for (  Node globalUse : globalUses) {
-    replaceGlobalUse(globalUse);
-  }
   for (  Symbol global : globals.values()) {
+    for (    Node globalUse : global.uses) {
+      replaceGlobalUse(globalUse);
+    }
     if (global.aliasAccessor) {
       addGlobalAliasNode(global,getAddingRoot(global.deepestModuleAccess));
     }

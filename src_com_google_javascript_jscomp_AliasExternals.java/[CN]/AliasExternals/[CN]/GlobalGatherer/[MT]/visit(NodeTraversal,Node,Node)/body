@@ -7,6 +7,9 @@
     }
     Symbol global=globals.get(name);
     if (global != null) {
+      if (n.getParent().getType() == Token.VAR || n.getParent().getType() == Token.FUNCTION) {
+        globals.remove(name);
+      }
       boolean isFirst=parent.getFirstChild() == n;
       if ((NodeUtil.isAssignmentOp(parent) && isFirst) || (parent.getType() == Token.NEW && isFirst) || parent.getType() == Token.INC || parent.getType() == Token.DEC) {
         global.recordMutator(t);
@@ -14,7 +17,7 @@
  else {
         global.recordAccessor(t);
       }
-      globalUses.add(n);
+      global.uses.add(n);
     }
   }
 }
