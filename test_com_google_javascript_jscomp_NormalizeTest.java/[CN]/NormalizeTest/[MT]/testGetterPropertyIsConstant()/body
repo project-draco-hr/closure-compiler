@@ -1,0 +1,9 @@
+{
+  testSame("var a = { get CONST() {return 3} }; " + "var b = a.CONST;");
+  Node n=getLastCompiler().getRoot();
+  Set<Node> constantNodes=findNodesWithProperty(n,Node.IS_CONSTANT_NAME);
+  assertEquals(2,constantNodes.size());
+  for (  Node hasProp : constantNodes) {
+    assertEquals("CONST",hasProp.getString());
+  }
+}
