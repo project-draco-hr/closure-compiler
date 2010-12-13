@@ -1,6 +1,6 @@
 {
   int i=0;
-  Set<JSType> allObjects=Sets.newHashSet();
+  List<JSType> allObjects=Lists.newArrayList();
   for (  JSType type : types) {
     String propName="ALF" + i++;
     if (type instanceof ObjectType) {
@@ -8,11 +8,14 @@
       objType.defineDeclaredProperty(propName,UNKNOWN_TYPE,false);
       objType.defineDeclaredProperty("allHaz",UNKNOWN_TYPE,false);
       assertTypeEquals(type,registry.getGreatestSubtypeWithProperty(type,propName));
-      assertEquals(Sets.newHashSet(type),registry.getTypesWithProperty(propName));
+      List<JSType> typesWithProp=Lists.newArrayList(registry.getTypesWithProperty(propName));
+      String message=type.toString();
+      assertEquals(message,1,typesWithProp.size());
+      assertTypeEquals(type,typesWithProp.get(0));
       assertTypeEquals(NO_TYPE,registry.getGreatestSubtypeWithProperty(type,"GRRR"));
       allObjects.add(type);
     }
   }
-  assertEquals(registry.getTypesWithProperty("GRRR"),Sets.newHashSet(NO_TYPE));
-  assertEquals(allObjects,registry.getTypesWithProperty("allHaz"));
+  assertTypeListEquals(registry.getTypesWithProperty("GRRR"),Lists.newArrayList(NO_TYPE));
+  assertTypeListEquals(allObjects,registry.getTypesWithProperty("allHaz"));
 }

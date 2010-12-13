@@ -1,0 +1,28 @@
+{
+  if (isAllType) {
+    return registry.getNativeType(ALL_TYPE);
+  }
+ else   if (isNativeUnknownType) {
+    if (areAllUnknownsChecked) {
+      return registry.getNativeType(CHECKED_UNKNOWN_TYPE);
+    }
+ else {
+      return registry.getNativeType(UNKNOWN_TYPE);
+    }
+  }
+ else {
+    int size=alternates.size();
+    if (size > MAX_UNION_SIZE) {
+      return registry.getNativeType(UNKNOWN_TYPE);
+    }
+ else     if (size > 1) {
+      return null;
+    }
+ else     if (size == 1) {
+      return alternates.iterator().next();
+    }
+ else {
+      return registry.getNativeType(NO_TYPE);
+    }
+  }
+}

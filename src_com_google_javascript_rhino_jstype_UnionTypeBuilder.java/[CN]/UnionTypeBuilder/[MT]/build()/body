@@ -1,32 +1,8 @@
 {
   if (result == null) {
-    if (isAllType) {
-      result=registry.getNativeType(ALL_TYPE);
-    }
- else     if (isNativeUnknownType) {
-      if (areAllUnknownsChecked) {
-        result=registry.getNativeType(CHECKED_UNKNOWN_TYPE);
-      }
- else {
-        result=registry.getNativeType(UNKNOWN_TYPE);
-      }
-    }
- else {
-      int size=alternates.size();
-      if (size > MAX_UNION_SIZE) {
-        result=registry.getNativeType(UNKNOWN_TYPE);
-      }
- else {
-        if (size > 1) {
-          result=new UnionType(registry,getAlternateListCopy());
-        }
- else         if (size == 1) {
-          result=alternates.iterator().next();
-        }
- else {
-          result=registry.getNativeType(NO_TYPE);
-        }
-      }
+    result=reduceAlternatesWithoutUnion();
+    if (result == null) {
+      result=new UnionType(registry,getAlternateListCopy());
     }
   }
   return result;

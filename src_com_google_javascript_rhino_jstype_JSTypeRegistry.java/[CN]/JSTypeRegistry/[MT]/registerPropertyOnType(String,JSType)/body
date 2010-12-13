@@ -1,23 +1,10 @@
 {
-  ObjectType owner=null;
-  if (type instanceof ObjectType) {
-    owner=(ObjectType)type;
-  }
- else   if (getNativeType(ALL_TYPE).isSubtype(type)) {
-    owner=getNativeObjectType(JSTypeNative.OBJECT_TYPE);
-  }
- else   if (type instanceof UnionType) {
-    for (    JSType alternate : ((UnionType)type).getAlternates()) {
-      registerPropertyOnType(propertyName,alternate);
-    }
-  }
-  if (owner == null) {
-    return;
-  }
-  Set<ObjectType> typeSet=typesIndexedByProperty.get(propertyName);
+  UnionTypeBuilder typeSet=typesIndexedByProperty.get(propertyName);
   if (typeSet == null) {
-    typesIndexedByProperty.put(propertyName,typeSet=new LinkedHashSet<ObjectType>());
+    typeSet=new UnionTypeBuilder(this);
+    typesIndexedByProperty.put(propertyName,typeSet);
   }
+  typeSet.addAlternate(type);
+  addReferenceTypeIndexedByProperty(propertyName,type);
   greatestSubtypeByProperty.remove(propertyName);
-  typeSet.add(owner);
 }

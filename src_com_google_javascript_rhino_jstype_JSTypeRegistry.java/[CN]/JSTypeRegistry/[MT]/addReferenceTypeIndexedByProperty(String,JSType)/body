@@ -1,0 +1,19 @@
+{
+  if (type instanceof ObjectType && ((ObjectType)type).hasReferenceName()) {
+    Map<String,ObjectType> typeSet=eachRefTypeIndexedByProperty.get(propertyName);
+    if (typeSet == null) {
+      typeSet=Maps.newHashMap();
+      eachRefTypeIndexedByProperty.put(propertyName,typeSet);
+    }
+    ObjectType objType=(ObjectType)type;
+    typeSet.put(objType.getReferenceName(),objType);
+  }
+ else   if (type instanceof NamedType) {
+    addReferenceTypeIndexedByProperty(propertyName,((NamedType)type).getReferencedType());
+  }
+ else   if (type instanceof UnionType) {
+    for (    JSType alternate : ((UnionType)type).getAlternates()) {
+      addReferenceTypeIndexedByProperty(propertyName,alternate);
+    }
+  }
+}
