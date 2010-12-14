@@ -2,6 +2,9 @@
   Deque<Name> workList=new ArrayDeque<Name>(namespace.getNameForest());
   while (!workList.isEmpty()) {
     Name name=workList.pop();
+    if (name.type == Name.Type.GET || name.type == Name.Type.SET) {
+      continue;
+    }
     if (name.globalSets == 1 && name.localSets == 0 && name.aliasingGets > 0) {
       List<Ref> refs=Lists.newArrayList(name.refs);
       for (      Ref ref : refs) {

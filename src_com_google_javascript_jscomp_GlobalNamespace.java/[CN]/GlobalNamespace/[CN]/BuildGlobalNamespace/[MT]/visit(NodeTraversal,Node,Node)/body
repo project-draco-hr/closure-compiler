@@ -10,6 +10,8 @@
   Name.Type type=Name.Type.OTHER;
   boolean isPropAssign=false;
 switch (n.getType()) {
+case Token.GET:
+case Token.SET:
 case Token.STRING:
     name=null;
   if (parent != null && parent.getType() == Token.OBJECTLIT) {
@@ -17,7 +19,19 @@ case Token.STRING:
   }
 if (name == null) return;
 isSet=true;
+switch (n.getType()) {
+case Token.STRING:
 type=getValueType(n.getFirstChild());
+break;
+case Token.GET:
+type=Name.Type.GET;
+break;
+case Token.SET:
+type=Name.Type.SET;
+break;
+default :
+throw new IllegalStateException("unexpected:" + n);
+}
 break;
 case Token.NAME:
 if (parent != null) {
