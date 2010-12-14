@@ -7,7 +7,7 @@
   Node thenBranch=cond.getNext();
   Node elseBranch=thenBranch.getNext();
   if (elseBranch == null) {
-    if (isExpressBlock(thenBranch)) {
+    if (isFoldableExpressBlock(thenBranch)) {
       Node expr=getBlockExpression(thenBranch);
       if (isPropertyAssignmentInExpression(expr)) {
         return n;
@@ -54,8 +54,8 @@
     reportCodeChange();
     return returnNode;
   }
-  boolean thenBranchIsExpressionBlock=isExpressBlock(thenBranch);
-  boolean elseBranchIsExpressionBlock=isExpressBlock(elseBranch);
+  boolean thenBranchIsExpressionBlock=isFoldableExpressBlock(thenBranch);
+  boolean elseBranchIsExpressionBlock=isFoldableExpressBlock(elseBranch);
   if (thenBranchIsExpressionBlock && elseBranchIsExpressionBlock) {
     Node thenOp=getBlockExpression(thenBranch).getFirstChild();
     Node elseOp=getBlockExpression(elseBranch).getFirstChild();
