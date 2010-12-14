@@ -1,0 +1,17 @@
+{
+  final String CONTENTS="goog.provide('yes1');goog.provide('yes2');/*" + "goog.provide('no1');*/goog.provide('yes3');//goog.provide('no2');";
+  Collection<SymbolInfo> symbols=parser.parseFile(SRC_PATH,CONTENTS);
+  Iterator<SymbolInfo> i=symbols.iterator();
+  SymbolInfo symbolInfo=i.next();
+  assertEquals(symbolInfo.symbol,"yes1");
+  assertEquals(symbolInfo.functionName,"goog.provide");
+  symbolInfo=i.next();
+  assertEquals(symbolInfo.symbol,"yes2");
+  assertEquals(symbolInfo.functionName,"goog.provide");
+  symbolInfo=i.next();
+  assertEquals(symbolInfo.symbol,"yes3");
+  assertEquals(symbolInfo.functionName,"goog.provide");
+  assertEquals(symbols.size(),3);
+  assertEquals(0,errorManager.getErrorCount());
+  assertEquals(0,errorManager.getWarningCount());
+}

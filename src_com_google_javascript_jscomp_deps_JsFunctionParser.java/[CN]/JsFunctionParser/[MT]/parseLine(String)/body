@@ -1,0 +1,20 @@
+{
+  boolean hasFunctions=false;
+  boolean parseLine=false;
+  for (  String function : functionsToParse) {
+    if (line.indexOf(function) != -1) {
+      parseLine=true;
+      break;
+    }
+  }
+  if (parseLine) {
+    matcher.reset(line);
+    while (matcher.find()) {
+      hasFunctions=true;
+      String functionName=matcher.group(1);
+      String arg=parseJsString(matcher.group(2));
+      symbols.add(new SymbolInfo(functionName,arg));
+    }
+  }
+  return !shortcutMode || hasFunctions || CharMatcher.WHITESPACE.matchesAllOf(line);
+}

@@ -1,0 +1,14 @@
+{
+  final String CONTENTS=" // hi ! \n /* this is a comment */ " + "goog.provide('yes1');\n /* and another comment */ \n" + "goog.provide('yes2'); // include this\n"+ "function foo() {}\n"+ "goog.provide('no1');";
+  Collection<SymbolInfo> symbols=parser.parseFile(SRC_PATH,CONTENTS);
+  Iterator<SymbolInfo> i=symbols.iterator();
+  SymbolInfo symbolInfo=i.next();
+  assertEquals(symbolInfo.symbol,"yes1");
+  assertEquals(symbolInfo.functionName,"goog.provide");
+  symbolInfo=i.next();
+  assertEquals(symbolInfo.symbol,"yes2");
+  assertEquals(symbolInfo.functionName,"goog.provide");
+  assertEquals(symbols.size(),2);
+  assertEquals(0,errorManager.getErrorCount());
+  assertEquals(0,errorManager.getWarningCount());
+}
