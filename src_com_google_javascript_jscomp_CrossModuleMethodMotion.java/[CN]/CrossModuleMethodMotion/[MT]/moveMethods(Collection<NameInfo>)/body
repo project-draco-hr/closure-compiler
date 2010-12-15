@@ -21,7 +21,10 @@
       Property prop=(Property)symbol;
       Node value=prop.getValue();
       if (moduleGraph.dependsOn(deepestCommonModuleRef,prop.getModule()) && value.getType() == Token.FUNCTION) {
-        Node valueParent=prop.getValueParent();
+        Node valueParent=value.getParent();
+        if (valueParent.getType() == Token.GET || valueParent.getType() == Token.SET) {
+          continue;
+        }
         Node proto=prop.getPrototype();
         int stubId=idGenerator.newId();
         valueParent.replaceChild(value,new Node(Token.CALL,Node.newString(Token.NAME,STUB_METHOD_NAME),Node.newNumber(stubId)).copyInformationFromForTree(value));
