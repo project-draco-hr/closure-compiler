@@ -1,0 +1,13 @@
+{
+  JsonML jsonMLRoot=JsonMLUtil.parseString(jsonml);
+  Node astRoot=parseExpectedJs(js);
+  JsonMLAst ast=new JsonMLAst(jsonMLRoot);
+  Node resultAstRoot=ast.getAstRoot(null);
+  String explanation=resultAstRoot.checkTreeEquals(astRoot);
+  assertNull("JsonML converter returned an incorrect AST for " + js + ".\n"+ explanation,explanation);
+  jsonMLRoot=JsonMLUtil.parseString(jsonml);
+  Writer parser=new Writer();
+  JsonML resultJsonMLRoot=parser.processAst(astRoot);
+  explanation=JsonMLUtil.compare(resultJsonMLRoot,jsonMLRoot);
+  assertNull("AST converter returned an incorrect JsonML for " + js + ".\n"+ explanation,explanation);
+}
