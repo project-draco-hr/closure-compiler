@@ -1,0 +1,26 @@
+{
+  int type=n.getType();
+  if (type == Token.NAME) {
+    return n.getString();
+  }
+ else   if (type == Token.GETPROP) {
+    String left=getNameString(n.getFirstChild());
+    if (left == null) {
+      return null;
+    }
+    return left + "." + n.getLastChild().getString();
+  }
+ else   if (type == Token.GETELEM) {
+    String left=getNameString(n.getFirstChild());
+    if (left == null) {
+      return null;
+    }
+    return left + "[" + n.getLastChild().getString()+ "]";
+  }
+ else   if (type == Token.THIS) {
+    return "this";
+  }
+ else {
+    return null;
+  }
+}

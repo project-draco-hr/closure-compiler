@@ -1,6 +1,9 @@
 {
   Node function=fnScope.getRootNode();
   Preconditions.checkState(function.getType() == Token.FUNCTION);
+  if (NodeUtil.isGetOrSetKey(function.getParent())) {
+    return;
+  }
   Node argList=getFunctionArgList(function);
   boolean modifyCallers=modifyCallSites && callSiteOptimizer.canModifyCallers(function);
   if (!modifyCallers) {
