@@ -1,4 +1,5 @@
 {
+  Preconditions.checkState(compiler.getLifeCycleStage().isNormalized());
   NodeTraversal.traverse(compiler,externs,new ProcessExterns());
   NodeTraversal.traverse(compiler,root,new ProcessProperties());
   Set<String> reservedNames=new HashSet<String>(externedNames.size() + quotedNames.size());
@@ -46,4 +47,5 @@
   if (changed) {
     compiler.reportCodeChange();
   }
+  compiler.setLifeCycleStage(LifeCycleStage.NORMALIZED_OBFUSCATED);
 }

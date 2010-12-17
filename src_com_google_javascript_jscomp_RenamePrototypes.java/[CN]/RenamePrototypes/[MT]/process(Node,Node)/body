@@ -1,4 +1,5 @@
 {
+  Preconditions.checkState(compiler.getLifeCycleStage().isNormalized());
   NodeTraversal.traverse(compiler,externs,new ProcessExternedProperties());
   NodeTraversal.traverse(compiler,root,new ProcessProperties());
   SortedSet<Property> propsByFrequency=new TreeSet<Property>(FREQUENCY_COMPARATOR);
@@ -37,4 +38,5 @@
   if (changed) {
     compiler.reportCodeChange();
   }
+  compiler.setLifeCycleStage(LifeCycleStage.NORMALIZED_OBFUSCATED);
 }
