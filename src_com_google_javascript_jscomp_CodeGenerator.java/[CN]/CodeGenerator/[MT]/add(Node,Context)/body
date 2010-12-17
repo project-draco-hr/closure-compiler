@@ -114,11 +114,22 @@ case Token.VOID:
 case Token.NOT:
 case Token.BITNOT:
 case Token.POS:
-case Token.NEG:
 {
 Preconditions.checkState(childCount == 1);
 cc.addOp(NodeUtil.opToStrNoFail(type),false);
 addExpr(first,NodeUtil.precedence(type));
+break;
+}
+case Token.NEG:
+{
+Preconditions.checkState(childCount == 1);
+if (n.getFirstChild().getType() == Token.NUMBER) {
+cc.addNumber(-n.getFirstChild().getDouble());
+}
+ else {
+cc.addOp(NodeUtil.opToStrNoFail(type),false);
+addExpr(first,NodeUtil.precedence(type));
+}
 break;
 }
 case Token.HOOK:
