@@ -1,0 +1,20 @@
+{
+  Node exitExpr=n.getFirstChild();
+  Node follow=ControlFlowAnalysis.computeFollowNode(n);
+  Node prefinallyFollows=follow;
+  follow=skipFinallyNodes(follow);
+  if (prefinallyFollows != follow) {
+    if (!isPure(exitExpr)) {
+      return n;
+    }
+  }
+  if (follow == null && (n.getType() == Token.THROW || exitExpr != null)) {
+    return n;
+  }
+  if (follow == null || areMatchingExits(n,follow)) {
+    n.detachFromParent();
+    reportCodeChange();
+    return null;
+  }
+  return n;
+}

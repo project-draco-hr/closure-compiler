@@ -1,0 +1,13 @@
+{
+  foldSame("function f() { throw a; }");
+  fold("function f() { if (x) { throw a } throw a; }","function f() { if (x) {} throw a; }");
+  foldSame("function f() { try { if (x) {throw a} } catch(e) {} throw a; }");
+  foldSame("function f() { try { if (x) {throw 1} } catch(e) {f()} throw 1; }");
+  foldSame("function f() { try { if (x) {throw 1} } catch(e) {f()} throw 1; }");
+  foldSame("function f() { try { if (x) {throw 1} } catch(e) {throw 1}}");
+  fold("function f() { try { if (x) {throw 1} } catch(e) {throw 1} throw 1; }","function f() { try { if (x) {throw 1} } catch(e) {} throw 1; }");
+  foldSame("function f() { try { if (x) { throw a } } finally { a++ } throw a; }");
+  fold("function f() { try { if (x) { throw 1 } } finally {} throw 1; }","function f() { try { if (x) {} } finally {} throw 1; }");
+  fold("function f() { switch(a){ case 1: throw a; } throw a; }","function f() { switch(a){ case 1: } throw a; }");
+  fold("function f() { switch(a){ " + "case 1: throw a; case 2: throw a; } throw a; }","function f() { switch(a){ case 1: break; case 2: } throw a; }");
+}

@@ -1,0 +1,27 @@
+{
+  Node result=n.getFirstChild();
+  Node breakTarget=n;
+  for (; !ControlFlowAnalysis.isBreakTarget(breakTarget,null); breakTarget=breakTarget.getParent()) {
+    if (NodeUtil.isFunction(breakTarget) || breakTarget.getType() == Token.SCRIPT) {
+      return n;
+    }
+  }
+  Node follow=ControlFlowAnalysis.computeFollowNode(breakTarget);
+  Node prefinallyFollows=follow;
+  follow=skipFinallyNodes(follow);
+  if (prefinallyFollows != follow) {
+    if (!isPure(result)) {
+      return n;
+    }
+  }
+  if (follow == null && (n.getType() == Token.THROW || result != null)) {
+    return n;
+  }
+  if (follow == null || areMatchingExits(n,follow)) {
+    Node replacement=new Node(Token.BREAK);
+    n.getParent().replaceChild(n,replacement);
+    this.reportCodeChange();
+    return replacement;
+  }
+  return n;
+}

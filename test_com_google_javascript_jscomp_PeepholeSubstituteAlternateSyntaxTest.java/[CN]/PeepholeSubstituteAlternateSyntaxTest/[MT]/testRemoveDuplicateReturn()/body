@@ -1,0 +1,11 @@
+{
+  fold("function f() { return; }","function f(){}");
+  foldSame("function f() { return a; }");
+  fold("function f() { if (x) { return a } return a; }","function f() { if (x) {} return a; }");
+  foldSame("function f() { try { if (x) { return a } } catch(e) {} return a; }");
+  foldSame("function f() { try { if (x) {} } catch(e) {} return 1; }");
+  foldSame("function f() { try { if (x) { return a } } finally { a++ } return a; }");
+  fold("function f() { try { if (x) { return 1 } } finally {} return 1; }","function f() { try { if (x) {} } finally {} return 1; }");
+  fold("function f() { switch(a){ case 1: return a; } return a; }","function f() { switch(a){ case 1: } return a; }");
+  fold("function f() { switch(a){ " + "  case 1: return a; case 2: return a; } return a; }","function f() { switch(a){ " + "  case 1: break; case 2: } return a; }");
+}
