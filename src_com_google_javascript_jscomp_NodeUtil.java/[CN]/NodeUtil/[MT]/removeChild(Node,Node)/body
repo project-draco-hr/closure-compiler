@@ -1,5 +1,11 @@
 {
-  if (isStatementBlock(parent) || isSwitchCase(node) || isTryFinallyNode(parent,node)) {
+  if (isTryFinallyNode(parent,node)) {
+    parent.removeChild(node);
+  }
+ else   if (node.getType() == Token.BLOCK) {
+    node.detachChildren();
+  }
+ else   if (isStatementBlock(parent) || isSwitchCase(node)) {
     parent.removeChild(node);
   }
  else   if (parent.getType() == Token.VAR) {
@@ -10,9 +16,6 @@
       parent.removeChild(node);
       removeChild(parent.getParent(),parent);
     }
-  }
- else   if (node.getType() == Token.BLOCK) {
-    node.detachChildren();
   }
  else   if (parent.getType() == Token.LABEL && node == parent.getLastChild()) {
     parent.removeChild(node);

@@ -1,0 +1,14 @@
+{
+  Compiler compiler=new Compiler();
+  Node root=parse("{{x()}}");
+  Node actual=root.cloneTree();
+  Node outerBlockNode=actual.getFirstChild();
+  Node innerBlockNode=outerBlockNode.getFirstChild();
+  innerBlockNode.setIsSyntheticBlock(true);
+  NodeUtil.removeChild(outerBlockNode,innerBlockNode);
+  String expected="{{}}";
+  String difference=parse(expected).checkTreeEquals(actual);
+  if (difference != null) {
+    assertTrue("Nodes do not match:\n" + difference,false);
+  }
+}
