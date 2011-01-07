@@ -15,6 +15,11 @@ Node valueNode=n.getFirstChild();
 valueNodeType=valueNode != null ? valueNode.getType() : Token.VOID;
 break;
 default :
+if (NodeUtil.isFunctionDeclaration(parent)) {
+info=parent.getJSDocInfo();
+valueNodeType=Token.FUNCTION;
+break;
+}
 return false;
 }
 return info != null && (info.isConstructor() && valueNodeType == Token.FUNCTION || info.hasEnumParameterType() && valueNodeType == Token.OBJECTLIT);
