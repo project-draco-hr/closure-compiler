@@ -1,0 +1,13 @@
+{
+  Preconditions.checkState(n.getType() == Token.TRY);
+  Node body=n.getFirstChild();
+  Node catchBlock=body.getNext();
+  Node finallyBlock=catchBlock.getNext();
+  if (!catchBlock.hasChildren() && (finallyBlock == null || !finallyBlock.hasChildren())) {
+    n.removeChild(body);
+    n.getParent().replaceChild(n,body);
+    reportCodeChange();
+    return body;
+  }
+  return n;
+}
