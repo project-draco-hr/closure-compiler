@@ -1,8 +1,8 @@
 {
   super.setUp();
   RecordTypeBuilder builder=new RecordTypeBuilder(registry);
-  builder.addProperty("a",NUMBER_TYPE);
-  builder.addProperty("b",STRING_TYPE);
+  builder.addProperty("a",NUMBER_TYPE,null);
+  builder.addProperty("b",STRING_TYPE,null);
   recordType=builder.build();
   enumType=new EnumType(registry,"Enum",NUMBER_TYPE);
   elementsType=enumType.getElementsType();
@@ -16,7 +16,7 @@
   interfaceType=FunctionType.forInterface(registry,"Interface",null);
   interfaceInstType=interfaceType.getInstanceType();
   googBar=registry.createConstructorType("goog.Bar",null,null,null);
-  googBar.getPrototype().defineDeclaredProperty("date",DATE_TYPE,true);
+  googBar.getPrototype().defineDeclaredProperty("date",DATE_TYPE,true,null);
   googBar.setImplementedInterfaces(Lists.<ObjectType>newArrayList(interfaceInstType));
   googBarInst=googBar.getInstanceType();
   googSubBar=registry.createConstructorType("googSubBar",null,null,null);
@@ -26,7 +26,7 @@
   googSubSubBar.setPrototypeBasedOn(googSubBar.getInstanceType());
   googSubSubBarInst=googSubSubBar.getInstanceType();
   final ObjectType googObject=registry.createAnonymousObjectType();
-  googObject.defineDeclaredProperty("Bar",googBar,false);
+  googObject.defineDeclaredProperty("Bar",googBar,false,null);
   namedGoogBar.resolve(null,new StaticScope<JSType>(){
     public StaticSlot<JSType> getSlot(    String name){
       if ("goog".equals(name)) {
