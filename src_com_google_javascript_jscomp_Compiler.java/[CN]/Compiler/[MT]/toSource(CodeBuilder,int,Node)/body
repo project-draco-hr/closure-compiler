@@ -22,7 +22,11 @@
       String code=toSource(root,sourceMap);
       if (!code.isEmpty()) {
         cb.append(code);
-        if (!code.endsWith(";")) {
+        int length=code.length();
+        char lastChar=code.charAt(length - 1);
+        char secondLastChar=length >= 2 ? code.charAt(length - 2) : '\0';
+        boolean hasSemiColon=lastChar == ';' || (lastChar == '\n' && secondLastChar == ';');
+        if (!hasSemiColon) {
           cb.append(";");
         }
       }
