@@ -5,17 +5,6 @@
   if (n.getType() == Token.FUNCTION || n.getType() == Token.SCRIPT) {
     return;
   }
-  if (n.getType() == Token.TRY) {
-    Node body=n.getFirstChild();
-    Node catchOrFinallyBlock=body.getNext();
-    Node finallyBlock=catchOrFinallyBlock.getNext();
-    if (!catchOrFinallyBlock.hasChildren() && (finallyBlock == null || !finallyBlock.hasChildren())) {
-      n.removeChild(body);
-      parent.replaceChild(n,body);
-      compiler.reportCodeChange();
-      n=body;
-    }
-  }
   DiGraphNode<Node,Branch> gNode=curCfg.getDirectedGraphNode(n);
   if (gNode == null) {
     return;

@@ -1,18 +1,27 @@
 {
+  Node parent=n.getParent();
   if (n.getType() == Token.EMPTY || (n.getType() == Token.BLOCK && !n.hasChildren())) {
     return;
   }
 switch (n.getType()) {
 case Token.DO:
-case Token.TRY:
-case Token.CATCH:
-case Token.FINALLY:
     return;
+case Token.BLOCK:
+  if (parent.getType() == Token.TRY) {
+    if (NodeUtil.isTryCatchNodeContainer(n)) {
+      return;
+    }
+  }
+break;
+case Token.CATCH:
+Node tryNode=parent.getParent();
+NodeUtil.maybeAddFinally(tryNode);
+break;
 }
 NodeUtil.redeclareVarsInsideBranch(n);
 compiler.reportCodeChange();
 if (logger.isLoggable(Level.FINE)) {
-  logger.fine("Removing " + n.toString());
+logger.fine("Removing " + n.toString());
 }
 NodeUtil.removeChild(n.getParent(),n);
 }

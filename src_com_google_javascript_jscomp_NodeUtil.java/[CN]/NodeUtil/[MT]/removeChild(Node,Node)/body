@@ -1,6 +1,21 @@
 {
   if (isTryFinallyNode(parent,node)) {
-    parent.removeChild(node);
+    if (NodeUtil.hasCatchHandler(getCatchBlock(parent))) {
+      parent.removeChild(node);
+    }
+ else {
+      node.detachChildren();
+    }
+  }
+ else   if (node.getType() == Token.CATCH) {
+    Node tryNode=node.getParent().getParent();
+    Preconditions.checkState(NodeUtil.hasFinally(tryNode));
+    node.detachFromParent();
+  }
+ else   if (isTryCatchNodeContainer(node)) {
+    Node tryNode=node.getParent();
+    Preconditions.checkState(NodeUtil.hasFinally(tryNode));
+    node.detachChildren();
   }
  else   if (node.getType() == Token.BLOCK) {
     node.detachChildren();
