@@ -1,0 +1,17 @@
+{
+  for (  TweakFunctionCall call : functionCalls) {
+    Node valueNode=call.valueNode;
+    TweakFunction tweakFunc=call.tweakFunc;
+    TweakFunction registerFunc=registerCall.tweakFunc;
+    if (valueNode != null) {
+      if (!registerFunc.isValidNodeType(valueNode.getType())) {
+        compiler.report(JSError.make(call.sourceName,valueNode,INVALID_TWEAK_DEFAULT_VALUE_ERROR,registerFunc.getName(),registerFunc.getExpectedTypeName()));
+      }
+    }
+ else     if (tweakFunc.isGetterFunction()) {
+      if (!tweakFunc.isCorrectRegisterFunction(registerFunc)) {
+        compiler.report(JSError.make(call.sourceName,call.callNode,TWEAK_WRONG_GETTER_TYPE_WARNING,tweakFunc.getName(),registerFunc.getName()));
+      }
+    }
+  }
+}
