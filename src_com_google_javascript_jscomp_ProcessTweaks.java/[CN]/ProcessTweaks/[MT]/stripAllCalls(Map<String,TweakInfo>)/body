@@ -1,0 +1,26 @@
+{
+  for (  TweakInfo tweakInfo : tweakInfos.values()) {
+    boolean isRegistered=tweakInfo.isRegistered();
+    for (    TweakFunctionCall functionCall : tweakInfo.functionCalls) {
+      Node callNode=functionCall.callNode;
+      Node parent=callNode.getParent();
+      if (functionCall.tweakFunc.isGetterFunction()) {
+        Node newValue;
+        if (isRegistered) {
+          newValue=tweakInfo.getDefaultValueNode().cloneNode();
+        }
+ else {
+          TweakFunction registerFunction=functionCall.tweakFunc.registerFunction;
+          newValue=registerFunction.createDefaultValueNode();
+        }
+        parent.replaceChild(callNode,newValue);
+      }
+ else {
+        Node voidZeroNode=new Node(Token.VOID).copyInformationFrom(callNode);
+        voidZeroNode.addChildToBack(Node.newNumber(0).copyInformationFrom(callNode));
+        parent.replaceChild(callNode,voidZeroNode);
+      }
+    }
+  }
+  return !tweakInfos.isEmpty();
+}

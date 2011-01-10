@@ -1,3 +1,16 @@
 {
-  collectTweaks(root);
+  Map<String,TweakInfo> tweakInfos=collectTweaks(root);
+  applyCompilerDefaultValueOverrides(tweakInfos);
+  boolean changed=false;
+  if (stripTweaks) {
+    changed=stripAllCalls(tweakInfos);
+  }
+ else   if (!compilerDefaultValueOverrides.isEmpty()) {
+    Node varNode=createCompilerDefaultValueOverridesVarNode(root.getFirstChild());
+    root.getFirstChild().addChildToFront(varNode);
+    changed=true;
+  }
+  if (changed) {
+    compiler.reportCodeChange();
+  }
 }

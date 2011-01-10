@@ -1,0 +1,21 @@
+{
+  Map<String,Node> map=Maps.newHashMap();
+  for (  Map.Entry<String,Object> entry : source.entrySet()) {
+    String name=entry.getKey();
+    Object value=entry.getValue();
+    if (value instanceof Boolean) {
+      map.put(name,((Boolean)value).booleanValue() ? new Node(Token.TRUE) : new Node(Token.FALSE));
+    }
+ else     if (value instanceof Integer) {
+      map.put(name,Node.newNumber(((Integer)value).intValue()));
+    }
+ else     if (value instanceof Double) {
+      map.put(name,Node.newNumber(((Double)value).doubleValue()));
+    }
+ else {
+      Preconditions.checkState(value instanceof String);
+      map.put(name,Node.newString((String)value));
+    }
+  }
+  return map;
+}
