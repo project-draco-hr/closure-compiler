@@ -1,14 +1,12 @@
 {
-  Map<String,TweakInfo> tweakInfos=collectTweaks(root);
-  applyCompilerDefaultValueOverrides(tweakInfos);
+  CollectTweaksResult result=collectTweaks(root);
+  applyCompilerDefaultValueOverrides(result.tweakInfos);
   boolean changed=false;
   if (stripTweaks) {
-    changed=stripAllCalls(tweakInfos);
+    changed=stripAllCalls(result.tweakInfos);
   }
  else   if (!compilerDefaultValueOverrides.isEmpty()) {
-    Node varNode=createCompilerDefaultValueOverridesVarNode(root.getFirstChild());
-    root.getFirstChild().addChildToFront(varNode);
-    changed=true;
+    changed=replaceGetCompilerOverridesCalls(result.getOverridesCalls);
   }
   if (changed) {
     compiler.reportCodeChange();
