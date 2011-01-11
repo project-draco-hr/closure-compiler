@@ -21,6 +21,30 @@ if (name.equals("Infinity")) {
 return Double.POSITIVE_INFINITY;
 }
 return null;
+case Token.NEG:
+if (n.getChildCount() == 1 && n.getFirstChild().getType() == Token.NAME && n.getFirstChild().getString().equals("Infinity")) {
+return Double.NEGATIVE_INFINITY;
+}
+return null;
+case Token.STRING:
+String s=n.getString();
+if (s.length() == 0) {
+return 0.0;
+}
+if (s.length() > 2 && s.charAt(0) == '0' && (s.charAt(1) == 'x' || s.charAt(1) == 'X')) {
+try {
+return Double.valueOf(Integer.parseInt(s.substring(2),16));
+}
+ catch (NumberFormatException e) {
+return null;
+}
+}
+try {
+return Double.parseDouble(s);
+}
+ catch (NumberFormatException e) {
+return null;
+}
 }
 return null;
 }
