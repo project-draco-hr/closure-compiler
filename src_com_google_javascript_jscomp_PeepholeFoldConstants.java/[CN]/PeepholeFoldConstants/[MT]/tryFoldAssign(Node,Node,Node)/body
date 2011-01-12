@@ -6,8 +6,14 @@
   if (mayHaveSideEffects(left)) {
     return n;
   }
-  Node leftChild=right.getFirstChild();
-  if (!areNodesEqualForInlining(left,leftChild)) {
+  Node newRight;
+  if (areNodesEqualForInlining(left,right.getFirstChild())) {
+    newRight=right.getLastChild();
+  }
+ else   if (NodeUtil.isCommutative(right.getType()) && areNodesEqualForInlining(left,right.getLastChild())) {
+    newRight=right.getFirstChild();
+  }
+ else {
     return n;
   }
   int newType=-1;
@@ -48,7 +54,7 @@ break;
 default :
 return n;
 }
-Node newNode=new Node(newType,left.detachFromParent(),right.getLastChild().detachFromParent());
+Node newNode=new Node(newType,left.detachFromParent(),newRight.detachFromParent());
 n.getParent().replaceChild(n,newNode);
 reportCodeChange();
 return newNode;
