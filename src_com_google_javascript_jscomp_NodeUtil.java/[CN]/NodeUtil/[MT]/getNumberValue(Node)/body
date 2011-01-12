@@ -8,7 +8,12 @@ case Token.NULL:
 case Token.NUMBER:
 return n.getDouble();
 case Token.VOID:
+if (mayHaveSideEffects(n.getFirstChild())) {
+return null;
+}
+ else {
 return Double.NaN;
+}
 case Token.NAME:
 String name=n.getString();
 if (name.equals("undefined")) {
@@ -27,7 +32,7 @@ return Double.NEGATIVE_INFINITY;
 }
 return null;
 case Token.STRING:
-String s=n.getString();
+String s=trimJsWhiteSpace(n.getString());
 if (s.length() == 0) {
 return 0.0;
 }
@@ -36,14 +41,20 @@ try {
 return Double.valueOf(Integer.parseInt(s.substring(2),16));
 }
  catch (NumberFormatException e) {
+return Double.NaN;
+}
+}
+if (s.length() > 3 && (s.charAt(0) == '-' || s.charAt(0) == '+') && s.charAt(1) == '0' && (s.charAt(2) == 'x' || s.charAt(2) == 'X')) {
 return null;
 }
+if (s.equals("infinity") || s.equals("-infinity") || s.equals("+infinity")) {
+return null;
 }
 try {
 return Double.parseDouble(s);
 }
  catch (NumberFormatException e) {
-return null;
+return Double.NaN;
 }
 }
 return null;
