@@ -6,7 +6,14 @@
       compiler.report(JSError.make(UNKNOWN_TWEAK_WARNING,tweakId));
     }
  else {
-      tweakInfo.defaultValueNode=entry.getValue();
+      TweakFunction registerFunc=tweakInfo.registerCall.tweakFunc;
+      Node value=entry.getValue();
+      if (!registerFunc.isValidNodeType(value.getType())) {
+        compiler.report(JSError.make(INVALID_TWEAK_DEFAULT_VALUE_WARNING,tweakId,registerFunc.getName(),registerFunc.getExpectedTypeName()));
+      }
+ else {
+        tweakInfo.defaultValueNode=value;
+      }
     }
   }
 }

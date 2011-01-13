@@ -1,3 +1,15 @@
 {
-  return new ProcessTweaks(compiler,stripTweaks,defaultValueOverrides);
+  return new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      ProcessTweaks processTweak=new ProcessTweaks(compiler,stripTweaks,defaultValueOverrides);
+      processTweak.process(externs,root);
+      if (stripTweaks) {
+        Set<String> emptySet=Collections.emptySet();
+        final StripCode stripCode=new StripCode(compiler,emptySet,emptySet,emptySet,emptySet);
+        stripCode.enableTweakStripping();
+        stripCode.process(externs,root);
+      }
+    }
+  }
+;
 }

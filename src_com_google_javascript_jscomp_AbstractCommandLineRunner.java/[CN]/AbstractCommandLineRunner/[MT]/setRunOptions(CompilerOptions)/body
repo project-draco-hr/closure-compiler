@@ -3,7 +3,9 @@
   diagnosticGroups.setWarningLevels(options,config.jscompError,CheckLevel.ERROR);
   diagnosticGroups.setWarningLevels(options,config.jscompWarning,CheckLevel.WARNING);
   diagnosticGroups.setWarningLevels(options,config.jscompOff,CheckLevel.OFF);
-  createDefineReplacements(config.define,options);
+  createDefineOrTweakReplacements(config.define,options,false);
+  options.setTweakProcessing(config.tweakProcessing);
+  createDefineOrTweakReplacements(config.tweak,options,true);
   options.manageClosureDependencies=config.manageClosureDependencies;
   if (config.closureEntryPoints.size() > 0) {
     options.setManageClosureDependencies(config.closureEntryPoints);
