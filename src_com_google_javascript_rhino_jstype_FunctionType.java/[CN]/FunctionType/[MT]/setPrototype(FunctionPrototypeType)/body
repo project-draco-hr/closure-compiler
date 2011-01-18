@@ -5,12 +5,16 @@
   if (isConstructor() && prototype == getInstanceType()) {
     return false;
   }
+  boolean replacedPrototype=prototype != null;
   this.prototype=prototype;
   if (isConstructor() || isInterface()) {
     FunctionType superClass=getSuperClassConstructor();
     if (superClass != null) {
       superClass.addSubType(this);
     }
+  }
+  if (replacedPrototype) {
+    clearCachedValues();
   }
   return true;
 }
