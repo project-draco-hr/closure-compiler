@@ -1,6 +1,16 @@
 {
-  if (bType.isAllType() || bType.isEmptyType() || bType.isUnknownType()|| aType.isAllType()|| aType.isEmptyType()|| aType.isUnknownType()) {
+  if (bType.isAllType() || bType.isUnknownType() || bType.isNoResolvedType()|| aType.isAllType()|| aType.isUnknownType()|| aType.isNoResolvedType()) {
     return UNKNOWN;
+  }
+  boolean aIsEmpty=aType.isEmptyType();
+  boolean bIsEmpty=bType.isEmptyType();
+  if (aIsEmpty || bIsEmpty) {
+    if (aIsEmpty && bIsEmpty) {
+      return TernaryValue.TRUE;
+    }
+ else {
+      return UNKNOWN;
+    }
   }
   if (aType.isFunctionType() || bType.isFunctionType()) {
     JSType otherType=aType.isFunctionType() ? bType : aType;
