@@ -15,13 +15,22 @@
       }
     }
     Node key=transformAsString(el.getLeft());
+    Node value=transform(el.getRight());
     if (el.isGetter()) {
       key.setType(Token.GET);
+      Preconditions.checkState(value.getType() == Token.FUNCTION);
+      if (getFnParamNode(value).hasChildren()) {
+        reportGetterParam(el.getLeft());
+      }
     }
  else     if (el.isSetter()) {
       key.setType(Token.SET);
+      Preconditions.checkState(value.getType() == Token.FUNCTION);
+      if (!getFnParamNode(value).hasOneChild()) {
+        reportSetterParam(el.getLeft());
+      }
     }
-    key.addChildToFront(transform(el.getRight()));
+    key.addChildToFront(value);
     node.addChildToBack(key);
   }
   return node;
