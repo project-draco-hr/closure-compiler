@@ -16,6 +16,13 @@ case Token.NOT:
 parent.replaceChild(n,replacementNode);
 reportCodeChange();
 return replacementNode;
+case Token.POS:
+if (NodeUtil.isNumericResult(left)) {
+parent.replaceChild(n,left.detachFromParent());
+reportCodeChange();
+return left;
+}
+return n;
 case Token.NEG:
 try {
 if (left.getType() == Token.NAME) {
