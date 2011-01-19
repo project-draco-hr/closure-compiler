@@ -1,12 +1,13 @@
 {
-  Preconditions.checkArgument(ctor.isConstructor() || ctor.isInterface());
-  Preconditions.checkArgument(!ctor.isUnknownType());
+  Preconditions.checkArgument(isConstructor() || isInterface());
+  Preconditions.checkArgument(!this.isUnknownType());
+  FunctionType ctor=this;
   while (true) {
     ObjectType maybeSuperInstanceType=ctor.getPrototype().getImplicitPrototype();
     if (maybeSuperInstanceType == null) {
       return false;
     }
-    if (maybeSuperInstanceType.isUnknownType() || maybeSuperInstanceType.isEmptyType()) {
+    if (maybeSuperInstanceType.isUnknownType()) {
       return true;
     }
     ctor=maybeSuperInstanceType.getConstructor();
