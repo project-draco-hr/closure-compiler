@@ -1,0 +1,23 @@
+{
+  Pattern argPattern=Pattern.compile("(--[a-zA-Z_]+)=(.*)");
+  Pattern quotesPattern=Pattern.compile("^['\"](.*)['\"]$");
+  List<String> processedArgs=Lists.newArrayList();
+  for (  String arg : args) {
+    Matcher matcher=argPattern.matcher(arg);
+    if (matcher.matches()) {
+      processedArgs.add(matcher.group(1));
+      String value=matcher.group(2);
+      Matcher quotesMatcher=quotesPattern.matcher(value);
+      if (quotesMatcher.matches()) {
+        processedArgs.add(quotesMatcher.group(1));
+      }
+ else {
+        processedArgs.add(value);
+      }
+    }
+ else {
+      processedArgs.add(arg);
+    }
+  }
+  return processedArgs;
+}
