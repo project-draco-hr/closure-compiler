@@ -1,0 +1,8 @@
+{
+  testSame("var x = {y: 5, /** @type {number} */ z: 3};");
+  ObjectType xType=ObjectType.cast(globalScope.getVar("x").getType());
+  assertEquals("number",xType.getPropertyType("y").toString());
+  assertFalse(xType.isPropertyTypeDeclared("y"));
+  assertTrue(xType.isPropertyTypeDeclared("z"));
+  assertEquals("{y: number, z: number}",xType.toString());
+}
