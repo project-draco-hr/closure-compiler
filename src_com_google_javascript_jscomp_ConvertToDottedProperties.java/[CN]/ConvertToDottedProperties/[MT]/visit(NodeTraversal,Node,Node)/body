@@ -1,13 +1,18 @@
 {
 switch (n.getType()) {
+case Token.STRING:
+    if (NodeUtil.isObjectLitKey(n,parent)) {
+      n.putBooleanProp(Node.QUOTED_PROP,false);
+    }
+  break;
 case Token.GETELEM:
-    Node left=n.getFirstChild();
-  Node right=left.getNext();
+Node left=n.getFirstChild();
+Node right=left.getNext();
 if (right.getType() == Token.STRING && NodeUtil.isValidPropertyName(right.getString())) {
-  n.removeChild(left);
-  n.removeChild(right);
-  parent.replaceChild(n,new Node(Token.GETPROP,left,right));
-  compiler.reportCodeChange();
+n.removeChild(left);
+n.removeChild(right);
+parent.replaceChild(n,new Node(Token.GETPROP,left,right));
+compiler.reportCodeChange();
 }
 break;
 }
