@@ -1,0 +1,25 @@
+{
+  if (type.isNoResolvedType()) {
+    return type.getNativeType(JSTypeNative.NO_RESOLVED_TYPE);
+  }
+ else   if (type instanceof UnionType) {
+    UnionType unionType=(UnionType)type;
+    boolean needsFiltering=false;
+    for (    JSType alt : unionType.getAlternates()) {
+      if (alt.isNoResolvedType()) {
+        needsFiltering=true;
+        break;
+      }
+    }
+    if (needsFiltering) {
+      UnionTypeBuilder builder=new UnionTypeBuilder(type.registry);
+      for (      JSType alt : unionType.getAlternates()) {
+        if (!alt.isNoResolvedType()) {
+          builder.addAlternate(alt);
+        }
+      }
+      return builder.build();
+    }
+  }
+  return type;
+}

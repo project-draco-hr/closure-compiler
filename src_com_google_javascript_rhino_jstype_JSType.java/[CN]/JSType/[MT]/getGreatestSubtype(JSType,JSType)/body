@@ -1,12 +1,15 @@
 {
-  if (thisType.isUnknownType() || thatType.isUnknownType()) {
+  if (thisType.isEquivalentTo(thatType)) {
+    return thisType;
+  }
+ else   if (thisType.isUnknownType() || thatType.isUnknownType()) {
     return thisType.isEquivalentTo(thatType) ? thisType : thisType.getNativeType(JSTypeNative.UNKNOWN_TYPE);
   }
  else   if (thisType.isSubtype(thatType)) {
-    return thisType;
+    return filterNoResolvedType(thisType);
   }
  else   if (thatType.isSubtype(thisType)) {
-    return thatType;
+    return filterNoResolvedType(thatType);
   }
  else   if (thisType.isUnionType()) {
     return ((UnionType)thisType).meet(thatType);
