@@ -1,0 +1,9 @@
+{
+  testSame("/** @constructor */ function Window() {}" + "Window.prototype = {alert: function() {}};" + "var x = this;");
+  ObjectType x=(ObjectType)(globalScope.getVar("x").getType());
+  FunctionType windowCtor=(FunctionType)(globalScope.getVar("Window").getType());
+  assertEquals("global this",x.toString());
+  assertTrue(x.isSubtype(windowCtor.getInstanceType()));
+  assertFalse(x.equals(windowCtor.getInstanceType()));
+  assertTrue(x.hasProperty("alert"));
+}

@@ -35,23 +35,20 @@ case Token.NULL:
 ensureTyped(t,n,NULL_TYPE);
 break;
 case Token.NUMBER:
-if (n.getParent().getType() != Token.OBJECTLIT) {
+if (!NodeUtil.isObjectLitKey(n,n.getParent())) {
 ensureTyped(t,n,NUMBER_TYPE);
 }
- else {
-typeable=false;
+break;
+case Token.STRING:
+if (!NodeUtil.isObjectLitKey(n,n.getParent())) {
+ensureTyped(t,n,STRING_TYPE);
 }
+break;
+case Token.GET:
+case Token.SET:
 break;
 case Token.ARRAYLIT:
 ensureTyped(t,n,ARRAY_TYPE);
-break;
-case Token.STRING:
-if (n.getParent().getType() != Token.OBJECTLIT) {
-ensureTyped(t,n,STRING_TYPE);
-}
- else {
-typeable=false;
-}
 break;
 case Token.REGEXP:
 ensureTyped(t,n,REGEXP_TYPE);
@@ -266,6 +263,11 @@ ensureTyped(t,n,parent.getJSType());
 }
  else {
 ensureTyped(t,n);
+}
+}
+if (n.getType() == Token.OBJECTLIT) {
+for (Node key : n.children()) {
+visitObjLitKey(t,key,n);
 }
 }
 break;

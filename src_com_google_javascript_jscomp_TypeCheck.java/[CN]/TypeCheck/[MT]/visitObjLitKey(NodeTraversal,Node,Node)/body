@@ -1,0 +1,25 @@
+{
+  Node rvalue=key.getFirstChild();
+  JSType rightType=NodeUtil.getObjectLitKeyTypeFromValueType(key,getJSType(rvalue));
+  if (rightType == null) {
+    rightType=getNativeType(UNKNOWN_TYPE);
+  }
+  Node owner=objlit;
+  JSType keyType=getJSType(key);
+  boolean valid=validator.expectCanAssignToPropertyOf(t,key,rightType,keyType,owner,NodeUtil.getObjectLitKeyName(key));
+  if (valid) {
+    ensureTyped(t,key,rightType);
+  }
+ else {
+    ensureTyped(t,key);
+  }
+  JSType objlitType=getJSType(objlit);
+  ObjectType type=ObjectType.cast(objlitType.restrictByNotNullOrUndefined());
+  if (type != null) {
+    String property=NodeUtil.getObjectLitKeyName(key);
+    if (type.hasProperty(property) && !type.isPropertyTypeInferred(property) && !propertyIsImplicitCast(type,property)) {
+      validator.expectCanAssignToPropertyOf(t,key,keyType,type.getPropertyType(property),owner,property);
+    }
+    return;
+  }
+}

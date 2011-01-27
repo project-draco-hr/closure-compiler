@@ -1,0 +1,14 @@
+{
+  inFunction("var x = {}; var out = x.a;");
+  verify("out",UNKNOWN_TYPE);
+  inFunction("var x = {a:1}; var out = x.a;");
+  verify("out",NUMBER_TYPE);
+  inFunction("var x = { get a() {return 1} }; var out = x.a;");
+  verify("out",UNKNOWN_TYPE);
+  inFunction("var x = {" + "  /** @return {number} */ get a() {return 1}" + "};"+ "var out = x.a;");
+  verify("out",NUMBER_TYPE);
+  inFunction("var x = { set a(b) {} }; var out = x.a;");
+  verify("out",UNKNOWN_TYPE);
+  inFunction("var x = { " + "/** @param {number} b */ set a(b) {} };" + "var out = x.a;");
+  verify("out",NUMBER_TYPE);
+}

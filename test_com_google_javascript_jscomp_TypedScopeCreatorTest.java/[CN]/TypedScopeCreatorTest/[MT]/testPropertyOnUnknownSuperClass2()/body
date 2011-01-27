@@ -1,0 +1,8 @@
+{
+  testSame("var goog = this.foo();" + "/** @constructor \n * @extends {goog.Unknown} */" + "function Foo() {}"+ "Foo.prototype = {bar: 1};"+ "var x = new Foo();",RhinoErrorReporter.PARSE_ERROR);
+  ObjectType x=(ObjectType)findNameType("x",globalScope);
+  assertEquals("Foo",x.toString());
+  assertFalse(x.getImplicitPrototype().hasOwnProperty("bar"));
+  assertEquals("number",x.getPropertyType("bar").toString());
+  assertTrue(x.isPropertyTypeInferred("bar"));
+}

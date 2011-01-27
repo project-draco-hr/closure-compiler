@@ -1,0 +1,10 @@
+{
+  testSame("/** @type {!Function} */ var abstractMethod;" + "/** @constructor */ function Foo() {}" + "Foo.prototype = {/** @param {number} x */ bar: abstractMethod};");
+  assertEquals("Function",findNameType("abstractMethod",globalScope).toString());
+  FunctionType ctor=(FunctionType)findNameType("Foo",globalScope);
+  ObjectType instance=ctor.getInstanceType();
+  assertEquals("Foo",instance.toString());
+  ObjectType proto=instance.getImplicitPrototype();
+  assertEquals("Foo.prototype",proto.toString());
+  assertEquals("function (number): ?",proto.getPropertyType("bar").toString());
+}

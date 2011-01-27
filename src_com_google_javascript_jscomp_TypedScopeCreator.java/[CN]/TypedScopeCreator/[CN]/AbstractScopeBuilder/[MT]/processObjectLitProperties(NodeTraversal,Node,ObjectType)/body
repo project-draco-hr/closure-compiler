@@ -1,14 +1,15 @@
 {
-  if (objLitType == null) {
-    return;
-  }
   for (Node name=objLit.getFirstChild(); name != null; name=name.getNext()) {
     Node value=name.getFirstChild();
-    String memberName=NodeUtil.getStringValue(name);
-    JSType type=getDeclaredTypeInAnnotation(t,name,name.getJSDocInfo());
-    if (type != null) {
-      boolean isExtern=t.getInput() != null && t.getInput().isExtern();
-      objLitType.defineDeclaredProperty(memberName,type,isExtern,name);
+    String memberName=NodeUtil.getObjectLitKeyName(name);
+    JSType valueType=getDeclaredTypeInAnnotation(t,name,name.getJSDocInfo());
+    JSType keyType=NodeUtil.getObjectLitKeyTypeFromValueType(name,valueType);
+    if (keyType != null) {
+      name.setJSType(keyType);
+      if (objLitType != null) {
+        boolean isExtern=t.getInput() != null && t.getInput().isExtern();
+        objLitType.defineDeclaredProperty(memberName,keyType,isExtern,name);
+      }
     }
   }
 }

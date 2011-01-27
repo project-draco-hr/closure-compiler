@@ -1,0 +1,26 @@
+{
+  if (valueType != null) {
+switch (key.getType()) {
+case Token.GET:
+      if (valueType.isFunctionType()) {
+        FunctionType fntype=((FunctionType)valueType);
+        valueType=fntype.getReturnType();
+      }
+ else {
+        return null;
+      }
+    break;
+case Token.SET:
+  if (valueType.isFunctionType()) {
+    FunctionType fntype=((FunctionType)valueType);
+    Node param=fntype.getParametersNode().getFirstChild();
+    valueType=param.getJSType();
+  }
+ else {
+    return null;
+  }
+break;
+}
+}
+return valueType;
+}
