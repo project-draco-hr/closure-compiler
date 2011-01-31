@@ -1,0 +1,38 @@
+{
+  Preconditions.checkNotNull(info);
+  Preconditions.checkState(info.hasEnumParameterType());
+  EnumType enumType=null;
+  if (rValue != null && rValue.isQualifiedName()) {
+    Var var=scope.getVar(rValue.getQualifiedName());
+    if (var != null && var.getType() instanceof EnumType) {
+      enumType=(EnumType)var.getType();
+    }
+  }
+  if (enumType == null) {
+    JSType elementsType=info.getEnumParameterType().evaluate(scope,typeRegistry);
+    enumType=typeRegistry.createEnumType(name,elementsType);
+    if (rValue != null && rValue.getType() == Token.OBJECTLIT) {
+      Node key=rValue.getFirstChild();
+      while (key != null) {
+        String keyName=NodeUtil.getStringValue(key);
+        if (keyName == null) {
+          compiler.report(JSError.make(sourceName,key,ENUM_NOT_CONSTANT,keyName));
+        }
+ else         if (enumType.hasOwnProperty(keyName)) {
+          compiler.report(JSError.make(sourceName,key,ENUM_DUP,keyName));
+        }
+ else         if (!codingConvention.isValidEnumKey(keyName)) {
+          compiler.report(JSError.make(sourceName,key,ENUM_NOT_CONSTANT,keyName));
+        }
+ else {
+          enumType.defineElement(keyName,key);
+        }
+        key=key.getNext();
+      }
+    }
+  }
+  if (name != null && scope.isGlobal()) {
+    typeRegistry.declareType(name,enumType.getElementsType());
+  }
+  return enumType;
+}

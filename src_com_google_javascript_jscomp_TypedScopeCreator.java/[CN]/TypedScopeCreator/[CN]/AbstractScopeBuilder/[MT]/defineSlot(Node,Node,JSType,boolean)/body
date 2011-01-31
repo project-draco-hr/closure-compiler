@@ -37,6 +37,13 @@
         globalThis.defineDeclaredProperty(variableName,type,isExtern,n);
       }
     }
+    if (type instanceof EnumType) {
+      Node initialValue=newVar.getInitialValue();
+      boolean isValidValue=initialValue != null && (initialValue.getType() == Token.OBJECTLIT || initialValue.isQualifiedName());
+      if (!isValidValue) {
+        compiler.report(JSError.make(sourceName,n,ENUM_INITIALIZER));
+      }
+    }
     if (type instanceof FunctionType && !type.isEmptyType()) {
       FunctionType fnType=(FunctionType)type;
       if ((fnType.isConstructor() || fnType.isInterface()) && !fnType.equals(getNativeType(U2U_CONSTRUCTOR_TYPE))) {

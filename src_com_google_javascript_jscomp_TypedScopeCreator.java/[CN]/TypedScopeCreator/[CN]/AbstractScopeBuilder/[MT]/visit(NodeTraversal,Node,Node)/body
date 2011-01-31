@@ -8,12 +8,9 @@ case Token.FUNCTION:
 if (t.getInput() == null || !t.getInput().isExtern()) {
   nonExternFunctions.add(n);
 }
-if (parent.getType() != Token.ASSIGN && parent.getType() != Token.NAME) {
-defineDeclaredFunction(n,parent);
-}
+defineFunctionLiteral(n,parent);
 break;
 case Token.ASSIGN:
-defineNamedTypeAssign(n,parent);
 Node firstChild=n.getFirstChild();
 if (firstChild.getType() == Token.GETPROP && firstChild.isQualifiedName()) {
 maybeDeclareQualifiedName(t,n.getJSDocInfo(),firstChild,n,firstChild.getNext());

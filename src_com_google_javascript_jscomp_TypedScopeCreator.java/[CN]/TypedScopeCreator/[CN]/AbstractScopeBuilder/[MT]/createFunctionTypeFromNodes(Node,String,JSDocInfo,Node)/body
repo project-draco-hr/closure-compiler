@@ -1,0 +1,61 @@
+{
+  FunctionType functionType=null;
+  if (rValue != null && rValue.isQualifiedName() && scope.isGlobal()) {
+    Var var=scope.getVar(rValue.getQualifiedName());
+    if (var != null && var.getType() instanceof FunctionType) {
+      FunctionType aliasedType=(FunctionType)var.getType();
+      if ((aliasedType.isConstructor() || aliasedType.isInterface()) && !aliasedType.isNativeObjectType()) {
+        functionType=aliasedType;
+        if (name != null && scope.isGlobal()) {
+          typeRegistry.declareType(name,functionType.getInstanceType());
+        }
+      }
+    }
+  }
+  if (functionType == null) {
+    Node errorRoot=rValue == null ? lvalueNode : rValue;
+    boolean isFnLiteral=rValue != null && rValue.getType() == Token.FUNCTION;
+    Node fnRoot=isFnLiteral ? rValue : null;
+    Node parametersNode=isFnLiteral ? rValue.getFirstChild().getNext() : null;
+    Node fnBlock=isFnLiteral ? parametersNode.getNext() : null;
+    if (info != null && info.hasType()) {
+      JSType type=info.getType().evaluate(scope,typeRegistry);
+      type=type.restrictByNotNullOrUndefined();
+      if (type.isFunctionType()) {
+        functionType=(FunctionType)type;
+        functionType.setJSDocInfo(info);
+      }
+    }
+    if (functionType == null) {
+      FunctionType overriddenPropType=null;
+      if (lvalueNode != null && lvalueNode.getType() == Token.GETPROP && lvalueNode.isQualifiedName()) {
+        Var var=scope.getVar(lvalueNode.getFirstChild().getQualifiedName());
+        if (var != null) {
+          ObjectType ownerType=ObjectType.cast(var.getType());
+          if (ownerType != null) {
+            String propName=lvalueNode.getLastChild().getString();
+            overriddenPropType=findOverriddenFunction(ownerType,propName);
+          }
+        }
+      }
+      FunctionTypeBuilder builder=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setSourceNode(fnRoot).inferFromOverriddenFunction(overriddenPropType,parametersNode).inferTemplateTypeName(info).inferReturnType(info).inferInheritance(info);
+      boolean searchedForThisType=false;
+      if (lvalueNode != null && lvalueNode.getType() == Token.GETPROP) {
+        Node objNode=lvalueNode.getFirstChild();
+        if (objNode.getType() == Token.GETPROP && objNode.getLastChild().getString().equals("prototype")) {
+          builder.inferThisType(info,objNode.getFirstChild());
+          searchedForThisType=true;
+        }
+ else         if (objNode.getType() == Token.THIS) {
+          builder.inferThisType(info,objNode.getJSType());
+          searchedForThisType=true;
+        }
+      }
+      if (!searchedForThisType) {
+        builder.inferThisType(info,(Node)null);
+      }
+      functionType=builder.inferParameterTypes(parametersNode,info).inferReturnStatementsAsLastResort(fnBlock).buildAndRegister();
+    }
+  }
+  return functionType;
+}

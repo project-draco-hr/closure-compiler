@@ -1,0 +1,11 @@
+{
+  assertDefinitionNode(n,Token.FUNCTION);
+  Node lValue=getBestLValue(n);
+  JSDocInfo info=getBestJSDocInfo(n);
+  String functionName=getBestLValueName(lValue);
+  FunctionType functionType=createFunctionTypeFromNodes(n,functionName,info,lValue);
+  setDeferredType(n,functionType);
+  if (NodeUtil.isFunctionDeclaration(n)) {
+    defineSlot(n.getFirstChild(),n,functionType);
+  }
+}

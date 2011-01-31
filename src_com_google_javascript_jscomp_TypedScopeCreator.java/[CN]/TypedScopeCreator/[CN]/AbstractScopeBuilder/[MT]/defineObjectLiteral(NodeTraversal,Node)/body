@@ -1,4 +1,5 @@
 {
+  JSType type=null;
   JSDocInfo info=objectLit.getJSDocInfo();
   if (info != null && info.getLendsName() != null) {
     String lendsName=info.getLendsName();
@@ -7,20 +8,28 @@
       compiler.report(JSError.make(sourceName,objectLit,UNKNOWN_LENDS,lendsName));
     }
  else {
-      JSType type=lendsVar.getType();
+      type=lendsVar.getType();
       if (type == null) {
         type=typeRegistry.getNativeType(UNKNOWN_TYPE);
       }
       if (!type.isSubtype(typeRegistry.getNativeType(OBJECT_TYPE))) {
         compiler.report(JSError.make(sourceName,objectLit,LENDS_ON_NON_OBJECT,lendsName,type.toString()));
+        type=null;
       }
  else {
         objectLit.setJSType(type);
       }
     }
   }
-  if (objectLit.getJSType() == null) {
-    objectLit.setJSType(typeRegistry.createAnonymousObjectType());
+  info=getBestJSDocInfo(objectLit);
+  Node lValue=getBestLValue(objectLit);
+  String lValueName=getBestLValueName(lValue);
+  if (info != null && info.hasEnumParameterType()) {
+    type=createEnumTypeFromNodes(objectLit,lValueName,info,lValue);
   }
+  if (type == null) {
+    type=typeRegistry.createAnonymousObjectType();
+  }
+  setDeferredType(objectLit,type);
   processObjectLitProperties(t,objectLit,ObjectType.cast(objectLit.getJSType()));
 }

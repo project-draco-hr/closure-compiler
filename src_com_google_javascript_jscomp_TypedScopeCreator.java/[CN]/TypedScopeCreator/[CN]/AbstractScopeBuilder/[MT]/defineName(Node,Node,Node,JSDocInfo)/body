@@ -1,31 +1,32 @@
 {
   Node value=name.getFirstChild();
+  JSType type=null;
   if (value != null && value.getType() == Token.FUNCTION) {
-    String functionName=name.getString();
-    FunctionType functionType=getFunctionType(functionName,value,info,null);
-    if (functionType.isReturnTypeInferred() && scope.isLocal()) {
-      defineSlot(name,var,null);
-    }
- else {
-      defineSlot(name,var,functionType);
+    FunctionType valueType=(FunctionType)value.getJSType();
+    if (info != null || scope.isGlobal() || !valueType.isReturnTypeInferred()) {
+      type=value.getJSType();
     }
   }
- else {
-    JSType type=null;
+  if (type == null) {
     if (info == null) {
       CompilerInput input=compiler.getInput(sourceName);
       Preconditions.checkNotNull(input,sourceName);
       type=input.isExtern() ? getNativeType(UNKNOWN_TYPE) : null;
     }
  else     if (info.hasEnumParameterType()) {
-      type=getEnumType(name.getString(),var,value,info.getEnumParameterType().evaluate(scope,typeRegistry));
+      if (value != null && value.getType() == Token.OBJECTLIT) {
+        type=value.getJSType();
+      }
+ else {
+        type=createEnumTypeFromNodes(value,name.getString(),info,name);
+      }
     }
  else     if (info.isConstructor()) {
-      type=getFunctionType(name.getString(),value,info,name);
+      type=createFunctionTypeFromNodes(value,name.getString(),info,name);
     }
  else {
       type=getDeclaredTypeInAnnotation(sourceName,name,info);
     }
-    defineSlot(name,var,type);
   }
+  defineSlot(name,var,type);
 }
