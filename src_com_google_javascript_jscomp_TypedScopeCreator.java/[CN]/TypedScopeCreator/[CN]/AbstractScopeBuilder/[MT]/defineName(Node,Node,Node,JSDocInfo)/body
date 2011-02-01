@@ -1,11 +1,8 @@
 {
   Node value=name.getFirstChild();
   JSType type=null;
-  if (value != null && value.getType() == Token.FUNCTION) {
-    FunctionType valueType=(FunctionType)value.getJSType();
-    if (info != null || scope.isGlobal() || !valueType.isReturnTypeInferred()) {
-      type=value.getJSType();
-    }
+  if (value != null && value.getType() == Token.FUNCTION && shouldUseFunctionLiteralType((FunctionType)value.getJSType(),info,name)) {
+    type=value.getJSType();
   }
   if (type == null) {
     if (info == null) {
