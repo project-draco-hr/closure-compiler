@@ -4,14 +4,27 @@
   if (type != null) {
     Node subclass=null;
     Node superclass=callNode.getLastChild();
-    if (callNode.getChildCount() == 2 && callName.getType() == Token.GETPROP) {
+    boolean isDeprecatedCall=callNode.getChildCount() == 2 && callName.getType() == Token.GETPROP;
+    if (isDeprecatedCall) {
       subclass=callName.getFirstChild();
     }
  else     if (callNode.getChildCount() == 3) {
       subclass=callName.getNext();
     }
+    if (type == SubclassType.MIXIN) {
+      if (!endsWithPrototype(superclass)) {
+        return null;
+      }
+      if (!isDeprecatedCall) {
+        if (!endsWithPrototype(subclass)) {
+          return null;
+        }
+        subclass=subclass.getFirstChild();
+      }
+      superclass=superclass.getFirstChild();
+    }
     if (subclass != null && subclass.isUnscopedQualifiedName() && superclass.isUnscopedQualifiedName()) {
-      return new SubclassRelationship(type,stripPrototype(subclass),stripPrototype(superclass));
+      return new SubclassRelationship(type,subclass,superclass);
     }
   }
   return null;
