@@ -1,65 +1,35 @@
 {
   Node left=n.getFirstChild();
   Node arg=left.getNext();
-  if (verifySetCssNameMapping(t,left,arg)) {
+  if (verifyArgument(t,left,arg,Token.OBJECTLIT)) {
     final Map<String,String> cssNames=Maps.newHashMap();
+    JSError error=null;
     for (Node key=arg.getFirstChild(); key != null; key=key.getNext()) {
       Node value=key.getFirstChild();
       if (key.getType() != Token.STRING || value == null || value.getType() != Token.STRING) {
-        compiler.report(t.makeError(n,NON_STRING_PASSED_TO_SET_CSS_NAME_MAPPING_ERROR));
-        return;
+        error=t.makeError(n,NON_STRING_PASSED_TO_SET_CSS_NAME_MAPPING_ERROR);
+      }
+      if (error != null) {
+        compiler.report(error);
+        break;
       }
       cssNames.put(key.getString(),value.getString());
     }
-    String styleStr="BY_PART";
-    if (arg.getNext() != null) {
-      styleStr=arg.getNext().getString();
-    }
-    final CssRenamingMap.Style style;
-    try {
-      style=CssRenamingMap.Style.valueOf(styleStr);
-    }
- catch (    IllegalArgumentException e) {
-      compiler.report(t.makeError(n,INVALID_STYLE_ERROR,styleStr));
-      return;
-    }
-    if (style == CssRenamingMap.Style.BY_PART) {
-      List<String> errors=Lists.newArrayList();
-      for (      String key : cssNames.keySet()) {
-        if (key.contains("-")) {
-          errors.add(key);
-        }
-      }
-      if (errors.size() != 0) {
-        compiler.report(t.makeError(n,INVALID_CSS_RENAMING_MAP,errors.toString()));
-      }
-    }
- else     if (style == CssRenamingMap.Style.BY_WHOLE) {
-      List<String> errors=Lists.newArrayList();
-      for (      Map.Entry<String,String> b : cssNames.entrySet()) {
-        if (b.getKey().length() > 10)         continue;
-        for (        Map.Entry<String,String> a : cssNames.entrySet()) {
-          String combined=cssNames.get(a.getKey() + "-" + b.getKey());
-          if (combined != null && !combined.equals(a.getValue() + "-" + b.getValue())) {
-            errors.add("map(" + a.getKey() + "-"+ b.getKey()+ ") != map("+ a.getKey()+ ")-map("+ b.getKey()+ ")");
+    if (error == null) {
+      CssRenamingMap cssRenamingMap=new CssRenamingMap(){
+        public String get(        String value){
+          if (cssNames.containsKey(value)) {
+            return cssNames.get(value);
+          }
+ else {
+            return value;
           }
         }
       }
-      if (errors.size() != 0) {
-        compiler.report(t.makeError(n,INVALID_CSS_RENAMING_MAP,errors.toString()));
-      }
-    }
-    CssRenamingMap cssRenamingMap=new CssRenamingMap(){
-      public String get(      String value){
-        return cssNames.get(value);
-      }
-      public CssRenamingMap.Style getStyle(){
-        return style;
-      }
-    }
 ;
-    compiler.setCssRenamingMap(cssRenamingMap);
-    parent.getParent().removeChild(parent);
-    compiler.reportCodeChange();
+      compiler.setCssRenamingMap(cssRenamingMap);
+      parent.getParent().removeChild(parent);
+      compiler.reportCodeChange();
+    }
   }
 }
