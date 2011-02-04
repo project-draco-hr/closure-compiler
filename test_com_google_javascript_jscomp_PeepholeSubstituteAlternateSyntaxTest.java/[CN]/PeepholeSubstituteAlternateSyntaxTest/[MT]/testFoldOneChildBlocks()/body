@@ -7,8 +7,8 @@
   fold("function(){if(x){foo()}}","function(){x&&foo()}");
   fold("function(){if(x){foo()}else{bar()}}","function(){x?foo():bar()}");
   fold("function(){if(x){a.b=1}}","function(){if(x)a.b=1}");
-  fold("function(){if(x){a.b*=1}}","function(){if(x)a.b*=1}");
-  fold("function(){if(x){a.b+=1}}","function(){if(x)a.b+=1}");
+  fold("function(){if(x){a.b*=1}}","function(){x&&(a.b*=1)}");
+  fold("function(){if(x){a.b+=1}}","function(){x&&(a.b+=1)}");
   fold("function(){if(x){++a.b}}","function(){x&&++a.b}");
   fold("function(){if(x){a.foo()}}","function(){x&&a.foo()}");
   fold("function(){try{foo()}catch(e){bar(e)}finally{baz()}}","function(){try{foo()}catch(e){bar(e)}finally{baz()}}");
@@ -16,7 +16,7 @@
   fold("function(){if(e1){do foo();while(e2)}else foo2()}","function(){if(e1){do foo();while(e2)}else foo2()}");
   fold("if(x){do{foo()}while(y)}else bar()","if(x){do foo();while(y)}else bar()");
   fold("function(){if(x){if(y)foo()}}","function(){x&&y&&foo()}");
-  fold("function(){if(x){if(y)foo();else bar()}}","function(){if(x)y?foo():bar()}");
+  fold("function(){if(x){if(y)foo();else bar()}}","function(){x&&(y?foo():bar())}");
   fold("function(){if(x){if(y)foo()}else bar()}","function(){if(x)y&&foo();else bar()}");
   fold("function(){if(x){if(y)foo();else bar()}else{baz()}}","function(){if(x)y?foo():bar();else baz()}");
   fold("if(e1){while(e2){if(e3){foo()}}}else{bar()}","if(e1)while(e2)e3&&foo();else bar()");
