@@ -1,0 +1,23 @@
+{
+  DiagnosticType diagnostic=null;
+  if (firstArg == null) {
+    diagnostic=NULL_ARGUMENT_ERROR;
+  }
+ else   if (firstArg.getType() != Token.OBJECTLIT) {
+    diagnostic=EXPECTED_OBJECTLIT_ERROR;
+  }
+ else   if (firstArg.getNext() != null) {
+    Node secondArg=firstArg.getNext();
+    if (secondArg.getType() != Token.STRING) {
+      diagnostic=EXPECTED_STRING_ERROR;
+    }
+ else     if (secondArg.getNext() != null) {
+      diagnostic=TOO_MANY_ARGUMENTS_ERROR;
+    }
+  }
+  if (diagnostic != null) {
+    compiler.report(t.makeError(methodName,diagnostic,methodName.getQualifiedName()));
+    return false;
+  }
+  return true;
+}
