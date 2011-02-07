@@ -27,6 +27,17 @@ if (isRemovableVar(var) && !maybeAssign.mayHaveSecondarySideEffects) {
 }
 }
 break;
+case Token.CALL:
+SubclassRelationship subclassRelationship=codingConvention.getClassesDefinedByCall(n);
+if (subclassRelationship != null) {
+Var subclassVar=scope.getVar(subclassRelationship.subclassName);
+if (!referenced.contains(subclassVar)) {
+inheritsCalls.put(subclassVar,parent);
+continuations.put(subclassVar,new Continuation(n,scope));
+return;
+}
+}
+break;
 case Token.NAME:
 var=scope.getVar(n.getString());
 if (parent.getType() == Token.VAR) {
