@@ -1,9 +1,18 @@
 {
   Preconditions.checkArgument(node.getType() == Token.ADD);
-  if (NodeUtil.isLiteralValue(left,false) && NodeUtil.isLiteralValue(right,false)) {
-    return tryFoldAddConstant(node,left,right);
+  if (NodeUtil.mayBeString(node,true)) {
+    if (NodeUtil.isLiteralValue(left,false) && NodeUtil.isLiteralValue(right,false)) {
+      return tryFoldAddConstantString(node,left,right);
+    }
+ else {
+      return tryFoldChildAddString(node,left,right);
+    }
   }
  else {
-    return tryFoldLeftChildAdd(node,left,right);
+    Node result=tryFoldArithmeticOp(node,left,right);
+    if (result != node) {
+      return result;
+    }
+    return tryFoldLeftChildOp(node,left,right);
   }
 }

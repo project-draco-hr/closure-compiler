@@ -1,0 +1,35 @@
+{
+  if (NodeUtil.isLiteralValue(right,false) && left.getType() == Token.ADD) {
+    Node ll=left.getFirstChild();
+    Node lr=ll.getNext();
+    if (lr.getType() == Token.STRING) {
+      String leftString=NodeUtil.getStringValue(lr);
+      String rightString=NodeUtil.getStringValue(right);
+      if (leftString != null && rightString != null) {
+        left.removeChild(ll);
+        String result=leftString + rightString;
+        n.replaceChild(left,ll);
+        n.replaceChild(right,Node.newString(result));
+        reportCodeChange();
+        return n;
+      }
+    }
+  }
+  if (NodeUtil.isLiteralValue(left,false) && right.getType() == Token.ADD) {
+    Node rl=right.getFirstChild();
+    Node rr=right.getLastChild();
+    if (rl.getType() == Token.STRING) {
+      String leftString=NodeUtil.getStringValue(left);
+      String rightString=NodeUtil.getStringValue(rl);
+      if (leftString != null && rightString != null) {
+        right.removeChild(rr);
+        String result=leftString + rightString;
+        n.replaceChild(right,rr);
+        n.replaceChild(left,Node.newString(result));
+        reportCodeChange();
+        return n;
+      }
+    }
+  }
+  return n;
+}

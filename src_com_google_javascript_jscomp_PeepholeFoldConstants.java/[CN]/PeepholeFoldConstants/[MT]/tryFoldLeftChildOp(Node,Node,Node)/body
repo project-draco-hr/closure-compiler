@@ -1,6 +1,7 @@
 {
   int opType=n.getType();
-  Preconditions.checkState(NodeUtil.isAssociative(opType) && NodeUtil.isCommutative(opType));
+  Preconditions.checkState((NodeUtil.isAssociative(opType) && NodeUtil.isCommutative(opType)) || n.getType() == Token.ADD);
+  Preconditions.checkState(n.getType() != Token.ADD || !NodeUtil.mayBeString(n));
   Double rightValObj=NodeUtil.getNumberValue(right);
   if (rightValObj != null && left.getType() == opType) {
     Preconditions.checkState(left.getChildCount() == 2);

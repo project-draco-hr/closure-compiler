@@ -1,0 +1,14 @@
+{
+switch (n.getType()) {
+case Token.ASSIGN:
+case Token.COMMA:
+    return valueCheck(n.getLastChild(),p);
+case Token.AND:
+case Token.OR:
+  return valueCheck(n.getFirstChild(),p) && valueCheck(n.getLastChild(),p);
+case Token.HOOK:
+return valueCheck(n.getFirstChild().getNext(),p) && valueCheck(n.getLastChild(),p);
+default :
+return p.apply(n);
+}
+}
