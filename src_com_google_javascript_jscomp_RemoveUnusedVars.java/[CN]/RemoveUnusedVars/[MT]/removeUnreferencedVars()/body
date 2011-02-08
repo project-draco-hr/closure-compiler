@@ -1,7 +1,11 @@
 {
-  CodingConvention convention=compiler.getCodingConvention();
+  CodingConvention convention=codingConvention;
   for (Iterator<Var> it=maybeUnreferenced.iterator(); it.hasNext(); ) {
     Var var=it.next();
+    for (    Node exprCallNode : inheritsCalls.get(var)) {
+      NodeUtil.removeChild(exprCallNode.getParent(),exprCallNode);
+      compiler.reportCodeChange();
+    }
     removeAllAssigns(var);
     compiler.addToDebugLog("Unreferenced var: " + var.name);
     Node nameNode=var.nameNode;
