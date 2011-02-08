@@ -1,0 +1,22 @@
+{
+  Preconditions.checkArgument(NodeUtil.isFunction(func));
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false,false);
+  cfa.process(null,func.getFirstChild().getNext().getNext());
+  ControlFlowGraph<Node> cfg=cfa.getCfg();
+  new PropertyOrdersFlowAnalysis(cfa.getCfg()).analyze();
+  Annotation ann=cfa.getCfg().getImplicitReturn().getAnnotation();
+  List<String>[] orders=((FlowState<PropertyOrders>)ann).getIn().getOrders();
+  if (orders.length == 0) {
+    throw new AssertionError("no paths through constructor " + funcName + "?");
+  }
+  if (orders.length > 1) {
+    report(sourceName,func,UNEQUAL_PROPERTIES,reverse(orders[0]).toString(),reverse(orders[1]).toString());
+  }
+  if (objType != null) {
+    for (    String propName : objType.getOwnPropertyNames()) {
+      if (!orders[0].contains(propName)) {
+        report(sourceName,func,UNASSIGNED_PROPERTY,funcName,propName);
+      }
+    }
+  }
+}

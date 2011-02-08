@@ -1,0 +1,48 @@
+{
+switch (node.getType()) {
+case Token.BLOCK:
+case Token.LABEL:
+case Token.FUNCTION:
+    return input;
+case Token.IF:
+case Token.WHILE:
+case Token.DO:
+  return flowThrough(NodeUtil.getConditionExpression(node),input);
+case Token.SWITCH:
+case Token.WITH:
+return flowThrough(node.getFirstChild(),input);
+case Token.FOR:
+if (node.getChildCount() == 4) {
+Node pre=node.getFirstChild(), cond=pre.getNext();
+return flowThrough(cond,flowThrough(pre,input));
+}
+ else {
+Node lhs=node.getFirstChild(), rhs=lhs.getNext();
+return flowThrough(rhs,flowThrough(lhs,input));
+}
+case Token.HOOK:
+Node cond=node.getFirstChild();
+input=flowThrough(cond,input);
+Node ifTrue=cond.getNext(), ifFalse=ifTrue.getNext();
+return join(flowThrough(ifTrue,input),flowThrough(ifFalse,input));
+case Token.AND:
+case Token.OR:
+Node left=node.getFirstChild(), right=left.getNext();
+input=flowThrough(left,input);
+return join(input,flowThrough(right,input));
+case Token.ASSIGN:
+Node lhs=node.getFirstChild(), rhs=lhs.getNext();
+if (lhs.getType() == Token.GETPROP) {
+Node llhs=lhs.getFirstChild(), lrhs=llhs.getNext();
+if ((llhs.getType() == Token.THIS) && (lrhs.getType() == Token.STRING) && (lrhs.getNext() == null)) {
+return flowThrough(rhs,input.copyAndAdd(lrhs.getString()));
+}
+}
+return flowThrough(rhs,flowThrough(lhs,input));
+default :
+for (node=node.getFirstChild(); node != null; node=node.getNext()) {
+input=flowThrough(node,input);
+}
+return input;
+}
+}
