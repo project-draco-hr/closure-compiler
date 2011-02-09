@@ -7,7 +7,7 @@
     return;
   }
   Scope.Var var=t.getScope().getVar(name);
-  boolean local=(var != null) && var.isLocal();
+  boolean local=(var != null) && var.isLocal() && (!var.scope.getParent().isGlobal() || !var.isBleedingFunction());
   if (!local && localRenamingOnly) {
     reservedNames.add(name);
     return;
