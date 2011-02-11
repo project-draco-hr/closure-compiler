@@ -1,0 +1,18 @@
+{
+  Node comma=new Node(Token.COMMA,exp1);
+  comma.copyInformationFrom(exp2);
+  if (exp2.getType() == Token.COMMA) {
+    Node leftMostChild=exp2;
+    while (leftMostChild.getType() == Token.COMMA) {
+      leftMostChild=leftMostChild.getFirstChild();
+    }
+    Node parent=leftMostChild.getParent();
+    comma.addChildToBack(leftMostChild.detachFromParent());
+    parent.addChildToFront(comma);
+    return exp2;
+  }
+ else {
+    comma.addChildToBack(exp2);
+    return comma;
+  }
+}

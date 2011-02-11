@@ -1,0 +1,24 @@
+{
+  if (block.getType() != Token.BLOCK) {
+    return false;
+  }
+  if (!block.hasChildren() || block.hasOneChild()) {
+    return false;
+  }
+  Node last=block.getLastChild();
+  for (Node c=block.getFirstChild(); c != null; c=c.getNext()) {
+    if (!NodeUtil.isExpressionNode(c) && c != last) {
+      return false;
+    }
+  }
+switch (last.getType()) {
+case Token.IF:
+case Token.THROW:
+case Token.SWITCH:
+case Token.EXPR_RESULT:
+    return true;
+case Token.RETURN:
+  return last.hasChildren();
+}
+return false;
+}
