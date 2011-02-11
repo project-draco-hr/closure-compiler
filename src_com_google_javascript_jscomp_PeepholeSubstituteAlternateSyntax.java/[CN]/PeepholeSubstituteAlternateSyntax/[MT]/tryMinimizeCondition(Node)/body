@@ -27,6 +27,13 @@ case Token.OR:
     }
   }
 break;
+default :
+TernaryValue nVal=NodeUtil.getBooleanValue(first);
+if (nVal != TernaryValue.UNKNOWN) {
+boolean result=nVal.not().toBoolean(true);
+int equivalentResult=result ? 1 : 0;
+return maybeReplaceChildWithNumber(n,parent,equivalentResult);
+}
 }
 return n;
 case Token.OR:

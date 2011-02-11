@@ -31,6 +31,12 @@ if (n.getChildCount() == 1 && n.getFirstChild().getType() == Token.NAME && n.get
 return Double.NEGATIVE_INFINITY;
 }
 return null;
+case Token.NOT:
+TernaryValue child=getBooleanValue(n.getFirstChild());
+if (child != TernaryValue.UNKNOWN) {
+return child.toBoolean(true) ? 0.0 : 1.0;
+}
+break;
 case Token.STRING:
 String s=trimJsWhiteSpace(n.getString());
 if (s.length() == 0) {
