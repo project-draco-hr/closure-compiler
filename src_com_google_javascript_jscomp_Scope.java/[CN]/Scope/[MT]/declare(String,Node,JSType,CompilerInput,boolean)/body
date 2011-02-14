@@ -1,16 +1,8 @@
 {
   Preconditions.checkState(name != null && name.length() > 0);
   Preconditions.checkState(vars.get(name) == null);
-  Var var=new Var(inferred);
-  var.name=name;
-  var.nameNode=nameNode;
-  var.type=type;
-  var.scope=this;
-  var.index=vars.size();
-  var.input=input;
   JSDocInfo info=NodeUtil.getInfoForNameNode(nameNode);
-  var.isDefine=info != null && info.isDefine();
-  var.info=info;
+  Var var=new Var(inferred,name,nameNode,type,this,vars.size(),input,info != null && info.isDefine(),info);
   vars.put(name,var);
   return var;
 }
