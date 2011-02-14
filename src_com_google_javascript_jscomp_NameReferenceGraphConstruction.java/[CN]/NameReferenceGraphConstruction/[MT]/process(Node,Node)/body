@@ -1,7 +1,7 @@
 {
-  ScopeCreator scopeCreator=compiler.getScopeCreator();
+  ScopeCreator scopeCreator=compiler.getTypedScopeCreator();
   if (scopeCreator == null) {
-    scopeCreator=new TypedScopeCreator(compiler);
+    scopeCreator=new MemoizedScopeCreator(new TypedScopeCreator(compiler));
   }
   NodeTraversal externsTraversal=new NodeTraversal(compiler,new Traversal(true),scopeCreator);
   NodeTraversal codeTraversal=new NodeTraversal(compiler,new Traversal(false),scopeCreator);
