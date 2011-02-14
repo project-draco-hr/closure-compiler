@@ -16,17 +16,33 @@ case Token.OR:
 {
     Node leftParent=first.getFirstChild();
     Node rightParent=first.getLastChild();
-    if (leftParent.getType() == Token.NOT && rightParent.getType() == Token.NOT) {
-      Node left=leftParent.removeFirstChild();
-      Node right=rightParent.removeFirstChild();
-      int newOp=(first.getType() == Token.AND) ? Token.OR : Token.AND;
-      Node newRoot=new Node(newOp,left,right);
-      parent.replaceChild(n,newRoot);
-      reportCodeChange();
-      return newRoot;
+    Node left, right;
+    if (leftParent.getType() != Token.NOT && rightParent.getType() != Token.NOT) {
+      int op_precedence=NodeUtil.precedence(first.getType());
+      if ((isLowerPrecedence(leftParent,NOT_PRECEDENCE) && isHigherPrecedence(leftParent,op_precedence)) || (isLowerPrecedence(rightParent,NOT_PRECEDENCE) && isHigherPrecedence(rightParent,op_precedence))) {
+        return n;
+      }
     }
+    if (leftParent.getType() == Token.NOT) {
+      left=leftParent.removeFirstChild();
+    }
+ else {
+      leftParent.detachFromParent();
+      left=new Node(Token.NOT,leftParent).copyInformationFrom(leftParent);
+    }
+    if (rightParent.getType() == Token.NOT) {
+      right=rightParent.removeFirstChild();
+    }
+ else {
+      rightParent.detachFromParent();
+      right=new Node(Token.NOT,rightParent).copyInformationFrom(rightParent);
+    }
+    int newOp=(first.getType() == Token.AND) ? Token.OR : Token.AND;
+    Node newRoot=new Node(newOp,left,right);
+    parent.replaceChild(n,newRoot);
+    reportCodeChange();
+    return newRoot;
   }
-break;
 default :
 TernaryValue nVal=NodeUtil.getBooleanValue(first);
 if (nVal != TernaryValue.UNKNOWN) {
