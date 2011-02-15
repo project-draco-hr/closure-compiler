@@ -2,22 +2,20 @@
 switch (n.getType()) {
 case Token.NAME:
 case Token.GETPROP:
-    if (parent.getType() == Token.ASSIGN || parent.getType() == Token.VAR) {
-      definitionMap.put(n.getQualifiedName(),parent);
-    }
-  if (parent.getType() != Token.CALL) {
+    String name=n.getQualifiedName();
+  if (name == null) {
     return;
   }
-List<String> exportSymbolNames=Lists.newArrayList();
-List<String> exportPropertyNames=Lists.newArrayList();
-exportSymbolNames.add("goog.exportSymbol");
-exportPropertyNames.add("goog.exportProperty");
-exportSymbolNames.add("google_exportSymbol");
-exportPropertyNames.add("google_exportProperty");
-if (exportPropertyNames.contains(n.getQualifiedName())) {
+if (parent.getType() == Token.ASSIGN || parent.getType() == Token.VAR) {
+  definitionMap.put(n.getQualifiedName(),parent);
+}
+if (parent.getType() != Token.CALL) {
+return;
+}
+if (exportPropertyFunctionNames.contains(n.getQualifiedName())) {
 handlePropertyExport(parent);
 }
-if (exportSymbolNames.contains(n.getQualifiedName())) {
+if (exportSymbolFunctionNames.contains(n.getQualifiedName())) {
 handleSymbolExport(parent);
 }
 }
