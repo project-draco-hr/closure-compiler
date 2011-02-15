@@ -1,13 +1,10 @@
 {
   Node callTarget=n.getFirstChild();
-  if (callTarget == null) {
+  if (callTarget == null || !NodeUtil.isGetProp(callTarget)) {
     return n;
   }
   Node right=callTarget.getNext();
-  if (right == null) {
-    return n;
-  }
-  if (!NodeUtil.isGetProp(callTarget) || !NodeUtil.isImmutableValue(right)) {
+  if (right != null && !NodeUtil.isImmutableValue(right)) {
     return n;
   }
   Node arrayNode=callTarget.getFirstChild();
@@ -15,7 +12,7 @@
   if ((arrayNode.getType() != Token.ARRAYLIT) || !functionName.getString().equals("join")) {
     return n;
   }
-  String joinString=NodeUtil.getStringValue(right);
+  String joinString=(right == null) ? "," : NodeUtil.getStringValue(right);
   List<Node> arrayFoldedChildren=Lists.newLinkedList();
   StringBuilder sb=null;
   int foldedSize=0;
@@ -29,7 +26,7 @@
  else {
         sb.append(joinString);
       }
-      sb.append(NodeUtil.getStringValue(elem));
+      sb.append(NodeUtil.getArrayElementStringValue(elem));
     }
  else {
       if (sb != null) {
