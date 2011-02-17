@@ -1,14 +1,21 @@
 {
-  for (Node name=objLit.getFirstChild(); name != null; name=name.getNext()) {
-    Node value=name.getFirstChild();
-    String memberName=NodeUtil.getObjectLitKeyName(name);
-    JSType valueType=getDeclaredPropType(t,name.getJSDocInfo(),name,value);
-    JSType keyType=NodeUtil.getObjectLitKeyTypeFromValueType(name,valueType);
+  for (Node keyNode=objLit.getFirstChild(); keyNode != null; keyNode=keyNode.getNext()) {
+    Node value=keyNode.getFirstChild();
+    String memberName=NodeUtil.getObjectLitKeyName(keyNode);
+    JSDocInfo info=keyNode.getJSDocInfo();
+    JSType valueType=getDeclaredPropType(t,info,keyNode,value);
+    JSType keyType=NodeUtil.getObjectLitKeyTypeFromValueType(keyNode,valueType);
     if (keyType != null) {
-      name.setJSType(keyType);
+      String qualifiedName=getBestLValueName(keyNode);
+      if (qualifiedName != null) {
+        defineSlot(keyNode,objLit,qualifiedName,keyType,false);
+      }
+ else {
+        setDeferredType(keyNode,keyType);
+      }
       if (objLitType != null) {
         boolean isExtern=t.getInput() != null && t.getInput().isExtern();
-        objLitType.defineDeclaredProperty(memberName,keyType,isExtern,name);
+        objLitType.defineDeclaredProperty(memberName,keyType,isExtern,keyNode);
       }
     }
   }

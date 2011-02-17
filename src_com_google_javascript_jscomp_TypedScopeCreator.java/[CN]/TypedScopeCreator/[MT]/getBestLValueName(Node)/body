@@ -1,3 +1,16 @@
 {
-  return lValue == null ? null : lValue.getQualifiedName();
+  if (lValue == null || lValue.getParent() == null) {
+    return null;
+  }
+  if (NodeUtil.isObjectLitKey(lValue,lValue.getParent())) {
+    Node owner=getBestLValue(lValue.getParent());
+    if (owner != null) {
+      String ownerName=getBestLValueName(owner);
+      if (ownerName != null) {
+        return ownerName + "." + NodeUtil.getObjectLitKeyName(lValue);
+      }
+    }
+    return null;
+  }
+  return lValue.getQualifiedName();
 }
