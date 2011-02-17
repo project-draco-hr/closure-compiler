@@ -1,3 +1,20 @@
 {
-  test("function() {};",null,VarCheck.INVALID_FUNCTION_DECL);
+  final CompilerTestCase testcase=this;
+  testSetupPass=new CompilerPass(){
+    void visit(    Node n){
+      if (n.getType() == Token.NAME && !n.getString().isEmpty() && n.getParent().getType() == Token.FUNCTION) {
+        n.setString("");
+        testcase.getLastCompiler().reportCodeChange();
+      }
+      for (      Node c : n.children()) {
+        visit(c);
+      }
+    }
+    @Override public void process(    Node externs,    Node root){
+      visit(root);
+    }
+  }
+;
+  test("function f() {};",null,VarCheck.INVALID_FUNCTION_DECL);
+  test("if (true) { function f(){}; }",null,VarCheck.INVALID_FUNCTION_DECL);
 }
