@@ -17,8 +17,8 @@
   fold("if(x){do{foo()}while(y)}else bar()","if(x){do foo();while(y)}else bar()");
   fold("function f(){if(x){if(y)foo()}}","function f(){x&&y&&foo()}");
   fold("function f(){if(x){if(y)foo();else bar()}}","function f(){x&&(y?foo():bar())}");
-  fold("function f(){if(x){if(y)foo()}else bar()}","function f(){if(x)y&&foo();else bar()}");
-  fold("function f(){if(x){if(y)foo();else bar()}else{baz()}}","function f(){if(x)y?foo():bar();else baz()}");
+  fold("function f(){if(x){if(y)foo()}else bar()}","function f(){x?y&&foo():bar()}");
+  fold("function f(){if(x){if(y)foo();else bar()}else{baz()}}","function f(){x?y?foo():bar():baz()}");
   fold("if(e1){while(e2){if(e3){foo()}}}else{bar()}","if(e1)while(e2)e3&&foo();else bar()");
   fold("if(e1){with(e2){if(e3){foo()}}}else{bar()}","if(e1)with(e2)e3&&foo();else bar()");
   fold("if(a||b){if(c||d){var x;}}","if(a||b)if(c||d)var x");

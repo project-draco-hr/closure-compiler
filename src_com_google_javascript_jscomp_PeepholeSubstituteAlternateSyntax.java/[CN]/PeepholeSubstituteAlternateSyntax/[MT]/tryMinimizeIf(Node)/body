@@ -93,18 +93,15 @@
           return expr;
         }
       }
- else       if (NodeUtil.isCall(thenOp)) {
-        n.removeChild(cond);
-        thenOp.detachFromParent();
-        elseOp.detachFromParent();
-        Node hookNode=new Node(Token.HOOK,cond,thenOp,elseOp).copyInformationFrom(n);
-        Node expr=NodeUtil.newExpr(hookNode);
-        parent.replaceChild(n,expr);
-        reportCodeChange();
-        return expr;
-      }
     }
-    return n;
+    n.removeChild(cond);
+    thenOp.detachFromParent();
+    elseOp.detachFromParent();
+    Node hookNode=new Node(Token.HOOK,cond,thenOp,elseOp).copyInformationFrom(n);
+    Node expr=NodeUtil.newExpr(hookNode);
+    parent.replaceChild(n,expr);
+    reportCodeChange();
+    return expr;
   }
   boolean thenBranchIsVar=isVarBlock(thenBranch);
   boolean elseBranchIsVar=isVarBlock(elseBranch);
