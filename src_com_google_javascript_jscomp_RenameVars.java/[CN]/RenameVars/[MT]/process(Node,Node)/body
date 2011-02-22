@@ -5,6 +5,9 @@
   reservedNames.addAll(externNames);
   SortedSet<Assignment> varsByFrequency=new TreeSet<Assignment>(FREQUENCY_COMPARATOR);
   varsByFrequency.addAll(assignments.values());
+  if (shouldShadow) {
+    new ShadowVariables(compiler,assignments,varsByFrequency,pseudoNameMap).process(externs,root);
+  }
   if (prevUsedRenameMap != null) {
     reusePreviouslyUsedVariableMap();
   }

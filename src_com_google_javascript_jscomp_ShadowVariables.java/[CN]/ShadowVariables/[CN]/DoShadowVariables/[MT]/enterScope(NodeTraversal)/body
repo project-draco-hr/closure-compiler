@@ -1,0 +1,30 @@
+{
+  Scope s=t.getScope();
+  if (!s.isLocal()) {
+    return;
+  }
+  if (s.getParent().isGlobal()) {
+    return;
+  }
+  for (Iterator<Var> vars=s.getVars(); vars.hasNext(); ) {
+    Var var=vars.next();
+    if (var.isBleedingFunction()) {
+      continue;
+    }
+    Assignment bestShadow=findBestShadow(s,var);
+    if (bestShadow == null) {
+      continue;
+    }
+    Assignment localAssignment=assignments.get(var.getName());
+    if (bestShadow.count < localAssignment.count) {
+      continue;
+    }
+    doShadow(localAssignment,bestShadow,var);
+    if (pseudoNameMap != null) {
+      String targetPseudoName=pseudoNameMap.get(s.getVar(bestShadow.oldName).nameNode);
+      for (      Node use : varToNameUsage.get(var)) {
+        pseudoNameMap.put(use,targetPseudoName);
+      }
+    }
+  }
+}
