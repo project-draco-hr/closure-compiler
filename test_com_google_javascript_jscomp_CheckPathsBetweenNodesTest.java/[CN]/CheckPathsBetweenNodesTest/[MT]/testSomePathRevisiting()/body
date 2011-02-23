@@ -1,0 +1,21 @@
+{
+  DiGraph<String,String> g=LinkedDirectedGraph.create();
+  g.createDirectedGraphNode("1");
+  g.createDirectedGraphNode("2a");
+  g.createDirectedGraphNode("2b");
+  g.createDirectedGraphNode("3");
+  g.createDirectedGraphNode("4a");
+  g.createDirectedGraphNode("4b");
+  g.createDirectedGraphNode("5");
+  g.connect("1","-","2a");
+  g.connect("1","-","2b");
+  g.connect("2a","-","3");
+  g.connect("2b","-","3");
+  g.connect("3","-","4a");
+  g.connect("3","-","4b");
+  g.connect("4a","-","5");
+  g.connect("4b","-","5");
+  CountingPredicate<String> p=new CountingPredicate<String>(Predicates.equalTo("4a"));
+  assertTrue(createTest(g,"1","5",p,ALL_EDGE).somePathsSatisfyPredicate());
+  assertEquals(4,p.count);
+}
