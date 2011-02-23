@@ -11,11 +11,11 @@
     throw new RuntimeException("unexpected exception",e);
   }
   for (  Token token : resultTokens.values()) {
-    OriginalMapping mapping=reader.getMappingForLine(token.position.getLineNumber() + 1,token.position.getCharacterIndex() + 1);
+    OriginalMapping mapping=reader.getMappingForLine(token.position.getLine() + 1,token.position.getColumn() + 1);
     assertNotNull(mapping);
     Token inputToken=originalTokens.get(token.tokenName);
     assertNotNull(inputToken);
-    assertEquals(mapping.position.getLineNumber(),inputToken.position.getLineNumber() + 1);
+    assertEquals(mapping.position.getLine(),inputToken.position.getLine() + 1);
     if (!inputToken.tokenName.startsWith("STR")) {
       assertTrue(!mapping.originalName.isEmpty());
     }

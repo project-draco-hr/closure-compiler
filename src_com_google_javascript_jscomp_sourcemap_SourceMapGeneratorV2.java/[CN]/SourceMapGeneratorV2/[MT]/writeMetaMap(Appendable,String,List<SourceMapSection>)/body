@@ -1,0 +1,25 @@
+{
+  out.append("{\n");
+  appendFirstField(out,"version","2");
+  appendField(out,"file",escapeString(name));
+  appendFieldStart(out,"sections");
+  out.append("[\n");
+  boolean first=true;
+  Long offset=new Long(0);
+  for (  SourceMapSection section : appSections) {
+    if (first) {
+      first=false;
+    }
+ else {
+      out.append(",\n");
+    }
+    out.append("{\n");
+    appendFirstField(out,"offset",offset.toString());
+    appendField(out,"file",escapeString(section.getSectionUrl()));
+    out.append("\n}");
+    offset+=section.getLength();
+  }
+  out.append("\n]");
+  appendFieldEnd(out);
+  out.append("\n}\n");
+}
