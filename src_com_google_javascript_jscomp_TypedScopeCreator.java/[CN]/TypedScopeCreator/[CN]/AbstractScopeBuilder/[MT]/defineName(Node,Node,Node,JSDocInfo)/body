@@ -1,29 +1,10 @@
 {
   Node value=name.getFirstChild();
-  JSType type=null;
-  if (value != null && value.getType() == Token.FUNCTION && shouldUseFunctionLiteralType((FunctionType)value.getJSType(),info,name)) {
-    type=value.getJSType();
-  }
+  JSType type=getDeclaredType(sourceName,info,name,value);
   if (type == null) {
-    if (info == null) {
-      CompilerInput input=compiler.getInput(sourceName);
-      Preconditions.checkNotNull(input,sourceName);
-      type=input.isExtern() ? getNativeType(UNKNOWN_TYPE) : null;
-    }
- else     if (info.hasEnumParameterType()) {
-      if (value != null && value.getType() == Token.OBJECTLIT) {
-        type=value.getJSType();
-      }
- else {
-        type=createEnumTypeFromNodes(value,name.getString(),info,name);
-      }
-    }
- else     if (info.isConstructor()) {
-      type=createFunctionTypeFromNodes(value,name.getString(),info,name);
-    }
- else {
-      type=getDeclaredTypeInAnnotation(sourceName,name,info);
-    }
+    CompilerInput input=compiler.getInput(sourceName);
+    Preconditions.checkNotNull(input,sourceName);
+    type=input.isExtern() ? getNativeType(UNKNOWN_TYPE) : null;
   }
   defineSlot(name,var,type);
 }
