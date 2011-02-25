@@ -29,6 +29,7 @@
   String name=nameInfo.name;
   if (nameInfo.isExternallyReferenceable) {
     recordReference(WINDOW,name,RefType.REGULAR);
+    maybeRecordAlias(name,parent,referring,referringName);
     return;
   }
   if (NodeUtil.isLhs(n,parent)) {
@@ -47,10 +48,7 @@
     }
   }
  else   if (referring != null) {
-    if ((parent.getType() == Token.NAME || parent.getType() == Token.ASSIGN) && scopes.get(parent) == referring) {
-      recordAlias(referringName,name);
-    }
- else {
+    if (!maybeRecordAlias(name,parent,referring,referringName)) {
       RefType depType=referring.onlyAffectsClassDef ? RefType.INHERITANCE : RefType.REGULAR;
       recordReference(referringName,name,depType);
     }
