@@ -3,19 +3,25 @@
   Node rootNode=t.getScope().getRootNode();
   if (rootNode.getType() == Token.FUNCTION) {
     String scopeFuncName=rootNode.getFirstChild().getString();
+    Node scopeFuncParent=rootNode.getParent();
     if (scopeFuncName.equals(name)) {
       recursive=true;
     }
-    for (Scope s=t.getScope(); s.getParent() != null; s=s.getParent()) {
-      Node curRoot=s.getRootNode();
-      if (curRoot.getParent().getType() == Token.ASSIGN) {
-        Node owner=curRoot.getParent().getFirstChild();
-        while (owner.getType() == Token.GETPROP) {
-          owner=owner.getFirstChild();
-        }
-        if (owner.getType() == Token.NAME && owner.getString().equals(name)) {
-          recursive=true;
-          break;
+ else     if (scopeFuncParent.getType() == Token.NAME && scopeFuncParent.getString().equals(name)) {
+      recursive=true;
+    }
+ else {
+      for (Scope s=t.getScope(); s.getParent() != null; s=s.getParent()) {
+        Node curRoot=s.getRootNode();
+        if (curRoot.getParent().getType() == Token.ASSIGN) {
+          Node owner=curRoot.getParent().getFirstChild();
+          while (owner.getType() == Token.GETPROP) {
+            owner=owner.getFirstChild();
+          }
+          if (owner.getType() == Token.NAME && owner.getString().equals(name)) {
+            recursive=true;
+            break;
+          }
         }
       }
     }
