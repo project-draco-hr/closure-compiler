@@ -27,7 +27,7 @@
   }
   boolean inferred=true;
   if (info != null) {
-    inferred=!(info.hasType() || info.hasEnumParameterType() || FunctionTypeBuilder.isFunctionTypeDeclaration(info));
+    inferred=!(info.hasType() || info.hasEnumParameterType() || (info.isConstant() && valueType != null && !valueType.isUnknownType())|| FunctionTypeBuilder.isFunctionTypeDeclaration(info));
   }
   if (inferred) {
     inferred=!(rhsValue != null && rhsValue.getType() == Token.FUNCTION && !scope.isDeclared(qName,false));
