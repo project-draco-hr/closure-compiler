@@ -5,21 +5,18 @@
  else   if (rValue != null && rValue.getType() == Token.FUNCTION && shouldUseFunctionLiteralType((FunctionType)rValue.getJSType(),info,lValue)) {
     return rValue.getJSType();
   }
- else   if (info != null) {
-    if (info.hasEnumParameterType()) {
-      if (rValue != null && rValue.getType() == Token.OBJECTLIT) {
-        return rValue.getJSType();
-      }
- else {
-        return createEnumTypeFromNodes(rValue,lValue.getQualifiedName(),info,lValue);
-      }
-    }
- else     if (info.isConstructor() || info.isInterface()) {
-      return createFunctionTypeFromNodes(rValue,lValue.getQualifiedName(),info,lValue);
-    }
- else     if (info.isConstant() && rValue != null && rValue.getJSType() != null && !rValue.getJSType().isUnknownType()) {
+ else   if (info != null && info.hasEnumParameterType()) {
+    if (rValue != null && rValue.getType() == Token.OBJECTLIT) {
       return rValue.getJSType();
     }
+ else {
+      return createEnumTypeFromNodes(rValue,lValue.getQualifiedName(),info,lValue);
+    }
   }
-  return getDeclaredTypeInAnnotation(sourceName,lValue,info);
+ else   if (info != null && (info.isConstructor() || info.isInterface())) {
+    return createFunctionTypeFromNodes(rValue,lValue.getQualifiedName(),info,lValue);
+  }
+ else {
+    return getDeclaredTypeInAnnotation(sourceName,lValue,info);
+  }
 }
