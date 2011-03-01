@@ -24,12 +24,16 @@
   info=getBestJSDocInfo(objectLit);
   Node lValue=getBestLValue(objectLit);
   String lValueName=getBestLValueName(lValue);
+  boolean createdEnumType=false;
   if (info != null && info.hasEnumParameterType()) {
     type=createEnumTypeFromNodes(objectLit,lValueName,info,lValue);
+    createdEnumType=true;
   }
   if (type == null) {
     type=typeRegistry.createAnonymousObjectType();
   }
   setDeferredType(objectLit,type);
-  processObjectLitProperties(t,objectLit,ObjectType.cast(objectLit.getJSType()));
+  if (!createdEnumType) {
+    processObjectLitProperties(t,objectLit,ObjectType.cast(objectLit.getJSType()));
+  }
 }
