@@ -77,7 +77,13 @@
     if (normalizeEnabled) {
       normalizeActualCode(compiler,externsRootClone,mainRootClone);
     }
-    if (mainRootClone.checkTreeEqualsSilent(mainRoot)) {
+    boolean codeChange=!mainRootClone.checkTreeEqualsSilent(mainRoot);
+    boolean externsChange=!externsRootClone.checkTreeEqualsSilent(externsRoot);
+    if (externsChange && !allowExternsChanges) {
+      String explanation=externsRootClone.checkTreeEquals(externsRoot);
+      fail("Unexpected changes to externs" + "\nExpected: " + compiler.toSource(externsRootClone) + "\nResult: "+ compiler.toSource(externsRoot)+ "\n"+ explanation);
+    }
+    if (!codeChange && !externsChange) {
       assertFalse("compiler.reportCodeChange() was called " + "even though nothing changed",hasCodeChanged);
     }
  else {
