@@ -1,14 +1,13 @@
 {
-  boolean eq=false;
-  if (type == node2.getType() && getChildCount() == node2.getChildCount() && getNodeClass(this) == getNodeClass(node2)) {
-    eq=this.isEquivalentTo(node2);
-  }
-  if (!eq) {
+  if (!isEquivalentTo(node2,false)) {
     return new NodeMismatch(this,node2);
   }
   NodeMismatch res=null;
   Node n, n2;
   for (n=first, n2=node2.first; res == null && n != null; n=n.next, n2=n2.next) {
+    if (node2 == null) {
+      throw new IllegalStateException();
+    }
     res=n.checkTreeEqualsImpl(n2);
     if (res != null) {
       return res;
