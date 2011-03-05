@@ -1,0 +1,18 @@
+{
+  if (!t.inGlobalScope() && t.getScope().getParent().isGlobal()) {
+    for (    Property p1 : currentHighAffinityProperties) {
+      for (      Property p2 : currentHighAffinityProperties) {
+        if (p1.oldName.compareTo(p2.oldName) < 0) {
+          List<GraphEdge<Property,PropertyAffinity>> edges=affinityGraph.getEdges(p1,p2);
+          if (edges.isEmpty()) {
+            affinityGraph.connect(p1,new PropertyAffinity(1),p2);
+          }
+ else {
+            edges.get(0).getValue().increase();
+          }
+        }
+      }
+    }
+    currentHighAffinityProperties=null;
+  }
+}
