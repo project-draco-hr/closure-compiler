@@ -1,6 +1,17 @@
 {
   if (parserConfig == null) {
-    parserConfig=ParserRunner.createConfig(isIdeMode(),acceptEcmaScript5(),acceptConstKeyword());
-  }
-  return parserConfig;
+    Config.LanguageMode mode;
+switch (options.languageIn) {
+case ECMASCRIPT3:
+      mode=Config.LanguageMode.ECMASCRIPT3;
+    break;
+case ECMASCRIPT5:
+  mode=Config.LanguageMode.ECMASCRIPT5;
+break;
+default :
+throw new IllegalStateException("unexpected language mode");
+}
+parserConfig=ParserRunner.createConfig(isIdeMode(),mode,acceptConstKeyword());
+}
+return parserConfig;
 }

@@ -6,9 +6,11 @@
   compilerEnv.initFromContext(cx);
   compilerEnv.setRecordingComments(true);
   compilerEnv.setRecordingLocalJsDocComments(true);
-  compilerEnv.setWarnTrailingComma(!config.acceptES5);
-  if (config.isIdeMode) {
+  compilerEnv.setWarnTrailingComma(config.languageMode == LanguageMode.ECMASCRIPT3);
+  if (config.isIdeMode || config.languageMode != LanguageMode.ECMASCRIPT3) {
     compilerEnv.setReservedKeywordAsIdentifier(true);
+  }
+  if (config.isIdeMode) {
     compilerEnv.setAllowMemberExprAsFunctionName(true);
   }
   Parser p=new Parser(compilerEnv,errorReporter);
