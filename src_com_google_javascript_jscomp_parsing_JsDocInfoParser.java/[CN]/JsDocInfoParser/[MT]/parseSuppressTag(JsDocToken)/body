@@ -5,13 +5,13 @@
       if (match(JsDocToken.STRING)) {
         String name=stream.getString();
         if (!suppressionNames.contains(name)) {
-          parser.addWarning("msg.jsdoc.suppress.unknown",name,stream.getLineno(),stream.getCharno());
+          parser.addParserWarning("msg.jsdoc.suppress.unknown",name,stream.getLineno(),stream.getCharno());
         }
         suppressions.add(stream.getString());
         token=next();
       }
  else {
-        parser.addWarning("msg.jsdoc.suppress",stream.getLineno(),stream.getCharno());
+        parser.addParserWarning("msg.jsdoc.suppress",stream.getLineno(),stream.getCharno());
         return token;
       }
       if (match(JsDocToken.PIPE)) {
@@ -22,12 +22,12 @@
       }
     }
     if (!match(JsDocToken.RC)) {
-      parser.addWarning("msg.jsdoc.suppress",stream.getLineno(),stream.getCharno());
+      parser.addParserWarning("msg.jsdoc.suppress",stream.getLineno(),stream.getCharno());
     }
  else {
       token=next();
       if (!jsdocBuilder.recordSuppressions(suppressions)) {
-        parser.addWarning("msg.jsdoc.suppress.duplicate",stream.getLineno(),stream.getCharno());
+        parser.addParserWarning("msg.jsdoc.suppress.duplicate",stream.getLineno(),stream.getCharno());
       }
     }
   }
