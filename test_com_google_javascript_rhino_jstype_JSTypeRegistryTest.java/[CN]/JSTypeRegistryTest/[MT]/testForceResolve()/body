@@ -3,7 +3,7 @@
   JSTypeRegistry lazyExprRegistry=new JSTypeRegistry(reporter);
   lazyExprRegistry.setResolveMode(ResolveMode.LAZY_EXPRESSIONS);
   Node expr=new Node(Token.QMARK,Node.newString("foo"));
-  StaticScope<JSType> empty=new EmptyScope();
+  StaticScope<JSType> empty=MapBasedScope.emptyScope();
   JSType type=lazyExprRegistry.createFromTypeNodes(expr,"source.js",empty);
   assertFalse(type.isResolved());
   assertTrue(type.forceResolve(reporter,empty).isResolved());

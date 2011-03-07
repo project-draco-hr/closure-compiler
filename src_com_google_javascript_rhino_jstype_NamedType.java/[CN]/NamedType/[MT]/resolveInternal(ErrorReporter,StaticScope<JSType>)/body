@@ -5,6 +5,7 @@
   }
   if (resolved) {
     super.resolveInternal(t,enclosing);
+    finishPropertyContinuations();
     return registry.isLastGeneration() ? getReferencedType() : this;
   }
   resolveViaProperties(t,enclosing);
@@ -12,5 +13,8 @@
     handleTypeCycle(t);
   }
   super.resolveInternal(t,enclosing);
+  if (isResolved()) {
+    finishPropertyContinuations();
+  }
   return registry.isLastGeneration() ? getReferencedType() : this;
 }
