@@ -61,7 +61,7 @@ return n;
 }
 arrayNode.detachChildren();
 if (foldedStringNode.getType() != Token.STRING) {
-Node replacement=new Node(Token.ADD,Node.newString("").copyInformationFrom(right),foldedStringNode);
+Node replacement=new Node(Token.ADD,Node.newString("").copyInformationFrom(n),foldedStringNode);
 foldedStringNode=replacement;
 }
 n.getParent().replaceChild(n,foldedStringNode);
@@ -73,7 +73,7 @@ return n;
 }
 int kJoinOverhead="[].join()".length();
 foldedSize+=kJoinOverhead;
-foldedSize+=InlineCostEstimator.getCost(right);
+foldedSize+=(right != null) ? InlineCostEstimator.getCost(right) : 0;
 if (foldedSize > originalSize) {
 return n;
 }
