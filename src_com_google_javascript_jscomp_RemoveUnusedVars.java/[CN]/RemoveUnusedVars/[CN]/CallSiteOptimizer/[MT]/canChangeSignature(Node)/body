@@ -1,12 +1,19 @@
 {
   Definition definition=getFunctionDefinition(function);
+  CodingConvention convention=compiler.getCodingConvention();
   Preconditions.checkState(!definition.isExtern());
   Collection<UseSite> useSites=defFinder.getUseSites(definition);
   for (  UseSite site : useSites) {
-    if (!SimpleDefinitionFinder.isCallOrNewSite(site)) {
-      return false;
+    Node parent=site.node.getParent();
+    if (NodeUtil.isCall(parent) && convention.getClassesDefinedByCall(parent) != null) {
+      continue;
     }
-    if (NodeUtil.isFunctionObjectCallOrApply(site.node.getParent())) {
+    if (!SimpleDefinitionFinder.isCallOrNewSite(site)) {
+      if (!(NodeUtil.isGetProp(parent) && NodeUtil.isFunctionObjectCall(parent.getParent()))) {
+        return false;
+      }
+    }
+    if (NodeUtil.isFunctionObjectApply(parent)) {
       return false;
     }
     Node nameNode=site.node;
