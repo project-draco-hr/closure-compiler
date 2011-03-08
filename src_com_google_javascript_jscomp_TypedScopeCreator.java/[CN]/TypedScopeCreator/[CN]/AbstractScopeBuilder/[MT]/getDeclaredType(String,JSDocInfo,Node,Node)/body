@@ -17,8 +17,23 @@
  else     if (info.isConstructor() || info.isInterface()) {
       return createFunctionTypeFromNodes(rValue,lValue.getQualifiedName(),info,lValue);
     }
- else     if (info.isConstant() && rValue != null && rValue.getJSType() != null && !rValue.getJSType().isUnknownType()) {
-      return rValue.getJSType();
+ else {
+      if (info.isConstant()) {
+        JSType knownType=null;
+        if (rValue != null) {
+          if (rValue.getJSType() != null && !rValue.getJSType().isUnknownType()) {
+            return rValue.getJSType();
+          }
+ else           if (rValue.getType() == Token.OR) {
+            Node firstClause=rValue.getFirstChild();
+            Node secondClause=firstClause.getNext();
+            boolean namesMatch=firstClause.getType() == Token.NAME && lValue.getType() == Token.NAME && firstClause.getString().equals(lValue.getString());
+            if (namesMatch && secondClause.getJSType() != null && !secondClause.getJSType().isUnknownType()) {
+              return secondClause.getJSType();
+            }
+          }
+        }
+      }
     }
   }
   return getDeclaredTypeInAnnotation(sourceName,lValue,info);

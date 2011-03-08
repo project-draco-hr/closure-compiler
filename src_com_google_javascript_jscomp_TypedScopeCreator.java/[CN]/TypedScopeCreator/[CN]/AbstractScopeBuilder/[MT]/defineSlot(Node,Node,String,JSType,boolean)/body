@@ -1,6 +1,7 @@
 {
   Preconditions.checkArgument(!variableName.isEmpty());
-  boolean shouldDeclareOnGlobalThis=n.getType() == Token.NAME && scope.isGlobal() && (parent.getType() == Token.VAR || parent.getType() == Token.FUNCTION);
+  boolean isGlobalVar=n.getType() == Token.NAME && scope.isGlobal();
+  boolean shouldDeclareOnGlobalThis=isGlobalVar && (parent.getType() == Token.VAR || parent.getType() == Token.FUNCTION);
   Scope scopeToDeclareIn=scope;
   if (n.getType() == Token.GETPROP && !scope.isGlobal() && isQnameRootedInGlobalScope(n)) {
     Scope globalScope=scope.getGlobalScope();
@@ -20,7 +21,7 @@
     boolean isExtern=input.isExtern();
     Var newVar=scopeToDeclareIn.declare(variableName,n,type,input,inferred);
     if (shouldDeclareOnGlobalThis) {
-      ObjectType globalThis=typeRegistry.getNativeObjectType(JSTypeNative.GLOBAL_THIS);
+      ObjectType globalThis=typeRegistry.getNativeObjectType(GLOBAL_THIS);
       if (inferred) {
         globalThis.defineInferredProperty(variableName,type == null ? getNativeType(JSTypeNative.NO_TYPE) : type,isExtern,n);
       }
@@ -45,5 +46,11 @@
         }
       }
     }
+  }
+  if (isGlobalVar && "Window".equals(variableName) && type instanceof FunctionType) {
+    FunctionType globalThisCtor=typeRegistry.getNativeObjectType(GLOBAL_THIS).getConstructor();
+    globalThisCtor.getInstanceType().clearCachedValues();
+    globalThisCtor.getPrototype().clearCachedValues();
+    globalThisCtor.setPrototypeBasedOn(((FunctionType)type).getInstanceType());
   }
 }
