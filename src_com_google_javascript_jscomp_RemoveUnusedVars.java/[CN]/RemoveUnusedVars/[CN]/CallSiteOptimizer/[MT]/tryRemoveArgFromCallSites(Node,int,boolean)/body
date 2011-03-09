@@ -2,7 +2,7 @@
   Definition definition=getFunctionDefinition(function);
   for (  UseSite site : defFinder.getUseSites(definition)) {
     if (isModifableCallSite(site)) {
-      Node arg=getArgumentForCallOrNewOrDotCall(site,argIndex);
+      Node arg=NodeUtil.getArgumentForCallOrNew(site.node.getParent(),argIndex);
       if (arg != null) {
         Node argParent=arg.getParent();
         if (canModifyAllSites || (arg.getNext() == null && !NodeUtil.mayHaveSideEffects(arg,compiler))) {
