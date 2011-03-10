@@ -1,5 +1,11 @@
 {
   String source=newlineJoin("c();","function c() { return b() }","function b() { return a() }","function a() { return 1 }");
-  String expected=newlineJoin("c();","function c() { b(); return }","function b() { a(); return }","function a() { return }");
+  String expected=newlineJoin("c();","function c() { b(); return }","function b() { return a() }","function a() { return 1 }");
+  test(source,expected);
+  source=expected;
+  expected=newlineJoin("c();","function c() { b(); return }","function b() { a(); return }","function a() { return 1 }");
+  test(source,expected);
+  source=expected;
+  expected=newlineJoin("c();","function c() { b(); return }","function b() { a(); return }","function a() { return }");
   test(source,expected);
 }

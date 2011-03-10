@@ -1,7 +1,11 @@
 {
-  for (  DefinitionSite defSite : definitions.getDefinitionSites().toArray(new DefinitionSite[0])) {
-    if (definitions.getDefinitionSites().contains(defSite)) {
-      optimizeResultsIfEligible(defSite,definitions);
+  List<Node> toOptimize=Lists.newArrayList();
+  for (  DefinitionSite defSite : definitions.getDefinitionSites()) {
+    if (!defSite.inExterns && !callResultsMaybeUsed(definitions,defSite)) {
+      toOptimize.add(defSite.definition.getRValue());
     }
+  }
+  for (  Node node : toOptimize) {
+    rewriteReturns(definitions,node);
   }
 }
