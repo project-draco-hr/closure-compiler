@@ -1,17 +1,11 @@
 {
   if (registry.isLastGeneration()) {
     boolean isForwardDeclared=ignoreForwardReferencedTypes && registry.isForwardDeclaredType(reference);
-    boolean beForgiving=forgiving || isForwardDeclared;
-    if (!beForgiving && registry.isLastGeneration()) {
+    if (!isForwardDeclared && registry.isLastGeneration()) {
       t.warning("Bad type annotation. Unknown type " + reference,sourceName,lineno,null,charno);
     }
  else {
-      if (isForwardDeclared) {
-        setReferencedType(registry.getNativeObjectType(JSTypeNative.NO_RESOLVED_TYPE));
-      }
- else {
-        setReferencedType(registry.getNativeObjectType(JSTypeNative.CHECKED_UNKNOWN_TYPE));
-      }
+      setReferencedType(registry.getNativeObjectType(JSTypeNative.NO_RESOLVED_TYPE));
       if (registry.isLastGeneration() && validator != null) {
         validator.apply(getReferencedType());
       }

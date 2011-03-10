@@ -3,17 +3,17 @@ switch (n.getType()) {
 case Token.LC:
     return createRecordTypeFromNodes(n.getFirstChild(),sourceName,scope);
 case Token.BANG:
-  return createFromTypeNodesInternal(n.getFirstChild(),sourceName,scope,forgiving).restrictByNotNullOrUndefined();
+  return createFromTypeNodesInternal(n.getFirstChild(),sourceName,scope).restrictByNotNullOrUndefined();
 case Token.QMARK:
 Node firstChild=n.getFirstChild();
 if (firstChild == null) {
 return getNativeType(UNKNOWN_TYPE);
 }
-return createDefaultObjectUnion(createFromTypeNodesInternal(firstChild,sourceName,scope,forgiving));
+return createDefaultObjectUnion(createFromTypeNodesInternal(firstChild,sourceName,scope));
 case Token.EQUALS:
-return createOptionalType(createFromTypeNodesInternal(n.getFirstChild(),sourceName,scope,false));
+return createOptionalType(createFromTypeNodesInternal(n.getFirstChild(),sourceName,scope));
 case Token.ELLIPSIS:
-return createOptionalType(createFromTypeNodesInternal(n.getFirstChild(),sourceName,scope,false));
+return createOptionalType(createFromTypeNodesInternal(n.getFirstChild(),sourceName,scope));
 case Token.STAR:
 return getNativeType(ALL_TYPE);
 case Token.LB:
@@ -21,7 +21,7 @@ return getNativeType(ARRAY_TYPE);
 case Token.PIPE:
 UnionTypeBuilder builder=new UnionTypeBuilder(this);
 for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-builder.addAlternate(createFromTypeNodesInternal(child,sourceName,scope,false));
+builder.addAlternate(createFromTypeNodesInternal(child,sourceName,scope));
 }
 return builder.build();
 case Token.EMPTY:
@@ -30,19 +30,16 @@ case Token.VOID:
 return getNativeType(VOID_TYPE);
 case Token.STRING:
 JSType namedType=getType(scope,n.getString(),sourceName,n.getLineno(),n.getCharno());
-if (forgiving) {
-namedType.forgiveUnknownNames();
-}
 if (resolveMode != ResolveMode.LAZY_NAMES) {
 namedType=namedType.resolveInternal(reporter,scope);
 }
 if ((namedType instanceof ObjectType) && !(nonNullableTypeNames.contains(n.getString()))) {
 Node typeList=n.getFirstChild();
 if (typeList != null && ("Array".equals(n.getString()) || "Object".equals(n.getString()))) {
-JSType parameterType=createFromTypeNodesInternal(typeList.getLastChild(),sourceName,scope,false);
+JSType parameterType=createFromTypeNodesInternal(typeList.getLastChild(),sourceName,scope);
 namedType=new ParameterizedType(this,(ObjectType)namedType,parameterType);
 if (typeList.hasMoreThanOneChild()) {
-JSType indexType=createFromTypeNodesInternal(typeList.getFirstChild(),sourceName,scope,false);
+JSType indexType=createFromTypeNodesInternal(typeList.getFirstChild(),sourceName,scope);
 namedType=new IndexedType(this,(ObjectType)namedType,indexType);
 }
 }
@@ -57,7 +54,7 @@ boolean isConstructor=false;
 Node current=n.getFirstChild();
 if (current.getType() == Token.THIS || current.getType() == Token.NEW) {
 Node contextNode=current.getFirstChild();
-thisType=ObjectType.cast(createFromTypeNodesInternal(contextNode,sourceName,scope,false).restrictByNotNullOrUndefined());
+thisType=ObjectType.cast(createFromTypeNodesInternal(contextNode,sourceName,scope).restrictByNotNullOrUndefined());
 if (thisType == null) {
 reporter.warning(ScriptRuntime.getMessage0(current.getType() == Token.THIS ? "msg.jsdoc.function.thisnotobject" : "msg.jsdoc.function.newnotobject"),sourceName,contextNode.getLineno(),"",contextNode.getCharno());
 }
@@ -73,11 +70,11 @@ if (arg.getChildCount() == 0) {
 paramBuilder.addVarArgs(getNativeType(UNKNOWN_TYPE));
 }
  else {
-paramBuilder.addVarArgs(createFromTypeNodesInternal(arg.getFirstChild(),sourceName,scope,false));
+paramBuilder.addVarArgs(createFromTypeNodesInternal(arg.getFirstChild(),sourceName,scope));
 }
 }
  else {
-JSType type=createFromTypeNodesInternal(arg,sourceName,scope,false);
+JSType type=createFromTypeNodesInternal(arg,sourceName,scope);
 if (arg.getType() == Token.EQUALS) {
 boolean addSuccess=paramBuilder.addOptionalParams(type);
 if (!addSuccess) {
@@ -91,7 +88,7 @@ paramBuilder.addRequiredParams(type);
 }
 current=current.getNext();
 }
-JSType returnType=createFromTypeNodesInternal(current,sourceName,scope,false);
+JSType returnType=createFromTypeNodesInternal(current,sourceName,scope);
 return new FunctionBuilder(this).withParams(paramBuilder).withReturnType(returnType).withTypeOfThis(thisType).setIsConstructor(isConstructor).build();
 }
 throw new IllegalStateException("Unexpected node in type expression: " + n.toString());
