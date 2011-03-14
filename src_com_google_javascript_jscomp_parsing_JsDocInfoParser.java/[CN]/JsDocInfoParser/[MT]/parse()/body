@@ -463,7 +463,13 @@ skipEOLs();
 lineno=stream.getLineno();
 charno=stream.getCharno();
 token=next();
-Node typeNode=parseAndRecordTypeNode(token,lineno,charno);
+Node typeNode=null;
+if (annotation == Annotation.RETURN && token != JsDocToken.LC) {
+typeNode=newNode(Token.QMARK);
+}
+ else {
+typeNode=parseAndRecordTypeNode(token,lineno,charno);
+}
 if (annotation == Annotation.THIS) {
 typeNode=wrapNode(Token.BANG,typeNode);
 if (typeNode != null && token != JsDocToken.LC) {
