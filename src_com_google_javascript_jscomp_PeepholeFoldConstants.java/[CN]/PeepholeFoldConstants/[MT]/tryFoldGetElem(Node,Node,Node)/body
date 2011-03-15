@@ -1,6 +1,6 @@
 {
   Preconditions.checkArgument(n.getType() == Token.GETELEM);
-  if (left.getType() == Token.ARRAYLIT && !NodeUtil.isSparseArray(left)) {
+  if (left.getType() == Token.ARRAYLIT) {
     if (right.getType() != Token.NUMBER) {
       return n;
     }
@@ -22,7 +22,12 @@
       error(INDEX_OUT_OF_BOUNDS_ERROR,right);
       return n;
     }
-    left.removeChild(elem);
+    if (elem.getType() == Token.EMPTY) {
+      elem=NodeUtil.newUndefinedNode(elem);
+    }
+ else {
+      left.removeChild(elem);
+    }
     n.getParent().replaceChild(n,elem);
     reportCodeChange();
     return elem;

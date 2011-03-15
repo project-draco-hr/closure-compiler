@@ -1,24 +1,7 @@
 {
   Node node=createNode(Token.ARRAYLIT,element);
   parent.addChildToBack(node);
-  int skipCount=0;
   for (  JsonML child : element.getChildren()) {
-    if (child.getType() == TagType.Empty) {
-      skipCount++;
-    }
     transformElement(child,node);
-  }
-  if (skipCount > 0) {
-    int[] skipIndexes=new int[skipCount];
-    int i=0;
-    int j=0;
-    for (    JsonML child : element.getChildren()) {
-      if (child.getType() == TagType.Empty) {
-        skipIndexes[i]=j;
-        ++i;
-      }
-      ++j;
-    }
-    node.putProp(Node.SKIP_INDEXES_PROP,skipIndexes);
   }
 }

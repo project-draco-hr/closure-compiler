@@ -9,7 +9,7 @@
   }
   Node arrayNode=callTarget.getFirstChild();
   Node functionName=arrayNode.getNext();
-  if ((arrayNode.getType() != Token.ARRAYLIT) || NodeUtil.isSparseArray(arrayNode) || !functionName.getString().equals("join")) {
+  if ((arrayNode.getType() != Token.ARRAYLIT) || !functionName.getString().equals("join")) {
     return n;
   }
   String joinString=(right == null) ? "," : NodeUtil.getStringValue(right);
@@ -19,7 +19,7 @@
   Node prev=null;
   Node elem=arrayNode.getFirstChild();
   while (elem != null) {
-    if (NodeUtil.isImmutableValue(elem)) {
+    if (NodeUtil.isImmutableValue(elem) || elem.getType() == Token.EMPTY) {
       if (sb == null) {
         sb=new StringBuilder();
       }
