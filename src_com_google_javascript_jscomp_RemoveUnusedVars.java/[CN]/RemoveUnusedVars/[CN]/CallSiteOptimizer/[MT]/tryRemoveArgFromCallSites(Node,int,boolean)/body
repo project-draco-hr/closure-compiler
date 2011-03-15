@@ -6,13 +6,11 @@
       if (arg != null) {
         Node argParent=arg.getParent();
         if (canModifyAllSites || (arg.getNext() == null && !NodeUtil.mayHaveSideEffects(arg,compiler))) {
-          argParent.removeChild(arg);
-          compiler.reportCodeChange();
+          toRemove.add(arg);
         }
  else {
           if (!NodeUtil.mayHaveSideEffects(arg,compiler) && (arg.getType() != Token.NUMBER || arg.getDouble() != 0)) {
-            argParent.replaceChild(arg,Node.newNumber(0).copyInformationFrom(arg));
-            compiler.reportCodeChange();
+            toReplaceWithZero.add(arg);
           }
         }
       }

@@ -1,6 +1,6 @@
 {
   if (param != null) {
-    boolean hasFollowing=removeUnreferencedFunctionArgs(scope,function,referenced,param.getNext(),paramIndex + 1,canChangeSignature);
+    boolean hasFollowing=markUnreferencedFunctionArgs(scope,function,referenced,param.getNext(),paramIndex + 1,canChangeSignature);
     Var var=scope.getVar(param.getString());
     if (!referenced.contains(var)) {
       Preconditions.checkNotNull(var);
@@ -10,8 +10,7 @@
       }
       tryRemoveArgFromCallSites(function,paramIndex,modifyAllCallSites);
       if (modifyAllCallSites || !hasFollowing) {
-        getFunctionArgList(function).removeChild(param);
-        compiler.reportCodeChange();
+        toRemove.add(param);
         return hasFollowing;
       }
     }
