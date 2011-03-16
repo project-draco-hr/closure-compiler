@@ -7,11 +7,17 @@
   if (options.inlineFunctions || options.inlineLocalFunctions) {
     passes.add(inlineFunctions);
   }
+  boolean runOptimizeCalls=options.optimizeCalls || options.optimizeParameters || options.optimizeReturns;
   if (options.removeUnusedVars || options.removeUnusedLocalVars) {
     if (options.deadAssignmentElimination) {
       passes.add(deadAssignmentsElimination);
     }
-    passes.add(removeUnusedVars);
+    if (!runOptimizeCalls) {
+      passes.add(removeUnusedVars);
+    }
+  }
+  if (runOptimizeCalls) {
+    passes.add(optimizeCallsAndRemoveUnusedVars);
   }
   assertAllLoopablePasses(passes);
   return passes;
