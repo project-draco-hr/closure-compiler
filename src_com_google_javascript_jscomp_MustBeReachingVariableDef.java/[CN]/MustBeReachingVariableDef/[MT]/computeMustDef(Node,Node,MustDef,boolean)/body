@@ -42,12 +42,25 @@ addToDefIfLocal(c.getString(),conditional ? null : cfgNode,c.getFirstChild(),out
 }
 return;
 default :
-if (NodeUtil.isAssignmentOp(n) && NodeUtil.isName(n.getFirstChild())) {
+if (NodeUtil.isAssignmentOp(n)) {
+if (NodeUtil.isName(n.getFirstChild())) {
 Node name=n.getFirstChild();
 computeMustDef(name.getNext(),cfgNode,output,conditional);
 addToDefIfLocal(name.getString(),conditional ? null : cfgNode,n.getLastChild(),output);
+return;
 }
- else {
+ else if (NodeUtil.isGet(n.getFirstChild())) {
+Node obj=n.getFirstChild().getFirstChild();
+if (NodeUtil.isName(obj) && "arguments".equals(obj.getString())) {
+for (Iterator<Var> i=jsScope.getVars(); i.hasNext(); ) {
+Var v=i.next();
+if (v.getParentNode().getType() == Token.LP) {
+output.reachingDef.put(v,null);
+}
+}
+}
+}
+}
 if (n.getType() == Token.DEC || n.getType() == Token.INC) {
 Node target=n.getFirstChild();
 if (NodeUtil.isName(target)) {
@@ -57,7 +70,6 @@ return;
 }
 for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
 computeMustDef(c,cfgNode,output,conditional);
-}
 }
 }
 }
