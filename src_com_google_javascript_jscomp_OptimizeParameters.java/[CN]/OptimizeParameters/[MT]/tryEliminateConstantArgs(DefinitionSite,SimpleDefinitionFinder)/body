@@ -3,30 +3,22 @@
   boolean firstCall=true;
   Definition definition=defSite.definition;
   Collection<UseSite> useSites=defFinder.getUseSites(definition);
-  boolean continueLooking=false;
   for (  UseSite site : useSites) {
     Preconditions.checkState(SimpleDefinitionFinder.isCallOrNewSite(site));
     Node call=site.node.getParent();
     Node cur=call.getFirstChild();
     if (firstCall) {
-      continueLooking=buildParameterList(parameters,cur,site.scope);
+      buildParameterList(parameters,cur);
       firstCall=false;
     }
  else {
-      continueLooking=findFixedParameters(parameters,cur);
+      findConstantParameters(parameters,cur);
     }
-    if (!continueLooking) {
-      return;
-    }
-  }
-  continueLooking=adjustForSideEffects(parameters);
-  if (!continueLooking) {
-    return;
   }
   for (  UseSite site : useSites) {
     Preconditions.checkState(SimpleDefinitionFinder.isCallOrNewSite(site));
     Node call=site.node.getParent();
-    optimizeCallSite(defFinder,parameters,call);
+    optimizeCallSite(parameters,call);
   }
   Node function=definition.getRValue();
   if (NodeUtil.isFunction(function)) {
