@@ -10,18 +10,6 @@
       setErrorManager(printer);
     }
   }
-  if (options.enables(DiagnosticGroups.CHECK_TYPES)) {
-    options.checkTypes=true;
-  }
- else   if (options.disables(DiagnosticGroups.CHECK_TYPES)) {
-    options.checkTypes=false;
-  }
- else   if (!options.checkTypes) {
-    options.setWarningLevel(DiagnosticGroup.forType(RhinoErrorReporter.TYPE_PARSE_ERROR),CheckLevel.OFF);
-  }
-  if (options.checkGlobalThisLevel.isOn()) {
-    options.setWarningLevel(DiagnosticGroups.GLOBAL_THIS,options.checkGlobalThisLevel);
-  }
   List<WarningsGuard> guards=Lists.newArrayList();
   guards.add(new SuppressDocWarningsGuard(getDiagnosticGroups().getRegisteredGroups()));
   WarningsGuard warningsGuard=options.getWarningsGuard();
@@ -30,6 +18,15 @@
   }
   if (!options.checkSymbols && (warningsGuard == null || !warningsGuard.disables(DiagnosticGroups.CHECK_VARIABLES))) {
     guards.add(new DiagnosticGroupWarningsGuard(DiagnosticGroups.CHECK_VARIABLES,CheckLevel.OFF));
+  }
+  if (options.enables(DiagnosticGroups.CHECK_TYPES)) {
+    options.checkTypes=true;
+  }
+ else   if (options.disables(DiagnosticGroups.CHECK_TYPES)) {
+    options.checkTypes=false;
+  }
+ else   if (!options.checkTypes) {
+    guards.add(new DiagnosticGroupWarningsGuard(DiagnosticGroup.forType(RhinoErrorReporter.TYPE_PARSE_ERROR),CheckLevel.OFF));
   }
   this.warningsGuard=new ComposeWarningsGuard(guards);
 }
