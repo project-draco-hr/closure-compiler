@@ -52,14 +52,12 @@ return;
  else if (NodeUtil.isGet(n.getFirstChild())) {
 Node obj=n.getFirstChild().getFirstChild();
 if (NodeUtil.isName(obj) && "arguments".equals(obj.getString())) {
-for (Iterator<Var> i=jsScope.getVars(); i.hasNext(); ) {
-Var v=i.next();
-if (v.getParentNode().getType() == Token.LP) {
-output.reachingDef.put(v,null);
+escapeParameters(output);
 }
 }
 }
-}
+if (NodeUtil.isName(n) && "arguments".equals(n.getString())) {
+escapeParameters(output);
 }
 if (n.getType() == Token.DEC || n.getType() == Token.INC) {
 Node target=n.getFirstChild();
