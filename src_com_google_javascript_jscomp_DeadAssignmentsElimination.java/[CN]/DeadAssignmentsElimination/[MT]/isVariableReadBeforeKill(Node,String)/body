@@ -1,4 +1,7 @@
 {
+  if (ControlFlowGraph.isEnteringNewCfgNode(n)) {
+    return VariableLiveness.MAYBE_LIVE;
+  }
   if (NodeUtil.isName(n) && variable.equals(n.getString())) {
     if (NodeUtil.isLhs(n,n.getParent())) {
       Preconditions.checkState(n.getParent().getType() == Token.ASSIGN);
@@ -13,13 +16,33 @@
       return VariableLiveness.READ;
     }
   }
-  for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-    if (!ControlFlowGraph.isEnteringNewCfgNode(child)) {
-      VariableLiveness state=isVariableReadBeforeKill(child,variable);
-      if (state != VariableLiveness.MAYBE_LIVE) {
-        return state;
-      }
-    }
-  }
+switch (n.getType()) {
+case Token.OR:
+case Token.AND:
+    VariableLiveness v1=isVariableReadBeforeKill(n.getFirstChild(),variable);
+  VariableLiveness v2=isVariableReadBeforeKill(n.getLastChild(),variable);
+if (v1 != VariableLiveness.MAYBE_LIVE) {
+  return v1;
+}
+ else if (v2 == VariableLiveness.READ) {
+  return VariableLiveness.READ;
+}
+ else {
   return VariableLiveness.MAYBE_LIVE;
+}
+case Token.HOOK:
+VariableLiveness first=isVariableReadBeforeKill(n.getFirstChild(),variable);
+if (first != VariableLiveness.MAYBE_LIVE) {
+return first;
+}
+return checkHookBranchReadBeforeKill(n.getFirstChild().getNext(),n.getLastChild(),variable);
+default :
+for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+VariableLiveness state=isVariableReadBeforeKill(child,variable);
+if (state != VariableLiveness.MAYBE_LIVE) {
+return state;
+}
+}
+}
+return VariableLiveness.MAYBE_LIVE;
 }
