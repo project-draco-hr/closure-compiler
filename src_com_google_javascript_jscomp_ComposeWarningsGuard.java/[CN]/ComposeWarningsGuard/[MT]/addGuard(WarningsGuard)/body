@@ -1,12 +1,11 @@
 {
   if (guard instanceof ComposeWarningsGuard) {
-    addGuards(Lists.reverse(((ComposeWarningsGuard)guard).guards));
+    addGuards(((ComposeWarningsGuard)guard).guards.descendingSet());
   }
  else {
-    int index=Collections.binarySearch(this.guards,guard,guardComparator);
-    if (index < 0) {
-      index=-index - 1;
-    }
-    this.guards.add(index,guard);
+    numberOfAdds++;
+    orderOfAddition.put(guard,numberOfAdds);
+    guards.remove(guard);
+    guards.add(guard);
   }
 }
