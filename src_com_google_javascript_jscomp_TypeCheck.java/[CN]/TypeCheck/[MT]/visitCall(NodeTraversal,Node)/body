@@ -8,14 +8,7 @@
   }
   if (childType instanceof FunctionType) {
     FunctionType functionType=(FunctionType)childType;
-    boolean isExtern=false;
-    JSDocInfo functionJSDocInfo=functionType.getJSDocInfo();
-    if (functionJSDocInfo != null) {
-      String sourceName=functionJSDocInfo.getSourceName();
-      CompilerInput functionSource=compiler.getInput(sourceName);
-      isExtern=functionSource.isExtern();
-    }
-    if (functionType.isConstructor() && !functionType.isNativeObjectType() && (functionType.getReturnType().isUnknownType() || !isExtern)) {
+    if (functionType.isConstructor() && !functionType.isNativeObjectType()) {
       report(t,n,CONSTRUCTOR_NOT_CALLABLE,childType.toString());
     }
     visitParameterList(t,n,functionType);
