@@ -1,0 +1,18 @@
+{
+  if (propertyCandidate == null) {
+    return false;
+  }
+  if (!NodeUtil.isExprAssign(propertyCandidate)) {
+    return false;
+  }
+  Node expr=propertyCandidate.getFirstChild();
+  Node lhs=expr.getFirstChild();
+  if (lhs.getType() != Token.GETELEM && lhs.getType() != Token.GETPROP) {
+    return false;
+  }
+  Node obj=lhs.getFirstChild();
+  if (obj.getType() != Token.NAME) {
+    return false;
+  }
+  return true;
+}
