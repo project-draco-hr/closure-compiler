@@ -1,17 +1,21 @@
 {
-  if (n.getType() != Token.VAR)   return;
+  if (n.getType() != Token.VAR && !canBeRedeclared(n,t.getScope()))   return;
   if (nodesToCollapse.contains(n))   return;
   if (parent.getType() == Token.IF)   return;
   Node varNode=n;
+  boolean hasVar=n.getType() == Token.VAR;
   n=n.getNext();
   boolean hasNodesToCollapse=false;
-  while (n != null && n.getType() == Token.VAR) {
+  while (n != null && (n.getType() == Token.VAR || canBeRedeclared(n,t.getScope()))) {
+    if (NodeUtil.isVar(n)) {
+      hasVar=true;
+    }
     nodesToCollapse.add(n);
     hasNodesToCollapse=true;
     n=n.getNext();
   }
-  if (hasNodesToCollapse) {
+  if (hasNodesToCollapse && hasVar) {
     nodesToCollapse.add(varNode);
-    collapses.add(new Collapse(varNode,parent));
+    collapses.add(new Collapse(varNode,n,parent));
   }
 }
