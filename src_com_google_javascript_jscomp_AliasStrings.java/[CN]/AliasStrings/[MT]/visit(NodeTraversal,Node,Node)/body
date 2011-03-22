@@ -15,32 +15,23 @@
       if (t.inGlobalScope() || isInThrowExpression(n)) {
         info.numOccurrencesInfrequentlyExecuted++;
       }
-      if (info.numOccurrences == 1) {
-        info.moduleToContainDecl=t.getModule();
-        Node prev=n;
-        for (        Node ancestor : n.getAncestors()) {
-          if (ancestor.getType() == Token.SCRIPT) {
-            info.parentForNewVarDecl=ancestor;
-            info.siblingToInsertVarDeclBefore=prev;
-            break;
-          }
-          prev=ancestor;
-        }
-      }
- else {
-        JSModule module=t.getModule();
+      JSModule module=t.getModule();
+      if (info.numOccurrences != 1) {
         if (module != null && info.moduleToContainDecl != null && module != info.moduleToContainDecl && !moduleGraph.dependsOn(module,info.moduleToContainDecl)) {
           module=moduleGraph.getDeepestCommonDependency(module,info.moduleToContainDecl);
-          Node varParent=moduleVarParentMap.get(module);
-          if (varParent == null) {
-            varParent=compiler.getNodeForCodeInsertion(module);
-            moduleVarParentMap.put(module,varParent);
-          }
-          info.moduleToContainDecl=module;
-          info.parentForNewVarDecl=varParent;
-          info.siblingToInsertVarDeclBefore=varParent.getFirstChild();
+        }
+ else {
+          return;
         }
       }
+      Node varParent=moduleVarParentMap.get(module);
+      if (varParent == null) {
+        varParent=compiler.getNodeForCodeInsertion(module);
+        moduleVarParentMap.put(module,varParent);
+      }
+      info.moduleToContainDecl=module;
+      info.parentForNewVarDecl=varParent;
+      info.siblingToInsertVarDeclBefore=varParent.getFirstChild();
     }
   }
 }
