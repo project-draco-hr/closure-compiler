@@ -1,0 +1,43 @@
+{
+  Node assignment=propertyCandidate.getFirstChild();
+  final int sizeOfArrayAtStart=arrayLiteral.getChildCount();
+  int maxIndexAssigned=sizeOfArrayAtStart - 1;
+  Node lhs=assignment.getFirstChild();
+  Node rhs=lhs.getNext();
+  if (lhs.getType() != Token.GETELEM) {
+    return false;
+  }
+  Node obj=lhs.getFirstChild();
+  Node property=obj.getNext();
+  if (property.getType() != Token.NUMBER) {
+    return false;
+  }
+  double dindex=property.getDouble();
+  if (!(dindex >= 0) || Double.isInfinite(dindex) || dindex > 0x7fffffffL) {
+    return false;
+  }
+  int index=(int)dindex;
+  if (dindex != index) {
+    return false;
+  }
+  if (maxIndexAssigned + 4 < index) {
+    return false;
+  }
+  if (index > maxIndexAssigned) {
+    while (maxIndexAssigned < index - 1) {
+      Node emptyNode=new Node(Token.EMPTY).copyInformationFrom(arrayLiteral);
+      arrayLiteral.addChildToBack(emptyNode);
+      ++maxIndexAssigned;
+    }
+    arrayLiteral.addChildToBack(rhs.detachFromParent());
+  }
+ else {
+    Node currentValue=arrayLiteral.getChildAtIndex(index);
+    if (currentValue.getType() != Token.EMPTY) {
+      return false;
+    }
+    arrayLiteral.replaceChild(currentValue,rhs.detachFromParent());
+  }
+  propertyCandidate.detachFromParent();
+  return true;
+}

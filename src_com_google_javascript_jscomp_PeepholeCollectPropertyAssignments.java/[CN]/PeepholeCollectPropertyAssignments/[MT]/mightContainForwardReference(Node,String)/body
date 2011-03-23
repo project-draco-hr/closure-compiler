@@ -1,0 +1,11 @@
+{
+  if (node.getType() == Token.NAME) {
+    return varName.equals(node.getString());
+  }
+  for (Node child=node.getFirstChild(); child != null; child=child.getNext()) {
+    if (mightContainForwardReference(child,varName)) {
+      return true;
+    }
+  }
+  return false;
+}
