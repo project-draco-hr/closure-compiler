@@ -1,0 +1,11 @@
+{
+  for (  Property p : propertyMap.values()) {
+    UndiGraphNode<Property,PropertyAffinity> node=affinityGraph.getUndirectedGraphNode(p);
+    int affinityScore=0;
+    for (Iterator<UndiGraphEdge<Property,PropertyAffinity>> edgeIterator=node.getNeighborEdgesIterator(); edgeIterator.hasNext(); ) {
+      UndiGraphEdge<Property,PropertyAffinity> edge=edgeIterator.next();
+      affinityScore+=edge.getValue().affinity + (node == edge.getNodeA() ? edge.getNodeB().getValue().numOccurrences : edge.getNodeA().getValue().numOccurrences);
+    }
+    node.getValue().affinityScore=affinityScore;
+  }
+}
