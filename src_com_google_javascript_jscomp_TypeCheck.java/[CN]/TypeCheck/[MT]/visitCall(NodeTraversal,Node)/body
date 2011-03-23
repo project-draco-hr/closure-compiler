@@ -8,7 +8,14 @@
   }
   if (childType instanceof FunctionType) {
     FunctionType functionType=(FunctionType)childType;
-    if (functionType.isConstructor() && !functionType.isNativeObjectType()) {
+    boolean isExtern=false;
+    JSDocInfo functionJSDocInfo=functionType.getJSDocInfo();
+    if (functionJSDocInfo != null) {
+      String sourceName=functionJSDocInfo.getSourceName();
+      CompilerInput functionSource=compiler.getInput(sourceName);
+      isExtern=functionSource.isExtern();
+    }
+    if (functionType.isConstructor() && !functionType.isNativeObjectType() && (functionType.getReturnType().isUnknownType() || functionType.getReturnType().isVoidType() || !isExtern)) {
       report(t,n,CONSTRUCTOR_NOT_CALLABLE,childType.toString());
     }
     visitParameterList(t,n,functionType);
