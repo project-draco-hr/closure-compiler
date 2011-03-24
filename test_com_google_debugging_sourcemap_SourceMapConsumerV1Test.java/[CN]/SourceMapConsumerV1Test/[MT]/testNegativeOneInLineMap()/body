@@ -1,0 +1,17 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append("/** Begin line maps. **/{ count : 1 }\n");
+  sb.append("[200,-1,199,-1]\n");
+  sb.append("/** Begin file information. **/\n");
+  sb.append("\n");
+  sb.append("/** Begin mapping definitions. **/\n");
+  for (int i=0; i <= 200; i++) {
+    sb.append("['foo.js', 1, ").append(i).append("]\n");
+  }
+  SourceMapConsumerV1 sourceMap=new SourceMapConsumerV1();
+  sourceMap.parse(sb.toString());
+  OriginalMapping mapping=sourceMap.getMappingForLine(1,2);
+  assertNull(mapping);
+  mapping=sourceMap.getMappingForLine(1,4);
+  assertNull(mapping);
+}

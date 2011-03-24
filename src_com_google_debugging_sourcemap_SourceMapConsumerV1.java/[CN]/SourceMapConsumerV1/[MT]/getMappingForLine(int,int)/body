@@ -1,0 +1,25 @@
+{
+  Preconditions.checkNotNull(characterMap,"parse() must be called first");
+  if (lineNumber < 1 || lineNumber > characterMap.size() || columnIndex < 1) {
+    return null;
+  }
+  List<LineFragment> lineFragments=characterMap.get(lineNumber - 1);
+  if (lineFragments == null || lineFragments.isEmpty()) {
+    return null;
+  }
+  int columnOffset=0;
+  LineFragment lastFragment=lineFragments.get(lineFragments.size() - 1);
+  int mapId=lastFragment.valueAtColumn(lastFragment.length());
+  for (  LineFragment lineFragment : lineFragments) {
+    int columnPosition=columnIndex - columnOffset;
+    if (columnPosition <= lineFragment.length()) {
+      mapId=lineFragment.valueAtColumn(columnPosition);
+      break;
+    }
+    columnOffset+=lineFragment.length();
+  }
+  if (mapId < 0) {
+    return null;
+  }
+  return getMappingFromId(mapId);
+}

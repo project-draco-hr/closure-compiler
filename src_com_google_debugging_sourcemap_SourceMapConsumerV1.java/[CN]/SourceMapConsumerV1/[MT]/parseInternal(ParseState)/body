@@ -1,0 +1,21 @@
+{
+  String headerCount=parser.readLine();
+  Preconditions.checkArgument(headerCount.startsWith(LINEMAP_HEADER),"Expected %s",LINEMAP_HEADER);
+  JSONObject countObject=new JSONObject(headerCount.substring(LINEMAP_HEADER.length()));
+  if (!countObject.has("count")) {
+    parser.fail("Missing 'count'");
+  }
+  int lineCount=countObject.getInt("count");
+  if (lineCount <= 0) {
+    parser.fail("Count must be >= 1");
+  }
+  ImmutableList.Builder<ImmutableList<LineFragment>> characterMapBuilder=ImmutableList.builder();
+  int maxId=parseCharacterMap(parser,lineCount,characterMapBuilder);
+  characterMap=characterMapBuilder.build();
+  parser.expectLine(FILEINFO_HEADER);
+  for (int i=0; i < lineCount; i++) {
+    parser.readLine();
+  }
+  parser.expectLine(DEFINITION_HEADER);
+  parseFileMappings(parser,maxId);
+}

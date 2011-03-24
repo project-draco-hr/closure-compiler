@@ -1,0 +1,22 @@
+{
+  lineNumber--;
+  columnIndex--;
+  if (lineNumber >= lineMaps.length()) {
+    return null;
+  }
+  if (!characterMap.containsKey(lineNumber)) {
+    try {
+      characterMap.put(lineNumber,SourceMapLineDecoder.decodeLine(lineMaps.getString(lineNumber)));
+    }
+ catch (    JSONException jse) {
+      throw new IllegalStateException("JSON exception when retrieving line map",jse);
+    }
+  }
+  List<Integer> map=characterMap.get(lineNumber);
+  if (map == null || map.size() <= columnIndex) {
+    return null;
+  }
+  int index=map.get(columnIndex);
+  Preconditions.checkState(index < mappings.size(),"Invalid mapping reference");
+  return mappings.get(index);
+}
