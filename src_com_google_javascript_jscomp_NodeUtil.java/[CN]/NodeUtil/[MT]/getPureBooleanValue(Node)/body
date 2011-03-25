@@ -5,7 +5,7 @@ case Token.STRING:
 case Token.NUMBER:
   return TernaryValue.forBoolean(n.getDouble() != 0);
 case Token.NOT:
-return getBooleanValue(n.getLastChild()).not();
+return getPureBooleanValue(n.getLastChild()).not();
 case Token.NULL:
 case Token.FALSE:
 case Token.VOID:
@@ -20,10 +20,13 @@ return TernaryValue.TRUE;
 }
 break;
 case Token.TRUE:
-case Token.ARRAYLIT:
-case Token.OBJECTLIT:
 case Token.REGEXP:
 return TernaryValue.TRUE;
+case Token.ARRAYLIT:
+case Token.OBJECTLIT:
+if (!mayHaveSideEffects(n)) {
+return TernaryValue.TRUE;
+}
 }
 return TernaryValue.UNKNOWN;
 }

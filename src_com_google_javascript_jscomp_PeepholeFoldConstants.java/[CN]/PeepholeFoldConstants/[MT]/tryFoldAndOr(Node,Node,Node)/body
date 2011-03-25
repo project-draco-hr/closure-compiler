@@ -2,13 +2,13 @@
   Node parent=n.getParent();
   Node result=null;
   int type=n.getType();
-  TernaryValue leftVal=NodeUtil.getBooleanValue(left);
+  TernaryValue leftVal=NodeUtil.getImpureBooleanValue(left);
   if (leftVal != TernaryValue.UNKNOWN) {
     boolean lval=leftVal.toBoolean(true);
     if (lval && type == Token.OR || !lval && type == Token.AND) {
       result=left;
     }
- else {
+ else     if (!mayHaveSideEffects(left)) {
       result=right;
     }
   }

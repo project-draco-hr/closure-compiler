@@ -15,11 +15,17 @@
   if (n.getFirstChild().getType() != Token.EMPTY) {
     return n;
   }
-  if (NodeUtil.getBooleanValue(cond) != TernaryValue.FALSE) {
+  if (NodeUtil.getImpureBooleanValue(cond) != TernaryValue.FALSE) {
     return n;
   }
   NodeUtil.redeclareVarsInsideBranch(n);
-  NodeUtil.removeChild(n.getParent(),n);
+  if (!mayHaveSideEffects(cond)) {
+    NodeUtil.removeChild(n.getParent(),n);
+  }
+ else {
+    Node statement=new Node(Token.EXPR_RESULT,cond.detachFromParent()).copyInformationFrom(cond);
+    n.getParent().replaceChild(n,statement);
+  }
   reportCodeChange();
   return null;
 }

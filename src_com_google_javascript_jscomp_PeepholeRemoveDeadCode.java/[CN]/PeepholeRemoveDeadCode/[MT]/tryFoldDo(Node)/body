@@ -1,7 +1,7 @@
 {
   Preconditions.checkArgument(n.getType() == Token.DO);
   Node cond=NodeUtil.getConditionExpression(n);
-  if (NodeUtil.getBooleanValue(cond) != TernaryValue.FALSE) {
+  if (NodeUtil.getImpureBooleanValue(cond) != TernaryValue.FALSE) {
     return n;
   }
   if (hasBreakOrContinue(n)) {
@@ -9,7 +9,12 @@
   }
   Preconditions.checkState(NodeUtil.isControlStructureCodeBlock(n,n.getFirstChild()));
   Node block=n.removeFirstChild();
-  n.getParent().replaceChild(n,block);
+  Node parent=n.getParent();
+  parent.replaceChild(n,block);
+  if (mayHaveSideEffects(cond)) {
+    Node condStatement=new Node(Token.EXPR_RESULT,cond.detachFromParent()).copyInformationFrom(cond);
+    parent.addChildAfter(condStatement,block);
+  }
   reportCodeChange();
   return n;
 }
