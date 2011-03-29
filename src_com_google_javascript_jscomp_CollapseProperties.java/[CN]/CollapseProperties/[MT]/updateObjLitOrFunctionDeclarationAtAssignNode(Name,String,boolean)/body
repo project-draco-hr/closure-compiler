@@ -5,11 +5,13 @@
   Node varParent=ref.node.getAncestor(3);
   Node gramps=ref.node.getAncestor(2);
   boolean isObjLit=rvalue.getType() == Token.OBJECTLIT;
+  boolean insertedVarNode=false;
   if (isObjLit && n.canEliminate()) {
     varParent.replaceChild(gramps,varNode);
     ref.node=null;
+    insertedVarNode=true;
   }
- else {
+ else   if (!n.isSimpleName()) {
     if (rvalue.getType() == Token.FUNCTION) {
       checkForHosedThisReferences(rvalue,n.docInfo,n);
     }
@@ -22,13 +24,18 @@
     nameNode.addChildToFront(rvalue);
     varParent.replaceChild(gramps,varNode);
     ref.node=nameNode;
+    insertedVarNode=true;
   }
-  if (isObjLit) {
-    declareVarsForObjLitValues(n,alias,rvalue,varNode,varParent.getChildBefore(varNode),varParent);
+  if (canCollapseChildNames) {
+    if (isObjLit) {
+      declareVarsForObjLitValues(n,alias,rvalue,varNode,varParent.getChildBefore(varNode),varParent);
+    }
+    addStubsForUndeclaredProperties(n,alias,varParent,varNode);
   }
-  addStubsForUndeclaredProperties(n,alias,varParent,varNode);
-  if (!varNode.hasChildren()) {
-    varParent.removeChild(varNode);
+  if (insertedVarNode) {
+    if (!varNode.hasChildren()) {
+      varParent.removeChild(varNode);
+    }
+    compiler.reportCodeChange();
   }
-  compiler.reportCodeChange();
 }
