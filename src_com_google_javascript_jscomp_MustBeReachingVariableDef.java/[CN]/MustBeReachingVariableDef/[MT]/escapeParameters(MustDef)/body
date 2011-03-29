@@ -1,8 +1,19 @@
 {
   for (Iterator<Var> i=jsScope.getVars(); i.hasNext(); ) {
     Var v=i.next();
-    if (v.getParentNode().getType() == Token.LP) {
+    if (isParameter(v)) {
       output.reachingDef.put(v,null);
+    }
+  }
+  for (  Entry<Var,Definition> pair : output.reachingDef.entrySet()) {
+    Definition value=pair.getValue();
+    if (value == null) {
+      continue;
+    }
+    for (    Var dep : value.depends) {
+      if (isParameter(dep)) {
+        output.reachingDef.put(pair.getKey(),null);
+      }
     }
   }
 }
