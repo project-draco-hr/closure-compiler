@@ -4,10 +4,11 @@
     label=node.getFirstChild().getString();
   }
   Node cur;
+  Node previous=null;
   Node lastJump;
   Node parent=node.getParent();
   for (cur=node, lastJump=node; !isBreakTarget(cur,label); cur=parent, parent=parent.getParent()) {
-    if (cur.getType() == Token.TRY && NodeUtil.hasFinally(cur)) {
+    if (cur.getType() == Token.TRY && NodeUtil.hasFinally(cur) && cur.getLastChild() != previous) {
       if (lastJump == node) {
         createEdge(lastJump,Branch.UNCOND,computeFallThrough(cur.getLastChild()));
       }
@@ -17,6 +18,7 @@
       lastJump=cur;
     }
     Preconditions.checkState(parent != null,"Cannot find break target.");
+    previous=cur;
   }
   if (lastJump == node) {
     createEdge(lastJump,Branch.UNCOND,computeFollowNode(cur,this));
