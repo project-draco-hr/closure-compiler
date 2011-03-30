@@ -18,7 +18,9 @@
  else {
       fieldType=getNativeType(JSTypeNative.UNKNOWN_TYPE);
     }
-    builder.addProperty(fieldName,fieldType,fieldNameNode);
+    if (builder.addProperty(fieldName,fieldType,fieldNameNode) == null) {
+      reporter.warning("Duplicate record field " + fieldName,sourceName,n.getLineno(),"",n.getCharno());
+    }
   }
   return builder.build();
 }
