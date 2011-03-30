@@ -459,15 +459,15 @@ case RETURN:
 case THIS:
 case TYPE:
 case TYPEDEF:
-skipEOLs();
 lineno=stream.getLineno();
 charno=stream.getCharno();
-token=next();
 Node typeNode=null;
-if (annotation == Annotation.RETURN && token != JsDocToken.LC) {
+if (!lookAheadForTypeAnnotation() && annotation == Annotation.RETURN) {
 typeNode=newNode(Token.QMARK);
 }
  else {
+skipEOLs();
+token=next();
 typeNode=parseAndRecordTypeNode(token,lineno,charno);
 }
 if (annotation == Annotation.THIS) {
@@ -491,7 +491,6 @@ if (!jsdocBuilder.recordReturnType(type)) {
 parser.addTypeWarning("msg.jsdoc.incompat.type",lineno,charno);
 break;
 }
-token=current();
 if (jsdocBuilder.shouldParseDocumentation()) {
 ExtractionInfo returnDescriptionInfo=extractMultilineTextualBlock(token);
 String returnDescription=returnDescriptionInfo.string;
