@@ -1,4 +1,7 @@
 {
+  if (n.getType() == Token.VAR) {
+    blacklistStubVars(t,n);
+  }
   if (n.getType() != Token.VAR && !canBeRedeclared(n,t.getScope()))   return;
   if (nodesToCollapse.contains(n))   return;
   if (parent.getType() == Token.IF)   return;
@@ -8,6 +11,7 @@
   boolean hasNodesToCollapse=false;
   while (n != null && (n.getType() == Token.VAR || canBeRedeclared(n,t.getScope()))) {
     if (NodeUtil.isVar(n)) {
+      blacklistStubVars(t,n);
       hasVar=true;
     }
     nodesToCollapse.add(n);
