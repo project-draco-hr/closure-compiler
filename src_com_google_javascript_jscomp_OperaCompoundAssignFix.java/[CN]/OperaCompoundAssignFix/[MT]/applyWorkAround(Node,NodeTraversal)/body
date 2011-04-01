@@ -1,0 +1,25 @@
+{
+  Preconditions.checkArgument(NodeUtil.isAssign(assign));
+  Node parent=assign.getParent();
+  Node comma=new Node(Token.COMMA);
+  comma.copyInformationFrom(assign);
+  parent.replaceChild(assign,comma);
+  String newName=names.peek().getNextNewName();
+  Node newAssign=new Node(Token.ASSIGN,Node.newString(Token.NAME,newName));
+  newAssign.copyInformationFromForTree(assign);
+  newAssign.addChildToBack(assign.getLastChild().detachFromParent());
+  comma.addChildrenToBack(newAssign);
+  assign.addChildrenToBack(Node.newString(Token.NAME,newName).copyInformationFrom(assign));
+  comma.addChildrenToBack(assign);
+  Node root=t.getScopeRoot();
+  Node var=new Node(Token.VAR,Node.newString(Token.NAME,newName));
+  var.copyInformationFromForTree(assign);
+  if (NodeUtil.isStatementBlock(root)) {
+    root=compiler.getNodeForCodeInsertion(t.getModule());
+    root.addChildrenToFront(var);
+  }
+ else {
+    root.getLastChild().addChildrenToFront(var);
+  }
+  compiler.reportCodeChange();
+}
