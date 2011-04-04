@@ -1,0 +1,25 @@
+{
+  testSame("var x = ({a:foo(),b:bar()}).a");
+  testSame("var x = ({a:1,b:bar()}).a");
+  testSame("function f() { return {b:foo(), a:2}.a; }");
+  testSame("({a:x}).a = 1");
+  testSame("({a:x}).a += 1");
+  testSame("({a:x}).a ++");
+  testSame("({a:x}).a --");
+  testSame("({a:function(){return this}}).a");
+  testSame("({get a() {return this}}).a");
+  testSame("({set a(b) {return this}}).a");
+  testSame("({}).a");
+  testSame("({}).a");
+  testSame("({set a(b) {}}).a");
+  test("({a:1,set a(b) {}}).a","1");
+  test("({get a() {}}).a","(function (){})()");
+  test("({get a() {},set a(b) {}}).a","(function (){})()");
+  test("var x = ({a:function(){return 1}}).a","var x = function(){return 1}");
+  test("var x = ({a:1}).a","var x = 1");
+  test("var x = ({a:1, a:2}).a","var x = 2");
+  test("var x = ({a:1, a:foo()}).a","var x = foo()");
+  test("var x = ({a:foo()}).a","var x = foo()");
+  test("function f() { return {a:1, b:2}.a; }","function f() { return 1; }");
+  test("var x = ({'a':1})['a']","var x = 1");
+}

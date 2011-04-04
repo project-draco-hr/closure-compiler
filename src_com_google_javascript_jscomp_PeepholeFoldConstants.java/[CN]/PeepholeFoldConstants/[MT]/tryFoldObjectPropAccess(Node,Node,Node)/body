@@ -1,0 +1,46 @@
+{
+  Preconditions.checkArgument(NodeUtil.isGet(n));
+  if (left.getType() != Token.OBJECTLIT || right.getType() != Token.STRING) {
+    return n;
+  }
+  Node parent=n.getParent();
+  if ((NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || parent.getType() == Token.INC || parent.getType() == Token.DEC) {
+    return n;
+  }
+  Node key=null;
+  Node value=null;
+  for (Node c=left.getFirstChild(); c != null; c=c.getNext()) {
+    if (c.getString().equals(right.getString())) {
+switch (c.getType()) {
+case Token.SET:
+        continue;
+case Token.GET:
+case Token.STRING:
+      if (value != null && mayHaveSideEffects(value)) {
+        return n;
+      }
+    key=c;
+  value=key.getFirstChild();
+break;
+default :
+throw new IllegalStateException();
+}
+}
+ else if (mayHaveSideEffects(c.getFirstChild())) {
+return n;
+}
+}
+if (value == null) {
+return n;
+}
+if (value.getType() == Token.FUNCTION && NodeUtil.referencesThis(value)) {
+return n;
+}
+Node replacement=value.detachFromParent();
+if (key.getType() == Token.GET) {
+replacement=new Node(Token.CALL,replacement);
+}
+n.getParent().replaceChild(n,replacement);
+reportCodeChange();
+return n;
+}
