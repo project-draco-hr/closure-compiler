@@ -17,6 +17,12 @@
   if (fs == null) {
     return;
   }
+  if (parent.getType() == Token.NEW) {
+    Node target=parent.getFirstChild();
+    if (target.getType() == Token.NAME && target.getString().equals(ObjectPropertyStringPreprocess.EXTERN_OBJECT_PROPERTY_STRING)) {
+      fs.setInline(false);
+    }
+  }
   if (parent.getType() == Token.ASSIGN && parent.getFirstChild() == n) {
     fs.setInline(false);
   }
