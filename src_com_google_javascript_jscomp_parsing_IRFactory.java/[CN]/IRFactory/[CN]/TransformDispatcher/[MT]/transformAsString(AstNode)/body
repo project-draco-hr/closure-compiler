@@ -3,12 +3,14 @@
   if (n instanceof Name) {
     ret=transformNameAsString((Name)n);
   }
+ else   if (n instanceof NumberLiteral) {
+    ret=transformNumberAsString((NumberLiteral)n);
+    ret.putBooleanProp(Node.QUOTED_PROP,true);
+  }
  else {
     ret=transform(n);
-    Preconditions.checkState(ret.getType() == Token.NUMBER || ret.getType() == Token.STRING);
-    if (ret.getType() == Token.STRING) {
-      ret.putBooleanProp(Node.QUOTED_PROP,true);
-    }
+    ret.putBooleanProp(Node.QUOTED_PROP,true);
   }
+  Preconditions.checkState(ret.getType() == Token.STRING);
   return ret;
 }

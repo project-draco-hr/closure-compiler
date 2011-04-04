@@ -201,11 +201,17 @@ String name=n.getString();
 Node fn=first;
 Node parameters=fn.getChildAtIndex(1);
 Node body=fn.getLastChild();
-if (TokenStream.isJSIdentifier(name) && NodeUtil.isLatin(name)) {
+if (!n.isQuotedString() && TokenStream.isJSIdentifier(name) && NodeUtil.isLatin(name)) {
 add(name);
 }
  else {
+double d=getSimpleNumber(name);
+if (!Double.isNaN(d)) {
+cc.addNumber(d);
+}
+ else {
 add(jsString(n.getString(),outputCharsetEncoder));
+}
 }
 add(parameters);
 add(body,Context.PRESERVE_BLOCK);
@@ -447,11 +453,19 @@ if (c.getType() == Token.GET || c.getType() == Token.SET) {
 add(c);
 }
  else {
-if (c.getType() == Token.STRING && !c.isQuotedString() && !TokenStream.isKeyword(c.getString()) && TokenStream.isJSIdentifier(c.getString()) && NodeUtil.isLatin(c.getString())) {
-add(c.getString());
+Preconditions.checkState(c.getType() == Token.STRING);
+String key=c.getString();
+if (!c.isQuotedString() && !TokenStream.isKeyword(key) && TokenStream.isJSIdentifier(key)&& NodeUtil.isLatin(key)) {
+add(key);
+}
+ else {
+double d=getSimpleNumber(key);
+if (!Double.isNaN(d)) {
+cc.addNumber(d);
 }
  else {
 addExpr(c,1);
+}
 }
 add(":");
 addExpr(c.getFirstChild(),1);
