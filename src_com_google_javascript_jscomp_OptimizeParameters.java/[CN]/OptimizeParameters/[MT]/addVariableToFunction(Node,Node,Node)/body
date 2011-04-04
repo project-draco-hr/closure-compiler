@@ -2,7 +2,8 @@
   Preconditions.checkArgument(NodeUtil.isFunction(function),"Node must be a function.");
   Node block=function.getLastChild();
   Preconditions.checkArgument(block.getType() == Token.BLOCK,"Node must be a block.");
-  Node newVar=NodeUtil.newVarNode(varName.getQualifiedName(),value.cloneTree());
+  Preconditions.checkState(value.getParent() == null);
+  Node newVar=NodeUtil.newVarNode(varName.getString(),value);
   block.addChildToFront(newVar);
   compiler.reportCodeChange();
 }

@@ -1,0 +1,14 @@
+{
+  test("function foo(p1) {} foo()","function foo() {var p1} foo()");
+  test("function foo(p1) {} foo(1)","function foo() {var p1=1} foo()");
+  test("function foo(p1) {} foo([])","function foo() {var p1=[]} foo()");
+  test("function foo(p1) {} foo({})","function foo() {var p1={}} foo()");
+  test("var x;function foo(p1) {} foo(x)","var x;function foo() {var p1=x} foo()");
+  test("var x;function foo(p1) {} foo(x())","var x;function foo() {var p1=x()} foo()");
+  test("var x;function foo(p1) {} foo(new x())","var x;function foo() {var p1=new x()} foo()");
+  test("var x;function foo(p1) {} foo('' + x)","var x;function foo() {var p1='' + x} foo()");
+  testSame("function foo(p1) {} foo(this)");
+  testSame("function foo(p1) {} foo(arguments)");
+  testSame("function foo(p1) {} foo(function(){})");
+  testSame("function foo(p1) {} (function () {var x;foo(x)})()");
+}
