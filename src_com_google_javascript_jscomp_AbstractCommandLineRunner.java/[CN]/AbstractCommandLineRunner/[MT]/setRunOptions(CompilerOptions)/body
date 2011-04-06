@@ -1,8 +1,10 @@
 {
   DiagnosticGroups diagnosticGroups=getDiagnosticGroups();
-  diagnosticGroups.setWarningLevels(options,config.jscompError,CheckLevel.ERROR);
-  diagnosticGroups.setWarningLevels(options,config.jscompWarning,CheckLevel.WARNING);
-  diagnosticGroups.setWarningLevels(options,config.jscompOff,CheckLevel.OFF);
+  if (config.warningGuards != null) {
+    for (    WarningGuardSpec.Entry entry : config.warningGuards.entries) {
+      diagnosticGroups.setWarningLevel(options,entry.groupName,entry.level);
+    }
+  }
   createDefineOrTweakReplacements(config.define,options,false);
   options.setTweakProcessing(config.tweakProcessing);
   createDefineOrTweakReplacements(config.tweak,options,true);
