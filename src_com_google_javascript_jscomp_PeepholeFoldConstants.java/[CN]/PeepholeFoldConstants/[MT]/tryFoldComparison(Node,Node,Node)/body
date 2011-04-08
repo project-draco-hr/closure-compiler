@@ -8,7 +8,9 @@
   boolean result;
   boolean rightLiteral=NodeUtil.isLiteralValue(right,false);
   boolean undefinedRight=((Token.NAME == right.getType() && right.getString().equals("undefined")) || (Token.VOID == right.getType() && NodeUtil.isLiteralValue(right.getFirstChild(),false)));
-switch (left.getType()) {
+  int lhType=getNormalizedNodeType(left);
+  int rhType=getNormalizedNodeType(right);
+switch (lhType) {
 case Token.VOID:
     if (!NodeUtil.isLiteralValue(left.getFirstChild(),false)) {
       return n;
@@ -27,18 +29,17 @@ if (undefinedRight) {
   result=compareToUndefined(left,op);
   break;
 }
-int rhType=right.getType();
 if (rhType != Token.TRUE && rhType != Token.FALSE && rhType != Token.NULL) {
 return n;
 }
 switch (op) {
 case Token.SHEQ:
 case Token.EQ:
-result=left.getType() == right.getType();
+result=lhType == rhType;
 break;
 case Token.SHNE:
 case Token.NE:
-result=left.getType() != right.getType();
+result=lhType != rhType;
 break;
 case Token.GE:
 case Token.LE:
