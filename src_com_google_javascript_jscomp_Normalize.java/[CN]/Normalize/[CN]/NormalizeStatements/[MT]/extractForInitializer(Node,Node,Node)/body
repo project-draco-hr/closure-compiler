@@ -11,8 +11,8 @@ case Token.FOR:
   if (NodeUtil.isForIn(c)) {
     Node first=c.getFirstChild();
     if (first.getType() == Token.VAR) {
-      Node newStatement=first.cloneTree();
-      Node name=first.removeFirstChild();
+      Node newStatement=first;
+      Node name=newStatement.getFirstChild().cloneNode();
       first.getParent().replaceChild(first,name);
       insertBeforeParent.addChildBefore(newStatement,insertBefore);
       reportCodeChange("FOR-IN var declaration");
