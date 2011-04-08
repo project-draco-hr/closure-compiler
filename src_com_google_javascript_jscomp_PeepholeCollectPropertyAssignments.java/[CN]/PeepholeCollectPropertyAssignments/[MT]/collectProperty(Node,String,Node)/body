@@ -1,0 +1,31 @@
+{
+  if (!isPropertyAssignmentToName(propertyCandidate)) {
+    return false;
+  }
+  Node lhs=propertyCandidate.getFirstChild().getFirstChild();
+  if (!name.equals(lhs.getFirstChild().getString())) {
+    return false;
+  }
+  Node rhs=lhs.getNext();
+  if (NodeUtil.mayHaveSideEffects(rhs) || NodeUtil.canBeSideEffected(rhs)) {
+    return false;
+  }
+  if (mightContainForwardReference(rhs,name)) {
+    return false;
+  }
+switch (value.getType()) {
+case Token.ARRAYLIT:
+    if (!collectArrayProperty(value,propertyCandidate)) {
+      return false;
+    }
+  break;
+case Token.OBJECTLIT:
+if (!collectObjectProperty(value,propertyCandidate)) {
+  return false;
+}
+break;
+default :
+throw new IllegalStateException();
+}
+return true;
+}
