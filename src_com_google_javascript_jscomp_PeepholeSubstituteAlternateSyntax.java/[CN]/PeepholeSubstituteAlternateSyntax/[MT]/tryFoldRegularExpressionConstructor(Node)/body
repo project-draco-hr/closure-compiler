@@ -3,13 +3,10 @@
   Node constructor=n.getFirstChild();
   Node pattern=constructor.getNext();
   Node flags=null != pattern ? pattern.getNext() : null;
-  if (!isASTNormalized()) {
-    return n;
-  }
   if (null == pattern || (null != flags && null != flags.getNext())) {
     return n;
   }
-  if (pattern.getType() == Token.STRING && !"".equals(pattern.getString()) && pattern.getString().length() < 100 && (null == flags || flags.getType() == Token.STRING) && !containsUnicodeEscape(pattern.getString())) {
+  if (pattern.getType() == Token.STRING && !"".equals(pattern.getString()) && pattern.getString().length() < 100 && (null == flags || flags.getType() == Token.STRING) && (isEcmaScript5OrGreater() || !containsUnicodeEscape(pattern.getString()))) {
     pattern=makeForwardSlashBracketSafe(pattern);
     Node regexLiteral;
     if (null == flags || "".equals(flags.getString())) {
