@@ -3,6 +3,9 @@
   compiler.addChangeHandler(recentChange);
   Node root=compiler.parseInputs();
   assertTrue("Unexpected parse error(s): " + Joiner.on("\n").join(compiler.getErrors()),root != null);
+  if (astValidationEnabled) {
+    (new AstValidator()).validateRoot(root);
+  }
   Node externsRoot=root.getFirstChild();
   Node mainRoot=root.getLastChild();
   Node rootClone=root.cloneTree();
@@ -30,6 +33,9 @@
       }
       recentChange.reset();
       getProcessor(compiler).process(externsRoot,mainRoot);
+      if (astValidationEnabled) {
+        (new AstValidator()).validateRoot(root);
+      }
       if (checkLineNumbers) {
         (new LineNumberCheck(compiler)).process(externsRoot,mainRoot);
       }

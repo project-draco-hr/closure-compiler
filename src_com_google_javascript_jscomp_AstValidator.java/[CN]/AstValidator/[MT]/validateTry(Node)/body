@@ -1,0 +1,21 @@
+{
+  validateNodeType(Token.TRY,n);
+  validateMinimumChildCount(n,2);
+  validateMaximumChildCount(n,3);
+  validateBlock(n.getFirstChild());
+  boolean seenCatchOrFinally=false;
+  Node catches=n.getChildAtIndex(1);
+  validateNodeType(Token.BLOCK,catches);
+  validateMaximumChildCount(catches,1);
+  if (catches.hasChildren()) {
+    validateCatch(catches.getFirstChild());
+    seenCatchOrFinally=true;
+  }
+  if (n.getChildCount() == 3) {
+    validateBlock(n.getLastChild());
+    seenCatchOrFinally=true;
+  }
+  if (!seenCatchOrFinally) {
+    violation("Missing catch or finally for try statement.",n);
+  }
+}

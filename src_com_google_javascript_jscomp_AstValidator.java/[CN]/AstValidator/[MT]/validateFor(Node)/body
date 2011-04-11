@@ -1,0 +1,17 @@
+{
+  validateNodeType(Token.FOR,n);
+  validateMinimumChildCount(n,3);
+  validateMaximumChildCount(n,4);
+  if (NodeUtil.isForIn(n)) {
+    validateChildCount(n,3);
+    validateVarOrAssignmentTarget(n.getFirstChild());
+    validateExpression(n.getChildAtIndex(1));
+  }
+ else {
+    validateChildCount(n,4);
+    validateVarOrOptionalExpression(n.getFirstChild());
+    validateOptionalExpression(n.getChildAtIndex(1));
+    validateOptionalExpression(n.getChildAtIndex(2));
+  }
+  validateBlock(n.getLastChild());
+}

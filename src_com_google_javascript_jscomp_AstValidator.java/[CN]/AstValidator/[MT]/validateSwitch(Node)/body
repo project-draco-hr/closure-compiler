@@ -1,0 +1,15 @@
+{
+  validateNodeType(Token.SWITCH,n);
+  validateMinimumChildCount(n,1);
+  validateExpression(n.getFirstChild());
+  int defaults=0;
+  for (Node c=n.getFirstChild().getNext(); c != null; c=c.getNext()) {
+    validateSwitchMember(n.getLastChild());
+    if (c.getType() == Token.DEFAULT) {
+      defaults++;
+    }
+  }
+  if (defaults > 1) {
+    violation("Expected at most 1 'default' in switch but was " + defaults,n);
+  }
+}

@@ -1,0 +1,14 @@
+{
+  validateNodeType(Token.SET,n);
+  validateChildCount(n,1);
+  validateObjectLiteralKeyName(n);
+  Node function=n.getFirstChild();
+  validateFunctionExpression(function);
+  if (!function.getFirstChild().getString().isEmpty()) {
+    violation("Expected unnamed function expression.",n);
+  }
+  Node functionParams=function.getChildAtIndex(1);
+  if (!functionParams.hasOneChild()) {
+    violation("set methods must have exactly one parameter.",n);
+  }
+}
