@@ -23,6 +23,14 @@ catch (  Throwable t) {
   if (config.computePhaseOrdering) {
     runTimeStats.outputBestPhaseOrdering();
   }
+  try {
+    if (jsOutput instanceof Closeable) {
+      ((Closeable)jsOutput).close();
+    }
+  }
+ catch (  IOException e) {
+    throw Throwables.propagate(e);
+  }
   if (testMode) {
     exitCodeReceiverForTesting.apply(result);
   }

@@ -7,8 +7,8 @@
       return 1;
     }
  else {
-      out.append(DotFormatter.toDot(compiler.getPassConfig().getPassGraph()));
-      out.append('\n');
+      jsOutput.append(DotFormatter.toDot(compiler.getPassConfig().getPassGraph()));
+      jsOutput.append('\n');
       return 0;
     }
   }
@@ -18,25 +18,25 @@
     }
  else {
       ControlFlowGraph<Node> cfg=compiler.computeCFG();
-      DotFormatter.appendDot(compiler.getRoot().getLastChild(),cfg,out);
-      out.append('\n');
+      DotFormatter.appendDot(compiler.getRoot().getLastChild(),cfg,jsOutput);
+      jsOutput.append('\n');
       return 0;
     }
   }
   if (config.printTree) {
     if (compiler.getRoot() == null) {
-      out.append("Code contains errors; no tree was generated.\n");
+      jsOutput.append("Code contains errors; no tree was generated.\n");
       return 1;
     }
  else {
-      compiler.getRoot().appendStringTree(out);
-      out.append("\n");
+      compiler.getRoot().appendStringTree(jsOutput);
+      jsOutput.append("\n");
       return 0;
     }
   }
   if (result.success) {
     if (modules == null) {
-      writeOutput(out,compiler,compiler.toSource(),config.outputWrapper,OUTPUT_WRAPPER_MARKER);
+      writeOutput(jsOutput,compiler,compiler.toSource(),config.outputWrapper,OUTPUT_WRAPPER_MARKER);
       outputSourceMap(options);
     }
  else {
