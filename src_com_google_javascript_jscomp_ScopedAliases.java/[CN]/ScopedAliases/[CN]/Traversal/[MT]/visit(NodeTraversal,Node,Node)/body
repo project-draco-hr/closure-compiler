@@ -20,8 +20,12 @@
     int type=n.getType();
     if (type == Token.NAME && parent.getType() == Token.VAR) {
       if (n.hasChildren() && n.getFirstChild().isQualifiedName()) {
-        aliases.put(n.getString(),t.getScope().getVar(n.getString()));
+        String name=n.getString();
+        Var aliasVar=t.getScope().getVar(name);
+        aliases.put(name,aliasVar);
         aliasDefinitions.add(n);
+        String qualifiedName=aliasVar.getInitialValue().getQualifiedName();
+        transformation.addAlias(name,qualifiedName);
         return;
       }
  else {

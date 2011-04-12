@@ -1,0 +1,16 @@
+{
+  String fullJsCode=GOOG_SCOPE_START_BLOCK + "var g = goog;\n var b= g.bar;\n var f = goog.something.foo;" + "g.dom.createElement(g.dom.TagName.DIV);\n b.foo();"+ GOOG_SCOPE_END_BLOCK;
+  String expectedJsCode="goog.dom.createElement(goog.dom.TagName.DIV);\n goog.bar.foo();";
+  TransformationHandlerSpy spy=new TransformationHandlerSpy();
+  transformationHandler=spy;
+  test(fullJsCode,expectedJsCode);
+  assertTrue(spy.observedPositions.containsKey("testcode"));
+  List<SourcePosition<AliasTransformation>> positions=spy.observedPositions.get("testcode");
+  assertEquals(1,positions.size());
+  verifyAliasTransformationPosition(1,GOOG_SCOPE_LEN,3,1,positions.get(0));
+  assertEquals(1,spy.constructedAliases.size());
+  AliasSpy aliasSpy=(AliasSpy)spy.constructedAliases.get(0);
+  assertEquals("goog",aliasSpy.observedDefinitions.get("g"));
+  assertEquals("g.bar",aliasSpy.observedDefinitions.get("b"));
+  assertEquals("goog.something.foo",aliasSpy.observedDefinitions.get("f"));
+}

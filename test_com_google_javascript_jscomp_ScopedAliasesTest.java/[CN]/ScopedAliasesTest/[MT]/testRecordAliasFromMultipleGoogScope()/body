@@ -1,0 +1,18 @@
+{
+  String firstGoogScopeBlock=GOOG_SCOPE_START_BLOCK + "\n var g = goog;\n g.dom.createElement(g.dom.TagName.DIV);\n" + GOOG_SCOPE_END_BLOCK;
+  String fullJsCode=firstGoogScopeBlock + "\n\nvar l = abc.def;\n\n" + GOOG_SCOPE_START_BLOCK+ "\n var z = namespace.Zoo;\n z.getAnimals(l);\n"+ GOOG_SCOPE_END_BLOCK;
+  String expectedJsCode="goog.dom.createElement(goog.dom.TagName.DIV);\n" + "\n\nvar l = abc.def;\n\n" + "\n namespace.Zoo.getAnimals(l);\n";
+  TransformationHandlerSpy spy=new TransformationHandlerSpy();
+  transformationHandler=spy;
+  test(fullJsCode,expectedJsCode);
+  assertTrue(spy.observedPositions.containsKey("testcode"));
+  List<SourcePosition<AliasTransformation>> positions=spy.observedPositions.get("testcode");
+  assertEquals(2,positions.size());
+  verifyAliasTransformationPosition(1,GOOG_SCOPE_LEN,6,0,positions.get(0));
+  verifyAliasTransformationPosition(8,GOOG_SCOPE_LEN,11,4,positions.get(1));
+  assertEquals(2,spy.constructedAliases.size());
+  AliasSpy aliasSpy=(AliasSpy)spy.constructedAliases.get(0);
+  assertEquals("goog",aliasSpy.observedDefinitions.get("g"));
+  aliasSpy=(AliasSpy)spy.constructedAliases.get(1);
+  assertEquals("namespace.Zoo",aliasSpy.observedDefinitions.get("z"));
+}
