@@ -1,6 +1,8 @@
 {
   JsonML jsonMLRoot=JsonMLUtil.parseString(jsonml);
-  Node astRoot=parseExpectedJs(js);
+  Node root=parseExpectedJs(js);
+  Node astRoot=root.getFirstChild();
+  Preconditions.checkState(astRoot.getType() == Token.SCRIPT);
   JsonMLAst ast=new JsonMLAst(jsonMLRoot);
   Node resultAstRoot=ast.getAstRoot(null);
   String explanation=resultAstRoot.checkTreeEquals(astRoot);
