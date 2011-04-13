@@ -3,8 +3,11 @@
   Node irNode=irFactory.transform(node);
   if (node.getComments() != null) {
     for (    Comment comment : node.getComments()) {
-      if (comment.getCommentType() == JSDOC && !comment.isParsed()) {
+      if (comment.getCommentType() == CommentType.JSDOC && !comment.isParsed()) {
         irFactory.handlePossibleFileOverviewJsDoc(comment);
+      }
+ else       if (comment.getCommentType() == CommentType.BLOCK) {
+        irFactory.handleBlockComment(comment);
       }
     }
   }
