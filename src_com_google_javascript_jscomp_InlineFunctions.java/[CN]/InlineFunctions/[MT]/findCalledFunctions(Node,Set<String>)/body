@@ -1,10 +1,8 @@
 {
   Preconditions.checkArgument(changed != null);
-  if (node.getType() == Token.CALL) {
-    Node child=node.getFirstChild();
-    if (child.getType() == Token.NAME) {
-      String name=child.getString();
-      changed.add(name);
+  if (node.getType() == Token.NAME) {
+    if (isCandidateUsage(node)) {
+      changed.add(node.getString());
     }
   }
   for (Node c=node.getFirstChild(); c != null; c=c.getNext()) {
