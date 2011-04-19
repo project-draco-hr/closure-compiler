@@ -4,6 +4,8 @@
   if (lineNumber >= lineMaps.length()) {
     return null;
   }
+  Preconditions.checkState(lineNumber >= 0,"Line number must be >= 0");
+  Preconditions.checkState(columnIndex >= 0,"Column index must be >= 0");
   if (!characterMap.containsKey(lineNumber)) {
     try {
       characterMap.put(lineNumber,SourceMapLineDecoder.decodeLine(lineMaps.getString(lineNumber)));
@@ -17,6 +19,9 @@
     return null;
   }
   int index=map.get(columnIndex);
+  if (index == -1) {
+    return null;
+  }
   Preconditions.checkState(index < mappings.size(),"Invalid mapping reference");
   return mappings.get(index);
 }
