@@ -1,0 +1,12 @@
+{
+  for (  ExtendedTypeInfo typeInfo : extendedTypes) {
+    if (jsdocBuilder.isInterfaceRecorded()) {
+      if (!jsdocBuilder.recordExtendedInterface(typeInfo.type)) {
+        parser.addParserWarning("msg.jsdoc.extends.duplicate",typeInfo.lineno,typeInfo.charno);
+      }
+    }
+    if (!jsdocBuilder.recordBaseType(typeInfo.type) && !jsdocBuilder.isInterfaceRecorded()) {
+      parser.addTypeWarning("msg.jsdoc.incompat.type",typeInfo.lineno,typeInfo.charno);
+    }
+  }
+}

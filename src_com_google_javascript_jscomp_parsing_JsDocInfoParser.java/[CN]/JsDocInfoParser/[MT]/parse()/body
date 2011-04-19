@@ -5,6 +5,7 @@
   state=State.SEARCHING_ANNOTATION;
   skipEOLs();
   JsDocToken token=next();
+  List<ExtendedTypeInfo> extendedTypes=Lists.newArrayList();
   if (jsdocBuilder.shouldParseDocumentation()) {
     ExtractionInfo blockInfo=extractBlockComment(token);
     token=blockInfo.token;
@@ -180,9 +181,7 @@ typeNode.putBooleanProp(Node.BRACELESS_TYPE,true);
 }
 type=createJSTypeExpression(typeNode);
 if (annotation == Annotation.EXTENDS) {
-if (!jsdocBuilder.recordBaseType(type)) {
-parser.addTypeWarning("msg.jsdoc.incompat.type",lineno,charno);
-}
+extendedTypes.add(new ExtendedTypeInfo(type,stream.getLineno(),stream.getCharno()));
 }
  else {
 Preconditions.checkState(annotation == Annotation.IMPLEMENTS);
@@ -530,10 +529,12 @@ case EOC:
 if (hasParsedFileOverviewDocInfo()) {
 fileOverviewJSDocInfo=retrieveAndResetParsedJSDocInfo();
 }
+checkExtendedTypes(extendedTypes);
 return true;
 case EOF:
 jsdocBuilder.build(null);
 parser.addParserWarning("msg.unexpected.eof",stream.getLineno(),stream.getCharno());
+checkExtendedTypes(extendedTypes);
 return false;
 case EOL:
 if (state == State.SEARCHING_NEWLINE) {
