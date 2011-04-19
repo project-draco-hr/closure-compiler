@@ -2,17 +2,6 @@
   if (sourceName == null || sourceStartPosition.getLine() < 0) {
     return;
   }
-  if (sourceName != lastSourceFile) {
-    lastSourceFile=sourceName;
-    Integer index=sourceFileMap.get(sourceName);
-    if (index != null) {
-      lastSourceFileIndex=index;
-    }
- else {
-      lastSourceFileIndex=sourceFileMap.size();
-      sourceFileMap.put(sourceName,lastSourceFileIndex);
-    }
-  }
   FilePosition adjustedStart=startPosition;
   FilePosition adjustedEnd=endPosition;
   if (offsetPosition.getLine() != 0 || offsetPosition.getColumn() != 0) {
@@ -29,7 +18,7 @@
     adjustedEnd=new FilePosition(endPosition.getLine() + offsetLine,endPosition.getColumn() + endOffsetPosition);
   }
   Mapping mapping=new Mapping();
-  mapping.sourceFile=lastSourceFileIndex;
+  mapping.sourceFile=getSourceId(sourceName);
   mapping.originalPosition=sourceStartPosition;
   mapping.originalName=symbolName;
   mapping.startPosition=adjustedStart;
