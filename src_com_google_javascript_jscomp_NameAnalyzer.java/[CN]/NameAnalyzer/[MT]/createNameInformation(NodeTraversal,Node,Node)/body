@@ -2,16 +2,38 @@
   String name="";
   Node rootNameNode=n;
   boolean bNameWasShortened=false;
-  while (NodeUtil.isGet(rootNameNode)) {
-    Node prop=rootNameNode.getLastChild();
-    if (rootNameNode.getType() == Token.GETPROP) {
-      name="." + prop.getString() + name;
+  while (true) {
+    if (NodeUtil.isGet(rootNameNode)) {
+      Node prop=rootNameNode.getLastChild();
+      if (rootNameNode.getType() == Token.GETPROP) {
+        name="." + prop.getString() + name;
+      }
+ else {
+        bNameWasShortened=true;
+        name="";
+      }
+      rootNameNode=rootNameNode.getFirstChild();
+    }
+ else     if (NodeUtil.isObjectLitKey(rootNameNode,rootNameNode.getParent())) {
+      name="." + rootNameNode.getString() + name;
+      Node objLit=rootNameNode.getParent();
+      Node objLitParent=objLit.getParent();
+      if (objLitParent.getType() == Token.ASSIGN) {
+        rootNameNode=objLitParent.getFirstChild();
+      }
+ else       if (objLitParent.getType() == Token.NAME) {
+        rootNameNode=objLitParent;
+      }
+ else       if (objLitParent.getType() == Token.STRING) {
+        rootNameNode=objLitParent;
+      }
+ else {
+        return null;
+      }
     }
  else {
-      bNameWasShortened=true;
-      name="";
+      break;
     }
-    rootNameNode=rootNameNode.getFirstChild();
   }
   if (NodeUtil.isCall(parent) && t.inGlobalScope()) {
     CodingConvention convention=compiler.getCodingConvention();
