@@ -1,0 +1,31 @@
+{
+  int[] temp=new int[MAX_ENTRY_VALUES];
+  ArrayList<Entry> entries=new ArrayList<Entry>();
+  while (content.hasNext()) {
+    if (tryConsumeToken(';')) {
+      ArrayList<Entry> result;
+      if (entries.size() > 0) {
+        result=entries;
+        entries=new ArrayList<Entry>();
+      }
+ else {
+        result=null;
+      }
+      lines.add(result);
+      entries.clear();
+      line++;
+      previousCol=0;
+    }
+ else {
+      int entryValues=0;
+      while (!entryComplete()) {
+        temp[entryValues]=nextValue();
+        entryValues++;
+      }
+      Entry entry=decodeEntry(temp,entryValues);
+      validateEntry(entry);
+      entries.add(entry);
+      tryConsumeToken(',');
+    }
+  }
+}

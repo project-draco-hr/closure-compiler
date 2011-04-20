@@ -1,0 +1,26 @@
+{
+  RunResult result=compile(js);
+  Map<String,Token> originalTokens=findTokens(js);
+  Map<String,Token> resultTokens=findTokens(result.generatedSource);
+  assertEquals(originalTokens.size(),resultTokens.size());
+  SourceMapConsumer reader=getSourceMapConsumer();
+  try {
+    reader.parse(result.sourceMapFileContent);
+  }
+ catch (  SourceMapParseException e) {
+    throw new RuntimeException("unexpected exception",e);
+  }
+  for (  Token token : resultTokens.values()) {
+    OriginalMapping mapping=reader.getMappingForLine(token.position.getLine() + 1,token.position.getColumn() + 1);
+    assertNotNull(mapping);
+    Token inputToken=originalTokens.get(token.tokenName);
+    assertNotNull(inputToken);
+    assertEquals(mapping.getLineNumber(),inputToken.position.getLine() + 1);
+    if (!inputToken.tokenName.startsWith("STR")) {
+      assertTrue("missing name for " + inputToken.tokenName,!mapping.getIdentifier().isEmpty());
+    }
+    if (!mapping.getIdentifier().isEmpty()) {
+      assertEquals(mapping.getIdentifier(),"__" + inputToken.tokenName + "__");
+    }
+  }
+}

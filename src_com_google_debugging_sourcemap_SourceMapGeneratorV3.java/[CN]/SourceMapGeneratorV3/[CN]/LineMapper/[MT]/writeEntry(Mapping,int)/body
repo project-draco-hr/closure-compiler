@@ -1,0 +1,20 @@
+{
+  Base64VLQ.encode(out,column - previousColumn);
+  previousColumn=column;
+  if (m != null) {
+    int sourceId=getSourceId(m.sourceFile);
+    Base64VLQ.encode(out,sourceId - previousSourceFileId);
+    previousSourceFileId=sourceId;
+    int srcline=m.originalPosition.getLine();
+    int srcColumn=m.originalPosition.getColumn();
+    Base64VLQ.encode(out,srcline - previousSourceLine);
+    previousSourceLine=srcline;
+    Base64VLQ.encode(out,srcColumn - previousSourceColumn);
+    previousSourceColumn=srcColumn;
+    if (m.originalName != null) {
+      int nameId=getNameId(m.originalName);
+      Base64VLQ.encode(out,(nameId - previousNameId));
+      previousNameId=nameId;
+    }
+  }
+}

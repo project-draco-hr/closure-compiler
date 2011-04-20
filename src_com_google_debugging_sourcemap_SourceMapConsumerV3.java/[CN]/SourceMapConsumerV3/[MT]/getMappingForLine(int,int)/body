@@ -1,0 +1,20 @@
+{
+  lineNumber--;
+  column--;
+  if (lineNumber < 0 || lineNumber >= lines.size()) {
+    return null;
+  }
+  Preconditions.checkState(lineNumber >= 0);
+  Preconditions.checkState(column >= 0);
+  if (lines.get(lineNumber) == null) {
+    return getPreviousMapping(lineNumber);
+  }
+  ArrayList<Entry> entries=lines.get(lineNumber);
+  Preconditions.checkState(entries.size() > 0);
+  if (entries.get(0).getGeneratedColumn() > column) {
+    return getPreviousMapping(lineNumber);
+  }
+  int index=search(entries,column,0,entries.size() - 1);
+  Preconditions.checkState(index >= 0,"unexpected:" + index);
+  return getOriginalMappingForEntry(entries.get(index));
+}

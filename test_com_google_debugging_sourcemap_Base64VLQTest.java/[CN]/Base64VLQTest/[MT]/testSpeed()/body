@@ -1,0 +1,19 @@
+{
+  long start=System.currentTimeMillis();
+  CharIteratorImpl ci=new CharIteratorImpl();
+  try {
+    StringBuilder sb=new StringBuilder();
+    for (int i=0; i < 1000000; i++) {
+      Base64VLQ.encode(sb,i);
+      ci.set(sb);
+      int result=Base64VLQ.decode(ci);
+      assertEquals(i,result);
+      sb.setLength(0);
+    }
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("failed.",e);
+  }
+  long end=System.currentTimeMillis();
+  assertTrue("too slow",end - start < 1000);
+}

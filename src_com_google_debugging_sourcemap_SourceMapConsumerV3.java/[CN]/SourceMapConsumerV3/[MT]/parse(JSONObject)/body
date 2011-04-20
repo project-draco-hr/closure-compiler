@@ -1,0 +1,21 @@
+{
+  try {
+    int version=sourceMapRoot.getInt("version");
+    if (version != 3) {
+      throw new SourceMapParseException("Unknown version: " + version);
+    }
+    String file=sourceMapRoot.getString("file");
+    if (file.isEmpty()) {
+      throw new SourceMapParseException("File entry is missing or empty");
+    }
+    lineCount=sourceMapRoot.getInt("lineCount");
+    String lineMap=sourceMapRoot.getString("mappings");
+    sources=getJavaStringArray(sourceMapRoot.getJSONArray("sources"));
+    names=getJavaStringArray(sourceMapRoot.getJSONArray("names"));
+    lines=Lists.newArrayListWithCapacity(lineCount);
+    new MappingBuilder(lineMap).build();
+  }
+ catch (  JSONException ex) {
+    throw new SourceMapParseException("JSON parse exception: " + ex);
+  }
+}
