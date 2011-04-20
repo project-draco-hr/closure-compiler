@@ -7,19 +7,11 @@
   if (!SimpleDefinitionFinder.isSimpleFunctionDeclaration(rValue)) {
     return true;
   }
-  if (SimpleDefinitionFinder.maybeExported(compiler,definition)) {
+  if (!defFinder.canModifyDefinition(definition)) {
     return true;
   }
   Collection<UseSite> useSites=defFinder.getUseSites(definition);
-  if (useSites.isEmpty()) {
-    return true;
-  }
   for (  UseSite site : useSites) {
-    Node nameNode=site.node;
-    Collection<Definition> singleSiteDefinitions=defFinder.getDefinitionsReferencedAt(nameNode);
-    if (singleSiteDefinitions.size() > 1) {
-      return true;
-    }
     Node useNodeParent=site.node.getParent();
     if (isCall(site)) {
       Node callNode=useNodeParent;
