@@ -7,20 +7,27 @@
     if (baseConstructor != null && baseConstructor != getNativeType(OBJECT_FUNCTION_TYPE) && (baseConstructor.isConstructor() && functionType.isInterface() || baseConstructor.isInterface() && functionType.isConstructor())) {
       compiler.report(t.makeError(n,CONFLICTING_EXTENDED_TYPE,functionPrivateName));
     }
-    for (    JSType baseInterface : functionType.getImplementedInterfaces()) {
-      boolean badImplementedType=false;
-      ObjectType baseInterfaceObj=ObjectType.cast(baseInterface);
-      if (baseInterfaceObj != null) {
-        FunctionType interfaceConstructor=baseInterfaceObj.getConstructor();
-        if (interfaceConstructor != null && !interfaceConstructor.isInterface()) {
+    if (functionType.isInterface()) {
+      if (functionType.hasImplementedInterfaces()) {
+        compiler.report(t.makeError(n,CONFLICTING_IMPLEMENTED_TYPE,functionPrivateName));
+      }
+    }
+ else {
+      for (      JSType baseInterface : functionType.getImplementedInterfaces()) {
+        boolean badImplementedType=false;
+        ObjectType baseInterfaceObj=ObjectType.cast(baseInterface);
+        if (baseInterfaceObj != null) {
+          FunctionType interfaceConstructor=baseInterfaceObj.getConstructor();
+          if (interfaceConstructor != null && !interfaceConstructor.isInterface()) {
+            badImplementedType=true;
+          }
+        }
+ else {
           badImplementedType=true;
         }
-      }
- else {
-        badImplementedType=true;
-      }
-      if (badImplementedType) {
-        report(t,n,BAD_IMPLEMENTED_TYPE,functionPrivateName);
+        if (badImplementedType) {
+          report(t,n,BAD_IMPLEMENTED_TYPE,functionPrivateName);
+        }
       }
     }
     if (functionType.isConstructor()) {
