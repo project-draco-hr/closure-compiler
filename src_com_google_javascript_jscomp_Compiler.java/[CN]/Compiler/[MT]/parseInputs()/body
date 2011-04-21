@@ -47,9 +47,6 @@ catch (      MissingProvideException e) {
     boolean staleInputs=false;
     for (    CompilerInput input : inputs) {
       Node n=input.getAstRoot(this);
-      if (hasErrors()) {
-        return null;
-      }
       if (n == null) {
         continue;
       }
@@ -88,6 +85,9 @@ catch (      MissingProvideException e) {
         NodeTraversal.traverse(this,n,sia);
       }
       jsRoot.addChildToBack(n);
+    }
+    if (hasErrors()) {
+      return null;
     }
     return externAndJsRoot;
   }
