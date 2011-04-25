@@ -3,11 +3,12 @@
   if (n.declaration != null && n.declaration.node != null && n.declaration.node.getType() == Token.GETPROP) {
     flattenNameRefAtDepth(alias,n.declaration.node,depth,originalName);
   }
-  if (n.refs != null) {
-    for (    Ref r : n.refs) {
-      if (r.getTwin() == null || r.isSet()) {
-        flattenNameRefAtDepth(alias,r.node,depth,originalName);
-      }
+  for (  Ref r : n.getRefs()) {
+    if (r == n.declaration) {
+      continue;
+    }
+    if (r.getTwin() == null || r.isSet()) {
+      flattenNameRefAtDepth(alias,r.node,depth,originalName);
     }
   }
   if (n.props != null) {

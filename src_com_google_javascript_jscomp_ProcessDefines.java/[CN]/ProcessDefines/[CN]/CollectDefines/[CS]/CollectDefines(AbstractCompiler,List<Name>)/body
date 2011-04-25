@@ -9,11 +9,12 @@
     if (name.declaration != null) {
       allRefInfo.put(name.declaration.node,new RefInfo(name.declaration,name));
     }
-    if (name.refs != null) {
-      for (      Ref ref : name.refs) {
-        if (ref.getTwin() == null || !ref.getTwin().isSet()) {
-          allRefInfo.put(ref.node,new RefInfo(ref,name));
-        }
+    for (    Ref ref : name.getRefs()) {
+      if (ref == name.declaration) {
+        continue;
+      }
+      if (ref.getTwin() == null || !ref.getTwin().isSet()) {
+        allRefInfo.put(ref.node,new RefInfo(ref,name));
       }
     }
   }

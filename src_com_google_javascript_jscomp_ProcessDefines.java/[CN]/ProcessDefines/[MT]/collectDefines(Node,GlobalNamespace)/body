@@ -6,12 +6,15 @@
         allDefines.add(name);
       }
  else {
-        JSError error=JSError.make(name.declaration.sourceName,name.declaration.node,INVALID_DEFINE_TYPE_ERROR);
+        JSError error=JSError.make(name.declaration.getSourceName(),name.declaration.node,INVALID_DEFINE_TYPE_ERROR);
         compiler.report(error);
       }
     }
- else     if (name.refs != null) {
-      for (      Ref ref : name.refs) {
+ else {
+      for (      Ref ref : name.getRefs()) {
+        if (ref == name.declaration) {
+          continue;
+        }
         Node n=ref.node;
         Node parent=ref.node.getParent();
         JSDocInfo info=n.getJSDocInfo();

@@ -1,11 +1,12 @@
 {
-  if (n.refs != null) {
-    String originalName=n.fullName();
-    for (    Ref r : n.refs) {
-      Node rParent=r.node.getParent();
-      if (!NodeUtil.isObjectLitKey(r.node,rParent) && (r.getTwin() == null || r.isSet())) {
-        flattenNameRef(alias,r.node,rParent,originalName);
-      }
+  String originalName=n.fullName();
+  for (  Ref r : n.getRefs()) {
+    if (r == n.declaration) {
+      continue;
+    }
+    Node rParent=r.node.getParent();
+    if (!NodeUtil.isObjectLitKey(r.node,rParent) && (r.getTwin() == null || r.isSet())) {
+      flattenNameRef(alias,r.node,rParent,originalName);
     }
   }
   if (n.props != null) {
