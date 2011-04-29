@@ -1,18 +1,17 @@
 {
   Ref declaration=name.declaration;
   Name parent=name.parent;
-  if (isDefined && declaration != null && parent != null && parent.declaration != null && parent.localSets == 0 && parent.declaration.preOrderIndex > declaration.preOrderIndex) {
-    compiler.report(JSError.make(declaration.source.getName(),declaration.node,NAME_DEFINED_LATE_WARNING,parent.fullName()));
-  }
+  boolean singleGlobalParentDecl=parent != null && parent.declaration != null && parent.localSets == 0;
   JSModuleGraph moduleGraph=compiler.getModuleGraph();
   for (  Ref ref : name.getRefs()) {
-    if (!isDefined) {
+    if (!isDefined && !isTypedef(ref)) {
       reportRefToUndefinedName(name,ref);
     }
- else {
-      if (declaration != null && ref.getModule() != declaration.getModule() && !moduleGraph.dependsOn(ref.getModule(),declaration.getModule())) {
-        reportBadModuleReference(name,ref);
-      }
+ else     if (declaration != null && ref.getModule() != declaration.getModule() && !moduleGraph.dependsOn(ref.getModule(),declaration.getModule())) {
+      reportBadModuleReference(name,ref);
+    }
+ else     if (ref.scope.isGlobal() && singleGlobalParentDecl && parent.declaration.preOrderIndex > ref.preOrderIndex) {
+      compiler.report(JSError.make(ref.source.getName(),ref.node,NAME_DEFINED_LATE_WARNING,parent.fullName()));
     }
   }
 }
