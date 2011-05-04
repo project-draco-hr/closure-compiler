@@ -48,6 +48,12 @@ return;
 }
 }
  else {
+if ("arguments".equals(n.getString()) && scope.isLocal()) {
+Node lp=scope.getRootNode().getFirstChild().getNext();
+for (Node a=lp.getFirstChild(); a != null; a=a.getNext()) {
+markReferencedVar(scope.getVar(a.getString()));
+}
+}
 if (var != null) {
 if (isRemovableVar(var)) {
 if (!assignsByNode.containsKey(n)) {
