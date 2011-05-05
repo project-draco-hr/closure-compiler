@@ -1,0 +1,32 @@
+{
+  Map<String,String> varmap=Maps.newHashMap();
+  for (  Reference ref : referenceInfo.references) {
+    if (ref.isLvalue() || ref.isInitializingDeclaration()) {
+      Node val=ref.getAssignedValue();
+      if (val != null) {
+        for (Node child=val.getFirstChild(); child != null; child=child.getNext()) {
+          String varname=child.getString();
+          if (varmap.containsKey(varname)) {
+            continue;
+          }
+          String var=VAR_PREFIX + varname + "_"+ safeNameIdSupplier.get();
+          varmap.put(varname,var);
+        }
+      }
+    }
+ else     if (ref.getParent().getType() == Token.VAR) {
+    }
+ else {
+      Node getprop=ref.getParent();
+      Preconditions.checkState(getprop.getType() == Token.GETPROP,"Unexpected reference type: " + Token.name(getprop.getType()));
+      Preconditions.checkState(getprop.getFirstChild().getString().equals(v.getName()),"Unexpected variable name: " + getprop.getFirstChild().getString() + ", expecting: "+ v.getName());
+      String varname=getprop.getLastChild().getString();
+      if (varmap.containsKey(varname)) {
+        continue;
+      }
+      String var=VAR_PREFIX + varname + "_"+ safeNameIdSupplier.get();
+      varmap.put(varname,var);
+    }
+  }
+  return varmap;
+}

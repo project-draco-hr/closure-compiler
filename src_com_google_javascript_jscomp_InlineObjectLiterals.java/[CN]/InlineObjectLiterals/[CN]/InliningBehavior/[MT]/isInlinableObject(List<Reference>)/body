@@ -1,0 +1,47 @@
+{
+  boolean ret=false;
+  for (  Reference ref : refs) {
+    Node name=ref.getNameNode();
+    Node parent=ref.getParent();
+    Node gramps=ref.getGrandparent();
+    if (parent.getType() == Token.GETPROP && (gramps.getType() != Token.CALL || gramps.getFirstChild() != parent) && parent.getFirstChild().isEquivalentTo(name)) {
+      continue;
+    }
+    if (!ref.isLvalue() && !ref.isInitializingDeclaration()) {
+      if (parent.getType() != Token.VAR) {
+        return false;
+      }
+      continue;
+    }
+    Node val=ref.getAssignedValue();
+    if (val == null) {
+      continue;
+    }
+    if (val.getType() != Token.OBJECTLIT) {
+      return false;
+    }
+    for (Node child=val.getFirstChild(); child != null; child=child.getNext()) {
+      if (child.getType() == Token.GET || child.getType() == Token.SET) {
+        return false;
+      }
+      Node childVal=child.getFirstChild();
+      for (      Reference t : refs) {
+        Node refNode=t.getParent();
+        while (!NodeUtil.isStatementBlock(refNode)) {
+          if (refNode == childVal) {
+            return false;
+          }
+          refNode=refNode.getParent();
+        }
+      }
+    }
+    Node p=parent;
+    while ((p=p.getParent()) != null) {
+      if (p.getType() == Token.GETPROP) {
+        return false;
+      }
+    }
+    ret=true;
+  }
+  return ret;
+}

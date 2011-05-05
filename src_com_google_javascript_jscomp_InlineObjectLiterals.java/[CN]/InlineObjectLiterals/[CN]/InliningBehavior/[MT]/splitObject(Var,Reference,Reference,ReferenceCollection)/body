@@ -1,0 +1,44 @@
+{
+  Map<String,String> varmap=computeVarList(v,referenceInfo);
+  Map<String,Node> initvals=Maps.newHashMap();
+  Node vnode;
+  boolean defined=referenceInfo.isWellDefined() && init.getParent().getType() == Token.VAR;
+  if (defined) {
+    vnode=init.getParent();
+    fillInitialValues(init,initvals);
+  }
+ else {
+    vnode=v.getScope().getRootNode().getLastChild().getFirstChild();
+  }
+  for (  Map.Entry<String,String> entry : varmap.entrySet()) {
+    Node val=initvals.get(entry.getKey());
+    Node varnode=NodeUtil.newVarNode(entry.getValue(),val);
+    if (val == null) {
+      varnode.copyInformationFromForTree(vnode);
+    }
+    vnode.getParent().addChildBefore(varnode,vnode);
+  }
+  if (defined) {
+    vnode.getParent().removeChild(vnode);
+  }
+  for (  Reference ref : referenceInfo.references) {
+    if (defined && ref == init)     continue;
+    if (ref.isLvalue()) {
+      replaceAssignmentExpression(v,ref,varmap);
+    }
+ else     if (ref.getParent().getType() == Token.VAR) {
+      ref.getGrandparent().removeChild(ref.getParent());
+    }
+ else {
+      Node getprop=ref.getParent();
+      Preconditions.checkState(getprop.getType() == Token.GETPROP,"Unexpected reference type: " + Token.name(getprop.getType()));
+      Preconditions.checkState(getprop.getFirstChild().getString().equals(v.getName()),"Unexpected variable name: " + getprop.getFirstChild().getString() + ", expecting: "+ v.getName());
+      String var=getprop.getChildAtIndex(1).getString();
+      Preconditions.checkState(varmap.containsKey(var));
+      Node replacement=Node.newString(Token.NAME,varmap.get(var));
+      replacement.copyInformationFrom(getprop);
+      ref.getGrandparent().replaceChild(ref.getParent(),replacement);
+    }
+  }
+  compiler.reportCodeChange();
+}
