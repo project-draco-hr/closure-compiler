@@ -12,15 +12,13 @@
       this.unflowableVarNames.add(name);
     }
   }
-  Iterator<Var> varIt=functionScope.getVars();
+  Iterator<Var> varIt=functionScope.getDeclarativelyUnboundVarsWithoutTypes();
   while (varIt.hasNext()) {
     Var var=varIt.next();
     if (this.unflowableVarNames.contains(var.getName())) {
       continue;
     }
-    if (var.getParentNode() != null && var.getType() == null && var.getParentNode().getType() == Token.VAR && !var.isExtern()) {
-      this.functionScope.inferSlotType(var.getName(),getNativeType(VOID_TYPE));
-    }
+    this.functionScope.inferSlotType(var.getName(),getNativeType(VOID_TYPE));
   }
   this.bottomScope=LinkedFlowScope.createEntryLattice(new Scope(functionScope.getRootNode(),functionScope.getTypeOfThis()));
 }
