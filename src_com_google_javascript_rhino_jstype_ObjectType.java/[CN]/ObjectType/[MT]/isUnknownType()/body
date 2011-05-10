@@ -3,6 +3,12 @@
     ObjectType implicitProto=getImplicitPrototype();
     if (implicitProto == null || implicitProto.isNativeObjectType()) {
       unknown=false;
+      for (      ObjectType interfaceType : getCtorExtendedInterfaces()) {
+        if (interfaceType.isUnknownType()) {
+          unknown=true;
+          break;
+        }
+      }
     }
  else {
       unknown=implicitProto.isUnknownType();
