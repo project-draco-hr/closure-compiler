@@ -2,6 +2,11 @@
   if (hasOwnDeclaredProperty(name)) {
     return false;
   }
-  properties.put(name,new Property(type,inferred,inExterns,propertyNode));
+  Property newProp=new Property(type,inferred,inExterns,propertyNode);
+  Property oldProp=properties.get(name);
+  if (oldProp != null) {
+    newProp.docInfo=oldProp.docInfo;
+  }
+  properties.put(name,newProp);
   return true;
 }
