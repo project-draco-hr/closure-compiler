@@ -12,19 +12,11 @@
   }
   ObjectType foundType=null;
   ObjectType objType=ObjectType.cast(type);
-  if (objType != null && objType.getConstructor() != null && objType.getConstructor().isInterface()) {
-    ObjectType topInterface=FunctionType.getTopDefiningInterface(objType,field);
-    if (topInterface != null && topInterface.getConstructor() != null) {
-      foundType=topInterface.getConstructor().getPrototype();
+  while (objType != null && objType.getImplicitPrototype() != objType) {
+    if (objType.hasOwnProperty(field)) {
+      foundType=objType;
     }
-  }
- else {
-    while (objType != null && objType.getImplicitPrototype() != objType) {
-      if (objType.hasOwnProperty(field)) {
-        foundType=objType;
-      }
-      objType=objType.getImplicitPrototype();
-    }
+    objType=objType.getImplicitPrototype();
   }
   if (foundType == null) {
     ObjectType maybeType=ObjectType.cast(registry.getGreatestSubtypeWithProperty(type,field));

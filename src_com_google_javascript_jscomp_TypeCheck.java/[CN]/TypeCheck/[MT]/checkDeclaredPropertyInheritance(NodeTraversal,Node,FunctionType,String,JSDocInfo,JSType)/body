@@ -4,16 +4,10 @@
   }
   FunctionType superClass=ctorType.getSuperClassConstructor();
   boolean superClassHasProperty=superClass != null && superClass.getPrototype().hasProperty(propertyName);
-  boolean superInterfacesHasProperty=false;
-  if (ctorType.isInterface()) {
-    for (    ObjectType interfaceType : ctorType.getExtendedInterfaces()) {
-      superInterfacesHasProperty=superInterfacesHasProperty || interfaceType.hasProperty(propertyName);
-    }
-  }
   boolean declaredOverride=info != null && info.isOverride();
   boolean foundInterfaceProperty=false;
   if (ctorType.isConstructor()) {
-    for (    JSType implementedInterface : ctorType.getAllImplementedInterfaces()) {
+    for (    JSType implementedInterface : ctorType.getImplementedInterfaces()) {
       if (implementedInterface.isUnknownType() || implementedInterface.isEmptyType()) {
         continue;
       }
@@ -26,7 +20,7 @@
       }
     }
   }
-  if (!declaredOverride && !superClassHasProperty && !superInterfacesHasProperty) {
+  if (!declaredOverride && !superClassHasProperty) {
     return;
   }
   JSType topInstanceType=superClassHasProperty ? superClass.getTopMostDefiningType(propertyName) : null;
@@ -40,17 +34,6 @@
     JSType superClassPropType=superClass.getPrototype().getPropertyType(propertyName);
     if (!propertyType.canAssignTo(superClassPropType)) {
       compiler.report(t.makeError(n,HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,propertyName,topInstanceType.toString(),superClassPropType.toString(),propertyType.toString()));
-    }
-  }
- else   if (superInterfacesHasProperty) {
-    for (    ObjectType interfaceType : ctorType.getExtendedInterfaces()) {
-      if (interfaceType.hasProperty(propertyName)) {
-        JSType superPropertyType=interfaceType.getPropertyType(propertyName);
-        if (!propertyType.canAssignTo(superPropertyType)) {
-          topInstanceType=interfaceType.getConstructor().getTopMostDefiningType(propertyName);
-          compiler.report(t.makeError(n,HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,propertyName,topInstanceType.toString(),superPropertyType.toString(),propertyType.toString()));
-        }
-      }
     }
   }
  else   if (!foundInterfaceProperty) {

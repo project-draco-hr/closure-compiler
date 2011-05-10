@@ -2,22 +2,12 @@
   ObjectType objectType=ObjectType.cast(type);
   if (objectType == null) {
     reportError(BAD_IMPLEMENTED_TYPE,fnName);
-    return false;
   }
- else   if (objectType.isEmptyType()) {
+ else   if (objectType.isEmptyType() || (objectType.isUnknownType() && (objectType.getImplicitPrototype() == null || objectType.getImplicitPrototype().isResolved()))) {
     reportWarning(RESOLVED_TAG_EMPTY,"@implements",fnName);
-    return false;
-  }
- else   if (objectType.isUnknownType()) {
-    if (hasMoreTagsToResolve(objectType)) {
-      return true;
-    }
- else {
-      reportWarning(RESOLVED_TAG_EMPTY,"@implements",fnName);
-      return false;
-    }
   }
  else {
     return true;
   }
+  return false;
 }

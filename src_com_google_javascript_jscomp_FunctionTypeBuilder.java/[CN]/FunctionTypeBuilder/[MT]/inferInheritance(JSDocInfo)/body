@@ -3,7 +3,7 @@
     isConstructor=info.isConstructor();
     isInterface=info.isInterface();
     if (info.hasBaseType()) {
-      if (isConstructor) {
+      if (isConstructor || isInterface) {
         JSType maybeBaseType=info.getBaseType().evaluate(scope,typeRegistry);
         if (maybeBaseType != null && maybeBaseType.setValidator(new ExtendedTypeValidator())) {
           baseType=(ObjectType)maybeBaseType;
@@ -21,18 +21,16 @@
           implementedInterfaces.add((ObjectType)maybeInterType);
         }
       }
+      if (baseType != null) {
+        JSType maybeFunctionType=baseType.getConstructor();
+        if (maybeFunctionType instanceof FunctionType) {
+          FunctionType functionType=baseType.getConstructor();
+          Iterables.addAll(implementedInterfaces,functionType.getImplementedInterfaces());
+        }
+      }
     }
  else     if (info.getImplementedInterfaceCount() > 0) {
       reportWarning(IMPLEMENTS_WITHOUT_CONSTRUCTOR,fnName);
-    }
-    if (isInterface) {
-      extendedInterfaces=Lists.newArrayList();
-      for (      JSTypeExpression t : info.getExtendedInterfaces()) {
-        JSType maybeInterfaceType=t.evaluate(scope,typeRegistry);
-        if (maybeInterfaceType != null && maybeInterfaceType.setValidator(new ExtendedTypeValidator())) {
-          extendedInterfaces.add((ObjectType)maybeInterfaceType);
-        }
-      }
     }
   }
   return this;
