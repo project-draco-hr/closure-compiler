@@ -1,0 +1,14 @@
+{
+  test("var a = /[\\x00\\x22\\x26\\x27\\x3c\\x3e]/g","var a = /[\\0\"&'<>]/g");
+  test("var b = /[\\x00\\x22\\x27\\x3c\\x3e]/g","var b = /[\\0\"'<>]/g");
+  test("var c = /[\\x00\\x09-\\x0d \\x22\\x26\\x27\\x2d\\/\\x3c-\\x3e`" + "\\x85\\xa0\\u2028\\u2029]/g","var c = /[\\0\\t-\\r \"&'/<->`\\x85\\xa0\\u2028\\u2029-]/g");
+  test("var d = /[\\x00\\x09-\\x0d \\x22\\x27\\x2d\\/\\x3c-\\x3e`" + "\\x85\\xa0\\u2028\\u2029]/g","var d = /[\\0\\t-\\r \"'/<->`\\x85\\xa0\\u2028\\u2029-]/g");
+  test("var e = /[\\x00\\x08-\\x0d\\x22\\x26\\x27\\/\\x3c-\\x3e\\\\" + "\\x85\\u2028\\u2029]/g","var e = /[\\0\\b-\\r\"&'/<->\\\\\\x85\\u2028\\u2029]/g");
+  test("var f = /[\\x00\\x08-\\x0d\\x22\\x24\\x26-\\/\\x3a\\x3c-\\x3f" + "\\x5b-\\x5e\\x7b-\\x7d\\x85\\u2028\\u2029]/g","var f = /[\\0\\b-\\r\"$&-/:<-?[-^{-}\\x85\\u2028\\u2029]/g");
+  test("var g = /[\\x00\\x08-\\x0d\\x22\\x26-\\x2a\\/\\x3a-\\x3e@\\\\" + "\\x7b\\x7d\\x85\\xa0\\u2028\\u2029]/g","var g = /[\\0\\b-\\r\"&-*/:->@\\\\{}\\x85\\xa0\\u2028\\u2029]/g");
+  test("var h = /^(?!-*(?:expression|(?:moz-)?binding))(?:[.#]?-?" + "(?:[_a-z0-9][_a-z0-9-]*)(?:-[_a-z][_a-z0-9-]*)*-?|-?" + "(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9])(?:[a-z]{1,2}|%)?|!important|)$/i","var h = /^(?!-*(?:expression|(?:moz-)?binding))(?:[#.]?-?" + "\\w[\\w-]*(?:-[_a-z][\\w-]*)*-?|-?" + "(?:\\d+(?:\\.\\d*)?|\\.\\d)(?:[a-z]{1,2}|%)?|!important|)$/i");
+  test("var i = /^(?:(?:https?|mailto):|[^&:\\/?#]*(?:[\\/?#]|$))/i","var i = /^(?:(?:https?|mailto):|[^#&/:?]*(?:[#/?]|$))/i");
+  test("var j = /^(?!style|on|action|archive|background|cite|classid" + "|codebase|data|dsync|href|longdesc|src|usemap)(?:[a-z0-9_$:-]*" + "|dir=(?:ltr|rtl))$/i","var j = /^(?!style|on|action|archive|background|cite|classid" + "|codebase|data|dsync|href|longdesc|src|usemap)(?:[\\w$:-]*" + "|dir=(?:ltr|rtl))$/i");
+  test("var k = /^(?!script|style|title|textarea|xmp|no)[a-z0-9_$:-]*$/i","var k = /^(?!script|style|title|textarea|xmp|no)[\\w$:-]*$/i");
+  test("var l = /<(?:!|\\/?[a-z])(?:[^>'\"]|\"[^\"]*\"|'[^']*')*>/gi","var l = /<(?:!|\\/?[a-z])(?:[^\"'>]|\"[^\"]*\"|'[^']*')*>/gi");
+}

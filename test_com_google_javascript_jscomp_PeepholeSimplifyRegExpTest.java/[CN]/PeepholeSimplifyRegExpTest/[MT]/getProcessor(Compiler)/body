@@ -1,0 +1,11 @@
+{
+  final CompilerPass simplifier=new PeepholeOptimizationsPass(compiler,new PeepholeSimplifyRegExp());
+  final CompilerPass checker=new CheckRegExp(compiler);
+  return new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      checker.process(externs,root);
+      simplifier.process(externs,root);
+    }
+  }
+;
+}

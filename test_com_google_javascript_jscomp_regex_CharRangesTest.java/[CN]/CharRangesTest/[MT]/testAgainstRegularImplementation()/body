@@ -1,0 +1,19 @@
+{
+  Random rnd=new Random(SEED);
+  for (int run=10; --run >= 0; ) {
+    BitSet bs=new BitSet();
+    for (int i=0x1000; --i >= 0; ) {
+      bs.set(0x1000 + rnd.nextInt(0x3000));
+    }
+    int[] members=new int[bs.cardinality()];
+    for (int i=-1, k=0; k < members.length; ++k) {
+      members[k]=i=bs.nextSetBit(i + 1);
+    }
+    CharRanges sbs=CharRanges.withMembers(members);
+    for (int i=0; i < 0x5000; ++i) {
+      if (bs.get(i) != sbs.contains(i)) {
+        fail("sbs=" + sbs + ", bs="+ bs+ ", difference at bit "+ i);
+      }
+    }
+  }
+}
