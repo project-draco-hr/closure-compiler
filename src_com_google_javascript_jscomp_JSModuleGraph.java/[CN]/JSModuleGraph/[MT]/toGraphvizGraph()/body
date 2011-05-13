@@ -1,0 +1,11 @@
+{
+  LinkedDirectedGraph<JSModule,String> graphViz=LinkedDirectedGraph.create();
+  for (  JSModule module : getAllModulesInDependencyOrder()) {
+    graphViz.createNode(module);
+    for (    JSModule dep : module.getDependencies()) {
+      graphViz.createNode(dep);
+      graphViz.connect(module,"->",dep);
+    }
+  }
+  return graphViz;
+}

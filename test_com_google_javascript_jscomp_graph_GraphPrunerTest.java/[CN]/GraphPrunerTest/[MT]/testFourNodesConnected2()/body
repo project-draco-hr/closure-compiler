@@ -1,0 +1,13 @@
+{
+  DiGraph<String,String> graph=LinkedDirectedGraph.create();
+  graph.createNode("A");
+  graph.createNode("B");
+  graph.createNode("C");
+  graph.createNode("D");
+  graph.connect("A","--","B");
+  graph.connect("B","--","C");
+  graph.connect("C","--","D");
+  DiGraph<String,String> pruned=new GraphPruner<String,String>(graph).prune(Predicates.not(Predicates.in(Lists.newArrayList("B","C"))));
+  assertEquals(2,pruned.getNodes().size());
+  assertTrue(pruned.isConnectedInDirection("A","D"));
+}
