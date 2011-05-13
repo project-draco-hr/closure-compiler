@@ -1,0 +1,34 @@
+{
+  if (body instanceof Alternation || body instanceof Concatenation || body instanceof Repetition|| (body instanceof Text && ((Text)body).text.length() > 1)) {
+    sb.append("(?:");
+    body.appendSourceCode(sb);
+    sb.append(')');
+  }
+ else {
+    body.appendSourceCode(sb);
+  }
+  if (max == Integer.MAX_VALUE) {
+switch (min) {
+case 0:
+      sb.append('*');
+    break;
+case 1:
+  sb.append('+');
+break;
+default :
+sb.append('{').append(min).append(",}");
+}
+}
+ else if (min == 0 && max == 1) {
+sb.append('?');
+}
+ else if (min == max) {
+sb.append('{').append(min).append('}');
+}
+ else {
+sb.append('{').append(min).append(',').append(max).append('}');
+}
+if (!greedy) {
+sb.append('?');
+}
+}

@@ -1,0 +1,28 @@
+{
+  RegExpTree body=this.body.simplify(flags);
+  if (max == 0 && !body.hasCapturingGroup()) {
+    return Empty.INSTANCE;
+  }
+  if (body instanceof Empty || NEVER_MATCHES.equals(body)) {
+    return body;
+  }
+  int min=this.min;
+  int max=this.max;
+  if (body instanceof Repetition) {
+    Repetition rbody=(Repetition)body;
+    if (rbody.greedy == greedy) {
+      long lmin=((long)min) * rbody.min;
+      long lmax=((long)max) * rbody.max;
+      if (lmin < Integer.MAX_VALUE) {
+        body=rbody.body;
+        min=(int)lmin;
+        max=lmax >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)lmax;
+      }
+    }
+  }
+  if (min == 1 && max == 1) {
+    return body;
+  }
+  boolean greedy=this.greedy || min == max;
+  return body.equals(this.body) && min == this.min && max == this.max && greedy == this.greedy ? this : new Repetition(body,min,max,greedy).simplify(flags);
+}

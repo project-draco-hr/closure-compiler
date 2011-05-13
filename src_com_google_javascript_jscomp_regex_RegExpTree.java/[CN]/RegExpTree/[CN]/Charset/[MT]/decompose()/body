@@ -1,0 +1,14 @@
+{
+  CharRanges negRanges=CharRanges.ALL_CODE_UNITS.difference(ranges);
+  if (!ieExplicits.isEmpty()) {
+    if (negRanges.intersection(ieExplicits).isEmpty()) {
+      return decompose(ranges,false);
+    }
+ else     if (ranges.intersection(ieExplicits).isEmpty()) {
+      return decompose(negRanges,true);
+    }
+  }
+  DecomposedCharset positive=decompose(ranges,false);
+  DecomposedCharset negative=decompose(negRanges,true);
+  return positive.complexity() <= negative.complexity() ? positive : negative;
+}

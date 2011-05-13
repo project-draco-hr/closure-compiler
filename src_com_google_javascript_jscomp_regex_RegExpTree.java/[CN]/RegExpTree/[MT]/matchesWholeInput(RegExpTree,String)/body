@@ -1,0 +1,17 @@
+{
+  if (flags.indexOf('m') >= 0) {
+    return false;
+  }
+  if (!(t instanceof Concatenation)) {
+    return false;
+  }
+  Concatenation c=(Concatenation)t;
+  if (c.elements.isEmpty()) {
+    return false;
+  }
+  RegExpTree first=c.elements.get(0), last=c.elements.get(c.elements.size() - 1);
+  if (!(first instanceof Anchor && last instanceof Anchor)) {
+    return false;
+  }
+  return ((Anchor)first).type == '^' && ((Anchor)last).type == '$';
+}

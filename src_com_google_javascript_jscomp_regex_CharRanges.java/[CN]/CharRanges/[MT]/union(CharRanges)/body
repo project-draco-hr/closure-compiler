@@ -1,0 +1,60 @@
+{
+  int[] q=this.ranges, r=other.ranges;
+  int m=q.length, n=r.length;
+  if (m == 0) {
+    return other;
+  }
+  if (n == 0) {
+    return this;
+  }
+  int[] out=new int[m + n];
+  int i=0, j=0, k=0;
+  while (i < m && j < n) {
+    int a0=q[i], a1=q[i + 1], b0=r[j], b1=r[j + 1];
+    if (a1 < b0) {
+      out[k++]=a0;
+      out[k++]=a1;
+      i+=2;
+    }
+ else     if (b1 < a0) {
+      out[k++]=b0;
+      out[k++]=b1;
+      j+=2;
+    }
+ else {
+      int start=Math.min(a0,b0);
+      int end=Math.max(a1,b1);
+      i+=2;
+      j+=2;
+      while (i < m || j < n) {
+        if (i < m && q[i] <= end) {
+          end=Math.max(end,q[i + 1]);
+          i+=2;
+        }
+ else         if (j < n && r[j] <= end) {
+          end=Math.max(end,r[j + 1]);
+          j+=2;
+        }
+ else {
+          break;
+        }
+      }
+      out[k++]=start;
+      out[k++]=end;
+    }
+  }
+  if (i < m) {
+    System.arraycopy(q,i,out,k,m - i);
+    k+=m - i;
+  }
+ else   if (j < n) {
+    System.arraycopy(r,j,out,k,n - j);
+    k+=n - j;
+  }
+  if (k != out.length) {
+    int[] clipped=new int[k];
+    System.arraycopy(out,0,clipped,0,k);
+    out=clipped;
+  }
+  return new CharRanges(out);
+}

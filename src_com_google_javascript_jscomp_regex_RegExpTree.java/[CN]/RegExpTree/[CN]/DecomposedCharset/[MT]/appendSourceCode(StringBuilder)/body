@@ -1,0 +1,46 @@
+{
+  if (ranges.isEmpty()) {
+    if (!inverted && namedGroups.length() == 2) {
+      sb.append(namedGroups);
+      return;
+    }
+ else     if (ranges.isEmpty() && namedGroups.length() == 0) {
+      sb.append(inverted ? "[\\S\\s]" : "(?!)");
+      return;
+    }
+  }
+  sb.append('[');
+  if (inverted) {
+    sb.append('^');
+  }
+  sb.append(namedGroups);
+  boolean rangesStartCharset=!inverted && namedGroups.length() == 0;
+  boolean emitDashAtEnd=false;
+  for (int i=0, n=ranges.getNumRanges(); i < n; ++i) {
+    char start=(char)ranges.start(i);
+    char end=(char)(ranges.end(i) - 1);
+switch (end - start) {
+case 0:
+      if (start == '-') {
+        emitDashAtEnd=true;
+      }
+ else {
+        escapeRangeCharOnto(start,rangesStartCharset,i == 0,i + 1 == n,sb);
+      }
+    break;
+case 1:
+  escapeRangeCharOnto(start,rangesStartCharset,i == 0,false,sb);
+escapeRangeCharOnto(end,rangesStartCharset,false,i + 1 == n,sb);
+break;
+default :
+escapeRangeCharOnto(start,rangesStartCharset,i == 0,false,sb);
+sb.append('-');
+escapeRangeCharOnto(end,rangesStartCharset,false,true,sb);
+break;
+}
+}
+if (emitDashAtEnd) {
+sb.append('-');
+}
+sb.append(']');
+}

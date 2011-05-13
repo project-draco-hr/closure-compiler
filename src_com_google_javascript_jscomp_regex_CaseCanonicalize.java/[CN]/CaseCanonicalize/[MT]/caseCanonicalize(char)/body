@@ -1,0 +1,13 @@
+{
+  if (ch < 0x80) {
+    return ('A' <= ch && ch <= 'Z') ? (char)(ch | 32) : ch;
+  }
+  if (CASE_SENSITIVE.contains(ch)) {
+    for (    DeltaSet ds : CANON_DELTA_SETS) {
+      if (ds.codeUnits.contains(ch)) {
+        return (char)(ch - ds.delta);
+      }
+    }
+  }
+  return ch;
+}

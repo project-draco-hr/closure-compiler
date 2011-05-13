@@ -1,0 +1,23 @@
+{
+  int n=ranges.length;
+  if (delta == 0 || n == 0) {
+    return this;
+  }
+  if (delta < 0) {
+    long lmin=ranges[0] + delta;
+    if (lmin < Integer.MIN_VALUE) {
+      throw new IndexOutOfBoundsException();
+    }
+  }
+ else {
+    long lmax=ranges[n - 1] + delta;
+    if (lmax > Integer.MAX_VALUE) {
+      throw new IndexOutOfBoundsException();
+    }
+  }
+  int[] shiftedRanges=new int[n];
+  for (int i=n; --i >= 0; ) {
+    shiftedRanges[i]=ranges[i] + delta;
+  }
+  return new CharRanges(shiftedRanges);
+}
