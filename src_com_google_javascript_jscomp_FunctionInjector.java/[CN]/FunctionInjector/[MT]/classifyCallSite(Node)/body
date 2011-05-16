@@ -4,7 +4,7 @@
   if (NodeUtil.isExprCall(parent)) {
     return CallSiteType.SIMPLE_CALL;
   }
- else   if (NodeUtil.isExprAssign(grandParent) && !NodeUtil.isLhs(callNode,parent) && parent.getFirstChild().getType() == Token.NAME && !NodeUtil.isConstantName(parent.getFirstChild())) {
+ else   if (NodeUtil.isExprAssign(grandParent) && !NodeUtil.isVarOrSimpleAssignLhs(callNode,parent) && parent.getFirstChild().getType() == Token.NAME && !NodeUtil.isConstantName(parent.getFirstChild())) {
     return CallSiteType.SIMPLE_ASSIGNMENT;
   }
  else   if (parent.getType() == Token.NAME && !NodeUtil.isConstantName(parent) && grandParent.getType() == Token.VAR && grandParent.hasOneChild()) {

@@ -3,7 +3,7 @@
     return VariableLiveness.MAYBE_LIVE;
   }
   if (NodeUtil.isName(n) && variable.equals(n.getString())) {
-    if (NodeUtil.isLhs(n,n.getParent())) {
+    if (NodeUtil.isVarOrSimpleAssignLhs(n,n.getParent())) {
       Preconditions.checkState(n.getParent().getType() == Token.ASSIGN);
       Node rhs=n.getNext();
       VariableLiveness state=isVariableReadBeforeKill(rhs,variable);
