@@ -16,12 +16,6 @@
   if (checkLeftOf(use,useCfgNode,SIDE_EFFECT_PREDICATE)) {
     return false;
   }
-  if (NodeUtil.isStatementBlock(defCfgNode.getParent()) && defCfgNode.getNext() != useCfgNode) {
-    CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch> pathCheck=new CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch>(cfg,cfg.getDirectedGraphNode(defCfgNode),cfg.getDirectedGraphNode(useCfgNode),SIDE_EFFECT_PREDICATE,Predicates.<DiGraphEdge<Node,ControlFlowGraph.Branch>>alwaysTrue(),false);
-    if (pathCheck.somePathsSatisfyPredicate()) {
-      return false;
-    }
-  }
   if (NodeUtil.mayHaveSideEffects(def.getLastChild())) {
     return false;
   }
@@ -29,6 +23,10 @@
     return false;
   }
   if (NodeUtil.isWithinLoop(use)) {
+    return false;
+  }
+  Collection<Node> uses=reachingUses.getUses(varName,defCfgNode);
+  if (uses.size() != 1) {
     return false;
   }
   if (NodeUtil.has(def.getLastChild(),new Predicate<Node>(){
@@ -53,9 +51,11 @@ case Token.NEW:
 )) {
   return false;
 }
-Collection<Node> uses=reachingUses.getUses(varName,defCfgNode);
-if (uses.size() != 1) {
-  return false;
+if (NodeUtil.isStatementBlock(defCfgNode.getParent()) && defCfgNode.getNext() != useCfgNode) {
+  CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch> pathCheck=new CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch>(cfg,cfg.getDirectedGraphNode(defCfgNode),cfg.getDirectedGraphNode(useCfgNode),SIDE_EFFECT_PREDICATE,Predicates.<DiGraphEdge<Node,ControlFlowGraph.Branch>>alwaysTrue(),false);
+  if (pathCheck.somePathsSatisfyPredicate()) {
+    return false;
+  }
 }
 return true;
 }
