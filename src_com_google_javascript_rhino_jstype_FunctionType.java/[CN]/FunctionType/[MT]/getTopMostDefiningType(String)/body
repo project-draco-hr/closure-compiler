@@ -2,11 +2,16 @@
   Preconditions.checkState(isConstructor() || isInterface());
   Preconditions.checkArgument(getPrototype().hasProperty(propertyName));
   FunctionType ctor=this;
-  JSType topInstanceType;
-  do {
+  if (isInterface()) {
+    return getTopDefiningInterface(this.getInstanceType(),propertyName);
+  }
+  ObjectType topInstanceType=ctor.getInstanceType();
+  while (true) {
     topInstanceType=ctor.getInstanceType();
     ctor=ctor.getSuperClassConstructor();
+    if (ctor == null || !ctor.getPrototype().hasProperty(propertyName)) {
+      break;
+    }
   }
- while (ctor != null && ctor.getPrototype().hasProperty(propertyName));
   return topInstanceType;
 }

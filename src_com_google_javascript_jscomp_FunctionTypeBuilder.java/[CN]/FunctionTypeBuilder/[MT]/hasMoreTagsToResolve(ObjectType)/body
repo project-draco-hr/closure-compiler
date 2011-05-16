@@ -1,0 +1,22 @@
+{
+  Preconditions.checkArgument(objectType.isUnknownType());
+  if (objectType.getImplicitPrototype() != null) {
+    if (objectType.getImplicitPrototype().isResolved()) {
+      return false;
+    }
+ else {
+      return true;
+    }
+  }
+ else {
+    FunctionType ctor=objectType.getConstructor();
+    if (ctor != null) {
+      for (      ObjectType interfaceType : ctor.getExtendedInterfaces()) {
+        if (!interfaceType.isResolved()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+}

@@ -2,12 +2,22 @@
   ObjectType objectType=ObjectType.cast(type);
   if (objectType == null) {
     reportWarning(EXTENDS_NON_OBJECT,fnName,type.toString());
+    return false;
   }
- else   if (objectType.isEmptyType() || (objectType.isUnknownType() && (objectType.getImplicitPrototype() == null || objectType.getImplicitPrototype().isResolved()))) {
+ else   if (objectType.isEmptyType()) {
     reportWarning(RESOLVED_TAG_EMPTY,"@extends",fnName);
+    return false;
+  }
+ else   if (objectType.isUnknownType()) {
+    if (hasMoreTagsToResolve(objectType)) {
+      return true;
+    }
+ else {
+      reportWarning(RESOLVED_TAG_EMPTY,"@extends",fnName);
+      return false;
+    }
   }
  else {
     return true;
   }
-  return false;
 }

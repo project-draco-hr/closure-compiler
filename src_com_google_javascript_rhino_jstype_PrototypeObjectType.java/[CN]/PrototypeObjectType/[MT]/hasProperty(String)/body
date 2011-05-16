@@ -4,7 +4,14 @@
   }
   ObjectType implicitPrototype=getImplicitPrototype();
   if (implicitPrototype != null) {
-    return implicitPrototype.hasProperty(propertyName);
+    if (implicitPrototype.hasProperty(propertyName)) {
+      return true;
+    }
+  }
+  for (  ObjectType interfaceType : getCtorExtendedInterfaces()) {
+    if (interfaceType.hasProperty(propertyName)) {
+      return true;
+    }
   }
   return false;
 }
