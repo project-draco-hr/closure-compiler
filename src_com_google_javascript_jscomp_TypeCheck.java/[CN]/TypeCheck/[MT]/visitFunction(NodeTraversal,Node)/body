@@ -35,5 +35,14 @@
     if (functionType.hasImplementedInterfaces()) {
       compiler.report(t.makeError(n,CONFLICTING_IMPLEMENTED_TYPE,functionPrivateName));
     }
+    if (functionType.getExtendedInterfacesCount() > 1) {
+      HashMap<String,ObjectType> properties=new HashMap<String,ObjectType>();
+      HashMap<String,ObjectType> currentProperties=new HashMap<String,ObjectType>();
+      for (      ObjectType interfaceType : functionType.getExtendedInterfaces()) {
+        currentProperties.clear();
+        checkInterfaceConflictProperties(t,n,functionPrivateName,properties,currentProperties,interfaceType);
+        properties.putAll(currentProperties);
+      }
+    }
   }
 }
