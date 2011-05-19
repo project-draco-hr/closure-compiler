@@ -1,0 +1,29 @@
+{
+  boolean pending=false;
+  String sourceName=null;
+  String symbolName=null;
+  FilePosition sourceStartPosition=null;
+  FilePosition startPosition=null;
+  final int lineCount=lines.size();
+  for (int i=0; i < lineCount; i++) {
+    ArrayList<Entry> line=lines.get(i);
+    if (line != null) {
+      final int entryCount=line.size();
+      for (int j=0; j < entryCount; j++) {
+        Entry entry=line.get(j);
+        if (pending) {
+          FilePosition endPosition=new FilePosition(i,entry.getGeneratedColumn());
+          visitor.visit(sourceName,symbolName,sourceStartPosition,startPosition,endPosition);
+          pending=false;
+        }
+        if (entry.getSourceFileId() != UNMAPPED) {
+          pending=true;
+          sourceName=sources[entry.getSourceFileId()];
+          symbolName=(entry.getNameId() != UNMAPPED) ? names[entry.getNameId()] : null;
+          sourceStartPosition=new FilePosition(entry.getSourceLine(),entry.getSourceColumn());
+          startPosition=new FilePosition(i,entry.getGeneratedColumn());
+        }
+      }
+    }
+  }
+}
