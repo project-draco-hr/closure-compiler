@@ -6,8 +6,12 @@
   for (int i=0; i < original.length; i++) {
     inputs.add(JSSourceFile.fromCode("input" + i,original[i]));
   }
-  compiler.init(externs,inputs,new CompilerOptions());
+  CompilerOptions options=new CompilerOptions();
+  options.setLanguageIn(LanguageMode.ECMASCRIPT5);
+  compiler.init(externs,inputs,options);
   Node all=compiler.parseInputs();
+  Preconditions.checkState(compiler.getErrorCount() == 0);
+  Preconditions.checkNotNull(all);
   Node n=all.getLastChild();
   return n;
 }
