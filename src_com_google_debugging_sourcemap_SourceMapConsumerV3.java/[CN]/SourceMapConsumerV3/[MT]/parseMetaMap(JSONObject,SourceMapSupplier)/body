@@ -1,0 +1,46 @@
+{
+  if (sectionSupplier == null) {
+    sectionSupplier=new DefaultSourceMapSupplier();
+  }
+  try {
+    int version=sourceMapRoot.getInt("version");
+    if (version != 3) {
+      throw new SourceMapParseException("Unknown version: " + version);
+    }
+    String file=sourceMapRoot.getString("file");
+    if (file.isEmpty()) {
+      throw new SourceMapParseException("File entry is missing or empty");
+    }
+    if (sourceMapRoot.has("lineCount") || sourceMapRoot.has("mappings") || sourceMapRoot.has("sources")|| sourceMapRoot.has("names")) {
+      throw new SourceMapParseException("Invalid map format");
+    }
+    SourceMapGeneratorV3 generator=new SourceMapGeneratorV3();
+    JSONArray sections=sourceMapRoot.getJSONArray("sections");
+    for (int i=0, count=sections.length(); i < count; i++) {
+      JSONObject section=sections.getJSONObject(i);
+      String url=section.getString("url");
+      JSONObject offset=section.getJSONObject("offset");
+      int line=offset.getInt("line");
+      int column=offset.getInt("column");
+      String mapSectionContents=sectionSupplier.getSourceMap(url);
+      if (mapSectionContents == null) {
+        throw new SourceMapParseException("Unable to retrieve: " + url);
+      }
+      generator.mergeMapSection(line,column,mapSectionContents);
+    }
+    StringBuilder sb=new StringBuilder();
+    try {
+      generator.appendTo(sb,file);
+    }
+ catch (    IOException e) {
+      throw new RuntimeException(e);
+    }
+    parse(sb.toString());
+  }
+ catch (  IOException ex) {
+    throw new SourceMapParseException("IO exception: " + ex);
+  }
+catch (  JSONException ex) {
+    throw new SourceMapParseException("JSON parse exception: " + ex);
+  }
+}
