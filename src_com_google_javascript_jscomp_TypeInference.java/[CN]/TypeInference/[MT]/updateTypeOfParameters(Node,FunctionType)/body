@@ -2,14 +2,15 @@
   int i=0;
   int childCount=n.getChildCount();
   for (  Node iParameter : fnType.getParameters()) {
+    if (i + 1 >= childCount) {
+      return;
+    }
     JSType iParameterType=iParameter.getJSType();
+    Node iArgument=n.getChildAtIndex(i + 1);
+    JSType iArgumentType=getJSType(iArgument);
+    inferPropertyTypesToMatchConstraint(iArgumentType,iParameterType);
     if (iParameterType instanceof FunctionType) {
       FunctionType iParameterFnType=(FunctionType)iParameterType;
-      if (i + 1 >= childCount) {
-        return;
-      }
-      Node iArgument=n.getChildAtIndex(i + 1);
-      JSType iArgumentType=getJSType(iArgument);
       if (iArgument.getType() == Token.FUNCTION && iArgumentType instanceof FunctionType && iArgument.getJSDocInfo() == null) {
         iArgument.setJSType(iParameterFnType);
       }
