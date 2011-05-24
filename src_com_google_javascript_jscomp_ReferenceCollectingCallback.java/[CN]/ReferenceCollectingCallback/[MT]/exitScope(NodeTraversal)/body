@@ -1,4 +1,10 @@
 {
   blockStack.pop();
-  behavior.afterExitScope(t,referenceMap);
+  if (t.getScope().isGlobal()) {
+    compiler.updateGlobalVarReferences(referenceMap,t.getScopeRoot());
+    behavior.afterExitScope(t,compiler.getGlobalVarReferences());
+  }
+ else {
+    behavior.afterExitScope(t,new ReferenceMapWrapper(referenceMap));
+  }
 }
