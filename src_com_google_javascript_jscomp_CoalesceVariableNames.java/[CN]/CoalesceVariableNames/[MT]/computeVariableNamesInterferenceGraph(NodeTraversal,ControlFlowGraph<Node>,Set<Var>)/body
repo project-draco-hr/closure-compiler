@@ -1,6 +1,23 @@
 {
   UndiGraph<Var,Void> interferenceGraph=LinkedUndirectedGraph.create();
+  Set<Var> unsafeCrossRangeSet=Sets.newHashSet();
   Scope scope=t.getScope();
+  for (  DiGraphNode<Node,Branch> cfgNode : cfg.getDirectedGraphNodes()) {
+    if (cfg.isImplicitReturn(cfgNode)) {
+      continue;
+    }
+    for (Iterator<Var> i=scope.getVars(); i.hasNext(); ) {
+      final Var v=i.next();
+      if (!unsafeCrossRangeSet.contains(v)) {
+        FlowState<LiveVariableLattice> state=cfgNode.getAnnotation();
+        PrescreenCrossLiveRange check=new PrescreenCrossLiveRange(v,state.getOut());
+        NodeTraversal.traverse(compiler,cfgNode.getValue(),check);
+        if (!check.isSafe()) {
+          unsafeCrossRangeSet.add(v);
+        }
+      }
+    }
+  }
   for (Iterator<Var> i=scope.getVars(); i.hasNext(); ) {
     Var v=i.next();
     if (!escaped.contains(v)) {
@@ -32,6 +49,9 @@
           interferenceGraph.connectIfNotFound(v1,null,v2);
           continue NEXT_VAR_PAIR;
         }
+      }
+      if (!unsafeCrossRangeSet.contains(v1) && !unsafeCrossRangeSet.contains(v2)) {
+        continue NEXT_VAR_PAIR;
       }
       NEXT_INTRA_CFG_NODE:       for (      DiGraphNode<Node,Branch> cfgNode : cfg.getDirectedGraphNodes()) {
         if (cfg.isImplicitReturn(cfgNode)) {
