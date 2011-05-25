@@ -1,11 +1,23 @@
 {
-  if (body instanceof Alternation || body instanceof Concatenation || body instanceof Repetition|| (body instanceof Text && ((Text)body).text.length() > 1)) {
-    sb.append("(?:");
-    body.appendSourceCode(sb);
-    sb.append(')');
-  }
- else {
-    body.appendSourceCode(sb);
+  int bodyStart=sb.length();
+  appendBodySourceCode(sb);
+  int bodyEnd=sb.length();
+  int bodyLen=bodyEnd - bodyStart;
+  int min=this.min;
+  int max=this.max;
+  if (min >= 2 && max == Integer.MAX_VALUE || max - min <= 1) {
+    int expanded=min == max || max == Integer.MAX_VALUE ? min - 1 : min;
+    int expandedMin=min - expanded;
+    int expandedMax=max == Integer.MAX_VALUE ? max : max - expanded;
+    int suffixLen=suffixLen(min,max);
+    int expandedSuffixLen=suffixLen(expandedMin,expandedMax);
+    if (bodyLen * expanded + expandedSuffixLen < suffixLen && !body.hasCapturingGroup()) {
+      while (--expanded >= 0) {
+        sb.append(sb,bodyStart,bodyEnd);
+      }
+      min=expandedMin;
+      max=expandedMax;
+    }
   }
   if (max == Integer.MAX_VALUE) {
 switch (min) {
@@ -23,7 +35,9 @@ sb.append('{').append(min).append(",}");
 sb.append('?');
 }
  else if (min == max) {
+if (min != 1) {
 sb.append('{').append(min).append('}');
+}
 }
  else {
 sb.append('{').append(min).append(',').append(max).append('}');

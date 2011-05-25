@@ -5,24 +5,26 @@
     if (element instanceof Alternation || element instanceof Concatenation) {
       parenthesize=true;
     }
- else {
-      digitsMightBleed=element instanceof Text;
-      if (digitsMightBleed) {
-        Text text=(Text)element;
-        if (text.text.length() != 0) {
-          char first=text.text.charAt(0);
-          parenthesize='0' <= first && first <= '9';
-        }
-      }
-    }
     if (parenthesize) {
       sb.append("(?:");
       element.appendSourceCode(sb);
       sb.append(')');
     }
  else {
+      int start=sb.length();
       element.appendSourceCode(sb);
+      if (digitsMightBleed && sb.length() > start) {
+        char firstChar=sb.charAt(start);
+        if ('0' <= firstChar && firstChar <= '9') {
+          if (sb.charAt(start - 1) == '{') {
+            sb.insert(start - 1,'\\');
+          }
+ else {
+            sb.insert(start,"(?:").append(')');
+          }
+        }
+      }
     }
-    digitsMightBleed=element instanceof BackReference && ((BackReference)element).groupIndex < 10;
+    digitsMightBleed=((element instanceof BackReference && ((BackReference)element).groupIndex < 10) || (element instanceof Text && ((Text)element).text.endsWith("{")));
   }
 }
