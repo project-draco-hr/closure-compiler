@@ -25,8 +25,9 @@
   List<WarningsGuard> guards=Lists.newArrayList();
   guards.add(new SuppressDocWarningsGuard(getDiagnosticGroups().getRegisteredGroups()));
   guards.add(options.getWarningsGuard());
-  if (!options.checkSymbols && (warningsGuard == null || !warningsGuard.disables(DiagnosticGroups.CHECK_VARIABLES))) {
-    guards.add(new DiagnosticGroupWarningsGuard(DiagnosticGroups.CHECK_VARIABLES,CheckLevel.OFF));
+  ComposeWarningsGuard composedGuards=new ComposeWarningsGuard(guards);
+  if (!options.checkSymbols && !composedGuards.enables(DiagnosticGroups.CHECK_VARIABLES)) {
+    composedGuards.addGuard(new DiagnosticGroupWarningsGuard(DiagnosticGroups.CHECK_VARIABLES,CheckLevel.OFF));
   }
-  this.warningsGuard=new ComposeWarningsGuard(guards);
+  this.warningsGuard=composedGuards;
 }
