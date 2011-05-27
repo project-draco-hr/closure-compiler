@@ -1,0 +1,93 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.CALL);
+  boolean isParseInt=functionName.equals("parseInt");
+  Node secondArg=firstArg.getNext();
+  int radix=0;
+  if (secondArg != null) {
+    if (!isParseInt) {
+      return n;
+    }
+    if ((secondArg.getNext() != null) || (secondArg.getType() != Token.NUMBER)) {
+      return n;
+    }
+ else {
+      double tmpRadix=secondArg.getDouble();
+      if (tmpRadix != (int)tmpRadix)       return n;
+      radix=(int)tmpRadix;
+      if (radix < 0 || radix == 1 || radix > 36) {
+        return n;
+      }
+    }
+  }
+  String stringVal=null;
+  Double checkVal;
+  if (firstArg.getType() == Token.NUMBER) {
+    checkVal=NodeUtil.getNumberValue(firstArg);
+    if (!(radix == 0 || radix == 10) && isParseInt) {
+      stringVal=String.valueOf(checkVal.intValue());
+    }
+ else {
+      Node numericNode;
+      if (isParseInt) {
+        numericNode=Node.newNumber(checkVal.intValue());
+      }
+ else {
+        numericNode=Node.newNumber(checkVal);
+      }
+      n.getParent().replaceChild(n,numericNode);
+      reportCodeChange();
+      return numericNode;
+    }
+  }
+ else {
+    stringVal=NodeUtil.getStringValue(firstArg);
+    if (stringVal == null) {
+      return n;
+    }
+    checkVal=NodeUtil.getStringNumberValue(stringVal);
+    if (checkVal == null || checkVal == Double.NaN) {
+      return n;
+    }
+    stringVal=NodeUtil.trimJsWhiteSpace(stringVal);
+  }
+  Node newNode;
+  if (isParseInt) {
+    if (radix == 0 || radix == 16) {
+      if (stringVal.length() > 1 && stringVal.substring(0,2).equalsIgnoreCase("0x")) {
+        radix=16;
+        stringVal=stringVal.substring(2);
+      }
+ else       if (radix == 0) {
+        if (!isEcmaScript5OrGreater() && stringVal.substring(0,1).equals("0")) {
+          return n;
+        }
+        radix=10;
+      }
+    }
+    int newVal=0;
+    try {
+      newVal=Integer.parseInt(stringVal,radix);
+    }
+ catch (    NumberFormatException e) {
+      return n;
+    }
+    newNode=Node.newNumber(newVal);
+  }
+ else {
+    String normalizedNewVal="0";
+    try {
+      double newVal=Double.parseDouble(stringVal);
+      newNode=Node.newNumber(newVal);
+      normalizedNewVal=normalizeNumericString(String.valueOf(newVal));
+    }
+ catch (    NumberFormatException e) {
+      return n;
+    }
+    if (!normalizeNumericString(stringVal).equals(normalizedNewVal)) {
+      return n;
+    }
+  }
+  n.getParent().replaceChild(n,newNode);
+  reportCodeChange();
+  return newNode;
+}
