@@ -1,7 +1,16 @@
 {
   subtree=tryFoldArrayJoin(subtree);
   if (subtree.getType() == Token.CALL) {
-    subtree=tryFoldKnownStringMethods(subtree);
+    Node callTarget=subtree.getFirstChild();
+    if (callTarget == null) {
+      return subtree;
+    }
+    if (NodeUtil.isGet(callTarget)) {
+      subtree=tryFoldKnownStringMethods(subtree);
+    }
+ else {
+      subtree=tryFoldKnownNumericMethods(subtree);
+    }
   }
   return subtree;
 }
