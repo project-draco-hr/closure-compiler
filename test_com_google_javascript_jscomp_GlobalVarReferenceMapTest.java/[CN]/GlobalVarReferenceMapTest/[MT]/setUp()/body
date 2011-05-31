@@ -1,0 +1,15 @@
+{
+  super.setUp();
+  globalScope.declare(VAR1,new Node(Token.NAME),null,INPUT1);
+  var1Refs.references=Lists.newArrayList(var1In1Ref,var1In2Ref,var1In3Ref);
+  globalScope.declare(VAR2,new Node(Token.NAME),null,INPUT1);
+  var2Refs.references=Lists.newArrayList(var2In1Ref,var2In3Ref);
+  ReferenceCollection var1TempRefs=new ReferenceCollection();
+  var1TempRefs.references=Lists.newArrayList(var1Refs.references);
+  ReferenceCollection var2TempRefs=new ReferenceCollection();
+  var2TempRefs.references=Lists.newArrayList(var2Refs.references);
+  globalMap.put(globalScope.getVar(VAR1),var1TempRefs);
+  globalMap.put(globalScope.getVar(VAR2),var2TempRefs);
+  map.updateGlobalVarReferences(globalMap,root);
+  scriptRoot.putProp(Node.SOURCENAME_PROP,INPUT2.getName());
+}
