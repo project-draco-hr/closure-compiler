@@ -4,14 +4,15 @@
     Node name=ref.getNameNode();
     Node parent=ref.getParent();
     Node gramps=ref.getGrandparent();
-    if (parent.getType() == Token.GETPROP && (gramps.getType() != Token.CALL || gramps.getFirstChild() != parent) && parent.getFirstChild().isEquivalentTo(name)) {
-      continue;
-    }
-    if (!ref.isLvalue() && !ref.isInitializingDeclaration()) {
-      if (parent.getType() != Token.VAR) {
+    if (parent.getType() == Token.GETPROP) {
+      Preconditions.checkState(parent.getFirstChild() == name);
+      if (gramps.getType() == Token.CALL && gramps.getFirstChild() == parent) {
         return false;
       }
       continue;
+    }
+    if (!isVarOrAssignExprLhs(name)) {
+      return false;
     }
     Node val=ref.getAssignedValue();
     if (val == null) {
@@ -33,12 +34,6 @@
           }
           refNode=refNode.getParent();
         }
-      }
-    }
-    Node p=parent;
-    while ((p=p.getParent()) != null) {
-      if (p.getType() == Token.GETPROP) {
-        return false;
       }
     }
     ret=true;
