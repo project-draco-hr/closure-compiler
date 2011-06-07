@@ -1,8 +1,24 @@
 {
-  if (!noCajaChecks) {
-    for (Node key=n.getFirstChild(); key != null; key=key.getNext()) {
-      if (key.getString().endsWith("__")) {
-        t.report(key,ILLEGAL_NAME);
+  Set<String> getters=Sets.newHashSet();
+  Set<String> setters=Sets.newHashSet();
+  for (Node key=n.getFirstChild(); key != null; key=key.getNext()) {
+    if (!noCajaChecks && key.getString().endsWith("__")) {
+      t.report(key,ILLEGAL_NAME);
+    }
+    if (key.getType() != Token.SET) {
+      if (getters.contains(key.getString())) {
+        t.report(key,DUPLICATE_OBJECT_KEY);
+      }
+ else {
+        getters.add(key.getString());
+      }
+    }
+    if (key.getType() != Token.GET) {
+      if (setters.contains(key.getString())) {
+        t.report(key,DUPLICATE_OBJECT_KEY);
+      }
+ else {
+        setters.add(key.getString());
       }
     }
   }
