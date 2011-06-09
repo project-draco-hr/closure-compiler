@@ -5,7 +5,8 @@
   }
   ObjectType objectType=ObjectType.cast(dereference(getprop.getFirstChild().getJSType()));
   String propertyName=getprop.getLastChild().getString();
-  if (objectType != null) {
+  boolean isConstant=isPropertyDeclaredConstant(objectType,propertyName);
+  if (isConstant) {
     ObjectType oType=objectType;
     while (oType != null) {
       if (oType.hasReferenceName()) {
@@ -16,15 +17,12 @@
       }
       oType=oType.getImplicitPrototype();
     }
-    JSDocInfo info=objectType.getOwnPropertyJSDocInfo(propertyName);
-    if (info != null && info.isConstant() && objectType.hasReferenceName()) {
-      initializedConstantProperties.put(objectType.getReferenceName(),propertyName);
-    }
+    Preconditions.checkState(objectType.hasReferenceName());
+    initializedConstantProperties.put(objectType.getReferenceName(),propertyName);
     if (objectType.isInstanceType()) {
       ObjectType prototype=objectType.getImplicitPrototype();
       if (prototype != null) {
-        JSDocInfo prototypeInfo=prototype.getOwnPropertyJSDocInfo(propertyName);
-        if (prototypeInfo != null && prototypeInfo.isConstant() && prototype.hasReferenceName()) {
+        if (prototype.hasProperty(propertyName) && prototype.hasReferenceName()) {
           initializedConstantProperties.put(prototype.getReferenceName(),propertyName);
         }
       }
