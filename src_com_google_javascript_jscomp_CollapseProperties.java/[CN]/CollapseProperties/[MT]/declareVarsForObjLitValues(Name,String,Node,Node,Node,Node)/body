@@ -10,8 +10,12 @@
     }
     boolean isJsIdentifier=key.getType() != Token.NUMBER && TokenStream.isJSIdentifier(key.getString());
     String propName=isJsIdentifier ? key.getString() : String.valueOf(++arbitraryNameCounter);
-    String propAlias=appendPropForAlias(alias,propName);
     String qName=objlitName.fullName() + '.' + propName;
+    Name p=nameMap.get(qName);
+    if (p != null && !p.canCollapse()) {
+      continue;
+    }
+    String propAlias=appendPropForAlias(alias,propName);
     Node refNode=null;
     if (discardKeys) {
       objlit.removeChild(key);
@@ -38,18 +42,15 @@
     }
     compiler.reportCodeChange();
     nameToAddAfter=newVar;
-    if (isJsIdentifier) {
-      Name p=nameMap.get(qName);
-      if (p != null) {
-        if (!discardKeys) {
-          Ref newAlias=p.declaration.cloneAndReclassify(Ref.Type.ALIASING_GET);
-          newAlias.node=refNode;
-          p.addRef(newAlias);
-        }
-        p.declaration.node=nameNode;
-        if (value.getType() == Token.FUNCTION) {
-          checkForHosedThisReferences(value,value.getJSDocInfo(),p);
-        }
+    if (isJsIdentifier && p != null) {
+      if (!discardKeys) {
+        Ref newAlias=p.declaration.cloneAndReclassify(Ref.Type.ALIASING_GET);
+        newAlias.node=refNode;
+        p.addRef(newAlias);
+      }
+      p.declaration.node=nameNode;
+      if (value.getType() == Token.FUNCTION) {
+        checkForHosedThisReferences(value,value.getJSDocInfo(),p);
       }
     }
     numVars++;

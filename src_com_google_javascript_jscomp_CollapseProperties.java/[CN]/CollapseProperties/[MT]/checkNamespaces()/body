@@ -1,12 +1,17 @@
 {
   for (  Name name : nameMap.values()) {
-    if (name.isNamespace() && (name.aliasingGets > 0 || name.localSets + name.globalSets > 1)) {
+    if (name.isNamespace() && (name.aliasingGets > 0 || name.localSets + name.globalSets > 1 || name.deleteProps > 0)) {
       boolean initialized=name.declaration != null;
       for (      Ref ref : name.getRefs()) {
         if (ref == name.declaration) {
           continue;
         }
-        if (ref.type == Ref.Type.SET_FROM_GLOBAL || ref.type == Ref.Type.SET_FROM_LOCAL) {
+        if (ref.type == Ref.Type.DELETE_PROP) {
+          if (initialized) {
+            warnAboutNamespaceRedefinition(name,ref);
+          }
+        }
+ else         if (ref.type == Ref.Type.SET_FROM_GLOBAL || ref.type == Ref.Type.SET_FROM_LOCAL) {
           if (initialized) {
             warnAboutNamespaceRedefinition(name,ref);
           }
