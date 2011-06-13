@@ -4,7 +4,7 @@
   compiler=createCompiler();
   B options=createOptions();
   List<JSModule> modules=null;
-  Result result;
+  Result result=null;
   setRunOptions(options);
   boolean writeOutputToFile=!options.jsOutputFile.isEmpty();
   if (writeOutputToFile) {
@@ -17,11 +17,21 @@
   List<String> moduleSpecs=config.module;
   if (!moduleSpecs.isEmpty()) {
     modules=createJsModules(moduleSpecs,jsFiles);
-    result=compiler.compileModules(externs,modules,options);
+    if (config.skipNormalOutputs) {
+      compiler.initModules(externs,modules,options);
+    }
+ else {
+      result=compiler.compileModules(externs,modules,options);
+    }
   }
  else {
     List<JSSourceFile> inputs=createSourceInputs(jsFiles);
-    result=compiler.compile(externs,inputs,options);
+    if (config.skipNormalOutputs) {
+      compiler.init(externs,inputs,options);
+    }
+ else {
+      result=compiler.compile(externs,inputs,options);
+    }
   }
   int errCode=processResults(result,modules,options);
   if (jsOutput instanceof Flushable) {

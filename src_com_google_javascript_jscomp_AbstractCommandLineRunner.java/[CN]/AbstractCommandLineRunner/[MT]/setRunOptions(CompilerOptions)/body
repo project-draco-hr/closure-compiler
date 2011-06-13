@@ -18,7 +18,18 @@
   outputCharset=options.outputCharset=getOutputCharset();
   inputCharset=getInputCharset();
   if (config.jsOutputFile.length() > 0) {
-    options.jsOutputFile=config.jsOutputFile;
+    if (config.skipNormalOutputs) {
+      throw new FlagUsageException("skip_normal_outputs and js_output_file" + " cannot be used together.");
+    }
+ else {
+      options.jsOutputFile=config.jsOutputFile;
+    }
+  }
+  if (config.skipNormalOutputs && config.printAst) {
+    throw new FlagUsageException("skip_normal_outputs and print_ast cannot" + " be used together.");
+  }
+  if (config.skipNormalOutputs && config.printTree) {
+    throw new FlagUsageException("skip_normal_outputs and print_tree cannot" + " be used together.");
   }
   if (config.createSourceMap.length() > 0) {
     options.sourceMapOutputPath=config.createSourceMap;
