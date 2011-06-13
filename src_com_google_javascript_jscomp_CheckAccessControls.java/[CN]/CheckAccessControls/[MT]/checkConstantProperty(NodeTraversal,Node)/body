@@ -1,12 +1,17 @@
 {
   Node parent=getprop.getParent();
-  if (!(NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == getprop) && (parent.getType() != Token.INC) && (parent.getType() != Token.DEC)) {
+  boolean isDelete=parent.getType() == Token.DELPROP;
+  if (!(NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == getprop) && (parent.getType() != Token.INC) && (parent.getType() != Token.DEC)&& !isDelete) {
     return;
   }
   ObjectType objectType=ObjectType.cast(dereference(getprop.getFirstChild().getJSType()));
   String propertyName=getprop.getLastChild().getString();
   boolean isConstant=isPropertyDeclaredConstant(objectType,propertyName);
   if (isConstant) {
+    if (isDelete) {
+      compiler.report(t.makeError(getprop,CONST_PROPERTY_DELETED,propertyName));
+      return;
+    }
     ObjectType oType=objectType;
     while (oType != null) {
       if (oType.hasReferenceName()) {
