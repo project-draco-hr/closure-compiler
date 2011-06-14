@@ -1,25 +1,30 @@
 {
-  String outputManifest=config.outputManifest;
-  if (Strings.isEmpty(outputManifest)) {
+  List<String> outputManifests=config.outputManifests;
+  if (outputManifests.isEmpty()) {
     return;
   }
-  JSModuleGraph graph=compiler.getModuleGraph();
-  if (shouldGenerateManifestPerModule()) {
-    Iterable<JSModule> modules=graph.getAllModules();
-    for (    JSModule module : modules) {
-      Writer out=fileNameToOutputWriter(expandManifest(module));
-      printManifestTo(module.getInputs(),out);
+  for (  String outputManifest : outputManifests) {
+    if (outputManifest.isEmpty()) {
+      continue;
+    }
+    JSModuleGraph graph=compiler.getModuleGraph();
+    if (shouldGenerateManifestPerModule(outputManifest)) {
+      Iterable<JSModule> modules=graph.getAllModules();
+      for (      JSModule module : modules) {
+        Writer out=fileNameToOutputWriter(expandManifest(module,outputManifest));
+        printManifestTo(module.getInputs(),out);
+        out.close();
+      }
+    }
+ else {
+      Writer out=fileNameToOutputWriter(expandManifest(null,outputManifest));
+      if (graph == null) {
+        printManifestTo(compiler.getInputsInOrder(),out);
+      }
+ else {
+        printModuleGraphManifestTo(graph,out);
+      }
       out.close();
     }
-  }
- else {
-    Writer out=fileNameToOutputWriter(expandManifest(null));
-    if (graph == null) {
-      printManifestTo(compiler.getInputsInOrder(),out);
-    }
- else {
-      printModuleGraphManifestTo(graph,out);
-    }
-    out.close();
   }
 }
