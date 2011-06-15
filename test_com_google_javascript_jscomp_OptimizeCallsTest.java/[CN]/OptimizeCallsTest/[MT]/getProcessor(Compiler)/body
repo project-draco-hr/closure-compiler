@@ -1,0 +1,13 @@
+{
+  final OptimizeCalls passes=new OptimizeCalls(compiler);
+  passes.addPass(new OptimizeReturns(compiler));
+  passes.addPass(new OptimizeParameters(compiler));
+  passes.addPass(new RemoveUnusedVars(compiler,true,false,true));
+  return new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      new PureFunctionIdentifier(compiler,new SimpleDefinitionFinder(compiler)).process(externs,root);
+      passes.process(externs,root);
+    }
+  }
+;
+}
