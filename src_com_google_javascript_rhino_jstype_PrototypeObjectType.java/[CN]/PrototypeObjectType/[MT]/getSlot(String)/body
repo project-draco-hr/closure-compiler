@@ -1,0 +1,19 @@
+{
+  if (properties.containsKey(name)) {
+    return properties.get(name);
+  }
+  ObjectType implicitPrototype=getImplicitPrototype();
+  if (implicitPrototype != null) {
+    StaticSlot<JSType> prop=implicitPrototype.getSlot(name);
+    if (prop != null) {
+      return prop;
+    }
+  }
+  for (  ObjectType interfaceType : getCtorExtendedInterfaces()) {
+    StaticSlot<JSType> prop=interfaceType.getSlot(name);
+    if (prop != null) {
+      return prop;
+    }
+  }
+  return null;
+}

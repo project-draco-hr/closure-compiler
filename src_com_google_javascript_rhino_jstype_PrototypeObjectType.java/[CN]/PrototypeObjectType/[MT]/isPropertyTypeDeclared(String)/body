@@ -1,11 +1,7 @@
 {
-  Property p=properties.get(property);
-  if (p == null) {
-    ObjectType implicitPrototype=getImplicitPrototype();
-    if (implicitPrototype != null) {
-      return implicitPrototype.isPropertyTypeDeclared(property);
-    }
+  StaticSlot<JSType> slot=getSlot(property);
+  if (slot == null) {
     return false;
   }
-  return !p.inferred;
+  return !slot.isTypeInferred();
 }

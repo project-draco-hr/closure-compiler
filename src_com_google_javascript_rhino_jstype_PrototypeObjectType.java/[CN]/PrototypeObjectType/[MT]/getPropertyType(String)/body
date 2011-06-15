@@ -1,11 +1,7 @@
 {
-  Property p=properties.get(propertyName);
-  if (p != null) {
-    return p.type;
+  StaticSlot<JSType> slot=getSlot(property);
+  if (slot == null) {
+    return getNativeType(JSTypeNative.UNKNOWN_TYPE);
   }
-  ObjectType implicitPrototype=getImplicitPrototype();
-  if (implicitPrototype != null) {
-    return implicitPrototype.getPropertyType(propertyName);
-  }
-  return getNativeType(JSTypeNative.UNKNOWN_TYPE);
+  return slot.getType();
 }
