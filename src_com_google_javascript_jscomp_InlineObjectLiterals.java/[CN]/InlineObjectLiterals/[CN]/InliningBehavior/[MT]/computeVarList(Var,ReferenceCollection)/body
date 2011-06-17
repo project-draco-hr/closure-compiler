@@ -1,9 +1,10 @@
 {
-  Map<String,String> varmap=Maps.newHashMap();
+  Map<String,String> varmap=Maps.newLinkedHashMap();
   for (  Reference ref : referenceInfo.references) {
     if (ref.isLvalue() || ref.isInitializingDeclaration()) {
       Node val=ref.getAssignedValue();
       if (val != null) {
+        Preconditions.checkState(val.getType() == Token.OBJECTLIT);
         for (Node child=val.getFirstChild(); child != null; child=child.getNext()) {
           String varname=child.getString();
           if (varmap.containsKey(varname)) {
@@ -18,8 +19,7 @@
     }
  else {
       Node getprop=ref.getParent();
-      Preconditions.checkState(getprop.getType() == Token.GETPROP,"Unexpected reference type: " + Token.name(getprop.getType()));
-      Preconditions.checkState(getprop.getFirstChild().getString().equals(v.getName()),"Unexpected variable name: " + getprop.getFirstChild().getString() + ", expecting: "+ v.getName());
+      Preconditions.checkState(getprop.getType() == Token.GETPROP);
       String varname=getprop.getLastChild().getString();
       if (varmap.containsKey(varname)) {
         continue;

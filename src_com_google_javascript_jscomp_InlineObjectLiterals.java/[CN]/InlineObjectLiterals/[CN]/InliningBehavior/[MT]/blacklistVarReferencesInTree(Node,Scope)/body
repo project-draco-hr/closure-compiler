@@ -1,8 +1,10 @@
 {
-  for (Node c=root.getFirstChild(); c != null; c=c.getNext()) {
-    blacklistVarReferencesInTree(c,scope);
+  NodeUtil.visitPreOrder(root,new NodeUtil.Visitor(){
+    @Override public void visit(    Node node){
+      if (node.getType() == Token.NAME) {
+        staleVars.add(scope.getVar(node.getString()));
+      }
+    }
   }
-  if (root.getType() == Token.NAME) {
-    staleVars.add(scope.getVar(root.getString()));
-  }
+,NodeUtil.MATCH_NOT_FUNCTION);
 }
