@@ -1,0 +1,30 @@
+{
+  if (node.getType() == Token.NAME) {
+    Node replacementTemplate=replacements.get(node.getString());
+    if (replacementTemplate != null) {
+      Preconditions.checkState(parent.getType() != Token.FUNCTION || parent.getType() != Token.VAR || parent.getType() != Token.CATCH);
+      Node replacement=replacementTemplate.cloneTree();
+      parent.replaceChild(node,replacement);
+      return replacement;
+    }
+  }
+ else   if (replaceThis && node.getType() == Token.THIS) {
+    Node replacementTemplate=replacements.get(THIS_MARKER);
+    Preconditions.checkNotNull(replacementTemplate);
+    if (replacementTemplate.getType() != Token.THIS) {
+      Node replacement=replacementTemplate.cloneTree();
+      parent.replaceChild(node,replacement);
+      if (NodeUtil.mayHaveSideEffects(replacementTemplate,compiler)) {
+        replacements.remove(THIS_MARKER);
+      }
+      return replacement;
+    }
+  }
+ else   if (node.getType() == Token.FUNCTION) {
+    replaceThis=false;
+  }
+  for (Node c=node.getFirstChild(); c != null; c=c.getNext()) {
+    c=inject(compiler,c,node,replacements,replaceThis);
+  }
+  return node;
+}
