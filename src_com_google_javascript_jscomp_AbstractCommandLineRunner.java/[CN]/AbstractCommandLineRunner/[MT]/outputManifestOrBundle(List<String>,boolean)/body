@@ -1,0 +1,39 @@
+{
+  if (outputFiles.isEmpty()) {
+    return;
+  }
+  for (  String output : outputFiles) {
+    if (output.isEmpty()) {
+      continue;
+    }
+    JSModuleGraph graph=compiler.getModuleGraph();
+    if (shouldGenerateOutputPerModule(output)) {
+      Iterable<JSModule> modules=graph.getAllModules();
+      for (      JSModule module : modules) {
+        Writer out=fileNameToOutputWriter(expandCommandLinePath(output,module));
+        if (isManifest) {
+          printManifestTo(module.getInputs(),out);
+        }
+ else {
+          printBundleTo(module.getInputs(),out);
+        }
+        out.close();
+      }
+    }
+ else {
+      Writer out=fileNameToOutputWriter(expandCommandLinePath(output,null));
+      if (graph == null) {
+        if (isManifest) {
+          printManifestTo(compiler.getInputsInOrder(),out);
+        }
+ else {
+          printBundleTo(compiler.getInputsInOrder(),out);
+        }
+      }
+ else {
+        printModuleGraphManifestOrBundleTo(graph,out,isManifest);
+      }
+      out.close();
+    }
+  }
+}
