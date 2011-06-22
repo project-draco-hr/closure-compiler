@@ -1,0 +1,14 @@
+{
+  Map<String,DependencyInfo> parsedFiles=Maps.newHashMap();
+  JsFileParser jsParser=new JsFileParser(errorManager);
+  for (  SourceFile file : srcs) {
+    String closureRelativePath=PathUtil.makeRelative(closurePathAbs,PathUtil.makeAbsolute(file.getName()));
+    logger.fine("Closure-relative path: " + closureRelativePath);
+    if (InclusionStrategy.WHEN_IN_SRCS == mergeStrategy || !preparsedFiles.contains(closureRelativePath)) {
+      DependencyInfo depInfo=jsParser.parseFile(file.getName(),closureRelativePath,file.getCode());
+      file.clearCachedSource();
+      parsedFiles.put(closureRelativePath,depInfo);
+    }
+  }
+  return parsedFiles;
+}

@@ -1,0 +1,21 @@
+{
+  Map<String,DependencyInfo> providesMap=Maps.newHashMap();
+  addToProvideMap(preparsedFileDepedencies,providesMap);
+  addToProvideMap(parsedFileDependencies,providesMap);
+  for (  DependencyInfo depInfo : parsedFileDependencies) {
+    List<String> requires=Lists.newArrayList(depInfo.getRequires());
+    for (int i=0, l=requires.size(); i < l; ++i) {
+      String namespace=requires.get(i);
+      if (requires.subList(i + 1,l).contains(namespace)) {
+        reportDuplicateRequire(namespace,depInfo);
+      }
+      DependencyInfo provider=providesMap.get(namespace);
+      if (provider == null) {
+        reportUndefinedNamespace(namespace,depInfo);
+      }
+ else       if (provider == depInfo) {
+        reportSameFile(namespace,depInfo);
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  if (isAbsolute(basePath) != isAbsolute(targetPath)) {
+    throw new IllegalArgumentException("Paths must both be relative or both absolute.\n" + "  basePath: " + basePath + "\n"+ "  targetPath: "+ targetPath);
+  }
+  basePath=collapseDots(basePath);
+  targetPath=collapseDots(targetPath);
+  String[] baseFragments=basePath.split("/");
+  String[] targetFragments=targetPath.split("/");
+  int i=-1;
+  do {
+    i+=1;
+    if (i == baseFragments.length && i == targetFragments.length) {
+      return ".";
+    }
+ else     if (i == baseFragments.length) {
+      return Joiner.on("/").join(Lists.newArrayList(Arrays.asList(targetFragments).listIterator(i)));
+    }
+ else     if (i == targetFragments.length) {
+      return Strings.repeat("../",baseFragments.length - i - 1) + "..";
+    }
+  }
+ while (baseFragments[i].equals(targetFragments[i]));
+  return Strings.repeat("../",baseFragments.length - i) + Joiner.on("/").join(Lists.newArrayList(Arrays.asList(targetFragments).listIterator(i)));
+}

@@ -1,0 +1,26 @@
+{
+  DepsFileParser depsParser=createDepsFileParser();
+  Map<String,DependencyInfo> depsFiles=Maps.newHashMap();
+  for (  SourceFile file : deps) {
+    if (!shouldSkipDepsFile(file)) {
+      List<DependencyInfo> depInfos=depsParser.parseFileReader(file.getName(),file.getCodeReader());
+      if (depInfos.isEmpty()) {
+        reportNoDepsInDepsFile(file.getName());
+      }
+ else {
+        for (        DependencyInfo info : depInfos) {
+          depsFiles.put(info.getPathRelativeToClosureBase(),info);
+        }
+      }
+    }
+  }
+  for (  SourceFile src : srcs) {
+    if ((new File(src.getName())).exists() && !shouldSkipDepsFile(src)) {
+      List<DependencyInfo> srcInfos=depsParser.parseFileReader(src.getName(),src.getCodeReader());
+      for (      DependencyInfo info : srcInfos) {
+        depsFiles.put(info.getPathRelativeToClosureBase(),info);
+      }
+    }
+  }
+  return depsFiles;
+}

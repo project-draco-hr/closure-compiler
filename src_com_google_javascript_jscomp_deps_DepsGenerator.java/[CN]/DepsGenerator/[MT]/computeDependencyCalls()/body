@@ -1,0 +1,16 @@
+{
+  Map<String,DependencyInfo> depsFiles=parseDepsFiles();
+  logger.fine("preparsedFiles: " + depsFiles);
+  Map<String,DependencyInfo> jsFiles=parseSources(depsFiles.keySet());
+  if (errorManager.getErrorCount() > 0) {
+    return null;
+  }
+  cleanUpDuplicatedFiles(depsFiles,jsFiles);
+  validateDependencies(depsFiles.values(),jsFiles.values());
+  if (errorManager.getErrorCount() > 0) {
+    return null;
+  }
+  ByteArrayOutputStream output=new ByteArrayOutputStream();
+  writeDepsContent(depsFiles,jsFiles,new PrintStream(output));
+  return new String(output.toByteArray());
+}

@@ -1,0 +1,16 @@
+{
+  writeDepInfos(out,jsFiles.values());
+  if (mergeStrategy == InclusionStrategy.ALWAYS) {
+    Multimap<String,DependencyInfo> infosIndex=Multimaps.index(depsFiles.values(),new Function<DependencyInfo,String>(){
+      @Override public String apply(      DependencyInfo from){
+        return from.getName();
+      }
+    }
+);
+    for (    String depsPath : infosIndex.keySet()) {
+      String path=formatPathToDepsFile(depsPath);
+      out.println("\n// Included from: " + path);
+      writeDepInfos(out,infosIndex.get(depsPath));
+    }
+  }
+}
