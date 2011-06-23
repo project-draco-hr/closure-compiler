@@ -6,17 +6,7 @@
     if (origParent.getType() == Token.CATCH && parent.getType() == Token.CATCH) {
       return;
     }
-    boolean allowDupe=false;
-    JSDocInfo info=n.getJSDocInfo();
-    if (info == null) {
-      info=parent.getJSDocInfo();
-    }
-    allowDupe=info != null && info.getSuppressions().contains("duplicate");
-    info=origVar.nameNode.getJSDocInfo();
-    if (info == null) {
-      info=origParent.getJSDocInfo();
-    }
-    allowDupe|=info != null && info.getSuppressions().contains("duplicate");
+    boolean allowDupe=hasDuplicateDeclarationSuppression(n,origVar);
     if (!allowDupe) {
       compiler.report(JSError.make(sourceName,n,VAR_MULTIPLY_DECLARED_ERROR,name,(origVar.input != null ? origVar.input.getName() : "??")));
     }

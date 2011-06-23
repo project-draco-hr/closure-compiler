@@ -1,0 +1,17 @@
+{
+  Preconditions.checkState(n.getType() == Token.NAME);
+  Node parent=n.getParent();
+  Node origParent=origVar.getParentNode();
+  JSDocInfo info=n.getJSDocInfo();
+  if (info == null) {
+    info=parent.getJSDocInfo();
+  }
+  if (info != null && info.getSuppressions().contains("duplicate")) {
+    return true;
+  }
+  info=origVar.nameNode.getJSDocInfo();
+  if (info == null) {
+    info=origParent.getJSDocInfo();
+  }
+  return (info != null && info.getSuppressions().contains("duplicate"));
+}

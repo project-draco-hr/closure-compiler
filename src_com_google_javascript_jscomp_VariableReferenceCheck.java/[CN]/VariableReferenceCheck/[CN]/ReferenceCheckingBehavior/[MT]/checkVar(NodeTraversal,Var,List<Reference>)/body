@@ -20,7 +20,8 @@
     }
     BasicBlock basicBlock=reference.getBasicBlock();
     boolean isDeclaration=reference.isDeclaration();
-    if (isDeclaration) {
+    boolean allowDupe=SyntacticScopeCreator.hasDuplicateDeclarationSuppression(reference.getNode(),v);
+    if (isDeclaration && !allowDupe) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
         if (declaredBlock.provablyExecutesBefore(basicBlock)) {
           compiler.report(JSError.make(reference.getSourceFile().getName(),reference.getNode(),checkLevel,REDECLARED_VARIABLE,v.name));
@@ -37,12 +38,14 @@
       }
     }
     if (!isDeclaration && !isDeclaredInScope) {
-      Node grandparent=reference.getGrandparent();
-      if (grandparent.getType() == Token.NAME && grandparent.getString() == v.name) {
-        continue;
-      }
-      if (reference.getScope() == v.scope) {
-        compiler.report(JSError.make(reference.getSourceFile().getName(),reference.getNode(),checkLevel,UNDECLARED_REFERENCE,v.name));
+      if (!reference.getSourceFile().isExtern()) {
+        Node grandparent=reference.getGrandparent();
+        if (grandparent.getType() == Token.NAME && grandparent.getString() == v.name) {
+          continue;
+        }
+        if (reference.getScope() == v.scope) {
+          compiler.report(JSError.make(reference.getSourceFile().getName(),reference.getNode(),checkLevel,UNDECLARED_REFERENCE,v.name));
+        }
       }
     }
     if (isDeclaration) {
