@@ -13,6 +13,7 @@
   NodeTraversal.traverse(compiler,root,new InstrumentCallback());
   if (!appNameSetter.isEmpty()) {
     Node call=new Node(Token.CALL,Node.newString(Token.NAME,appNameSetter),Node.newString(appNameStr));
+    call.putBooleanProp(Node.FREE_CALL,true);
     Node expr=new Node(Token.EXPR_RESULT,call);
     Node addingRoot=compiler.getNodeForCodeInsertion(null);
     addingRoot.addChildrenToFront(expr);

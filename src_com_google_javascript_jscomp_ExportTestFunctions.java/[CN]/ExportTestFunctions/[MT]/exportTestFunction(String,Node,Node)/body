@@ -1,5 +1,9 @@
 {
-  Node call=new Node(Token.CALL,NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),exportSymbolFunction,node,testFunctionName));
+  Node exportCallTarget=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),exportSymbolFunction,node,testFunctionName);
+  Node call=new Node(Token.CALL,exportCallTarget);
+  if (exportCallTarget.getType() == Token.NAME) {
+    call.putBooleanProp(Node.FREE_CALL,true);
+  }
   call.addChildToBack(Node.newString(testFunctionName));
   call.addChildToBack(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),testFunctionName,node,testFunctionName));
   Node expression=new Node(Token.EXPR_RESULT,call);

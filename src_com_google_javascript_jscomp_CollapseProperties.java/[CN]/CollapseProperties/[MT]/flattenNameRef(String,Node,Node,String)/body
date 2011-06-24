@@ -1,6 +1,9 @@
 {
   Node ref=NodeUtil.newName(compiler.getCodingConvention(),alias,n,originalName);
   NodeUtil.copyNameAnnotations(n.getLastChild(),ref);
+  if (parent.getType() == Token.CALL && n == parent.getFirstChild()) {
+    parent.putBooleanProp(Node.FREE_CALL,true);
+  }
   JSType type=n.getJSType();
   if (type != null) {
     ref.setJSType(type);
