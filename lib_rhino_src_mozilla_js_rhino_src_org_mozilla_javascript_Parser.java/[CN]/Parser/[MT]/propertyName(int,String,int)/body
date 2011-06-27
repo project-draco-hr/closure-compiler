@@ -1,0 +1,34 @@
+{
+  int pos=atPos != -1 ? atPos : ts.tokenBeg, lineno=ts.lineno;
+  int colonPos=-1;
+  Name name=createNameNode(true,currentToken);
+  Name ns=null;
+  if (matchToken(Token.COLONCOLON)) {
+    ns=name;
+    colonPos=ts.tokenBeg;
+switch (nextToken()) {
+case Token.NAME:
+      name=createNameNode();
+    break;
+case Token.MUL:
+  saveNameTokenData(ts.tokenBeg,"*",ts.lineno);
+name=createNameNode(false,-1);
+break;
+case Token.LB:
+return xmlElemRef(atPos,ns,colonPos);
+default :
+reportError("msg.no.name.after.coloncolon");
+return makeErrorNode();
+}
+}
+if (ns == null && memberTypeFlags == 0 && atPos == -1) {
+return name;
+}
+XmlPropRef ref=new XmlPropRef(pos,getNodeEnd(name) - pos);
+ref.setAtPos(atPos);
+ref.setNamespace(ns);
+ref.setColonPos(colonPos);
+ref.setPropName(name);
+ref.setLineno(lineno);
+return ref;
+}

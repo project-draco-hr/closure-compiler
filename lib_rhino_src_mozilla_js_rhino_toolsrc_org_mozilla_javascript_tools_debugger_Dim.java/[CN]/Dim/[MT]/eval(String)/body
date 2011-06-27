@@ -1,0 +1,36 @@
+{
+  String result="undefined";
+  if (expr == null) {
+    return result;
+  }
+  ContextData contextData=currentContextData();
+  if (contextData == null || frameIndex >= contextData.frameCount()) {
+    return result;
+  }
+  StackFrame frame=contextData.getFrame(frameIndex);
+  if (contextData.eventThreadFlag) {
+    Context cx=Context.getCurrentContext();
+    result=do_eval(cx,frame,expr);
+  }
+ else {
+synchronized (monitor) {
+      if (insideInterruptLoop) {
+        evalRequest=expr;
+        evalFrame=frame;
+        monitor.notify();
+        do {
+          try {
+            monitor.wait();
+          }
+ catch (          InterruptedException exc) {
+            Thread.currentThread().interrupt();
+            break;
+          }
+        }
+ while (evalRequest != null);
+        result=evalResult;
+      }
+    }
+  }
+  return result;
+}

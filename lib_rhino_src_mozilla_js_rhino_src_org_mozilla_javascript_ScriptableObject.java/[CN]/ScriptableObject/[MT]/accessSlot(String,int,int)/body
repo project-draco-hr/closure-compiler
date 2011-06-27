@@ -1,0 +1,153 @@
+{
+  int indexOrHash=(name != null ? name.hashCode() : index);
+  if (accessType == SLOT_QUERY || accessType == SLOT_MODIFY || accessType == SLOT_MODIFY_CONST || accessType == SLOT_MODIFY_GETTER_SETTER || accessType == SLOT_CONVERT_ACCESSOR_TO_DATA) {
+    Slot[] slotsLocalRef=slots;
+    if (slotsLocalRef == null) {
+      if (accessType == SLOT_QUERY)       return null;
+    }
+ else {
+      int tableSize=slotsLocalRef.length;
+      int slotIndex=getSlotIndex(tableSize,indexOrHash);
+      Slot slot=slotsLocalRef[slotIndex];
+      while (slot != null) {
+        String sname=slot.name;
+        if (sname != null) {
+          if (sname == name)           break;
+          if (name != null && indexOrHash == slot.indexOrHash) {
+            if (name.equals(sname)) {
+              slot.name=name;
+              break;
+            }
+          }
+        }
+ else         if (name == null && indexOrHash == slot.indexOrHash) {
+          break;
+        }
+        slot=slot.next;
+      }
+      if (accessType == SLOT_QUERY) {
+        return slot;
+      }
+ else       if (accessType == SLOT_MODIFY) {
+        if (slot != null)         return slot;
+      }
+ else       if (accessType == SLOT_MODIFY_GETTER_SETTER) {
+        if (slot instanceof GetterSlot)         return slot;
+      }
+ else       if (accessType == SLOT_MODIFY_CONST) {
+        if (slot != null)         return slot;
+      }
+ else       if (accessType == SLOT_CONVERT_ACCESSOR_TO_DATA) {
+        if (!(slot instanceof GetterSlot))         return slot;
+      }
+    }
+synchronized (this) {
+      slotsLocalRef=slots;
+      int insertPos;
+      if (count == 0) {
+        slotsLocalRef=new Slot[5];
+        slots=slotsLocalRef;
+        insertPos=getSlotIndex(slotsLocalRef.length,indexOrHash);
+      }
+ else {
+        int tableSize=slotsLocalRef.length;
+        insertPos=getSlotIndex(tableSize,indexOrHash);
+        Slot prev=slotsLocalRef[insertPos];
+        Slot slot=prev;
+        while (slot != null) {
+          if (slot.indexOrHash == indexOrHash && (slot.name == name || (name != null && name.equals(slot.name)))) {
+            break;
+          }
+          prev=slot;
+          slot=slot.next;
+        }
+        if (slot != null) {
+          Slot newSlot;
+          if (accessType == SLOT_MODIFY_GETTER_SETTER && !(slot instanceof GetterSlot)) {
+            newSlot=new GetterSlot(name,indexOrHash,slot.getAttributes());
+          }
+ else           if (accessType == SLOT_CONVERT_ACCESSOR_TO_DATA && (slot instanceof GetterSlot)) {
+            newSlot=new Slot(name,indexOrHash,slot.getAttributes());
+          }
+ else           if (accessType == SLOT_MODIFY_CONST) {
+            return null;
+          }
+ else {
+            return slot;
+          }
+          newSlot.value=slot.value;
+          newSlot.next=slot.next;
+          if (lastAdded != null)           lastAdded.orderedNext=newSlot;
+          if (firstAdded == null)           firstAdded=newSlot;
+          lastAdded=newSlot;
+          if (prev == slot) {
+            slotsLocalRef[insertPos]=newSlot;
+          }
+ else {
+            prev.next=newSlot;
+          }
+          slot.wasDeleted=true;
+          slot.value=null;
+          slot.name=null;
+          if (slot == lastAccess) {
+            lastAccess=REMOVED;
+          }
+          return newSlot;
+        }
+ else {
+          if (4 * (count + 1) > 3 * slotsLocalRef.length) {
+            slotsLocalRef=new Slot[slotsLocalRef.length * 2 + 1];
+            copyTable(slots,slotsLocalRef,count);
+            slots=slotsLocalRef;
+            insertPos=getSlotIndex(slotsLocalRef.length,indexOrHash);
+          }
+        }
+      }
+      Slot newSlot=(accessType == SLOT_MODIFY_GETTER_SETTER ? new GetterSlot(name,indexOrHash,0) : new Slot(name,indexOrHash,0));
+      if (accessType == SLOT_MODIFY_CONST)       newSlot.setAttributes(CONST);
+      ++count;
+      if (lastAdded != null)       lastAdded.orderedNext=newSlot;
+      if (firstAdded == null)       firstAdded=newSlot;
+      lastAdded=newSlot;
+      addKnownAbsentSlot(slotsLocalRef,newSlot,insertPos);
+      return newSlot;
+    }
+  }
+ else   if (accessType == SLOT_REMOVE) {
+synchronized (this) {
+      Slot[] slotsLocalRef=slots;
+      if (count != 0) {
+        int tableSize=slots.length;
+        int slotIndex=getSlotIndex(tableSize,indexOrHash);
+        Slot prev=slotsLocalRef[slotIndex];
+        Slot slot=prev;
+        while (slot != null) {
+          if (slot.indexOrHash == indexOrHash && (slot.name == name || (name != null && name.equals(slot.name)))) {
+            break;
+          }
+          prev=slot;
+          slot=slot.next;
+        }
+        if (slot != null && (slot.getAttributes() & PERMANENT) == 0) {
+          count--;
+          if (prev == slot) {
+            slotsLocalRef[slotIndex]=slot.next;
+          }
+ else {
+            prev.next=slot.next;
+          }
+          slot.wasDeleted=true;
+          slot.value=null;
+          slot.name=null;
+          if (slot == lastAccess) {
+            lastAccess=REMOVED;
+          }
+        }
+      }
+    }
+    return null;
+  }
+ else {
+    throw Kit.codeBug();
+  }
+}

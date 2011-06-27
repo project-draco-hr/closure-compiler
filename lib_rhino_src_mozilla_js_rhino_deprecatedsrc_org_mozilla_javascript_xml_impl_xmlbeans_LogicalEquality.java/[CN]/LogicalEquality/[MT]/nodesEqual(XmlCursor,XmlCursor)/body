@@ -1,0 +1,30 @@
+{
+  boolean result=false;
+  if (xmlOne.isStartdoc()) {
+    xmlOne.toFirstContentToken();
+  }
+  if (xmlTwo.isStartdoc()) {
+    xmlTwo.toFirstContentToken();
+  }
+  if (xmlOne.currentTokenType() == xmlTwo.currentTokenType()) {
+    if (xmlOne.isEnddoc()) {
+      result=true;
+    }
+ else     if (xmlOne.isAttr()) {
+      result=attributesEqual(xmlOne,xmlTwo);
+    }
+ else     if (xmlOne.isText()) {
+      result=textNodesEqual(xmlOne,xmlTwo);
+    }
+ else     if (xmlOne.isComment()) {
+      result=commentsEqual(xmlOne,xmlTwo);
+    }
+ else     if (xmlOne.isProcinst()) {
+      result=processingInstructionsEqual(xmlOne,xmlTwo);
+    }
+ else     if (xmlOne.isStart()) {
+      result=elementsEqual(xmlOne,xmlTwo);
+    }
+  }
+  return result;
+}

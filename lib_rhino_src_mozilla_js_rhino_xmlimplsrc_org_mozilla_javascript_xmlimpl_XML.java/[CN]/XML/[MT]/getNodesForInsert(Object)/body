@@ -1,0 +1,16 @@
+{
+  if (value instanceof XML) {
+    return new XmlNode[]{((XML)value).node};
+  }
+ else   if (value instanceof XMLList) {
+    XMLList list=(XMLList)value;
+    XmlNode[] rv=new XmlNode[list.length()];
+    for (int i=0; i < list.length(); i++) {
+      rv[i]=list.item(i).node;
+    }
+    return rv;
+  }
+ else {
+    return new XmlNode[]{XmlNode.createText(getProcessor(),ScriptRuntime.toString(value))};
+  }
+}

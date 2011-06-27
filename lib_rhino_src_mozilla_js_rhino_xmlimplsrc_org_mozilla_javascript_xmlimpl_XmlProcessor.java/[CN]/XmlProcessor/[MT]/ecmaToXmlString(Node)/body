@@ -1,0 +1,31 @@
+{
+  StringBuffer s=new StringBuffer();
+  int indentLevel=0;
+  if (prettyPrint) {
+    for (int i=0; i < indentLevel; i++) {
+      s.append(' ');
+    }
+  }
+  if (node instanceof Text) {
+    String data=((Text)node).getData();
+    String v=(prettyPrint) ? data.trim() : data;
+    s.append(escapeElementValue(v));
+    return s.toString();
+  }
+  if (node instanceof Attr) {
+    String value=((Attr)node).getValue();
+    s.append(escapeAttributeValue(value));
+    return s.toString();
+  }
+  if (node instanceof Comment) {
+    s.append("<!--" + ((Comment)node).getNodeValue() + "-->");
+    return s.toString();
+  }
+  if (node instanceof ProcessingInstruction) {
+    ProcessingInstruction pi=(ProcessingInstruction)node;
+    s.append("<?" + pi.getTarget() + " "+ pi.getData()+ "?>");
+    return s.toString();
+  }
+  s.append(elementToXmlString((Element)node));
+  return s.toString();
+}

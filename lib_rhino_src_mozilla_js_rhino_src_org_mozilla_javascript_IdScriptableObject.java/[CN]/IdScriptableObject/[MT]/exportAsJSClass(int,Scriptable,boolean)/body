@@ -1,0 +1,17 @@
+{
+  if (scope != this && scope != null) {
+    setParentScope(scope);
+    setPrototype(getObjectPrototype(scope));
+  }
+  activatePrototypeMap(maxPrototypeId);
+  IdFunctionObject ctor=prototypeValues.createPrecachedConstructor();
+  if (sealed) {
+    sealObject();
+  }
+  fillConstructorProperties(ctor);
+  if (sealed) {
+    ctor.sealObject();
+  }
+  ctor.exportAsScopeProperty();
+  return ctor;
+}

@@ -1,0 +1,14 @@
+{
+  Context cx=Context.enter();
+  try {
+    String source="" + "var x = 'sharedScope';\n" + "function f() { return x; }\n"+ "function initClosure(prefix) {\n"+ "    return function test() { return prefix+x; }\n"+ "}\n"+ "var closure = initClosure('nested:');\n"+ "";
+    Script script=cx.compileString(source,"sharedScript",1,null);
+    useDynamicScope=false;
+    runScripts(cx,script);
+    useDynamicScope=true;
+    runScripts(cx,script);
+  }
+  finally {
+    Context.exit();
+  }
+}

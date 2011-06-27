@@ -1,0 +1,17 @@
+{
+  boolean result=false;
+  if (target instanceof XML) {
+    return this.node.toXmlString(getProcessor()).equals(((XML)target).node.toXmlString(getProcessor()));
+  }
+ else   if (target instanceof XMLList) {
+    XMLList otherList=(XMLList)target;
+    if (otherList.length() == 1) {
+      result=equivalentXml(otherList.getXML());
+    }
+  }
+ else   if (hasSimpleContent()) {
+    String otherStr=ScriptRuntime.toString(target);
+    result=toString().equals(otherStr);
+  }
+  return result;
+}

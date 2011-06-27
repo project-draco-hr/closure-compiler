@@ -1,0 +1,26 @@
+{
+  if (isAccessorDescriptor(desc)) {
+    if (!(slot instanceof GetterSlot))     slot=getSlot(cx,slot.name,SLOT_MODIFY_GETTER_SETTER);
+    GetterSlot gslot=(GetterSlot)slot;
+    Object getter=getProperty(desc,"get");
+    if (getter != NOT_FOUND) {
+      gslot.getter=getter;
+    }
+    Object setter=getProperty(desc,"set");
+    if (setter != NOT_FOUND) {
+      gslot.setter=setter;
+    }
+    gslot.value=Undefined.instance;
+    gslot.setAttributes(attributes);
+  }
+ else {
+    if (slot instanceof GetterSlot && isDataDescriptor(desc)) {
+      slot=getSlot(cx,slot.name,SLOT_CONVERT_ACCESSOR_TO_DATA);
+    }
+    Object value=getProperty(desc,"value");
+    if (value != NOT_FOUND) {
+      slot.value=value;
+    }
+    slot.setAttributes(attributes);
+  }
+}

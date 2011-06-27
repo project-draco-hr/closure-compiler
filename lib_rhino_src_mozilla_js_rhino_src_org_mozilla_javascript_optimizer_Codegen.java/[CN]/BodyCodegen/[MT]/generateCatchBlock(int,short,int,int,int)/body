@@ -1,0 +1,25 @@
+{
+  int handler=cfw.acquireLabel();
+  cfw.markHandler(handler);
+  cfw.addAStore(exceptionLocal);
+  cfw.addALoad(savedVariableObject);
+  cfw.addAStore(variableObjectLocal);
+  String exceptionName;
+  if (exceptionType == JAVASCRIPT_EXCEPTION) {
+    exceptionName="org/mozilla/javascript/JavaScriptException";
+  }
+ else   if (exceptionType == EVALUATOR_EXCEPTION) {
+    exceptionName="org/mozilla/javascript/EvaluatorException";
+  }
+ else   if (exceptionType == ECMAERROR_EXCEPTION) {
+    exceptionName="org/mozilla/javascript/EcmaError";
+  }
+ else   if (exceptionType == THROWABLE_EXCEPTION) {
+    exceptionName="java/lang/Throwable";
+  }
+ else {
+    throw Kit.codeBug();
+  }
+  cfw.addExceptionHandler(startLabel,catchLabel,handler,exceptionName);
+  cfw.add(ByteCode.GOTO,catchLabel);
+}

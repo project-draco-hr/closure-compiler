@@ -1,0 +1,18 @@
+{
+  if (hint == ScriptRuntime.FunctionClass)   return this;
+  Object rval;
+  Class<?> type;
+  try {
+    rval=field.get(javaObject);
+    type=field.getType();
+  }
+ catch (  IllegalAccessException accEx) {
+    throw Context.reportRuntimeError1("msg.java.internal.private",field.getName());
+  }
+  Context cx=Context.getContext();
+  rval=cx.getWrapFactory().wrap(cx,this,rval,type);
+  if (rval instanceof Scriptable) {
+    rval=((Scriptable)rval).getDefaultValue(hint);
+  }
+  return rval;
+}

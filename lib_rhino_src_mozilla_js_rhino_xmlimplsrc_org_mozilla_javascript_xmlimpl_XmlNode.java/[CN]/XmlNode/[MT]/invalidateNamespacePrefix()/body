@@ -1,0 +1,12 @@
+{
+  if (!(dom instanceof Element))   throw new IllegalStateException();
+  String prefix=this.dom.getPrefix();
+  QName after=QName.create(this.dom.getNamespaceURI(),this.dom.getLocalName(),null);
+  renameNode(after);
+  NamedNodeMap attrs=this.dom.getAttributes();
+  for (int i=0; i < attrs.getLength(); i++) {
+    if (attrs.item(i).getPrefix().equals(prefix)) {
+      createImpl(attrs.item(i)).renameNode(QName.create(attrs.item(i).getNamespaceURI(),attrs.item(i).getLocalName(),null));
+    }
+  }
+}

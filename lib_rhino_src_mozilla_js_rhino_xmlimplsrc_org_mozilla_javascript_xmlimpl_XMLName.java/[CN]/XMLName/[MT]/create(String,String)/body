@@ -1,0 +1,18 @@
+{
+  if (name == null)   throw new IllegalArgumentException();
+  int l=name.length();
+  if (l != 0) {
+    char firstChar=name.charAt(0);
+    if (firstChar == '*') {
+      if (l == 1) {
+        return XMLName.formStar();
+      }
+    }
+ else     if (firstChar == '@') {
+      XMLName xmlName=XMLName.formProperty("",name.substring(1));
+      xmlName.setAttributeName();
+      return xmlName;
+    }
+  }
+  return XMLName.formProperty(defaultNamespaceUri,name);
+}

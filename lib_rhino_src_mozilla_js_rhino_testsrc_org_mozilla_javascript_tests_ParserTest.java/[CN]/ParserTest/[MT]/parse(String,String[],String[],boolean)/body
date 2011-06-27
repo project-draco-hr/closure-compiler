@@ -1,0 +1,29 @@
+{
+  CompilerEnvirons environment=new CompilerEnvirons();
+  environment.setAllowKeywordAsObjectPropertyName(allowKeywordsAsObjectLiteralsKeys);
+  TestErrorReporter testErrorReporter=new TestErrorReporter(errors,warnings){
+    @Override public EvaluatorException runtimeError(    String message,    String sourceName,    int line,    String lineSource,    int lineOffset){
+      if (errors == null) {
+        throw new UnsupportedOperationException();
+      }
+      return new EvaluatorException(message,sourceName,line,lineSource,lineOffset);
+    }
+  }
+;
+  environment.setErrorReporter(testErrorReporter);
+  environment.setRecordingComments(true);
+  environment.setRecordingLocalJsDocComments(jsdoc);
+  Parser p=new Parser(environment,testErrorReporter);
+  AstRoot script=null;
+  try {
+    script=p.parse(string,null,0);
+  }
+ catch (  EvaluatorException e) {
+    if (errors == null) {
+      throw e;
+    }
+  }
+  assertTrue(testErrorReporter.hasEncounteredAllErrors());
+  assertTrue(testErrorReporter.hasEncounteredAllWarnings());
+  return script;
+}

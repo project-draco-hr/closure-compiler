@@ -1,0 +1,20 @@
+{
+  if (peekToken() != Token.COLON)   codeBug();
+  consumeToken();
+  String name=label.getName();
+  if (labelSet == null) {
+    labelSet=new HashMap<String,LabeledStatement>();
+  }
+ else {
+    LabeledStatement ls=labelSet.get(name);
+    if (ls != null) {
+      if (compilerEnv.isIdeMode()) {
+        Label dup=ls.getLabelByName(name);
+        reportError("msg.dup.label",dup.getAbsolutePosition(),dup.getLength());
+      }
+      reportError("msg.dup.label",label.getPosition(),label.getLength());
+    }
+  }
+  bundle.addLabel(label);
+  labelSet.put(name,bundle);
+}

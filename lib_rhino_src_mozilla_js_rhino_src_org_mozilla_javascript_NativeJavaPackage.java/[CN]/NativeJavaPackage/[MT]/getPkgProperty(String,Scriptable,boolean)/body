@@ -1,0 +1,40 @@
+{
+  Object cached=super.get(name,start);
+  if (cached != NOT_FOUND)   return cached;
+  if (negativeCache != null && negativeCache.contains(name)) {
+    return null;
+  }
+  String className=(packageName.length() == 0) ? name : packageName + '.' + name;
+  Context cx=Context.getContext();
+  ClassShutter shutter=cx.getClassShutter();
+  Scriptable newValue=null;
+  if (shutter == null || shutter.visibleToScripts(className)) {
+    Class<?> cl=null;
+    if (classLoader != null) {
+      cl=Kit.classOrNull(classLoader,className);
+    }
+ else {
+      cl=Kit.classOrNull(className);
+    }
+    if (cl != null) {
+      newValue=new NativeJavaClass(getTopLevelScope(this),cl);
+      newValue.setPrototype(getPrototype());
+    }
+  }
+  if (newValue == null) {
+    if (createPkg) {
+      NativeJavaPackage pkg;
+      pkg=new NativeJavaPackage(true,className,classLoader);
+      ScriptRuntime.setObjectProtoAndParent(pkg,getParentScope());
+      newValue=pkg;
+    }
+ else {
+      if (negativeCache == null)       negativeCache=new HashSet<String>();
+      negativeCache.add(name);
+    }
+  }
+  if (newValue != null) {
+    super.put(name,start,newValue);
+  }
+  return newValue;
+}

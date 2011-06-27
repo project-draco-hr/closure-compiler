@@ -1,0 +1,20 @@
+{
+  generateExpression(child,node);
+  Node nameChild=child.getNext();
+  generateExpression(nameChild,node);
+  if (node.getType() == Token.GETPROPNOWARN) {
+    cfw.addALoad(contextLocal);
+    addScriptRuntimeInvoke("getObjectPropNoWarn","(Ljava/lang/Object;" + "Ljava/lang/String;" + "Lorg/mozilla/javascript/Context;"+ ")Ljava/lang/Object;");
+    return;
+  }
+  int childType=child.getType();
+  if (childType == Token.THIS && nameChild.getType() == Token.STRING) {
+    cfw.addALoad(contextLocal);
+    addScriptRuntimeInvoke("getObjectProp","(Lorg/mozilla/javascript/Scriptable;" + "Ljava/lang/String;" + "Lorg/mozilla/javascript/Context;"+ ")Ljava/lang/Object;");
+  }
+ else {
+    cfw.addALoad(contextLocal);
+    cfw.addALoad(variableObjectLocal);
+    addScriptRuntimeInvoke("getObjectProp","(Ljava/lang/Object;" + "Ljava/lang/String;" + "Lorg/mozilla/javascript/Context;"+ "Lorg/mozilla/javascript/Scriptable;"+ ")Ljava/lang/Object;");
+  }
+}

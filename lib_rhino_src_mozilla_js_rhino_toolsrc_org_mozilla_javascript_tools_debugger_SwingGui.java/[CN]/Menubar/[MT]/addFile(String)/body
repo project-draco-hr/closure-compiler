@@ -1,0 +1,37 @@
+{
+  int count=windowMenu.getItemCount();
+  JMenuItem item;
+  if (count == 4) {
+    windowMenu.addSeparator();
+    count++;
+  }
+  JMenuItem lastItem=windowMenu.getItem(count - 1);
+  boolean hasMoreWin=false;
+  int maxWin=5;
+  if (lastItem != null && lastItem.getText().equals("More Windows...")) {
+    hasMoreWin=true;
+    maxWin++;
+  }
+  if (!hasMoreWin && count - 4 == 5) {
+    windowMenu.add(item=new JMenuItem("More Windows...",'M'));
+    item.setActionCommand("More Windows...");
+    item.addActionListener(this);
+    return;
+  }
+ else   if (count - 4 <= maxWin) {
+    if (hasMoreWin) {
+      count--;
+      windowMenu.remove(lastItem);
+    }
+    String shortName=SwingGui.getShortName(url);
+    windowMenu.add(item=new JMenuItem((char)('0' + (count - 4)) + " " + shortName,'0' + (count - 4)));
+    if (hasMoreWin) {
+      windowMenu.add(lastItem);
+    }
+  }
+ else {
+    return;
+  }
+  item.setActionCommand(url);
+  item.addActionListener(this);
+}

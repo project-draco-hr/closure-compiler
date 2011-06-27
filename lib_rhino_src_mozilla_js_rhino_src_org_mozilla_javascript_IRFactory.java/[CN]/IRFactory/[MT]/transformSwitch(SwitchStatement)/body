@@ -1,0 +1,32 @@
+{
+  decompiler.addToken(Token.SWITCH);
+  decompiler.addToken(Token.LP);
+  Node switchExpr=transform(node.getExpression());
+  decompiler.addToken(Token.RP);
+  node.addChildToBack(switchExpr);
+  Node block=new Node(Token.BLOCK,node,node.getLineno());
+  decompiler.addEOL(Token.LC);
+  for (  SwitchCase sc : node.getCases()) {
+    AstNode expr=sc.getExpression();
+    Node caseExpr=null;
+    if (expr != null) {
+      decompiler.addToken(Token.CASE);
+      caseExpr=transform(expr);
+    }
+ else {
+      decompiler.addToken(Token.DEFAULT);
+    }
+    decompiler.addEOL(Token.COLON);
+    List<AstNode> stmts=sc.getStatements();
+    Node body=new Block();
+    if (stmts != null) {
+      for (      AstNode kid : stmts) {
+        body.addChildToBack(transform(kid));
+      }
+    }
+    addSwitchCase(block,caseExpr,body);
+  }
+  decompiler.addEOL(Token.RC);
+  closeSwitch(block);
+  return block;
+}

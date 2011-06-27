@@ -1,0 +1,21 @@
+{
+  URL urlObj;
+  try {
+    urlObj=new URL(url);
+  }
+ catch (  MalformedURLException ex) {
+    String curDir=System.getProperty("user.dir");
+    curDir=curDir.replace('\\','/');
+    if (!curDir.endsWith("/")) {
+      curDir=curDir + '/';
+    }
+    try {
+      URL curDirURL=new URL("file:" + curDir);
+      urlObj=new URL(curDirURL,url);
+    }
+ catch (    MalformedURLException ex2) {
+      throw new RuntimeException("Can not construct file URL for '" + url + "':"+ ex2.getMessage());
+    }
+  }
+  return urlObj;
+}

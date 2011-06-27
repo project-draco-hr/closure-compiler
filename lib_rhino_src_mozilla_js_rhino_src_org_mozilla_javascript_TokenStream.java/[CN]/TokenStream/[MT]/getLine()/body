@@ -1,0 +1,44 @@
+{
+  if (sourceString != null) {
+    int lineEnd=sourceCursor;
+    if (lineEndChar >= 0) {
+      --lineEnd;
+    }
+ else {
+      for (; lineEnd != sourceEnd; ++lineEnd) {
+        int c=sourceString.charAt(lineEnd);
+        if (ScriptRuntime.isJSLineTerminator(c)) {
+          break;
+        }
+      }
+    }
+    return sourceString.substring(lineStart,lineEnd);
+  }
+ else {
+    int lineLength=sourceCursor - lineStart;
+    if (lineEndChar >= 0) {
+      --lineLength;
+    }
+ else {
+      for (; ; ++lineLength) {
+        int i=lineStart + lineLength;
+        if (i == sourceEnd) {
+          try {
+            if (!fillSourceBuffer()) {
+              break;
+            }
+          }
+ catch (          IOException ioe) {
+            break;
+          }
+          i=lineStart + lineLength;
+        }
+        int c=sourceBuffer[i];
+        if (ScriptRuntime.isJSLineTerminator(c)) {
+          break;
+        }
+      }
+    }
+    return new String(sourceBuffer,lineStart,lineLength);
+  }
+}

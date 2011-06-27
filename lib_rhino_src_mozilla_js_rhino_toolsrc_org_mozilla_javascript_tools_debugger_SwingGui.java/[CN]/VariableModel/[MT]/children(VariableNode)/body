@@ -1,0 +1,38 @@
+{
+  if (node.children != null) {
+    return node.children;
+  }
+  VariableNode[] children;
+  Object value=getValue(node);
+  Object[] ids=debugger.getObjectIds(value);
+  if (ids == null || ids.length == 0) {
+    children=CHILDLESS;
+  }
+ else {
+    Arrays.sort(ids,new Comparator<Object>(){
+      public int compare(      Object l,      Object r){
+        if (l instanceof String) {
+          if (r instanceof Integer) {
+            return -1;
+          }
+          return ((String)l).compareToIgnoreCase((String)r);
+        }
+ else {
+          if (r instanceof String) {
+            return 1;
+          }
+          int lint=((Integer)l).intValue();
+          int rint=((Integer)r).intValue();
+          return lint - rint;
+        }
+      }
+    }
+);
+    children=new VariableNode[ids.length];
+    for (int i=0; i != ids.length; ++i) {
+      children[i]=new VariableNode(value,ids[i]);
+    }
+  }
+  node.children=children;
+  return children;
+}

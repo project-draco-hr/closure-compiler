@@ -1,0 +1,29 @@
+{
+switch (node.getType()) {
+case Token.ARRAYLIT:
+    decompileArrayLiteral((ArrayLiteral)node);
+  break;
+case Token.OBJECTLIT:
+decompileObjectLiteral((ObjectLiteral)node);
+break;
+case Token.STRING:
+decompiler.addString(((StringLiteral)node).getValue());
+break;
+case Token.NAME:
+decompiler.addName(((Name)node).getIdentifier());
+break;
+case Token.NUMBER:
+decompiler.addNumber(((NumberLiteral)node).getNumber());
+break;
+case Token.GETPROP:
+decompilePropertyGet((PropertyGet)node);
+break;
+case Token.EMPTY:
+break;
+case Token.GETELEM:
+decompileElementGet((ElementGet)node);
+break;
+default :
+Kit.codeBug("unexpected token: " + Token.typeToName(node.getType()));
+}
+}

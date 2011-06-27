@@ -1,0 +1,26 @@
+{
+  int N=itsConstantListSize;
+  if (N == 0)   return;
+  cfw.startMethod("<clinit>","()V",(short)(ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_FINAL));
+  double[] array=itsConstantList;
+  for (int i=0; i != N; ++i) {
+    double num=array[i];
+    String constantName="_k" + i;
+    String constantType=getStaticConstantWrapperType(num);
+    cfw.addField(constantName,constantType,(short)(ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE));
+    int inum=(int)num;
+    if (inum == num) {
+      cfw.add(ByteCode.NEW,"java/lang/Integer");
+      cfw.add(ByteCode.DUP);
+      cfw.addPush(inum);
+      cfw.addInvoke(ByteCode.INVOKESPECIAL,"java/lang/Integer","<init>","(I)V");
+    }
+ else {
+      cfw.addPush(num);
+      addDoubleWrap(cfw);
+    }
+    cfw.add(ByteCode.PUTSTATIC,mainClassName,constantName,constantType);
+  }
+  cfw.add(ByteCode.RETURN);
+  cfw.stopMethod((short)0);
+}

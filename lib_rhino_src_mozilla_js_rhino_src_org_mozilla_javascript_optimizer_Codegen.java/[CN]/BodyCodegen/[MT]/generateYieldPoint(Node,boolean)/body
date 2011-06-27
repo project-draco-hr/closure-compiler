@@ -1,0 +1,36 @@
+{
+  int top=cfw.getStackTop();
+  maxStack=maxStack > top ? maxStack : top;
+  if (cfw.getStackTop() != 0) {
+    generateGetGeneratorStackState();
+    for (int i=0; i < top; i++) {
+      cfw.add(ByteCode.DUP_X1);
+      cfw.add(ByteCode.SWAP);
+      cfw.addLoadConstant(i);
+      cfw.add(ByteCode.SWAP);
+      cfw.add(ByteCode.AASTORE);
+    }
+    cfw.add(ByteCode.POP);
+  }
+  Node child=node.getFirstChild();
+  if (child != null)   generateExpression(child,node);
+ else   Codegen.pushUndefined(cfw);
+  int nextState=getNextGeneratorState(node);
+  generateSetGeneratorResumptionPoint(nextState);
+  boolean hasLocals=generateSaveLocals(node);
+  cfw.add(ByteCode.ARETURN);
+  generateCheckForThrowOrClose(getTargetLabel(node),hasLocals,nextState);
+  if (top != 0) {
+    generateGetGeneratorStackState();
+    for (int i=0; i < top; i++) {
+      cfw.add(ByteCode.DUP);
+      cfw.addLoadConstant(top - i - 1);
+      cfw.add(ByteCode.AALOAD);
+      cfw.add(ByteCode.SWAP);
+    }
+    cfw.add(ByteCode.POP);
+  }
+  if (exprContext) {
+    cfw.addALoad(argsLocal);
+  }
+}

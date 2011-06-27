@@ -1,0 +1,15 @@
+{
+  boolean errorseen=false;
+  CompilerEnvirons compilerEnv=new CompilerEnvirons();
+  compilerEnv.initFromContext(this);
+  compilerEnv.setGeneratingSource(false);
+  Parser p=new Parser(compilerEnv,DefaultErrorReporter.instance);
+  try {
+    p.parse(source,null,1);
+  }
+ catch (  EvaluatorException ee) {
+    errorseen=true;
+  }
+  if (errorseen && p.eof())   return false;
+ else   return true;
+}

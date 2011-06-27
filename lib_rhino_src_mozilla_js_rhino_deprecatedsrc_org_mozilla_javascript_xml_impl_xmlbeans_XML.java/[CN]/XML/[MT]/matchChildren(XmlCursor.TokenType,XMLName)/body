@@ -1,0 +1,43 @@
+{
+  XMLList result=new XMLList(lib);
+  XmlCursor curs=newCursor();
+  TokenType tt=curs.currentTokenType();
+  javax.xml.namespace.QName qname=new javax.xml.namespace.QName(name.uri(),name.localName());
+  javax.xml.namespace.QName targetProperty=qname;
+  if (tt.isStartdoc()) {
+    tt=curs.toFirstContentToken();
+  }
+  if (tt.isContainer()) {
+    tt=curs.toFirstContentToken();
+    while (!tt.isEnd()) {
+      if (tt == tokenType) {
+        if (!tt.isStart() && !tt.isProcinst()) {
+          result.addToList(findAnnotation(curs));
+          targetProperty=null;
+        }
+ else {
+          if (qnameMatches(name,curs.getName())) {
+            result.addToList(findAnnotation(curs));
+            if (targetProperty != null) {
+              if (targetProperty.getLocalPart().equals("*")) {
+                targetProperty=curs.getName();
+              }
+ else               if (!targetProperty.getLocalPart().equals(curs.getName().getLocalPart())) {
+                targetProperty=null;
+              }
+            }
+          }
+        }
+      }
+      if (tt.isStart()) {
+        tt=curs.toEndToken();
+      }
+      tt=curs.toNextToken();
+    }
+  }
+  curs.dispose();
+  if (tokenType == XmlCursor.TokenType.START) {
+    result.setTargets(this,targetProperty);
+  }
+  return result;
+}

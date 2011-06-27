@@ -1,0 +1,29 @@
+{
+  if (!f.hasTag(GENERATOR_TAG)) {
+    return super.execIdCall(f,cx,scope,thisObj,args);
+  }
+  int id=f.methodId();
+  if (!(thisObj instanceof NativeGenerator))   throw incompatibleCallError(f);
+  NativeGenerator generator=(NativeGenerator)thisObj;
+switch (id) {
+case Id_close:
+    return generator.resume(cx,scope,GENERATOR_CLOSE,new GeneratorClosedException());
+case Id_next:
+  generator.firstTime=false;
+return generator.resume(cx,scope,GENERATOR_SEND,Undefined.instance);
+case Id_send:
+{
+Object arg=args.length > 0 ? args[0] : Undefined.instance;
+if (generator.firstTime && !arg.equals(Undefined.instance)) {
+  throw ScriptRuntime.typeError0("msg.send.newborn");
+}
+return generator.resume(cx,scope,GENERATOR_SEND,arg);
+}
+case Id_throw:
+return generator.resume(cx,scope,GENERATOR_THROW,args.length > 0 ? args[0] : Undefined.instance);
+case Id___iterator__:
+return thisObj;
+default :
+throw new IllegalArgumentException(String.valueOf(id));
+}
+}

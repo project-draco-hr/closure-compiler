@@ -1,0 +1,14 @@
+{
+  if (value instanceof XMLObjectImpl) {
+    return ((XMLObjectImpl)value).toXMLString();
+  }
+  String text=ScriptRuntime.toString(value);
+  if (text.length() == 0)   return text;
+  Document dom=newDocument();
+  Element e=dom.createElement("a");
+  e.setTextContent(text);
+  String elementText=toString(e);
+  int begin=elementText.indexOf('>') + 1;
+  int end=elementText.lastIndexOf('<');
+  return (begin < end) ? elementText.substring(begin,end) : "";
+}

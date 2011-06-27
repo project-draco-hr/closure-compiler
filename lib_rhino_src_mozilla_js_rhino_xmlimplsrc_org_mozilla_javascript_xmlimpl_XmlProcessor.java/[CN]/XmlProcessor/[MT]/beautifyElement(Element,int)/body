@@ -1,0 +1,42 @@
+{
+  StringBuffer s=new StringBuffer();
+  s.append('\n');
+  for (int i=0; i < indent; i++) {
+    s.append(' ');
+  }
+  String afterContent=s.toString();
+  for (int i=0; i < prettyIndent; i++) {
+    s.append(' ');
+  }
+  String beforeContent=s.toString();
+  ArrayList<Node> toIndent=new ArrayList<Node>();
+  boolean indentChildren=false;
+  for (int i=0; i < e.getChildNodes().getLength(); i++) {
+    if (i == 1)     indentChildren=true;
+    if (e.getChildNodes().item(i) instanceof Text) {
+      toIndent.add(e.getChildNodes().item(i));
+    }
+ else {
+      indentChildren=true;
+      toIndent.add(e.getChildNodes().item(i));
+    }
+  }
+  if (indentChildren) {
+    for (int i=0; i < toIndent.size(); i++) {
+      e.insertBefore(e.getOwnerDocument().createTextNode(beforeContent),toIndent.get(i));
+    }
+  }
+  NodeList nodes=e.getChildNodes();
+  ArrayList<Element> list=new ArrayList<Element>();
+  for (int i=0; i < nodes.getLength(); i++) {
+    if (nodes.item(i) instanceof Element) {
+      list.add((Element)nodes.item(i));
+    }
+  }
+  for (  Element elem : list) {
+    beautifyElement(elem,indent + prettyIndent);
+  }
+  if (indentChildren) {
+    e.appendChild(e.getOwnerDocument().createTextNode(afterContent));
+  }
+}

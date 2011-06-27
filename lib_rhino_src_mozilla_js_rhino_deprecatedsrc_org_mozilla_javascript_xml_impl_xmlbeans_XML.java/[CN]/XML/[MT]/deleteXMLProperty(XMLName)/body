@@ -1,0 +1,21 @@
+{
+  if (!name.isDescendants() && name.isAttributeName()) {
+    XmlCursor curs=newCursor();
+    if (name.localName().equals("*")) {
+      if (curs.toFirstAttribute()) {
+        while (curs.currentTokenType().isAttr()) {
+          curs.removeXml();
+        }
+      }
+    }
+ else {
+      javax.xml.namespace.QName qname=new javax.xml.namespace.QName(name.uri(),name.localName());
+      curs.removeAttribute(qname);
+    }
+    curs.dispose();
+  }
+ else {
+    XMLList matches=getPropertyList(name);
+    matches.remove();
+  }
+}

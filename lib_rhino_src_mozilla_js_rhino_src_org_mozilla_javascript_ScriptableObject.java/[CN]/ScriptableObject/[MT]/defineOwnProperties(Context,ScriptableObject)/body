@@ -1,0 +1,14 @@
+{
+  Object[] ids=props.getIds();
+  for (  Object id : ids) {
+    String name=ScriptRuntime.toString(id);
+    Object descObj=props.get(id);
+    ScriptableObject desc=ensureScriptableObject(descObj);
+    checkValidPropertyDefinition(getSlot(name,0,SLOT_QUERY),desc);
+  }
+  for (  Object id : ids) {
+    String name=ScriptRuntime.toString(id);
+    ScriptableObject desc=(ScriptableObject)props.get(id);
+    defineOwnProperty(cx,name,desc,false);
+  }
+}

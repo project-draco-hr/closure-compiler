@@ -1,0 +1,22 @@
+{
+  if (!flattenAllTables) {
+    List<Symbol> newSymbols=new ArrayList<Symbol>();
+    if (this.symbolTable != null) {
+      for (int i=0; i < symbols.size(); i++) {
+        Symbol symbol=symbols.get(i);
+        if (symbol.getContainingTable() == this) {
+          newSymbols.add(symbol);
+        }
+      }
+    }
+    symbols=newSymbols;
+  }
+  variableNames=new String[symbols.size()];
+  isConsts=new boolean[symbols.size()];
+  for (int i=0; i < symbols.size(); i++) {
+    Symbol symbol=symbols.get(i);
+    variableNames[i]=symbol.getName();
+    isConsts[i]=symbol.getDeclType() == Token.CONST;
+    symbol.setIndex(i);
+  }
+}

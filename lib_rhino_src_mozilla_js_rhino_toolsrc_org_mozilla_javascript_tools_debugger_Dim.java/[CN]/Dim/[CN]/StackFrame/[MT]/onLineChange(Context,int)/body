@@ -1,0 +1,15 @@
+{
+  this.lineNumber=lineno;
+  if (!breakpoints[lineno] && !dim.breakFlag) {
+    boolean lineBreak=contextData.breakNextLine;
+    if (lineBreak && contextData.stopAtFrameDepth >= 0) {
+      lineBreak=(contextData.frameCount() <= contextData.stopAtFrameDepth);
+    }
+    if (!lineBreak) {
+      return;
+    }
+    contextData.stopAtFrameDepth=-1;
+    contextData.breakNextLine=false;
+  }
+  dim.handleBreakpointHit(this,cx);
+}

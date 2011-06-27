@@ -1,0 +1,25 @@
+{
+  in.defaultReadObject();
+  isAdapter=in.readBoolean();
+  if (isAdapter) {
+    if (adapter_readAdapterObject == null)     throw new ClassNotFoundException();
+    Object[] args={this,in};
+    try {
+      javaObject=adapter_readAdapterObject.invoke(null,args);
+    }
+ catch (    Exception ex) {
+      throw new IOException();
+    }
+  }
+ else {
+    javaObject=in.readObject();
+  }
+  String className=(String)in.readObject();
+  if (className != null) {
+    staticType=Class.forName(className);
+  }
+ else {
+    staticType=null;
+  }
+  initMembers();
+}

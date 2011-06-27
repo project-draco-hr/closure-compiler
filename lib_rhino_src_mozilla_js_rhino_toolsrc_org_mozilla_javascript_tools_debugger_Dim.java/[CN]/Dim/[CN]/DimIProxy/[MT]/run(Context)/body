@@ -1,0 +1,45 @@
+{
+switch (type) {
+case IPROXY_COMPILE_SCRIPT:
+    cx.compileString(text,url,1,null);
+  break;
+case IPROXY_EVAL_SCRIPT:
+{
+  Scriptable scope=null;
+  if (dim.scopeProvider != null) {
+    scope=dim.scopeProvider.getScope();
+  }
+  if (scope == null) {
+    scope=new ImporterTopLevel(cx);
+  }
+  cx.evaluateString(scope,text,url,1,null);
+}
+break;
+case IPROXY_STRING_IS_COMPILABLE:
+booleanResult=cx.stringIsCompilableUnit(text);
+break;
+case IPROXY_OBJECT_TO_STRING:
+if (object == Undefined.instance) {
+stringResult="undefined";
+}
+ else if (object == null) {
+stringResult="null";
+}
+ else if (object instanceof NativeCall) {
+stringResult="[object Call]";
+}
+ else {
+stringResult=Context.toString(object);
+}
+break;
+case IPROXY_OBJECT_PROPERTY:
+objectResult=dim.getObjectPropertyImpl(cx,object,id);
+break;
+case IPROXY_OBJECT_IDS:
+objectArrayResult=dim.getObjectIdsImpl(cx,object);
+break;
+default :
+throw Kit.codeBug();
+}
+return null;
+}

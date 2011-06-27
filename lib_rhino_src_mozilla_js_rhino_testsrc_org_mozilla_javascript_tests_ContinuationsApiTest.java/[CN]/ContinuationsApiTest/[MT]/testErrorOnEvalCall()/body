@@ -1,0 +1,17 @@
+{
+  Context cx=Context.enter();
+  try {
+    cx.setOptimizationLevel(-1);
+    Script script=cx.compileString("eval('myObject.f(3);');","test source",1,null);
+    cx.executeScriptWithContinuations(script,globalScope);
+    fail("Should throw IllegalStateException");
+  }
+ catch (  WrappedException we) {
+    Throwable t=we.getWrappedException();
+    assertTrue(t instanceof IllegalStateException);
+    assertTrue(t.getMessage().startsWith("Cannot capture continuation"));
+  }
+ finally {
+    Context.exit();
+  }
+}

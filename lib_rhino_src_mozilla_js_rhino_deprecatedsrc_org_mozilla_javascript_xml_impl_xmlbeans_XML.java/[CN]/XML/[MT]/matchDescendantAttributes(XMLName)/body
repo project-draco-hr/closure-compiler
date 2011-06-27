@@ -1,0 +1,31 @@
+{
+  XMLList result=new XMLList(lib);
+  XmlCursor curs=newCursor();
+  TokenType tt=curs.currentTokenType();
+  result.setTargets(this,null);
+  if (tt.isStartdoc()) {
+    tt=curs.toFirstContentToken();
+  }
+  if (tt.isContainer()) {
+    int nestLevel=1;
+    while (nestLevel > 0) {
+      tt=curs.toNextToken();
+      if (tt.isAttr()) {
+        if (qnameMatches(xmlName,curs.getName())) {
+          result.addToList(findAnnotation(curs));
+        }
+      }
+      if (tt.isStart()) {
+        nestLevel++;
+      }
+ else       if (tt.isEnd()) {
+        nestLevel--;
+      }
+ else       if (tt.isEnddoc()) {
+        break;
+      }
+    }
+  }
+  curs.dispose();
+  return result;
+}

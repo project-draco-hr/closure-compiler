@@ -1,0 +1,25 @@
+{
+  final int MAX_VALUE_LENGTH=10;
+  int len=str.length();
+  if (1 <= len && len <= MAX_VALUE_LENGTH) {
+    int c=str.charAt(0);
+    c-='0';
+    if (c == 0) {
+      return (len == 1) ? 0L : -1L;
+    }
+    if (1 <= c && c <= 9) {
+      long v=c;
+      for (int i=1; i != len; ++i) {
+        c=str.charAt(i) - '0';
+        if (!(0 <= c && c <= 9)) {
+          return -1;
+        }
+        v=10 * v + c;
+      }
+      if ((v >>> 32) == 0) {
+        return v;
+      }
+    }
+  }
+  return -1;
+}

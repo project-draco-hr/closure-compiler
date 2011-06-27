@@ -1,0 +1,22 @@
+{
+  String pad=makeIndent(depth);
+  StringBuilder sb=new StringBuilder(32);
+  sb.append(pad);
+  sb.append("if (");
+  sb.append(condition.toSource(0));
+  sb.append(") ");
+  if (!(thenPart instanceof Block)) {
+    sb.append("\n").append(makeIndent(depth));
+  }
+  sb.append(thenPart.toSource(depth).trim());
+  if (elsePart instanceof IfStatement) {
+    sb.append(" else ");
+    sb.append(elsePart.toSource(depth).trim());
+  }
+ else   if (elsePart != null) {
+    sb.append(" else ");
+    sb.append(elsePart.toSource(depth).trim());
+  }
+  sb.append("\n");
+  return sb.toString();
+}

@@ -1,0 +1,45 @@
+{
+  String cmd=e.getActionCommand();
+  String plaf_name=null;
+  if (cmd.equals("Load")) {
+    String f=chooseFile();
+    if (f != null) {
+      f=f.replace('\\','/');
+      consoleTextArea.eval("load(\"" + f + "\");");
+    }
+  }
+ else   if (cmd.equals("Exit")) {
+    System.exit(0);
+  }
+ else   if (cmd.equals("Cut")) {
+    consoleTextArea.cut();
+  }
+ else   if (cmd.equals("Copy")) {
+    consoleTextArea.copy();
+  }
+ else   if (cmd.equals("Paste")) {
+    consoleTextArea.paste();
+  }
+ else {
+    if (cmd.equals("Metal")) {
+      plaf_name="javax.swing.plaf.metal.MetalLookAndFeel";
+    }
+ else     if (cmd.equals("Windows")) {
+      plaf_name="com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+    }
+ else     if (cmd.equals("Motif")) {
+      plaf_name="com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+    }
+    if (plaf_name != null) {
+      try {
+        UIManager.setLookAndFeel(plaf_name);
+        SwingUtilities.updateComponentTreeUI(this);
+        consoleTextArea.postUpdateUI();
+        createFileChooser();
+      }
+ catch (      Exception exc) {
+        JOptionPane.showMessageDialog(this,exc.getMessage(),"Platform",JOptionPane.ERROR_MESSAGE);
+      }
+    }
+  }
+}

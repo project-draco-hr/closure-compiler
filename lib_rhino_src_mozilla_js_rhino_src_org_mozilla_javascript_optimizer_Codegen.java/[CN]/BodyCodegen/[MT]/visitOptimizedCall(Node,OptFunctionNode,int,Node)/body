@@ -1,0 +1,80 @@
+{
+  Node firstArgChild=child.getNext();
+  short thisObjLocal=0;
+  if (type == Token.NEW) {
+    generateExpression(child,node);
+  }
+ else {
+    generateFunctionAndThisObj(child,node);
+    thisObjLocal=getNewWordLocal();
+    cfw.addAStore(thisObjLocal);
+  }
+  int beyond=cfw.acquireLabel();
+  int directTargetIndex=target.getDirectTargetIndex();
+  if (isTopLevel) {
+    cfw.add(ByteCode.ALOAD_0);
+  }
+ else {
+    cfw.add(ByteCode.ALOAD_0);
+    cfw.add(ByteCode.GETFIELD,codegen.mainClassName,Codegen.DIRECT_CALL_PARENT_FIELD,codegen.mainClassSignature);
+  }
+  cfw.add(ByteCode.GETFIELD,codegen.mainClassName,Codegen.getDirectTargetFieldName(directTargetIndex),codegen.mainClassSignature);
+  cfw.add(ByteCode.DUP2);
+  int regularCall=cfw.acquireLabel();
+  cfw.add(ByteCode.IF_ACMPNE,regularCall);
+  short stackHeight=cfw.getStackTop();
+  cfw.add(ByteCode.SWAP);
+  cfw.add(ByteCode.POP);
+  if (compilerEnv.isUseDynamicScope()) {
+    cfw.addALoad(contextLocal);
+    cfw.addALoad(variableObjectLocal);
+  }
+ else {
+    cfw.add(ByteCode.DUP);
+    cfw.addInvoke(ByteCode.INVOKEINTERFACE,"org/mozilla/javascript/Scriptable","getParentScope","()Lorg/mozilla/javascript/Scriptable;");
+    cfw.addALoad(contextLocal);
+    cfw.add(ByteCode.SWAP);
+  }
+  if (type == Token.NEW) {
+    cfw.add(ByteCode.ACONST_NULL);
+  }
+ else {
+    cfw.addALoad(thisObjLocal);
+  }
+  Node argChild=firstArgChild;
+  while (argChild != null) {
+    int dcp_register=nodeIsDirectCallParameter(argChild);
+    if (dcp_register >= 0) {
+      cfw.addALoad(dcp_register);
+      cfw.addDLoad(dcp_register + 1);
+    }
+ else     if (argChild.getIntProp(Node.ISNUMBER_PROP,-1) == Node.BOTH) {
+      cfw.add(ByteCode.GETSTATIC,"java/lang/Void","TYPE","Ljava/lang/Class;");
+      generateExpression(argChild,node);
+    }
+ else {
+      generateExpression(argChild,node);
+      cfw.addPush(0.0);
+    }
+    argChild=argChild.getNext();
+  }
+  cfw.add(ByteCode.GETSTATIC,"org/mozilla/javascript/ScriptRuntime","emptyArgs","[Ljava/lang/Object;");
+  cfw.addInvoke(ByteCode.INVOKESTATIC,codegen.mainClassName,(type == Token.NEW) ? codegen.getDirectCtorName(target.fnode) : codegen.getBodyMethodName(target.fnode),codegen.getBodyMethodSignature(target.fnode));
+  cfw.add(ByteCode.GOTO,beyond);
+  cfw.markLabel(regularCall,stackHeight);
+  cfw.add(ByteCode.POP);
+  cfw.addALoad(contextLocal);
+  cfw.addALoad(variableObjectLocal);
+  if (type != Token.NEW) {
+    cfw.addALoad(thisObjLocal);
+    releaseWordLocal(thisObjLocal);
+  }
+  generateCallArgArray(node,firstArgChild,true);
+  if (type == Token.NEW) {
+    addScriptRuntimeInvoke("newObject","(Ljava/lang/Object;" + "Lorg/mozilla/javascript/Context;" + "Lorg/mozilla/javascript/Scriptable;"+ "[Ljava/lang/Object;"+ ")Lorg/mozilla/javascript/Scriptable;");
+  }
+ else {
+    cfw.addInvoke(ByteCode.INVOKEINTERFACE,"org/mozilla/javascript/Callable","call","(Lorg/mozilla/javascript/Context;" + "Lorg/mozilla/javascript/Scriptable;" + "Lorg/mozilla/javascript/Scriptable;"+ "[Ljava/lang/Object;"+ ")Ljava/lang/Object;");
+  }
+  cfw.markLabel(beyond);
+}

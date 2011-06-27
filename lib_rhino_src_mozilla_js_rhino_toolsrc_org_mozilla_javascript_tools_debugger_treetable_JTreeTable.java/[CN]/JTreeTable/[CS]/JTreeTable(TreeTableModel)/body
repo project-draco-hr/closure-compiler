@@ -1,0 +1,15 @@
+{
+  super();
+  tree=new TreeTableCellRenderer(treeTableModel);
+  super.setModel(new TreeTableModelAdapter(treeTableModel,tree));
+  ListToTreeSelectionModelWrapper selectionWrapper=new ListToTreeSelectionModelWrapper();
+  tree.setSelectionModel(selectionWrapper);
+  setSelectionModel(selectionWrapper.getListSelectionModel());
+  setDefaultRenderer(TreeTableModel.class,tree);
+  setDefaultEditor(TreeTableModel.class,new TreeTableCellEditor());
+  setShowGrid(false);
+  setIntercellSpacing(new Dimension(0,0));
+  if (tree.getRowHeight() < 1) {
+    setRowHeight(18);
+  }
+}

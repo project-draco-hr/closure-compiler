@@ -1,0 +1,12 @@
+{
+  if (SwingUtilities.isEventDispatchThread()) {
+    enterInterruptImpl(lastFrame,threadTitle,alertMessage);
+  }
+ else {
+    RunProxy proxy=new RunProxy(this,RunProxy.ENTER_INTERRUPT);
+    proxy.lastFrame=lastFrame;
+    proxy.threadTitle=threadTitle;
+    proxy.alertMessage=alertMessage;
+    SwingUtilities.invokeLater(proxy);
+  }
+}

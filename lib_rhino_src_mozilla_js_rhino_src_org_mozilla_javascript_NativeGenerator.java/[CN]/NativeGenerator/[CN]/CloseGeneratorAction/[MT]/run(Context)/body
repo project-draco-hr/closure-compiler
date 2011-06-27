@@ -1,0 +1,10 @@
+{
+  Scriptable scope=ScriptableObject.getTopLevelScope(generator);
+  Callable closeGenerator=new Callable(){
+    public Object call(    Context cx,    Scriptable scope,    Scriptable thisObj,    Object[] args){
+      return ((NativeGenerator)thisObj).resume(cx,scope,GENERATOR_CLOSE,new GeneratorClosedException());
+    }
+  }
+;
+  return ScriptRuntime.doTopCall(closeGenerator,cx,scope,generator,null);
+}

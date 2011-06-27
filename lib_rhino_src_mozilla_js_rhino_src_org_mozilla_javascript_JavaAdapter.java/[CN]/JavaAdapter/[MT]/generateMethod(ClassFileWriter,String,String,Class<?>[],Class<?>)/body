@@ -1,0 +1,28 @@
+{
+  StringBuffer sb=new StringBuffer();
+  int paramsEnd=appendMethodSignature(parms,returnType,sb);
+  String methodSignature=sb.toString();
+  cfw.startMethod(methodName,methodSignature,ClassFileWriter.ACC_PUBLIC);
+  cfw.add(ByteCode.ALOAD_0);
+  cfw.add(ByteCode.GETFIELD,genName,"factory","Lorg/mozilla/javascript/ContextFactory;");
+  cfw.add(ByteCode.ALOAD_0);
+  cfw.add(ByteCode.GETFIELD,genName,"self","Lorg/mozilla/javascript/Scriptable;");
+  cfw.add(ByteCode.ALOAD_0);
+  cfw.add(ByteCode.GETFIELD,genName,"delegee","Lorg/mozilla/javascript/Scriptable;");
+  cfw.addPush(methodName);
+  cfw.addInvoke(ByteCode.INVOKESTATIC,"org/mozilla/javascript/JavaAdapter","getFunction","(Lorg/mozilla/javascript/Scriptable;" + "Ljava/lang/String;" + ")Lorg/mozilla/javascript/Function;");
+  generatePushWrappedArgs(cfw,parms,parms.length);
+  if (parms.length > 64) {
+    throw Context.reportRuntimeError0("JavaAdapter can not subclass methods with more then" + " 64 arguments.");
+  }
+  long convertionMask=0;
+  for (int i=0; i != parms.length; ++i) {
+    if (!parms[i].isPrimitive()) {
+      convertionMask|=(1 << i);
+    }
+  }
+  cfw.addPush(convertionMask);
+  cfw.addInvoke(ByteCode.INVOKESTATIC,"org/mozilla/javascript/JavaAdapter","callMethod","(Lorg/mozilla/javascript/ContextFactory;" + "Lorg/mozilla/javascript/Scriptable;" + "Lorg/mozilla/javascript/Function;"+ "[Ljava/lang/Object;"+ "J"+ ")Ljava/lang/Object;");
+  generateReturnResult(cfw,returnType,true);
+  cfw.stopMethod((short)paramsEnd);
+}

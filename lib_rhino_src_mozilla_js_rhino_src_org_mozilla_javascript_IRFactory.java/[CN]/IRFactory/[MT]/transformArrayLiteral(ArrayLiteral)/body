@@ -1,0 +1,30 @@
+{
+  if (node.isDestructuring()) {
+    return node;
+  }
+  decompiler.addToken(Token.LB);
+  List<AstNode> elems=node.getElements();
+  Node array=new Node(Token.ARRAYLIT);
+  List<Integer> skipIndexes=null;
+  for (int i=0; i < elems.size(); ++i) {
+    AstNode elem=elems.get(i);
+    if (elem.getType() != Token.EMPTY) {
+      array.addChildToBack(transform(elem));
+    }
+ else {
+      if (skipIndexes == null) {
+        skipIndexes=new ArrayList<Integer>();
+      }
+      skipIndexes.add(i);
+    }
+    if (i < elems.size() - 1)     decompiler.addToken(Token.COMMA);
+  }
+  decompiler.addToken(Token.RB);
+  array.putIntProp(Node.DESTRUCTURING_ARRAY_LENGTH,node.getDestructuringLength());
+  if (skipIndexes != null) {
+    int[] skips=new int[skipIndexes.size()];
+    for (int i=0; i < skipIndexes.size(); i++)     skips[i]=skipIndexes.get(i);
+    array.putProp(Node.SKIP_INDEXES_PROP,skips);
+  }
+  return array;
+}

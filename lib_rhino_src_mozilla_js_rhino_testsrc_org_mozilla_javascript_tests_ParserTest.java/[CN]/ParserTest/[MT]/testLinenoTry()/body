@@ -1,0 +1,18 @@
+{
+  AstRoot root=parse("\ntry {\n" + "    var x = 1;\n" + "} catch\n"+ "    (err)\n"+ "{\n"+ "} finally {\n"+ "    var y = 2;\n"+ "}\n");
+  TryStatement tryStmt=(TryStatement)root.getFirstChild();
+  AstNode tryBlock=tryStmt.getTryBlock();
+  List<CatchClause> catchBlocks=tryStmt.getCatchClauses();
+  CatchClause catchClause=catchBlocks.get(0);
+  Block catchVarBlock=catchClause.getBody();
+  Name catchVar=catchClause.getVarName();
+  AstNode finallyBlock=tryStmt.getFinallyBlock();
+  AstNode finallyStmt=(AstNode)finallyBlock.getFirstChild();
+  assertEquals(1,tryStmt.getLineno());
+  assertEquals(1,tryBlock.getLineno());
+  assertEquals(5,catchVarBlock.getLineno());
+  assertEquals(4,catchVar.getLineno());
+  assertEquals(3,catchClause.getLineno());
+  assertEquals(6,finallyBlock.getLineno());
+  assertEquals(7,finallyStmt.getLineno());
+}

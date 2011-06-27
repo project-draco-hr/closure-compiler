@@ -1,0 +1,37 @@
+{
+  boolean activate=true;
+  String url=sourceInfo.url();
+  FileWindow w=new FileWindow(this,sourceInfo);
+  fileWindows.put(url,w);
+  if (line != -1) {
+    if (currentWindow != null) {
+      currentWindow.setPosition(-1);
+    }
+    try {
+      w.setPosition(w.textArea.getLineStartOffset(line - 1));
+    }
+ catch (    BadLocationException exc) {
+      try {
+        w.setPosition(w.textArea.getLineStartOffset(0));
+      }
+ catch (      BadLocationException ee) {
+        w.setPosition(-1);
+      }
+    }
+  }
+  desk.add(w);
+  if (line != -1) {
+    currentWindow=w;
+  }
+  menubar.addFile(url);
+  w.setVisible(true);
+  if (activate) {
+    try {
+      w.setMaximum(true);
+      w.setSelected(true);
+      w.moveToFront();
+    }
+ catch (    Exception exc) {
+    }
+  }
+}

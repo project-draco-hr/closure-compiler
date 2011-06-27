@@ -1,0 +1,24 @@
+{
+  if (failed) {
+    getElementById(failureHtml,"failureDetails.status").setTextContent(getLinesStartingWith("STATUS:"));
+    String bn=getLinesStartingWith("BUGNUMBER:");
+    Element bnlink=getElementById(failureHtml,"failureDetails.bug.href");
+    if (bn.length() > 0) {
+      String number=bn.substring("BUGNUMBER: ".length());
+      if (!number.equals("none")) {
+        bnlink.setAttribute("href",bugUrl + number);
+        getElementById(bnlink,"failureDetails.bug.number").setTextContent(number);
+      }
+ else {
+        bnlink.getParentNode().removeChild(bnlink);
+      }
+    }
+ else {
+      bnlink.getParentNode().removeChild(bnlink);
+    }
+    getElementById(failureHtml,"failureDetails.lxr").setAttribute("href",lxrUrl + testPath);
+    getElementById(failureHtml,"failureDetails.lxr.text").setTextContent(testPath);
+    getElementById(html.getDocumentElement(),"retestList.text").setTextContent(getElementById(html.getDocumentElement(),"retestList.text").getTextContent() + testPath + "\n");
+    getElementById(html.getDocumentElement(),"failureDetails").appendChild(failureHtml);
+  }
+}

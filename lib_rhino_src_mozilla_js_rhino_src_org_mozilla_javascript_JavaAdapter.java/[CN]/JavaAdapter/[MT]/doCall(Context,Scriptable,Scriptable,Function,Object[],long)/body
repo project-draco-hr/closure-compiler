@@ -1,0 +1,11 @@
+{
+  for (int i=0; i != args.length; ++i) {
+    if (0 != (argsToWrap & (1 << i))) {
+      Object arg=args[i];
+      if (!(arg instanceof Scriptable)) {
+        args[i]=cx.getWrapFactory().wrap(cx,scope,arg,null);
+      }
+    }
+  }
+  return f.call(cx,scope,thisObj,args);
+}

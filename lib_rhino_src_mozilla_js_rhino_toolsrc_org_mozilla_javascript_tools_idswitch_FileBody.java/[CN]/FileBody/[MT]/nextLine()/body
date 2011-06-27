@@ -1,0 +1,27 @@
+{
+  if (nextLineStart == bufferEnd) {
+    lineNumber=0;
+    return false;
+  }
+  int i;
+  int c=0;
+  for (i=nextLineStart; i != bufferEnd; ++i) {
+    c=buffer[i];
+    if (c == '\n' || c == '\r') {
+      break;
+    }
+  }
+  lineBegin=nextLineStart;
+  lineEnd=i;
+  if (i == bufferEnd) {
+    nextLineStart=i;
+  }
+ else   if (c == '\r' && i + 1 != bufferEnd && buffer[i + 1] == '\n') {
+    nextLineStart=i + 2;
+  }
+ else {
+    nextLineStart=i + 1;
+  }
+  ++lineNumber;
+  return true;
+}

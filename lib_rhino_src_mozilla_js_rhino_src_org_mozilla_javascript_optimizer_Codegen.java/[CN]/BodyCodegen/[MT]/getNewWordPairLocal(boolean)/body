@@ -1,0 +1,21 @@
+{
+  short result=getConsecutiveSlots(2,isConst);
+  if (result < (MAX_LOCALS - 1)) {
+    locals[result]=1;
+    locals[result + 1]=1;
+    if (isConst)     locals[result + 2]=1;
+    if (result == firstFreeLocal) {
+      for (int i=firstFreeLocal + 2; i < MAX_LOCALS; i++) {
+        if (locals[i] == 0) {
+          firstFreeLocal=(short)i;
+          if (localsMax < firstFreeLocal)           localsMax=firstFreeLocal;
+          return result;
+        }
+      }
+    }
+ else {
+      return result;
+    }
+  }
+  throw Context.reportRuntimeError("Program too complex " + "(out of locals)");
+}

@@ -1,0 +1,17 @@
+{
+  if (!insideFunction()) {
+    return;
+  }
+  boolean activation=false;
+  if ("arguments".equals(name) || (compilerEnv.getActivationNames() != null && compilerEnv.getActivationNames().contains(name))) {
+    activation=true;
+  }
+ else   if ("length".equals(name)) {
+    if (token == Token.GETPROP && compilerEnv.getLanguageVersion() == Context.VERSION_1_2) {
+      activation=true;
+    }
+  }
+  if (activation) {
+    setRequiresActivation();
+  }
+}

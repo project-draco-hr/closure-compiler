@@ -1,0 +1,24 @@
+{
+  XMLObjectImpl xmlObj;
+  XMLObjectImpl firstXmlObject=null;
+  for (; ; ) {
+    if (scope instanceof XMLWithScope) {
+      xmlObj=(XMLObjectImpl)scope.getPrototype();
+      if (xmlObj.hasXMLProperty(xmlName)) {
+        break;
+      }
+      if (firstXmlObject == null) {
+        firstXmlObject=xmlObj;
+      }
+    }
+    scope=scope.getParentScope();
+    if (scope == null) {
+      xmlObj=firstXmlObject;
+      break;
+    }
+  }
+  if (xmlObj != null) {
+    xmlName.initXMLObject(xmlObj);
+  }
+  return xmlName;
+}

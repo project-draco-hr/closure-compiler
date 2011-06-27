@@ -1,0 +1,18 @@
+{
+  if (element == null)   throw new RuntimeException("element must not be null");
+  String myDefaultNamespace=toUri(element.lookupNamespaceURI(null));
+  String parentDefaultNamespace="";
+  if (element.getParentNode() != null) {
+    parentDefaultNamespace=toUri(element.getParentNode().lookupNamespaceURI(null));
+  }
+  if (!myDefaultNamespace.equals(parentDefaultNamespace) || !(element.getParentNode() instanceof Element)) {
+    rv.declare(Namespace.create("",myDefaultNamespace));
+  }
+  NamedNodeMap attributes=element.getAttributes();
+  for (int i=0; i < attributes.getLength(); i++) {
+    Attr attr=(Attr)attributes.item(i);
+    if (attr.getPrefix() != null && attr.getPrefix().equals("xmlns")) {
+      rv.declare(Namespace.create(attr.getLocalName(),attr.getValue()));
+    }
+  }
+}

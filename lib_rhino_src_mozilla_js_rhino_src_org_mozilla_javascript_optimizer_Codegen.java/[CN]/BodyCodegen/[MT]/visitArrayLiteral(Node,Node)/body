@@ -1,0 +1,26 @@
+{
+  int count=0;
+  for (Node cursor=child; cursor != null; cursor=cursor.getNext()) {
+    ++count;
+  }
+  addNewObjectArray(count);
+  for (int i=0; i != count; ++i) {
+    cfw.add(ByteCode.DUP);
+    cfw.addPush(i);
+    generateExpression(child,node);
+    cfw.add(ByteCode.AASTORE);
+    child=child.getNext();
+  }
+  int[] skipIndexes=(int[])node.getProp(Node.SKIP_INDEXES_PROP);
+  if (skipIndexes == null) {
+    cfw.add(ByteCode.ACONST_NULL);
+    cfw.add(ByteCode.ICONST_0);
+  }
+ else {
+    cfw.addPush(OptRuntime.encodeIntArray(skipIndexes));
+    cfw.addPush(skipIndexes.length);
+  }
+  cfw.addALoad(contextLocal);
+  cfw.addALoad(variableObjectLocal);
+  addOptRuntimeInvoke("newArrayLiteral","([Ljava/lang/Object;" + "Ljava/lang/String;" + "I"+ "Lorg/mozilla/javascript/Context;"+ "Lorg/mozilla/javascript/Scriptable;"+ ")Lorg/mozilla/javascript/Scriptable;");
+}

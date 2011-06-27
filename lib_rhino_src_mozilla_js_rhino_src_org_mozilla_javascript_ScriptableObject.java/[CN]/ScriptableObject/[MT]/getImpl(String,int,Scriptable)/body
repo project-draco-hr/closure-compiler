@@ -1,0 +1,43 @@
+{
+  Slot slot=getSlot(name,index,SLOT_QUERY);
+  if (slot == null) {
+    return Scriptable.NOT_FOUND;
+  }
+  if (!(slot instanceof GetterSlot)) {
+    return slot.value;
+  }
+  Object getterObj=((GetterSlot)slot).getter;
+  if (getterObj != null) {
+    if (getterObj instanceof MemberBox) {
+      MemberBox nativeGetter=(MemberBox)getterObj;
+      Object getterThis;
+      Object[] args;
+      if (nativeGetter.delegateTo == null) {
+        getterThis=start;
+        args=ScriptRuntime.emptyArgs;
+      }
+ else {
+        getterThis=nativeGetter.delegateTo;
+        args=new Object[]{start};
+      }
+      return nativeGetter.invoke(getterThis,args);
+    }
+ else {
+      Function f=(Function)getterObj;
+      Context cx=Context.getContext();
+      return f.call(cx,f.getParentScope(),start,ScriptRuntime.emptyArgs);
+    }
+  }
+  Object value=slot.value;
+  if (value instanceof LazilyLoadedCtor) {
+    LazilyLoadedCtor initializer=(LazilyLoadedCtor)value;
+    try {
+      initializer.init();
+    }
+  finally {
+      value=initializer.getValue();
+      slot.value=value;
+    }
+  }
+  return value;
+}

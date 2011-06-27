@@ -1,0 +1,17 @@
+{
+  if (!(obj instanceof JavaAdapterSignature))   return false;
+  JavaAdapterSignature sig=(JavaAdapterSignature)obj;
+  if (superClass != sig.superClass)   return false;
+  if (interfaces != sig.interfaces) {
+    if (interfaces.length != sig.interfaces.length)     return false;
+    for (int i=0; i < interfaces.length; i++)     if (interfaces[i] != sig.interfaces[i])     return false;
+  }
+  if (names.size() != sig.names.size())   return false;
+  ObjToIntMap.Iterator iter=new ObjToIntMap.Iterator(names);
+  for (iter.start(); !iter.done(); iter.next()) {
+    String name=(String)iter.getKey();
+    int arity=iter.getValue();
+    if (arity != names.get(name,arity + 1))     return false;
+  }
+  return true;
+}

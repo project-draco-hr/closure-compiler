@@ -1,0 +1,26 @@
+{
+  String cmd=e.getActionCommand();
+  if (cmd.equals("Cancel")) {
+    setVisible(false);
+    value=null;
+  }
+ else   if (cmd.equals("Select")) {
+    if (list.getSelectedIndex() < 0) {
+      return;
+    }
+    try {
+      value=(String)list.getSelectedValue();
+    }
+ catch (    ArrayIndexOutOfBoundsException exc) {
+      return;
+    }
+    setVisible(false);
+    Dim.FunctionSource item=debugGui.dim.functionSourceByName(value);
+    if (item != null) {
+      Dim.SourceInfo si=item.sourceInfo();
+      String url=si.url();
+      int lineNumber=item.firstLine();
+      debugGui.showFileWindow(url,lineNumber);
+    }
+  }
+}

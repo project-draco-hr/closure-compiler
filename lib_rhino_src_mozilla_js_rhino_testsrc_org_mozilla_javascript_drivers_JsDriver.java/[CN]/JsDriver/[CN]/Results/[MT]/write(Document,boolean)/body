@@ -1,0 +1,23 @@
+{
+  try {
+    File output=this.output;
+    javax.xml.transform.TransformerFactory factory=javax.xml.transform.TransformerFactory.newInstance();
+    javax.xml.transform.Transformer xform=factory.newTransformer();
+    if (xml) {
+      xform.setOutputProperty(javax.xml.transform.OutputKeys.METHOD,"xml");
+      xform.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION,"yes");
+      output=new File(output.getCanonicalPath() + ".xml");
+    }
+    xform.transform(new javax.xml.transform.dom.DOMSource(template),new javax.xml.transform.stream.StreamResult(new FileOutputStream(output)));
+  }
+ catch (  IOException e) {
+    arguments.getConsole().println("Could not write results file to " + output + ": ");
+    e.printStackTrace(System.err);
+  }
+catch (  javax.xml.transform.TransformerConfigurationException e) {
+    throw new RuntimeException("Parser failure",e);
+  }
+catch (  javax.xml.transform.TransformerException e) {
+    throw new RuntimeException("Parser failure",e);
+  }
+}

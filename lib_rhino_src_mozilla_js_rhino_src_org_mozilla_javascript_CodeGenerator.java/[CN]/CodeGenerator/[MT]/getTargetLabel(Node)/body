@@ -1,0 +1,21 @@
+{
+  int label=target.labelId();
+  if (label != -1) {
+    return label;
+  }
+  label=labelTableTop;
+  if (labelTable == null || label == labelTable.length) {
+    if (labelTable == null) {
+      labelTable=new int[MIN_LABEL_TABLE_SIZE];
+    }
+ else {
+      int[] tmp=new int[labelTable.length * 2];
+      System.arraycopy(labelTable,0,tmp,0,label);
+      labelTable=tmp;
+    }
+  }
+  labelTableTop=label + 1;
+  labelTable[label]=-1;
+  target.labelId(label);
+  return label;
+}

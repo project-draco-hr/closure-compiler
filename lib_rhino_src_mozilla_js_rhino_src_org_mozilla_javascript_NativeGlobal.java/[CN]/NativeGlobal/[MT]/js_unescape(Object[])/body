@@ -1,0 +1,38 @@
+{
+  String s=ScriptRuntime.toString(args,0);
+  int firstEscapePos=s.indexOf('%');
+  if (firstEscapePos >= 0) {
+    int L=s.length();
+    char[] buf=s.toCharArray();
+    int destination=firstEscapePos;
+    for (int k=firstEscapePos; k != L; ) {
+      char c=buf[k];
+      ++k;
+      if (c == '%' && k != L) {
+        int end, start;
+        if (buf[k] == 'u') {
+          start=k + 1;
+          end=k + 5;
+        }
+ else {
+          start=k;
+          end=k + 2;
+        }
+        if (end <= L) {
+          int x=0;
+          for (int i=start; i != end; ++i) {
+            x=Kit.xDigitToInt(buf[i],x);
+          }
+          if (x >= 0) {
+            c=(char)x;
+            k=end;
+          }
+        }
+      }
+      buf[destination]=c;
+      ++destination;
+    }
+    s=new String(buf,0,destination);
+  }
+  return s;
+}

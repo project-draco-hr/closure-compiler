@@ -1,0 +1,30 @@
+{
+  generateExpression(child,node);
+  child=child.getNext();
+  if (type == Token.SETELEM_OP) {
+    cfw.add(ByteCode.DUP);
+  }
+  generateExpression(child,node);
+  child=child.getNext();
+  boolean indexIsNumber=(node.getIntProp(Node.ISNUMBER_PROP,-1) != -1);
+  if (type == Token.SETELEM_OP) {
+    if (indexIsNumber) {
+      cfw.add(ByteCode.DUP2_X1);
+      cfw.addALoad(contextLocal);
+      addOptRuntimeInvoke("getObjectIndex","(Ljava/lang/Object;D" + "Lorg/mozilla/javascript/Context;" + ")Ljava/lang/Object;");
+    }
+ else {
+      cfw.add(ByteCode.DUP_X1);
+      cfw.addALoad(contextLocal);
+      addScriptRuntimeInvoke("getObjectElem","(Ljava/lang/Object;" + "Ljava/lang/Object;" + "Lorg/mozilla/javascript/Context;"+ ")Ljava/lang/Object;");
+    }
+  }
+  generateExpression(child,node);
+  cfw.addALoad(contextLocal);
+  if (indexIsNumber) {
+    addScriptRuntimeInvoke("setObjectIndex","(Ljava/lang/Object;" + "D" + "Ljava/lang/Object;"+ "Lorg/mozilla/javascript/Context;"+ ")Ljava/lang/Object;");
+  }
+ else {
+    addScriptRuntimeInvoke("setObjectElem","(Ljava/lang/Object;" + "Ljava/lang/Object;" + "Ljava/lang/Object;"+ "Lorg/mozilla/javascript/Context;"+ ")Ljava/lang/Object;");
+  }
+}

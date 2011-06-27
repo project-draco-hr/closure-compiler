@@ -1,0 +1,23 @@
+{
+  if (currentToken != Token.DEFAULT)   codeBug();
+  consumeToken();
+  mustHaveXML();
+  setRequiresActivation();
+  int lineno=ts.lineno, pos=ts.tokenBeg;
+  if (!(matchToken(Token.NAME) && "xml".equals(ts.getString()))) {
+    reportError("msg.bad.namespace");
+  }
+  if (!(matchToken(Token.NAME) && "namespace".equals(ts.getString()))) {
+    reportError("msg.bad.namespace");
+  }
+  if (!matchToken(Token.ASSIGN)) {
+    reportError("msg.bad.namespace");
+  }
+  AstNode e=expr();
+  UnaryExpression dxmln=new UnaryExpression(pos,getNodeEnd(e) - pos);
+  dxmln.setOperator(Token.DEFAULTNAMESPACE);
+  dxmln.setOperand(e);
+  dxmln.setLineno(lineno);
+  ExpressionStatement es=new ExpressionStatement(dxmln,true);
+  return es;
+}

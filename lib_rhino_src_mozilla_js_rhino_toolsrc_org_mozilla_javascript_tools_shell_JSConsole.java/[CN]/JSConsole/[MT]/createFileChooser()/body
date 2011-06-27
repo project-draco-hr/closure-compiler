@@ -1,0 +1,24 @@
+{
+  dlg=new JFileChooser();
+  javax.swing.filechooser.FileFilter filter=new javax.swing.filechooser.FileFilter(){
+    @Override public boolean accept(    File f){
+      if (f.isDirectory()) {
+        return true;
+      }
+      String name=f.getName();
+      int i=name.lastIndexOf('.');
+      if (i > 0 && i < name.length() - 1) {
+        String ext=name.substring(i + 1).toLowerCase();
+        if (ext.equals("js")) {
+          return true;
+        }
+      }
+      return false;
+    }
+    @Override public String getDescription(){
+      return "JavaScript Files (*.js)";
+    }
+  }
+;
+  dlg.addChoosableFileFilter(filter);
+}

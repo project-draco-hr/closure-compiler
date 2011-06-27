@@ -1,0 +1,16 @@
+{
+  int lb=ts.tokenBeg, rb=-1, pos=atPos != -1 ? atPos : lb;
+  AstNode expr=expr();
+  int end=getNodeEnd(expr);
+  if (mustMatchToken(Token.RB,"msg.no.bracket.index")) {
+    rb=ts.tokenBeg;
+    end=ts.tokenEnd;
+  }
+  XmlElemRef ref=new XmlElemRef(pos,end - pos);
+  ref.setNamespace(namespace);
+  ref.setColonPos(colonPos);
+  ref.setAtPos(atPos);
+  ref.setExpression(expr);
+  ref.setBrackets(lb,rb);
+  return ref;
+}

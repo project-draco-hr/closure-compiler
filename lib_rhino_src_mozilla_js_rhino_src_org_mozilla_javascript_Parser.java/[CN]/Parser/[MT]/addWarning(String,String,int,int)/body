@@ -1,0 +1,12 @@
+{
+  String message=lookupMessage(messageId,messageArg);
+  if (compilerEnv.reportWarningAsError()) {
+    addError(messageId,messageArg,position,length);
+  }
+ else   if (errorCollector != null) {
+    errorCollector.warning(message,sourceURI,position,length);
+  }
+ else {
+    errorReporter.warning(message,sourceURI,ts.getLineno(),ts.getLine(),ts.getOffset());
+  }
+}

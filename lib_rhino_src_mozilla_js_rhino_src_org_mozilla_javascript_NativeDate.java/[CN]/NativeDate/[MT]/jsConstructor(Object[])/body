@@ -1,0 +1,24 @@
+{
+  NativeDate obj=new NativeDate();
+  if (args.length == 0) {
+    obj.date=now();
+    return obj;
+  }
+  if (args.length == 1) {
+    Object arg0=args[0];
+    if (arg0 instanceof Scriptable)     arg0=((Scriptable)arg0).getDefaultValue(null);
+    double date;
+    if (arg0 instanceof String) {
+      date=date_parseString((String)arg0);
+    }
+ else {
+      date=ScriptRuntime.toNumber(arg0);
+    }
+    obj.date=TimeClip(date);
+    return obj;
+  }
+  double time=date_msecFromArgs(args);
+  if (!Double.isNaN(time) && !Double.isInfinite(time))   time=TimeClip(internalUTC(time));
+  obj.date=time;
+  return obj;
+}

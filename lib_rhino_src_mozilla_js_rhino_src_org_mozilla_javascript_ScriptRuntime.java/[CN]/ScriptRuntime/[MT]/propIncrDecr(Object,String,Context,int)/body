@@ -1,0 +1,21 @@
+{
+  Scriptable start=toObjectOrNull(cx,obj);
+  if (start == null) {
+    throw undefReadError(obj,id);
+  }
+  Scriptable target=start;
+  Object value;
+  search: {
+    do {
+      value=target.get(id,start);
+      if (value != Scriptable.NOT_FOUND) {
+        break search;
+      }
+      target=target.getPrototype();
+    }
+ while (target != null);
+    start.put(id,start,NaNobj);
+    return NaNobj;
+  }
+  return doScriptableIncrDecr(target,id,start,value,incrDecrMask);
+}

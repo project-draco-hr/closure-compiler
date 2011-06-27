@@ -1,0 +1,26 @@
+{
+  if (cx.topCallScope == null)   throw new IllegalStateException();
+  int varCount=funObj.getParamAndVarCount();
+  if (varCount != 0) {
+    Scriptable varScope=scope;
+    while (varScope instanceof NativeWith) {
+      varScope=varScope.getParentScope();
+    }
+    for (int i=varCount; i-- != 0; ) {
+      String name=funObj.getParamOrVarName(i);
+      boolean isConst=funObj.getParamOrVarConst(i);
+      if (!ScriptableObject.hasProperty(scope,name)) {
+        if (!evalScript) {
+          if (isConst)           ScriptableObject.defineConstProperty(varScope,name);
+ else           ScriptableObject.defineProperty(varScope,name,Undefined.instance,ScriptableObject.PERMANENT);
+        }
+ else {
+          varScope.put(name,varScope,Undefined.instance);
+        }
+      }
+ else {
+        ScriptableObject.redefineProperty(scope,name,isConst);
+      }
+    }
+  }
+}

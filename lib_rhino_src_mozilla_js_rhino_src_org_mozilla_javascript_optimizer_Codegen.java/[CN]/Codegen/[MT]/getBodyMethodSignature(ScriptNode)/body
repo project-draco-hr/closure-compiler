@@ -1,0 +1,17 @@
+{
+  StringBuffer sb=new StringBuffer();
+  sb.append('(');
+  sb.append(mainClassSignature);
+  sb.append("Lorg/mozilla/javascript/Context;" + "Lorg/mozilla/javascript/Scriptable;" + "Lorg/mozilla/javascript/Scriptable;");
+  if (n.getType() == Token.FUNCTION) {
+    OptFunctionNode ofn=OptFunctionNode.get(n);
+    if (ofn.isTargetOfDirectCall()) {
+      int pCount=ofn.fnode.getParamCount();
+      for (int i=0; i != pCount; i++) {
+        sb.append("Ljava/lang/Object;D");
+      }
+    }
+  }
+  sb.append("[Ljava/lang/Object;)Ljava/lang/Object;");
+  return sb.toString();
+}

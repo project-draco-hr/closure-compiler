@@ -1,0 +1,24 @@
+{
+  for (; ; ) {
+    if (val == null) {
+      return "null";
+    }
+    if (val == Undefined.instance) {
+      return "undefined";
+    }
+    if (val instanceof String) {
+      return (String)val;
+    }
+    if (val instanceof Number) {
+      return numberToString(((Number)val).doubleValue(),10);
+    }
+    if (val instanceof Scriptable) {
+      val=((Scriptable)val).getDefaultValue(StringClass);
+      if (val instanceof Scriptable) {
+        throw errorWithClassName("msg.primitive.expected",val);
+      }
+      continue;
+    }
+    return val.toString();
+  }
+}

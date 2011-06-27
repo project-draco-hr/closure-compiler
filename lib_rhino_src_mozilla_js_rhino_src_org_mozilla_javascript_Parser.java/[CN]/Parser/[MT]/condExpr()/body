@@ -1,0 +1,20 @@
+{
+  AstNode pn=orExpr();
+  if (matchToken(Token.HOOK)) {
+    int line=ts.lineno;
+    int qmarkPos=ts.tokenBeg, colonPos=-1;
+    AstNode ifTrue=assignExpr();
+    if (mustMatchToken(Token.COLON,"msg.no.colon.cond"))     colonPos=ts.tokenBeg;
+    AstNode ifFalse=assignExpr();
+    int beg=pn.getPosition(), len=getNodeEnd(ifFalse) - beg;
+    ConditionalExpression ce=new ConditionalExpression(beg,len);
+    ce.setLineno(line);
+    ce.setTestExpression(pn);
+    ce.setTrueExpression(ifTrue);
+    ce.setFalseExpression(ifFalse);
+    ce.setQuestionMarkPosition(qmarkPos - beg);
+    ce.setColonPosition(colonPos - beg);
+    pn=ce;
+  }
+  return pn;
+}

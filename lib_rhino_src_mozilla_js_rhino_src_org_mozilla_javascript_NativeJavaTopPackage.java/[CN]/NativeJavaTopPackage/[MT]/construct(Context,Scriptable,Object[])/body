@@ -1,0 +1,19 @@
+{
+  ClassLoader loader=null;
+  if (args.length != 0) {
+    Object arg=args[0];
+    if (arg instanceof Wrapper) {
+      arg=((Wrapper)arg).unwrap();
+    }
+    if (arg instanceof ClassLoader) {
+      loader=(ClassLoader)arg;
+    }
+  }
+  if (loader == null) {
+    Context.reportRuntimeError0("msg.not.classloader");
+    return null;
+  }
+  NativeJavaPackage pkg=new NativeJavaPackage(true,"",loader);
+  ScriptRuntime.setObjectProtoAndParent(pkg,scope);
+  return pkg;
+}

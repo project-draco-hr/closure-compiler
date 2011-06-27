@@ -1,0 +1,12 @@
+{
+  for (  Label lb : ls.getLabels()) {
+    decompiler.addName(lb.getName());
+    decompiler.addEOL(Token.COLON);
+  }
+  Label label=ls.getFirstLabel();
+  Node statement=transform(ls.getStatement());
+  Node breakTarget=Node.newTarget();
+  Node block=new Node(Token.BLOCK,label,statement,breakTarget);
+  label.target=breakTarget;
+  return block;
+}

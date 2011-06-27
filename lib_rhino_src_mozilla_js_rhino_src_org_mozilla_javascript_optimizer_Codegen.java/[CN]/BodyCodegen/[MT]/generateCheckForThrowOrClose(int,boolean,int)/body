@@ -1,0 +1,21 @@
+{
+  int throwLabel=cfw.acquireLabel();
+  int closeLabel=cfw.acquireLabel();
+  cfw.markLabel(throwLabel);
+  cfw.addALoad(argsLocal);
+  generateThrowJavaScriptException();
+  cfw.markLabel(closeLabel);
+  cfw.addALoad(argsLocal);
+  cfw.add(ByteCode.CHECKCAST,"java/lang/Throwable");
+  cfw.add(ByteCode.ATHROW);
+  if (label != -1)   cfw.markLabel(label);
+  if (!hasLocals) {
+    cfw.markTableSwitchCase(generatorSwitch,nextState);
+  }
+  cfw.addILoad(operationLocal);
+  cfw.addLoadConstant(NativeGenerator.GENERATOR_CLOSE);
+  cfw.add(ByteCode.IF_ICMPEQ,closeLabel);
+  cfw.addILoad(operationLocal);
+  cfw.addLoadConstant(NativeGenerator.GENERATOR_THROW);
+  cfw.add(ByteCode.IF_ICMPEQ,throwLabel);
+}

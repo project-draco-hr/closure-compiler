@@ -1,0 +1,26 @@
+{
+  boolean empty=true;
+  int setOp=variableType == Token.CONST ? Token.SETCONST : Token.SETNAME;
+  int index=0;
+  for (  AstNode n : array.getElements()) {
+    if (n.getType() == Token.EMPTY) {
+      index++;
+      continue;
+    }
+    Node rightElem=new Node(Token.GETELEM,createName(tempName),createNumber(index));
+    if (n.getType() == Token.NAME) {
+      String name=n.getString();
+      parent.addChildToBack(new Node(setOp,createName(Token.BINDNAME,name,null),rightElem));
+      if (variableType != -1) {
+        defineSymbol(variableType,name,true);
+        destructuringNames.add(name);
+      }
+    }
+ else {
+      parent.addChildToBack(destructuringAssignmentHelper(variableType,n,rightElem,currentScriptOrFn.getNextTempName()));
+    }
+    index++;
+    empty=false;
+  }
+  return empty;
+}

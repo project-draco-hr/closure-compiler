@@ -1,0 +1,30 @@
+{
+  ContextFactory factory;
+  Context cx=Context.getCurrentContext();
+  if (cx != null) {
+    factory=cx.getFactory();
+  }
+ else {
+    factory=null;
+  }
+  Class<?> superClass=Class.forName((String)in.readObject());
+  String[] interfaceNames=(String[])in.readObject();
+  Class<?>[] interfaces=new Class[interfaceNames.length];
+  for (int i=0; i < interfaceNames.length; i++)   interfaces[i]=Class.forName(interfaceNames[i]);
+  Scriptable delegee=(Scriptable)in.readObject();
+  Class<?> adapterClass=getAdapterClass(self,superClass,interfaces,delegee);
+  Class<?>[] ctorParms={ScriptRuntime.ContextFactoryClass,ScriptRuntime.ScriptableClass,ScriptRuntime.ScriptableClass};
+  Object[] ctorArgs={factory,delegee,self};
+  try {
+    return adapterClass.getConstructor(ctorParms).newInstance(ctorArgs);
+  }
+ catch (  InstantiationException e) {
+  }
+catch (  IllegalAccessException e) {
+  }
+catch (  InvocationTargetException e) {
+  }
+catch (  NoSuchMethodException e) {
+  }
+  throw new ClassNotFoundException("adapter");
+}

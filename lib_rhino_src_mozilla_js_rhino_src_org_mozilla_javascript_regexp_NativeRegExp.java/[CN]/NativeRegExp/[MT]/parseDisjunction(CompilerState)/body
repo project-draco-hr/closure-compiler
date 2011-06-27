@@ -1,0 +1,16 @@
+{
+  if (!parseAlternative(state))   return false;
+  char[] source=state.cpbegin;
+  int index=state.cp;
+  if (index != source.length && source[index] == '|') {
+    RENode altResult;
+    ++state.cp;
+    altResult=new RENode(REOP_ALT);
+    altResult.kid=state.result;
+    if (!parseDisjunction(state))     return false;
+    altResult.kid2=state.result;
+    state.result=altResult;
+    state.progLength+=9;
+  }
+  return true;
+}

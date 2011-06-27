@@ -1,0 +1,40 @@
+{
+  if (re.parenCount != 0) {
+    gData.parens=new long[re.parenCount];
+  }
+ else {
+    gData.parens=null;
+  }
+  gData.backTrackStackTop=null;
+  gData.stateStackTop=null;
+  gData.multiline=multiline;
+  gData.regexp=re;
+  gData.lastParen=0;
+  int anchorCh=gData.regexp.anchorCh;
+  for (int i=start; i <= end; ++i) {
+    if (anchorCh >= 0) {
+      for (; ; ) {
+        if (i == end) {
+          return false;
+        }
+        char matchCh=chars[i];
+        if (matchCh == anchorCh || ((gData.regexp.flags & JSREG_FOLD) != 0 && upcase(matchCh) == upcase((char)anchorCh))) {
+          break;
+        }
+        ++i;
+      }
+    }
+    gData.cp=i;
+    for (int j=0; j < re.parenCount; j++) {
+      gData.set_parens(j,-1,0);
+    }
+    boolean result=executeREBytecode(gData,chars,end);
+    gData.backTrackStackTop=null;
+    gData.stateStackTop=null;
+    if (result) {
+      gData.skipped=i - start;
+      return true;
+    }
+  }
+  return false;
+}

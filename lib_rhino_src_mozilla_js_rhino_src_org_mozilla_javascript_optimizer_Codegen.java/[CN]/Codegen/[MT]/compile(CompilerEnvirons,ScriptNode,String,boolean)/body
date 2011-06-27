@@ -1,0 +1,16 @@
+{
+  int serial;
+synchronized (globalLock) {
+    serial=++globalSerialClassCounter;
+  }
+  String baseName="c";
+  if (tree.getSourceName().length() > 0) {
+    baseName=tree.getSourceName().replaceAll("\\W","_");
+    if (!Character.isJavaIdentifierStart(baseName.charAt(0))) {
+      baseName="_" + baseName;
+    }
+  }
+  String mainClassName="org.mozilla.javascript.gen." + baseName + "_"+ serial;
+  byte[] mainClassBytes=compileToClassFile(compilerEnv,mainClassName,tree,encodedSource,returnFunction);
+  return new Object[]{mainClassName,mainClassBytes};
+}

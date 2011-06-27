@@ -1,0 +1,25 @@
+{
+  decompiler.addToken(Token.FOR);
+  if (loop.isForEach())   decompiler.addName("each ");
+  decompiler.addToken(Token.LP);
+  loop.setType(Token.LOOP);
+  pushScope(loop);
+  try {
+    int declType=-1;
+    AstNode iter=loop.getIterator();
+    if (iter instanceof VariableDeclaration) {
+      declType=((VariableDeclaration)iter).getType();
+    }
+    Node lhs=transform(iter);
+    decompiler.addToken(Token.IN);
+    Node obj=transform(loop.getIteratedObject());
+    decompiler.addToken(Token.RP);
+    decompiler.addEOL(Token.LC);
+    Node body=transform(loop.getBody());
+    decompiler.addEOL(Token.RC);
+    return createForIn(declType,loop,lhs,obj,body,loop.isForEach());
+  }
+  finally {
+    popScope();
+  }
+}

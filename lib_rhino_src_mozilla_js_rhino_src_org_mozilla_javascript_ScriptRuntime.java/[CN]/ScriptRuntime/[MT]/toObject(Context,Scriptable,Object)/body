@@ -1,0 +1,20 @@
+{
+  if (val instanceof Scriptable) {
+    return (Scriptable)val;
+  }
+  if (val == null) {
+    throw typeError0("msg.null.to.object");
+  }
+  if (val == Undefined.instance) {
+    throw typeError0("msg.undef.to.object");
+  }
+  String className=val instanceof String ? "String" : val instanceof Number ? "Number" : val instanceof Boolean ? "Boolean" : null;
+  if (className != null) {
+    Object[] args={val};
+    scope=ScriptableObject.getTopLevelScope(scope);
+    return newObject(cx,scope,className,args);
+  }
+  Object wrapped=cx.getWrapFactory().wrap(cx,scope,val,null);
+  if (wrapped instanceof Scriptable)   return (Scriptable)wrapped;
+  throw errorWithClassName("msg.invalid.type",val);
+}

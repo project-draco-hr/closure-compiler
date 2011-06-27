@@ -1,0 +1,12 @@
+{
+  AstRoot root=parse("\na\n" + "    ?\n" + "    b\n"+ "    :\n"+ "    c\n"+ "    ;\n");
+  ExpressionStatement ex=(ExpressionStatement)root.getFirstChild();
+  ConditionalExpression hook=(ConditionalExpression)ex.getExpression();
+  AstNode condExpr=hook.getTestExpression();
+  AstNode thenExpr=hook.getTrueExpression();
+  AstNode elseExpr=hook.getFalseExpression();
+  assertEquals(2,hook.getLineno());
+  assertEquals(1,condExpr.getLineno());
+  assertEquals(3,thenExpr.getLineno());
+  assertEquals(5,elseExpr.getLineno());
+}

@@ -1,0 +1,30 @@
+{
+  Class<?> classObject=getClassObject();
+  int modifiers=classObject.getModifiers();
+  if (!(Modifier.isInterface(modifiers) || Modifier.isAbstract(modifiers))) {
+    MemberBox[] ctors=members.ctors;
+    int index=NativeJavaMethod.findFunction(cx,ctors,args);
+    if (index < 0) {
+      String sig=NativeJavaMethod.scriptSignature(args);
+      throw Context.reportRuntimeError2("msg.no.java.ctor",classObject.getName(),sig);
+    }
+    return constructSpecific(cx,scope,args,ctors[index]);
+  }
+ else {
+    Scriptable topLevel=ScriptableObject.getTopLevelScope(this);
+    String msg="";
+    try {
+      Object v=topLevel.get("JavaAdapter",topLevel);
+      if (v != NOT_FOUND) {
+        Function f=(Function)v;
+        Object[] adapterArgs={this,args[0]};
+        return f.construct(cx,topLevel,adapterArgs);
+      }
+    }
+ catch (    Exception ex) {
+      String m=ex.getMessage();
+      if (m != null)       msg=m;
+    }
+    throw Context.reportRuntimeError2("msg.cant.instantiate",msg,classObject.getName());
+  }
+}

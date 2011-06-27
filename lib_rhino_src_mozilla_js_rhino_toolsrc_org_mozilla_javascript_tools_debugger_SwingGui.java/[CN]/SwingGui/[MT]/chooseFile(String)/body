@@ -1,0 +1,27 @@
+{
+  dlg.setDialogTitle(title);
+  File CWD=null;
+  String dir=SecurityUtilities.getSystemProperty("user.dir");
+  if (dir != null) {
+    CWD=new File(dir);
+  }
+  if (CWD != null) {
+    dlg.setCurrentDirectory(CWD);
+  }
+  int returnVal=dlg.showOpenDialog(this);
+  if (returnVal == JFileChooser.APPROVE_OPTION) {
+    try {
+      String result=dlg.getSelectedFile().getCanonicalPath();
+      CWD=dlg.getSelectedFile().getParentFile();
+      Properties props=System.getProperties();
+      props.put("user.dir",CWD.getPath());
+      System.setProperties(props);
+      return result;
+    }
+ catch (    IOException ignored) {
+    }
+catch (    SecurityException ignored) {
+    }
+  }
+  return null;
+}

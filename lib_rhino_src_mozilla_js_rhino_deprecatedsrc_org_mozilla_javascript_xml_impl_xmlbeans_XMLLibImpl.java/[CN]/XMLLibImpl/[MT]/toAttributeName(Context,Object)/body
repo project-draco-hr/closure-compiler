@@ -1,0 +1,30 @@
+{
+  String uri;
+  String localName;
+  if (nameValue instanceof String) {
+    uri="";
+    localName=(String)nameValue;
+  }
+ else   if (nameValue instanceof XMLName) {
+    XMLName xmlName=(XMLName)nameValue;
+    if (!xmlName.isAttributeName()) {
+      xmlName.setAttributeName();
+    }
+    return xmlName;
+  }
+ else   if (nameValue instanceof QName) {
+    QName qname=(QName)nameValue;
+    uri=qname.uri();
+    localName=qname.localName();
+  }
+ else   if (nameValue instanceof Boolean || nameValue instanceof Number || nameValue == Undefined.instance || nameValue == null) {
+    throw badXMLName(nameValue);
+  }
+ else {
+    uri="";
+    localName=ScriptRuntime.toString(nameValue);
+  }
+  XMLName xmlName=XMLName.formProperty(uri,localName);
+  xmlName.setAttributeName();
+  return xmlName;
+}

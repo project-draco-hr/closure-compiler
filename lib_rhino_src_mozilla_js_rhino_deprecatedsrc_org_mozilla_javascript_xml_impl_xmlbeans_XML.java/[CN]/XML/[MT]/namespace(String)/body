@@ -1,0 +1,23 @@
+{
+  XmlCursor cursor=newCursor();
+  if (cursor.isStartdoc()) {
+    cursor.toFirstContentToken();
+  }
+  Object result=null;
+  if (prefix == null) {
+    if (cursor.isStart() || cursor.isAttr()) {
+      Object[] inScopeNS=NamespaceHelper.inScopeNamespaces(lib,cursor);
+      XmlCursor cursor2=newCursor();
+      if (cursor2.isStartdoc())       cursor2.toFirstContentToken();
+      result=NamespaceHelper.getNamespace(lib,cursor2,inScopeNS);
+      cursor2.dispose();
+    }
+  }
+ else {
+    Map prefixToURI=NamespaceHelper.getAllNamespaces(lib,cursor);
+    String uri=(String)prefixToURI.get(prefix);
+    result=(uri == null) ? Undefined.instance : new Namespace(lib,prefix,uri);
+  }
+  cursor.dispose();
+  return result;
+}

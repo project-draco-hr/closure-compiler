@@ -1,0 +1,48 @@
+{
+  if (value == null) {
+    value="null";
+  }
+ else   if (value instanceof Undefined) {
+    value="undefined";
+  }
+  XMLName xmlName=this;
+  if (xmlName.isAttributeName()) {
+    target.setAttribute(xmlName,value);
+  }
+ else   if (xmlName.uri() == null && xmlName.localName().equals("*")) {
+    target.setChildren(value);
+  }
+ else {
+    XMLObjectImpl xmlValue=null;
+    if (value instanceof XMLObjectImpl) {
+      xmlValue=(XMLObjectImpl)value;
+      if (xmlValue instanceof XML) {
+        if (((XML)xmlValue).isAttribute()) {
+          xmlValue=target.makeXmlFromString(xmlName,xmlValue.toString());
+        }
+      }
+      if (xmlValue instanceof XMLList) {
+        for (int i=0; i < xmlValue.length(); i++) {
+          XML xml=((XMLList)xmlValue).item(i);
+          if (xml.isAttribute()) {
+            ((XMLList)xmlValue).replace(i,target.makeXmlFromString(xmlName,xml.toString()));
+          }
+        }
+      }
+    }
+ else {
+      xmlValue=target.makeXmlFromString(xmlName,ScriptRuntime.toString(value));
+    }
+    XMLList matches=target.getPropertyList(xmlName);
+    if (matches.length() == 0) {
+      target.appendChild(xmlValue);
+    }
+ else {
+      for (int i=1; i < matches.length(); i++) {
+        target.removeChild(matches.item(i).childIndex());
+      }
+      XML firstMatch=matches.item(0);
+      target.replace(firstMatch.childIndex(),xmlValue);
+    }
+  }
+}

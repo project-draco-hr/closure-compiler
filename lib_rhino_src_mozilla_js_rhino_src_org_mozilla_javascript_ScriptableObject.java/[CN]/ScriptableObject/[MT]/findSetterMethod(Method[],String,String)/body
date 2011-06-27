@@ -1,0 +1,18 @@
+{
+  String newStyleName="set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+  for (  Method method : methods) {
+    JSSetter annotation=method.getAnnotation(JSSetter.class);
+    if (annotation != null) {
+      if (name.equals(annotation.value()) || ("".equals(annotation.value()) && newStyleName.equals(method.getName()))) {
+        return method;
+      }
+    }
+  }
+  String oldStyleName=prefix + name;
+  for (  Method method : methods) {
+    if (oldStyleName.equals(method.getName())) {
+      return method;
+    }
+  }
+  return null;
+}

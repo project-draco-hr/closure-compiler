@@ -1,0 +1,11 @@
+{
+  if ((value & ~0xFFFF) != 0)   throw Kit.codeBug();
+  byte[] array=itsData.itsICode;
+  int top=iCodeTop;
+  if (top + 2 > array.length) {
+    array=increaseICodeCapacity(2);
+  }
+  array[top]=(byte)(value >>> 8);
+  array[top + 1]=(byte)value;
+  iCodeTop=top + 2;
+}

@@ -1,0 +1,17 @@
+{
+  int precision;
+  if (args.length == 0) {
+    precision=0;
+    oneArgMode=zeroArgMode;
+  }
+ else {
+    precision=ScriptRuntime.toInt32(args[0]);
+    if (precision < precisionMin || precision > MAX_PRECISION) {
+      String msg=ScriptRuntime.getMessage1("msg.bad.precision",ScriptRuntime.toString(args[0]));
+      throw ScriptRuntime.constructError("RangeError",msg);
+    }
+  }
+  StringBuffer sb=new StringBuffer();
+  DToA.JS_dtostr(sb,oneArgMode,precision + precisionOffset,val);
+  return sb.toString();
+}

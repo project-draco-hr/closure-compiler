@@ -1,0 +1,29 @@
+{
+  if (msg.length() > 60) {
+    StringBuffer buf=new StringBuffer();
+    int len=msg.length();
+    int j=0;
+    int i;
+    for (i=0; i < len; i++, j++) {
+      char c=msg.charAt(i);
+      buf.append(c);
+      if (Character.isWhitespace(c)) {
+        int k;
+        for (k=i + 1; k < len; k++) {
+          if (Character.isWhitespace(msg.charAt(k))) {
+            break;
+          }
+        }
+        if (k < len) {
+          int nextWordLen=k - i;
+          if (j + nextWordLen > 60) {
+            buf.append('\n');
+            j=0;
+          }
+        }
+      }
+    }
+    msg=buf.toString();
+  }
+  JOptionPane.showMessageDialog(parent,msg,title,flags);
+}

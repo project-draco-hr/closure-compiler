@@ -1,0 +1,17 @@
+{
+  XMLName xmlName;
+  if ((memberTypeFlags & Node.ATTRIBUTE_FLAG) != 0) {
+    xmlName=lib.toAttributeName(cx,elem);
+  }
+ else {
+    if ((memberTypeFlags & Node.DESCENDANTS_FLAG) == 0) {
+      throw Kit.codeBug();
+    }
+    xmlName=lib.toXMLName(cx,elem);
+  }
+  if ((memberTypeFlags & Node.DESCENDANTS_FLAG) != 0) {
+    xmlName.setIsDescendants();
+  }
+  xmlName.initXMLObject(this);
+  return xmlName;
+}

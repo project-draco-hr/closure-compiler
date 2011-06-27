@@ -1,0 +1,12 @@
+{
+  Object helper=VMBridge.instance.getThreadContextHelper();
+  Context cx=VMBridge.instance.getContext(helper);
+  if (cx == null) {
+    throw new IllegalStateException("Calling Context.exit without previous Context.enter");
+  }
+  if (cx.enterCount < 1)   Kit.codeBug();
+  if (--cx.enterCount == 0) {
+    VMBridge.instance.setContext(helper,null);
+    cx.factory.onContextReleased(cx);
+  }
+}

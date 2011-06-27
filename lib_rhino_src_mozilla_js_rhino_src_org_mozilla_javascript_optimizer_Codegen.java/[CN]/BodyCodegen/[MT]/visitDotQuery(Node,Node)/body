@@ -1,0 +1,20 @@
+{
+  updateLineNumber(node);
+  generateExpression(child,node);
+  cfw.addALoad(variableObjectLocal);
+  addScriptRuntimeInvoke("enterDotQuery","(Ljava/lang/Object;" + "Lorg/mozilla/javascript/Scriptable;" + ")Lorg/mozilla/javascript/Scriptable;");
+  cfw.addAStore(variableObjectLocal);
+  cfw.add(ByteCode.ACONST_NULL);
+  int queryLoopStart=cfw.acquireLabel();
+  cfw.markLabel(queryLoopStart);
+  cfw.add(ByteCode.POP);
+  generateExpression(child.getNext(),node);
+  addScriptRuntimeInvoke("toBoolean","(Ljava/lang/Object;)Z");
+  cfw.addALoad(variableObjectLocal);
+  addScriptRuntimeInvoke("updateDotQuery","(Z" + "Lorg/mozilla/javascript/Scriptable;" + ")Ljava/lang/Object;");
+  cfw.add(ByteCode.DUP);
+  cfw.add(ByteCode.IFNULL,queryLoopStart);
+  cfw.addALoad(variableObjectLocal);
+  addScriptRuntimeInvoke("leaveDotQuery","(Lorg/mozilla/javascript/Scriptable;" + ")Lorg/mozilla/javascript/Scriptable;");
+  cfw.addAStore(variableObjectLocal);
+}

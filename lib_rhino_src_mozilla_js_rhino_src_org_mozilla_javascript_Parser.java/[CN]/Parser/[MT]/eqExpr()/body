@@ -1,0 +1,24 @@
+{
+  AstNode pn=relExpr();
+  for (; ; ) {
+    int tt=peekToken(), opPos=ts.tokenBeg;
+    int lineno=ts.lineno;
+switch (tt) {
+case Token.EQ:
+case Token.NE:
+case Token.SHEQ:
+case Token.SHNE:
+      consumeToken();
+    int parseToken=tt;
+  if (compilerEnv.getLanguageVersion() == Context.VERSION_1_2) {
+    if (tt == Token.EQ)     parseToken=Token.SHEQ;
+ else     if (tt == Token.NE)     parseToken=Token.SHNE;
+  }
+pn=new InfixExpression(parseToken,pn,relExpr(),opPos);
+pn.setLineno(lineno);
+continue;
+}
+break;
+}
+return pn;
+}

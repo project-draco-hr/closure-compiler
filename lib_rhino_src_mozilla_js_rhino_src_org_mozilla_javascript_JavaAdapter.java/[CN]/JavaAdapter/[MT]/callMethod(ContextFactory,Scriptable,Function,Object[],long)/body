@@ -1,0 +1,24 @@
+{
+  if (f == null) {
+    return Undefined.instance;
+  }
+  if (factory == null) {
+    factory=ContextFactory.getGlobal();
+  }
+  final Scriptable scope=f.getParentScope();
+  if (argsToWrap == 0) {
+    return Context.call(factory,f,scope,thisObj,args);
+  }
+  Context cx=Context.getCurrentContext();
+  if (cx != null) {
+    return doCall(cx,scope,thisObj,f,args,argsToWrap);
+  }
+ else {
+    return factory.call(new ContextAction(){
+      public Object run(      Context cx){
+        return doCall(cx,scope,thisObj,f,args,argsToWrap);
+      }
+    }
+);
+  }
+}

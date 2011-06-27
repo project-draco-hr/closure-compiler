@@ -1,0 +1,36 @@
+{
+  if (state.stack.search(value) != -1) {
+    throw ScriptRuntime.typeError0("msg.cyclic.value");
+  }
+  state.stack.push(value);
+  String stepback=state.indent;
+  state.indent=state.indent + state.gap;
+  List<Object> partial=new LinkedList<Object>();
+  int len=(int)value.getLength();
+  for (int index=0; index < len; index++) {
+    Object strP=str(index,value,state);
+    if (strP == Undefined.instance) {
+      partial.add("null");
+    }
+ else {
+      partial.add(strP);
+    }
+  }
+  final String finalValue;
+  if (partial.isEmpty()) {
+    finalValue="[]";
+  }
+ else {
+    if (state.gap.length() == 0) {
+      finalValue='[' + join(partial,",") + ']';
+    }
+ else {
+      String separator=",\n" + state.indent;
+      String properties=join(partial,separator);
+      finalValue="[\n" + state.indent + properties+ '\n'+ stepback+ ']';
+    }
+  }
+  state.stack.pop();
+  state.indent=stepback;
+  return finalValue;
+}

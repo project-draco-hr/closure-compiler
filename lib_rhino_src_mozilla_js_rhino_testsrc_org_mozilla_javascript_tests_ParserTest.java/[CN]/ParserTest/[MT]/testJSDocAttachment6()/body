@@ -1,0 +1,12 @@
+{
+  AstRoot root=parse("({1: /** don't attach me */ 2, 3: 4});");
+  assertNotNull(root.getComments());
+  assertEquals(1,root.getComments().size());
+  ExpressionStatement st=(ExpressionStatement)root.getFirstChild();
+  ParenthesizedExpression pt=(ParenthesizedExpression)st.getExpression();
+  ObjectLiteral lit=(ObjectLiteral)pt.getExpression();
+  for (  ObjectProperty el : lit.getElements()) {
+    assertNull(el.getLeft().getJsDoc());
+    assertNull(el.getRight().getJsDoc());
+  }
+}

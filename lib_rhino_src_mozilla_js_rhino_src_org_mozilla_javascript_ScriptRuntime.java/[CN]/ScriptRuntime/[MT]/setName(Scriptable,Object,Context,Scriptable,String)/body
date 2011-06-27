@@ -1,0 +1,22 @@
+{
+  if (bound != null) {
+    if (bound instanceof XMLObject) {
+      XMLObject xmlObject=(XMLObject)bound;
+      xmlObject.ecmaPut(cx,id,value);
+    }
+ else {
+      ScriptableObject.putProperty(bound,id,value);
+    }
+  }
+ else {
+    if (cx.hasFeature(Context.FEATURE_STRICT_MODE) || cx.hasFeature(Context.FEATURE_STRICT_VARS)) {
+      Context.reportWarning(ScriptRuntime.getMessage1("msg.assn.create.strict",id));
+    }
+    bound=ScriptableObject.getTopLevelScope(scope);
+    if (cx.useDynamicScope) {
+      bound=checkDynamicScope(cx.topCallScope,bound);
+    }
+    bound.put(id,bound,value);
+  }
+  return value;
+}

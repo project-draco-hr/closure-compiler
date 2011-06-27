@@ -1,0 +1,17 @@
+{
+  cfw.startMethod("super$" + methodName,methodSignature,ClassFileWriter.ACC_PUBLIC);
+  cfw.add(ByteCode.ALOAD,0);
+  int paramOffset=1;
+  for (int i=0; i < parms.length; i++) {
+    paramOffset+=generatePushParam(cfw,paramOffset,parms[i]);
+  }
+  cfw.addInvoke(ByteCode.INVOKESPECIAL,superName,methodName,methodSignature);
+  Class<?> retType=returnType;
+  if (!retType.equals(Void.TYPE)) {
+    generatePopResult(cfw,retType);
+  }
+ else {
+    cfw.add(ByteCode.RETURN);
+  }
+  cfw.stopMethod((short)(paramOffset + 1));
+}

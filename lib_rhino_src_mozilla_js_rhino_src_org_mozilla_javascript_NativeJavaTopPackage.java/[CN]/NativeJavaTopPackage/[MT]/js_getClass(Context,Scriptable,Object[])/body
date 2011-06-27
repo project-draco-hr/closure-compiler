@@ -1,0 +1,18 @@
+{
+  if (args.length > 0 && args[0] instanceof Wrapper) {
+    Scriptable result=this;
+    Class<?> cl=((Wrapper)args[0]).unwrap().getClass();
+    String name=cl.getName();
+    int offset=0;
+    for (; ; ) {
+      int index=name.indexOf('.',offset);
+      String propName=index == -1 ? name.substring(offset) : name.substring(offset,index);
+      Object prop=result.get(propName,result);
+      if (!(prop instanceof Scriptable))       break;
+      result=(Scriptable)prop;
+      if (index == -1)       return result;
+      offset=index + 1;
+    }
+  }
+  throw Context.reportRuntimeError0("msg.not.java.obj");
+}

@@ -1,0 +1,42 @@
+{
+  if (node.isDestructuring()) {
+    return node;
+  }
+  decompiler.addToken(Token.LC);
+  List<ObjectProperty> elems=node.getElements();
+  Node object=new Node(Token.OBJECTLIT);
+  Object[] properties;
+  if (elems.isEmpty()) {
+    properties=ScriptRuntime.emptyArgs;
+  }
+ else {
+    int size=elems.size(), i=0;
+    properties=new Object[size];
+    for (    ObjectProperty prop : elems) {
+      if (prop.isGetter()) {
+        decompiler.addToken(Token.GET);
+      }
+ else       if (prop.isSetter()) {
+        decompiler.addToken(Token.SET);
+      }
+      properties[i++]=getPropKey(prop.getLeft());
+      if (!(prop.isGetter() || prop.isSetter())) {
+        decompiler.addToken(Token.OBJECTLIT);
+      }
+      Node right=transform(prop.getRight());
+      if (prop.isGetter()) {
+        right=createUnary(Token.GET,right);
+      }
+ else       if (prop.isSetter()) {
+        right=createUnary(Token.SET,right);
+      }
+      object.addChildToBack(right);
+      if (i < size) {
+        decompiler.addToken(Token.COMMA);
+      }
+    }
+  }
+  decompiler.addToken(Token.RC);
+  object.putProp(Node.OBJECT_IDS_PROP,properties);
+  return object;
+}

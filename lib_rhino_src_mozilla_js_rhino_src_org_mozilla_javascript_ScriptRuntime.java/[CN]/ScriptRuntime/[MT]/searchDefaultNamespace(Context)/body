@@ -1,0 +1,23 @@
+{
+  Scriptable scope=cx.currentActivationCall;
+  if (scope == null) {
+    scope=getTopCallScope(cx);
+  }
+  Object nsObject;
+  for (; ; ) {
+    Scriptable parent=scope.getParentScope();
+    if (parent == null) {
+      nsObject=ScriptableObject.getProperty(scope,DEFAULT_NS_TAG);
+      if (nsObject == Scriptable.NOT_FOUND) {
+        return null;
+      }
+      break;
+    }
+    nsObject=scope.get(DEFAULT_NS_TAG,scope);
+    if (nsObject != Scriptable.NOT_FOUND) {
+      break;
+    }
+    scope=parent;
+  }
+  return nsObject;
+}

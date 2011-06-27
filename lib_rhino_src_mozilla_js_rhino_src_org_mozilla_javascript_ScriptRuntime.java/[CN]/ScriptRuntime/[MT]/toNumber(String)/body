@@ -1,0 +1,52 @@
+{
+  int len=s.length();
+  int start=0;
+  char startChar;
+  for (; ; ) {
+    if (start == len) {
+      return +0.0;
+    }
+    startChar=s.charAt(start);
+    if (!ScriptRuntime.isStrWhiteSpaceChar(startChar))     break;
+    start++;
+  }
+  if (startChar == '0') {
+    if (start + 2 < len) {
+      int c1=s.charAt(start + 1);
+      if (c1 == 'x' || c1 == 'X') {
+        return stringToNumber(s,start + 2,16);
+      }
+    }
+  }
+ else   if (startChar == '+' || startChar == '-') {
+    if (start + 3 < len && s.charAt(start + 1) == '0') {
+      int c2=s.charAt(start + 2);
+      if (c2 == 'x' || c2 == 'X') {
+        double val=stringToNumber(s,start + 3,16);
+        return startChar == '-' ? -val : val;
+      }
+    }
+  }
+  int end=len - 1;
+  char endChar;
+  while (ScriptRuntime.isStrWhiteSpaceChar(endChar=s.charAt(end)))   end--;
+  if (endChar == 'y') {
+    if (startChar == '+' || startChar == '-')     start++;
+    if (start + 7 == end && s.regionMatches(start,"Infinity",0,8))     return startChar == '-' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+    return NaN;
+  }
+  String sub=s.substring(start,end + 1);
+  if (MSJVM_BUG_WORKAROUNDS) {
+    for (int i=sub.length() - 1; i >= 0; i--) {
+      char c=sub.charAt(i);
+      if (('0' <= c && c <= '9') || c == '.' || c == 'e' || c == 'E' || c == '+' || c == '-')       continue;
+      return NaN;
+    }
+  }
+  try {
+    return Double.valueOf(sub).doubleValue();
+  }
+ catch (  NumberFormatException ex) {
+    return NaN;
+  }
+}

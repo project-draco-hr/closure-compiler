@@ -1,0 +1,31 @@
+{
+  if (currentToken != Token.CONTINUE)   codeBug();
+  consumeToken();
+  int lineno=ts.lineno, pos=ts.tokenBeg, end=ts.tokenEnd;
+  Name label=null;
+  if (peekTokenOrEOL() == Token.NAME) {
+    label=createNameNode();
+    end=getNodeEnd(label);
+  }
+  LabeledStatement labels=matchJumpLabelName();
+  Loop target=null;
+  if (labels == null && label == null) {
+    if (loopSet == null || loopSet.size() == 0) {
+      reportError("msg.continue.outside");
+    }
+ else {
+      target=loopSet.get(loopSet.size() - 1);
+    }
+  }
+ else {
+    if (labels == null || !(labels.getStatement() instanceof Loop)) {
+      reportError("msg.continue.nonloop",pos,end - pos);
+    }
+    target=labels == null ? null : (Loop)labels.getStatement();
+  }
+  ContinueStatement pn=new ContinueStatement(pos,end - pos);
+  if (target != null)   pn.setTarget(target);
+  pn.setLabel(label);
+  pn.setLineno(lineno);
+  return pn;
+}

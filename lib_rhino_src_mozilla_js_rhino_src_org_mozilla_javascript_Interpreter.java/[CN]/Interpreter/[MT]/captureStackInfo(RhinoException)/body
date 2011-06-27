@@ -1,0 +1,39 @@
+{
+  Context cx=Context.getCurrentContext();
+  if (cx == null || cx.lastInterpreterFrame == null) {
+    ex.interpreterStackInfo=null;
+    ex.interpreterLineData=null;
+    return;
+  }
+  CallFrame[] array;
+  if (cx.previousInterpreterInvocations == null || cx.previousInterpreterInvocations.size() == 0) {
+    array=new CallFrame[1];
+  }
+ else {
+    int previousCount=cx.previousInterpreterInvocations.size();
+    if (cx.previousInterpreterInvocations.peek() == cx.lastInterpreterFrame) {
+      --previousCount;
+    }
+    array=new CallFrame[previousCount + 1];
+    cx.previousInterpreterInvocations.toArray(array);
+  }
+  array[array.length - 1]=(CallFrame)cx.lastInterpreterFrame;
+  int interpreterFrameCount=0;
+  for (int i=0; i != array.length; ++i) {
+    interpreterFrameCount+=1 + array[i].frameIndex;
+  }
+  int[] linePC=new int[interpreterFrameCount];
+  int linePCIndex=interpreterFrameCount;
+  for (int i=array.length; i != 0; ) {
+    --i;
+    CallFrame frame=array[i];
+    while (frame != null) {
+      --linePCIndex;
+      linePC[linePCIndex]=frame.pcSourceLineStart;
+      frame=frame.parentFrame;
+    }
+  }
+  if (linePCIndex != 0)   Kit.codeBug();
+  ex.interpreterStackInfo=array;
+  ex.interpreterLineData=linePC;
+}

@@ -1,0 +1,16 @@
+{
+  AstRoot root=parse("\nfunction\n" + "    foo(\n" + "    a,\n"+ "    b,\n"+ "    c) {\n"+ "}\n");
+  FunctionNode function=(FunctionNode)root.getFirstChild();
+  Name functionName=function.getFunctionName();
+  AstNode body=function.getBody();
+  List<AstNode> params=function.getParams();
+  AstNode param1=params.get(0);
+  AstNode param2=params.get(1);
+  AstNode param3=params.get(2);
+  assertEquals(1,function.getLineno());
+  assertEquals(2,functionName.getLineno());
+  assertEquals(3,param1.getLineno());
+  assertEquals(4,param2.getLineno());
+  assertEquals(5,param3.getLineno());
+  assertEquals(5,body.getLineno());
+}

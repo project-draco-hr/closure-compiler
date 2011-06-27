@@ -1,0 +1,26 @@
+{
+  Script script;
+  if (path.endsWith(".class")) {
+    script=loadCompiledScript(cx,path,securityDomain);
+  }
+ else {
+    String source=(String)readFileOrUrl(path,true);
+    if (source == null) {
+      exitCode=EXITCODE_FILE_NOT_FOUND;
+      return;
+    }
+    if (source.length() > 0 && source.charAt(0) == '#') {
+      for (int i=1; i != source.length(); ++i) {
+        int c=source.charAt(i);
+        if (c == '\n' || c == '\r') {
+          source=source.substring(i);
+          break;
+        }
+      }
+    }
+    script=loadScriptFromSource(cx,source,path,1,securityDomain);
+  }
+  if (script != null) {
+    evaluateScript(script,cx,scope);
+  }
+}

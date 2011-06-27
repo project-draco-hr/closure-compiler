@@ -1,0 +1,45 @@
+{
+  boolean result=true;
+  if (!qnamesEqual(xmlOne.getName(),xmlTwo.getName())) {
+    result=false;
+  }
+ else {
+    nextToken(xmlOne);
+    nextToken(xmlTwo);
+    do {
+      if (xmlOne.currentTokenType() != xmlTwo.currentTokenType()) {
+        result=false;
+        break;
+      }
+ else       if (xmlOne.isEnd()) {
+        break;
+      }
+ else       if (xmlOne.isEnddoc()) {
+        break;
+      }
+ else       if (xmlOne.isAttr()) {
+        result=attributeListsEqual(xmlOne,xmlTwo);
+      }
+ else {
+        if (xmlOne.isText()) {
+          result=textNodesEqual(xmlOne,xmlTwo);
+        }
+ else         if (xmlOne.isComment()) {
+          result=commentsEqual(xmlOne,xmlTwo);
+        }
+ else         if (xmlOne.isProcinst()) {
+          result=processingInstructionsEqual(xmlOne,xmlTwo);
+        }
+ else         if (xmlOne.isStart()) {
+          result=elementsEqual(xmlOne,xmlTwo);
+        }
+ else {
+        }
+        nextToken(xmlOne);
+        nextToken(xmlTwo);
+      }
+    }
+ while (result);
+  }
+  return result;
+}

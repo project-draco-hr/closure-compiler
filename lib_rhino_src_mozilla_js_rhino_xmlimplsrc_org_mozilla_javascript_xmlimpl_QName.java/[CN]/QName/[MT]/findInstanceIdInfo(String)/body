@@ -1,0 +1,29 @@
+{
+  int id;
+  L0: {
+    id=0;
+    String X=null;
+    int s_length=s.length();
+    if (s_length == 3) {
+      X="uri";
+      id=Id_uri;
+    }
+ else     if (s_length == 9) {
+      X="localName";
+      id=Id_localName;
+    }
+    if (X != null && X != s && !X.equals(s))     id=0;
+    break L0;
+  }
+  if (id == 0)   return super.findInstanceIdInfo(s);
+  int attr;
+switch (id) {
+case Id_localName:
+case Id_uri:
+    attr=PERMANENT | READONLY;
+  break;
+default :
+throw new IllegalStateException();
+}
+return instanceIdInfo(attr,super.getMaxInstanceId() + id);
+}

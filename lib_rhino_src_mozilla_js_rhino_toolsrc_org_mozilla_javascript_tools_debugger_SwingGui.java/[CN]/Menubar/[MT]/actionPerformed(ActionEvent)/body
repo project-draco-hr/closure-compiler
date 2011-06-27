@@ -1,0 +1,36 @@
+{
+  String cmd=e.getActionCommand();
+  String plaf_name=null;
+  if (cmd.equals("Metal")) {
+    plaf_name="javax.swing.plaf.metal.MetalLookAndFeel";
+  }
+ else   if (cmd.equals("Windows")) {
+    plaf_name="com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+  }
+ else   if (cmd.equals("Motif")) {
+    plaf_name="com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+  }
+ else {
+    Object source=e.getSource();
+    if (source == breakOnExceptions) {
+      debugGui.dim.setBreakOnExceptions(breakOnExceptions.isSelected());
+    }
+ else     if (source == breakOnEnter) {
+      debugGui.dim.setBreakOnEnter(breakOnEnter.isSelected());
+    }
+ else     if (source == breakOnReturn) {
+      debugGui.dim.setBreakOnReturn(breakOnReturn.isSelected());
+    }
+ else {
+      debugGui.actionPerformed(e);
+    }
+    return;
+  }
+  try {
+    UIManager.setLookAndFeel(plaf_name);
+    SwingUtilities.updateComponentTreeUI(debugGui);
+    SwingUtilities.updateComponentTreeUI(debugGui.dlg);
+  }
+ catch (  Exception ignored) {
+  }
+}

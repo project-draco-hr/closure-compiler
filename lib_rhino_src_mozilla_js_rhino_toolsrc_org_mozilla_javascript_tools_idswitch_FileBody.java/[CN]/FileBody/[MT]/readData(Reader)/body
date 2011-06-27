@@ -1,0 +1,18 @@
+{
+  int capacity=buffer.length;
+  int offset=0;
+  for (; ; ) {
+    int n_read=r.read(buffer,offset,capacity - offset);
+    if (n_read < 0) {
+      break;
+    }
+    offset+=n_read;
+    if (capacity == offset) {
+      capacity*=2;
+      char[] tmp=new char[capacity];
+      System.arraycopy(buffer,0,tmp,0,offset);
+      buffer=tmp;
+    }
+  }
+  bufferEnd=offset;
+}

@@ -1,0 +1,22 @@
+{
+  if ((end - start) * 3 <= MAX_UTF_ENCODING_SIZE) {
+    return end;
+  }
+  int limit=MAX_UTF_ENCODING_SIZE;
+  for (int i=start; i != end; i++) {
+    int c=s.charAt(i);
+    if (0 != c && c <= 0x7F) {
+      --limit;
+    }
+ else     if (c < 0x7FF) {
+      limit-=2;
+    }
+ else {
+      limit-=3;
+    }
+    if (limit < 0) {
+      return i;
+    }
+  }
+  return end;
+}

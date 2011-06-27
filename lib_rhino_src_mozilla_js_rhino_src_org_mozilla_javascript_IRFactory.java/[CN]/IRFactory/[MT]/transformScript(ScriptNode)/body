@@ -1,0 +1,15 @@
+{
+  decompiler.addToken(Token.SCRIPT);
+  if (currentScope != null)   Kit.codeBug();
+  currentScope=node;
+  Node body=new Node(Token.BLOCK);
+  for (  Node kid : node) {
+    body.addChildToBack(transform((AstNode)kid));
+  }
+  node.removeChildren();
+  Node children=body.getFirstChild();
+  if (children != null) {
+    node.addChildrenToBack(children);
+  }
+  return node;
+}

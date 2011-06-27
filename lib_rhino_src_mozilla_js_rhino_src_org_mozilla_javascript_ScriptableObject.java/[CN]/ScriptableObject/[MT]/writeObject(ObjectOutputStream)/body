@@ -1,0 +1,27 @@
+{
+  out.defaultWriteObject();
+  int objectsCount=count;
+  if (objectsCount < 0) {
+    objectsCount=~objectsCount;
+  }
+  if (objectsCount == 0) {
+    out.writeInt(0);
+  }
+ else {
+    out.writeInt(slots.length);
+    Slot slot=firstAdded;
+    while (slot != null && slot.wasDeleted) {
+      slot=slot.orderedNext;
+    }
+    firstAdded=slot;
+    while (slot != null) {
+      out.writeObject(slot);
+      Slot next=slot.orderedNext;
+      while (next != null && next.wasDeleted) {
+        next=next.orderedNext;
+      }
+      slot.orderedNext=next;
+      slot=next;
+    }
+  }
+}

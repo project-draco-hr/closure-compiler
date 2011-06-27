@@ -1,0 +1,26 @@
+{
+  if (DEBUGCODE) {
+    System.out.println("Add " + bytecodeStr(ByteCode.TABLESWITCH) + " "+ low+ " "+ high);
+  }
+  if (low > high)   throw new ClassFileFormatException("Bad bounds: " + low + ' '+ high);
+  int newStack=itsStackTop + stackChange(ByteCode.TABLESWITCH);
+  if (newStack < 0 || Short.MAX_VALUE < newStack)   badStack(newStack);
+  int entryCount=high - low + 1;
+  int padSize=3 & ~itsCodeBufferTop;
+  int N=addReservedCodeSpace(1 + padSize + 4 * (1 + 2 + entryCount));
+  int switchStart=N;
+  itsCodeBuffer[N++]=(byte)ByteCode.TABLESWITCH;
+  while (padSize != 0) {
+    itsCodeBuffer[N++]=0;
+    --padSize;
+  }
+  N+=4;
+  N=putInt32(low,itsCodeBuffer,N);
+  putInt32(high,itsCodeBuffer,N);
+  itsStackTop=(short)newStack;
+  if (newStack > itsMaxStack)   itsMaxStack=(short)newStack;
+  if (DEBUGSTACK) {
+    System.out.println("After " + bytecodeStr(ByteCode.TABLESWITCH) + " stack = "+ itsStackTop);
+  }
+  return switchStart;
+}

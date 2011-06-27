@@ -1,0 +1,14 @@
+{
+  frame.frozen=false;
+  int sourceLine=getIndex(frame.idata.itsICode,frame.pc);
+  frame.pc+=2;
+  if (generatorState.operation == NativeGenerator.GENERATOR_THROW) {
+    return new JavaScriptException(generatorState.value,frame.idata.itsSourceFile,sourceLine);
+  }
+  if (generatorState.operation == NativeGenerator.GENERATOR_CLOSE) {
+    return generatorState.value;
+  }
+  if (generatorState.operation != NativeGenerator.GENERATOR_SEND)   throw Kit.codeBug();
+  if (op == Token.YIELD)   frame.stack[stackTop]=generatorState.value;
+  return Scriptable.NOT_FOUND;
+}

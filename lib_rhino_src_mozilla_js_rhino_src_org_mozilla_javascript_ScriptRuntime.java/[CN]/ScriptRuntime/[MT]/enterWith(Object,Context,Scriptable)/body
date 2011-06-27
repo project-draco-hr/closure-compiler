@@ -1,0 +1,11 @@
+{
+  Scriptable sobj=toObjectOrNull(cx,obj);
+  if (sobj == null) {
+    throw typeError1("msg.undef.with",toString(obj));
+  }
+  if (sobj instanceof XMLObject) {
+    XMLObject xmlObject=(XMLObject)sobj;
+    return xmlObject.enterWith(scope);
+  }
+  return new NativeWith(scope,sobj);
+}

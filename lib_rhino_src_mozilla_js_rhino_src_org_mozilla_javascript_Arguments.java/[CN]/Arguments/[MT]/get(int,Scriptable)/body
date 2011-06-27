@@ -1,0 +1,15 @@
+{
+  if (0 <= index && index < args.length) {
+    Object value=args[index];
+    if (value != NOT_FOUND) {
+      if (sharedWithActivation(index)) {
+        NativeFunction f=activation.function;
+        String argName=f.getParamOrVarName(index);
+        value=activation.get(argName,activation);
+        if (value == NOT_FOUND)         Kit.codeBug();
+      }
+      return value;
+    }
+  }
+  return super.get(index,start);
+}

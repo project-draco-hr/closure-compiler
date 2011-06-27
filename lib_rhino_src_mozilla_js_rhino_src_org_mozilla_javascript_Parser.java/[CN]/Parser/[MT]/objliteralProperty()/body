@@ -1,0 +1,26 @@
+{
+  AstNode pname;
+  int tt=peekToken();
+switch (tt) {
+case Token.NAME:
+    pname=createNameNode();
+  break;
+case Token.STRING:
+pname=createStringLiteral();
+break;
+case Token.NUMBER:
+pname=new NumberLiteral(ts.tokenBeg,ts.getString(),ts.getNumber());
+break;
+default :
+if (compilerEnv.isAllowKeywordAsObjectPropertyName() && TokenStream.isKeyword(ts.getString())) {
+pname=createNameNode();
+}
+ else {
+reportError("msg.bad.prop");
+return null;
+}
+break;
+}
+consumeToken();
+return pname;
+}

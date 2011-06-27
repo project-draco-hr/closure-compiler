@@ -1,0 +1,17 @@
+{
+  if (args.length == 0)   return new NativeArray(0);
+  if (cx.getLanguageVersion() == Context.VERSION_1_2) {
+    return new NativeArray(args);
+  }
+ else {
+    Object arg0=args[0];
+    if (args.length > 1 || !(arg0 instanceof Number)) {
+      return new NativeArray(args);
+    }
+ else {
+      long len=ScriptRuntime.toUint32(arg0);
+      if (len != ((Number)arg0).doubleValue())       throw Context.reportRuntimeError0("msg.arraylength.bad");
+      return new NativeArray(len);
+    }
+  }
+}

@@ -1,0 +1,211 @@
+{
+  int type=node.getType();
+  Node child=node.getFirstChild();
+switch (type) {
+case Token.FUNCTION:
+{
+      int fnIndex=node.getExistingIntProp(Node.FUNCTION_PROP);
+      int fnType=scriptOrFn.getFunctionNode(fnIndex).getFunctionType();
+      if (fnType == FunctionNode.FUNCTION_EXPRESSION_STATEMENT) {
+        addIndexOp(Icode_CLOSURE_STMT,fnIndex);
+      }
+ else {
+        if (fnType != FunctionNode.FUNCTION_STATEMENT) {
+          throw Kit.codeBug();
+        }
+      }
+      if (!itsInFunctionFlag) {
+        addIndexOp(Icode_CLOSURE_EXPR,fnIndex);
+        stackChange(1);
+        addIcode(Icode_POP_RESULT);
+        stackChange(-1);
+      }
+    }
+  break;
+case Token.LABEL:
+case Token.LOOP:
+case Token.BLOCK:
+case Token.EMPTY:
+case Token.WITH:
+updateLineNumber(node);
+case Token.SCRIPT:
+while (child != null) {
+visitStatement(child,initialStackDepth);
+child=child.getNext();
+}
+break;
+case Token.ENTERWITH:
+visitExpression(child,0);
+addToken(Token.ENTERWITH);
+stackChange(-1);
+break;
+case Token.LEAVEWITH:
+addToken(Token.LEAVEWITH);
+break;
+case Token.LOCAL_BLOCK:
+{
+int local=allocLocal();
+node.putIntProp(Node.LOCAL_PROP,local);
+updateLineNumber(node);
+while (child != null) {
+visitStatement(child,initialStackDepth);
+child=child.getNext();
+}
+addIndexOp(Icode_LOCAL_CLEAR,local);
+releaseLocal(local);
+}
+break;
+case Token.DEBUGGER:
+addIcode(Icode_DEBUGGER);
+break;
+case Token.SWITCH:
+updateLineNumber(node);
+{
+visitExpression(child,0);
+for (Jump caseNode=(Jump)child.getNext(); caseNode != null; caseNode=(Jump)caseNode.getNext()) {
+if (caseNode.getType() != Token.CASE) throw badTree(caseNode);
+Node test=caseNode.getFirstChild();
+addIcode(Icode_DUP);
+stackChange(1);
+visitExpression(test,0);
+addToken(Token.SHEQ);
+stackChange(-1);
+addGoto(caseNode.target,Icode_IFEQ_POP);
+stackChange(-1);
+}
+addIcode(Icode_POP);
+stackChange(-1);
+}
+break;
+case Token.TARGET:
+markTargetLabel(node);
+break;
+case Token.IFEQ:
+case Token.IFNE:
+{
+Node target=((Jump)node).target;
+visitExpression(child,0);
+addGoto(target,type);
+stackChange(-1);
+}
+break;
+case Token.GOTO:
+{
+Node target=((Jump)node).target;
+addGoto(target,type);
+}
+break;
+case Token.JSR:
+{
+Node target=((Jump)node).target;
+addGoto(target,Icode_GOSUB);
+}
+break;
+case Token.FINALLY:
+{
+stackChange(1);
+int finallyRegister=getLocalBlockRef(node);
+addIndexOp(Icode_STARTSUB,finallyRegister);
+stackChange(-1);
+while (child != null) {
+visitStatement(child,initialStackDepth);
+child=child.getNext();
+}
+addIndexOp(Icode_RETSUB,finallyRegister);
+}
+break;
+case Token.EXPR_VOID:
+case Token.EXPR_RESULT:
+updateLineNumber(node);
+visitExpression(child,0);
+addIcode((type == Token.EXPR_VOID) ? Icode_POP : Icode_POP_RESULT);
+stackChange(-1);
+break;
+case Token.TRY:
+{
+Jump tryNode=(Jump)node;
+int exceptionObjectLocal=getLocalBlockRef(tryNode);
+int scopeLocal=allocLocal();
+addIndexOp(Icode_SCOPE_SAVE,scopeLocal);
+int tryStart=iCodeTop;
+boolean savedFlag=itsInTryFlag;
+itsInTryFlag=true;
+while (child != null) {
+visitStatement(child,initialStackDepth);
+child=child.getNext();
+}
+itsInTryFlag=savedFlag;
+Node catchTarget=tryNode.target;
+if (catchTarget != null) {
+int catchStartPC=labelTable[getTargetLabel(catchTarget)];
+addExceptionHandler(tryStart,catchStartPC,catchStartPC,false,exceptionObjectLocal,scopeLocal);
+}
+Node finallyTarget=tryNode.getFinally();
+if (finallyTarget != null) {
+int finallyStartPC=labelTable[getTargetLabel(finallyTarget)];
+addExceptionHandler(tryStart,finallyStartPC,finallyStartPC,true,exceptionObjectLocal,scopeLocal);
+}
+addIndexOp(Icode_LOCAL_CLEAR,scopeLocal);
+releaseLocal(scopeLocal);
+}
+break;
+case Token.CATCH_SCOPE:
+{
+int localIndex=getLocalBlockRef(node);
+int scopeIndex=node.getExistingIntProp(Node.CATCH_SCOPE_PROP);
+String name=child.getString();
+child=child.getNext();
+visitExpression(child,0);
+addStringPrefix(name);
+addIndexPrefix(localIndex);
+addToken(Token.CATCH_SCOPE);
+addUint8(scopeIndex != 0 ? 1 : 0);
+stackChange(-1);
+}
+break;
+case Token.THROW:
+updateLineNumber(node);
+visitExpression(child,0);
+addToken(Token.THROW);
+addUint16(lineNumber & 0xFFFF);
+stackChange(-1);
+break;
+case Token.RETHROW:
+updateLineNumber(node);
+addIndexOp(Token.RETHROW,getLocalBlockRef(node));
+break;
+case Token.RETURN:
+updateLineNumber(node);
+if (node.getIntProp(Node.GENERATOR_END_PROP,0) != 0) {
+addIcode(Icode_GENERATOR_END);
+addUint16(lineNumber & 0xFFFF);
+}
+ else if (child != null) {
+visitExpression(child,ECF_TAIL);
+addToken(Token.RETURN);
+stackChange(-1);
+}
+ else {
+addIcode(Icode_RETUNDEF);
+}
+break;
+case Token.RETURN_RESULT:
+updateLineNumber(node);
+addToken(Token.RETURN_RESULT);
+break;
+case Token.ENUM_INIT_KEYS:
+case Token.ENUM_INIT_VALUES:
+case Token.ENUM_INIT_ARRAY:
+visitExpression(child,0);
+addIndexOp(type,getLocalBlockRef(node));
+stackChange(-1);
+break;
+case Icode_GENERATOR:
+break;
+default :
+throw badTree(node);
+}
+if (stackDepth != initialStackDepth) {
+throw Kit.codeBug();
+}
+}

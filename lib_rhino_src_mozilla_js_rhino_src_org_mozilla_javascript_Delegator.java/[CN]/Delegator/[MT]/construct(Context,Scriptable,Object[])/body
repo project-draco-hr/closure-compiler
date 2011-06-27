@@ -1,0 +1,17 @@
+{
+  if (obj == null) {
+    Delegator n=newInstance();
+    Scriptable delegee;
+    if (args.length == 0) {
+      delegee=new NativeObject();
+    }
+ else {
+      delegee=ScriptRuntime.toObject(cx,scope,args[0]);
+    }
+    n.setDelegee(delegee);
+    return n;
+  }
+ else {
+    return ((Function)obj).construct(cx,scope,args);
+  }
+}

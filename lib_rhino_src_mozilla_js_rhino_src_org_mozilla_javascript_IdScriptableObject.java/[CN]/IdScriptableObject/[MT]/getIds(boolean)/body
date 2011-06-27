@@ -1,0 +1,41 @@
+{
+  Object[] result=super.getIds(getAll);
+  if (prototypeValues != null) {
+    result=prototypeValues.getNames(getAll,result);
+  }
+  int maxInstanceId=getMaxInstanceId();
+  if (maxInstanceId != 0) {
+    Object[] ids=null;
+    int count=0;
+    for (int id=maxInstanceId; id != 0; --id) {
+      String name=getInstanceIdName(id);
+      int info=findInstanceIdInfo(name);
+      if (info != 0) {
+        int attr=(info >>> 16);
+        if ((attr & PERMANENT) == 0) {
+          if (NOT_FOUND == getInstanceIdValue(id)) {
+            continue;
+          }
+        }
+        if (getAll || (attr & DONTENUM) == 0) {
+          if (count == 0) {
+            ids=new Object[id];
+          }
+          ids[count++]=name;
+        }
+      }
+    }
+    if (count != 0) {
+      if (result.length == 0 && ids.length == count) {
+        result=ids;
+      }
+ else {
+        Object[] tmp=new Object[result.length + count];
+        System.arraycopy(result,0,tmp,0,result.length);
+        System.arraycopy(ids,0,tmp,result.length,count);
+        result=tmp;
+      }
+    }
+  }
+  return result;
+}

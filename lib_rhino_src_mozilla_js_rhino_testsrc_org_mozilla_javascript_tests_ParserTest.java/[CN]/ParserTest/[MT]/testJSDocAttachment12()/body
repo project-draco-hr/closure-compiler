@@ -1,0 +1,10 @@
+{
+  AstRoot root=parse("({/** attach me */ get 1() {}});");
+  assertNotNull(root.getComments());
+  assertEquals(1,root.getComments().size());
+  ExpressionStatement st=(ExpressionStatement)root.getFirstChild();
+  ParenthesizedExpression pt=(ParenthesizedExpression)st.getExpression();
+  ObjectLiteral lit=(ObjectLiteral)pt.getExpression();
+  NumberLiteral number=(NumberLiteral)lit.getElements().get(0).getLeft();
+  assertNotNull(number.getJsDoc());
+}

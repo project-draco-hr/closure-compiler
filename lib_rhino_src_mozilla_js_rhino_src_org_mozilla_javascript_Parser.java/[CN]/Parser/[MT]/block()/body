@@ -1,0 +1,17 @@
+{
+  if (currentToken != Token.LC)   codeBug();
+  consumeToken();
+  int pos=ts.tokenBeg;
+  Scope block=new Scope(pos);
+  block.setLineno(ts.lineno);
+  pushScope(block);
+  try {
+    statements(block);
+    mustMatchToken(Token.RC,"msg.no.brace.block");
+    block.setLength(ts.tokenEnd - pos);
+    return block;
+  }
+  finally {
+    popScope();
+  }
+}

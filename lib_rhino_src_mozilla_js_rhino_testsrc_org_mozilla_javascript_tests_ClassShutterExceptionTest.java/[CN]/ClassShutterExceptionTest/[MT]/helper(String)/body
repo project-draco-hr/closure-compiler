@@ -1,0 +1,19 @@
+{
+  Context cx=Context.enter();
+  Context.ClassShutterSetter setter=cx.getClassShutterSetter();
+  try {
+    Scriptable globalScope=cx.initStandardObjects();
+    if (setter == null) {
+      setter=classShutterSetter;
+    }
+ else {
+      classShutterSetter=setter;
+    }
+    setter.setClassShutter(new OpaqueShutter());
+    cx.evaluateString(globalScope,source,"test source",1,null);
+  }
+  finally {
+    setter.setClassShutter(null);
+    Context.exit();
+  }
+}

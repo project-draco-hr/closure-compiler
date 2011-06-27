@@ -1,0 +1,12 @@
+{
+  if (opcodeCount(theOpCode) != 0)   throw new IllegalArgumentException("Unexpected operands");
+  int newStack=itsStackTop + stackChange(theOpCode);
+  if (newStack < 0 || Short.MAX_VALUE < newStack)   badStack(newStack);
+  if (DEBUGCODE)   System.out.println("Add " + bytecodeStr(theOpCode));
+  addToCodeBuffer(theOpCode);
+  itsStackTop=(short)newStack;
+  if (newStack > itsMaxStack)   itsMaxStack=(short)newStack;
+  if (DEBUGSTACK) {
+    System.out.println("After " + bytecodeStr(theOpCode) + " stack = "+ itsStackTop);
+  }
+}

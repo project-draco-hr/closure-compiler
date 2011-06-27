@@ -1,0 +1,25 @@
+{
+  Map<String,Object> ht=isStatic ? staticMembers : members;
+  Object member=null;
+  MemberBox methodOrCtor=findExplicitFunction(name,isStatic);
+  if (methodOrCtor != null) {
+    Scriptable prototype=ScriptableObject.getFunctionPrototype(scope);
+    if (methodOrCtor.isCtor()) {
+      NativeJavaConstructor fun=new NativeJavaConstructor(methodOrCtor);
+      fun.setPrototype(prototype);
+      member=fun;
+      ht.put(name,fun);
+    }
+ else {
+      String trueName=methodOrCtor.getName();
+      member=ht.get(trueName);
+      if (member instanceof NativeJavaMethod && ((NativeJavaMethod)member).methods.length > 1) {
+        NativeJavaMethod fun=new NativeJavaMethod(methodOrCtor,name);
+        fun.setPrototype(prototype);
+        ht.put(name,fun);
+        member=fun;
+      }
+    }
+  }
+  return member;
+}

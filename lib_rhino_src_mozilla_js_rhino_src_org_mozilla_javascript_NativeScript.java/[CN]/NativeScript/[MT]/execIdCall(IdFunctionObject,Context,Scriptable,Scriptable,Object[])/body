@@ -1,0 +1,37 @@
+{
+  if (!f.hasTag(SCRIPT_TAG)) {
+    return super.execIdCall(f,cx,scope,thisObj,args);
+  }
+  int id=f.methodId();
+switch (id) {
+case Id_constructor:
+{
+      String source=(args.length == 0) ? "" : ScriptRuntime.toString(args[0]);
+      Script script=compile(cx,source);
+      NativeScript nscript=new NativeScript(script);
+      ScriptRuntime.setObjectProtoAndParent(nscript,scope);
+      return nscript;
+    }
+case Id_toString:
+{
+    NativeScript real=realThis(thisObj,f);
+    Script realScript=real.script;
+    if (realScript == null) {
+      return "";
+    }
+    return cx.decompileScript(realScript,0);
+  }
+case Id_exec:
+{
+  throw Context.reportRuntimeError1("msg.cant.call.indirect","exec");
+}
+case Id_compile:
+{
+NativeScript real=realThis(thisObj,f);
+String source=ScriptRuntime.toString(args,0);
+real.script=compile(cx,source);
+return real;
+}
+}
+throw new IllegalArgumentException(String.valueOf(id));
+}

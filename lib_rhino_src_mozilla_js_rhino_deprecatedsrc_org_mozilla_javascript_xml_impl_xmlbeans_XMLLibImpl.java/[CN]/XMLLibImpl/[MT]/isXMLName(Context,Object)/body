@@ -1,0 +1,24 @@
+{
+  String name;
+  try {
+    name=ScriptRuntime.toString(nameObj);
+  }
+ catch (  EcmaError ee) {
+    if ("TypeError".equals(ee.getName())) {
+      return false;
+    }
+    throw ee;
+  }
+  int length=name.length();
+  if (length != 0) {
+    if (isNCNameStartChar(name.charAt(0))) {
+      for (int i=1; i != length; ++i) {
+        if (!isNCNameChar(name.charAt(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+  return false;
+}

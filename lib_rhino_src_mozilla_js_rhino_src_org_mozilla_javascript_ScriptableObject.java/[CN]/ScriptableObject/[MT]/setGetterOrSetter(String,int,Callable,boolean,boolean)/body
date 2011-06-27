@@ -1,0 +1,24 @@
+{
+  if (name != null && index != 0)   throw new IllegalArgumentException(name);
+  if (!force) {
+    checkNotSealed(name,index);
+  }
+  final GetterSlot gslot;
+  if (isExtensible()) {
+    gslot=(GetterSlot)getSlot(name,index,SLOT_MODIFY_GETTER_SETTER);
+  }
+ else {
+    gslot=(GetterSlot)getSlot(name,index,SLOT_QUERY);
+    if (gslot == null)     return;
+  }
+  if (!force) {
+    gslot.checkNotReadonly();
+  }
+  if (isSetter) {
+    gslot.setter=getterOrSetter;
+  }
+ else {
+    gslot.getter=getterOrSetter;
+  }
+  gslot.value=Undefined.instance;
+}

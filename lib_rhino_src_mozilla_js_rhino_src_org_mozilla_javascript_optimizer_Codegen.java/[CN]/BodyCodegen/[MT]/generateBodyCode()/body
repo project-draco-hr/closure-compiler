@@ -1,0 +1,25 @@
+{
+  isGenerator=Codegen.isGenerator(scriptOrFn);
+  initBodyGeneration();
+  if (isGenerator) {
+    String type="(" + codegen.mainClassSignature + "Lorg/mozilla/javascript/Context;"+ "Lorg/mozilla/javascript/Scriptable;"+ "Ljava/lang/Object;"+ "Ljava/lang/Object;I)Ljava/lang/Object;";
+    cfw.startMethod(codegen.getBodyMethodName(scriptOrFn) + "_gen",type,(short)(ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE));
+  }
+ else {
+    cfw.startMethod(codegen.getBodyMethodName(scriptOrFn),codegen.getBodyMethodSignature(scriptOrFn),(short)(ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE));
+  }
+  generatePrologue();
+  Node treeTop;
+  if (fnCurrent != null) {
+    treeTop=scriptOrFn.getLastChild();
+  }
+ else {
+    treeTop=scriptOrFn;
+  }
+  generateStatement(treeTop);
+  generateEpilogue();
+  cfw.stopMethod((short)(localsMax + 1));
+  if (isGenerator) {
+    generateGenerator();
+  }
+}

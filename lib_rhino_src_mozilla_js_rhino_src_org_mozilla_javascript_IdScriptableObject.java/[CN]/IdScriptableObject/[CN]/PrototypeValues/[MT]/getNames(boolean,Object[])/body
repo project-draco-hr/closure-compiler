@@ -1,0 +1,35 @@
+{
+  Object[] names=null;
+  int count=0;
+  for (int id=1; id <= maxId; ++id) {
+    Object value=ensureId(id);
+    if (getAll || (attributeArray[id - 1] & DONTENUM) == 0) {
+      if (value != NOT_FOUND) {
+        int nameSlot=(id - 1) * SLOT_SPAN + NAME_SLOT;
+        String name=(String)valueArray[nameSlot];
+        if (names == null) {
+          names=new Object[maxId];
+        }
+        names[count++]=name;
+      }
+    }
+  }
+  if (count == 0) {
+    return extraEntries;
+  }
+ else   if (extraEntries == null || extraEntries.length == 0) {
+    if (count != names.length) {
+      Object[] tmp=new Object[count];
+      System.arraycopy(names,0,tmp,0,count);
+      names=tmp;
+    }
+    return names;
+  }
+ else {
+    int extra=extraEntries.length;
+    Object[] tmp=new Object[extra + count];
+    System.arraycopy(extraEntries,0,tmp,0,extra);
+    System.arraycopy(names,0,tmp,extra,count);
+    return tmp;
+  }
+}

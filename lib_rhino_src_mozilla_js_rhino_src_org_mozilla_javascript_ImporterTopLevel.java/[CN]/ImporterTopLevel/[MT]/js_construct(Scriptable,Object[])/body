@@ -1,0 +1,18 @@
+{
+  ImporterTopLevel result=new ImporterTopLevel();
+  for (int i=0; i != args.length; ++i) {
+    Object arg=args[i];
+    if (arg instanceof NativeJavaClass) {
+      result.importClass((NativeJavaClass)arg);
+    }
+ else     if (arg instanceof NativeJavaPackage) {
+      result.importPackage((NativeJavaPackage)arg);
+    }
+ else {
+      throw Context.reportRuntimeError1("msg.not.class.not.pkg",Context.toString(arg));
+    }
+  }
+  result.setParentScope(scope);
+  result.setPrototype(this);
+  return result;
+}

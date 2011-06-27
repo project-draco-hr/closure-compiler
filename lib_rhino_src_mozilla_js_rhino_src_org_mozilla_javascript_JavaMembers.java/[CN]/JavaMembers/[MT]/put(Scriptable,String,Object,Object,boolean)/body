@@ -1,0 +1,52 @@
+{
+  Map<String,Object> ht=isStatic ? staticMembers : members;
+  Object member=ht.get(name);
+  if (!isStatic && member == null) {
+    member=staticMembers.get(name);
+  }
+  if (member == null)   throw reportMemberNotFound(name);
+  if (member instanceof FieldAndMethods) {
+    FieldAndMethods fam=(FieldAndMethods)ht.get(name);
+    member=fam.field;
+  }
+  if (member instanceof BeanProperty) {
+    BeanProperty bp=(BeanProperty)member;
+    if (bp.setter == null) {
+      throw reportMemberNotFound(name);
+    }
+    if (bp.setters == null || value == null) {
+      Class<?> setType=bp.setter.argTypes[0];
+      Object[] args={Context.jsToJava(value,setType)};
+      try {
+        bp.setter.invoke(javaObject,args);
+      }
+ catch (      Exception ex) {
+        throw Context.throwAsScriptRuntimeEx(ex);
+      }
+    }
+ else {
+      Object[] args={value};
+      bp.setters.call(Context.getContext(),ScriptableObject.getTopLevelScope(scope),scope,args);
+    }
+  }
+ else {
+    if (!(member instanceof Field)) {
+      String str=(member == null) ? "msg.java.internal.private" : "msg.java.method.assign";
+      throw Context.reportRuntimeError1(str,name);
+    }
+    Field field=(Field)member;
+    Object javaValue=Context.jsToJava(value,field.getType());
+    try {
+      field.set(javaObject,javaValue);
+    }
+ catch (    IllegalAccessException accessEx) {
+      if ((field.getModifiers() & Modifier.FINAL) != 0) {
+        return;
+      }
+      throw Context.throwAsScriptRuntimeEx(accessEx);
+    }
+catch (    IllegalArgumentException argEx) {
+      throw Context.reportRuntimeError3("msg.java.internal.field.type",value.getClass().getName(),field,javaObject.getClass().getName());
+    }
+  }
+}

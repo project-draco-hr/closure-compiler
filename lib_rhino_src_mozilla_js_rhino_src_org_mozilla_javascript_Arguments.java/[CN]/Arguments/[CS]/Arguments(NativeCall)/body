@@ -1,0 +1,17 @@
+{
+  this.activation=activation;
+  Scriptable parent=activation.getParentScope();
+  setParentScope(parent);
+  setPrototype(ScriptableObject.getObjectPrototype(parent));
+  args=activation.originalArgs;
+  lengthObj=Integer.valueOf(args.length);
+  NativeFunction f=activation.function;
+  calleeObj=f;
+  int version=f.getLanguageVersion();
+  if (version <= Context.VERSION_1_3 && version != Context.VERSION_DEFAULT) {
+    callerObj=null;
+  }
+ else {
+    callerObj=NOT_FOUND;
+  }
+}

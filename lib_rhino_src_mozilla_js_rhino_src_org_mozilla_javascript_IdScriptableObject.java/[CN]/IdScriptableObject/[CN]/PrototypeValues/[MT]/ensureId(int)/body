@@ -1,0 +1,29 @@
+{
+  Object[] array=valueArray;
+  if (array == null) {
+synchronized (this) {
+      array=valueArray;
+      if (array == null) {
+        array=new Object[maxId * SLOT_SPAN];
+        valueArray=array;
+        attributeArray=new short[maxId];
+      }
+    }
+  }
+  int valueSlot=(id - 1) * SLOT_SPAN + VALUE_SLOT;
+  Object value=array[valueSlot];
+  if (value == null) {
+    if (id == constructorId) {
+      initSlot(constructorId,"constructor",constructor,constructorAttrs);
+      constructor=null;
+    }
+ else {
+      obj.initPrototypeId(id);
+    }
+    value=array[valueSlot];
+    if (value == null) {
+      throw new IllegalStateException(obj.getClass().getName() + ".initPrototypeId(int id) " + "did not initialize id="+ id);
+    }
+  }
+  return value;
+}

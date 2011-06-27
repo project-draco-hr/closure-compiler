@@ -1,0 +1,33 @@
+{
+switch (type) {
+case OPEN_FILE:
+    try {
+      debugGui.dim.compileScript(fileName,text);
+    }
+ catch (    RuntimeException ex) {
+      MessageDialogWrapper.showMessageDialog(debugGui,ex.getMessage(),"Error Compiling " + fileName,JOptionPane.ERROR_MESSAGE);
+    }
+  break;
+case LOAD_FILE:
+try {
+  debugGui.dim.evalScript(fileName,text);
+}
+ catch (RuntimeException ex) {
+  MessageDialogWrapper.showMessageDialog(debugGui,ex.getMessage(),"Run error for " + fileName,JOptionPane.ERROR_MESSAGE);
+}
+break;
+case UPDATE_SOURCE_TEXT:
+{
+String fileName=sourceInfo.url();
+if (!debugGui.updateFileWindow(sourceInfo) && !fileName.equals("<stdin>")) {
+debugGui.createFileWindow(sourceInfo,-1);
+}
+}
+break;
+case ENTER_INTERRUPT:
+debugGui.enterInterruptImpl(lastFrame,threadTitle,alertMessage);
+break;
+default :
+throw new IllegalArgumentException(String.valueOf(type));
+}
+}

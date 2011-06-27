@@ -1,0 +1,34 @@
+{
+  int i=ip[0];
+  int length=target.length();
+  if (version == Context.VERSION_1_2 && re == null && separator.length() == 1 && separator.charAt(0) == ' ') {
+    if (i == 0) {
+      while (i < length && Character.isWhitespace(target.charAt(i)))       i++;
+      ip[0]=i;
+    }
+    if (i == length)     return -1;
+    while (i < length && !Character.isWhitespace(target.charAt(i)))     i++;
+    int j=i;
+    while (j < length && Character.isWhitespace(target.charAt(j)))     j++;
+    matchlen[0]=j - i;
+    return i;
+  }
+  if (i > length)   return -1;
+  if (re != null) {
+    return reProxy.find_split(cx,scope,target,separator,re,ip,matchlen,matched,parensp);
+  }
+  if (version != Context.VERSION_DEFAULT && version < Context.VERSION_1_3 && length == 0)   return -1;
+  if (separator.length() == 0) {
+    if (version == Context.VERSION_1_2) {
+      if (i == length) {
+        matchlen[0]=1;
+        return i;
+      }
+      return i + 1;
+    }
+    return (i == length) ? -1 : i + 1;
+  }
+  if (ip[0] >= length)   return length;
+  i=target.indexOf(separator,ip[0]);
+  return (i != -1) ? i : length;
+}

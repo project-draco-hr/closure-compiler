@@ -1,0 +1,19 @@
+{
+  if (scope == null)   throw new IllegalArgumentException();
+  if (cx.topCallScope != null)   throw new IllegalStateException();
+  Object result;
+  cx.topCallScope=ScriptableObject.getTopLevelScope(scope);
+  cx.useDynamicScope=cx.hasFeature(Context.FEATURE_DYNAMIC_SCOPE);
+  ContextFactory f=cx.getFactory();
+  try {
+    result=f.doTopCall(callable,cx,scope,thisObj,args);
+  }
+  finally {
+    cx.topCallScope=null;
+    cx.cachedXMLLib=null;
+    if (cx.currentActivationCall != null) {
+      throw new IllegalStateException();
+    }
+  }
+  return result;
+}

@@ -1,0 +1,15 @@
+{
+  if (frame.savedCallOp == Token.CALL) {
+    frame.stack[frame.savedStackTop]=callResult;
+    frame.sDbl[frame.savedStackTop]=callResultDbl;
+  }
+ else   if (frame.savedCallOp == Token.NEW) {
+    if (callResult instanceof Scriptable) {
+      frame.stack[frame.savedStackTop]=callResult;
+    }
+  }
+ else {
+    Kit.codeBug();
+  }
+  frame.savedCallOp=0;
+}

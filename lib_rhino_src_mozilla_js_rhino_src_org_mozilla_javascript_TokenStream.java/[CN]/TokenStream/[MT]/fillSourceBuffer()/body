@@ -1,0 +1,22 @@
+{
+  if (sourceString != null)   Kit.codeBug();
+  if (sourceEnd == sourceBuffer.length) {
+    if (lineStart != 0 && !isMarkingComment()) {
+      System.arraycopy(sourceBuffer,lineStart,sourceBuffer,0,sourceEnd - lineStart);
+      sourceEnd-=lineStart;
+      sourceCursor-=lineStart;
+      lineStart=0;
+    }
+ else {
+      char[] tmp=new char[sourceBuffer.length * 2];
+      System.arraycopy(sourceBuffer,0,tmp,0,sourceEnd);
+      sourceBuffer=tmp;
+    }
+  }
+  int n=sourceReader.read(sourceBuffer,sourceEnd,sourceBuffer.length - sourceEnd);
+  if (n < 0) {
+    return false;
+  }
+  sourceEnd+=n;
+  return true;
+}

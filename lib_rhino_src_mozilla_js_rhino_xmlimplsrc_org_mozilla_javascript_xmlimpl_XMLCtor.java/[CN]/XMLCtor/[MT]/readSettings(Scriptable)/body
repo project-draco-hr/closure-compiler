@@ -1,0 +1,28 @@
+{
+  for (int i=1; i <= MAX_INSTANCE_ID; ++i) {
+    int id=super.getMaxInstanceId() + i;
+    String name=getInstanceIdName(id);
+    Object value=ScriptableObject.getProperty(source,name);
+    if (value == Scriptable.NOT_FOUND) {
+      continue;
+    }
+switch (i) {
+case Id_ignoreComments:
+case Id_ignoreProcessingInstructions:
+case Id_ignoreWhitespace:
+case Id_prettyPrinting:
+      if (!(value instanceof Boolean)) {
+        continue;
+      }
+    break;
+case Id_prettyIndent:
+  if (!(value instanceof Number)) {
+    continue;
+  }
+break;
+default :
+throw new IllegalStateException();
+}
+setInstanceIdValue(id,value);
+}
+}

@@ -1,0 +1,43 @@
+{
+  int type=node.getType();
+  Node child=node.getFirstChild();
+switch (type) {
+case Token.NOT:
+    generateIfJump(child,node,falseLabel,trueLabel);
+  break;
+case Token.OR:
+case Token.AND:
+{
+  int interLabel=cfw.acquireLabel();
+  if (type == Token.AND) {
+    generateIfJump(child,node,interLabel,falseLabel);
+  }
+ else {
+    generateIfJump(child,node,trueLabel,interLabel);
+  }
+  cfw.markLabel(interLabel);
+  child=child.getNext();
+  generateIfJump(child,node,trueLabel,falseLabel);
+  break;
+}
+case Token.IN:
+case Token.INSTANCEOF:
+case Token.LE:
+case Token.LT:
+case Token.GE:
+case Token.GT:
+visitIfJumpRelOp(node,child,trueLabel,falseLabel);
+break;
+case Token.EQ:
+case Token.NE:
+case Token.SHEQ:
+case Token.SHNE:
+visitIfJumpEqOp(node,child,trueLabel,falseLabel);
+break;
+default :
+generateExpression(node,parent);
+addScriptRuntimeInvoke("toBoolean","(Ljava/lang/Object;)Z");
+cfw.add(ByteCode.IFNE,trueLabel);
+cfw.add(ByteCode.GOTO,falseLabel);
+}
+}

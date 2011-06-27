@@ -1,0 +1,12 @@
+{
+  Map<String,Symbol> src=source.ensureSymbolTable();
+  Map<String,Symbol> dst=dest.ensureSymbolTable();
+  if (!Collections.disjoint(src.keySet(),dst.keySet())) {
+    codeBug();
+  }
+  for (  Map.Entry<String,Symbol> entry : src.entrySet()) {
+    Symbol sym=entry.getValue();
+    sym.setContainingTable(dest);
+    dst.put(entry.getKey(),sym);
+  }
+}

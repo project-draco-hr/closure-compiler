@@ -1,0 +1,23 @@
+{
+  int ttFlagged=peekFlaggedToken();
+  int pos=pn.getPosition();
+switch (ttFlagged & CLEAR_TI_MASK) {
+case Token.SEMI:
+    consumeToken();
+  pn.setLength(ts.tokenEnd - pos);
+break;
+case Token.ERROR:
+case Token.EOF:
+case Token.RC:
+warnMissingSemi(pos,nodeEnd(pn));
+break;
+default :
+if ((ttFlagged & TI_AFTER_EOL) == 0) {
+reportError("msg.no.semi.stmt");
+}
+ else {
+warnMissingSemi(pos,nodeEnd(pn));
+}
+break;
+}
+}

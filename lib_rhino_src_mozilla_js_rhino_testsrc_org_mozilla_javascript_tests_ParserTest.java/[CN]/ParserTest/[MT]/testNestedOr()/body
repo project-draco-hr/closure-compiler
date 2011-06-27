@@ -1,0 +1,11 @@
+{
+  AstNode root=parse("\nif (a && \n" + "    b() || \n" + "    /* comment */\n"+ "    c) {\n"+ "}\n");
+  IfStatement ifStmt=(IfStatement)root.getFirstChild();
+  InfixExpression orClause=(InfixExpression)ifStmt.getCondition();
+  InfixExpression andClause=(InfixExpression)orClause.getLeft();
+  AstNode cName=orClause.getRight();
+  assertEquals(1,ifStmt.getLineno());
+  assertEquals(2,orClause.getLineno());
+  assertEquals(1,andClause.getLineno());
+  assertEquals(4,cName.getLineno());
+}

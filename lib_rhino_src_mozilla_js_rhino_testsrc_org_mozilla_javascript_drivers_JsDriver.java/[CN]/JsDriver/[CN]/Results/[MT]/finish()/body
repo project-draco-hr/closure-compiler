@@ -1,0 +1,18 @@
+{
+  Date end=new Date();
+  long elapsedMs=end.getTime() - start.getTime();
+  set(html,"results.testlist",join(arguments.getTestList()));
+  set(html,"results.skiplist",join(arguments.getSkipList()));
+  String pct=new java.text.DecimalFormat("##0.00").format((double)failures / (double)tests * 100.0);
+  set(html,"results.results","Tests attempted: " + tests + " Failures: "+ failures+ " ("+ pct+ "%)");
+  set(html,"results.platform","java.home=" + System.getProperty("java.home") + "\n"+ "java.version="+ System.getProperty("java.version")+ "\n"+ "os.name="+ System.getProperty("os.name"));
+  set(html,"results.classpath",System.getProperty("java.class.path").replace(File.pathSeparatorChar,' '));
+  int elapsedSeconds=(int)(elapsedMs / 1000);
+  int elapsedMinutes=elapsedSeconds / 60;
+  elapsedSeconds=elapsedSeconds % 60;
+  String elapsed="" + elapsedMinutes + " minutes, "+ elapsedSeconds+ " seconds";
+  set(html,"results.elapsed",elapsed);
+  set(html,"results.time",new java.text.SimpleDateFormat("MMMM d yyyy h:mm:ss aa").format(new java.util.Date()));
+  write(html,false);
+  write(xml,true);
+}

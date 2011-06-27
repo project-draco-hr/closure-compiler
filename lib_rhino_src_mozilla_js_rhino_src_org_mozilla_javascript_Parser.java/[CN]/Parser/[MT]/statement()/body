@@ -1,0 +1,28 @@
+{
+  int pos=ts.tokenBeg;
+  try {
+    AstNode pn=statementHelper();
+    if (pn != null) {
+      if (compilerEnv.isStrictMode() && !pn.hasSideEffects()) {
+        int beg=pn.getPosition();
+        beg=Math.max(beg,lineBeginningFor(beg));
+        addStrictWarning(pn instanceof EmptyExpression ? "msg.extra.trailing.semi" : "msg.no.side.effects","",beg,nodeEnd(pn) - beg);
+      }
+      return pn;
+    }
+  }
+ catch (  ParserException e) {
+  }
+  guessingStatementEnd:   for (; ; ) {
+    int tt=peekTokenOrEOL();
+    consumeToken();
+switch (tt) {
+case Token.ERROR:
+case Token.EOF:
+case Token.EOL:
+case Token.SEMI:
+      break guessingStatementEnd;
+  }
+}
+return new EmptyExpression(pos,ts.tokenBeg - pos);
+}

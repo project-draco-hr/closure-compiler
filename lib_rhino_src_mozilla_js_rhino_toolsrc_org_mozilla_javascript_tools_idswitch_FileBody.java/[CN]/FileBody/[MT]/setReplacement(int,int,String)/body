@@ -1,0 +1,30 @@
+{
+  if (equals(text,buffer,begin,end)) {
+    return false;
+  }
+  ReplaceItem item=new ReplaceItem(begin,end,text);
+  if (firstReplace == null) {
+    firstReplace=lastReplace=item;
+  }
+ else   if (begin < firstReplace.begin) {
+    item.next=firstReplace;
+    firstReplace=item;
+  }
+ else {
+    ReplaceItem cursor=firstReplace;
+    ReplaceItem next=cursor.next;
+    while (next != null) {
+      if (begin < next.begin) {
+        item.next=next;
+        cursor.next=item;
+        break;
+      }
+      cursor=next;
+      next=next.next;
+    }
+    if (next == null) {
+      lastReplace.next=item;
+    }
+  }
+  return true;
+}

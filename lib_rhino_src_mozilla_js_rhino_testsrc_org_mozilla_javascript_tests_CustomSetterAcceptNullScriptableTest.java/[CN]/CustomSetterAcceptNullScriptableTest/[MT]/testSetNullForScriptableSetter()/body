@@ -1,0 +1,17 @@
+{
+  final String scriptCode="foo.myProp = new Foo2();\n" + "foo.myProp = null;";
+  final ContextFactory factory=new ContextFactory();
+  final Context cx=factory.enterContext();
+  try {
+    final ScriptableObject topScope=cx.initStandardObjects();
+    final Foo foo=new Foo();
+    final Method setMyPropMethod=Foo.class.getMethod("setMyProp",Foo2.class);
+    foo.defineProperty("myProp",null,null,setMyPropMethod,ScriptableObject.EMPTY);
+    topScope.put("foo",topScope,foo);
+    ScriptableObject.defineClass(topScope,Foo2.class);
+    cx.evaluateString(topScope,scriptCode,"myScript",1,null);
+  }
+  finally {
+    Context.exit();
+  }
+}

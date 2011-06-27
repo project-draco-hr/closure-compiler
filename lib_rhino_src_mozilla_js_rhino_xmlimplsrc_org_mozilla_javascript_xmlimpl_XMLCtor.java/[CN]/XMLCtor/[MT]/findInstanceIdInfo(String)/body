@@ -1,0 +1,49 @@
+{
+  int id;
+  L0: {
+    id=0;
+    String X=null;
+    int c;
+    L: switch (s.length()) {
+case 12:
+      X="prettyIndent";
+    id=Id_prettyIndent;
+  break L;
+case 14:
+c=s.charAt(0);
+if (c == 'i') {
+X="ignoreComments";
+id=Id_ignoreComments;
+}
+ else if (c == 'p') {
+X="prettyPrinting";
+id=Id_prettyPrinting;
+}
+break L;
+case 16:
+X="ignoreWhitespace";
+id=Id_ignoreWhitespace;
+break L;
+case 28:
+X="ignoreProcessingInstructions";
+id=Id_ignoreProcessingInstructions;
+break L;
+}
+if (X != null && X != s && !X.equals(s)) id=0;
+break L0;
+}
+if (id == 0) return super.findInstanceIdInfo(s);
+int attr;
+switch (id) {
+case Id_ignoreComments:
+case Id_ignoreProcessingInstructions:
+case Id_ignoreWhitespace:
+case Id_prettyIndent:
+case Id_prettyPrinting:
+attr=PERMANENT | DONTENUM;
+break;
+default :
+throw new IllegalStateException();
+}
+return instanceIdInfo(attr,super.getMaxInstanceId() + id);
+}

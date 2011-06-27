@@ -1,0 +1,13 @@
+{
+  if (this.isElementType()) {
+    Element copy=(Element)this.dom.cloneNode(true);
+    Namespace[] inScope=this.getInScopeNamespaces();
+    for (int i=0; i < inScope.length; i++) {
+      declareNamespace(copy,inScope[i].getPrefix(),inScope[i].getUri());
+    }
+    return processor.ecmaToXmlString(copy);
+  }
+ else {
+    return processor.ecmaToXmlString(dom);
+  }
+}

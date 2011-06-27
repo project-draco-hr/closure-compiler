@@ -1,0 +1,15 @@
+{
+  if (member.isCtor() || parmsLength == VARARGS_CTOR) {
+    return null;
+  }
+  Scriptable result;
+  try {
+    result=(Scriptable)member.getDeclaringClass().newInstance();
+  }
+ catch (  Exception ex) {
+    throw Context.throwAsScriptRuntimeEx(ex);
+  }
+  result.setPrototype(getClassPrototype());
+  result.setParentScope(getParentScope());
+  return result;
+}

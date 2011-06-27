@@ -1,0 +1,36 @@
+{
+  if (!cl.isInterface())   throw new IllegalArgumentException();
+  Scriptable topScope=ScriptRuntime.getTopCallScope(cx);
+  ClassCache cache=ClassCache.get(topScope);
+  InterfaceAdapter adapter;
+  adapter=(InterfaceAdapter)cache.getInterfaceAdapter(cl);
+  ContextFactory cf=cx.getFactory();
+  if (adapter == null) {
+    Method[] methods=cl.getMethods();
+    if (methods.length == 0) {
+      throw Context.reportRuntimeError2("msg.no.empty.interface.conversion",String.valueOf(function),cl.getClass().getName());
+    }
+    boolean canCallFunction=false;
+    canCallFunctionChecks: {
+      Class<?>[] argTypes=methods[0].getParameterTypes();
+      for (int i=1; i != methods.length; ++i) {
+        Class<?>[] types2=methods[i].getParameterTypes();
+        if (types2.length != argTypes.length) {
+          break canCallFunctionChecks;
+        }
+        for (int j=0; j != argTypes.length; ++j) {
+          if (types2[j] != argTypes[j]) {
+            break canCallFunctionChecks;
+          }
+        }
+      }
+      canCallFunction=true;
+    }
+    if (!canCallFunction) {
+      throw Context.reportRuntimeError2("msg.no.function.interface.conversion",String.valueOf(function),cl.getClass().getName());
+    }
+    adapter=new InterfaceAdapter(cf,cl);
+    cache.cacheInterfaceAdapter(cl,adapter);
+  }
+  return VMBridge.instance.newInterfaceProxy(adapter.proxyHelper,cf,adapter,function,topScope);
+}

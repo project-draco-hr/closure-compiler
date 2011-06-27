@@ -1,0 +1,17 @@
+{
+  if (member == null) {
+    out.writeBoolean(false);
+    return;
+  }
+  out.writeBoolean(true);
+  if (!(member instanceof Method || member instanceof Constructor))   throw new IllegalArgumentException("not Method or Constructor");
+  out.writeBoolean(member instanceof Method);
+  out.writeObject(member.getName());
+  out.writeObject(member.getDeclaringClass());
+  if (member instanceof Method) {
+    writeParameters(out,((Method)member).getParameterTypes());
+  }
+ else {
+    writeParameters(out,((Constructor<?>)member).getParameterTypes());
+  }
+}

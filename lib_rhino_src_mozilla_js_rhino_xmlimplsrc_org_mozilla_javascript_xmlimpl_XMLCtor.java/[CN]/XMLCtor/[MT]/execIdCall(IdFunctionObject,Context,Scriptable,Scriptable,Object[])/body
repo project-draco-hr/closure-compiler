@@ -1,0 +1,32 @@
+{
+  if (!f.hasTag(XMLCTOR_TAG)) {
+    return super.execIdCall(f,cx,scope,thisObj,args);
+  }
+  int id=f.methodId();
+switch (id) {
+case Id_defaultSettings:
+{
+      options.setDefault();
+      Scriptable obj=cx.newObject(scope);
+      writeSetting(obj);
+      return obj;
+    }
+case Id_settings:
+{
+    Scriptable obj=cx.newObject(scope);
+    writeSetting(obj);
+    return obj;
+  }
+case Id_setSettings:
+{
+  if (args.length == 0 || args[0] == null || args[0] == Undefined.instance) {
+    options.setDefault();
+  }
+ else   if (args[0] instanceof Scriptable) {
+    readSettings((Scriptable)args[0]);
+  }
+  return Undefined.instance;
+}
+}
+throw new IllegalArgumentException(String.valueOf(id));
+}

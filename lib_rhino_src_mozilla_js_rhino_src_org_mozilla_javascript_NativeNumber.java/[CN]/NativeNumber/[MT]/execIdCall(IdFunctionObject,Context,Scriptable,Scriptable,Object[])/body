@@ -1,0 +1,64 @@
+{
+  if (!f.hasTag(NUMBER_TAG)) {
+    return super.execIdCall(f,cx,scope,thisObj,args);
+  }
+  int id=f.methodId();
+  if (id == Id_constructor) {
+    double val=(args.length >= 1) ? ScriptRuntime.toNumber(args[0]) : 0.0;
+    if (thisObj == null) {
+      return new NativeNumber(val);
+    }
+    return ScriptRuntime.wrapNumber(val);
+  }
+  if (!(thisObj instanceof NativeNumber))   throw incompatibleCallError(f);
+  double value=((NativeNumber)thisObj).doubleValue;
+switch (id) {
+case Id_toString:
+case Id_toLocaleString:
+{
+      int base=(args.length == 0) ? 10 : ScriptRuntime.toInt32(args[0]);
+      return ScriptRuntime.numberToString(value,base);
+    }
+case Id_toSource:
+  return "(new Number(" + ScriptRuntime.toString(value) + "))";
+case Id_valueOf:
+return ScriptRuntime.wrapNumber(value);
+case Id_toFixed:
+return num_to(value,args,DToA.DTOSTR_FIXED,DToA.DTOSTR_FIXED,-20,0);
+case Id_toExponential:
+{
+if (Double.isNaN(value)) {
+return "NaN";
+}
+if (Double.isInfinite(value)) {
+if (value >= 0) {
+  return "Infinity";
+}
+ else {
+  return "-Infinity";
+}
+}
+return num_to(value,args,DToA.DTOSTR_STANDARD_EXPONENTIAL,DToA.DTOSTR_EXPONENTIAL,0,1);
+}
+case Id_toPrecision:
+{
+if (args.length == 0 || args[0] == Undefined.instance) {
+return ScriptRuntime.numberToString(value,10);
+}
+if (Double.isNaN(value)) {
+return "NaN";
+}
+if (Double.isInfinite(value)) {
+if (value >= 0) {
+return "Infinity";
+}
+ else {
+return "-Infinity";
+}
+}
+return num_to(value,args,DToA.DTOSTR_STANDARD,DToA.DTOSTR_PRECISION,1,0);
+}
+default :
+throw new IllegalArgumentException(String.valueOf(id));
+}
+}

@@ -1,0 +1,17 @@
+{
+  final int CONTEXT_ARG=1;
+  final int SCOPE_ARG=2;
+  cfw.startMethod(getFunctionInitMethodName(ofn),FUNCTION_INIT_SIGNATURE,(short)(ClassFileWriter.ACC_PRIVATE | ClassFileWriter.ACC_FINAL));
+  cfw.addLoadThis();
+  cfw.addALoad(CONTEXT_ARG);
+  cfw.addALoad(SCOPE_ARG);
+  cfw.addInvoke(ByteCode.INVOKEVIRTUAL,"org/mozilla/javascript/NativeFunction","initScriptFunction","(Lorg/mozilla/javascript/Context;" + "Lorg/mozilla/javascript/Scriptable;" + ")V");
+  int regexpCount=ofn.fnode.getRegexpCount();
+  if (regexpCount != 0) {
+    cfw.addLoadThis();
+    pushRegExpArray(cfw,ofn.fnode,CONTEXT_ARG,SCOPE_ARG);
+    cfw.add(ByteCode.PUTFIELD,mainClassName,REGEXP_ARRAY_FIELD_NAME,REGEXP_ARRAY_FIELD_TYPE);
+  }
+  cfw.add(ByteCode.RETURN);
+  cfw.stopMethod((short)3);
+}

@@ -1,0 +1,21 @@
+{
+  Document doc=getDocument();
+  int len=doc.getLength();
+  Segment segment=new Segment();
+  try {
+    doc.getText(outputMark,len - outputMark,segment);
+  }
+ catch (  javax.swing.text.BadLocationException ignored) {
+    ignored.printStackTrace();
+  }
+  if (segment.count > 0) {
+    history.add(segment.toString());
+  }
+  historyIndex=history.size();
+  inPipe.write(segment.array,segment.offset,segment.count);
+  append("\n");
+  outputMark=doc.getLength();
+  inPipe.write("\n");
+  inPipe.flush();
+  console1.flush();
+}

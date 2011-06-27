@@ -1,0 +1,63 @@
+{
+  char dc;
+  int num, tmp;
+  if (da.charAt(dp) != '$')   Kit.codeBug();
+  int version=cx.getLanguageVersion();
+  if (version != Context.VERSION_DEFAULT && version <= Context.VERSION_1_4) {
+    if (dp > 0 && da.charAt(dp - 1) == '\\')     return null;
+  }
+  int daL=da.length();
+  if (dp + 1 >= daL)   return null;
+  dc=da.charAt(dp + 1);
+  if (NativeRegExp.isDigit(dc)) {
+    int cp;
+    if (version != Context.VERSION_DEFAULT && version <= Context.VERSION_1_4) {
+      if (dc == '0')       return null;
+      num=0;
+      cp=dp;
+      while (++cp < daL && NativeRegExp.isDigit(dc=da.charAt(cp))) {
+        tmp=10 * num + (dc - '0');
+        if (tmp < num)         break;
+        num=tmp;
+      }
+    }
+ else {
+      int parenCount=(res.parens == null) ? 0 : res.parens.length;
+      num=dc - '0';
+      if (num > parenCount)       return null;
+      cp=dp + 2;
+      if ((dp + 2) < daL) {
+        dc=da.charAt(dp + 2);
+        if (NativeRegExp.isDigit(dc)) {
+          tmp=10 * num + (dc - '0');
+          if (tmp <= parenCount) {
+            cp++;
+            num=tmp;
+          }
+        }
+      }
+      if (num == 0)       return null;
+    }
+    num--;
+    skip[0]=cp - dp;
+    return res.getParenSubString(num);
+  }
+  skip[0]=2;
+switch (dc) {
+case '$':
+    return new SubString("$");
+case '&':
+  return res.lastMatch;
+case '+':
+return res.lastParen;
+case '`':
+if (version == Context.VERSION_1_2) {
+res.leftContext.index=0;
+res.leftContext.length=res.lastMatch.index;
+}
+return res.leftContext;
+case '\'':
+return res.rightContext;
+}
+return null;
+}

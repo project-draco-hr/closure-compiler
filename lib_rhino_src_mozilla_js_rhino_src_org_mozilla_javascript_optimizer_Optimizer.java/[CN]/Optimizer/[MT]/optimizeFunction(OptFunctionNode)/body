@@ -1,0 +1,17 @@
+{
+  if (theFunction.fnode.requiresActivation())   return;
+  inDirectCallFunction=theFunction.isTargetOfDirectCall();
+  this.theFunction=theFunction;
+  ObjArray statementsArray=new ObjArray();
+  buildStatementList_r(theFunction.fnode,statementsArray);
+  Node[] theStatementNodes=new Node[statementsArray.size()];
+  statementsArray.toArray(theStatementNodes);
+  Block.runFlowAnalyzes(theFunction,theStatementNodes);
+  if (!theFunction.fnode.requiresActivation()) {
+    parameterUsedInNumberContext=false;
+    for (int i=0; i < theStatementNodes.length; i++) {
+      rewriteForNumberVariables(theStatementNodes[i],NumberType);
+    }
+    theFunction.setParameterNumberContext(parameterUsedInNumberContext);
+  }
+}

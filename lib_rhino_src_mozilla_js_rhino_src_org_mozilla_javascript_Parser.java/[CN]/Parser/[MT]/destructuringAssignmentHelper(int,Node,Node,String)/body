@@ -1,0 +1,34 @@
+{
+  Scope result=createScopeNode(Token.LETEXPR,left.getLineno());
+  result.addChildToFront(new Node(Token.LET,createName(Token.NAME,tempName,right)));
+  try {
+    pushScope(result);
+    defineSymbol(Token.LET,tempName,true);
+  }
+  finally {
+    popScope();
+  }
+  Node comma=new Node(Token.COMMA);
+  result.addChildToBack(comma);
+  List<String> destructuringNames=new ArrayList<String>();
+  boolean empty=true;
+switch (left.getType()) {
+case Token.ARRAYLIT:
+    empty=destructuringArray((ArrayLiteral)left,variableType,tempName,comma,destructuringNames);
+  break;
+case Token.OBJECTLIT:
+empty=destructuringObject((ObjectLiteral)left,variableType,tempName,comma,destructuringNames);
+break;
+case Token.GETPROP:
+case Token.GETELEM:
+comma.addChildToBack(simpleAssignment(left,createName(tempName)));
+break;
+default :
+reportError("msg.bad.assign.left");
+}
+if (empty) {
+comma.addChildToBack(createNumber(0));
+}
+result.putProp(Node.DESTRUCTURING_NAMES,destructuringNames);
+return result;
+}

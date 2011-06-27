@@ -1,0 +1,28 @@
+{
+  RENode headTerm=null;
+  RENode tailTerm=null;
+  char[] source=state.cpbegin;
+  while (true) {
+    if (state.cp == state.cpend || source[state.cp] == '|' || (state.parenNesting != 0 && source[state.cp] == ')')) {
+      if (headTerm == null) {
+        state.result=new RENode(REOP_EMPTY);
+      }
+ else       state.result=headTerm;
+      return true;
+    }
+    if (!parseTerm(state))     return false;
+    if (headTerm == null)     headTerm=state.result;
+ else {
+      if (tailTerm == null) {
+        headTerm.next=state.result;
+        tailTerm=state.result;
+        while (tailTerm.next != null)         tailTerm=tailTerm.next;
+      }
+ else {
+        tailTerm.next=state.result;
+        tailTerm=tailTerm.next;
+        while (tailTerm.next != null)         tailTerm=tailTerm.next;
+      }
+    }
+  }
+}

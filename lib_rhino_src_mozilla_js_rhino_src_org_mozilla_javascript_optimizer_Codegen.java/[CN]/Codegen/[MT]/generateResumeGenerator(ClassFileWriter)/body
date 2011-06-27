@@ -1,0 +1,35 @@
+{
+  boolean hasGenerators=false;
+  for (int i=0; i < scriptOrFnNodes.length; i++) {
+    if (isGenerator(scriptOrFnNodes[i]))     hasGenerators=true;
+  }
+  if (!hasGenerators)   return;
+  cfw.startMethod("resumeGenerator","(Lorg/mozilla/javascript/Context;" + "Lorg/mozilla/javascript/Scriptable;" + "ILjava/lang/Object;"+ "Ljava/lang/Object;)Ljava/lang/Object;",(short)(ClassFileWriter.ACC_PUBLIC | ClassFileWriter.ACC_FINAL));
+  cfw.addALoad(0);
+  cfw.addALoad(1);
+  cfw.addALoad(2);
+  cfw.addALoad(4);
+  cfw.addALoad(5);
+  cfw.addILoad(3);
+  cfw.addLoadThis();
+  cfw.add(ByteCode.GETFIELD,cfw.getClassName(),ID_FIELD_NAME,"I");
+  int startSwitch=cfw.addTableSwitch(0,scriptOrFnNodes.length - 1);
+  cfw.markTableSwitchDefault(startSwitch);
+  int endlabel=cfw.acquireLabel();
+  for (int i=0; i < scriptOrFnNodes.length; i++) {
+    ScriptNode n=scriptOrFnNodes[i];
+    cfw.markTableSwitchCase(startSwitch,i,(short)6);
+    if (isGenerator(n)) {
+      String type="(" + mainClassSignature + "Lorg/mozilla/javascript/Context;"+ "Lorg/mozilla/javascript/Scriptable;"+ "Ljava/lang/Object;"+ "Ljava/lang/Object;I)Ljava/lang/Object;";
+      cfw.addInvoke(ByteCode.INVOKESTATIC,mainClassName,getBodyMethodName(n) + "_gen",type);
+      cfw.add(ByteCode.ARETURN);
+    }
+ else {
+      cfw.add(ByteCode.GOTO,endlabel);
+    }
+  }
+  cfw.markLabel(endlabel);
+  pushUndefined(cfw);
+  cfw.add(ByteCode.ARETURN);
+  cfw.stopMethod((short)6);
+}

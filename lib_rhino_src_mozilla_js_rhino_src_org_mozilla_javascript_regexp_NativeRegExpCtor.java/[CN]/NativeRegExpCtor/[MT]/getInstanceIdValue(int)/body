@@ -1,0 +1,40 @@
+{
+  int shifted=id - super.getMaxInstanceId();
+  if (1 <= shifted && shifted <= MAX_INSTANCE_ID) {
+    RegExpImpl impl=getImpl();
+    Object stringResult;
+switch (shifted) {
+case Id_multiline:
+case Id_STAR:
+      return ScriptRuntime.wrapBoolean(impl.multiline);
+case Id_input:
+case Id_UNDERSCORE:
+    stringResult=impl.input;
+  break;
+case Id_lastMatch:
+case Id_AMPERSAND:
+stringResult=impl.lastMatch;
+break;
+case Id_lastParen:
+case Id_PLUS:
+stringResult=impl.lastParen;
+break;
+case Id_leftContext:
+case Id_BACK_QUOTE:
+stringResult=impl.leftContext;
+break;
+case Id_rightContext:
+case Id_QUOTE:
+stringResult=impl.rightContext;
+break;
+default :
+{
+int substring_number=shifted - DOLLAR_ID_BASE - 1;
+stringResult=impl.getParenSubString(substring_number);
+break;
+}
+}
+return (stringResult == null) ? "" : stringResult.toString();
+}
+return super.getInstanceIdValue(id);
+}

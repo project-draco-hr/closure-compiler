@@ -1,0 +1,54 @@
+{
+  String source=null;
+  int hash=sourceUrl.indexOf('#');
+  if (hash >= 0) {
+    sourceUrl=sourceUrl.substring(0,hash);
+  }
+  try {
+    InputStream is;
+    openStream: {
+      if (sourceUrl.indexOf(':') < 0) {
+        try {
+          if (sourceUrl.startsWith("~/")) {
+            String home=SecurityUtilities.getSystemProperty("user.home");
+            if (home != null) {
+              String pathFromHome=sourceUrl.substring(2);
+              File f=new File(new File(home),pathFromHome);
+              if (f.exists()) {
+                is=new FileInputStream(f);
+                break openStream;
+              }
+            }
+          }
+          File f=new File(sourceUrl);
+          if (f.exists()) {
+            is=new FileInputStream(f);
+            break openStream;
+          }
+        }
+ catch (        SecurityException ex) {
+        }
+        if (sourceUrl.startsWith("//")) {
+          sourceUrl="http:" + sourceUrl;
+        }
+ else         if (sourceUrl.startsWith("/")) {
+          sourceUrl="http://127.0.0.1" + sourceUrl;
+        }
+ else {
+          sourceUrl="http://" + sourceUrl;
+        }
+      }
+      is=(new URL(sourceUrl)).openStream();
+    }
+    try {
+      source=Kit.readReader(new InputStreamReader(is));
+    }
+  finally {
+      is.close();
+    }
+  }
+ catch (  IOException ex) {
+    System.err.println("Failed to load source from " + sourceUrl + ": "+ ex);
+  }
+  return source;
+}

@@ -1,0 +1,16 @@
+{
+  scope=ScriptableObject.getTopLevelScope(scope);
+  for (; ; ) {
+    if (scope instanceof ScriptableObject) {
+      ScriptableObject so=(ScriptableObject)scope;
+      Object value=so.getAssociatedValue(key);
+      if (value != null) {
+        return value;
+      }
+    }
+    scope=scope.getPrototype();
+    if (scope == null) {
+      return null;
+    }
+  }
+}

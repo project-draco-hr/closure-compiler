@@ -1,0 +1,20 @@
+{
+  if (currentToken != Token.WHILE)   codeBug();
+  consumeToken();
+  int pos=ts.tokenBeg;
+  WhileLoop pn=new WhileLoop(pos);
+  pn.setLineno(ts.lineno);
+  enterLoop(pn);
+  try {
+    ConditionData data=condition();
+    pn.setCondition(data.condition);
+    pn.setParens(data.lp - pos,data.rp - pos);
+    AstNode body=statement();
+    pn.setLength(getNodeEnd(body) - pos);
+    pn.setBody(body);
+  }
+  finally {
+    exitLoop();
+  }
+  return pn;
+}

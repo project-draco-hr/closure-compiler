@@ -1,0 +1,46 @@
+{
+  int i=ip[0];
+  int length=target.length();
+  int result;
+  int version=cx.getLanguageVersion();
+  NativeRegExp re=(NativeRegExp)reObj;
+  again:   while (true) {
+    int ipsave=ip[0];
+    ip[0]=i;
+    Object ret=re.executeRegExp(cx,scope,this,target,ip,NativeRegExp.TEST);
+    if (ret != Boolean.TRUE) {
+      ip[0]=ipsave;
+      matchlen[0]=1;
+      matched[0]=false;
+      return length;
+    }
+    i=ip[0];
+    ip[0]=ipsave;
+    matched[0]=true;
+    SubString sep=this.lastMatch;
+    matchlen[0]=sep.length;
+    if (matchlen[0] == 0) {
+      if (i == ip[0]) {
+        if (i == length) {
+          if (version == Context.VERSION_1_2) {
+            matchlen[0]=1;
+            result=i;
+          }
+ else           result=-1;
+          break;
+        }
+        i++;
+        continue again;
+      }
+    }
+    result=i - matchlen[0];
+    break;
+  }
+  int size=(parens == null) ? 0 : parens.length;
+  parensp[0]=new String[size];
+  for (int num=0; num < size; num++) {
+    SubString parsub=getParenSubString(num);
+    parensp[0][num]=parsub.toString();
+  }
+  return result;
+}

@@ -1,0 +1,16 @@
+{
+  if (callType == Node.SPECIALCALL_EVAL) {
+    if (NativeGlobal.isEvalFunction(fun)) {
+      throw typeError1("msg.not.ctor","eval");
+    }
+  }
+ else   if (callType == Node.SPECIALCALL_WITH) {
+    if (NativeWith.isWithFunction(fun)) {
+      return NativeWith.newWithSpecial(cx,scope,args);
+    }
+  }
+ else {
+    throw Kit.codeBug();
+  }
+  return newObject(fun,cx,scope,args);
+}

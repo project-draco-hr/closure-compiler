@@ -1,0 +1,19 @@
+{
+  ContextFactory factory=new MyFactory();
+  Context cx=factory.enterContext();
+  cx.setOptimizationLevel(optimizationLevel);
+  assertTrue(cx instanceof MyContext);
+  try {
+    Scriptable globalScope=cx.initStandardObjects();
+    cx.evaluateString(globalScope,source,"test source",1,null);
+    fail();
+  }
+ catch (  QuotaExceeded e) {
+  }
+catch (  RuntimeException e) {
+    fail(e.toString());
+  }
+ finally {
+    Context.exit();
+  }
+}

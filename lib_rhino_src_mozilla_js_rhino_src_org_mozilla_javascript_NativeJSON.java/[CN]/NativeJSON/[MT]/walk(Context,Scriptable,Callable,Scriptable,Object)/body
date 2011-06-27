@@ -1,0 +1,39 @@
+{
+  final Object property;
+  if (name instanceof Number) {
+    property=holder.get(((Number)name).intValue(),holder);
+  }
+ else {
+    property=holder.get(((String)name),holder);
+  }
+  if (property instanceof Scriptable) {
+    Scriptable val=((Scriptable)property);
+    if (val instanceof NativeArray) {
+      int len=(int)((NativeArray)val).getLength();
+      for (int i=0; i < len; i++) {
+        Object newElement=walk(cx,scope,reviver,val,i);
+        if (newElement == Undefined.instance) {
+          val.delete(i);
+        }
+ else {
+          val.put(i,val,newElement);
+        }
+      }
+    }
+ else {
+      Object[] keys=val.getIds();
+      for (      Object p : keys) {
+        Object newElement=walk(cx,scope,reviver,val,p);
+        if (newElement == Undefined.instance) {
+          if (p instanceof Number)           val.delete(((Number)p).intValue());
+ else           val.delete((String)p);
+        }
+ else {
+          if (p instanceof Number)           val.put(((Number)p).intValue(),val,newElement);
+ else           val.put((String)p,val,newElement);
+        }
+      }
+    }
+  }
+  return reviver.call(cx,scope,holder,new Object[]{name,property});
+}

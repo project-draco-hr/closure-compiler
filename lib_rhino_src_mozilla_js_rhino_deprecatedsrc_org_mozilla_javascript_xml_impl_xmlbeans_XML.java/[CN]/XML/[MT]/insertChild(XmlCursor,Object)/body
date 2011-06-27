@@ -1,0 +1,33 @@
+{
+  if (xmlToInsert == null || xmlToInsert instanceof Undefined) {
+  }
+ else   if (xmlToInsert instanceof XmlCursor) {
+    moveSrcToDest((XmlCursor)xmlToInsert,curs,true);
+  }
+ else   if (xmlToInsert instanceof XML) {
+    XML xmlValue=(XML)xmlToInsert;
+    if (xmlValue.tokenType() == XmlCursor.TokenType.ATTR) {
+      insertChild(curs,xmlValue.toString());
+    }
+ else {
+      XmlCursor cursToInsert=((XML)xmlToInsert).newCursor();
+      moveSrcToDest(cursToInsert,curs,true);
+      cursToInsert.dispose();
+    }
+  }
+ else   if (xmlToInsert instanceof XMLList) {
+    XMLList list=(XMLList)xmlToInsert;
+    for (int i=0; i < list.length(); i++) {
+      insertChild(curs,list.item(i));
+    }
+  }
+ else {
+    String xmlStr=ScriptRuntime.toString(xmlToInsert);
+    XmlObject xo=XmlObject.Factory.newInstance();
+    XmlCursor sourceCurs=xo.newCursor();
+    sourceCurs.toNextToken();
+    sourceCurs.insertChars(xmlStr);
+    sourceCurs.toPrevToken();
+    moveSrcToDest(sourceCurs,curs,true);
+  }
+}

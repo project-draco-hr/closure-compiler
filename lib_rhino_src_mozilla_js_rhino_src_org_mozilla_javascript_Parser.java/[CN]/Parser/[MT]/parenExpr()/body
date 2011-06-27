@@ -1,0 +1,23 @@
+{
+  boolean wasInForInit=inForInit;
+  inForInit=false;
+  try {
+    Comment jsdocNode=getAndResetJsDoc();
+    int lineno=ts.lineno;
+    AstNode e=expr();
+    ParenthesizedExpression pn=new ParenthesizedExpression(e);
+    if (jsdocNode == null) {
+      jsdocNode=getAndResetJsDoc();
+    }
+    if (jsdocNode != null) {
+      pn.setJsDocNode(jsdocNode);
+    }
+    mustMatchToken(Token.RP,"msg.no.paren");
+    pn.setLength(ts.tokenEnd - pn.getPosition());
+    pn.setLineno(lineno);
+    return pn;
+  }
+  finally {
+    inForInit=wasInForInit;
+  }
+}

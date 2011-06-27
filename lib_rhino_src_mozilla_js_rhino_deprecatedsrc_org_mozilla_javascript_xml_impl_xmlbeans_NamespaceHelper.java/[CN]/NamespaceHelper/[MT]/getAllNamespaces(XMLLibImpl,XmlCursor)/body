@@ -1,0 +1,18 @@
+{
+  NamespaceHelper helper=new NamespaceHelper(lib);
+  cursor.push();
+  int depth=0;
+  while (cursor.hasPrevToken()) {
+    if (cursor.isContainer()) {
+      cursor.push();
+      depth++;
+    }
+    cursor.toParent();
+  }
+  for (int i=0; i < depth; i++) {
+    cursor.pop();
+    helper.update(cursor,null);
+  }
+  cursor.pop();
+  return helper.prefixToURI;
+}

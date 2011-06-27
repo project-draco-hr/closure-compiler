@@ -1,0 +1,103 @@
+{
+switch (nodeType) {
+case Token.ADD:
+    if (left.type == Token.STRING) {
+      String s2;
+      if (right.type == Token.STRING) {
+        s2=right.getString();
+      }
+ else       if (right.type == Token.NUMBER) {
+        s2=ScriptRuntime.numberToString(right.getDouble(),10);
+      }
+ else {
+        break;
+      }
+      String s1=left.getString();
+      left.setString(s1.concat(s2));
+      return left;
+    }
+ else     if (left.type == Token.NUMBER) {
+      if (right.type == Token.NUMBER) {
+        left.setDouble(left.getDouble() + right.getDouble());
+        return left;
+      }
+ else       if (right.type == Token.STRING) {
+        String s1, s2;
+        s1=ScriptRuntime.numberToString(left.getDouble(),10);
+        s2=right.getString();
+        right.setString(s1.concat(s2));
+        return right;
+      }
+    }
+  break;
+case Token.SUB:
+if (left.type == Token.NUMBER) {
+  double ld=left.getDouble();
+  if (right.type == Token.NUMBER) {
+    left.setDouble(ld - right.getDouble());
+    return left;
+  }
+ else   if (ld == 0.0) {
+    return new Node(Token.NEG,right);
+  }
+}
+ else if (right.type == Token.NUMBER) {
+  if (right.getDouble() == 0.0) {
+    return new Node(Token.POS,left);
+  }
+}
+break;
+case Token.MUL:
+if (left.type == Token.NUMBER) {
+double ld=left.getDouble();
+if (right.type == Token.NUMBER) {
+left.setDouble(ld * right.getDouble());
+return left;
+}
+ else if (ld == 1.0) {
+return new Node(Token.POS,right);
+}
+}
+ else if (right.type == Token.NUMBER) {
+if (right.getDouble() == 1.0) {
+return new Node(Token.POS,left);
+}
+}
+break;
+case Token.DIV:
+if (right.type == Token.NUMBER) {
+double rd=right.getDouble();
+if (left.type == Token.NUMBER) {
+left.setDouble(left.getDouble() / rd);
+return left;
+}
+ else if (rd == 1.0) {
+return new Node(Token.POS,left);
+}
+}
+break;
+case Token.AND:
+{
+int leftStatus=isAlwaysDefinedBoolean(left);
+if (leftStatus == ALWAYS_FALSE_BOOLEAN) {
+return left;
+}
+ else if (leftStatus == ALWAYS_TRUE_BOOLEAN) {
+return right;
+}
+break;
+}
+case Token.OR:
+{
+int leftStatus=isAlwaysDefinedBoolean(left);
+if (leftStatus == ALWAYS_TRUE_BOOLEAN) {
+return left;
+}
+ else if (leftStatus == ALWAYS_FALSE_BOOLEAN) {
+return right;
+}
+break;
+}
+}
+return new Node(nodeType,left,right);
+}

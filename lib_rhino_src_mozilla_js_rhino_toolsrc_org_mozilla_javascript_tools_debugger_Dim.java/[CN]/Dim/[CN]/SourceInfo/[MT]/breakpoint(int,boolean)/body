@@ -1,0 +1,16 @@
+{
+  if (!breakableLine(line)) {
+    throw new IllegalArgumentException(String.valueOf(line));
+  }
+  boolean changed;
+synchronized (breakpoints) {
+    if (breakpoints[line] != value) {
+      breakpoints[line]=value;
+      changed=true;
+    }
+ else {
+      changed=false;
+    }
+  }
+  return changed;
+}

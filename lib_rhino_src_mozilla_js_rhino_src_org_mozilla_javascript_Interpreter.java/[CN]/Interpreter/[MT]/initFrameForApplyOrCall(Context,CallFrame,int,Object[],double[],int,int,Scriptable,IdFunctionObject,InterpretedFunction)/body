@@ -1,0 +1,37 @@
+{
+  Scriptable applyThis;
+  if (indexReg != 0) {
+    Object obj=stack[stackTop + 2];
+    if (obj == UniqueTag.DOUBLE_MARK)     obj=ScriptRuntime.wrapNumber(sDbl[stackTop + 2]);
+    applyThis=ScriptRuntime.toObjectOrNull(cx,obj);
+  }
+ else {
+    applyThis=null;
+  }
+  if (applyThis == null) {
+    applyThis=ScriptRuntime.getTopCallScope(cx);
+  }
+  if (op == Icode_TAIL_CALL) {
+    exitFrame(cx,frame,null);
+    frame=frame.parentFrame;
+  }
+ else {
+    frame.savedStackTop=stackTop;
+    frame.savedCallOp=op;
+  }
+  CallFrame calleeFrame=new CallFrame();
+  if (BaseFunction.isApply(ifun)) {
+    Object[] callArgs=indexReg < 2 ? ScriptRuntime.emptyArgs : ScriptRuntime.getApplyArguments(cx,stack[stackTop + 3]);
+    initFrame(cx,calleeScope,applyThis,callArgs,null,0,callArgs.length,iApplyCallable,frame,calleeFrame);
+  }
+ else {
+    for (int i=1; i < indexReg; ++i) {
+      stack[stackTop + 1 + i]=stack[stackTop + 2 + i];
+      sDbl[stackTop + 1 + i]=sDbl[stackTop + 2 + i];
+    }
+    int argCount=indexReg < 2 ? 0 : indexReg - 1;
+    initFrame(cx,calleeScope,applyThis,stack,sDbl,stackTop + 2,argCount,iApplyCallable,frame,calleeFrame);
+  }
+  frame=calleeFrame;
+  return frame;
+}

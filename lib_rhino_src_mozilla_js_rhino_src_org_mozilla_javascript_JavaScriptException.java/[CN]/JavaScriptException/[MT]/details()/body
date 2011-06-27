@@ -1,0 +1,19 @@
+{
+  if (value == null) {
+    return "null";
+  }
+ else   if (value instanceof NativeError) {
+    return value.toString();
+  }
+  try {
+    return ScriptRuntime.toString(value);
+  }
+ catch (  RuntimeException rte) {
+    if (value instanceof Scriptable) {
+      return ScriptRuntime.defaultObjectToString((Scriptable)value);
+    }
+ else {
+      return value.toString();
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  DateFormat formatter;
+switch (methodId) {
+case Id_toLocaleString:
+    if (localeDateTimeFormatter == null) {
+      localeDateTimeFormatter=DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG);
+    }
+  formatter=localeDateTimeFormatter;
+break;
+case Id_toLocaleTimeString:
+if (localeTimeFormatter == null) {
+localeTimeFormatter=DateFormat.getTimeInstance(DateFormat.LONG);
+}
+formatter=localeTimeFormatter;
+break;
+case Id_toLocaleDateString:
+if (localeDateFormatter == null) {
+localeDateFormatter=DateFormat.getDateInstance(DateFormat.LONG);
+}
+formatter=localeDateFormatter;
+break;
+default :
+throw new AssertionError();
+}
+synchronized (formatter) {
+return formatter.format(new Date((long)t));
+}
+}

@@ -1,0 +1,21 @@
+{
+  XmlCursor cursor=newCursor();
+  try {
+    if (cursor.isStartdoc())     cursor.toFirstContentToken();
+    if (cursor.isText() || cursor.isComment())     return;
+    if (cursor.isProcinst()) {
+      String localName=qname.localName();
+      cursor.setName(new javax.xml.namespace.QName(localName));
+    }
+ else {
+      String prefix=qname.prefix();
+      if (prefix == null) {
+        prefix="";
+      }
+      cursor.setName(new javax.xml.namespace.QName(qname.uri(),qname.localName(),prefix));
+    }
+  }
+  finally {
+    cursor.dispose();
+  }
+}

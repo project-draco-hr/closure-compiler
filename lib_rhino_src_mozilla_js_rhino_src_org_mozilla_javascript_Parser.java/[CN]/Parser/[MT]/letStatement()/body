@@ -1,0 +1,14 @@
+{
+  if (currentToken != Token.LET)   codeBug();
+  consumeToken();
+  int lineno=ts.lineno, pos=ts.tokenBeg;
+  AstNode pn;
+  if (peekToken() == Token.LP) {
+    pn=let(true,pos);
+  }
+ else {
+    pn=variables(Token.LET,pos);
+  }
+  pn.setLineno(lineno);
+  return pn;
+}

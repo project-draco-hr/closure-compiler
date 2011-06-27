@@ -1,0 +1,76 @@
+{
+  Object parent=Undefined.instance;
+  XMLObject xmlValue;
+  if (value == null) {
+    value="null";
+  }
+ else   if (value instanceof Undefined) {
+    value="undefined";
+  }
+  if (value instanceof XMLObject) {
+    xmlValue=(XMLObject)value;
+  }
+ else {
+    if (targetProperty == null) {
+      xmlValue=XML.createFromJS(lib,value.toString());
+    }
+ else {
+      xmlValue=XML.createTextElement(lib,targetProperty,value.toString());
+    }
+  }
+  if (index < length()) {
+    parent=item(index).parent();
+  }
+ else {
+    parent=parent();
+  }
+  if (parent instanceof XML) {
+    XML xmlParent=(XML)parent;
+    if (index < length()) {
+      XML xmlNode=getXmlFromAnnotation(index);
+      if (xmlValue instanceof XML) {
+        xmlNode.replaceAll((XML)xmlValue);
+        replace(index,xmlNode);
+      }
+ else       if (xmlValue instanceof XMLList) {
+        XMLList list=(XMLList)xmlValue;
+        if (list.length() > 0) {
+          int lastIndexAdded=xmlNode.childIndex();
+          xmlNode.replaceAll(list.item(0));
+          replace(index,list.item(0));
+          for (int i=1; i < list.length(); i++) {
+            xmlParent.insertChildAfter(xmlParent.getXmlChild(lastIndexAdded),list.item(i));
+            lastIndexAdded++;
+            insert(index + i,list.item(i));
+          }
+        }
+      }
+    }
+ else {
+      xmlParent.appendChild(xmlValue);
+      addToList(xmlParent.getXmlChild(index));
+    }
+  }
+ else {
+    if (index < length()) {
+      XML xmlNode=XML.getFromAnnotation(lib,_annos.item(index));
+      if (xmlValue instanceof XML) {
+        xmlNode.replaceAll((XML)xmlValue);
+        replace(index,xmlNode);
+      }
+ else       if (xmlValue instanceof XMLList) {
+        XMLList list=(XMLList)xmlValue;
+        if (list.length() > 0) {
+          xmlNode.replaceAll(list.item(0));
+          replace(index,list.item(0));
+          for (int i=1; i < list.length(); i++) {
+            insert(index + i,list.item(i));
+          }
+        }
+      }
+    }
+ else {
+      addToList(xmlValue);
+    }
+  }
+}

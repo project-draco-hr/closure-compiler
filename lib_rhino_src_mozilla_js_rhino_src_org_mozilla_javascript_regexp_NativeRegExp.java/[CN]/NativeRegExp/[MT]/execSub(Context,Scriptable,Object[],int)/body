@@ -1,0 +1,27 @@
+{
+  RegExpImpl reImpl=getImpl(cx);
+  String str;
+  if (args.length == 0) {
+    str=reImpl.input;
+    if (str == null) {
+      reportError("msg.no.re.input.for",toString());
+    }
+  }
+ else {
+    str=ScriptRuntime.toString(args[0]);
+  }
+  double d=((re.flags & JSREG_GLOB) != 0) ? lastIndex : 0;
+  Object rval;
+  if (d < 0 || str.length() < d) {
+    lastIndex=0;
+    rval=null;
+  }
+ else {
+    int indexp[]={(int)d};
+    rval=executeRegExp(cx,scopeObj,reImpl,str,indexp,matchType);
+    if ((re.flags & JSREG_GLOB) != 0) {
+      lastIndex=(rval == null || rval == Undefined.instance) ? 0 : indexp[0];
+    }
+  }
+  return rval;
+}

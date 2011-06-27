@@ -1,0 +1,12 @@
+{
+  if (generatorState.operation == NativeGenerator.GENERATOR_CLOSE) {
+    throw ScriptRuntime.typeError0("msg.yield.closing");
+  }
+  frame.frozen=true;
+  frame.result=frame.stack[stackTop];
+  frame.resultDbl=frame.sDbl[stackTop];
+  frame.savedStackTop=stackTop;
+  frame.pc--;
+  ScriptRuntime.exitActivationFunction(cx);
+  return (frame.result != UniqueTag.DOUBLE_MARK) ? frame.result : ScriptRuntime.wrapNumber(frame.resultDbl);
+}

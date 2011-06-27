@@ -1,0 +1,173 @@
+{
+  if (inDirectCallFunction) {
+    int directParameterCount=scriptOrFn.getParamCount();
+    if (firstFreeLocal != 4)     Kit.codeBug();
+    for (int i=0; i != directParameterCount; ++i) {
+      varRegisters[i]=firstFreeLocal;
+      firstFreeLocal+=3;
+    }
+    if (!fnCurrent.getParameterNumberContext()) {
+      itsForcedObjectParameters=true;
+      for (int i=0; i != directParameterCount; ++i) {
+        short reg=varRegisters[i];
+        cfw.addALoad(reg);
+        cfw.add(ByteCode.GETSTATIC,"java/lang/Void","TYPE","Ljava/lang/Class;");
+        int isObjectLabel=cfw.acquireLabel();
+        cfw.add(ByteCode.IF_ACMPNE,isObjectLabel);
+        cfw.addDLoad(reg + 1);
+        addDoubleWrap();
+        cfw.addAStore(reg);
+        cfw.markLabel(isObjectLabel);
+      }
+    }
+  }
+  if (fnCurrent != null && !inDirectCallFunction && (!compilerEnv.isUseDynamicScope() || fnCurrent.fnode.getIgnoreDynamicScope())) {
+    cfw.addALoad(funObjLocal);
+    cfw.addInvoke(ByteCode.INVOKEINTERFACE,"org/mozilla/javascript/Scriptable","getParentScope","()Lorg/mozilla/javascript/Scriptable;");
+    cfw.addAStore(variableObjectLocal);
+  }
+  argsLocal=firstFreeLocal++;
+  localsMax=firstFreeLocal;
+  if (isGenerator) {
+    operationLocal=firstFreeLocal++;
+    localsMax=firstFreeLocal;
+    cfw.addALoad(thisObjLocal);
+    generatorStateLocal=firstFreeLocal++;
+    localsMax=firstFreeLocal;
+    cfw.add(ByteCode.CHECKCAST,OptRuntime.GeneratorState.CLASS_NAME);
+    cfw.add(ByteCode.DUP);
+    cfw.addAStore(generatorStateLocal);
+    cfw.add(ByteCode.GETFIELD,OptRuntime.GeneratorState.CLASS_NAME,OptRuntime.GeneratorState.thisObj_NAME,OptRuntime.GeneratorState.thisObj_TYPE);
+    cfw.addAStore(thisObjLocal);
+    if (epilogueLabel == -1) {
+      epilogueLabel=cfw.acquireLabel();
+    }
+    List<Node> targets=((FunctionNode)scriptOrFn).getResumptionPoints();
+    if (targets != null) {
+      generateGetGeneratorResumptionPoint();
+      generatorSwitch=cfw.addTableSwitch(0,targets.size() + GENERATOR_START);
+      generateCheckForThrowOrClose(-1,false,GENERATOR_START);
+    }
+  }
+  if (fnCurrent == null) {
+    if (scriptOrFn.getRegexpCount() != 0) {
+      scriptRegexpLocal=getNewWordLocal();
+      codegen.pushRegExpArray(cfw,scriptOrFn,contextLocal,variableObjectLocal);
+      cfw.addAStore(scriptRegexpLocal);
+    }
+  }
+  if (compilerEnv.isGenerateObserverCount())   saveCurrentCodeOffset();
+  if (hasVarsInRegs) {
+    int parmCount=scriptOrFn.getParamCount();
+    if (parmCount > 0 && !inDirectCallFunction) {
+      cfw.addALoad(argsLocal);
+      cfw.add(ByteCode.ARRAYLENGTH);
+      cfw.addPush(parmCount);
+      int label=cfw.acquireLabel();
+      cfw.add(ByteCode.IF_ICMPGE,label);
+      cfw.addALoad(argsLocal);
+      cfw.addPush(parmCount);
+      addScriptRuntimeInvoke("padArguments","([Ljava/lang/Object;I" + ")[Ljava/lang/Object;");
+      cfw.addAStore(argsLocal);
+      cfw.markLabel(label);
+    }
+    int paramCount=fnCurrent.fnode.getParamCount();
+    int varCount=fnCurrent.fnode.getParamAndVarCount();
+    boolean[] constDeclarations=fnCurrent.fnode.getParamAndVarConst();
+    short firstUndefVar=-1;
+    for (int i=0; i != varCount; ++i) {
+      short reg=-1;
+      if (i < paramCount) {
+        if (!inDirectCallFunction) {
+          reg=getNewWordLocal();
+          cfw.addALoad(argsLocal);
+          cfw.addPush(i);
+          cfw.add(ByteCode.AALOAD);
+          cfw.addAStore(reg);
+        }
+      }
+ else       if (fnCurrent.isNumberVar(i)) {
+        reg=getNewWordPairLocal(constDeclarations[i]);
+        cfw.addPush(0.0);
+        cfw.addDStore(reg);
+      }
+ else {
+        reg=getNewWordLocal(constDeclarations[i]);
+        if (firstUndefVar == -1) {
+          Codegen.pushUndefined(cfw);
+          firstUndefVar=reg;
+        }
+ else {
+          cfw.addALoad(firstUndefVar);
+        }
+        cfw.addAStore(reg);
+      }
+      if (reg >= 0) {
+        if (constDeclarations[i]) {
+          cfw.addPush(0);
+          cfw.addIStore(reg + (fnCurrent.isNumberVar(i) ? 2 : 1));
+        }
+        varRegisters[i]=reg;
+      }
+      if (compilerEnv.isGenerateDebugInfo()) {
+        String name=fnCurrent.fnode.getParamOrVarName(i);
+        String type=fnCurrent.isNumberVar(i) ? "D" : "Ljava/lang/Object;";
+        int startPC=cfw.getCurrentCodeOffset();
+        if (reg < 0) {
+          reg=varRegisters[i];
+        }
+        cfw.addVariableDescriptor(name,type,startPC,reg);
+      }
+    }
+    return;
+  }
+  if (isGenerator)   return;
+  String debugVariableName;
+  if (fnCurrent != null) {
+    debugVariableName="activation";
+    cfw.addALoad(funObjLocal);
+    cfw.addALoad(variableObjectLocal);
+    cfw.addALoad(argsLocal);
+    addScriptRuntimeInvoke("createFunctionActivation","(Lorg/mozilla/javascript/NativeFunction;" + "Lorg/mozilla/javascript/Scriptable;" + "[Ljava/lang/Object;"+ ")Lorg/mozilla/javascript/Scriptable;");
+    cfw.addAStore(variableObjectLocal);
+    cfw.addALoad(contextLocal);
+    cfw.addALoad(variableObjectLocal);
+    addScriptRuntimeInvoke("enterActivationFunction","(Lorg/mozilla/javascript/Context;" + "Lorg/mozilla/javascript/Scriptable;" + ")V");
+  }
+ else {
+    debugVariableName="global";
+    cfw.addALoad(funObjLocal);
+    cfw.addALoad(thisObjLocal);
+    cfw.addALoad(contextLocal);
+    cfw.addALoad(variableObjectLocal);
+    cfw.addPush(0);
+    addScriptRuntimeInvoke("initScript","(Lorg/mozilla/javascript/NativeFunction;" + "Lorg/mozilla/javascript/Scriptable;" + "Lorg/mozilla/javascript/Context;"+ "Lorg/mozilla/javascript/Scriptable;"+ "Z"+ ")V");
+  }
+  enterAreaStartLabel=cfw.acquireLabel();
+  epilogueLabel=cfw.acquireLabel();
+  cfw.markLabel(enterAreaStartLabel);
+  generateNestedFunctionInits();
+  if (compilerEnv.isGenerateDebugInfo()) {
+    cfw.addVariableDescriptor(debugVariableName,"Lorg/mozilla/javascript/Scriptable;",cfw.getCurrentCodeOffset(),variableObjectLocal);
+  }
+  if (fnCurrent == null) {
+    popvLocal=getNewWordLocal();
+    Codegen.pushUndefined(cfw);
+    cfw.addAStore(popvLocal);
+    int linenum=scriptOrFn.getEndLineno();
+    if (linenum != -1)     cfw.addLineNumberEntry((short)linenum);
+  }
+ else {
+    if (fnCurrent.itsContainsCalls0) {
+      itsZeroArgArray=getNewWordLocal();
+      cfw.add(ByteCode.GETSTATIC,"org/mozilla/javascript/ScriptRuntime","emptyArgs","[Ljava/lang/Object;");
+      cfw.addAStore(itsZeroArgArray);
+    }
+    if (fnCurrent.itsContainsCalls1) {
+      itsOneArgArray=getNewWordLocal();
+      cfw.addPush(1);
+      cfw.add(ByteCode.ANEWARRAY,"java/lang/Object");
+      cfw.addAStore(itsOneArgArray);
+    }
+  }
+}

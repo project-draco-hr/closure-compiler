@@ -1,0 +1,17 @@
+{
+  if (count == 0)   throw Kit.codeBug();
+  int tableSize=newSlots.length;
+  int i=slots.length;
+  for (; ; ) {
+    --i;
+    Slot slot=slots[i];
+    while (slot != null) {
+      int insertPos=getSlotIndex(tableSize,slot.indexOrHash);
+      Slot next=slot.next;
+      addKnownAbsentSlot(newSlots,slot,insertPos);
+      slot.next=null;
+      slot=next;
+      if (--count == 0)       return;
+    }
+  }
+}

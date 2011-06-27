@@ -1,0 +1,28 @@
+{
+  if (thisObj == null) {
+    throw undefCallError(obj,property);
+  }
+  Object value;
+  for (; ; ) {
+    value=ScriptableObject.getProperty(thisObj,property);
+    if (value != Scriptable.NOT_FOUND) {
+      break;
+    }
+    if (!(thisObj instanceof XMLObject)) {
+      break;
+    }
+    XMLObject xmlObject=(XMLObject)thisObj;
+    Scriptable extra=xmlObject.getExtraMethodSource(cx);
+    if (extra == null) {
+      break;
+    }
+    thisObj=extra;
+  }
+  if (!(value instanceof Callable)) {
+    Object noSuchMethod=ScriptableObject.getProperty(thisObj,"__noSuchMethod__");
+    if (noSuchMethod instanceof Callable)     value=new NoSuchMethodShim((Callable)noSuchMethod,property);
+ else     throw notFunctionError(thisObj,value,property);
+  }
+  storeScriptable(cx,thisObj);
+  return (Callable)value;
+}

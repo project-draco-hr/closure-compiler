@@ -1,0 +1,22 @@
+{
+  Object result;
+  if (thisObj instanceof NativeArray) {
+    NativeArray na=(NativeArray)thisObj;
+    if (na.denseOnly && na.length > 0) {
+      na.length--;
+      result=na.dense[(int)na.length];
+      na.dense[(int)na.length]=NOT_FOUND;
+      return result;
+    }
+  }
+  long length=getLengthProperty(cx,thisObj);
+  if (length > 0) {
+    length--;
+    result=getElem(cx,thisObj,length);
+  }
+ else {
+    result=Undefined.instance;
+  }
+  setLengthProperty(cx,thisObj,length);
+  return result;
+}

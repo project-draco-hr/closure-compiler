@@ -1,0 +1,12 @@
+{
+  XmlCursor cursor=newCursor();
+  try {
+    if (cursor.isStartdoc())     cursor.toFirstContentToken();
+    if (cursor.isText() || cursor.isComment())     return;
+    javax.xml.namespace.QName qname=cursor.getName();
+    cursor.setName(new javax.xml.namespace.QName(qname.getNamespaceURI(),localName,qname.getPrefix()));
+  }
+  finally {
+    cursor.dispose();
+  }
+}

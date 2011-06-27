@@ -1,0 +1,13 @@
+{
+  AstRoot root=parse("\na++;\n" + "   --\n" + "   b;\n");
+  ExpressionStatement first=(ExpressionStatement)root.getFirstChild();
+  ExpressionStatement secondStmt=(ExpressionStatement)first.getNext();
+  UnaryExpression firstOp=(UnaryExpression)first.getExpression();
+  UnaryExpression secondOp=(UnaryExpression)secondStmt.getExpression();
+  AstNode firstVarRef=firstOp.getOperand();
+  AstNode secondVarRef=secondOp.getOperand();
+  assertEquals(1,firstOp.getLineno());
+  assertEquals(2,secondOp.getLineno());
+  assertEquals(1,firstVarRef.getLineno());
+  assertEquals(3,secondVarRef.getLineno());
+}

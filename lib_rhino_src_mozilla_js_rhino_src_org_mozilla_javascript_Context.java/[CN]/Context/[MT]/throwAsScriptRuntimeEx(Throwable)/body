@@ -1,0 +1,15 @@
+{
+  while ((e instanceof InvocationTargetException)) {
+    e=((InvocationTargetException)e).getTargetException();
+  }
+  if (e instanceof Error) {
+    Context cx=getContext();
+    if (cx == null || !cx.hasFeature(Context.FEATURE_ENHANCED_JAVA_ACCESS)) {
+      throw (Error)e;
+    }
+  }
+  if (e instanceof RhinoException) {
+    throw (RhinoException)e;
+  }
+  throw new WrappedException(e);
+}

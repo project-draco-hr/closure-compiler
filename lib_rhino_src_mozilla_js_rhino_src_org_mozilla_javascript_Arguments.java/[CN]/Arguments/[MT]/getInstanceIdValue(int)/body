@@ -1,0 +1,23 @@
+{
+switch (id) {
+case Id_callee:
+    return calleeObj;
+case Id_length:
+  return lengthObj;
+case Id_caller:
+{
+  Object value=callerObj;
+  if (value == UniqueTag.NULL_VALUE) {
+    value=null;
+  }
+ else   if (value == null) {
+    NativeCall caller=activation.parentActivationCall;
+    if (caller != null) {
+      value=caller.get("arguments",caller);
+    }
+  }
+  return value;
+}
+}
+return super.getInstanceIdValue(id);
+}

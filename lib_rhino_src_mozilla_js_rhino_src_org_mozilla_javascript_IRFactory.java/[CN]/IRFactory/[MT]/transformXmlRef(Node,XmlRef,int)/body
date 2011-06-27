@@ -1,0 +1,20 @@
+{
+  if ((memberTypeFlags & Node.ATTRIBUTE_FLAG) != 0)   decompiler.addToken(Token.XMLATTR);
+  Name namespace=node.getNamespace();
+  String ns=namespace != null ? namespace.getIdentifier() : null;
+  if (ns != null) {
+    decompiler.addName(ns);
+    decompiler.addToken(Token.COLONCOLON);
+  }
+  if (node instanceof XmlPropRef) {
+    String name=((XmlPropRef)node).getPropName().getIdentifier();
+    decompiler.addName(name);
+    return createPropertyGet(pn,ns,name,memberTypeFlags);
+  }
+ else {
+    decompiler.addToken(Token.LB);
+    Node expr=transform(((XmlElemRef)node).getExpression());
+    decompiler.addToken(Token.RB);
+    return createElementGet(pn,ns,expr,memberTypeFlags);
+  }
+}

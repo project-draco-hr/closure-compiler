@@ -1,0 +1,21 @@
+{
+  XMLName result;
+  if (nameValue instanceof XMLName) {
+    result=(XMLName)nameValue;
+  }
+ else   if (nameValue instanceof QName) {
+    QName qname=(QName)nameValue;
+    result=XMLName.formProperty(qname.uri(),qname.localName());
+  }
+ else   if (nameValue instanceof String) {
+    result=toXMLNameFromString(cx,(String)nameValue);
+  }
+ else   if (nameValue instanceof Boolean || nameValue instanceof Number || nameValue == Undefined.instance || nameValue == null) {
+    throw badXMLName(nameValue);
+  }
+ else {
+    String name=ScriptRuntime.toString(nameValue);
+    result=toXMLNameFromString(cx,name);
+  }
+  return result;
+}

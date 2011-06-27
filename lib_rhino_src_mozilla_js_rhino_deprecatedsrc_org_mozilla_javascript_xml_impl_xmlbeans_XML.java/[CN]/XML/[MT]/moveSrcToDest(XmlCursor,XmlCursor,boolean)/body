@@ -1,0 +1,19 @@
+{
+  boolean fMovedSomething=true;
+  TokenType tt;
+  do {
+    if (fDontMoveIfSame && srcCurs.isInSameDocument(destCurs) && (srcCurs.comparePosition(destCurs) == 0)) {
+      fMovedSomething=false;
+      break;
+    }
+    if (destCurs.currentTokenType().isStartdoc()) {
+      destCurs.toNextToken();
+    }
+    XmlCursor copyCurs=copy(srcCurs);
+    copyCurs.moveXml(destCurs);
+    copyCurs.dispose();
+    tt=srcCurs.currentTokenType();
+  }
+ while (!tt.isStart() && !tt.isEnd() && !tt.isEnddoc());
+  return fMovedSomething;
+}

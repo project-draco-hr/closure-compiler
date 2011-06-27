@@ -1,0 +1,12 @@
+{
+  AstRoot root=parse("\nfunction\n" + "    foo(\n" + "    a,\n"+ "    b,\n"+ "    c) {\n"+ "    return\n"+ "    4;\n"+ "}\n");
+  FunctionNode function=(FunctionNode)root.getFirstChild();
+  Name functionName=function.getFunctionName();
+  AstNode body=function.getBody();
+  ReturnStatement returnStmt=(ReturnStatement)body.getFirstChild();
+  ExpressionStatement exprStmt=(ExpressionStatement)returnStmt.getNext();
+  AstNode returnVal=exprStmt.getExpression();
+  assertEquals(6,returnStmt.getLineno());
+  assertEquals(7,exprStmt.getLineno());
+  assertEquals(7,returnVal.getLineno());
+}

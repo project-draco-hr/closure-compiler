@@ -1,0 +1,22 @@
+{
+  AstNode pn=shiftExpr();
+  for (; ; ) {
+    int tt=peekToken(), opPos=ts.tokenBeg;
+    int line=ts.lineno;
+switch (tt) {
+case Token.IN:
+      if (inForInit)       break;
+case Token.INSTANCEOF:
+case Token.LE:
+case Token.LT:
+case Token.GE:
+case Token.GT:
+    consumeToken();
+  pn=new InfixExpression(tt,pn,shiftExpr(),opPos);
+pn.setLineno(line);
+continue;
+}
+break;
+}
+return pn;
+}

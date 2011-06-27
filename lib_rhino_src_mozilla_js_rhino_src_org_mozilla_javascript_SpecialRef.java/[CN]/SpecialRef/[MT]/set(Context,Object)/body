@@ -1,0 +1,35 @@
+{
+switch (type) {
+case SPECIAL_NONE:
+    return ScriptRuntime.setObjectProp(target,name,value,cx);
+case SPECIAL_PROTO:
+case SPECIAL_PARENT:
+{
+    Scriptable obj=ScriptRuntime.toObjectOrNull(cx,value);
+    if (obj != null) {
+      Scriptable search=obj;
+      do {
+        if (search == target) {
+          throw Context.reportRuntimeError1("msg.cyclic.value",name);
+        }
+        if (type == SPECIAL_PROTO) {
+          search=search.getPrototype();
+        }
+ else {
+          search=search.getParentScope();
+        }
+      }
+ while (search != null);
+    }
+    if (type == SPECIAL_PROTO) {
+      target.setPrototype(obj);
+    }
+ else {
+      target.setParentScope(obj);
+    }
+    return obj;
+  }
+default :
+throw Kit.codeBug();
+}
+}

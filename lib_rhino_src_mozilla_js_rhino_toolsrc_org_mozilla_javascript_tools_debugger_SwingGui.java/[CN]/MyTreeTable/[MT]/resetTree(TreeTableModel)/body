@@ -1,0 +1,21 @@
+{
+  tree=new TreeTableCellRenderer(treeTableModel);
+  super.setModel(new TreeTableModelAdapter(treeTableModel,tree));
+  ListToTreeSelectionModelWrapper selectionWrapper=new ListToTreeSelectionModelWrapper();
+  tree.setSelectionModel(selectionWrapper);
+  setSelectionModel(selectionWrapper.getListSelectionModel());
+  if (tree.getRowHeight() < 1) {
+    setRowHeight(18);
+  }
+  setDefaultRenderer(TreeTableModel.class,tree);
+  setDefaultEditor(TreeTableModel.class,new TreeTableCellEditor());
+  setShowGrid(true);
+  setIntercellSpacing(new Dimension(1,1));
+  tree.setRootVisible(false);
+  tree.setShowsRootHandles(true);
+  DefaultTreeCellRenderer r=(DefaultTreeCellRenderer)tree.getCellRenderer();
+  r.setOpenIcon(null);
+  r.setClosedIcon(null);
+  r.setLeafIcon(null);
+  return tree;
+}

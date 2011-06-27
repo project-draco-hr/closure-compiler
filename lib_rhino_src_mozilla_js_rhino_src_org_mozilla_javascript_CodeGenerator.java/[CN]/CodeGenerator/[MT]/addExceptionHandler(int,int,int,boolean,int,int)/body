@@ -1,0 +1,21 @@
+{
+  int top=exceptionTableTop;
+  int[] table=itsData.itsExceptionTable;
+  if (table == null) {
+    if (top != 0)     Kit.codeBug();
+    table=new int[Interpreter.EXCEPTION_SLOT_SIZE * 2];
+    itsData.itsExceptionTable=table;
+  }
+ else   if (table.length == top) {
+    table=new int[table.length * 2];
+    System.arraycopy(itsData.itsExceptionTable,0,table,0,top);
+    itsData.itsExceptionTable=table;
+  }
+  table[top + Interpreter.EXCEPTION_TRY_START_SLOT]=icodeStart;
+  table[top + Interpreter.EXCEPTION_TRY_END_SLOT]=icodeEnd;
+  table[top + Interpreter.EXCEPTION_HANDLER_SLOT]=handlerStart;
+  table[top + Interpreter.EXCEPTION_TYPE_SLOT]=isFinally ? 1 : 0;
+  table[top + Interpreter.EXCEPTION_LOCAL_SLOT]=exceptionObjectLocal;
+  table[top + Interpreter.EXCEPTION_SCOPE_SLOT]=scopeLocal;
+  exceptionTableTop=top + Interpreter.EXCEPTION_SLOT_SIZE;
+}

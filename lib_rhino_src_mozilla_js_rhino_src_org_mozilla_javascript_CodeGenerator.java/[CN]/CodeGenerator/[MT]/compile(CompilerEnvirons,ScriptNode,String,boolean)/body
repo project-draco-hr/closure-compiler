@@ -1,0 +1,27 @@
+{
+  this.compilerEnv=compilerEnv;
+  if (Token.printTrees) {
+    System.out.println("before transform:");
+    System.out.println(tree.toStringTree(tree));
+  }
+  new NodeTransformer().transform(tree);
+  if (Token.printTrees) {
+    System.out.println("after transform:");
+    System.out.println(tree.toStringTree(tree));
+  }
+  if (returnFunction) {
+    scriptOrFn=tree.getFunctionNode(0);
+  }
+ else {
+    scriptOrFn=tree;
+  }
+  itsData=new InterpreterData(compilerEnv.getLanguageVersion(),scriptOrFn.getSourceName(),encodedSource,((AstRoot)tree).isInStrictMode());
+  itsData.topLevel=true;
+  if (returnFunction) {
+    generateFunctionICode();
+  }
+ else {
+    generateICodeFromTree(scriptOrFn);
+  }
+  return itsData;
+}

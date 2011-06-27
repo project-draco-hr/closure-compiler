@@ -1,0 +1,21 @@
+{
+  long index;
+  if (name instanceof Integer) {
+    index=((Integer)name).intValue();
+  }
+ else   if (name instanceof Number) {
+    double x=((Number)name).doubleValue();
+    index=(long)x;
+    if (index != x) {
+      return false;
+    }
+    if (index == 0 && 1.0 / x < 0) {
+      return false;
+    }
+  }
+ else {
+    String s=ScriptRuntime.toString(name);
+    index=ScriptRuntime.testUint32String(s);
+  }
+  return (0 <= index && index < length());
+}

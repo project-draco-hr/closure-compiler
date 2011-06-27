@@ -1,0 +1,13 @@
+{
+  Context cx=Context.enter();
+  try {
+    Scriptable threadScope=cx.newObject(sharedScope);
+    threadScope.setPrototype(sharedScope);
+    threadScope.setParentScope(null);
+    threadScope.put("x",threadScope,x);
+    cx.evaluateString(threadScope,source,"threadScript",1,null);
+  }
+  finally {
+    Context.exit();
+  }
+}

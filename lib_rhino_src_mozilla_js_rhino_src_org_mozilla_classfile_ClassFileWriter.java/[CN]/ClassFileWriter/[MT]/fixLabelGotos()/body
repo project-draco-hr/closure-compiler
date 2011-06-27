@@ -1,0 +1,19 @@
+{
+  byte[] codeBuffer=itsCodeBuffer;
+  for (int i=0; i < itsFixupTableTop; i++) {
+    long fixup=itsFixupTable[i];
+    int label=(int)(fixup >> 32);
+    int fixupSite=(int)fixup;
+    int pc=itsLabelTable[label];
+    if (pc == -1) {
+      throw new RuntimeException();
+    }
+    int offset=pc - (fixupSite - 1);
+    if ((short)offset != offset) {
+      throw new ClassFileFormatException("Program too complex: too big jump offset");
+    }
+    codeBuffer[fixupSite]=(byte)(offset >> 8);
+    codeBuffer[fixupSite + 1]=(byte)offset;
+  }
+  itsFixupTableTop=0;
+}

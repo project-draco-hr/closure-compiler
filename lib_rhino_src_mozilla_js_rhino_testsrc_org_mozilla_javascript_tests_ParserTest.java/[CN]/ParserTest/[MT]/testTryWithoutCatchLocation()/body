@@ -1,0 +1,12 @@
+{
+  AstNode root=parse("\ntry {\n" + "  var x = 1;\n" + "} finally {\n"+ "  var y = 2;\n"+ "}\n");
+  TryStatement tryStmt=(TryStatement)root.getFirstChild();
+  AstNode tryBlock=tryStmt.getTryBlock();
+  List<CatchClause> catchBlocks=tryStmt.getCatchClauses();
+  Scope finallyBlock=(Scope)tryStmt.getFinallyBlock();
+  AstNode finallyStmt=(AstNode)finallyBlock.getFirstChild();
+  assertEquals(1,tryStmt.getLineno());
+  assertEquals(1,tryBlock.getLineno());
+  assertEquals(3,finallyBlock.getLineno());
+  assertEquals(4,finallyStmt.getLineno());
+}

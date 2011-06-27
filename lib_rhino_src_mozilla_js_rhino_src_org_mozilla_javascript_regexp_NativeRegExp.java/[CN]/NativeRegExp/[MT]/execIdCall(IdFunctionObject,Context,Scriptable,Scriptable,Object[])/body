@@ -1,0 +1,23 @@
+{
+  if (!f.hasTag(REGEXP_TAG)) {
+    return super.execIdCall(f,cx,scope,thisObj,args);
+  }
+  int id=f.methodId();
+switch (id) {
+case Id_compile:
+    return realThis(thisObj,f).compile(cx,scope,args);
+case Id_toString:
+case Id_toSource:
+  return realThis(thisObj,f).toString();
+case Id_exec:
+return realThis(thisObj,f).execSub(cx,scope,args,MATCH);
+case Id_test:
+{
+Object x=realThis(thisObj,f).execSub(cx,scope,args,TEST);
+return Boolean.TRUE.equals(x) ? Boolean.TRUE : Boolean.FALSE;
+}
+case Id_prefix:
+return realThis(thisObj,f).execSub(cx,scope,args,PREFIX);
+}
+throw new IllegalArgumentException(String.valueOf(id));
+}

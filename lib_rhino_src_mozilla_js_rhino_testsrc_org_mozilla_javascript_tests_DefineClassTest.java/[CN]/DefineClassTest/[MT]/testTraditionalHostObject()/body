@@ -1,0 +1,21 @@
+{
+  Context cx=Context.enter();
+  try {
+    Object result=evaluate(cx,"t = new TraditionalHostObject(); t.initialized;");
+    assertEquals(result,Boolean.TRUE);
+    assertEquals(evaluate(cx,"t.instanceFunction();"),"instanceFunction");
+    assertEquals(evaluate(cx,"TraditionalHostObject.staticFunction();"),"staticFunction");
+    assertNull(evaluate(cx,"t.foo;"));
+    assertEquals(evaluate(cx,"t.foo = 'foo'; t.foo;"),"FOO");
+    assertEquals(evaluate(cx,"t.bar;"),"bar");
+    try {
+      evaluate(cx,"t.bar = 'bar'; t.bar;");
+      fail("setting property with no setter should throw error");
+    }
+ catch (    EcmaError e) {
+    }
+  }
+  finally {
+    Context.exit();
+  }
+}

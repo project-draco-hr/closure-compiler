@@ -1,0 +1,22 @@
+{
+  if (!(0 <= jumpTarget && jumpTarget <= itsCodeBufferTop))   throw new IllegalArgumentException("Bad jump target: " + jumpTarget);
+  if (!(caseIndex >= -1))   throw new IllegalArgumentException("Bad case index: " + caseIndex);
+  int padSize=3 & ~switchStart;
+  int caseOffset;
+  if (caseIndex < 0) {
+    caseOffset=switchStart + 1 + padSize;
+  }
+ else {
+    caseOffset=switchStart + 1 + padSize+ 4 * (3 + caseIndex);
+  }
+  if (!(0 <= switchStart && switchStart <= itsCodeBufferTop - 4 * 4 - padSize - 1)) {
+    throw new IllegalArgumentException(switchStart + " is outside a possible range of tableswitch" + " in already generated code");
+  }
+  if ((0xFF & itsCodeBuffer[switchStart]) != ByteCode.TABLESWITCH) {
+    throw new IllegalArgumentException(switchStart + " is not offset of tableswitch statement");
+  }
+  if (!(0 <= caseOffset && caseOffset + 4 <= itsCodeBufferTop)) {
+    throw new ClassFileFormatException("Too big case index: " + caseIndex);
+  }
+  putInt32(jumpTarget - switchStart,itsCodeBuffer,caseOffset);
+}

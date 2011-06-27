@@ -1,0 +1,17 @@
+{
+  String absPath=f.getAbsolutePath();
+  if (!f.isFile()) {
+    addError("msg.jsfile.not.found",absPath);
+    return null;
+  }
+  try {
+    return (String)SourceReader.readFileOrUrl(absPath,true,characterEncoding);
+  }
+ catch (  FileNotFoundException ex) {
+    addError("msg.couldnt.open",absPath);
+  }
+catch (  IOException ioe) {
+    addFormatedError(ioe.toString());
+  }
+  return null;
+}

@@ -1,0 +1,25 @@
+{
+  int label=getTargetLabel(target);
+  if (!(label < labelTableTop))   Kit.codeBug();
+  int targetPC=labelTable[label];
+  if (targetPC != -1) {
+    addBackwardGoto(gotoOp,targetPC);
+  }
+ else {
+    int gotoPC=iCodeTop;
+    addGotoOp(gotoOp);
+    int top=fixupTableTop;
+    if (fixupTable == null || top == fixupTable.length) {
+      if (fixupTable == null) {
+        fixupTable=new long[MIN_FIXUP_TABLE_SIZE];
+      }
+ else {
+        long[] tmp=new long[fixupTable.length * 2];
+        System.arraycopy(fixupTable,0,tmp,0,top);
+        fixupTable=tmp;
+      }
+    }
+    fixupTableTop=top + 1;
+    fixupTable[top]=((long)label << 32) | gotoPC;
+  }
+}

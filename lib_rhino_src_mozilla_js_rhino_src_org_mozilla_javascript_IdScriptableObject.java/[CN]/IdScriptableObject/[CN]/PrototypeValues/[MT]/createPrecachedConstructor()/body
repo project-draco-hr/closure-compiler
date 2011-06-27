@@ -1,0 +1,14 @@
+{
+  if (constructorId != 0)   throw new IllegalStateException();
+  constructorId=obj.findPrototypeId("constructor");
+  if (constructorId == 0) {
+    throw new IllegalStateException("No id for constructor property");
+  }
+  obj.initPrototypeId(constructorId);
+  if (constructor == null) {
+    throw new IllegalStateException(obj.getClass().getName() + ".initPrototypeId() did not " + "initialize id="+ constructorId);
+  }
+  constructor.initFunction(obj.getClassName(),ScriptableObject.getTopLevelScope(obj));
+  constructor.markAsConstructor(obj);
+  return constructor;
+}

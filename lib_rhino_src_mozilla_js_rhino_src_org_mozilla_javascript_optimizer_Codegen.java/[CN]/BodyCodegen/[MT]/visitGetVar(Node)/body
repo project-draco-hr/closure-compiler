@@ -1,0 +1,19 @@
+{
+  if (!hasVarsInRegs)   Kit.codeBug();
+  int varIndex=fnCurrent.getVarIndex(node);
+  short reg=varRegisters[varIndex];
+  if (varIsDirectCallParameter(varIndex)) {
+    if (node.getIntProp(Node.ISNUMBER_PROP,-1) != -1) {
+      dcpLoadAsNumber(reg);
+    }
+ else {
+      dcpLoadAsObject(reg);
+    }
+  }
+ else   if (fnCurrent.isNumberVar(varIndex)) {
+    cfw.addDLoad(reg);
+  }
+ else {
+    cfw.addALoad(reg);
+  }
+}

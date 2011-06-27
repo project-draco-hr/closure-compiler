@@ -1,0 +1,40 @@
+{
+  Object getter=getProperty(desc,"get");
+  if (getter != NOT_FOUND && getter != Undefined.instance && !(getter instanceof Callable)) {
+    throw ScriptRuntime.notFunctionError(getter);
+  }
+  Object setter=getProperty(desc,"set");
+  if (setter != NOT_FOUND && setter != Undefined.instance && !(setter instanceof Callable)) {
+    throw ScriptRuntime.notFunctionError(setter);
+  }
+  if (isDataDescriptor(desc) && isAccessorDescriptor(desc)) {
+    throw ScriptRuntime.typeError0("msg.both.data.and.accessor.desc");
+  }
+  if (slot == null) {
+    if (!isExtensible())     throw ScriptRuntime.typeError("msg.not.extensible");
+  }
+ else {
+    String name=slot.name;
+    ScriptableObject current=getOwnPropertyDescriptor(Context.getContext(),name);
+    if (isFalse(current.get("configurable",current))) {
+      if (isTrue(getProperty(desc,"configurable")))       throw ScriptRuntime.typeError1("msg.change.configurable.false.to.true",name);
+      if (isTrue(current.get("enumerable",current)) != isTrue(getProperty(desc,"enumerable")))       throw ScriptRuntime.typeError1("msg.change.enumerable.with.configurable.false",name);
+      if (isGenericDescriptor(desc)) {
+      }
+ else       if (isDataDescriptor(desc) && isDataDescriptor(current)) {
+        if (isFalse(current.get("writable",current))) {
+          if (isTrue(getProperty(desc,"writable")))           throw ScriptRuntime.typeError1("msg.change.writable.false.to.true.with.configurable.false",name);
+          if (changes(current.get("value",current),getProperty(desc,"value")))           throw ScriptRuntime.typeError1("msg.change.value.with.writable.false",name);
+        }
+      }
+ else       if (isAccessorDescriptor(desc) && isAccessorDescriptor(current)) {
+        if (changes(current.get("set",current),setter))         throw ScriptRuntime.typeError1("msg.change.setter.with.configurable.false",name);
+        if (changes(current.get("get",current),getter))         throw ScriptRuntime.typeError1("msg.change.getter.with.configurable.false",name);
+      }
+ else {
+        if (isDataDescriptor(current))         throw ScriptRuntime.typeError1("msg.change.property.data.to.accessor.with.configurable.false",name);
+ else         throw ScriptRuntime.typeError1("msg.change.property.accessor.to.data.with.configurable.false",name);
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  int functionType=fn.getFunctionType();
+  int start=decompiler.markFunctionStart(functionType);
+  Node mexpr=decompileFunctionHeader(fn);
+  int index=currentScriptOrFn.addFunction(fn);
+  PerFunctionVariables savedVars=new PerFunctionVariables(fn);
+  try {
+    Node destructuring=(Node)fn.getProp(Node.DESTRUCTURING_PARAMS);
+    fn.removeProp(Node.DESTRUCTURING_PARAMS);
+    int lineno=fn.getBody().getLineno();
+    ++nestingOfFunction;
+    Node body=transform(fn.getBody());
+    if (!fn.isExpressionClosure()) {
+      decompiler.addToken(Token.RC);
+    }
+    fn.setEncodedSourceBounds(start,decompiler.markFunctionEnd(start));
+    if (functionType != FunctionNode.FUNCTION_EXPRESSION && !fn.isExpressionClosure()) {
+      decompiler.addToken(Token.EOL);
+    }
+    if (destructuring != null) {
+      body.addChildToFront(new Node(Token.EXPR_VOID,destructuring,lineno));
+    }
+    int syntheticType=fn.getFunctionType();
+    Node pn=initFunction(fn,index,body,syntheticType);
+    if (mexpr != null) {
+      pn=createAssignment(Token.ASSIGN,mexpr,pn);
+      if (syntheticType != FunctionNode.FUNCTION_EXPRESSION) {
+        pn=createExprStatementNoReturn(pn,fn.getLineno());
+      }
+    }
+    return pn;
+  }
+  finally {
+    --nestingOfFunction;
+    savedVars.restore();
+  }
+}

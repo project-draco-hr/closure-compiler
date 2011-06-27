@@ -1,0 +1,17 @@
+{
+  Constructor<?> ctor=ctor();
+  try {
+    try {
+      return ctor.newInstance(args);
+    }
+ catch (    IllegalAccessException ex) {
+      if (!VMBridge.instance.tryToMakeAccessible(ctor)) {
+        throw Context.throwAsScriptRuntimeEx(ex);
+      }
+    }
+    return ctor.newInstance(args);
+  }
+ catch (  Exception ex) {
+    throw Context.throwAsScriptRuntimeEx(ex);
+  }
+}

@@ -1,0 +1,17 @@
+{
+  ClassCache cache=ClassCache.get(scope);
+  Map<JavaAdapterSignature,Class<?>> generated=cache.getInterfaceAdapterCacheMap();
+  ObjToIntMap names=getObjectFunctionNames(obj);
+  JavaAdapterSignature sig;
+  sig=new JavaAdapterSignature(superClass,interfaces,names);
+  Class<?> adapterClass=generated.get(sig);
+  if (adapterClass == null) {
+    String adapterName="adapter" + cache.newClassSerialNumber();
+    byte[] code=createAdapterCode(names,adapterName,superClass,interfaces,null);
+    adapterClass=loadAdapterClass(adapterName,code);
+    if (cache.isCachingEnabled()) {
+      generated.put(sig,adapterClass);
+    }
+  }
+  return adapterClass;
+}

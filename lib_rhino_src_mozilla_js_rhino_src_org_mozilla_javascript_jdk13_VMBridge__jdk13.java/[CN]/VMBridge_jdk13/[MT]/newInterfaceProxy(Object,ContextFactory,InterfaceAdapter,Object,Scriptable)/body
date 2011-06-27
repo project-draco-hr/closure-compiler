@@ -1,0 +1,23 @@
+{
+  Constructor<?> c=(Constructor<?>)proxyHelper;
+  InvocationHandler handler=new InvocationHandler(){
+    public Object invoke(    Object proxy,    Method method,    Object[] args){
+      return adapter.invoke(cf,target,topScope,method,args);
+    }
+  }
+;
+  Object proxy;
+  try {
+    proxy=c.newInstance(new Object[]{handler});
+  }
+ catch (  InvocationTargetException ex) {
+    throw Context.throwAsScriptRuntimeEx(ex);
+  }
+catch (  IllegalAccessException ex) {
+    throw Kit.initCause(new IllegalStateException(),ex);
+  }
+catch (  InstantiationException ex) {
+    throw Kit.initCause(new IllegalStateException(),ex);
+  }
+  return proxy;
+}

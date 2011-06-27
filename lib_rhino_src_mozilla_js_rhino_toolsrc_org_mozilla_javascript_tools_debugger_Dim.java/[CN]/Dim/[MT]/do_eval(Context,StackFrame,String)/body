@@ -1,0 +1,31 @@
+{
+  String resultString;
+  Debugger saved_debugger=cx.getDebugger();
+  Object saved_data=cx.getDebuggerContextData();
+  int saved_level=cx.getOptimizationLevel();
+  cx.setDebugger(null,null);
+  cx.setOptimizationLevel(-1);
+  cx.setGeneratingDebug(false);
+  try {
+    Callable script=(Callable)cx.compileString(expr,"",0,null);
+    Object result=script.call(cx,frame.scope,frame.thisObj,ScriptRuntime.emptyArgs);
+    if (result == Undefined.instance) {
+      resultString="";
+    }
+ else {
+      resultString=ScriptRuntime.toString(result);
+    }
+  }
+ catch (  Exception exc) {
+    resultString=exc.getMessage();
+  }
+ finally {
+    cx.setGeneratingDebug(true);
+    cx.setOptimizationLevel(saved_level);
+    cx.setDebugger(saved_debugger,saved_data);
+  }
+  if (resultString == null) {
+    resultString="null";
+  }
+  return resultString;
+}

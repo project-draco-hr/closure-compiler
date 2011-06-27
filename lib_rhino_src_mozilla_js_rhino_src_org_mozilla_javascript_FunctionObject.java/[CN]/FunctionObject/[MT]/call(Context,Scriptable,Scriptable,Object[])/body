@@ -1,0 +1,77 @@
+{
+  Object result;
+  boolean checkMethodResult=false;
+  if (parmsLength < 0) {
+    if (parmsLength == VARARGS_METHOD) {
+      Object[] invokeArgs={cx,thisObj,args,this};
+      result=member.invoke(null,invokeArgs);
+      checkMethodResult=true;
+    }
+ else {
+      boolean inNewExpr=(thisObj == null);
+      Boolean b=inNewExpr ? Boolean.TRUE : Boolean.FALSE;
+      Object[] invokeArgs={cx,args,this,b};
+      result=(member.isCtor()) ? member.newInstance(invokeArgs) : member.invoke(null,invokeArgs);
+    }
+  }
+ else {
+    if (!isStatic) {
+      Class<?> clazz=member.getDeclaringClass();
+      if (!clazz.isInstance(thisObj)) {
+        boolean compatible=false;
+        if (thisObj == scope) {
+          Scriptable parentScope=getParentScope();
+          if (scope != parentScope) {
+            compatible=clazz.isInstance(parentScope);
+            if (compatible) {
+              thisObj=parentScope;
+            }
+          }
+        }
+        if (!compatible) {
+          throw ScriptRuntime.typeError1("msg.incompat.call",functionName);
+        }
+      }
+    }
+    Object[] invokeArgs;
+    if (parmsLength == args.length) {
+      invokeArgs=args;
+      for (int i=0; i != parmsLength; ++i) {
+        Object arg=args[i];
+        Object converted=convertArg(cx,scope,arg,typeTags[i]);
+        if (arg != converted) {
+          if (invokeArgs == args) {
+            invokeArgs=args.clone();
+          }
+          invokeArgs[i]=converted;
+        }
+      }
+    }
+ else     if (parmsLength == 0) {
+      invokeArgs=ScriptRuntime.emptyArgs;
+    }
+ else {
+      invokeArgs=new Object[parmsLength];
+      for (int i=0; i != parmsLength; ++i) {
+        Object arg=(i < args.length) ? args[i] : Undefined.instance;
+        invokeArgs[i]=convertArg(cx,scope,arg,typeTags[i]);
+      }
+    }
+    if (member.isMethod()) {
+      result=member.invoke(thisObj,invokeArgs);
+      checkMethodResult=true;
+    }
+ else {
+      result=member.newInstance(invokeArgs);
+    }
+  }
+  if (checkMethodResult) {
+    if (hasVoidReturn) {
+      result=Undefined.instance;
+    }
+ else     if (returnTypeTag == JAVA_UNSUPPORTED_TYPE) {
+      result=cx.getWrapFactory().wrap(cx,scope,result,null);
+    }
+  }
+  return result;
+}

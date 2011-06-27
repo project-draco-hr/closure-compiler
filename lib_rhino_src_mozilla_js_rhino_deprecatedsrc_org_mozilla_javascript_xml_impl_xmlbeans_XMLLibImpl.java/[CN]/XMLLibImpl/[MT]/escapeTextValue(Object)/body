@@ -1,0 +1,17 @@
+{
+  if (value instanceof XMLObjectImpl) {
+    return ((XMLObjectImpl)value).toXMLString(0);
+  }
+  String text=ScriptRuntime.toString(value);
+  if (text.length() == 0)   return text;
+  XmlObject xo=XmlObject.Factory.newInstance();
+  XmlCursor cursor=xo.newCursor();
+  cursor.toNextToken();
+  cursor.beginElement("a");
+  cursor.insertChars(text);
+  cursor.dispose();
+  String elementText=xo.toString();
+  int begin=elementText.indexOf('>') + 1;
+  int end=elementText.lastIndexOf('<');
+  return (begin < end) ? elementText.substring(begin,end) : "";
+}

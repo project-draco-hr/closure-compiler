@@ -1,0 +1,11 @@
+{
+  if (name != null && index != 0)   throw new IllegalArgumentException(name);
+  Slot slot=getSlot(name,index,SLOT_QUERY);
+  if (slot == null)   return null;
+  if (slot instanceof GetterSlot) {
+    GetterSlot gslot=(GetterSlot)slot;
+    Object result=isSetter ? gslot.setter : gslot.getter;
+    return result != null ? result : Undefined.instance;
+  }
+ else   return Undefined.instance;
+}

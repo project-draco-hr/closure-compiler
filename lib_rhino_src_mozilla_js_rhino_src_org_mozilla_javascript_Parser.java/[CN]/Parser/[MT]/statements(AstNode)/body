@@ -1,0 +1,12 @@
+{
+  if (currentToken != Token.LC && !compilerEnv.isIdeMode())   codeBug();
+  int pos=ts.tokenBeg;
+  AstNode block=parent != null ? parent : new Block(pos);
+  block.setLineno(ts.lineno);
+  int tt;
+  while ((tt=peekToken()) > Token.EOF && tt != Token.RC) {
+    block.addChild(statement());
+  }
+  block.setLength(ts.tokenBeg - pos);
+  return block;
+}

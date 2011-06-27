@@ -1,0 +1,36 @@
+{
+  int index=0;
+  XmlCursor curs=newCursor();
+  TokenType tt=curs.currentTokenType();
+  while (true) {
+    if (tt.isText()) {
+      index++;
+      if (!curs.toPrevSibling()) {
+        break;
+      }
+    }
+ else     if (tt.isStart()) {
+      tt=curs.toPrevToken();
+      if (tt.isEnd()) {
+        curs.toNextToken();
+        if (!curs.toPrevSibling()) {
+          break;
+        }
+        index++;
+      }
+ else {
+        break;
+      }
+    }
+ else     if (tt.isComment() || tt.isProcinst()) {
+      curs.toPrevToken();
+    }
+ else {
+      break;
+    }
+    tt=curs.currentTokenType();
+  }
+  index=curs.currentTokenType().isStartdoc() ? -1 : index;
+  curs.dispose();
+  return index;
+}

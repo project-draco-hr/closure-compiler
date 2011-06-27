@@ -1,0 +1,17 @@
+{
+  final ContextAction action=new ContextAction(){
+    public Object run(    Context cx){
+      final Scriptable scope=cx.initStandardObjects();
+      try {
+        cx.evaluateString(scope,_source,"test.js",0,null);
+      }
+ catch (      final JavaScriptException e) {
+        assertEquals(_expectedStackTrace,e.getScriptStackTrace());
+        return null;
+      }
+      throw new RuntimeException("Exception expected!");
+    }
+  }
+;
+  Utils.runWithOptimizationLevel(action,-1);
+}

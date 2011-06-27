@@ -1,0 +1,18 @@
+{
+  int tt=peekToken();
+  if ((tt == Token.COMMA || tt == Token.RC) && ptt == Token.NAME && compilerEnv.getLanguageVersion() >= Context.VERSION_1_8) {
+    if (!inDestructuringAssignment) {
+      reportError("msg.bad.object.init");
+    }
+    AstNode nn=new Name(property.getPosition(),property.getString());
+    ObjectProperty pn=new ObjectProperty();
+    pn.putProp(Node.DESTRUCTURING_SHORTHAND,Boolean.TRUE);
+    pn.setLeftAndRight(property,nn);
+    return pn;
+  }
+  mustMatchToken(Token.COLON,"msg.no.colon.prop");
+  ObjectProperty pn=new ObjectProperty();
+  pn.setOperatorPosition(ts.tokenBeg);
+  pn.setLeftAndRight(property,assignExpr());
+  return pn;
+}

@@ -1,0 +1,29 @@
+{
+  boolean result=true;
+  TreeMap mapOne=loadAttributeMap(xmlOne);
+  TreeMap mapTwo=loadAttributeMap(xmlTwo);
+  if (mapOne.size() != mapTwo.size()) {
+    result=false;
+  }
+ else {
+    Set keysOne=mapOne.keySet();
+    Set keysTwo=mapTwo.keySet();
+    Iterator itOne=keysOne.iterator();
+    Iterator itTwo=keysTwo.iterator();
+    while (result && itOne.hasNext()) {
+      String valueOne=(String)itOne.next();
+      String valueTwo=(String)itTwo.next();
+      if (!valueOne.equals(valueTwo)) {
+        result=false;
+      }
+ else {
+        javax.xml.namespace.QName qnameOne=(javax.xml.namespace.QName)mapOne.get(valueOne);
+        javax.xml.namespace.QName qnameTwo=(javax.xml.namespace.QName)mapTwo.get(valueTwo);
+        if (!qnamesEqual(qnameOne,qnameTwo)) {
+          result=false;
+        }
+      }
+    }
+  }
+  return result;
+}

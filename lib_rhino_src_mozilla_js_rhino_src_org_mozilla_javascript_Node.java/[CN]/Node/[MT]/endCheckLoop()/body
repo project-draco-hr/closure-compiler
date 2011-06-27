@@ -1,0 +1,11 @@
+{
+  Node n;
+  int rv=END_UNREACHED;
+  for (n=first; n.next != last; n=n.next) {
+  }
+  if (n.type != Token.IFEQ)   return END_DROPS_OFF;
+  rv=((Jump)n).target.next.endCheck();
+  if (n.first.type == Token.TRUE)   rv&=~END_DROPS_OFF;
+  rv|=getIntProp(CONTROL_BLOCK_PROP,END_UNREACHED);
+  return rv;
+}

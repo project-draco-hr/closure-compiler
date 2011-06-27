@@ -1,0 +1,30 @@
+{
+  Object[] superIds=super.getIds();
+  if (dense == null) {
+    return superIds;
+  }
+  int N=dense.length;
+  long currentLength=length;
+  if (N > currentLength) {
+    N=(int)currentLength;
+  }
+  if (N == 0) {
+    return superIds;
+  }
+  int superLength=superIds.length;
+  Object[] ids=new Object[N + superLength];
+  int presentCount=0;
+  for (int i=0; i != N; ++i) {
+    if (dense[i] != NOT_FOUND) {
+      ids[presentCount]=Integer.valueOf(i);
+      ++presentCount;
+    }
+  }
+  if (presentCount != N) {
+    Object[] tmp=new Object[presentCount + superLength];
+    System.arraycopy(ids,0,tmp,0,presentCount);
+    ids=tmp;
+  }
+  System.arraycopy(superIds,0,ids,presentCount,superLength);
+  return ids;
+}

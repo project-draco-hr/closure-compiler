@@ -1,0 +1,18 @@
+{
+  if (destCurs.isStartdoc()) {
+    destCurs.toFirstContentToken();
+  }
+  removeToken(destCurs);
+  XmlCursor srcCurs=newValue.newCursor();
+  if (srcCurs.currentTokenType().isStartdoc()) {
+    srcCurs.toFirstContentToken();
+  }
+  moveSrcToDest(srcCurs,destCurs,false);
+  if (!destCurs.toPrevSibling()) {
+    destCurs.toPrevToken();
+  }
+  destCurs.setBookmark(new XScriptAnnotation(destCurs));
+  destCurs.toEndToken();
+  destCurs.toNextToken();
+  srcCurs.dispose();
+}

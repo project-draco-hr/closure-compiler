@@ -1,0 +1,14 @@
+{
+  Scriptable sobj=toObjectOrNull(cx,obj);
+  if (sobj == null) {
+    throw undefReadError(obj,property);
+  }
+  if (obj instanceof XMLObject) {
+    getObjectProp(sobj,property,cx);
+  }
+  Object result=ScriptableObject.getProperty(sobj,property);
+  if (result == Scriptable.NOT_FOUND) {
+    return Undefined.instance;
+  }
+  return result;
+}

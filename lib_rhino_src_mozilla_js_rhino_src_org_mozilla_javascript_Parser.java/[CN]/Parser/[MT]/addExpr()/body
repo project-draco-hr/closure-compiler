@@ -1,0 +1,15 @@
+{
+  AstNode pn=mulExpr();
+  for (; ; ) {
+    int tt=peekToken(), opPos=ts.tokenBeg;
+    if (tt == Token.ADD || tt == Token.SUB) {
+      consumeToken();
+      int lineno=ts.lineno;
+      pn=new InfixExpression(tt,pn,mulExpr(),opPos);
+      pn.setLineno(lineno);
+      continue;
+    }
+    break;
+  }
+  return pn;
+}

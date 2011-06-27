@@ -1,0 +1,22 @@
+{
+  if (name.equals("prototype"))   return null;
+  if (staticFieldAndMethods != null) {
+    Object result=staticFieldAndMethods.get(name);
+    if (result != null)     return result;
+  }
+  if (members.has(name,true)) {
+    return members.get(this,name,javaObject,true);
+  }
+  if (javaClassPropertyName.equals(name)) {
+    Context cx=Context.getContext();
+    Scriptable scope=ScriptableObject.getTopLevelScope(start);
+    return cx.getWrapFactory().wrap(cx,scope,javaObject,ScriptRuntime.ClassClass);
+  }
+  Class<?> nestedClass=findNestedClass(getClassObject(),name);
+  if (nestedClass != null) {
+    NativeJavaClass nestedValue=new NativeJavaClass(ScriptableObject.getTopLevelScope(this),nestedClass);
+    nestedValue.setParentScope(this);
+    return nestedValue;
+  }
+  throw members.reportMemberNotFound(name);
+}

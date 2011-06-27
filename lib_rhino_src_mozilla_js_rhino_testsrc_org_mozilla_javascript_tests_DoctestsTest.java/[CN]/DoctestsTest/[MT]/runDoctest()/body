@@ -1,0 +1,18 @@
+{
+  ContextFactory factory=ContextFactory.getGlobal();
+  Context cx=factory.enterContext();
+  try {
+    cx.setOptimizationLevel(optimizationLevel);
+    Global global=new Global(cx);
+    int testsPassed=global.runDoctest(cx,global,source,name,1);
+    System.out.println(name + "(" + optimizationLevel+ "): "+ testsPassed+ " passed.");
+    assertTrue(testsPassed > 0);
+  }
+ catch (  Exception ex) {
+    System.out.println(name + "(" + optimizationLevel+ "): FAILED due to "+ ex);
+    throw ex;
+  }
+ finally {
+    Context.exit();
+  }
+}

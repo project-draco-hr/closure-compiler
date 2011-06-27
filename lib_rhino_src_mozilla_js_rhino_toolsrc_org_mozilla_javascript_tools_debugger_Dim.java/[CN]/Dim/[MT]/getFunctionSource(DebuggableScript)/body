@@ -1,0 +1,25 @@
+{
+  FunctionSource fsource=functionSource(fnOrScript);
+  if (fsource == null) {
+    String url=getNormalizedUrl(fnOrScript);
+    SourceInfo si=sourceInfo(url);
+    if (si == null) {
+      if (!fnOrScript.isGeneratedScript()) {
+        String source=loadSource(url);
+        if (source != null) {
+          DebuggableScript top=fnOrScript;
+          for (; ; ) {
+            DebuggableScript parent=top.getParent();
+            if (parent == null) {
+              break;
+            }
+            top=parent;
+          }
+          registerTopScript(top,source);
+          fsource=functionSource(fnOrScript);
+        }
+      }
+    }
+  }
+  return fsource;
+}

@@ -1,0 +1,11 @@
+{
+  cfw.addPush(arrayLength);
+  cfw.add(ByteCode.ANEWARRAY,"java/lang/Object");
+  int paramOffset=1;
+  for (int i=0; i != argTypes.length; ++i) {
+    cfw.add(ByteCode.DUP);
+    cfw.addPush(i);
+    paramOffset+=generateWrapArg(cfw,paramOffset,argTypes[i]);
+    cfw.add(ByteCode.AASTORE);
+  }
+}

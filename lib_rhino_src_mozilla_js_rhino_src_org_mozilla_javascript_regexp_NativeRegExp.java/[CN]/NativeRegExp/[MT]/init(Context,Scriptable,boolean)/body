@@ -1,0 +1,16 @@
+{
+  NativeRegExp proto=new NativeRegExp();
+  proto.re=(RECompiled)compileRE(cx,"",null,false);
+  proto.activatePrototypeMap(MAX_PROTOTYPE_ID);
+  proto.setParentScope(scope);
+  proto.setPrototype(getObjectPrototype(scope));
+  NativeRegExpCtor ctor=new NativeRegExpCtor();
+  proto.defineProperty("constructor",ctor,ScriptableObject.DONTENUM);
+  ScriptRuntime.setFunctionProtoAndParent(ctor,scope);
+  ctor.setImmunePrototypeProperty(proto);
+  if (sealed) {
+    proto.sealObject();
+    ctor.sealObject();
+  }
+  defineProperty(scope,"RegExp",ctor,ScriptableObject.DONTENUM);
+}

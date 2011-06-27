@@ -1,0 +1,15 @@
+{
+  if (possibleDynamicScope == staticTopScope) {
+    return possibleDynamicScope;
+  }
+  Scriptable proto=possibleDynamicScope;
+  for (; ; ) {
+    proto=proto.getPrototype();
+    if (proto == staticTopScope) {
+      return possibleDynamicScope;
+    }
+    if (proto == null) {
+      return staticTopScope;
+    }
+  }
+}

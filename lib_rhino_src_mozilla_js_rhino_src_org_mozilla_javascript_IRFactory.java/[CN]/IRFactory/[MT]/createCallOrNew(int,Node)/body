@@ -1,0 +1,24 @@
+{
+  int type=Node.NON_SPECIALCALL;
+  if (child.getType() == Token.NAME) {
+    String name=child.getString();
+    if (name.equals("eval")) {
+      type=Node.SPECIALCALL_EVAL;
+    }
+ else     if (name.equals("With")) {
+      type=Node.SPECIALCALL_WITH;
+    }
+  }
+ else   if (child.getType() == Token.GETPROP) {
+    String name=child.getLastChild().getString();
+    if (name.equals("eval")) {
+      type=Node.SPECIALCALL_EVAL;
+    }
+  }
+  Node node=new Node(nodeType,child);
+  if (type != Node.NON_SPECIALCALL) {
+    setRequiresActivation();
+    node.putIntProp(Node.SPECIALCALL_PROP,type);
+  }
+  return node;
+}

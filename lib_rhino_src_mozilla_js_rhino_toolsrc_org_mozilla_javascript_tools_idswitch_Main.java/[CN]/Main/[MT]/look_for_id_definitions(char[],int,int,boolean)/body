@@ -1,0 +1,24 @@
+{
+  int cursor=begin;
+  cursor=skip_white_space(array,cursor,end);
+  int id_start=cursor;
+  int name_start=skip_matched_prefix("Id_",array,cursor,end);
+  if (name_start >= 0) {
+    cursor=name_start;
+    cursor=skip_name_char(array,cursor,end);
+    int name_end=cursor;
+    if (name_start != name_end) {
+      cursor=skip_white_space(array,cursor,end);
+      if (cursor != end) {
+        if (array[cursor] == '=') {
+          int id_end=name_end;
+          if (use_tag_value_as_string) {
+            name_start=tag_value_start;
+            name_end=tag_value_end;
+          }
+          add_id(array,id_start,id_end,name_start,name_end);
+        }
+      }
+    }
+  }
+}

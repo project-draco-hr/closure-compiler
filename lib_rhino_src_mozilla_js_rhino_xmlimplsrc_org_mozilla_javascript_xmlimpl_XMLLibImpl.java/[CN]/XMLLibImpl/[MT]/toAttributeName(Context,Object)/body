@@ -1,0 +1,22 @@
+{
+  if (nameValue instanceof XMLName) {
+    return (XMLName)nameValue;
+  }
+ else   if (nameValue instanceof QName) {
+    return XMLName.create(((QName)nameValue).getDelegate(),true,false);
+  }
+ else   if (nameValue instanceof Boolean || nameValue instanceof Number || nameValue == Undefined.instance || nameValue == null) {
+    throw badXMLName(nameValue);
+  }
+ else {
+    String localName=null;
+    if (nameValue instanceof String) {
+      localName=(String)nameValue;
+    }
+ else {
+      localName=ScriptRuntime.toString(nameValue);
+    }
+    if (localName != null && localName.equals("*"))     localName=null;
+    return XMLName.create(XmlNode.QName.create(XmlNode.Namespace.create(""),localName),true,false);
+  }
+}

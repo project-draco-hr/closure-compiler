@@ -1,0 +1,22 @@
+{
+  Node mexpr=null;
+  if (fn.getFunctionName() != null) {
+    decompiler.addName(fn.getName());
+  }
+ else   if (fn.getMemberExprNode() != null) {
+    mexpr=transform(fn.getMemberExprNode());
+  }
+  decompiler.addToken(Token.LP);
+  List<AstNode> params=fn.getParams();
+  for (int i=0; i < params.size(); i++) {
+    decompile(params.get(i));
+    if (i < params.size() - 1) {
+      decompiler.addToken(Token.COMMA);
+    }
+  }
+  decompiler.addToken(Token.RP);
+  if (!fn.isExpressionClosure()) {
+    decompiler.addEOL(Token.LC);
+  }
+  return mexpr;
+}

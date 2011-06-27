@@ -1,0 +1,18 @@
+{
+  XmlCursor cursor=newCursor();
+  if (cursor.isStartdoc())   cursor.toFirstContentToken();
+  QName name=null;
+  if (cursor.isStart() || cursor.isAttr() || cursor.isProcinst()) {
+    javax.xml.namespace.QName qname=cursor.getName();
+    if (cursor.isProcinst()) {
+      name=new QName(lib,"",qname.getLocalPart(),"");
+    }
+ else {
+      String uri=qname.getNamespaceURI();
+      String prefix=qname.getPrefix();
+      name=new QName(lib,uri,qname.getLocalPart(),prefix);
+    }
+  }
+  cursor.dispose();
+  return name;
+}

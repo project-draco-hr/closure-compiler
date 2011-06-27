@@ -1,0 +1,30 @@
+{
+  ObjArray namespaces=new ObjArray();
+  NamespaceHelper helper=new NamespaceHelper(lib);
+  cursor.push();
+  int depth=0;
+  while (cursor.hasPrevToken()) {
+    if (cursor.isContainer()) {
+      cursor.push();
+      depth++;
+    }
+    cursor.toParent();
+  }
+  for (int i=0; i < depth; i++) {
+    cursor.pop();
+    helper.update(cursor,null);
+  }
+  Iterator i=helper.prefixToURI.entrySet().iterator();
+  while (i.hasNext()) {
+    Map.Entry entry=(Map.Entry)i.next();
+    Namespace ns=new Namespace(lib,(String)entry.getKey(),(String)entry.getValue());
+    namespaces.add(ns);
+  }
+  i=helper.undeclared.iterator();
+  while (i.hasNext()) {
+    Namespace ns=new Namespace(lib,(String)i.next());
+    namespaces.add(ns);
+  }
+  cursor.pop();
+  return namespaces.toArray();
+}

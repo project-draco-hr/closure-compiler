@@ -1,0 +1,48 @@
+{
+  String url=fnOrScript.getSourceName();
+  if (url == null) {
+    url="<stdin>";
+  }
+ else {
+    char evalSeparator='#';
+    StringBuffer sb=null;
+    int urlLength=url.length();
+    int cursor=0;
+    for (; ; ) {
+      int searchStart=url.indexOf(evalSeparator,cursor);
+      if (searchStart < 0) {
+        break;
+      }
+      String replace=null;
+      int i=searchStart + 1;
+      while (i != urlLength) {
+        int c=url.charAt(i);
+        if (!('0' <= c && c <= '9')) {
+          break;
+        }
+        ++i;
+      }
+      if (i != searchStart + 1) {
+        if ("(eval)".regionMatches(0,url,i,6)) {
+          cursor=i + 6;
+          replace="(eval)";
+        }
+      }
+      if (replace == null) {
+        break;
+      }
+      if (sb == null) {
+        sb=new StringBuffer();
+        sb.append(url.substring(0,searchStart));
+      }
+      sb.append(replace);
+    }
+    if (sb != null) {
+      if (cursor != urlLength) {
+        sb.append(url.substring(cursor));
+      }
+      url=sb.toString();
+    }
+  }
+  return url;
+}

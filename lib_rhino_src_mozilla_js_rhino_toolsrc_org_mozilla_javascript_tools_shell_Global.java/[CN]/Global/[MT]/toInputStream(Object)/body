@@ -1,0 +1,26 @@
+{
+  InputStream is=null;
+  String s=null;
+  if (value instanceof Wrapper) {
+    Object unwrapped=((Wrapper)value).unwrap();
+    if (unwrapped instanceof InputStream) {
+      is=(InputStream)unwrapped;
+    }
+ else     if (unwrapped instanceof byte[]) {
+      is=new ByteArrayInputStream((byte[])unwrapped);
+    }
+ else     if (unwrapped instanceof Reader) {
+      s=readReader((Reader)unwrapped);
+    }
+ else     if (unwrapped instanceof char[]) {
+      s=new String((char[])unwrapped);
+    }
+  }
+  if (is == null) {
+    if (s == null) {
+      s=ScriptRuntime.toString(value);
+    }
+    is=new ByteArrayInputStream(s.getBytes());
+  }
+  return is;
+}

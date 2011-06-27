@@ -1,0 +1,21 @@
+{
+  EventQueue queue=awtEventQueue;
+  if (queue == null) {
+    queue=Toolkit.getDefaultToolkit().getSystemEventQueue();
+    awtEventQueue=queue;
+  }
+  AWTEvent event=queue.getNextEvent();
+  if (event instanceof ActiveEvent) {
+    ((ActiveEvent)event).dispatch();
+  }
+ else {
+    Object source=event.getSource();
+    if (source instanceof Component) {
+      Component comp=(Component)source;
+      comp.dispatchEvent(event);
+    }
+ else     if (source instanceof MenuComponent) {
+      ((MenuComponent)source).dispatchEvent(event);
+    }
+  }
+}

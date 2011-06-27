@@ -1,0 +1,63 @@
+{
+  StringBuilder b=new StringBuilder();
+  while (pos < length) {
+    char c=src.charAt(pos++);
+    if (c <= '\u001F') {
+      throw new ParseException("String contains control character");
+    }
+switch (c) {
+case '\\':
+      if (pos >= length) {
+        throw new ParseException("Unterminated string");
+      }
+    c=src.charAt(pos++);
+switch (c) {
+case '"':
+    b.append('"');
+  break;
+case '\\':
+b.append('\\');
+break;
+case '/':
+b.append('/');
+break;
+case 'b':
+b.append('\b');
+break;
+case 'f':
+b.append('\f');
+break;
+case 'n':
+b.append('\n');
+break;
+case 'r':
+b.append('\r');
+break;
+case 't':
+b.append('\t');
+break;
+case 'u':
+if (length - pos < 5) {
+throw new ParseException("Invalid character code: \\u" + src.substring(pos));
+}
+try {
+b.append((char)Integer.parseInt(src.substring(pos,pos + 4),16));
+pos+=4;
+}
+ catch (NumberFormatException nfx) {
+throw new ParseException("Invalid character code: " + src.substring(pos,pos + 4));
+}
+break;
+default :
+throw new ParseException("Unexcpected character in string: '\\" + c + "'");
+}
+break;
+case '"':
+return b.toString();
+default :
+b.append(c);
+break;
+}
+}
+throw new ParseException("Unterminated string literal");
+}

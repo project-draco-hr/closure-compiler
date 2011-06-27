@@ -1,0 +1,19 @@
+{
+  int childNumberFlag=node.getIntProp(Node.ISNUMBER_PROP,-1);
+  if (childNumberFlag != -1) {
+    generateExpression(child,node);
+    generateExpression(child.getNext(),node);
+    cfw.add(opCode);
+  }
+ else {
+    boolean childOfArithmetic=isArithmeticNode(parent);
+    generateExpression(child,node);
+    if (!isArithmeticNode(child))     addObjectToDouble();
+    generateExpression(child.getNext(),node);
+    if (!isArithmeticNode(child.getNext()))     addObjectToDouble();
+    cfw.add(opCode);
+    if (!childOfArithmetic) {
+      addDoubleWrap();
+    }
+  }
+}

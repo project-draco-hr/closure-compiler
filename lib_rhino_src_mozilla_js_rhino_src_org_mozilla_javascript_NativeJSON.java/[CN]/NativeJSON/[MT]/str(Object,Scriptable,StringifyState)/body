@@ -1,0 +1,49 @@
+{
+  Object value=null;
+  if (key instanceof String) {
+    value=getProperty(holder,(String)key);
+  }
+ else {
+    value=getProperty(holder,((Number)key).intValue());
+  }
+  if (value instanceof Scriptable) {
+    Object toJSON=getProperty((Scriptable)value,"toJSON");
+    if (toJSON instanceof Callable) {
+      value=callMethod(state.cx,(Scriptable)value,"toJSON",new Object[]{key});
+    }
+  }
+  if (state.replacer != null) {
+    value=state.replacer.call(state.cx,state.scope,holder,new Object[]{key,value});
+  }
+  if (value instanceof NativeNumber) {
+    value=ScriptRuntime.toNumber(value);
+  }
+ else   if (value instanceof NativeString) {
+    value=ScriptRuntime.toString(value);
+  }
+ else   if (value instanceof NativeBoolean) {
+    value=((NativeBoolean)value).getDefaultValue(ScriptRuntime.BooleanClass);
+  }
+  if (value == null)   return "null";
+  if (value.equals(Boolean.TRUE))   return "true";
+  if (value.equals(Boolean.FALSE))   return "false";
+  if (value instanceof String) {
+    return quote((String)value);
+  }
+  if (value instanceof Number) {
+    double d=((Number)value).doubleValue();
+    if (d == d && d != Double.POSITIVE_INFINITY && d != Double.NEGATIVE_INFINITY) {
+      return ScriptRuntime.toString(value);
+    }
+ else {
+      return "null";
+    }
+  }
+  if (value instanceof Scriptable && !(value instanceof Callable)) {
+    if (value instanceof NativeArray) {
+      return ja((NativeArray)value,state);
+    }
+    return jo((Scriptable)value,state);
+  }
+  return Undefined.instance;
+}

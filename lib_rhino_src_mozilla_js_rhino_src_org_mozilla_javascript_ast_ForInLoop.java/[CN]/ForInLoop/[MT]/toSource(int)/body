@@ -1,0 +1,20 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append(makeIndent(depth));
+  sb.append("for ");
+  if (isForEach()) {
+    sb.append("each ");
+  }
+  sb.append("(");
+  sb.append(iterator.toSource(0));
+  sb.append(" in ");
+  sb.append(iteratedObject.toSource(0));
+  sb.append(") ");
+  if (body instanceof Block) {
+    sb.append(body.toSource(depth).trim()).append("\n");
+  }
+ else {
+    sb.append("\n").append(body.toSource(depth + 1));
+  }
+  return sb.toString();
+}

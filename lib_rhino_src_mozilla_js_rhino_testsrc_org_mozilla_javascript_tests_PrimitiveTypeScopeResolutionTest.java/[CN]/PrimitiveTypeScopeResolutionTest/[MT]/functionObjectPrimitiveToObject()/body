@@ -1,0 +1,19 @@
+{
+  final String scriptScope2="function f() {\n" + "String.prototype.foo = 'from 2'; \n" + "var s2 = 's2';\n"+ "var s2Foo = s2.foo;\n"+ "var s2FooReadByFunction = myObject.readPropFoo(s2);\n"+ "if (s2Foo != s2FooReadByFunction)\n"+ "throw 's2 got: ' + s2FooReadByFunction;\n"+ "}";
+  final MyObject myObject=new MyObject();
+  final String[] functionNames={"readPropFoo"};
+  myObject.defineFunctionProperties(functionNames,MyObject.class,ScriptableObject.EMPTY);
+  final String scriptScope1="String.prototype.foo = 'from 1'; scope2.f()";
+  final ContextAction action=new ContextAction(){
+    public Object run(    final Context cx){
+      final Scriptable scope1=cx.initStandardObjects(new MySimpleScriptableObject("scope1"));
+      final Scriptable scope2=cx.initStandardObjects(new MySimpleScriptableObject("scope2"));
+      scope2.put("myObject",scope2,myObject);
+      cx.evaluateString(scope2,scriptScope2,"source2",1,null);
+      scope1.put("scope2",scope1,scope2);
+      return cx.evaluateString(scope1,scriptScope1,"source1",1,null);
+    }
+  }
+;
+  Utils.runWithAllOptimizationLevels(action);
+}

@@ -1,0 +1,12 @@
+{
+  if (args.length < 2) {
+    throw Context.reportRuntimeError("Expected an object to serialize and a filename to write " + "the serialization to");
+  }
+  Object obj=args[0];
+  String filename=Context.toString(args[1]);
+  FileOutputStream fos=new FileOutputStream(filename);
+  Scriptable scope=ScriptableObject.getTopLevelScope(thisObj);
+  ScriptableOutputStream out=new ScriptableOutputStream(fos,scope);
+  out.writeObject(obj);
+  out.close();
+}

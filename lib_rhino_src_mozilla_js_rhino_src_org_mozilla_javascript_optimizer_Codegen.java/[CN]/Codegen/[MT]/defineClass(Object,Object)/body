@@ -1,0 +1,21 @@
+{
+  Object[] nameBytesPair=(Object[])bytecode;
+  String className=(String)nameBytesPair[0];
+  byte[] classBytes=(byte[])nameBytesPair[1];
+  ClassLoader rhinoLoader=getClass().getClassLoader();
+  GeneratedClassLoader loader;
+  loader=SecurityController.createLoader(rhinoLoader,staticSecurityDomain);
+  Exception e;
+  try {
+    Class<?> cl=loader.defineClass(className,classBytes);
+    loader.linkClass(cl);
+    return cl;
+  }
+ catch (  SecurityException x) {
+    e=x;
+  }
+catch (  IllegalArgumentException x) {
+    e=x;
+  }
+  throw new RuntimeException("Malformed optimizer package " + e);
+}

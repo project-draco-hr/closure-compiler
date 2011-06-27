@@ -1,0 +1,51 @@
+{
+switch (n.getType()) {
+case Token.NUMBER:
+    return Optimizer.NumberType;
+case Token.CALL:
+case Token.NEW:
+case Token.REF_CALL:
+  return Optimizer.AnyType;
+case Token.GETELEM:
+return Optimizer.AnyType;
+case Token.GETVAR:
+return varTypes[fn.getVarIndex(n)];
+case Token.INC:
+case Token.DEC:
+case Token.MUL:
+case Token.DIV:
+case Token.MOD:
+case Token.BITOR:
+case Token.BITXOR:
+case Token.BITAND:
+case Token.LSH:
+case Token.RSH:
+case Token.URSH:
+case Token.SUB:
+case Token.POS:
+case Token.NEG:
+return Optimizer.NumberType;
+case Token.ARRAYLIT:
+case Token.OBJECTLIT:
+return Optimizer.AnyType;
+case Token.ADD:
+{
+Node child=n.getFirstChild();
+int lType=findExpressionType(fn,child,varTypes);
+int rType=findExpressionType(fn,child.getNext(),varTypes);
+return lType | rType;
+}
+}
+Node child=n.getFirstChild();
+if (child == null) {
+return Optimizer.AnyType;
+}
+ else {
+int result=Optimizer.NoType;
+while (child != null) {
+result|=findExpressionType(fn,child,varTypes);
+child=child.getNext();
+}
+return result;
+}
+}

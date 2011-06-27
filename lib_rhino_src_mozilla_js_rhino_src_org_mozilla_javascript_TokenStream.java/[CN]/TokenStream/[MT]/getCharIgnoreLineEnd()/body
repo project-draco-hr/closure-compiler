@@ -1,0 +1,44 @@
+{
+  if (ungetCursor != 0) {
+    cursor++;
+    return ungetBuffer[--ungetCursor];
+  }
+  for (; ; ) {
+    int c;
+    if (sourceString != null) {
+      if (sourceCursor == sourceEnd) {
+        hitEOF=true;
+        return EOF_CHAR;
+      }
+      cursor++;
+      c=sourceString.charAt(sourceCursor++);
+    }
+ else {
+      if (sourceCursor == sourceEnd) {
+        if (!fillSourceBuffer()) {
+          hitEOF=true;
+          return EOF_CHAR;
+        }
+      }
+      cursor++;
+      c=sourceBuffer[sourceCursor++];
+    }
+    if (c <= 127) {
+      if (c == '\n' || c == '\r') {
+        lineEndChar=c;
+        c='\n';
+      }
+    }
+ else {
+      if (c == BYTE_ORDER_MARK)       return c;
+      if (isJSFormatChar(c)) {
+        continue;
+      }
+      if (ScriptRuntime.isJSLineTerminator(c)) {
+        lineEndChar=c;
+        c='\n';
+      }
+    }
+    return c;
+  }
+}

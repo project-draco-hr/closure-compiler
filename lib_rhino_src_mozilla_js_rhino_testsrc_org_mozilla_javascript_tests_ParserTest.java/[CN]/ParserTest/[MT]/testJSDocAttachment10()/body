@@ -1,0 +1,10 @@
+{
+  AstRoot root=parse("({foo: /** attach me */ (bar)});");
+  assertNotNull(root.getComments());
+  assertEquals(1,root.getComments().size());
+  ExpressionStatement st=(ExpressionStatement)root.getFirstChild();
+  ParenthesizedExpression pt=(ParenthesizedExpression)st.getExpression();
+  ObjectLiteral lit=(ObjectLiteral)pt.getExpression();
+  ParenthesizedExpression parens=(ParenthesizedExpression)lit.getElements().get(0).getRight();
+  assertNotNull(parens.getJsDoc());
+}

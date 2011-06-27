@@ -1,0 +1,50 @@
+{
+  short savedVariableObject=getNewWordLocal();
+  cfw.addALoad(variableObjectLocal);
+  cfw.addAStore(savedVariableObject);
+  int startLabel=cfw.acquireLabel();
+  cfw.markLabel(startLabel,(short)0);
+  Node catchTarget=node.target;
+  Node finallyTarget=node.getFinally();
+  if (isGenerator && finallyTarget != null) {
+    FinallyReturnPoint ret=new FinallyReturnPoint();
+    if (finallys == null) {
+      finallys=new HashMap<Node,FinallyReturnPoint>();
+    }
+    finallys.put(finallyTarget,ret);
+    finallys.put(finallyTarget.getNext(),ret);
+  }
+  while (child != null) {
+    generateStatement(child);
+    child=child.getNext();
+  }
+  int realEnd=cfw.acquireLabel();
+  cfw.add(ByteCode.GOTO,realEnd);
+  int exceptionLocal=getLocalBlockRegister(node);
+  if (catchTarget != null) {
+    int catchLabel=catchTarget.labelId();
+    generateCatchBlock(JAVASCRIPT_EXCEPTION,savedVariableObject,catchLabel,startLabel,exceptionLocal);
+    generateCatchBlock(EVALUATOR_EXCEPTION,savedVariableObject,catchLabel,startLabel,exceptionLocal);
+    generateCatchBlock(ECMAERROR_EXCEPTION,savedVariableObject,catchLabel,startLabel,exceptionLocal);
+    Context cx=Context.getCurrentContext();
+    if (cx != null && cx.hasFeature(Context.FEATURE_ENHANCED_JAVA_ACCESS)) {
+      generateCatchBlock(THROWABLE_EXCEPTION,savedVariableObject,catchLabel,startLabel,exceptionLocal);
+    }
+  }
+  if (finallyTarget != null) {
+    int finallyHandler=cfw.acquireLabel();
+    cfw.markHandler(finallyHandler);
+    cfw.addAStore(exceptionLocal);
+    cfw.addALoad(savedVariableObject);
+    cfw.addAStore(variableObjectLocal);
+    int finallyLabel=finallyTarget.labelId();
+    if (isGenerator)     addGotoWithReturn(finallyTarget);
+ else     cfw.add(ByteCode.JSR,finallyLabel);
+    cfw.addALoad(exceptionLocal);
+    if (isGenerator)     cfw.add(ByteCode.CHECKCAST,"java/lang/Throwable");
+    cfw.add(ByteCode.ATHROW);
+    cfw.addExceptionHandler(startLabel,finallyLabel,finallyHandler,null);
+  }
+  releaseWordLocal(savedVariableObject);
+  cfw.markLabel(realEnd);
+}

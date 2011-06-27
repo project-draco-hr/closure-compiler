@@ -1,0 +1,22 @@
+{
+  Namespace current=getNodeNamespace();
+  if (namespace.is(current))   return;
+  NamedNodeMap attrs=this.dom.getAttributes();
+  for (int i=0; i < attrs.getLength(); i++) {
+    XmlNode attr=XmlNode.createImpl(attrs.item(i));
+    if (namespace.is(attr.getNodeNamespace()))     return;
+  }
+  String existingPrefix=getExistingPrefixFor(namespace);
+  if (existingPrefix != null) {
+    if (namespace.isUnspecifiedPrefix()) {
+      declareNamespace(existingPrefix,getDefaultNamespace().getUri());
+    }
+ else {
+      if (existingPrefix.equals(namespace.getPrefix())) {
+        declareNamespace(existingPrefix,getDefaultNamespace().getUri());
+      }
+    }
+  }
+ else {
+  }
+}

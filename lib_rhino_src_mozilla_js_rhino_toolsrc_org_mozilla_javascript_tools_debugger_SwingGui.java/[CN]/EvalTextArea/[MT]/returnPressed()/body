@@ -1,0 +1,29 @@
+{
+  Document doc=getDocument();
+  int len=doc.getLength();
+  Segment segment=new Segment();
+  try {
+    doc.getText(outputMark,len - outputMark,segment);
+  }
+ catch (  javax.swing.text.BadLocationException ignored) {
+    ignored.printStackTrace();
+  }
+  String text=segment.toString();
+  if (debugGui.dim.stringIsCompilableUnit(text)) {
+    if (text.trim().length() > 0) {
+      history.add(text);
+      historyIndex=history.size();
+    }
+    append("\n");
+    String result=debugGui.dim.eval(text);
+    if (result.length() > 0) {
+      append(result);
+      append("\n");
+    }
+    append("% ");
+    outputMark=doc.getLength();
+  }
+ else {
+    append("\n");
+  }
+}

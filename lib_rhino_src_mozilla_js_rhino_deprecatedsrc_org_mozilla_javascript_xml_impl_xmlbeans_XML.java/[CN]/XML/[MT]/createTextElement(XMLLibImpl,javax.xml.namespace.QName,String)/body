@@ -1,0 +1,18 @@
+{
+  XScriptAnnotation anno;
+  XmlObject xo=XmlObject.Factory.newInstance();
+  XmlCursor cursor=xo.newCursor();
+  try {
+    cursor.toNextToken();
+    cursor.beginElement(qname.getLocalPart(),qname.getNamespaceURI());
+    cursor.insertChars(value);
+    cursor.toStartDoc();
+    cursor.toNextToken();
+    anno=new XScriptAnnotation(cursor);
+    cursor.setBookmark(anno);
+  }
+  finally {
+    cursor.dispose();
+  }
+  return new XML(lib,anno);
+}

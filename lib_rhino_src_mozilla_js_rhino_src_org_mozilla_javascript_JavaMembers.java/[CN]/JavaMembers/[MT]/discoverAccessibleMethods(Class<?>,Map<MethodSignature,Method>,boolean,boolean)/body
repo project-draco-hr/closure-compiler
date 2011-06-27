@@ -1,0 +1,51 @@
+{
+  if (Modifier.isPublic(clazz.getModifiers()) || includePrivate) {
+    try {
+      if (includeProtected || includePrivate) {
+        while (clazz != null) {
+          try {
+            Method[] methods=clazz.getDeclaredMethods();
+            for (int i=0; i < methods.length; i++) {
+              Method method=methods[i];
+              int mods=method.getModifiers();
+              if (Modifier.isPublic(mods) || Modifier.isProtected(mods) || includePrivate) {
+                if (includePrivate)                 method.setAccessible(true);
+                map.put(new MethodSignature(method),method);
+              }
+            }
+            clazz=clazz.getSuperclass();
+          }
+ catch (          SecurityException e) {
+            Method[] methods=clazz.getMethods();
+            for (int i=0; i < methods.length; i++) {
+              Method method=methods[i];
+              MethodSignature sig=new MethodSignature(method);
+              if (map.get(sig) == null)               map.put(sig,method);
+            }
+            break;
+          }
+        }
+      }
+ else {
+        Method[] methods=clazz.getMethods();
+        for (int i=0; i < methods.length; i++) {
+          Method method=methods[i];
+          MethodSignature sig=new MethodSignature(method);
+          map.put(sig,method);
+        }
+      }
+      return;
+    }
+ catch (    SecurityException e) {
+      Context.reportWarning("Could not discover accessible methods of class " + clazz.getName() + " due to lack of privileges, "+ "attemping superclasses/interfaces.");
+    }
+  }
+  Class<?>[] interfaces=clazz.getInterfaces();
+  for (int i=0; i < interfaces.length; i++) {
+    discoverAccessibleMethods(interfaces[i],map,includeProtected,includePrivate);
+  }
+  Class<?> superclass=clazz.getSuperclass();
+  if (superclass != null) {
+    discoverAccessibleMethods(superclass,map,includeProtected,includePrivate);
+  }
+}
