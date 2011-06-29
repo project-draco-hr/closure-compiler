@@ -1,4 +1,8 @@
 {
+  Bind result=super.describeFunctionBind(n);
+  if (result != null) {
+    return result;
+  }
   if (n.getType() != Token.CALL) {
     return null;
   }
@@ -7,22 +11,22 @@
   if (name != null) {
     if (name.equals("goog.bind") || name.equals("goog$bind")) {
       Node fn=callTarget.getNext();
+      if (fn == null) {
+        return null;
+      }
       Node thisValue=safeNext(fn);
       Node parameters=safeNext(thisValue);
       return new Bind(fn,thisValue,parameters);
     }
     if (name.equals("goog.partial") || name.equals("goog$partial")) {
       Node fn=callTarget.getNext();
+      if (fn == null) {
+        return null;
+      }
       Node thisValue=null;
       Node parameters=safeNext(fn);
       return new Bind(fn,thisValue,parameters);
     }
-  }
-  if (callTarget.getType() == Token.GETPROP && callTarget.getLastChild().getString().equals("bind") && callTarget.getFirstChild().getType() == Token.FUNCTION) {
-    Node fn=callTarget.getFirstChild();
-    Node thisValue=callTarget.getNext();
-    Node parameters=safeNext(thisValue);
-    return new Bind(fn,thisValue,parameters);
   }
   return null;
 }

@@ -1,3 +1,25 @@
 {
+  if (n.getType() != Token.CALL) {
+    return null;
+  }
+  Node callTarget=n.getFirstChild();
+  String name=callTarget.getQualifiedName();
+  if (name != null) {
+    if (name.equals("Function.prototype.bind.call")) {
+      Node fn=callTarget.getNext();
+      if (fn == null) {
+        return null;
+      }
+      Node thisValue=safeNext(fn);
+      Node parameters=safeNext(thisValue);
+      return new Bind(fn,thisValue,parameters);
+    }
+  }
+  if (callTarget.getType() == Token.GETPROP && callTarget.getLastChild().getString().equals("bind") && callTarget.getFirstChild().getType() == Token.FUNCTION) {
+    Node fn=callTarget.getFirstChild();
+    Node thisValue=callTarget.getNext();
+    Node parameters=safeNext(thisValue);
+    return new Bind(fn,thisValue,parameters);
+  }
   return null;
 }
