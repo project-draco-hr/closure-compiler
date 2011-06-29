@@ -5,7 +5,7 @@
   DecompositionState state=new DecompositionState();
   state.sideEffects=hasFollowingSideEffects;
   state.extractBeforeStatement=exprInjectionPoint;
-  for (Node child=nonconditionalExpr, parent=child.getParent(); parent != expressionRoot; child=parent, parent=child.getParent()) {
+  for (Node grandchild=null, child=nonconditionalExpr, parent=child.getParent(); parent != expressionRoot; grandchild=child, child=parent, parent=child.getParent()) {
     int parentType=parent.getType();
     Preconditions.checkState(!isConditionalOp(parent) || child == parent.getFirstChild());
     if (parentType == Token.ASSIGN) {
@@ -24,13 +24,13 @@
       }
     }
  else     if (parentType == Token.CALL && NodeUtil.isGet(parent.getFirstChild())) {
-      if (!maybeExternMethod(parent.getFirstChild())) {
-        throw new IllegalStateException("External object method calls can not be decomposed.");
-      }
+      Node functionExpression=parent.getFirstChild();
+      decomposeSubExpressions(functionExpression.getNext(),child,state);
+      if (isExpressionTreeUnsafe(functionExpression,state.sideEffects) && functionExpression.getFirstChild() != grandchild) {
+        if (true) {
+          throw new IllegalStateException("Object method calls can not be decomposed.");
+        }
  else {
-        Node functionExpression=parent.getFirstChild();
-        decomposeSubExpressions(functionExpression.getNext(),child,state);
-        if (isExpressionTreeUnsafe(functionExpression,state.sideEffects)) {
           state.sideEffects=true;
           Node replacement=rewriteCallExpression(parent,state);
           parent=replacement;
