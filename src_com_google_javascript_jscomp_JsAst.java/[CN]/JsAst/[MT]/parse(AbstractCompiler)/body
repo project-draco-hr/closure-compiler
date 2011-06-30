@@ -1,0 +1,16 @@
+{
+  try {
+    logger_.fine("Parsing: " + sourceFile.getName());
+    root=ParserRunner.parse(sourceFile,sourceFile.getCode(),compiler.getParserConfig(),compiler.getDefaultErrorReporter(),logger_);
+  }
+ catch (  IOException e) {
+    compiler.report(JSError.make(AbstractCompiler.READ_ERROR,sourceFile.getName()));
+  }
+  if (root == null || compiler.hasHaltingErrors()) {
+    root=new Node(Token.BLOCK);
+  }
+ else {
+    compiler.prepareAst(root);
+  }
+  root.setStaticSourceFile(sourceFile);
+}

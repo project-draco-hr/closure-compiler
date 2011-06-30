@@ -7,8 +7,9 @@
   Parser p=new Parser(environment,testErrorReporter);
   AstRoot script=p.parse(code,null,0);
   Config config=new Config(extraAnnotations,extraSuppressions,true,LanguageMode.ECMASCRIPT3,false);
+  StaticSourceFile file=new SimpleSourceFile(script.getSourceName(),false);
   for (  Comment comment : script.getComments()) {
-    JsDocInfoParser jsdocParser=new JsDocInfoParser(new JsDocTokenStream(comment.getValue().substring(3),comment.getLineno()),comment,script.getSourceName(),config,testErrorReporter);
+    JsDocInfoParser jsdocParser=new JsDocInfoParser(new JsDocTokenStream(comment.getValue().substring(3),comment.getLineno()),comment,file,config,testErrorReporter);
     jsdocParser.parse();
     jsdocParser.retrieveAndResetParsedJSDocInfo();
   }

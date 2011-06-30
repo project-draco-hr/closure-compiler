@@ -17,17 +17,17 @@
   Parser p=new Parser(compilerEnv,errorReporter);
   AstRoot astRoot=null;
   try {
-    astRoot=p.parse(sourceString,sourceName,1);
+    astRoot=p.parse(sourceString,sourceFile.getName(),1);
   }
  catch (  EvaluatorException e) {
-    logger.info("Error parsing " + sourceName + ": "+ e.getMessage());
+    logger.info("Error parsing " + sourceFile.getName() + ": "+ e.getMessage());
   }
  finally {
     Context.exit();
   }
   Node root=null;
   if (astRoot != null) {
-    root=IRFactory.transformTree(astRoot,sourceString,config,errorReporter);
+    root=IRFactory.transformTree(astRoot,sourceFile,sourceString,config,errorReporter);
     root.setIsSyntheticBlock(true);
   }
   return root;
