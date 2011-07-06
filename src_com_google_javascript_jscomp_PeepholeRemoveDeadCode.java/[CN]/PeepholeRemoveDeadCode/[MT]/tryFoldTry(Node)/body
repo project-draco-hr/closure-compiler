@@ -9,5 +9,17 @@
     reportCodeChange();
     return body;
   }
+  if (!body.hasChildren()) {
+    NodeUtil.redeclareVarsInsideBranch(catchBlock);
+    if (finallyBlock != null) {
+      n.removeChild(finallyBlock);
+      n.getParent().replaceChild(n,finallyBlock);
+    }
+ else {
+      n.getParent().removeChild(n);
+    }
+    reportCodeChange();
+    return finallyBlock;
+  }
   return n;
 }
