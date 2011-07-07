@@ -5,6 +5,7 @@
   for (  CatchClause cc : statementNode.getCatchClauses()) {
     if (lineSet == false) {
       block.setLineno(cc.getLineno());
+      maybeSetLengthFrom(block,cc);
       lineSet=true;
     }
     block.addChildToBack(transform(cc));
@@ -16,6 +17,7 @@
   }
   if ((lineSet == false) && (finallyBlock != null)) {
     block.setLineno(finallyBlock.getLineno());
+    maybeSetLengthFrom(block,finallyBlock);
   }
   return node;
 }
