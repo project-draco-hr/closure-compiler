@@ -2,8 +2,8 @@
   Node result=n;
 switch (n.getType()) {
 case Token.HOOK:
-    Node trueNode=trySimpilifyUnusedResult(n.getFirstChild().getNext());
-  Node falseNode=trySimpilifyUnusedResult(n.getLastChild());
+    Node trueNode=trySimplifyUnusedResult(n.getFirstChild().getNext());
+  Node falseNode=trySimplifyUnusedResult(n.getLastChild());
 if (trueNode == null && falseNode != null) {
   n.setType(Token.OR);
   Preconditions.checkState(n.getChildCount() == 2);
@@ -13,7 +13,7 @@ if (trueNode == null && falseNode != null) {
   Preconditions.checkState(n.getChildCount() == 2);
 }
  else if (trueNode == null && falseNode == null) {
-  result=trySimpilifyUnusedResult(n.getFirstChild());
+  result=trySimplifyUnusedResult(n.getFirstChild());
 }
  else {
   result=n;
@@ -21,18 +21,18 @@ if (trueNode == null && falseNode != null) {
 break;
 case Token.AND:
 case Token.OR:
-Node conditionalResultNode=trySimpilifyUnusedResult(n.getLastChild());
+Node conditionalResultNode=trySimplifyUnusedResult(n.getLastChild());
 if (conditionalResultNode == null) {
 Preconditions.checkState(n.hasOneChild());
-result=trySimpilifyUnusedResult(n.getFirstChild());
+result=trySimplifyUnusedResult(n.getFirstChild());
 }
 break;
 case Token.FUNCTION:
 result=null;
 break;
 case Token.COMMA:
-Node left=trySimpilifyUnusedResult(n.getFirstChild());
-Node right=trySimpilifyUnusedResult(n.getLastChild());
+Node left=trySimplifyUnusedResult(n.getFirstChild());
+Node right=trySimplifyUnusedResult(n.getLastChild());
 if (left == null && right == null) {
 result=null;
 }
@@ -51,7 +51,7 @@ if (!NodeUtil.nodeTypeMayHaveSideEffects(n)) {
 Node resultList=null;
 for (Node next, c=n.getFirstChild(); c != null; c=next) {
 next=c.getNext();
-c=trySimpilifyUnusedResult(c);
+c=trySimplifyUnusedResult(c);
 if (c != null) {
 c.detachFromParent();
 if (resultList == null) {

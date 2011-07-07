@@ -8,8 +8,12 @@ case Token.NOT:
 return getPureBooleanValue(n.getLastChild()).not();
 case Token.NULL:
 case Token.FALSE:
-case Token.VOID:
 return TernaryValue.FALSE;
+case Token.VOID:
+if (!mayHaveSideEffects(n.getFirstChild())) {
+return TernaryValue.FALSE;
+}
+break;
 case Token.NAME:
 String name=n.getString();
 if ("undefined".equals(name) || "NaN".equals(name)) {
@@ -27,6 +31,7 @@ case Token.OBJECTLIT:
 if (!mayHaveSideEffects(n)) {
 return TernaryValue.TRUE;
 }
+break;
 }
 return TernaryValue.UNKNOWN;
 }
