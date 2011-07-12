@@ -6,11 +6,12 @@
   assignAllowed.push(1);
   allRefInfo=Maps.newHashMap();
   for (  Name name : listOfDefines) {
-    if (name.declaration != null) {
-      allRefInfo.put(name.declaration.node,new RefInfo(name.declaration,name));
+    Ref decl=name.getDeclaration();
+    if (decl != null) {
+      allRefInfo.put(decl.node,new RefInfo(decl,name));
     }
     for (    Ref ref : name.getRefs()) {
-      if (ref == name.declaration) {
+      if (ref == decl) {
         continue;
       }
       if (ref.getTwin() == null || !ref.getTwin().isSet()) {

@@ -1,10 +1,11 @@
 {
   String originalName=n.fullName();
-  if (n.declaration != null && n.declaration.node != null && n.declaration.node.getType() == Token.GETPROP) {
-    flattenNameRefAtDepth(alias,n.declaration.node,depth,originalName);
+  Ref decl=n.getDeclaration();
+  if (decl != null && decl.node != null && decl.node.getType() == Token.GETPROP) {
+    flattenNameRefAtDepth(alias,decl.node,depth,originalName);
   }
   for (  Ref r : n.getRefs()) {
-    if (r == n.declaration) {
+    if (r == decl) {
       continue;
     }
     if (r.getTwin() == null || r.isSet()) {

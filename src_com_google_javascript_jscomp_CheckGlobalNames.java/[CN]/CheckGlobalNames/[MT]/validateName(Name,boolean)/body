@@ -1,7 +1,7 @@
 {
-  Ref declaration=name.declaration;
+  Ref declaration=name.getDeclaration();
   Name parent=name.parent;
-  boolean singleGlobalParentDecl=parent != null && parent.declaration != null && parent.localSets == 0;
+  boolean singleGlobalParentDecl=parent != null && parent.getDeclaration() != null && parent.localSets == 0;
   JSModuleGraph moduleGraph=compiler.getModuleGraph();
   for (  Ref ref : name.getRefs()) {
     if (!isDefined && !isTypedef(ref)) {
@@ -10,8 +10,8 @@
  else     if (declaration != null && ref.getModule() != declaration.getModule() && !moduleGraph.dependsOn(ref.getModule(),declaration.getModule())) {
       reportBadModuleReference(name,ref);
     }
- else     if (ref.scope.isGlobal() && singleGlobalParentDecl && parent.declaration.preOrderIndex > ref.preOrderIndex) {
-      compiler.report(JSError.make(ref.source.getName(),ref.node,NAME_DEFINED_LATE_WARNING,name.fullName(),parent.fullName(),parent.declaration.source.getName(),String.valueOf(parent.declaration.node.getLineno())));
+ else     if (ref.scope.isGlobal() && singleGlobalParentDecl && parent.getDeclaration().preOrderIndex > ref.preOrderIndex) {
+      compiler.report(JSError.make(ref.source.getName(),ref.node,NAME_DEFINED_LATE_WARNING,name.fullName(),parent.fullName(),parent.getDeclaration().source.getName(),String.valueOf(parent.getDeclaration().node.getLineno())));
     }
   }
 }
