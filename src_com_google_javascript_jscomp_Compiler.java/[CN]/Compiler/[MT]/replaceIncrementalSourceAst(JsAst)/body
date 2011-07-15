@@ -1,6 +1,6 @@
 {
-  String sourceName=ast.getSourceFile().getName();
-  CompilerInput oldInput=Preconditions.checkNotNull(getInput(sourceName),"No input to replace: " + sourceName);
+  String inputName=ast.getSourceFile().getName();
+  CompilerInput oldInput=Preconditions.checkNotNull(getInput(inputName),"No input to replace: " + inputName);
   Node newRoot=ast.getAstRoot(this);
   if (newRoot == null) {
     return false;
@@ -13,7 +13,7 @@
     getRoot().getLastChild().addChildToBack(newRoot);
   }
   CompilerInput newInput=new CompilerInput(ast);
-  inputsByName.put(sourceName,newInput);
+  inputsByName.put(inputName,newInput);
   JSModule module=oldInput.getModule();
   if (module != null) {
     module.addAfter(newInput,oldInput);

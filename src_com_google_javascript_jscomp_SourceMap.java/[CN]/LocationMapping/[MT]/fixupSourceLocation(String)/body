@@ -1,0 +1,17 @@
+{
+  if (prefixMappings.isEmpty()) {
+    return sourceFile;
+  }
+  String fixed=sourceLocationFixupCache.get(sourceFile);
+  if (fixed != null) {
+    return fixed;
+  }
+  for (  LocationMapping mapping : prefixMappings) {
+    if (sourceFile.startsWith(mapping.prefix)) {
+      fixed=mapping.replacement + sourceFile.substring(mapping.prefix.length());
+      break;
+    }
+  }
+  sourceLocationFixupCache.put(sourceFile,fixed);
+  return fixed;
+}
