@@ -16,8 +16,7 @@
       JSType type=getJSType(assertedNode);
       JSType narrowed=type.restrictByNotNullOrUndefined();
       if (type != narrowed) {
-        scope=scope.createChildFlowScope();
-        redeclare(scope,assertedNodeName,narrowed);
+        scope=narrowScope(scope,assertedNode,narrowed);
         callNode.setJSType(narrowed);
       }
     }
@@ -30,8 +29,7 @@
     JSType type=getJSType(assertedNode);
     JSType narrowed=type.getGreatestSubtype(getNativeType(assertedType));
     if (type != narrowed) {
-      scope=scope.createChildFlowScope();
-      redeclare(scope,assertedNodeName,narrowed);
+      scope=narrowScope(scope,assertedNode,narrowed);
       callNode.setJSType(narrowed);
     }
   }

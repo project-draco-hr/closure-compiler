@@ -1,10 +1,9 @@
 {
-  if (n.getType() == Token.NAME) {
+  if (n.isQualifiedName()) {
     JSType type=getJSType(n);
     JSType narrowed=type.restrictByNotNullOrUndefined();
     if (type != narrowed) {
-      scope=scope.createChildFlowScope();
-      redeclare(scope,n.getString(),narrowed);
+      scope=narrowScope(scope,n,narrowed);
     }
   }
   return scope;
