@@ -2,8 +2,12 @@
   jsType=jsType.restrictByNotNullOrUndefined();
   if (jsType instanceof UnionType) {
     for (    JSType alt : ((UnionType)jsType).getAlternates()) {
-      return maybeAddAutoboxes(cType,alt,prop);
+      cType=maybeAddAutoboxes(cType,alt,prop);
     }
+    return cType;
+  }
+ else   if (jsType instanceof EnumElementType) {
+    return maybeAddAutoboxes(cType,((EnumElementType)jsType).getPrimitiveType(),prop);
   }
   if (jsType.autoboxesTo() != null) {
     JSType autoboxed=jsType.autoboxesTo();

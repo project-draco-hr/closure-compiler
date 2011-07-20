@@ -4,11 +4,15 @@
     for (    JSType alt : ((UnionType)type).getAlternates()) {
       addInvalidatingType(alt);
     }
-    return;
   }
-  typeSystem.addInvalidatingType(type);
-  ObjectType objType=ObjectType.cast(type);
-  if (objType != null && objType.getImplicitPrototype() != null) {
-    typeSystem.addInvalidatingType(objType.getImplicitPrototype());
+ else   if (type instanceof EnumElementType) {
+    addInvalidatingType(((EnumElementType)type).getPrimitiveType());
+  }
+ else {
+    typeSystem.addInvalidatingType(type);
+    ObjectType objType=ObjectType.cast(type);
+    if (objType != null && objType.getImplicitPrototype() != null) {
+      typeSystem.addInvalidatingType(objType.getImplicitPrototype());
+    }
   }
 }
