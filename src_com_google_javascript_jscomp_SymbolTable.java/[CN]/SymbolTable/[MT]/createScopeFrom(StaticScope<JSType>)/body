@@ -1,0 +1,13 @@
+{
+  Node otherScopeRoot=otherScope.getRootNode();
+  SymbolScope myScope=scopes.get(otherScopeRoot);
+  if (myScope == null) {
+    StaticScope<JSType> otherScopeParent=otherScope.getParentScope();
+    if (otherScopeParent == null) {
+      Preconditions.checkState(scopes.isEmpty());
+    }
+    myScope=new SymbolScope(otherScopeRoot,otherScopeParent == null ? null : createScopeFrom(otherScopeParent),otherScope.getTypeOfThis());
+    scopes.put(otherScopeRoot,myScope);
+  }
+  return myScope;
+}

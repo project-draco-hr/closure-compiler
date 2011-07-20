@@ -1,0 +1,9 @@
+{
+  SymbolTable table=createSymbolTable("/** @type {number} */ var x = 5; x = 6;");
+  Symbol x=getGlobalVar(table,"x");
+  List<Reference> refs=Lists.newArrayList(table.getReferences(x));
+  assertEquals(2,refs.size());
+  assertEquals(x.getDeclaration(),refs.get(0));
+  assertEquals(Token.VAR,refs.get(0).getNode().getParent().getType());
+  assertEquals(Token.ASSIGN,refs.get(1).getNode().getParent().getType());
+}
