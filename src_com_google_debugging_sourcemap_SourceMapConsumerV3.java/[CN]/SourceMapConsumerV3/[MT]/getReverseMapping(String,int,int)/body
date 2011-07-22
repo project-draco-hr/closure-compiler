@@ -1,0 +1,20 @@
+{
+  int sourceFileId=Arrays.binarySearch(sources,originalFile);
+  if (sourceFileId < 0) {
+    return Collections.emptyList();
+  }
+  for (  ArrayList<Entry> entries : lines) {
+    if (entries != null) {
+      for (      Entry entry : entries) {
+        if (entry.getSourceFileId() == sourceFileId) {
+          if (entry.getSourceLine() == line) {
+            Builder builder=OriginalMapping.newBuilder().setOriginalFile(sources[entry.getSourceFileId()]).setLineNumber(entry.getSourceLine()).setColumnPosition(entry.getSourceColumn());
+            OriginalMapping mapping=builder.build();
+            return Collections.singletonList(mapping);
+          }
+        }
+      }
+    }
+  }
+  return Collections.emptyList();
+}
