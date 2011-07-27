@@ -1,17 +1,19 @@
 {
+  Preconditions.checkState(n.getType() == Token.GETELEM);
+  Node indexNode=n.getLastChild();
   if (objType.isUnknownType()) {
-    expectStringOrNumber(t,n,indexType,"property access");
+    expectStringOrNumber(t,indexNode,indexType,"property access");
   }
  else {
     ObjectType dereferenced=objType.dereference();
     if (dereferenced != null && dereferenced.getIndexType() != null) {
-      expectCanAssignTo(t,n,indexType,dereferenced.getIndexType(),"restricted index type");
+      expectCanAssignTo(t,indexNode,indexType,dereferenced.getIndexType(),"restricted index type");
     }
  else     if (dereferenced != null && dereferenced.isArrayType()) {
-      expectNumber(t,n,indexType,"array access");
+      expectNumber(t,indexNode,indexType,"array access");
     }
  else     if (objType.matchesObjectContext()) {
-      expectString(t,n,indexType,"property access");
+      expectString(t,indexNode,indexType,"property access");
     }
  else {
       mismatch(t,n,"only arrays or objects can be accessed",objType,typeRegistry.createUnionType(ARRAY_TYPE,OBJECT_TYPE));
