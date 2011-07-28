@@ -1,0 +1,45 @@
+{
+  if (n.getType() != Token.CALL) {
+    return;
+  }
+  String callName=n.getFirstChild().getQualifiedName();
+  boolean consistent=false;
+  NameGenerator nameGenerator=nameGenerators.get(callName);
+  if (nameGenerator == null) {
+    nameGenerator=consistNameGenerators.get(callName);
+    consistent=true;
+  }
+  if (nameGenerator == null) {
+    return;
+  }
+  if (!t.inGlobalScope()) {
+    compiler.report(t.makeError(n,NON_GLOBAL_ID_GENERATOR_CALL));
+    return;
+  }
+  for (  Node ancestor : n.getAncestors()) {
+    if (NodeUtil.isControlStructure(ancestor)) {
+      compiler.report(t.makeError(n,CONDITIONAL_ID_GENERATOR_CALL));
+      return;
+    }
+  }
+  Node id=n.getFirstChild().getNext();
+  if (!NodeUtil.isString(id)) {
+    return;
+  }
+  List<Replacement> idGeneratorMap=idGeneratorMaps.get(callName);
+  String rename=null;
+  if (consistent) {
+    Map<String,String> entry=consistNameMap.get(callName);
+    rename=entry.get(id.getString());
+    if (rename == null) {
+      rename=nameGenerator.generateNextName();
+      entry.put(id.getString(),rename);
+    }
+  }
+ else {
+    rename=nameGenerator.generateNextName();
+  }
+  parent.replaceChild(n,Node.newString(rename));
+  idGeneratorMap.add(new Replacement(rename,t.getSourceName(),t.getLineNumber()));
+  compiler.reportCodeChange();
+}

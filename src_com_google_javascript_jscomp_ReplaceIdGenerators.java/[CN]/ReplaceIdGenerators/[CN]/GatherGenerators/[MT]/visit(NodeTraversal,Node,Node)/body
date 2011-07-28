@@ -1,0 +1,33 @@
+{
+  JSDocInfo doc=n.getJSDocInfo();
+  if (doc == null) {
+    return;
+  }
+  if (!doc.isConsistentIdGenerator() && !doc.isIdGenerator()) {
+    return;
+  }
+  if (doc.isConsistentIdGenerator() && doc.isIdGenerator()) {
+    compiler.report(t.makeError(n,CONFLICTING_GENERATOR_TYPE));
+  }
+  String name=null;
+  if (NodeUtil.isAssign(n)) {
+    name=n.getFirstChild().getQualifiedName();
+  }
+ else   if (NodeUtil.isVar(n)) {
+    name=n.getFirstChild().getString();
+  }
+ else   if (NodeUtil.isFunction(n)) {
+    name=n.getFirstChild().getString();
+    if (name.isEmpty()) {
+      return;
+    }
+  }
+  if (doc.isConsistentIdGenerator()) {
+    consistNameGenerators.put(name,new NameGenerator(Collections.<String>emptySet(),"",null));
+    consistNameMap.put(name,Maps.<String,String>newLinkedHashMap());
+  }
+ else {
+    nameGenerators.put(name,new NameGenerator(Collections.<String>emptySet(),"",null));
+  }
+  idGeneratorMaps.put(name,Lists.<Replacement>newArrayList());
+}
