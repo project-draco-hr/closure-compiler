@@ -27,14 +27,10 @@
       Node functionExpression=parent.getFirstChild();
       decomposeSubExpressions(functionExpression.getNext(),child,state);
       if (isExpressionTreeUnsafe(functionExpression,state.sideEffects) && functionExpression.getFirstChild() != grandchild) {
-        if (true) {
-          throw new IllegalStateException("Object method calls can not be decomposed.");
-        }
- else {
-          state.sideEffects=true;
-          Node replacement=rewriteCallExpression(parent,state);
-          parent=replacement;
-        }
+        Preconditions.checkState(allowObjectCallDecomposing(),"Object method calls can not be decomposed.");
+        state.sideEffects=true;
+        Node replacement=rewriteCallExpression(parent,state);
+        parent=replacement;
       }
     }
  else     if (parentType == Token.OBJECTLIT) {
