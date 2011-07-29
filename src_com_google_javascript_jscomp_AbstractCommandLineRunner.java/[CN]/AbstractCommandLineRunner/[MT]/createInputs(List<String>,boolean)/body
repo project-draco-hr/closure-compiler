@@ -15,6 +15,12 @@
       }
       inputs.add(JSSourceFile.fromInputStream("stdin",System.in));
       usingStdin=true;
+      if (!config.outputManifests.isEmpty()) {
+        throw new FlagUsageException("Manifest files cannot be generated " + "when the input is from stdin.");
+      }
+      if (!config.outputBundles.isEmpty()) {
+        throw new FlagUsageException("Bundle files cannot be generated " + "when the input is from stdin.");
+      }
     }
   }
   return inputs;
