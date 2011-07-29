@@ -16,10 +16,12 @@
     compiler.report(t.makeError(n,NON_GLOBAL_ID_GENERATOR_CALL));
     return;
   }
-  for (  Node ancestor : n.getAncestors()) {
-    if (NodeUtil.isControlStructure(ancestor)) {
-      compiler.report(t.makeError(n,CONDITIONAL_ID_GENERATOR_CALL));
-      return;
+  if (!consistent) {
+    for (    Node ancestor : n.getAncestors()) {
+      if (NodeUtil.isControlStructure(ancestor)) {
+        compiler.report(t.makeError(n,CONDITIONAL_ID_GENERATOR_CALL));
+        return;
+      }
     }
   }
   Node id=n.getFirstChild().getNext();
