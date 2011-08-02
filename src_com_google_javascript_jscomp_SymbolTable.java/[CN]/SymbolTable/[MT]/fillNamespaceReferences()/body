@@ -1,0 +1,17 @@
+{
+  for (  Symbol symbol : getAllSymbols()) {
+    for (    Reference ref : getReferences(symbol)) {
+      Node currentNode=ref.getNode();
+      while (currentNode.getType() == Token.GETPROP) {
+        currentNode=currentNode.getFirstChild();
+        String name=currentNode.getQualifiedName();
+        if (name != null) {
+          Symbol namespace=symbol.scope.getSlot(name);
+          if (namespace != null) {
+            namespace.defineReferenceAt(currentNode);
+          }
+        }
+      }
+    }
+  }
+}
