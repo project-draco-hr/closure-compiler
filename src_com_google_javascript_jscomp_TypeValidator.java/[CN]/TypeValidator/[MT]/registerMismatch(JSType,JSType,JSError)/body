@@ -4,15 +4,15 @@
   if (found.canAssignTo(required) || required.canAssignTo(found)) {
     return;
   }
-  mismatches.add(new TypeMismatch(found,required));
+  mismatches.add(new TypeMismatch(found,required,error));
   if (found instanceof FunctionType && required instanceof FunctionType) {
     FunctionType fnTypeA=((FunctionType)found);
     FunctionType fnTypeB=((FunctionType)required);
     Iterator<Node> paramItA=fnTypeA.getParameters().iterator();
     Iterator<Node> paramItB=fnTypeB.getParameters().iterator();
     while (paramItA.hasNext() && paramItB.hasNext()) {
-      registerIfMismatch(paramItA.next().getJSType(),paramItB.next().getJSType());
+      registerIfMismatch(paramItA.next().getJSType(),paramItB.next().getJSType(),error);
     }
-    registerIfMismatch(fnTypeA.getReturnType(),fnTypeB.getReturnType());
+    registerIfMismatch(fnTypeA.getReturnType(),fnTypeB.getReturnType(),error);
   }
 }

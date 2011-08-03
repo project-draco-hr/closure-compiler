@@ -4,7 +4,28 @@
   Property prop=getProperty(name);
   if (!prop.scheduleRenaming(n.getLastChild(),processProperty(t,prop,type,null))) {
     if (showInvalidationWarnings) {
-      compiler.report(JSError.make(t.getSourceName(),n,Warnings.INVALIDATION,name,(type == null ? "null" : type.toString()),n.toString()));
+      String suggestion="";
+      if (type instanceof JSType) {
+        JSType jsType=(JSType)type;
+        String qName=n.getFirstChild().getQualifiedName();
+        if (jsType.isAllType() || jsType.isUnknownType()) {
+          if (n.getFirstChild().getType() == Token.THIS) {
+            suggestion="The \"this\" object is unknown in the function," + "consider using @this";
+          }
+ else {
+            suggestion="Consider casting " + qName + " if you know it's type.";
+          }
+        }
+ else {
+          StringBuilder sb=new StringBuilder();
+          printErrorLocations(sb,jsType);
+          if (sb.length() != 0) {
+            suggestion="Consider fixing errors for the following types: ";
+            suggestion+=sb.toString();
+          }
+        }
+      }
+      compiler.report(JSError.make(t.getSourceName(),n,Warnings.INVALIDATION,name,(type == null ? "null" : type.toString()),n.toString(),suggestion));
     }
   }
 }

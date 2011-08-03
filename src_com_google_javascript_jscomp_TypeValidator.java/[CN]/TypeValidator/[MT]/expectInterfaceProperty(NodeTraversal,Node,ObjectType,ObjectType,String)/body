@@ -2,10 +2,7 @@
   if (!instance.hasProperty(prop)) {
     String sourceName=n.getSourceFileName();
     sourceName=sourceName == null ? "" : sourceName;
-    if (shouldReport) {
-      compiler.report(JSError.make(sourceName,n,INTERFACE_METHOD_NOT_IMPLEMENTED,prop,implementedInterface.toString(),instance.toString()));
-    }
-    registerMismatch(instance,implementedInterface);
+    registerMismatch(instance,implementedInterface,report(JSError.make(sourceName,n,INTERFACE_METHOD_NOT_IMPLEMENTED,prop,implementedInterface.toString(),instance.toString())));
   }
  else {
     JSType found=instance.getPropertyType(prop);
@@ -13,11 +10,8 @@
     found=found.restrictByNotNullOrUndefined();
     required=required.restrictByNotNullOrUndefined();
     if (!found.canAssignTo(required)) {
-      if (shouldReport) {
-        FunctionType constructor=implementedInterface.toObjectType().getConstructor();
-        compiler.report(t.makeError(n,HIDDEN_INTERFACE_PROPERTY_MISMATCH,prop,constructor.getTopMostDefiningType(prop).toString(),required.toString(),found.toString()));
-      }
-      registerMismatch(found,required);
+      FunctionType constructor=implementedInterface.toObjectType().getConstructor();
+      registerMismatch(found,required,report(t.makeError(n,HIDDEN_INTERFACE_PROPERTY_MISMATCH,prop,constructor.getTopMostDefiningType(prop).toString(),required.toString(),found.toString())));
     }
   }
 }
