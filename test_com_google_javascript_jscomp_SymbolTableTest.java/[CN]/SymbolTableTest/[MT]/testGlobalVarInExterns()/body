@@ -1,0 +1,9 @@
+{
+  SymbolTable table=createSymbolTable("customExternFn(1);");
+  Symbol fn=getGlobalVar(table,"customExternFn");
+  List<Reference> refs=Lists.newArrayList(table.getReferences(fn));
+  assertEquals(2,refs.size());
+  SymbolScope scope=table.getEnclosingScope(refs.get(0).getNode());
+  assertTrue(scope.isGlobalScope());
+  assertNull(table.getSymbolForScope(scope));
+}
