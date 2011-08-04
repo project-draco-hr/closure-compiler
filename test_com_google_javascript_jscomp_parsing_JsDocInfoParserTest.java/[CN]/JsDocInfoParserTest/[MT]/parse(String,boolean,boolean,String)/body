@@ -2,7 +2,10 @@
   TestErrorReporter errorReporter=new TestErrorReporter(null,warnings);
   Config config=new Config(extraAnnotations,extraSuppressions,parseDocumentation,LanguageMode.ECMASCRIPT3,false);
   StaticSourceFile file=new SimpleSourceFile("testcode",false);
-  JsDocInfoParser jsdocParser=new JsDocInfoParser(stream(comment),new Comment(0,0,CommentType.JSDOC,comment),file,config,errorReporter);
+  Node associatedNode=new Node(Token.SCRIPT);
+  associatedNode.setInputId(new InputId(file.getName()));
+  associatedNode.setStaticSourceFile(file);
+  JsDocInfoParser jsdocParser=new JsDocInfoParser(stream(comment),new Comment(0,0,CommentType.JSDOC,comment),associatedNode,config,errorReporter);
   if (fileLevelJsDocBuilder != null) {
     jsdocParser.setFileLevelJsDocBuilder(fileLevelJsDocBuilder);
   }

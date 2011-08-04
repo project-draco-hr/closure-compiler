@@ -11,9 +11,7 @@
     boolean isExtern=false;
     JSDocInfo functionJSDocInfo=functionType.getJSDocInfo();
     if (functionJSDocInfo != null) {
-      String sourceName=functionJSDocInfo.getSourceName();
-      CompilerInput functionSource=compiler.getInput(sourceName);
-      isExtern=functionSource.isExtern();
+      isExtern=functionJSDocInfo.getAssociatedNode().isFromExterns();
     }
     if (functionType.isConstructor() && !functionType.isNativeObjectType() && (functionType.getReturnType().isUnknownType() || functionType.getReturnType().isVoidType() || !isExtern)) {
       report(t,n,CONSTRUCTOR_NOT_CALLABLE,childType.toString());
