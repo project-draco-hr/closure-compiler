@@ -1,7 +1,7 @@
 {
   compiler.init(Lists.newArrayList(JSSourceFile.fromCode("[externs]",externs)),Lists.newArrayList(JSSourceFile.fromCode("[testcode]",js)),compiler.getOptions());
-  Node n=compiler.getInput("[testcode]").getAstRoot(compiler);
-  Node externsNode=compiler.getInput("[externs]").getAstRoot(compiler);
+  Node n=compiler.getInput(new InputId("[testcode]")).getAstRoot(compiler);
+  Node externsNode=compiler.getInput(new InputId("[externs]")).getAstRoot(compiler);
   Node externAndJsRoot=new Node(Token.BLOCK,externsNode,n);
   externAndJsRoot.setIsSyntheticBlock(true);
   assertEquals("parsing error: " + Joiner.on(", ").join(compiler.getErrors()),0,compiler.getErrorCount());

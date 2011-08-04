@@ -3,13 +3,13 @@
     resetGlobalVarReferences(refMapPatch);
     return;
   }
-  String sourceName=NodeUtil.getSourceName(root);
-  Preconditions.checkNotNull(sourceName);
-  removeScriptReferences(sourceName);
+  InputId inputId=root.getInputId();
+  Preconditions.checkNotNull(inputId);
+  removeScriptReferences(inputId);
   for (  Entry<Var,ReferenceCollection> entry : refMapPatch.entrySet()) {
     Var var=entry.getKey();
     if (var.isGlobal()) {
-      replaceReferences(var.getName(),sourceName,entry.getValue());
+      replaceReferences(var.getName(),inputId,entry.getValue());
     }
   }
 }

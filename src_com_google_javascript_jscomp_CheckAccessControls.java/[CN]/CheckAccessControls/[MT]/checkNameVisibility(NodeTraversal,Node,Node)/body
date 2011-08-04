@@ -4,11 +4,15 @@
     JSDocInfo docInfo=var.getJSDocInfo();
     if (docInfo != null) {
       Visibility visibility=docInfo.getVisibility();
-      if (visibility == Visibility.PRIVATE && !t.getInput().getName().equals(docInfo.getSourceName())) {
-        if (docInfo.isConstructor() && isValidPrivateConstructorAccess(parent)) {
-          return;
+      if (visibility == Visibility.PRIVATE) {
+        StaticSourceFile varSrc=var.getSourceFile();
+        StaticSourceFile refSrc=name.getStaticSourceFile();
+        if (varSrc != null && refSrc != null && !varSrc.getName().equals(refSrc.getName())) {
+          if (docInfo.isConstructor() && isValidPrivateConstructorAccess(parent)) {
+            return;
+          }
+          compiler.report(t.makeError(name,BAD_PRIVATE_GLOBAL_ACCESS,name.getString(),varSrc.getName()));
         }
-        compiler.report(t.makeError(name,BAD_PRIVATE_GLOBAL_ACCESS,name.getString(),docInfo.getSourceName()));
       }
     }
   }

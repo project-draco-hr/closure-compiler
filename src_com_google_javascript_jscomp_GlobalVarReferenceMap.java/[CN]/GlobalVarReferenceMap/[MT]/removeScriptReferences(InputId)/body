@@ -1,0 +1,13 @@
+{
+  Preconditions.checkNotNull(inputId);
+  for (  ReferenceCollection collection : refMap.values()) {
+    if (collection == null) {
+      continue;
+    }
+    List<Reference> oldRefs=collection.references;
+    SourceRefRange range=findSourceRefRange(oldRefs,inputId);
+    List<Reference> newRefs=Lists.newArrayList(range.refsBefore());
+    newRefs.addAll(range.refsAfter());
+    collection.references=newRefs;
+  }
+}
