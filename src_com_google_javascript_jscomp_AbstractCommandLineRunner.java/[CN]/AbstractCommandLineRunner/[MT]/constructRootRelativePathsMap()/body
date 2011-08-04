@@ -1,17 +1,12 @@
 {
   Map<String,String> rootRelativePathsMap=Maps.newLinkedHashMap();
-  if (!config.manifestMapFile.equals("")) {
-    File mapFile=new File(config.manifestMapFile);
-    BufferedReader br=Files.newReader(mapFile,Charsets.UTF_8);
-    String line;
-    while ((line=br.readLine()) != null) {
-      int colonIndex=line.indexOf(':');
-      Preconditions.checkState(colonIndex > 0);
-      String execPath=line.substring(0,colonIndex);
-      String rootRelativePath=line.substring(colonIndex + 1);
-      Preconditions.checkState(rootRelativePath.indexOf(':') == -1);
-      rootRelativePathsMap.put(execPath,rootRelativePath);
-    }
+  for (  String mapString : config.manifestMaps) {
+    int colonIndex=mapString.indexOf(':');
+    Preconditions.checkState(colonIndex > 0);
+    String execPath=mapString.substring(0,colonIndex);
+    String rootRelativePath=mapString.substring(colonIndex + 1);
+    Preconditions.checkState(rootRelativePath.indexOf(':') == -1);
+    rootRelativePathsMap.put(execPath,rootRelativePath);
   }
   return rootRelativePathsMap;
 }
