@@ -1,0 +1,13 @@
+{
+  if (NodeUtil.isGetProp(n) && !NodeUtil.isGetProp(p)) {
+    String propName=getFieldName(n);
+    Iterable<ObjectType> types=typeRegistry.getEachReferenceTypeWithProperty(propName);
+    for (    ObjectType type : types) {
+      Node pNode=type.getPropertyNode(propName);
+      if (srcName.equals(pNode.getSourceFileName())) {
+        typeRegistry.unregisterPropertyOnType(propName,type);
+        type.removeProperty(propName);
+      }
+    }
+  }
+}
