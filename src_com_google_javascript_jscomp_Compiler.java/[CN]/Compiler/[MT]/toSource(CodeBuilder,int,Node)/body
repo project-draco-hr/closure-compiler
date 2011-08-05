@@ -7,10 +7,11 @@
         }
         Preconditions.checkState(root.getType() == Token.SCRIPT);
         String delimiter=options.inputDelimiter;
+        String inputName=root.getInputId().getIdName();
         String sourceName=root.getSourceFileName();
         Preconditions.checkState(sourceName != null);
         Preconditions.checkState(!sourceName.isEmpty());
-        delimiter=delimiter.replaceAll("%name%",sourceName).replaceAll("%num%",String.valueOf(inputSeqNum));
+        delimiter=delimiter.replaceAll("%name%",Matcher.quoteReplacement(inputName)).replaceAll("%num%",String.valueOf(inputSeqNum));
         cb.append(delimiter).append("\n");
       }
       if (root.getJSDocInfo() != null && root.getJSDocInfo().getLicense() != null) {
