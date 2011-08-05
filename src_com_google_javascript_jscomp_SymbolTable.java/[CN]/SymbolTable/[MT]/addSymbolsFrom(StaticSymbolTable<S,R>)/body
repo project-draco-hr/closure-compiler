@@ -2,22 +2,24 @@
   for (  S otherSymbol : otherSymbolTable.getAllSymbols()) {
     SymbolScope myScope=createScopeFrom(otherSymbolTable.getScope(otherSymbol));
     StaticReference<JSType> decl=otherSymbol.getDeclaration();
-    if (decl == null) {
-      continue;
+    Node declNode=decl == null ? null : decl.getNode();
+    Symbol mySymbol=null;
+    if (declNode != null && declNode.getStaticSourceFile() != null) {
+      mySymbol=symbols.get(declNode);
+      if (mySymbol == null) {
+        mySymbol=new Symbol(otherSymbol.getName(),otherSymbol.getType(),otherSymbol.isTypeInferred(),myScope);
+        symbols.put(declNode,mySymbol);
+        myScope.ownSymbols.put(mySymbol.getName(),mySymbol);
+        mySymbol.setDeclaration(new Reference(mySymbol,declNode));
+      }
     }
-    Node declNode=decl.getNode();
-    if (declNode == null || declNode.getStaticSourceFile() == null) {
-      continue;
+ else {
+      mySymbol=myScope.getOwnSlot(otherSymbol.getName());
     }
-    Symbol mySymbol=symbols.get(declNode);
-    if (mySymbol == null) {
-      mySymbol=new Symbol(otherSymbol.getName(),otherSymbol.getType(),otherSymbol.isTypeInferred(),myScope);
-      symbols.put(declNode,mySymbol);
-      myScope.ownSymbols.put(mySymbol.getName(),mySymbol);
-      mySymbol.setDeclaration(new Reference(mySymbol,declNode));
-    }
-    for (    R otherRef : otherSymbolTable.getReferences(otherSymbol)) {
-      mySymbol.defineReferenceAt(otherRef.getNode());
+    if (mySymbol != null) {
+      for (      R otherRef : otherSymbolTable.getReferences(otherSymbol)) {
+        mySymbol.defineReferenceAt(otherRef.getNode());
+      }
     }
   }
 }
