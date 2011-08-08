@@ -1,0 +1,36 @@
+{
+  boolean hasLocalNames=hasLocalNames(fnNode);
+  boolean forbidTemps=false;
+  if (!t.inGlobalScope()) {
+    Node fnCaller=t.getScopeRoot();
+    Node fnCallerBody=fnCaller.getLastChild();
+    forbidTemps=NodeUtil.isNameReferenced(fnCallerBody,"eval",NodeUtil.MATCH_NOT_FUNCTION);
+    if (!forbidTemps && containsFunctions) {
+      Predicate<Node> match=new Predicate<Node>(){
+        @Override public boolean apply(        Node n){
+          if (n.getType() == Token.FUNCTION) {
+            return n != fnNode;
+          }
+          return false;
+        }
+      }
+;
+      forbidTemps=NodeUtil.has(fnCallerBody,match,NodeUtil.MATCH_NOT_FUNCTION);
+    }
+  }
+  if (forbidTemps) {
+    if (hasLocalNames) {
+      return false;
+    }
+    Map<String,Node> args=FunctionArgumentInjector.getFunctionCallParameterMap(fnNode,callNode,this.safeNameIdSupplier);
+    boolean hasArgs=!args.isEmpty();
+    if (hasArgs) {
+      Set<String> allNamesToAlias=Sets.newHashSet(namesToAlias);
+      FunctionArgumentInjector.maybeAddTempsForCallArguments(fnNode,args,allNamesToAlias,compiler.getCodingConvention());
+      if (!allNamesToAlias.isEmpty()) {
+        return false;
+      }
+    }
+  }
+  return true;
+}

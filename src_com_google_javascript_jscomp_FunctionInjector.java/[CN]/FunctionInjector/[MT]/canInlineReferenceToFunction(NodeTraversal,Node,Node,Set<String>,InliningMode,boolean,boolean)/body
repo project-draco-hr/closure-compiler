@@ -2,9 +2,6 @@
   if (!isSupportedCallType(callNode)) {
     return CanInlineResult.NO;
   }
-  if (containsFunctions && !t.inGlobalScope()) {
-    return CanInlineResult.NO;
-  }
   if (referencesThis && !NodeUtil.isFunctionObjectCall(callNode)) {
     return CanInlineResult.NO;
   }
@@ -12,6 +9,6 @@
     return canInlineReferenceDirectly(callNode,fnNode);
   }
  else {
-    return canInlineReferenceAsStatementBlock(t,callNode,fnNode,needAliases);
+    return canInlineReferenceAsStatementBlock(t,callNode,fnNode,needAliases,containsFunctions);
   }
 }
