@@ -2,15 +2,14 @@
   Node block=NodeUtil.getFunctionBody(fnNode);
   final String fnRecursionName=fnNode.getFirstChild().getString();
   Preconditions.checkState(fnRecursionName != null);
-  boolean referencesArguments=NodeUtil.isNameReferenced(block,"arguments",NodeUtil.MATCH_NOT_FUNCTION);
   Predicate<Node> p=new Predicate<Node>(){
     @Override public boolean apply(    Node n){
       if (n.getType() == Token.NAME) {
-        return n.getString().equals("eval") || (!fnName.isEmpty() && n.getString().equals(fnName)) || (!fnRecursionName.isEmpty() && n.getString().equals(fnRecursionName));
+        return n.getString().equals("arguments") || n.getString().equals("eval") || n.getString().equals(fnName)|| (!fnRecursionName.isEmpty() && n.getString().equals(fnRecursionName));
       }
       return false;
     }
   }
 ;
-  return !referencesArguments && !NodeUtil.has(block,p,Predicates.<Node>alwaysTrue());
+  return !NodeUtil.has(block,p,Predicates.<Node>alwaysTrue());
 }
