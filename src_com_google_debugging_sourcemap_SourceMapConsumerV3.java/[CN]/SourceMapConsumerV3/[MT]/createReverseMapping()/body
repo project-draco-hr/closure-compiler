@@ -1,0 +1,24 @@
+{
+  reverseSourceMapping=new HashMap<String,Map<Integer,Collection<OriginalMapping>>>();
+  for (int targetLine=0; targetLine < lines.size(); targetLine++) {
+    ArrayList<Entry> entries=lines.get(targetLine);
+    if (entries != null) {
+      for (      Entry entry : entries) {
+        if (entry.getSourceFileId() != UNMAPPED && entry.getSourceLine() != UNMAPPED) {
+          String originalFile=sources[entry.getSourceFileId()];
+          if (!reverseSourceMapping.containsKey(originalFile)) {
+            reverseSourceMapping.put(originalFile,new HashMap<Integer,Collection<OriginalMapping>>());
+          }
+          Map<Integer,Collection<OriginalMapping>> lineToCollectionMap=reverseSourceMapping.get(originalFile);
+          int sourceLine=entry.getSourceLine();
+          if (!lineToCollectionMap.containsKey(sourceLine)) {
+            lineToCollectionMap.put(sourceLine,new ArrayList<OriginalMapping>(1));
+          }
+          Collection<OriginalMapping> mappings=lineToCollectionMap.get(sourceLine);
+          Builder builder=OriginalMapping.newBuilder().setLineNumber(targetLine).setColumnPosition(entry.getGeneratedColumn());
+          mappings.add(builder.build());
+        }
+      }
+    }
+  }
+}

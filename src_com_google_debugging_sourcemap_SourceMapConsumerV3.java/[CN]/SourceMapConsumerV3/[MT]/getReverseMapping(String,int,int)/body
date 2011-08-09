@@ -1,20 +1,18 @@
 {
-  int sourceFileId=Arrays.binarySearch(sources,originalFile);
-  if (sourceFileId < 0) {
+  if (reverseSourceMapping == null) {
+    createReverseMapping();
+  }
+  Map<Integer,Collection<OriginalMapping>> sourceLineToCollectionMap=reverseSourceMapping.get(originalFile);
+  if (sourceLineToCollectionMap == null) {
     return Collections.emptyList();
   }
-  for (  ArrayList<Entry> entries : lines) {
-    if (entries != null) {
-      for (      Entry entry : entries) {
-        if (entry.getSourceFileId() == sourceFileId) {
-          if (entry.getSourceLine() == line) {
-            Builder builder=OriginalMapping.newBuilder().setOriginalFile(sources[entry.getSourceFileId()]).setLineNumber(entry.getSourceLine()).setColumnPosition(entry.getSourceColumn());
-            OriginalMapping mapping=builder.build();
-            return Collections.singletonList(mapping);
-          }
-        }
-      }
+ else {
+    Collection<OriginalMapping> mappings=sourceLineToCollectionMap.get(line);
+    if (mappings == null) {
+      return Collections.emptyList();
+    }
+ else {
+      return mappings;
     }
   }
-  return Collections.emptyList();
 }
