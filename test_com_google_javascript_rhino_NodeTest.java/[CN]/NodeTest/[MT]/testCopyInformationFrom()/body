@@ -1,0 +1,14 @@
+{
+  Node assign=getNode("b = c");
+  assign.setSourceEncodedPosition(99);
+  assign.setSourceFileForTesting("foo.js");
+  Node lhs=assign.getFirstChild();
+  lhs.copyInformationFrom(assign);
+  assertEquals(99,lhs.getSourcePosition());
+  assertEquals("foo.js",lhs.getSourceFileName());
+  assign.setSourceEncodedPosition(101);
+  assign.setSourceFileForTesting("bar.js");
+  lhs.copyInformationFrom(assign);
+  assertEquals(99,lhs.getSourcePosition());
+  assertEquals("foo.js",lhs.getSourceFileName());
+}
