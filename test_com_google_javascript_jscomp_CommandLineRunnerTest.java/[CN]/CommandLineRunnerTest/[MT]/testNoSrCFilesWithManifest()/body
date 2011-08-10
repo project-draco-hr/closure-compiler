@@ -1,0 +1,13 @@
+{
+  args.add("--use_only_custom_externs=true");
+  args.add("--output_manifest=test.MF");
+  CommandLineRunner runner=createCommandLineRunner(new String[0]);
+  String expectedMessage="";
+  try {
+    runner.doRun();
+  }
+ catch (  FlagUsageException e) {
+    expectedMessage=e.getMessage();
+  }
+  assertEquals(expectedMessage,"Bad --js flag. " + "Manifest files cannot be generated when the input is from stdin.");
+}
