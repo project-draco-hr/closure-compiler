@@ -1,7 +1,7 @@
 {
   StringWriter out=new StringWriter();
   String name="./app.js";
-  List<SourceMapSection> appSections=Lists.newArrayList(new SourceMapSection("src1",0,0),new SourceMapSection("src2",100,10),new SourceMapSection("src3",150,5));
+  List<SourceMapSection> appSections=Lists.newArrayList(SourceMapSection.forURL("src1",0,0),SourceMapSection.forURL("src2",100,10),SourceMapSection.forURL("src3",150,5));
   SourceMapGeneratorV3 generator=new SourceMapGeneratorV3();
   generator.appendIndexMapTo(out,name,appSections);
   assertEquals("{\n" + "\"version\":3,\n" + "\"file\":\"./app.js\",\n"+ "\"sections\":[\n"+ "{\n"+ "\"offset\":{\n"+ "\"line\":0,\n"+ "\"column\":0\n"+ "},\n"+ "\"url\":\"src1\"\n"+ "},\n"+ "{\n"+ "\"offset\":{\n"+ "\"line\":100,\n"+ "\"column\":10\n"+ "},\n"+ "\"url\":\"src2\"\n"+ "},\n"+ "{\n"+ "\"offset\":{\n"+ "\"line\":150,\n"+ "\"column\":5\n"+ "},\n"+ "\"url\":\"src3\"\n"+ "}\n"+ "]\n"+ "}\n",out.toString());
