@@ -3,6 +3,7 @@
   Node grandParent=parent.getParent();
   CallSiteType callSiteType=classifyCallSite(callNode);
   Preconditions.checkArgument(callSiteType != CallSiteType.UNSUPPORTED);
+  boolean isCallInLoop=NodeUtil.isWithinLoop(callNode);
   String resultName=null;
   boolean needsDefaultReturnResult=true;
 switch (callSiteType) {
@@ -18,14 +19,13 @@ needsDefaultReturnResult=false;
 break;
 case EXPRESSION:
 resultName=getUniqueResultName();
-needsDefaultReturnResult=false;
+needsDefaultReturnResult=isCallInLoop;
 break;
 case DECOMPOSABLE_EXPRESSION:
 throw new IllegalStateException("Decomposable expressions must decomposed before inlining.");
 default :
 throw new IllegalStateException("Unexpected call site type.");
 }
-boolean isCallInLoop=NodeUtil.isWithinLoop(callNode);
 FunctionToBlockMutator mutator=new FunctionToBlockMutator(compiler,this.safeNameIdSupplier);
 Node newBlock=mutator.mutate(fnName,fnNode,callNode,resultName,needsDefaultReturnResult,isCallInLoop);
 Node greatGrandParent=grandParent.getParent();
