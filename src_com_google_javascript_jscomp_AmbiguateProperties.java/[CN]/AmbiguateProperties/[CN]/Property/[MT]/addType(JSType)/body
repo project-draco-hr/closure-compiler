@@ -3,10 +3,10 @@
     return;
   }
   ++numOccurrences;
-  if (newType instanceof UnionType) {
+  if (newType.isUnionType()) {
     newType=newType.restrictByNotNullOrUndefined();
-    if (newType instanceof UnionType) {
-      for (      JSType alt : ((UnionType)newType).getAlternates()) {
+    if (newType.isUnionType()) {
+      for (      JSType alt : newType.toMaybeUnionType().getAlternates()) {
         addNonUnionType(alt);
       }
       return;
