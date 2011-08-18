@@ -1,13 +1,13 @@
 {
   JSType propType=ownerType.getPropertyType(propName);
-  if (propType instanceof FunctionType) {
-    return (FunctionType)propType;
+  if (propType != null && propType.isFunctionType()) {
+    return propType.toMaybeFunctionType();
   }
  else {
     for (    ObjectType iface : ownerType.getCtorImplementedInterfaces()) {
       propType=iface.getPropertyType(propName);
-      if (propType instanceof FunctionType) {
-        return (FunctionType)propType;
+      if (propType != null && propType.isFunctionType()) {
+        return propType.toMaybeFunctionType();
       }
     }
   }

@@ -2,8 +2,8 @@
   FunctionType functionType=null;
   if (rValue != null && rValue.isQualifiedName() && scope.isGlobal()) {
     Var var=scope.getVar(rValue.getQualifiedName());
-    if (var != null && var.getType() instanceof FunctionType) {
-      FunctionType aliasedType=(FunctionType)var.getType();
+    if (var != null && var.getType() != null && var.getType().isFunctionType()) {
+      FunctionType aliasedType=var.getType().toMaybeFunctionType();
       if ((aliasedType.isConstructor() || aliasedType.isInterface()) && !aliasedType.isNativeObjectType()) {
         functionType=aliasedType;
         if (name != null && scope.isGlobal()) {
@@ -22,7 +22,7 @@
       JSType type=info.getType().evaluate(scope,typeRegistry);
       type=type.restrictByNotNullOrUndefined();
       if (type.isFunctionType()) {
-        functionType=(FunctionType)type;
+        functionType=type.toMaybeFunctionType();
         functionType.setJSDocInfo(info);
       }
     }

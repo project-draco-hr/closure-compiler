@@ -1,12 +1,12 @@
 {
-  JSType scopeType=scope.getJSType();
-  if (!(scopeType instanceof FunctionType)) {
+  FunctionType scopeType=JSType.toMaybeFunctionType(scope.getJSType());
+  if (scopeType == null) {
     return null;
   }
   if (isEmptyFunction(scope)) {
     return null;
   }
-  JSType returnType=((FunctionType)scopeType).getReturnType();
+  JSType returnType=scopeType.getReturnType();
   if (returnType == null) {
     return null;
   }
