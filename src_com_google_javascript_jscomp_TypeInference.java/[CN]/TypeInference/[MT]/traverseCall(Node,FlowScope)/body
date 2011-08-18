@@ -3,8 +3,8 @@
   Node left=n.getFirstChild();
   JSType functionType=getJSType(left).restrictByNotNullOrUndefined();
   if (functionType != null) {
-    if (functionType.isFunctionType()) {
-      FunctionType fnType=functionType.toMaybeFunctionType();
+    if (functionType instanceof FunctionType) {
+      FunctionType fnType=(FunctionType)functionType;
       n.setJSType(fnType.getReturnType());
       updateTypeOfParameters(n,fnType);
       updateTypeOfThisOnClosure(n,fnType);

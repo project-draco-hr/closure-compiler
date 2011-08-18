@@ -43,9 +43,9 @@
     defineSlot(n,parent,valueType,inferred);
   }
  else   if (rhsValue != null && rhsValue.getType() == Token.TRUE) {
-    FunctionType ownerType=JSType.toMaybeFunctionType(getObjectSlot(ownerName));
-    if (ownerType != null) {
-      JSType ownerTypeOfThis=ownerType.getTypeOfThis();
+    ObjectType ownerType=getObjectSlot(ownerName);
+    if (ownerType instanceof FunctionType) {
+      JSType ownerTypeOfThis=((FunctionType)ownerType).getTypeOfThis();
       String delegateName=codingConvention.getDelegateSuperclassName();
       JSType delegateType=delegateName == null ? null : typeRegistry.getType(delegateName);
       if (delegateType != null && ownerTypeOfThis.isSubtype(delegateType)) {

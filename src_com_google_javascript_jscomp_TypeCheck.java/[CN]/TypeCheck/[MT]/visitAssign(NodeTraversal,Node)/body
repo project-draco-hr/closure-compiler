@@ -21,8 +21,8 @@
       return;
     }
     if (property.equals("prototype")) {
-      if (objectJsType != null && objectJsType.isFunctionType()) {
-        FunctionType functionType=objectJsType.toMaybeFunctionType();
+      if (objectJsType instanceof FunctionType) {
+        FunctionType functionType=(FunctionType)objectJsType;
         if (functionType.isConstructor()) {
           JSType rvalueType=rvalue.getJSType();
           validator.expectObject(t,rvalue,rvalueType,OVERRIDING_PROTOTYPE_WITH_NON_OBJECT);
@@ -36,9 +36,9 @@
       Node object2=object.getFirstChild();
       String property2=NodeUtil.getStringValue(object.getLastChild());
       if ("prototype".equals(property2)) {
-        JSType jsType=getJSType(object2);
-        if (jsType.isFunctionType()) {
-          FunctionType functionType=jsType.toMaybeFunctionType();
+        JSType jsType=object2.getJSType();
+        if (jsType instanceof FunctionType) {
+          FunctionType functionType=(FunctionType)jsType;
           if (functionType.isConstructor() || functionType.isInterface()) {
             checkDeclaredPropertyInheritance(t,assign,functionType,property,info,getJSType(rvalue));
           }

@@ -1,12 +1,9 @@
 {
   JSType type=node.getJSType();
-  if (type == null) {
-    return "";
-  }
- else   if (type.isFunctionType()) {
+  if (type instanceof FunctionType) {
     return getFunctionAnnotation(node);
   }
- else   if (!type.isUnknownType() && !type.isEmptyType() && !type.isVoidType()&& !type.isFunctionPrototypeType()) {
+ else   if (type != null && !type.isUnknownType() && !type.isEmptyType() && !type.isVoidType() && !type.isFunctionPrototypeType()) {
     return "/** @type {" + node.getJSType() + "} */\n";
   }
  else {

@@ -5,13 +5,13 @@
     if (i + 1 >= childCount) {
       return;
     }
-    JSType iParameterType=getJSType(iParameter);
+    JSType iParameterType=iParameter.getJSType();
     Node iArgument=n.getChildAtIndex(i + 1);
     JSType iArgumentType=getJSType(iArgument);
     inferPropertyTypesToMatchConstraint(iArgumentType,iParameterType);
-    if (iParameterType.isFunctionType()) {
-      FunctionType iParameterFnType=iParameterType.toMaybeFunctionType();
-      if (iArgument.getType() == Token.FUNCTION && iArgumentType.isFunctionType() && iArgument.getJSDocInfo() == null) {
+    if (iParameterType instanceof FunctionType) {
+      FunctionType iParameterFnType=(FunctionType)iParameterType;
+      if (iArgument.getType() == Token.FUNCTION && iArgumentType instanceof FunctionType && iArgument.getJSDocInfo() == null) {
         iArgument.setJSType(iParameterFnType);
       }
     }

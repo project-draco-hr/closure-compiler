@@ -1,15 +1,9 @@
 {
   Node constructor=n.getFirstChild();
-  JSType type=getJSType(constructor).restrictByNotNullOrUndefined();
-  if (type.isConstructor() || type.isEmptyType() || type.isUnknownType()) {
-    FunctionType fnType=type.toMaybeFunctionType();
-    if (fnType != null) {
-      visitParameterList(t,n,fnType);
-      ensureTyped(t,n,fnType.getInstanceType());
-    }
- else {
-      ensureTyped(t,n);
-    }
+  FunctionType type=getFunctionType(constructor);
+  if (type != null && type.isConstructor()) {
+    visitParameterList(t,n,type);
+    ensureTyped(t,n,type.getInstanceType());
   }
  else {
     if (constructor.getType() != Token.GETPROP) {

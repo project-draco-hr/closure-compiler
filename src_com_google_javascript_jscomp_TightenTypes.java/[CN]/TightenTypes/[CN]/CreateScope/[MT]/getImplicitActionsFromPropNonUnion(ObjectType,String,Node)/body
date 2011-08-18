@@ -5,7 +5,10 @@
     if (jsType instanceof FunctionPrototypeType) {
       thisType=((FunctionPrototypeType)jsType).getOwnerFunction().getInstanceType();
     }
-    FunctionType callType=propType.toMaybeFunctionType();
+    FunctionType callType=null;
+    if (propType instanceof FunctionType) {
+      callType=(FunctionType)propType;
+    }
     Action action=createExternFunctionCall(fnNode,thisType,callType);
     return Lists.<Action>newArrayList(action);
   }

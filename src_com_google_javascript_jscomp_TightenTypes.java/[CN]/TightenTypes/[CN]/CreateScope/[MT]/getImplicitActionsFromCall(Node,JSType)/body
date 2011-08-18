@@ -7,21 +7,21 @@
     }
     return actions;
   }
- else   if (!(recvType.isFunctionType())) {
+ else   if (!(recvType instanceof FunctionType)) {
     return Lists.<Action>newArrayList();
   }
   ObjectType objType=ObjectType.cast(getJSType(receiver.getFirstChild()).restrictByNotNullOrUndefined());
   String prop=receiver.getLastChild().getString();
-  if (objType != null && (objType.isPropertyInExterns(prop)) && (recvType.toMaybeFunctionType()).getParameters() != null) {
+  if (objType != null && (objType.isPropertyInExterns(prop)) && ((FunctionType)recvType).getParameters() != null) {
     List<Action> actions=Lists.newArrayList();
-    Iterator<Node> paramIter=(recvType.toMaybeFunctionType()).getParameters().iterator();
+    Iterator<Node> paramIter=((FunctionType)recvType).getParameters().iterator();
     Iterator<Node> argumentIter=n.children().iterator();
     argumentIter.next();
     while (paramIter.hasNext() && argumentIter.hasNext()) {
       Node arg=argumentIter.next();
       Node param=paramIter.next();
-      if (arg.getJSType() != null && arg.getJSType().isFunctionType()) {
-        actions.addAll(getImplicitActionsFromArgument(arg,arg.getJSType().toMaybeFunctionType().getTypeOfThis(),param.getJSType()));
+      if (arg.getJSType() instanceof FunctionType) {
+        actions.addAll(getImplicitActionsFromArgument(arg,((FunctionType)arg.getJSType()).getTypeOfThis(),param.getJSType()));
       }
     }
     return actions;
