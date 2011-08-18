@@ -36,8 +36,8 @@
         compiler.report(JSError.make(sourceName,n,ENUM_INITIALIZER));
       }
     }
-    if (type instanceof FunctionType && !type.isEmptyType()) {
-      FunctionType fnType=(FunctionType)type;
+    FunctionType fnType=JSType.toMaybeFunctionType(type);
+    if (fnType != null && !type.isEmptyType()) {
       if ((fnType.isConstructor() || fnType.isInterface()) && !fnType.equals(getNativeType(U2U_CONSTRUCTOR_TYPE))) {
         FunctionType superClassCtor=fnType.getSuperClassConstructor();
         scopeToDeclareIn.declare(variableName + ".prototype",n,fnType.getPrototype(),input,superClassCtor == null || superClassCtor.getInstanceType().equals(getNativeType(OBJECT_TYPE)));
@@ -47,10 +47,10 @@
       }
     }
   }
-  if (isGlobalVar && "Window".equals(variableName) && type instanceof FunctionType&& type.isConstructor()) {
+  if (isGlobalVar && "Window".equals(variableName) && type != null && type.isFunctionType() && type.isConstructor()) {
     FunctionType globalThisCtor=typeRegistry.getNativeObjectType(GLOBAL_THIS).getConstructor();
     globalThisCtor.getInstanceType().clearCachedValues();
     globalThisCtor.getPrototype().clearCachedValues();
-    globalThisCtor.setPrototypeBasedOn(((FunctionType)type).getInstanceType());
+    globalThisCtor.setPrototypeBasedOn((type.toMaybeFunctionType()).getInstanceType());
   }
 }

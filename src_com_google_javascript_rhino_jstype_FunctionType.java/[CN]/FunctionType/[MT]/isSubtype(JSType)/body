@@ -3,13 +3,13 @@
     return true;
   }
   if (that.isFunctionType()) {
-    if (((FunctionType)that).isInterface()) {
+    FunctionType other=that.toMaybeFunctionType();
+    if (other.isInterface()) {
       return true;
     }
     if (this.isInterface()) {
       return false;
     }
-    FunctionType other=(FunctionType)that;
     boolean treatThisTypesAsCovariant=this.isConstructor() || other.isConstructor() || (other.typeOfThis.getConstructor() != null && other.typeOfThis.getConstructor().isInterface())|| other.typeOfThis.isSubtype(this.typeOfThis)|| this.typeOfThis.isSubtype(other.typeOfThis);
     return treatThisTypesAsCovariant && this.call.isSubtype(other.call);
   }

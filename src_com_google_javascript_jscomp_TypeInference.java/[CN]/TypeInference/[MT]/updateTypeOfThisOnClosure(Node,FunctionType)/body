@@ -20,8 +20,8 @@
       int j=0;
       for (      Node jParameter : fnType.getParameters()) {
         JSType jParameterType=getJSType(jParameter).restrictByNotNullOrUndefined();
-        if (jParameterType instanceof FunctionType) {
-          FunctionType jParameterFnType=(FunctionType)jParameterType;
+        if (jParameterType.isFunctionType()) {
+          FunctionType jParameterFnType=jParameterType.toMaybeFunctionType();
           if (jParameterFnType.getTypeOfThis().equals(iParameterType)) {
             foundTemplateTypeOfThisParameter=true;
             if (j + 1 >= childCount) {
@@ -29,9 +29,9 @@
             }
             Node jArgument=n.getChildAtIndex(j + 1);
             JSType jArgumentType=getJSType(jArgument);
-            if (jArgument.getType() == Token.FUNCTION && jArgumentType instanceof FunctionType) {
+            if (jArgument.getType() == Token.FUNCTION && jArgumentType.isFunctionType()) {
               if (iArgumentType != null && !iArgumentType.isNoType()) {
-                FunctionType jArgumentFnType=(FunctionType)jArgumentType;
+                FunctionType jArgumentFnType=jArgumentType.toMaybeFunctionType();
                 if (jArgumentFnType.getTypeOfThis().isUnknownType()) {
                   jArgument.setJSType(registry.createFunctionTypeWithNewThisType(jArgumentFnType,(ObjectType)iArgumentType));
                 }
