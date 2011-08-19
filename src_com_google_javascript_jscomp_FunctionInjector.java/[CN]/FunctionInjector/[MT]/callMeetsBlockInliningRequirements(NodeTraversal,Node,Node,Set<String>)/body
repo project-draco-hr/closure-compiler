@@ -1,15 +1,27 @@
 {
   boolean fnContainsVars=NodeUtil.has(NodeUtil.getFunctionBody(fnNode),new NodeUtil.MatchDeclaration(),new NodeUtil.MatchShallowStatement());
-  boolean callerContainsFunction=false;
+  boolean forbidTemps=false;
   if (!t.inGlobalScope()) {
     Node fnCaller=t.getScopeRoot();
     Node fnCallerBody=fnCaller.getLastChild();
-    callerContainsFunction=NodeUtil.containsFunction(fnCallerBody);
+    Predicate<Node> match=new Predicate<Node>(){
+      @Override public boolean apply(      Node n){
+        if (n.getType() == Token.NAME) {
+          return n.getString().equals("eval");
+        }
+        if (n.getType() == Token.FUNCTION) {
+          return n != fnNode;
+        }
+        return false;
+      }
+    }
+;
+    forbidTemps=NodeUtil.has(fnCallerBody,match,NodeUtil.MATCH_NOT_FUNCTION);
   }
-  if (fnContainsVars && callerContainsFunction) {
+  if (fnContainsVars && forbidTemps) {
     return false;
   }
-  if (callerContainsFunction) {
+  if (forbidTemps) {
     Map<String,Node> args=FunctionArgumentInjector.getFunctionCallParameterMap(fnNode,callNode,this.safeNameIdSupplier);
     boolean hasArgs=!args.isEmpty();
     if (hasArgs) {
