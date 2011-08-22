@@ -1,8 +1,8 @@
 {
-  if (t.inGlobalScope()) {
+  Scope scope=t.getScope();
+  if (!shouldOptimizeScope(scope)) {
     return;
   }
-  Scope scope=t.getScope();
   ControlFlowGraph<Node> cfg=t.getControlFlowGraph();
   LiveVariablesAnalysis liveness=new LiveVariablesAnalysis(cfg,scope,compiler);
   if (scope.getRootNode().getFirstChild().getNext().getChildCount() == 2) {

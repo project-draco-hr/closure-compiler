@@ -2,6 +2,9 @@
   if (t.inGlobalScope()) {
     return;
   }
+  if (LiveVariablesAnalysis.MAX_VARIABLES_TO_ANALYZE < t.getScope().getVarCount()) {
+    return;
+  }
   ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false,true);
   Preconditions.checkState(NodeUtil.isFunction(t.getScopeRoot()));
   cfa.process(null,t.getScopeRoot().getLastChild());
