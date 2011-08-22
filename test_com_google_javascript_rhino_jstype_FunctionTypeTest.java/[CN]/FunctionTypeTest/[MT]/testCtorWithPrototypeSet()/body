@@ -1,6 +1,11 @@
 {
   FunctionType ctor=registry.createConstructorType("Foo",null,null,null);
   assertFalse(ctor.getInstanceType().isUnknownType());
-  ctor.defineDeclaredProperty("prototype",UNKNOWN_TYPE,null);
+  Node node=new Node(Token.OBJECTLIT);
+  ctor.defineDeclaredProperty("prototype",UNKNOWN_TYPE,node);
   assertTrue(ctor.getInstanceType().isUnknownType());
+  assertEquals(ImmutableSet.<String>of("prototype"),ctor.getOwnPropertyNames());
+  assertTrue(ctor.isPropertyTypeInferred("prototype"));
+  assertTrue(ctor.getPropertyType("prototype").isUnknownType());
+  assertNull(ctor.getPropertyNode("prototype"));
 }
