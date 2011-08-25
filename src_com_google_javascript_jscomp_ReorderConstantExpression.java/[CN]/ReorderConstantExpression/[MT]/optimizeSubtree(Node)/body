@@ -1,0 +1,16 @@
+{
+  if (NodeUtil.isSymmetricOperation(subtree) || NodeUtil.isRelationalOperation(subtree)) {
+    if (NodeUtil.isImmutableValue(subtree.getLastChild()) && !NodeUtil.isImmutableValue(subtree.getFirstChild())) {
+      if (NodeUtil.isRelationalOperation(subtree)) {
+        int inverseOperator=NodeUtil.getInverseOperator(subtree.getType());
+        subtree.setType(inverseOperator);
+      }
+      Node firstNode=subtree.getFirstChild().detachFromParent();
+      Node lastNode=subtree.getLastChild().detachFromParent();
+      subtree.addChildrenToFront(lastNode);
+      subtree.addChildrenToBack(firstNode);
+      this.compiler.reportCodeChange();
+    }
+  }
+  return subtree;
+}
