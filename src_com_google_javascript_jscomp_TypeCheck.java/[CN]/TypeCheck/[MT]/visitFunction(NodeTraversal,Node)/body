@@ -2,7 +2,7 @@
   FunctionType functionType=JSType.toMaybeFunctionType(n.getJSType());
   String functionPrivateName=n.getFirstChild().getString();
   if (functionType.isConstructor()) {
-    FunctionType baseConstructor=functionType.getPrototype().getImplicitPrototype().getConstructor();
+    FunctionType baseConstructor=functionType.getSuperClassConstructor();
     if (baseConstructor != null && baseConstructor != getNativeType(OBJECT_FUNCTION_TYPE) && (baseConstructor.isInterface() && functionType.isConstructor())) {
       compiler.report(t.makeError(n,CONFLICTING_EXTENDED_TYPE,functionPrivateName));
     }

@@ -1,8 +1,6 @@
 {
-  if (prototype == null) {
-    setPrototype(new FunctionPrototypeType(registry,this,baseType,isNativeObjectType()));
+  if (baseType.hasReferenceName() || baseType.isUnknownType() || isNativeObjectType()|| baseType.isFunctionPrototypeType()|| !(baseType instanceof PrototypeObjectType)) {
+    baseType=new PrototypeObjectType(registry,this.getReferenceName() + ".prototype",baseType);
   }
- else {
-    prototype.setImplicitPrototype(baseType);
-  }
+  setPrototype((PrototypeObjectType)baseType);
 }

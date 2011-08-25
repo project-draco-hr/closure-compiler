@@ -2,5 +2,9 @@
   testSame("var y = Window.prototype;" + "Window.prototype = {alert: function(message) {}};" + "/** @constructor */ function Window() {}\n"+ "var window = new Window(); \n"+ "var x = window;");
   ObjectType x=(ObjectType)findNameType("x",globalScope);
   assertEquals("Window",x.toString());
-  assertFalse(x.getImplicitPrototype().hasOwnProperty("alert"));
+  assertTrue(x.getImplicitPrototype().hasOwnProperty("alert"));
+  assertEquals("function (?): undefined",x.getPropertyType("alert").toString());
+  assertFalse(x.isPropertyTypeDeclared("alert"));
+  ObjectType y=(ObjectType)findNameType("y",globalScope);
+  assertEquals("?",y.getPropertyType("alert").toString());
 }
