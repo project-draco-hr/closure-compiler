@@ -1,8 +1,22 @@
 {
   PrototypeMemberDeclaration first=instance.declarations.getFirst();
   String className=first.qualifiedClassName;
-  Node stmt=new Node(first.node.getType(),new Node(Token.ASSIGN,Node.newString(Token.NAME,prototypeAlias),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),className + ".prototype",instance.parent,className + ".prototype"))).copyInformationFromForTree(first.node);
-  instance.parent.addChildBefore(stmt,first.node);
+  if (pattern == Pattern.USE_GLOBAL_TEMP) {
+    Node stmt=new Node(first.node.getType(),new Node(Token.ASSIGN,Node.newString(Token.NAME,prototypeAlias),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),className + ".prototype",instance.parent,className + ".prototype"))).copyInformationFromForTree(first.node);
+    instance.parent.addChildBefore(stmt,first.node);
+  }
+ else   if (pattern == Pattern.USE_ANON_FUNCTION) {
+    Node block=new Node(Token.BLOCK);
+    Node func=new Node(Token.FUNCTION,Node.newString(Token.NAME,""),new Node(Token.LP,Node.newString(Token.NAME,prototypeAlias)),block);
+    Node call=new Node(Token.CALL,func,NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),className + ".prototype",instance.parent,className + ".prototype"));
+    call.putIntProp(Node.FREE_CALL,1);
+    Node stmt=new Node(first.node.getType(),call);
+    stmt.copyInformationFromForTree(first.node);
+    instance.parent.addChildBefore(stmt,first.node);
+    for (    PrototypeMemberDeclaration declar : instance.declarations) {
+      block.addChildToBack(declar.node.detachFromParent());
+    }
+  }
   for (  PrototypeMemberDeclaration declar : instance.declarations) {
     replacePrototypeMemberDeclaration(declar);
   }
