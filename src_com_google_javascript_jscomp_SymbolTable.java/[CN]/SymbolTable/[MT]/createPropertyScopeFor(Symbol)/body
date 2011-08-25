@@ -1,0 +1,35 @@
+{
+  if (s.propertyScope != null) {
+    return;
+  }
+  SymbolScope parentPropertyScope=null;
+  ObjectType type=s.getType().toObjectType();
+  ObjectType proto=type.getParentScope();
+  if (proto != null && proto != type && proto.getConstructor() != null) {
+    Symbol parentSymbol=getSymbolForInstancesOf(proto.getConstructor());
+    if (parentSymbol != null) {
+      createPropertyScopeFor(parentSymbol);
+      parentPropertyScope=parentSymbol.getPropertyScope();
+    }
+  }
+  ObjectType instanceType=type;
+  Iterable<String> propNames=type.getOwnPropertyNames();
+  if (instanceType.isFunctionPrototypeType()) {
+    instanceType=((ObjectType)instanceType).getOwnerFunction().getInstanceType();
+    Set<String> set=Sets.newHashSet(propNames);
+    Iterables.addAll(set,instanceType.getOwnPropertyNames());
+    propNames=set;
+  }
+  s.propertyScope=new SymbolScope(null,parentPropertyScope,type);
+  for (  String propName : propNames) {
+    StaticSlot<JSType> newProp=instanceType.getSlot(propName);
+    if (newProp.getDeclaration() == null) {
+      continue;
+    }
+    Symbol oldProp=getScope(s).getSlot(s.getName() + "." + propName);
+    if (oldProp != null) {
+      removeSymbol(oldProp);
+    }
+    copySymbolTo(newProp,s.propertyScope);
+  }
+}

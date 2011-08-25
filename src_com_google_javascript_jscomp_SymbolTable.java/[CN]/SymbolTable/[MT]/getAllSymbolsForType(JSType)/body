@@ -1,0 +1,18 @@
+{
+  if (type == null) {
+    return ImmutableList.of();
+  }
+  UnionType unionType=type.toMaybeUnionType();
+  if (unionType != null) {
+    List<Symbol> result=Lists.newArrayListWithExpectedSize(2);
+    for (    JSType alt : unionType.getAlternates()) {
+      Symbol altSym=getOnlySymbolForType(alt);
+      if (altSym != null) {
+        result.add(altSym);
+      }
+    }
+    return result;
+  }
+  Symbol result=getOnlySymbolForType(type);
+  return result == null ? ImmutableList.<Symbol>of() : ImmutableList.of(result);
+}

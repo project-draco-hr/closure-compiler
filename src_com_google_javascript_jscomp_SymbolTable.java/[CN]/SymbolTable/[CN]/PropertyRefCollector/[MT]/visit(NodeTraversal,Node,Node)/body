@@ -1,0 +1,30 @@
+{
+  if (n.getType() == Token.GETPROP) {
+    JSType owner=n.getFirstChild().getJSType();
+    if (owner == null) {
+      return;
+    }
+    String propName=n.getLastChild().getString();
+    if (owner.isNominalConstructor()) {
+      Symbol sym=getSymbolDeclaredBy(owner.toMaybeFunctionType());
+      if (sym == null || sym.getPropertyScope() == null) {
+        return;
+      }
+      Symbol prop=sym.getPropertyScope().getSlot(propName);
+      if (prop != null) {
+        prop.defineReferenceAt(n);
+      }
+    }
+ else {
+      for (      Symbol ctor : getAllSymbolsForType(owner)) {
+        Symbol sym=getSymbolForInstancesOf(ctor);
+        if (sym != null) {
+          Symbol prop=sym.getPropertyScope().getSlot(propName);
+          if (prop != null) {
+            prop.defineReferenceAt(n);
+          }
+        }
+      }
+    }
+  }
+}

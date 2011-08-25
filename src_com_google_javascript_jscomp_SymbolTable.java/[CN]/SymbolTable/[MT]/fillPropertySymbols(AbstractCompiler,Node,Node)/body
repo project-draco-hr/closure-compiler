@@ -1,0 +1,18 @@
+{
+  List<Symbol> types=Lists.newArrayList();
+  List<Symbol> instances=Lists.newArrayList();
+  for (  Symbol sym : getAllSymbols()) {
+    FunctionType t=sym.getFunctionType();
+    if (t != null && t.isNominalConstructor()) {
+      types.add(sym);
+      Symbol instance=getSymbolForInstancesOf(t);
+      if (instance != null) {
+        instances.add(instance);
+      }
+    }
+  }
+  for (  Symbol s : Iterables.concat(types,instances)) {
+    createPropertyScopeFor(s);
+  }
+  (new PropertyRefCollector(compiler)).process(externs,root);
+}

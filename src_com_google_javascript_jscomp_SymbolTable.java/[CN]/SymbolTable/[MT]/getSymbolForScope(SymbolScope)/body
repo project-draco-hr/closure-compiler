@@ -1,4 +1,16 @@
 {
+  if (scope.isPropertyScope()) {
+    JSType type=scope.getTypeOfThis();
+    if (type != null) {
+      if (type.isNominalConstructor()) {
+        return getSymbolDeclaredBy(type.toMaybeFunctionType());
+      }
+ else       if (type.isFunctionPrototypeType()) {
+        return getSymbolForInstancesOf(((ObjectType)type).getOwnerFunction());
+      }
+    }
+    return null;
+  }
   Node rootNode=scope.getRootNode();
   if (rootNode.getType() != Token.FUNCTION) {
     return null;

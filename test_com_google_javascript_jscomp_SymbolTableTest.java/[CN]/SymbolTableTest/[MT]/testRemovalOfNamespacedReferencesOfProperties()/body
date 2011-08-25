@@ -1,0 +1,9 @@
+{
+  SymbolTable table=createSymbolTable("/** @constructor */ var DomHelper = function(){};" + "/** method */ DomHelper.method = function() {};");
+  Symbol domHelper=getGlobalVar(table,"DomHelper");
+  assertNotNull(domHelper);
+  Symbol domHelperNamespacedMethod=getGlobalVar(table,"DomHelper.method");
+  assertNull(domHelperNamespacedMethod);
+  Symbol domHelperMethod=domHelper.getPropertyScope().getSlot("method");
+  assertNotNull(domHelperMethod);
+}
