@@ -1,19 +1,17 @@
 {
   if (parent.getType() == Token.ASSIGN) {
     Node lValue=parent.getFirstChild();
-    if (lValue.isQualifiedName()) {
-      if (lValue.getType() == Token.GETPROP) {
-        JSType lValueType=lValue.getJSType();
-        if (lValueType != null && lValueType.isConstructor()) {
-          return (lValueType.toMaybeFunctionType()).getInstanceType();
-        }
- else {
-          return normalizeClassType(lValue.getFirstChild().getJSType());
-        }
+    if (NodeUtil.isGet(lValue)) {
+      JSType lValueType=lValue.getJSType();
+      if (lValueType != null && lValueType.isNominalConstructor()) {
+        return (lValueType.toMaybeFunctionType()).getInstanceType();
       }
  else {
-        return normalizeClassType(lValue.getJSType());
+        return normalizeClassType(lValue.getFirstChild().getJSType());
       }
+    }
+ else {
+      return normalizeClassType(lValue.getJSType());
     }
   }
  else   if (NodeUtil.isFunctionDeclaration(n) || parent.getType() == Token.NAME) {
