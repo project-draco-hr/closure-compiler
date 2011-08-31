@@ -20,15 +20,6 @@
     CompilerInput input=compiler.getInput(inputId);
     boolean isExtern=n.isFromExterns();
     Var newVar=scopeToDeclareIn.declare(variableName,n,type,input,inferred);
-    if (shouldDeclareOnGlobalThis) {
-      ObjectType globalThis=typeRegistry.getNativeObjectType(GLOBAL_THIS);
-      if (inferred) {
-        globalThis.defineInferredProperty(variableName,type == null ? getNativeType(JSTypeNative.NO_TYPE) : type,n);
-      }
- else {
-        globalThis.defineDeclaredProperty(variableName,type,n);
-      }
-    }
     if (type instanceof EnumType) {
       Node initialValue=newVar.getInitialValue();
       boolean isValidValue=initialValue != null && (initialValue.getType() == Token.OBJECTLIT || initialValue.isQualifiedName());
@@ -45,6 +36,15 @@
           compiler.report(JSError.make(sourceName,n,fnType.isConstructor() ? CTOR_INITIALIZER : IFACE_INITIALIZER,variableName));
         }
       }
+    }
+  }
+  if (shouldDeclareOnGlobalThis) {
+    ObjectType globalThis=typeRegistry.getNativeObjectType(GLOBAL_THIS);
+    if (inferred) {
+      globalThis.defineInferredProperty(variableName,type == null ? getNativeType(JSTypeNative.NO_TYPE) : type,n);
+    }
+ else {
+      globalThis.defineDeclaredProperty(variableName,type,n);
     }
   }
   if (isGlobalVar && "Window".equals(variableName) && type != null && type.isFunctionType() && type.isConstructor()) {
