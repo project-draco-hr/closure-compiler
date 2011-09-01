@@ -5,10 +5,14 @@
   if (isConstructor() && prototype == getInstanceType()) {
     return false;
   }
-  boolean replacedPrototype=prototype != null;
+  PrototypeObjectType oldPrototype=this.prototype;
+  boolean replacedPrototype=oldPrototype != null;
   this.prototype=prototype;
   this.prototypeSlot=new SimpleSlot("prototype",prototype,true);
   this.prototype.setOwnerFunction(this);
+  if (oldPrototype != null) {
+    oldPrototype.setOwnerFunction(null);
+  }
   if (isConstructor() || isInterface()) {
     FunctionType superClass=getSuperClassConstructor();
     if (superClass != null) {

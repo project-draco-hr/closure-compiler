@@ -4,20 +4,24 @@
   String qName=n.getQualifiedName();
   String propName=n.getLastChild().getString();
   Preconditions.checkArgument(qName != null && ownerName != null);
+  JSType valueType=getDeclaredType(t.getSourceName(),info,n,rhsValue);
+  if (valueType == null && rhsValue != null) {
+    valueType=rhsValue.getJSType();
+  }
   if ("prototype".equals(propName)) {
     Var qVar=scope.getVar(qName);
     if (qVar != null) {
-      if (!qVar.isTypeInferred()) {
+      ObjectType qVarType=ObjectType.cast(qVar.getType());
+      if (qVarType != null && rhsValue != null && rhsValue.getType() == Token.OBJECTLIT) {
+        typeRegistry.resetImplicitPrototype(rhsValue.getJSType(),qVarType.getImplicitPrototype());
+      }
+ else       if (!qVar.isTypeInferred()) {
         return;
       }
       if (qVar.getScope() == scope) {
         scope.undeclare(qVar);
       }
     }
-  }
-  JSType valueType=getDeclaredType(t.getSourceName(),info,n,rhsValue);
-  if (valueType == null && rhsValue != null) {
-    valueType=rhsValue.getJSType();
   }
   if (valueType == null) {
     if (parent.getType() == Token.EXPR_RESULT) {
