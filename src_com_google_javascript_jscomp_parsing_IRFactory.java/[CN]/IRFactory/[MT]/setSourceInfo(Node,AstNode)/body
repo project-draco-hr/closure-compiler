@@ -1,16 +1,9 @@
 {
-  if (irNode.getType() == Token.FUNCTION && irNode.getFirstChild().getLineno() != -1) {
-    irNode.setLineno(irNode.getFirstChild().getLineno());
-    irNode.setCharno(irNode.getFirstChild().getCharno());
+  if (irNode.getLineno() == -1) {
+    int lineno=node.getLineno();
+    irNode.setLineno(lineno);
+    int charno=position2charno(node.getAbsolutePosition());
+    irNode.setCharno(charno);
     maybeSetLengthFrom(irNode,node);
-  }
- else {
-    if (irNode.getLineno() == -1) {
-      int lineno=node.getLineno();
-      irNode.setLineno(lineno);
-      int charno=position2charno(node.getAbsolutePosition());
-      irNode.setCharno(charno);
-      maybeSetLengthFrom(irNode,node);
-    }
   }
 }
