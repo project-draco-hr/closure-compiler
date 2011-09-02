@@ -24,7 +24,8 @@
     if (isDeclaration && !allowDupe) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
         if (declaredBlock.provablyExecutesBefore(basicBlock)) {
-          compiler.report(JSError.make(reference.getSourceFile().getName(),reference.getNode(),checkLevel,REDECLARED_VARIABLE,v.name));
+          String filename=NodeUtil.getSourceName(reference.getNode());
+          compiler.report(JSError.make(filename,reference.getNode(),checkLevel,REDECLARED_VARIABLE,v.name));
           break;
         }
       }
@@ -32,7 +33,8 @@
     if (isUnhoistedNamedFunction && !isDeclaration && isDeclaredInScope) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
         if (!declaredBlock.provablyExecutesBefore(basicBlock)) {
-          compiler.report(JSError.make(reference.getSourceFile().getName(),reference.getNode(),AMBIGUOUS_FUNCTION_DECL,v.name));
+          String filename=NodeUtil.getSourceName(reference.getNode());
+          compiler.report(JSError.make(filename,reference.getNode(),AMBIGUOUS_FUNCTION_DECL,v.name));
           break;
         }
       }
@@ -44,7 +46,8 @@
           continue;
         }
         if (reference.getScope() == v.scope) {
-          compiler.report(JSError.make(reference.getSourceFile().getName(),reference.getNode(),checkLevel,UNDECLARED_REFERENCE,v.name));
+          String filename=NodeUtil.getSourceName(reference.getNode());
+          compiler.report(JSError.make(filename,reference.getNode(),checkLevel,UNDECLARED_REFERENCE,v.name));
         }
       }
     }
