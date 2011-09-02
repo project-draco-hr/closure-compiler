@@ -3,7 +3,7 @@
   T type=typeSystem.getType(getScope(),n.getFirstChild(),name);
   Property prop=getProperty(name);
   if (!prop.scheduleRenaming(n.getLastChild(),processProperty(t,prop,type,null))) {
-    if (showInvalidationWarnings) {
+    if (propertiesToErrorFor.containsKey(name)) {
       String suggestion="";
       if (type instanceof JSType) {
         JSType jsType=(JSType)type;
@@ -25,7 +25,7 @@
           }
         }
       }
-      compiler.report(JSError.make(t.getSourceName(),n,Warnings.INVALIDATION,name,(type == null ? "null" : type.toString()),n.toString(),suggestion));
+      compiler.report(JSError.make(t.getSourceName(),n,propertiesToErrorFor.get(name),Warnings.INVALIDATION,name,(type == null ? "null" : type.toString()),n.toString(),suggestion));
     }
   }
 }

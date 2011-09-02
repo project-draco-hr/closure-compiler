@@ -3,13 +3,15 @@
   return new CompilerPass(){
     @Override public void process(    Node externs,    Node root){
       checker.processForTesting(externs,root);
+      Map<String,CheckLevel> propertiesToErrorFor=Maps.<String,CheckLevel>newHashMap();
+      propertiesToErrorFor.put("foobar",CheckLevel.ERROR);
       if (runTightenTypes) {
         TightenTypes tightener=new TightenTypes(compiler);
         tightener.process(externs,root);
-        lastPass=DisambiguateProperties.forConcreteTypeSystem(compiler,tightener);
+        lastPass=DisambiguateProperties.forConcreteTypeSystem(compiler,tightener,propertiesToErrorFor);
       }
  else {
-        lastPass=DisambiguateProperties.forJSTypeSystem(compiler);
+        lastPass=DisambiguateProperties.forJSTypeSystem(compiler,propertiesToErrorFor);
       }
       lastPass.process(externs,root);
     }
