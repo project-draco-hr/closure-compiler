@@ -10,6 +10,9 @@
   JSType varType=var.getType();
   if (varType != null && varType != typeRegistry.getNativeType(UNKNOWN_TYPE) && newType != null && newType != typeRegistry.getNativeType(UNKNOWN_TYPE)) {
     if (var.input == null) {
+      Scope s=var.getScope();
+      s.undeclare(var);
+      s.declare(variableName,n,varType,input,false);
       n.setJSType(varType);
       if (parent.getType() == Token.VAR) {
         if (n.getFirstChild() != null) {

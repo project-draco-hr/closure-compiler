@@ -9,15 +9,15 @@
       scopeToDeclareIn=scope.getGlobalScope();
     }
   }
+  CompilerInput input=compiler.getInput(inputId);
   if (scopeToDeclareIn.isDeclared(variableName,false)) {
     Var oldVar=scopeToDeclareIn.getVar(variableName);
-    validator.expectUndeclaredVariable(sourceName,n,parent,oldVar,variableName,type);
+    validator.expectUndeclaredVariable(sourceName,input,n,parent,oldVar,variableName,type);
   }
  else {
     if (!inferred) {
       setDeferredType(n,type);
     }
-    CompilerInput input=compiler.getInput(inputId);
     boolean isExtern=n.isFromExterns();
     Var newVar=scopeToDeclareIn.declare(variableName,n,type,input,inferred);
     if (type instanceof EnumType) {
