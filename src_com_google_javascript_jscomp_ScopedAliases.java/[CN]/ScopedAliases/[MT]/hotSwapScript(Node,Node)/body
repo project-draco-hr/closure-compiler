@@ -5,7 +5,7 @@
     for (    AliasUsage aliasUsage : traversal.getAliasUsages()) {
       aliasUsage.applyAlias();
     }
-    for (    Node aliasDefinition : traversal.getAliasDefinitions()) {
+    for (    Node aliasDefinition : traversal.getAliasDefinitionsInOrder()) {
       if (aliasDefinition.getParent().getType() == Token.VAR && aliasDefinition.getParent().hasOneChild()) {
         aliasDefinition.getParent().detachFromParent();
       }
@@ -20,7 +20,7 @@
       expressionWithScopeCall.getParent().replaceChild(expressionWithScopeCall,scopeClosureBlock);
       NodeUtil.tryMergeBlock(scopeClosureBlock);
     }
-    if (traversal.getAliasUsages().size() > 0 || traversal.getAliasDefinitions().size() > 0 || traversal.getScopeCalls().size() > 0) {
+    if (traversal.getAliasUsages().size() > 0 || traversal.getAliasDefinitionsInOrder().size() > 0 || traversal.getScopeCalls().size() > 0) {
       compiler.reportCodeChange();
     }
   }

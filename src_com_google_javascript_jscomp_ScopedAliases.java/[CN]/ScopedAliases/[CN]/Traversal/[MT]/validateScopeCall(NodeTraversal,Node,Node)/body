@@ -1,0 +1,20 @@
+{
+  if (preprocessorSymbolTable != null) {
+    preprocessorSymbolTable.addReference(n.getFirstChild());
+  }
+  if (!NodeUtil.isExpressionNode(parent)) {
+    report(t,n,GOOG_SCOPE_USED_IMPROPERLY);
+  }
+  if (n.getChildCount() != 2) {
+    report(t,n,GOOG_SCOPE_HAS_BAD_PARAMETERS);
+  }
+ else {
+    Node anonymousFnNode=n.getChildAtIndex(1);
+    if (!NodeUtil.isFunction(anonymousFnNode) || NodeUtil.getFunctionName(anonymousFnNode) != null || NodeUtil.getFunctionParameters(anonymousFnNode).hasChildren()) {
+      report(t,anonymousFnNode,GOOG_SCOPE_HAS_BAD_PARAMETERS);
+    }
+ else {
+      scopeCalls.add(n);
+    }
+  }
+}
