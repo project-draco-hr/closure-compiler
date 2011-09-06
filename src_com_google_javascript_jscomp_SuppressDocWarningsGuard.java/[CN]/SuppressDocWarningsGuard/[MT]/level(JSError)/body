@@ -10,6 +10,12 @@
  else       if (type == Token.SCRIPT) {
         info=current.getJSDocInfo();
       }
+ else       if (type == Token.ASSIGN) {
+        Node rhs=current.getLastChild();
+        if (NodeUtil.isFunction(rhs)) {
+          info=NodeUtil.getFunctionJSDocInfo(rhs);
+        }
+      }
       if (info != null) {
         for (        String suppressor : info.getSuppressions()) {
           WarningsGuard guard=suppressors.get(suppressor);
