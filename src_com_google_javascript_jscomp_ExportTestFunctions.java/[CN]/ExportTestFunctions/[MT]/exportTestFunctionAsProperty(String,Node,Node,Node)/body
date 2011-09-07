@@ -1,0 +1,9 @@
+{
+  String testFunctionName=NodeUtil.getPrototypePropertyName(node.getFirstChild());
+  String objectName=fullyQualifiedFunctionName.substring(0,fullyQualifiedFunctionName.lastIndexOf('.'));
+  String exportCallStr=String.format("%s(%s, '%s', %s);",exportPropertyFunction,objectName,testFunctionName,fullyQualifiedFunctionName);
+  Node exportCall=this.compiler.parseSyntheticCode(exportCallStr).removeChildren();
+  exportCall.useSourceInfoFromForTree(scriptNode);
+  scriptNode.addChildAfter(exportCall,parent);
+  compiler.reportCodeChange();
+}
