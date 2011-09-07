@@ -1,5 +1,5 @@
 {
-  SymbolTable symbolTable=new SymbolTable();
+  SymbolTable symbolTable=new SymbolTable(getTypeRegistry());
   MemoizedScopeCreator typedScopeCreator=getTypedScopeCreator();
   if (typedScopeCreator != null) {
     symbolTable.addSymbolsFrom(typedScopeCreator);
@@ -16,6 +16,7 @@
     symbolTable.addSymbolsFrom(preprocessorSymbolTable);
   }
   symbolTable.fillNamespaceReferences();
+  symbolTable.fillThisReferences(this,externsRoot,jsRoot);
   symbolTable.fillPropertySymbols(this,externsRoot,jsRoot);
   return symbolTable;
 }

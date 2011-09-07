@@ -1,0 +1,16 @@
+{
+  if (n.getType() != Token.THIS) {
+    return;
+  }
+  JSType type=n.getJSType();
+  if (type == null) {
+    return;
+  }
+  if (type.isGlobalThisType() && globalScope.getSlot(GLOBAL_THIS) == null) {
+    declareSymbol(GLOBAL_THIS,registry.getNativeType(JSTypeNative.GLOBAL_THIS),false,globalScope,n);
+  }
+  Symbol s=getOnlySymbolForType(type);
+  if (s != null) {
+    s.defineReferenceAt(n);
+  }
+}

@@ -2,7 +2,10 @@
   if (scope.isPropertyScope()) {
     JSType type=scope.getTypeOfThis();
     if (type != null) {
-      if (type.isNominalConstructor()) {
+      if (type.isGlobalThisType()) {
+        return globalScope.getSlot(GLOBAL_THIS);
+      }
+ else       if (type.isNominalConstructor()) {
         return getSymbolDeclaredBy(type.toMaybeFunctionType());
       }
  else       if (type.isFunctionPrototypeType()) {

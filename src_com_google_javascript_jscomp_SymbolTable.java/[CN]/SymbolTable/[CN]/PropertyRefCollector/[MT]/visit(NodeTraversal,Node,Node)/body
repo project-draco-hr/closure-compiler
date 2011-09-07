@@ -4,26 +4,18 @@
     if (owner == null) {
       return;
     }
-    String propName=n.getLastChild().getString();
-    if (owner.isNominalConstructor()) {
-      Symbol sym=getSymbolDeclaredBy(owner.toMaybeFunctionType());
-      if (sym == null || sym.getPropertyScope() == null) {
-        return;
+    if (owner.isGlobalThisType()) {
+      Symbol sym=globalScope.getSlot(n.getLastChild().getString());
+      if (sym != null) {
+        sym.defineReferenceAt(n);
       }
-      Symbol prop=sym.getPropertyScope().getSlot(propName);
-      if (prop != null) {
-        prop.defineReferenceAt(n);
-      }
+    }
+ else     if (owner.isNominalConstructor()) {
+      maybeDefineReference(n,getSymbolDeclaredBy(owner.toMaybeFunctionType()));
     }
  else {
       for (      Symbol ctor : getAllSymbolsForType(owner)) {
-        Symbol sym=getSymbolForInstancesOf(ctor);
-        if (sym != null) {
-          Symbol prop=sym.getPropertyScope().getSlot(propName);
-          if (prop != null) {
-            prop.defineReferenceAt(n);
-          }
-        }
+        maybeDefineReference(n,getSymbolForInstancesOf(ctor));
       }
     }
   }
