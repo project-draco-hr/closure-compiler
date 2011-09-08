@@ -2,5 +2,7 @@
   SymbolTable table=createSymbolTable("/** @constructor */ function Foo() {}");
   Symbol fooPrototype=getGlobalVar(table,"Foo.prototype");
   assertNotNull(fooPrototype);
-  assertEquals(1,Iterables.size(table.getReferences(fooPrototype)));
+  List<Reference> refs=Lists.newArrayList(table.getReferences(fooPrototype));
+  assertEquals(1,refs.size());
+  assertEquals(Token.FUNCTION,refs.get(0).getNode().getType());
 }

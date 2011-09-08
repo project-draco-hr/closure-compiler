@@ -1,7 +1,9 @@
 {
   setResolvedTypeInternal(this);
   call=(ArrowType)safeResolve(call,t,scope);
-  prototype=(PrototypeObjectType)safeResolve(prototype,t,scope);
+  if (prototypeSlot != null) {
+    prototypeSlot.setType((PrototypeObjectType)safeResolve(prototypeSlot.getType(),t,scope));
+  }
   JSType maybeTypeOfThis=safeResolve(typeOfThis,t,scope);
   if (maybeTypeOfThis != null) {
     maybeTypeOfThis=maybeTypeOfThis.restrictByNotNullOrUndefined();

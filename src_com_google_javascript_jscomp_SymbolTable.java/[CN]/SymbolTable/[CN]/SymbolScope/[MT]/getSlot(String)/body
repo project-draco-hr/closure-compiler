@@ -3,5 +3,16 @@
   if (own != null) {
     return own;
   }
-  return parent == null ? null : parent.getSlot(name);
+  Symbol ancestor=parent == null ? null : parent.getSlot(name);
+  if (ancestor != null) {
+    return ancestor;
+  }
+  int dot=name.lastIndexOf('.');
+  if (dot != -1) {
+    Symbol owner=getSlot(name.substring(0,dot));
+    if (owner != null && owner.getPropertyScope() != null) {
+      return owner.getPropertyScope().getSlot(name.substring(dot + 1));
+    }
+  }
+  return null;
 }

@@ -15,7 +15,7 @@
   ObjectType instanceType=type;
   Iterable<String> propNames=type.getOwnPropertyNames();
   if (instanceType.isFunctionPrototypeType()) {
-    instanceType=((ObjectType)instanceType).getOwnerFunction().getInstanceType();
+    instanceType=instanceType.getOwnerFunction().getInstanceType();
     Set<String> set=Sets.newHashSet(propNames);
     Iterables.addAll(set,instanceType.getOwnPropertyNames());
     propNames=set;
@@ -30,6 +30,12 @@
     if (oldProp != null) {
       removeSymbol(oldProp);
     }
-    copySymbolTo(newProp,s.propertyScope);
+    Symbol newSym=copySymbolTo(newProp,s.propertyScope);
+    if (oldProp != null) {
+      newSym.propertyScope=oldProp.propertyScope;
+      for (      Reference ref : oldProp.references.values()) {
+        newSym.defineReferenceAt(ref.getNode());
+      }
+    }
   }
 }

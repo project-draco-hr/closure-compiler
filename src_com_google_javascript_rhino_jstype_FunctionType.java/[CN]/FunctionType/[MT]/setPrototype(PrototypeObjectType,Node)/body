@@ -5,11 +5,10 @@
   if (isConstructor() && prototype == getInstanceType()) {
     return false;
   }
-  PrototypeObjectType oldPrototype=this.prototype;
+  PrototypeObjectType oldPrototype=prototypeSlot == null ? null : (PrototypeObjectType)prototypeSlot.getType();
   boolean replacedPrototype=oldPrototype != null;
-  this.prototype=prototype;
-  this.prototypeSlot=new SimpleSlot("prototype",prototype,true);
-  this.prototype.setOwnerFunction(this);
+  this.prototypeSlot=new Property("prototype",prototype,true,propertyNode == null ? source : propertyNode);
+  prototype.setOwnerFunction(this);
   if (oldPrototype != null) {
     oldPrototype.setOwnerFunction(null);
   }
