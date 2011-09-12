@@ -1,18 +1,20 @@
 {
-  ObjectType objectType=childType.dereference();
-  if (objectType != null) {
-    JSType propType=getJSType(n);
-    if ((!objectType.hasProperty(propName) || objectType.equals(typeRegistry.getNativeType(UNKNOWN_TYPE))) && propType.equals(typeRegistry.getNativeType(UNKNOWN_TYPE))) {
-      if (objectType instanceof EnumType) {
-        report(t,n,INEXISTENT_ENUM_ELEMENT,propName);
-      }
- else       if (!objectType.isEmptyType() && reportMissingProperties && !isPropertyTest(n)) {
-        if (!typeRegistry.canPropertyBeDefined(objectType,propName)) {
-          report(t,n,INEXISTENT_PROPERTY,propName,validator.getReadableJSTypeName(n.getFirstChild(),true));
+  JSType propType=getJSType(n);
+  if (propType.equals(typeRegistry.getNativeType(UNKNOWN_TYPE))) {
+    childType=childType.autobox();
+    ObjectType objectType=ObjectType.cast(childType);
+    if (objectType != null) {
+      if (!objectType.hasProperty(propName) || objectType.equals(typeRegistry.getNativeType(UNKNOWN_TYPE))) {
+        if (objectType instanceof EnumType) {
+          report(t,n,INEXISTENT_ENUM_ELEMENT,propName);
+        }
+ else {
+          checkPropertyAccessHelper(objectType,propName,t,n);
         }
       }
     }
-  }
  else {
+      checkPropertyAccessHelper(childType,propName,t,n);
+    }
   }
 }
