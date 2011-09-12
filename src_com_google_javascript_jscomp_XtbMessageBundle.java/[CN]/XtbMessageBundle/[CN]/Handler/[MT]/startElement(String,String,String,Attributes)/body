@@ -1,0 +1,19 @@
+{
+  if (BUNDLE_ELEM_NAME.equals(qName)) {
+    Preconditions.checkState(lang == null);
+    lang=atts.getValue(LANG_ATT_NAME);
+    Preconditions.checkState(lang != null && !lang.isEmpty());
+  }
+ else   if (TRANSLATION_ELEM_NAME.equals(qName)) {
+    Preconditions.checkState(msgBuilder == null);
+    String id=atts.getValue(MESSAGE_ID_ATT_NAME);
+    Preconditions.checkState(id != null && !id.isEmpty());
+    msgBuilder=new JsMessage.Builder(id);
+  }
+ else   if (PLACEHOLDER_ELEM_NAME.equals(qName)) {
+    Preconditions.checkState(msgBuilder != null);
+    String phRef=atts.getValue(PLACEHOLDER_NAME_ATT_NAME);
+    phRef=JsMessageVisitor.toLowerCamelCaseWithNumericSuffixes(phRef);
+    msgBuilder.appendPlaceholderReference(phRef);
+  }
+}

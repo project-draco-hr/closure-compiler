@@ -1,0 +1,15 @@
+{
+  Preconditions.checkState(meaning != null);
+  StringBuilder sb=new StringBuilder();
+  for (  CharSequence part : messageParts) {
+    if (part instanceof PlaceholderReference) {
+      sb.append(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE,((PlaceholderReference)part).getName()));
+    }
+ else {
+      sb.append(part);
+    }
+  }
+  String tcValue=sb.toString();
+  String projectScopedMeaning=(projectId != null ? (projectId + ": ") : "") + meaning;
+  return String.valueOf(MessageId.GenerateId(tcValue,projectScopedMeaning));
+}
