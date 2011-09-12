@@ -3,6 +3,8 @@
     return reportGenericTypeSyntaxWarning();
   }
   String typeName=stream.getString();
+  int lineno=stream.getLineno();
+  int charno=stream.getCharno();
   while (match(JsDocToken.EOL) && typeName.charAt(typeName.length() - 1) == '.') {
     skipEOLs();
     if (match(JsDocToken.STRING)) {
@@ -10,7 +12,7 @@
       typeName+=stream.getString();
     }
   }
-  Node typeNameNode=newStringNode(typeName);
+  Node typeNameNode=newStringNode(typeName,lineno,charno);
   if (match(JsDocToken.LT)) {
     next();
     skipEOLs();
