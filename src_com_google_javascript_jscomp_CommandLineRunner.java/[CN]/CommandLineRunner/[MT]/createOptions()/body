@@ -15,5 +15,16 @@
     formattingOption.applyToOptions(options);
   }
   options.closurePass=flags.process_closure_primitives;
+  if (!flags.translationsFile.isEmpty()) {
+    try {
+      options.messageBundle=new XtbMessageBundle(new FileInputStream(flags.translationsFile),flags.translationsProject);
+    }
+ catch (    IOException e) {
+      throw new RuntimeException("Reading XTB file",e);
+    }
+  }
+ else   if (CompilationLevel.ADVANCED_OPTIMIZATIONS == level) {
+    options.messageBundle=new EmptyMessageBundle();
+  }
   return options;
 }
