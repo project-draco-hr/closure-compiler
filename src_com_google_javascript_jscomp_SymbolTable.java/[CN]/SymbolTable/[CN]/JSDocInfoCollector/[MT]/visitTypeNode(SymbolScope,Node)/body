@@ -1,6 +1,11 @@
 {
   if (n.getType() == Token.STRING) {
     Symbol symbol=scope.getSlot(n.getString());
+    if (symbol == null) {
+      JSType type=registry.getType(n.getString());
+      JSType autobox=type == null ? null : type.autoboxesTo();
+      symbol=autobox == null ? null : getOnlySymbolForType(autobox);
+    }
     if (symbol != null) {
       symbol.defineReferenceAt(n);
     }

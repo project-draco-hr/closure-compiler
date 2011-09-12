@@ -1,0 +1,12 @@
+{
+  SymbolTable table=createSymbolTable("/** @param {string} x */ function f(x) {}\n");
+  Symbol str=getGlobalVar(table,"String");
+  assertNotNull(str);
+  List<Reference> refs=Lists.newArrayList(table.getReferences(str));
+  assertTrue(refs.size() > 1);
+  int last=refs.size() - 1;
+  for (int i=0; i < refs.size(); i++) {
+    Reference ref=refs.get(i);
+    assertEquals(i != last,ref.getNode().isFromExterns());
+  }
+}
