@@ -2,15 +2,30 @@
   if (n.getType() != Token.THIS) {
     return;
   }
-  JSType type=n.getJSType();
-  if (type == null) {
-    return;
+  Symbol symbol=null;
+  if (t.inGlobalScope()) {
+    if (globalScope.getSlot(GLOBAL_THIS) == null) {
+      symbol=declareSymbol(GLOBAL_THIS,registry.getNativeType(JSTypeNative.GLOBAL_THIS),false,globalScope,n);
+    }
+ else {
+      symbol=globalScope.getSlot(GLOBAL_THIS);
+    }
   }
-  if (type.isGlobalThisType() && globalScope.getSlot(GLOBAL_THIS) == null) {
-    declareSymbol(GLOBAL_THIS,registry.getNativeType(JSTypeNative.GLOBAL_THIS),false,globalScope,n);
+ else {
+    SymbolScope scope=scopes.get(t.getScopeRoot());
+    Preconditions.checkNotNull(scope);
+    Symbol scopeSymbol=getSymbolForScope(scope);
+    if (scopeSymbol != null) {
+      createPropertyScopeFor(scopeSymbol);
+      SymbolScope propScope=scopeSymbol.getPropertyScope();
+      symbol=propScope.getSlot("this");
+      if (symbol == null) {
+        JSType type=n.getJSType();
+        symbol=declareSymbol("this",type,type != null && !type.isUnknownType(),propScope,n);
+      }
+    }
   }
-  Symbol s=getOnlySymbolForType(type);
-  if (s != null) {
-    s.defineReferenceAt(n);
+  if (symbol != null) {
+    symbol.defineReferenceAt(n);
   }
 }

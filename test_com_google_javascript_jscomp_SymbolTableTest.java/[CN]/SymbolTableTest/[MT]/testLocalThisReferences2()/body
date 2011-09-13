@@ -1,0 +1,7 @@
+{
+  SymbolTable table=createSymbolTable("/** @constructor */ function F() {}" + "/** doc */ F.prototype.baz = " + "    function() { this.foo = 3; this.bar = 5; };");
+  Symbol t=getGlobalVar(table,"F.prototype.baz.this");
+  assertNotNull(t);
+  List<Reference> refs=Lists.newArrayList(table.getReferences(t));
+  assertEquals(2,refs.size());
+}
