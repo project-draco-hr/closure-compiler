@@ -3,7 +3,10 @@
   int lineno=stream.getLineno();
   int startCharno=stream.getCharno();
   Node typeNode=parseParamTypeExpressionAnnotation(token);
-  int endCharno=stream.getCharno();
-  jsdocBuilder.markTypeNode(typeNode,lineno,startCharno,endCharno,true);
+  if (typeNode != null) {
+    int endLineno=stream.getLineno();
+    int endCharno=stream.getCharno();
+    jsdocBuilder.markTypeNode(typeNode,lineno,startCharno,endLineno,endCharno,true);
+  }
   return typeNode;
 }
