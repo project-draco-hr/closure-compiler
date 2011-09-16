@@ -1,16 +1,10 @@
 {
   if (NodeUtil.isGetProp(n) && !NodeUtil.isGetProp(p)) {
     String propName=getFieldName(n);
-    Iterable<JSType> types=ImmutableList.copyOf(typeRegistry.getTypesWithProperty(propName));
-    for (    JSType type : types) {
-      ObjectType objType=type.toObjectType();
-      if (objType != null) {
-        Node pNode=objType.getPropertyNode(propName);
-        if (pNode != null && srcName.equals(pNode.getSourceFileName())) {
-          typeRegistry.unregisterPropertyOnType(propName,type);
-          objType.removeProperty(propName);
-        }
-      }
+    JSType type=n.getFirstChild().getJSType();
+    if (type == null || type.toObjectType() == null) {
+      return;
     }
+    removeProperty(type.toObjectType(),propName);
   }
 }
