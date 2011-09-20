@@ -46,9 +46,8 @@
       outputSourceMap(options,options.jsOutputFile);
     }
  else {
-      String moduleFilePrefix=config.moduleOutputPathPrefix;
-      maybeCreateDirsForPath(moduleFilePrefix);
-      Map<String,String> moduleWrappers=parseModuleWrappers(config.moduleWrapper,modules);
+      parsedModuleWrappers=parseModuleWrappers(config.moduleWrapper,modules);
+      maybeCreateDirsForPath(config.moduleOutputPathPrefix);
       Writer mapOut=null;
       if (!shouldGenerateMapPerModule(options)) {
         mapOut=fileNameToOutputWriter(expandSourceMapPath(options,null));
@@ -57,11 +56,11 @@
         if (shouldGenerateMapPerModule(options)) {
           mapOut=fileNameToOutputWriter(expandSourceMapPath(options,m));
         }
-        Writer writer=fileNameToOutputWriter(moduleFilePrefix + m.getName() + ".js");
+        Writer writer=fileNameToOutputWriter(getModuleOutputFileName(m));
         if (options.sourceMapOutputPath != null) {
           compiler.getSourceMap().reset();
         }
-        writeOutput(writer,compiler,compiler.toSource(m),moduleWrappers.get(m.getName()),"%s");
+        writeModuleOutput(writer,m);
         if (options.sourceMapOutputPath != null) {
           compiler.getSourceMap().appendTo(mapOut,m.getName());
         }
