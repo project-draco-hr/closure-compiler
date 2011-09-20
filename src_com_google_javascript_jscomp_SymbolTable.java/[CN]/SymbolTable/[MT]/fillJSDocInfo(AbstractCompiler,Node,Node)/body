@@ -1,3 +1,20 @@
 {
   NodeTraversal.traverseRoots(compiler,Lists.newArrayList(externs,root),new JSDocInfoCollector(compiler.getTypeRegistry()));
+  for (  Symbol sym : getAllSymbols()) {
+    JSDocInfo info=sym.getJSDocInfo();
+    if (info == null) {
+      continue;
+    }
+    for (    Marker marker : info.getMarkers()) {
+      SourcePosition<Node> pos=marker.getNameNode();
+      if (pos == null) {
+        continue;
+      }
+      Node paramNode=pos.getItem();
+      Symbol param=getParameterInFunction(sym,paramNode.getString());
+      if (param != null) {
+        param.defineReferenceAt(paramNode);
+      }
+    }
+  }
 }
