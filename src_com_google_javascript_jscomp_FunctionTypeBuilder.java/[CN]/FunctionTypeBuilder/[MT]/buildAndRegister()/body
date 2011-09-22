@@ -1,4 +1,8 @@
 {
+  if (returnType == null && !contents.mayHaveNonEmptyReturns() && !contents.mayBeFromExterns()) {
+    returnType=typeRegistry.getNativeType(VOID_TYPE);
+    returnTypeInferred=true;
+  }
   if (returnType == null) {
     returnType=typeRegistry.getNativeType(UNKNOWN_TYPE);
   }
@@ -10,14 +14,14 @@
     fnType=getOrCreateConstructor();
   }
  else   if (isInterface) {
-    fnType=typeRegistry.createInterfaceType(fnName,sourceNode);
+    fnType=typeRegistry.createInterfaceType(fnName,contents.getSourceNode());
     if (getScopeDeclaredIn().isGlobal() && !fnName.isEmpty()) {
       typeRegistry.declareType(fnName,fnType.getInstanceType());
     }
     maybeSetBaseType(fnType);
   }
  else {
-    fnType=new FunctionBuilder(typeRegistry).withName(fnName).withSourceNode(sourceNode).withParamsNode(parametersNode).withReturnType(returnType,returnTypeInferred).withTypeOfThis(thisType).withTemplateName(templateTypeName).build();
+    fnType=new FunctionBuilder(typeRegistry).withName(fnName).withSourceNode(contents.getSourceNode()).withParamsNode(parametersNode).withReturnType(returnType,returnTypeInferred).withTypeOfThis(thisType).withTemplateName(templateTypeName).build();
     maybeSetBaseType(fnType);
   }
   if (implementedInterfaces != null) {

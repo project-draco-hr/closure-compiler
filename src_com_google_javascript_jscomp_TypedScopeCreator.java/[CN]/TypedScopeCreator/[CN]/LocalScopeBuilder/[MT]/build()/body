@@ -1,3 +1,11 @@
 {
   NodeTraversal.traverse(compiler,scope.getRootNode(),this);
+  AstFunctionContents contents=getFunctionAnalysisResults(scope.getRootNode());
+  if (contents != null) {
+    for (    String varName : contents.getEscapedVarNames()) {
+      Var v=scope.getVar(varName);
+      Preconditions.checkState(v.getScope() == scope);
+      v.markEscaped();
+    }
+  }
 }

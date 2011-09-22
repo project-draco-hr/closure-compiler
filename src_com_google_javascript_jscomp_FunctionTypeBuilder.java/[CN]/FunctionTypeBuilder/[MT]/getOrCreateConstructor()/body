@@ -1,12 +1,12 @@
 {
-  FunctionType fnType=typeRegistry.createConstructorType(fnName,sourceNode,parametersNode,returnType);
+  FunctionType fnType=typeRegistry.createConstructorType(fnName,contents.getSourceNode(),parametersNode,returnType);
   JSType existingType=typeRegistry.getType(fnName);
   if (existingType != null) {
     boolean isInstanceObject=existingType.isInstanceType();
     if (isInstanceObject || fnName.equals("Function")) {
       FunctionType existingFn=isInstanceObject ? existingType.toObjectType().getConstructor() : typeRegistry.getNativeFunctionType(FUNCTION_FUNCTION_TYPE);
       if (existingFn.getSource() == null) {
-        existingFn.setSource(sourceNode);
+        existingFn.setSource(contents.getSourceNode());
       }
       if (!existingFn.hasEqualCallType(fnType)) {
         reportWarning(TYPE_REDEFINITION,fnName,fnType.toString(),existingFn.toString());

@@ -1,0 +1,19 @@
+{
+  if (t.inGlobalScope()) {
+    return;
+  }
+  if (n.getType() == Token.RETURN && n.getFirstChild() != null) {
+    data.get(t.getScopeRoot()).recordNonEmptyReturn();
+  }
+ else   if (n.getType() == Token.NAME && NodeUtil.isLValue(n)) {
+    String name=n.getString();
+    Scope scope=t.getScope();
+    Var var=scope.getVar(name);
+    if (var != null) {
+      Scope ownerScope=var.getScope();
+      if (scope != ownerScope && ownerScope.isLocal()) {
+        data.get(ownerScope.getRootNode()).recordEscapedVarName(name);
+      }
+    }
+  }
+}

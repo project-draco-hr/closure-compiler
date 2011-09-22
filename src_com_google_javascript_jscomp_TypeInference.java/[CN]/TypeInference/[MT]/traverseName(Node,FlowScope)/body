@@ -11,7 +11,7 @@
     StaticSlot<JSType> var=scope.getSlot(varName);
     if (var != null) {
       boolean isInferred=var.isTypeInferred();
-      boolean unflowable=isInferred && unflowableVarNames.contains(varName);
+      boolean unflowable=isInferred && isUnflowable(syntacticScope.getVar(varName));
       boolean nonLocalInferredSlot=isInferred && syntacticScope.getParent() != null && var == syntacticScope.getParent().getSlot(varName);
       if (!unflowable && !nonLocalInferredSlot) {
         type=var.getType();
