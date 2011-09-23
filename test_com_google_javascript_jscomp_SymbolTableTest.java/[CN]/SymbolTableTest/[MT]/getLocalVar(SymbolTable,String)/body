@@ -1,7 +1,7 @@
 {
-  for (  Symbol symbol : table.getAllSymbols()) {
-    if (symbol.getName().equals(name) && table.getScope(symbol).getParentScope() != null) {
-      return symbol;
+  for (  SymbolScope scope : table.getAllScopes()) {
+    if (!scope.isGlobalScope() && scope.isLexicalScope() && scope.getSlot(name) != null) {
+      return scope.getSlot(name);
     }
   }
   return null;
