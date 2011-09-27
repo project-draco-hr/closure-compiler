@@ -5,13 +5,17 @@
       JSType typeJ=typeChain.get(j);
       JSType namedTypeI=getNamedWrapper("TypeI",typeI);
       JSType namedTypeJ=getNamedWrapper("TypeJ",typeJ);
+      JSType proxyTypeI=new ProxyObjectType(registry,typeI);
+      JSType proxyTypeJ=new ProxyObjectType(registry,typeJ);
       if (i == j) {
         assertTrue(typeI + " should equal itself",typeI.isEquivalentTo(typeI));
         assertTrue("Named " + typeI + " should equal itself",namedTypeI.isEquivalentTo(namedTypeI));
+        assertTrue("Proxy " + typeI + " should equal itself",proxyTypeI.isEquivalentTo(proxyTypeI));
       }
  else {
         assertFalse(typeI + " should not equal " + typeJ,typeI.isEquivalentTo(typeJ));
         assertFalse("Named " + typeI + " should not equal "+ typeJ,namedTypeI.isEquivalentTo(namedTypeJ));
+        assertFalse("Proxy " + typeI + " should not equal "+ typeJ,proxyTypeI.isEquivalentTo(proxyTypeJ));
       }
       if (checkSubtyping) {
         if (i <= j) {

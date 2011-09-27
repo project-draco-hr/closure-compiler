@@ -1,0 +1,12 @@
+{
+  ObjectType fn1=new FunctionBuilder(registry).withParamsNode(new Node(Token.LP)).withReturnType(NUMBER_TYPE).build();
+  ObjectType fn2=new FunctionBuilder(registry).withParamsNode(new Node(Token.LP)).withReturnType(STRING_TYPE).build();
+  ObjectType p1=new ProxyObjectType(registry,fn1);
+  ObjectType p2=new ProxyObjectType(registry,fn2);
+  ObjectType supremum=new FunctionBuilder(registry).withParamsNode(new Node(Token.LP)).withReturnType(registry.createUnionType(STRING_TYPE,NUMBER_TYPE)).build();
+  assertTypeEquals(fn1.getLeastSupertype(fn2),p1.getLeastSupertype(p2));
+  assertTypeEquals(supremum,fn1.getLeastSupertype(fn2));
+  assertTypeEquals(supremum,fn1.getLeastSupertype(p2));
+  assertTypeEquals(supremum,p1.getLeastSupertype(fn2));
+  assertTypeEquals(supremum,p1.getLeastSupertype(p2));
+}

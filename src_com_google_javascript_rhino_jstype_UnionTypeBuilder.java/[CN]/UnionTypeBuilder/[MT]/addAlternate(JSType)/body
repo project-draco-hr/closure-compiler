@@ -19,6 +19,7 @@
       if (alternates.size() > maxUnionSize) {
         return this;
       }
+      int i=0;
       Iterator<JSType> it=alternates.iterator();
       while (it.hasNext()) {
         JSType current=it.next();
@@ -33,10 +34,27 @@
           }
  else           if (current.isSubtype(alternate)) {
             it.remove();
+            if (i == functionTypePosition) {
+              functionTypePosition=-1;
+            }
           }
         }
+        i++;
       }
-      alternates.add(alternate);
+      if (alternate.isFunctionType()) {
+        if (functionTypePosition == -1) {
+          functionTypePosition=alternates.size();
+          alternates.add(alternate);
+        }
+ else {
+          JSType supremum=alternate.toMaybeFunctionType().getLeastSupertype(alternates.get(functionTypePosition).toMaybeFunctionType());
+          Preconditions.checkState(supremum.isFunctionType());
+          alternates.set(functionTypePosition,supremum);
+        }
+      }
+ else {
+        alternates.add(alternate);
+      }
       result=null;
     }
   }
