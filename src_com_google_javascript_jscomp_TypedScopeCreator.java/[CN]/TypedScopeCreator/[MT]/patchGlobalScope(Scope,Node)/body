@@ -2,9 +2,14 @@
   Preconditions.checkState(scriptRoot.getType() == Token.SCRIPT);
   Preconditions.checkNotNull(globalScope);
   Preconditions.checkState(globalScope.isGlobal());
-  (new FirstOrderFunctionAnalyzer(compiler,functionAnalysisResults)).process(null,scriptRoot);
   String scriptName=NodeUtil.getSourceName(scriptRoot);
   Preconditions.checkNotNull(scriptName);
+  for (  Node node : ImmutableList.copyOf(functionAnalysisResults.keySet())) {
+    if (scriptName.equals(NodeUtil.getSourceName(node))) {
+      functionAnalysisResults.remove(node);
+    }
+  }
+  (new FirstOrderFunctionAnalyzer(compiler,functionAnalysisResults)).process(null,scriptRoot);
   Iterator<Var> varIter=globalScope.getVars();
   List<Var> varsToRemove=Lists.newArrayList();
   while (varIter.hasNext()) {
