@@ -2,7 +2,10 @@
   Set<String> classNames=Sets.newHashSet();
   for (  Node node : newNodes) {
     String className=node.getFirstChild().getQualifiedName();
-    if ((constructors == null || !constructors.contains(className)) && (requires == null || !requires.contains(className)) && !classNames.contains(className)) {
+    String outermostClassName=getOutermostClassName(className);
+    boolean notProvidedByConstructors=(constructors == null || !constructors.contains(className));
+    boolean notProvidedByRequires=(requires == null || (!requires.contains(className) && !requires.contains(outermostClassName)));
+    if (notProvidedByConstructors && notProvidedByRequires && !classNames.contains(className)) {
       compiler.report(t.makeError(node,level,MISSING_REQUIRE_WARNING,className));
       classNames.add(className);
     }
