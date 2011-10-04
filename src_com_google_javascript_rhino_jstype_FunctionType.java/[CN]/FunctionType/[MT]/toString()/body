@@ -1,7 +1,8 @@
 {
-  if (this == registry.getNativeType(JSTypeNative.FUNCTION_INSTANCE_TYPE)) {
+  if (!isPrettyPrint() || this == registry.getNativeType(JSTypeNative.FUNCTION_INSTANCE_TYPE)) {
     return "Function";
   }
+  setPrettyPrint(false);
   StringBuilder b=new StringBuilder(32);
   b.append("function (");
   int paramNum=call.parameters.getChildCount();
@@ -40,5 +41,6 @@
   }
   b.append("): ");
   b.append(call.returnType);
+  setPrettyPrint(true);
   return b.toString();
 }

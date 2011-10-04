@@ -17,6 +17,12 @@
  else   if (thatType.isUnionType()) {
     return thatType.toMaybeUnionType().meet(thisType);
   }
+ else   if (thisType.isRecordType()) {
+    return thisType.toMaybeRecordType().getGreatestSubtypeHelper(thatType);
+  }
+ else   if (thatType.isRecordType()) {
+    return thatType.toMaybeRecordType().getGreatestSubtypeHelper(thisType);
+  }
   if (thisType.isEnumElementType()) {
     JSType inf=thisType.toMaybeEnumElementType().meet(thatType);
     if (inf != null) {
