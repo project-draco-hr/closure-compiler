@@ -32,11 +32,14 @@
       if ((fnType.isConstructor() || fnType.isInterface()) && !fnType.equals(getNativeType(U2U_CONSTRUCTOR_TYPE))) {
         FunctionType superClassCtor=fnType.getSuperClassConstructor();
         StaticSlot<JSType> prototypeSlot=fnType.getSlot("prototype");
-        Node prototypeNode=n;
-        if (prototypeSlot.getDeclaration() != null) {
-          prototypeNode=prototypeSlot.getDeclaration().getNode();
+        String prototypeName=variableName + ".prototype";
+        if (scopeToDeclareIn.getOwnSlot(prototypeName) == null) {
+          Node prototypeNode=n;
+          if (prototypeSlot.getDeclaration() != null) {
+            prototypeNode=prototypeSlot.getDeclaration().getNode();
+          }
+          scopeToDeclareIn.declare(prototypeName,prototypeNode,prototypeSlot.getType(),input,superClassCtor == null || superClassCtor.getInstanceType().equals(getNativeType(OBJECT_TYPE)));
         }
-        scopeToDeclareIn.declare(variableName + ".prototype",prototypeNode,prototypeSlot.getType(),input,superClassCtor == null || superClassCtor.getInstanceType().equals(getNativeType(OBJECT_TYPE)));
         if (newVar.getInitialValue() == null && !isExtern && variableName.equals(fnType.getInstanceType().getReferenceName())) {
           compiler.report(JSError.make(sourceName,n,fnType.isConstructor() ? CTOR_INITIALIZER : IFACE_INITIALIZER,variableName));
         }
