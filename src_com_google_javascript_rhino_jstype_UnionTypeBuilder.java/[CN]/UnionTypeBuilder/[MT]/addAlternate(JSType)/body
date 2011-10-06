@@ -19,6 +19,13 @@
       if (alternates.size() > maxUnionSize) {
         return this;
       }
+      if (alternate.isFunctionType() && functionTypePosition != -1) {
+        FunctionType other=alternates.get(functionTypePosition).toMaybeFunctionType();
+        FunctionType supremum=alternate.toMaybeFunctionType().supAndInfHelper(other,true);
+        alternates.set(functionTypePosition,supremum);
+        result=null;
+        return this;
+      }
       int i=0;
       Iterator<JSType> it=alternates.iterator();
       while (it.hasNext()) {
@@ -42,19 +49,10 @@
         i++;
       }
       if (alternate.isFunctionType()) {
-        if (functionTypePosition == -1) {
-          functionTypePosition=alternates.size();
-          alternates.add(alternate);
-        }
- else {
-          JSType supremum=alternate.toMaybeFunctionType().getLeastSupertype(alternates.get(functionTypePosition).toMaybeFunctionType());
-          Preconditions.checkState(supremum.isFunctionType());
-          alternates.set(functionTypePosition,supremum);
-        }
+        Preconditions.checkState(functionTypePosition == -1);
+        functionTypePosition=alternates.size();
       }
- else {
-        alternates.add(alternate);
-      }
+      alternates.add(alternate);
       result=null;
     }
   }
