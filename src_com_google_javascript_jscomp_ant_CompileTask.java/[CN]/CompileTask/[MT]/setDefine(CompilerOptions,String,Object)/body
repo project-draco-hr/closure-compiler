@@ -1,0 +1,33 @@
+{
+  boolean success=false;
+  if (value instanceof String) {
+    final boolean isTrue="true".equals(value);
+    final boolean isFalse="false".equals(value);
+    if (isTrue || isFalse) {
+      options.setDefineToBooleanLiteral(key,isTrue);
+    }
+ else {
+      try {
+        double dblTemp=Double.parseDouble((String)value);
+        options.setDefineToDoubleLiteral(key,dblTemp);
+      }
+ catch (      NumberFormatException nfe) {
+        options.setDefineToStringLiteral(key,(String)value);
+      }
+    }
+    success=true;
+  }
+ else   if (value instanceof Boolean) {
+    options.setDefineToBooleanLiteral(key,(Boolean)value);
+    success=true;
+  }
+ else   if (value instanceof Integer) {
+    options.setDefineToNumberLiteral(key,(Integer)value);
+    success=true;
+  }
+ else   if (value instanceof Double) {
+    options.setDefineToDoubleLiteral(key,(Double)value);
+    success=true;
+  }
+  return success;
+}
