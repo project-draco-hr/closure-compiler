@@ -1,0 +1,12 @@
+{
+  SymbolTable table=createSymbolTable("/** @const */ var a = {};" + "/** @const */ a.b = {};" + "/** @param {number} x */ function f(x) {}");
+  Symbol a=getGlobalVar(table,"a");
+  Symbol ab=getGlobalVar(table,"a.b");
+  Symbol f=getGlobalVar(table,"f");
+  Symbol x=getLocalVar(table,"x");
+  Ordering<Symbol> ordering=table.getNaturalSymbolOrdering();
+  assertSymmetricOrdering(ordering,a,ab);
+  assertSymmetricOrdering(ordering,a,f);
+  assertSymmetricOrdering(ordering,ab,f);
+  assertSymmetricOrdering(ordering,f,x);
+}
