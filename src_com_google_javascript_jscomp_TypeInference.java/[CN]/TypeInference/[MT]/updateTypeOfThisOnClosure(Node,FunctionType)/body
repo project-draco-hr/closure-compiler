@@ -7,12 +7,12 @@
   for (  Node iParameter : fnType.getParameters()) {
     JSType iParameterType=getJSType(iParameter).restrictByNotNullOrUndefined();
     if (iParameterType.isTemplateType()) {
-      JSType iArgumentType=null;
+      ObjectType iArgumentType=null;
       if (i + 1 < childCount) {
         Node iArgument=n.getChildAtIndex(i + 1);
-        iArgumentType=getJSType(iArgument).restrictByNotNullOrUndefined();
-        if (!(iArgumentType instanceof ObjectType)) {
-          compiler.report(JSError.make(NodeUtil.getSourceName(iArgument),iArgument,TEMPLATE_TYPE_NOT_OBJECT_TYPE));
+        iArgumentType=getJSType(iArgument).restrictByNotNullOrUndefined().collapseUnion().toObjectType();
+        if (iArgumentType == null) {
+          compiler.report(JSError.make(NodeUtil.getSourceName(iArgument),iArgument,TEMPLATE_TYPE_NOT_OBJECT_TYPE,getJSType(iArgument).toString()));
           return;
         }
       }
@@ -33,7 +33,7 @@
               if (iArgumentType != null && !iArgumentType.isNoType()) {
                 FunctionType jArgumentFnType=jArgumentType.toMaybeFunctionType();
                 if (jArgumentFnType.getTypeOfThis().isUnknownType()) {
-                  jArgument.setJSType(registry.createFunctionTypeWithNewThisType(jArgumentFnType,(ObjectType)iArgumentType));
+                  jArgument.setJSType(registry.createFunctionTypeWithNewThisType(jArgumentFnType,iArgumentType));
                 }
               }
  else {
