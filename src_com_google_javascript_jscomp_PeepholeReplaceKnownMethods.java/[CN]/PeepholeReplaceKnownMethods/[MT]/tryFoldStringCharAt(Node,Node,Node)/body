@@ -1,0 +1,20 @@
+{
+  Preconditions.checkArgument(n.getType() == Token.CALL);
+  Preconditions.checkArgument(stringNode.getType() == Token.STRING);
+  int index;
+  String stringAsString=stringNode.getString();
+  if (arg1 != null && arg1.getType() == Token.NUMBER && arg1.getNext() == null) {
+    index=(int)arg1.getDouble();
+  }
+ else {
+    return n;
+  }
+  if (index < 0 || stringAsString.length() <= index) {
+    return n;
+  }
+  Node resultNode=Node.newString(stringAsString.substring(index,index + 1));
+  Node parent=n.getParent();
+  parent.replaceChild(n,resultNode);
+  reportCodeChange();
+  return resultNode;
+}
