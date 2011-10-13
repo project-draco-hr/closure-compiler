@@ -4,7 +4,7 @@
     String memberName=NodeUtil.getObjectLitKeyName(keyNode);
     JSDocInfo info=keyNode.getJSDocInfo();
     JSType valueType=getDeclaredType(t.getSourceName(),info,keyNode,value);
-    JSType keyType=NodeUtil.getObjectLitKeyTypeFromValueType(keyNode,valueType);
+    JSType keyType=objLitType.isEnumType() ? objLitType.toMaybeEnumType().getElementsType() : NodeUtil.getObjectLitKeyTypeFromValueType(keyNode,valueType);
     if (keyType != null) {
       String qualifiedName=NodeUtil.getBestLValueName(keyNode);
       if (qualifiedName != null) {
@@ -13,7 +13,7 @@
  else {
         setDeferredType(keyNode,keyType);
       }
-      if (objLitType != null) {
+      if (objLitType != null && declareOnOwner) {
         boolean isExtern=t.getInput() != null && t.getInput().isExtern();
         objLitType.defineDeclaredProperty(memberName,keyType,keyNode);
       }

@@ -1,0 +1,12 @@
+{
+  if (declInfo == null || !declInfo.hasEnumParameterType()) {
+    return;
+  }
+  JSType valueType=getJSType(value);
+  if (!valueType.isEnumType()) {
+    return;
+  }
+  EnumType valueEnumType=valueType.toMaybeEnumType();
+  JSType valueEnumPrimitiveType=valueEnumType.getElementsType().getPrimitiveType();
+  validator.expectCanAssignTo(t,value,valueEnumPrimitiveType,declInfo.getEnumParameterType().evaluate(t.getScope(),typeRegistry),"incompatible enum element types");
+}

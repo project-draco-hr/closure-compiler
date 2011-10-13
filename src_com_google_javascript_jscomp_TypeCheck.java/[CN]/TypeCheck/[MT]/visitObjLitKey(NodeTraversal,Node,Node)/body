@@ -6,7 +6,11 @@
   }
   Node owner=objlit;
   JSType keyType=getJSType(key);
-  boolean valid=validator.expectCanAssignToPropertyOf(t,key,rightType,keyType,owner,NodeUtil.getObjectLitKeyName(key));
+  JSType allowedValueType=keyType;
+  if (allowedValueType.isEnumElementType()) {
+    allowedValueType=allowedValueType.toMaybeEnumElementType().getPrimitiveType();
+  }
+  boolean valid=validator.expectCanAssignToPropertyOf(t,key,rightType,allowedValueType,owner,NodeUtil.getObjectLitKeyName(key));
   if (valid) {
     ensureTyped(t,key,rightType);
   }
