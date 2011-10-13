@@ -1,18 +1,20 @@
 {
-  if (!NodeUtil.isLiteralValue(left,false) || !NodeUtil.isLiteralValue(right,false)) {
+  boolean leftLiteral=NodeUtil.isLiteralValue(left,true);
+  boolean rightLiteral=NodeUtil.isLiteralValue(right,true);
+  if (!leftLiteral || !rightLiteral) {
     if (n.getType() != Token.GT && n.getType() != Token.LT) {
       return n;
     }
   }
   int op=n.getType();
   boolean result;
-  boolean rightLiteral=NodeUtil.isLiteralValue(right,false);
-  boolean undefinedRight=((Token.NAME == right.getType() && right.getString().equals("undefined")) || (Token.VOID == right.getType() && NodeUtil.isLiteralValue(right.getFirstChild(),false)));
+  boolean undefinedRight=NodeUtil.isUndefined(right) && rightLiteral;
+  boolean nullRight=NodeUtil.isNull(right);
   int lhType=getNormalizedNodeType(left);
   int rhType=getNormalizedNodeType(right);
 switch (lhType) {
 case Token.VOID:
-    if (!NodeUtil.isLiteralValue(left.getFirstChild(),false)) {
+    if (!leftLiteral) {
       return n;
     }
  else     if (!rightLiteral) {
@@ -23,11 +25,15 @@ case Token.VOID:
     }
   break;
 case Token.NULL:
+if (rightLiteral && isEqualityOp(op)) {
+  result=compareToNull(right,op);
+  break;
+}
 case Token.TRUE:
 case Token.FALSE:
 if (undefinedRight) {
-  result=compareToUndefined(left,op);
-  break;
+result=compareToUndefined(left,op);
+break;
 }
 if (rhType != Token.TRUE && rhType != Token.FALSE && rhType != Token.NULL) {
 return n;
@@ -79,6 +85,10 @@ if (undefinedRight) {
 result=compareToUndefined(left,op);
 break;
 }
+if (nullRight && isEqualityOp(op)) {
+result=compareToNull(left,op);
+break;
+}
 if (Token.STRING != right.getType()) {
 return n;
 }
@@ -100,6 +110,10 @@ if (undefinedRight) {
 result=compareToUndefined(left,op);
 break;
 }
+if (nullRight && isEqualityOp(op)) {
+result=compareToNull(left,op);
+break;
+}
 if (Token.NUMBER != right.getType()) {
 return n;
 }
@@ -112,7 +126,7 @@ return null;
 }
 break;
 case Token.NAME:
-if (undefinedRight) {
+if (leftLiteral && undefinedRight) {
 result=compareToUndefined(left,op);
 break;
 }
@@ -120,6 +134,10 @@ if (rightLiteral) {
 boolean undefinedLeft=(left.getString().equals("undefined"));
 if (undefinedLeft) {
 result=compareToUndefined(right,op);
+break;
+}
+if (leftLiteral && nullRight && isEqualityOp(op)) {
+result=compareToNull(left,op);
 break;
 }
 }
@@ -140,6 +158,33 @@ default :
 return n;
 }
 break;
+case Token.NEG:
+if (leftLiteral) {
+if (undefinedRight) {
+result=compareToUndefined(left,op);
+break;
+}
+if (nullRight && isEqualityOp(op)) {
+result=compareToNull(left,op);
+break;
+}
+}
+return n;
+case Token.ARRAYLIT:
+case Token.OBJECTLIT:
+case Token.REGEXP:
+case Token.FUNCTION:
+if (leftLiteral) {
+if (undefinedRight) {
+result=compareToUndefined(left,op);
+break;
+}
+if (nullRight && isEqualityOp(op)) {
+result=compareToNull(left,op);
+break;
+}
+}
+return n;
 default :
 return n;
 }

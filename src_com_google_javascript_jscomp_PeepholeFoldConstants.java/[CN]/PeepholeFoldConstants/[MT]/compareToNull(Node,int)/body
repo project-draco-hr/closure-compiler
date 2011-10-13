@@ -1,5 +1,4 @@
 {
-  Preconditions.checkState(NodeUtil.isLiteralValue(value,true));
   boolean valueUndefined=NodeUtil.isUndefined(value);
   boolean valueNull=(Token.NULL == value.getType());
   boolean equivalent=valueUndefined || valueNull;
@@ -9,14 +8,9 @@ case Token.EQ:
 case Token.NE:
   return !equivalent;
 case Token.SHEQ:
-return valueUndefined;
+return valueNull;
 case Token.SHNE:
-return !valueUndefined;
-case Token.LT:
-case Token.GT:
-case Token.LE:
-case Token.GE:
-return false;
+return !valueNull;
 default :
 throw new IllegalStateException("unexpected.");
 }
