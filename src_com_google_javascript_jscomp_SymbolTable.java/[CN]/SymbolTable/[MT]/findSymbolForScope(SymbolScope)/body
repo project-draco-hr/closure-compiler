@@ -1,0 +1,11 @@
+{
+  Node rootNode=scope.getRootNode();
+  if (rootNode.getParent() == null) {
+    return globalScope.getSlot(GLOBAL_THIS);
+  }
+  if (rootNode.getType() != Token.FUNCTION) {
+    return null;
+  }
+  String name=NodeUtil.getBestLValueName(NodeUtil.getBestLValue(rootNode));
+  return name == null ? null : scope.getParentScope().getSlot(name);
+}

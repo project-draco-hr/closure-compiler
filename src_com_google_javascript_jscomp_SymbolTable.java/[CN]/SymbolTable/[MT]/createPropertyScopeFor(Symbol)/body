@@ -3,7 +3,10 @@
     return;
   }
   SymbolScope parentPropertyScope=null;
-  ObjectType type=s.getType().toObjectType();
+  ObjectType type=s.getType() == null ? null : s.getType().toObjectType();
+  if (type == null) {
+    return;
+  }
   ObjectType proto=type.getParentScope();
   if (proto != null && proto != type && proto.getConstructor() != null) {
     Symbol parentSymbol=getSymbolForInstancesOf(proto.getConstructor());
@@ -20,7 +23,7 @@
     Iterables.addAll(set,instanceType.getOwnPropertyNames());
     propNames=set;
   }
-  s.propertyScope=new SymbolScope(null,parentPropertyScope,type);
+  s.setPropertyScope(new SymbolScope(null,parentPropertyScope,type,s));
   for (  String propName : propNames) {
     StaticSlot<JSType> newProp=instanceType.getSlot(propName);
     if (newProp.getDeclaration() == null) {
@@ -35,7 +38,7 @@
       if (newSym.getJSDocInfo() == null) {
         newSym.setJSDocInfo(oldProp.getJSDocInfo());
       }
-      newSym.propertyScope=oldProp.propertyScope;
+      newSym.setPropertyScope(oldProp.propertyScope);
       for (      Reference ref : oldProp.references.values()) {
         newSym.defineReferenceAt(ref.getNode());
       }

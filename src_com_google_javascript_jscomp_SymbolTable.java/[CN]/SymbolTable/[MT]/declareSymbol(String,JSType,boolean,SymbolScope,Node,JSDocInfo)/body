@@ -1,9 +1,6 @@
 {
-  Symbol symbol=new Symbol(name,type,inferred,scope);
+  Symbol symbol=addSymbol(name,type,inferred,scope,declNode);
   symbol.setJSDocInfo(info);
-  symbols.put(declNode,name,symbol);
-  Symbol replacedSymbol=scope.ownSymbols.put(name,symbol);
-  Preconditions.checkState(replacedSymbol == null);
-  symbol.setDeclaration(new Reference(symbol,declNode));
+  symbol.setDeclaration(symbol.defineReferenceAt(declNode));
   return symbol;
 }

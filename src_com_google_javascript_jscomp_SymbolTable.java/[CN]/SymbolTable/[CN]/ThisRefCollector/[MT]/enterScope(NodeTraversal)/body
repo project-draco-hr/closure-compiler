@@ -1,0 +1,28 @@
+{
+  Symbol symbol=null;
+  if (t.inGlobalScope()) {
+    Node firstInputRoot=t.getScopeRoot().getLastChild().getFirstChild();
+    if (firstInputRoot != null) {
+      symbol=addSymbol(GLOBAL_THIS,registry.getNativeType(JSTypeNative.GLOBAL_THIS),false,globalScope,firstInputRoot);
+      symbol.setDeclaration(new Reference(symbol,firstInputRoot));
+    }
+  }
+ else {
+    SymbolScope scope=scopes.get(t.getScopeRoot());
+    Preconditions.checkNotNull(scope);
+    Symbol scopeSymbol=getSymbolForScope(scope);
+    if (scopeSymbol != null) {
+      SymbolScope propScope=scopeSymbol.getPropertyScope();
+      if (propScope != null) {
+        symbol=propScope.getOwnSlot("this");
+        if (symbol == null) {
+          JSType rootType=t.getScopeRoot().getJSType();
+          FunctionType fnType=rootType == null ? null : rootType.toMaybeFunctionType();
+          JSType type=fnType == null ? null : fnType.getTypeOfThis();
+          symbol=addSymbol("this",type,false,scope,t.getScopeRoot());
+        }
+      }
+    }
+  }
+  thisStack.add(symbol);
+}

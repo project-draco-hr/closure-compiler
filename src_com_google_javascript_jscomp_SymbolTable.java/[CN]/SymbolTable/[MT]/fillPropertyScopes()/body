@@ -1,0 +1,14 @@
+{
+  List<Symbol> types=Lists.newArrayList();
+  for (  Symbol sym : getAllSymbols()) {
+    JSType type=sym.getType();
+    ObjectType dereferenced=type == null ? null : type.dereference();
+    if (dereferenced != null) {
+      types.add(sym);
+    }
+  }
+  Collections.sort(types,Collections.reverseOrder(getNaturalSymbolOrdering()));
+  for (  Symbol s : types) {
+    createPropertyScopeFor(s);
+  }
+}

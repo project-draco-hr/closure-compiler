@@ -2,7 +2,7 @@
   SymbolTable table=createSymbolTable("/** @constructor */ function Foo() {}\n" + "/** @type {Foo} */ var x;\n" + "/** @param {Foo} x */ function f(x) {}\n"+ "/** @return {function(): Foo} */ function g() {}\n"+ "/**\n"+ " * @constructor\n"+ " * @extends {Foo}\n"+ " */ function Sub() {}");
   Symbol foo=getGlobalVar(table,"Foo");
   assertNotNull(foo);
-  List<Reference> refs=Lists.newArrayList(table.getReferences(foo));
+  List<Reference> refs=table.getReferenceList(foo);
   assertEquals(5,refs.size());
   assertEquals(1,refs.get(0).getNode().getLineno());
   assertEquals(29,refs.get(0).getNode().getCharno());

@@ -2,30 +2,11 @@
   if (n.getType() != Token.THIS) {
     return;
   }
-  Symbol symbol=null;
-  if (t.inGlobalScope()) {
-    if (globalScope.getSlot(GLOBAL_THIS) == null) {
-      symbol=declareSymbol(GLOBAL_THIS,registry.getNativeType(JSTypeNative.GLOBAL_THIS),false,globalScope,n,null);
-    }
- else {
-      symbol=globalScope.getSlot(GLOBAL_THIS);
-    }
-  }
- else {
-    SymbolScope scope=scopes.get(t.getScopeRoot());
-    Preconditions.checkNotNull(scope);
-    Symbol scopeSymbol=getSymbolForScope(scope);
-    if (scopeSymbol != null) {
-      createPropertyScopeFor(scopeSymbol);
-      SymbolScope propScope=scopeSymbol.getPropertyScope();
-      symbol=propScope.getSlot("this");
-      if (symbol == null) {
-        JSType type=n.getJSType();
-        symbol=declareSymbol("this",type,type != null && !type.isUnknownType(),propScope,n,null);
-      }
-    }
-  }
+  Symbol symbol=thisStack.get(thisStack.size() - 1);
   if (symbol != null) {
-    symbol.defineReferenceAt(n);
+    Reference ref=symbol.defineReferenceAt(n);
+    if (symbol.getDeclaration() == null) {
+      symbol.setDeclaration(ref);
+    }
   }
 }
