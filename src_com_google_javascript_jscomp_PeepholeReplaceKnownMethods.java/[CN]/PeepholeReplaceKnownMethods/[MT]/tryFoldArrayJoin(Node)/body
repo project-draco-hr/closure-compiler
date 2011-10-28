@@ -4,13 +4,19 @@
     return n;
   }
   Node right=callTarget.getNext();
-  if (right != null && !NodeUtil.isImmutableValue(right)) {
-    return n;
+  if (right != null) {
+    if (right.getNext() != null || !NodeUtil.isImmutableValue(right)) {
+      return n;
+    }
   }
   Node arrayNode=callTarget.getFirstChild();
   Node functionName=arrayNode.getNext();
   if ((arrayNode.getType() != Token.ARRAYLIT) || !functionName.getString().equals("join")) {
     return n;
+  }
+  if (right != null && right.getType() == Token.STRING && ",".equals(right.getString())) {
+    n.removeChild(right);
+    reportCodeChange();
   }
   String joinString=(right == null) ? "," : NodeUtil.getStringValue(right);
   List<Node> arrayFoldedChildren=Lists.newLinkedList();
