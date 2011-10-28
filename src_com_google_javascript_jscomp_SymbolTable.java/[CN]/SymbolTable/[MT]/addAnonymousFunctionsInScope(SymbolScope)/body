@@ -1,0 +1,11 @@
+{
+  Symbol sym=getSymbolForScope(scope);
+  if (sym == null) {
+    if (scope.isLexicalScope() && !scope.isGlobalScope() && scope.getParentScope() != null) {
+      SymbolScope parent=scope.getParentScope();
+      int count=parent.innerAnonFunctionsWithNames++;
+      String innerName="function%" + count;
+      scope.setSymbolForScope(declareInferredSymbol(parent,innerName,scope.getRootNode()));
+    }
+  }
+}
