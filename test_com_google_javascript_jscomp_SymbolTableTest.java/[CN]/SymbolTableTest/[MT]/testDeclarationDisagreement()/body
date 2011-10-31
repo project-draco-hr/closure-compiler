@@ -1,0 +1,8 @@
+{
+  SymbolTable table=createSymbolTable("/** @const */ var goog = goog || {};\n" + "/** @param {!Function} x */\n" + "goog.addSingletonGetter2 = function(x) {};\n"+ "/** Wakka wakka wakka */\n"+ "goog.addSingletonGetter = goog.addSingletonGetter2;\n"+ "/** @param {!Function} x */\n"+ "goog.addSingletonGetter = function(x) {};\n");
+  Symbol method=getGlobalVar(table,"goog.addSingletonGetter");
+  List<Reference> refs=table.getReferenceList(method);
+  assertEquals(2,refs.size());
+  assertEquals(7,method.getDeclaration().getNode().getLineno());
+  assertEquals(5,refs.get(1).getNode().getLineno());
+}
