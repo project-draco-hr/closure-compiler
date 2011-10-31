@@ -1,0 +1,13 @@
+{
+  Node parent=node.getParent();
+  Node replacement=new Node(Token.GETPROP,Node.newString(Token.NAME,globalSymbolNamespace).copyInformationFrom(node),Node.newString(name).copyInformationFrom(node));
+  replacement.copyInformationFrom(node);
+  if (node.hasChildren()) {
+    Node assign=new Node(Token.ASSIGN,replacement,node.removeFirstChild());
+    parent.replaceChild(node,assign);
+  }
+ else {
+    parent.replaceChild(node,replacement);
+  }
+  compiler.reportCodeChange();
+}

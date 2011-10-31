@@ -1,0 +1,18 @@
+{
+  if (n.getType() != Token.NAME) {
+    return;
+  }
+  String name=n.getString();
+  if (parent.getType() == Token.FUNCTION && name.length() == 0) {
+    return;
+  }
+  Scope.Var var=t.getScope().getVar(name);
+  if (var == null || !var.isGlobal() || var.isExtern()) {
+    return;
+  }
+  Node nameNode=var.getNameNode();
+  if (nameNode != null && nameNode.getParent() != null && nameNode.getParent().getType() == Token.CATCH) {
+    return;
+  }
+  replaceSymbol(n,name);
+}

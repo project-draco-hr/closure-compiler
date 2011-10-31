@@ -93,7 +93,7 @@
   if (options.collapseAnonymousFunctions) {
     passes.add(collapseAnonymousFunctions);
   }
-  if (options.moveFunctionDeclarations) {
+  if (options.moveFunctionDeclarations || options.renamePrefixNamespace != null) {
     passes.add(moveFunctionDeclarations);
   }
   if (options.anonymousFunctionNaming == AnonymousFunctionNamingPolicy.MAPPED) {
@@ -161,6 +161,12 @@
   }
   if (options.anonymousFunctionNaming == AnonymousFunctionNamingPolicy.UNMAPPED) {
     passes.add(nameUnmappedAnonymousFunctions);
+  }
+  if (options.renamePrefixNamespace != null) {
+    if (!GLOBAL_SYMBOL_NAMESPACE_PATTERN.matcher(options.renamePrefixNamespace).matches()) {
+      throw new IllegalArgumentException("Illegal character in renamePrefixNamespace name: " + options.renamePrefixNamespace);
+    }
+    passes.add(rescopeGlobalSymbols);
   }
   if (options.operaCompoundAssignFix) {
     passes.add(operaCompoundAssignFix);

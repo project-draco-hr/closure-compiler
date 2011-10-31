@@ -1,0 +1,16 @@
+{
+  if (NodeUtil.isFunctionDeclaration(n)) {
+    String name=NodeUtil.getFunctionName(n);
+    n.getFirstChild().setString("");
+    Node prev=parent.getChildBefore(n);
+    n.detachFromParent();
+    Node var=NodeUtil.newVarNode(name,n);
+    if (prev == null) {
+      parent.addChildToFront(var);
+    }
+ else {
+      parent.addChildAfter(var,prev);
+    }
+    compiler.reportCodeChange();
+  }
+}

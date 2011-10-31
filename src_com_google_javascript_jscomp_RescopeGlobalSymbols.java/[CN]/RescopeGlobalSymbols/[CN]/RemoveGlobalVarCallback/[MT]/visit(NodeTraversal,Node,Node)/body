@@ -1,0 +1,29 @@
+{
+  if (n.getType() != Token.VAR) {
+    return;
+  }
+  List<Node> commas=new ArrayList<Node>();
+  List<Node> interestingChildren=new ArrayList<Node>();
+  for (  Node c : n.children()) {
+    if (c.getType() == Token.ASSIGN || parent.getType() == Token.FOR) {
+      interestingChildren.add(c);
+    }
+  }
+  for (  Node c : interestingChildren) {
+    if (parent.getType() == Token.FOR && parent.getFirstChild() == n) {
+      commas.add(c.cloneTree());
+    }
+ else {
+      Node expr=new Node(Token.EXPR_RESULT);
+      expr.copyInformationFrom(c);
+      expr.addChildToBack(c.cloneTree());
+      parent.addChildBefore(expr,n);
+    }
+  }
+  if (commas.size() > 0) {
+    Node comma=joinOnComma(commas,n);
+    parent.addChildBefore(comma,n);
+  }
+  parent.removeChild(n);
+  compiler.reportCodeChange();
+}
