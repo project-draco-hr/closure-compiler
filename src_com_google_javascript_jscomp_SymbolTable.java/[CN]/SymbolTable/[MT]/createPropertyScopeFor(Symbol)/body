@@ -29,9 +29,13 @@
     if (newProp.getDeclaration() == null) {
       continue;
     }
-    Symbol oldProp=getScope(s).getSlot(s.getName() + "." + propName);
+    Symbol oldProp=symbols.get(newProp.getDeclaration().getNode(),s.getName() + "." + propName);
     if (oldProp != null) {
       removeSymbol(oldProp);
+    }
+    if (symbols.get(newProp.getDeclaration().getNode(),newProp.getName()) != null) {
+      logger.warning("Found duplicate symbol " + newProp);
+      continue;
     }
     Symbol newSym=copySymbolTo(newProp,s.propertyScope);
     if (oldProp != null) {

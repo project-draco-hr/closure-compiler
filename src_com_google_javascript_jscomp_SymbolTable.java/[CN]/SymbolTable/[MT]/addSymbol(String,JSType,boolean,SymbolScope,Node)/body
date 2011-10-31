@@ -1,7 +1,8 @@
 {
   Symbol symbol=new Symbol(name,type,inferred,scope);
-  symbols.put(declNode,name,symbol);
-  Symbol replacedSymbol=scope.ownSymbols.put(name,symbol);
+  Symbol replacedSymbol=symbols.put(declNode,name,symbol);
+  Preconditions.checkState(replacedSymbol == null);
+  replacedSymbol=scope.ownSymbols.put(name,symbol);
   Preconditions.checkState(replacedSymbol == null);
   return symbol;
 }

@@ -1,9 +1,8 @@
 {
   List<Symbol> types=Lists.newArrayList();
   for (  Symbol sym : getAllSymbols()) {
-    JSType type=sym.getType();
-    ObjectType dereferenced=type == null ? null : type.dereference();
-    if (dereferenced != null) {
+    ObjectType type=ObjectType.cast(sym.getType());
+    if (type != null && (type.getReferenceName() == null || sym.getName().equals(type.getReferenceName()))) {
       types.add(sym);
     }
   }
