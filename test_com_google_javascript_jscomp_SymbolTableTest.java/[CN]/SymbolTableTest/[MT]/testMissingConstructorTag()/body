@@ -1,0 +1,6 @@
+{
+  SymbolTable table=createSymbolTable("function F() {" + "  this.field1 = 3;" + "}"+ "F.prototype.method1 = function() {"+ "  this.field1 = 5;"+ "};"+ "(new F()).method1();");
+  assertNull(getGlobalVar(table,"F.prototype.field1"));
+  Symbol sym=getGlobalVar(table,"F.prototype.method1");
+  assertEquals(1,table.getReferenceList(sym).size());
+}
