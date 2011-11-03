@@ -50,13 +50,13 @@
       maybeCreateDirsForPath(config.moduleOutputPathPrefix);
       Writer mapOut=null;
       if (!shouldGenerateMapPerModule(options)) {
-        mapOut=fileNameToOutputWriter(expandSourceMapPath(options,null));
+        mapOut=fileNameToOutputWriter2(expandSourceMapPath(options,null));
       }
       for (      JSModule m : modules) {
         if (shouldGenerateMapPerModule(options)) {
-          mapOut=fileNameToOutputWriter(expandSourceMapPath(options,m));
+          mapOut=fileNameToOutputWriter2(expandSourceMapPath(options,m));
         }
-        Writer writer=fileNameToOutputWriter(getModuleOutputFileName(m));
+        Writer writer=fileNameToLegacyOutputWriter(getModuleOutputFileName(m));
         if (options.sourceMapOutputPath != null) {
           compiler.getSourceMap().reset();
         }
