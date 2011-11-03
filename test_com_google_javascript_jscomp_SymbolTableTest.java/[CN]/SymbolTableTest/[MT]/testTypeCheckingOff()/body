@@ -1,0 +1,8 @@
+{
+  options=new CompilerOptions();
+  SymbolTable table=createSymbolTable("/** @contstructor */" + "function F() {" + "  this.field1 = 3;"+ "}"+ "F.prototype.method1 = function() {"+ "  this.field1 = 5;"+ "};"+ "(new F()).method1();");
+  assertNull(getGlobalVar(table,"F.prototype.field1"));
+  assertNull(getGlobalVar(table,"F.prototype.method1"));
+  Symbol sym=getGlobalVar(table,"F");
+  assertEquals(3,table.getReferenceList(sym).size());
+}
