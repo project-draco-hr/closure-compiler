@@ -9,16 +9,7 @@
  else {
     renamer=nameStack.peek().forChildScope();
   }
-  if (declarationRoot.getType() == Token.FUNCTION) {
-    Node fnParams=declarationRoot.getFirstChild().getNext();
-    for (Node c=fnParams.getFirstChild(); c != null; c=c.getNext()) {
-      String name=c.getString();
-      renamer.addDeclaredName(name);
-    }
-    Node functionBody=declarationRoot.getLastChild();
-    findDeclaredNames(functionBody,null,renamer);
-  }
- else {
+  if (declarationRoot.getType() != Token.FUNCTION) {
     findDeclaredNames(declarationRoot,null,renamer);
   }
   nameStack.push(renamer);

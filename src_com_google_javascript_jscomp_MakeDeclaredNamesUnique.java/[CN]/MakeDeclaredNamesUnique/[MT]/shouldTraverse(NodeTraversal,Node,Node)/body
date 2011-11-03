@@ -10,12 +10,24 @@ case Token.FUNCTION:
       nameStack.push(renamer);
     }
   break;
-case Token.CATCH:
+case Token.LP:
 {
   Renamer renamer=nameStack.peek().forChildScope();
-  String name=n.getFirstChild().getString();
-  renamer.addDeclaredName(name);
+  for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+    String name=c.getString();
+    renamer.addDeclaredName(name);
+  }
+  Node functionBody=n.getNext();
+  findDeclaredNames(functionBody,null,renamer);
   nameStack.push(renamer);
+}
+break;
+case Token.CATCH:
+{
+Renamer renamer=nameStack.peek().forChildScope();
+String name=n.getFirstChild().getString();
+renamer.addDeclaredName(name);
+nameStack.push(renamer);
 }
 break;
 }
