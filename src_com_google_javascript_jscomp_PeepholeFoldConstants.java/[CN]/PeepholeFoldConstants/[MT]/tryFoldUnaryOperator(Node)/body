@@ -11,8 +11,14 @@
   }
 switch (n.getType()) {
 case Token.NOT:
-    int result=leftVal.toBoolean(true) ? Token.FALSE : Token.TRUE;
-  Node replacementNode=new Node(result);
+    if (late && left.getType() == Token.NUMBER) {
+      double numValue=left.getDouble();
+      if (numValue == 0 || numValue == 1) {
+        return n;
+      }
+    }
+  int result=leftVal.toBoolean(true) ? Token.FALSE : Token.TRUE;
+Node replacementNode=new Node(result);
 parent.replaceChild(n,replacementNode);
 reportCodeChange();
 return replacementNode;
