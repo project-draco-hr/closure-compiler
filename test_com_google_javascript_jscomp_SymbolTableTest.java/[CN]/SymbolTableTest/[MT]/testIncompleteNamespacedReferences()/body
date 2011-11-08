@@ -1,0 +1,11 @@
+{
+  SymbolTable table=createSymbolTable("/** @constructor */\n" + "goog.dom.DomHelper = function(){};\n" + "var y = goog.dom.DomHelper;\n");
+  Symbol goog=getGlobalVar(table,"goog");
+  assertNotNull(goog);
+  assertEquals(2,table.getReferenceList(goog).size());
+  Symbol googDom=getGlobalVar(table,"goog.dom");
+  assertNull(googDom);
+  Symbol googDomHelper=getGlobalVar(table,"goog.dom.DomHelper");
+  assertNotNull(googDomHelper);
+  assertEquals(2,Iterables.size(table.getReferences(googDomHelper)));
+}

@@ -1,7 +1,14 @@
 {
   if (n.getType() == Token.GETPROP) {
     JSType owner=n.getFirstChild().getJSType();
-    if (owner == null) {
+    if (owner == null || owner.isUnknownType()) {
+      String name=n.getQualifiedName();
+      if (name != null) {
+        Symbol lexicalSym=getEnclosingScope(n).getSlot(name);
+        if (lexicalSym != null) {
+          lexicalSym.defineReferenceAt(n);
+        }
+      }
       return;
     }
     if (owner.isGlobalThisType()) {
