@@ -5,5 +5,11 @@
       assertEquals(sym,ref.getSymbol());
     }
   }
+  Symbol global=getGlobalVar(table,"*global*");
+  assertNotNull(global);
+  assertNotNull(global.getDeclaration());
+  assertEquals(Token.SCRIPT,global.getDeclaration().getNode().getType());
+  List<Reference> globalRefs=table.getReferenceList(global);
+  assertFalse(globalRefs.contains(global.getDeclaration()));
   return table;
 }

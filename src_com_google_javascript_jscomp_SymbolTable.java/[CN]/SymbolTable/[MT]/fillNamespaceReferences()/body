@@ -1,5 +1,5 @@
 {
-  for (  Symbol symbol : getAllSymbols()) {
+  for (  Symbol symbol : getAllSymbolsSorted()) {
     for (    Reference ref : getReferences(symbol)) {
       Node currentNode=ref.getNode();
       while (currentNode.getType() == Token.GETPROP) {
@@ -7,6 +7,9 @@
         String name=currentNode.getQualifiedName();
         if (name != null) {
           Symbol namespace=symbol.scope.getSlot(name);
+          if (namespace == null && symbol.scope.isGlobalScope()) {
+            namespace=declareSymbol(name,registry.getNativeType(JSTypeNative.UNKNOWN_TYPE),true,symbol.scope,currentNode,null);
+          }
           if (namespace != null) {
             namespace.defineReferenceAt(currentNode);
           }
