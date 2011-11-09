@@ -7,7 +7,7 @@
       node.detachChildren();
     }
   }
- else   if (node.getType() == Token.CATCH) {
+ else   if (node.isCatch()) {
     Node tryNode=node.getParent().getParent();
     Preconditions.checkState(NodeUtil.hasFinally(tryNode));
     node.detachFromParent();
@@ -17,13 +17,13 @@
     Preconditions.checkState(NodeUtil.hasFinally(tryNode));
     node.detachChildren();
   }
- else   if (node.getType() == Token.BLOCK) {
+ else   if (node.isBlock()) {
     node.detachChildren();
   }
  else   if (isStatementBlock(parent) || isSwitchCase(node)) {
     parent.removeChild(node);
   }
- else   if (parent.getType() == Token.VAR) {
+ else   if (parent.isVar()) {
     if (parent.hasMoreThanOneChild()) {
       parent.removeChild(node);
     }
@@ -32,11 +32,11 @@
       removeChild(parent.getParent(),parent);
     }
   }
- else   if (parent.getType() == Token.LABEL && node == parent.getLastChild()) {
+ else   if (parent.isLabel() && node == parent.getLastChild()) {
     parent.removeChild(node);
     removeChild(parent.getParent(),parent);
   }
- else   if (parent.getType() == Token.FOR && parent.getChildCount() == 4) {
+ else   if (parent.isFor() && parent.getChildCount() == 4) {
     parent.replaceChild(node,new Node(Token.EMPTY));
   }
  else {

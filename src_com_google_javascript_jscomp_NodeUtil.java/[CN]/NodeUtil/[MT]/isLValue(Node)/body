@@ -1,6 +1,5 @@
 {
-  int nType=node.getType();
-  Preconditions.checkArgument(nType == Token.NAME || nType == Token.GETPROP || nType == Token.GETELEM);
-  Node parent=node.getParent();
-  return (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == node) || (NodeUtil.isForIn(parent) && parent.getFirstChild() == node) || NodeUtil.isVar(parent)|| (parent.getType() == Token.FUNCTION && parent.getFirstChild() == node)|| parent.getType() == Token.DEC || parent.getType() == Token.INC || parent.getType() == Token.LP || parent.getType() == Token.CATCH;
+  Preconditions.checkArgument(n.isName() || n.isGetProp() || n.isGetElem());
+  Node parent=n.getParent();
+  return (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || (NodeUtil.isForIn(parent) && parent.getFirstChild() == n) || parent.isVar()|| (parent.isFunction() && parent.getFirstChild() == n)|| parent.isDec()|| parent.isInc()|| parent.isLP()|| parent.isCatch();
 }

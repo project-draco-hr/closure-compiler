@@ -1,12 +1,12 @@
 {
-  if (callNode.getType() != Token.NEW) {
+  if (!callNode.isNew()) {
     throw new IllegalStateException("Expected NEW node, got " + Token.name(callNode.getType()));
   }
   if (callNode.isNoSideEffectsCall()) {
     return false;
   }
   Node nameNode=callNode.getFirstChild();
-  if (nameNode.getType() == Token.NAME && CONSTRUCTORS_WITHOUT_SIDE_EFFECTS.contains(nameNode.getString())) {
+  if (nameNode.isName() && CONSTRUCTORS_WITHOUT_SIDE_EFFECTS.contains(nameNode.getString())) {
     return false;
   }
   return true;

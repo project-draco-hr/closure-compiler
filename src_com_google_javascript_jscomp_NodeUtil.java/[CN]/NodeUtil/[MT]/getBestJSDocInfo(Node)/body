@@ -5,20 +5,19 @@
     if (parent == null) {
       return null;
     }
-    int parentType=parent.getType();
-    if (parentType == Token.NAME) {
+    if (parent.isName()) {
       return getBestJSDocInfo(parent);
     }
- else     if (parentType == Token.ASSIGN) {
+ else     if (parent.isAssign()) {
       info=parent.getJSDocInfo();
     }
  else     if (isObjectLitKey(parent,parent.getParent())) {
       info=parent.getJSDocInfo();
     }
- else     if (parentType == Token.FUNCTION) {
+ else     if (parent.isFunction()) {
       info=parent.getJSDocInfo();
     }
- else     if (parentType == Token.VAR && parent.hasOneChild()) {
+ else     if (parent.isVar() && parent.hasOneChild()) {
       info=parent.getJSDocInfo();
     }
   }
