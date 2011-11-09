@@ -2,7 +2,7 @@
   Node parent=fn.getParent();
   Node gramps=parent.getParent();
   Node nameNode=SimpleDefinitionFinder.getNameNodeFromFunctionNode(fn);
-  if (nameNode != null && NodeUtil.isName(nameNode)) {
+  if (nameNode != null && nameNode.isName()) {
     String name=nameNode.getString();
     if (name.equals(NodeUtil.JSC_PROPERTY_NAME_FN) || name.equals(ObjectPropertyStringPreprocess.EXTERN_OBJECT_PROPERTY_STRING)) {
       return false;
@@ -11,7 +11,7 @@
   if (NodeUtil.isFunctionDeclaration(fn)) {
     return true;
   }
-  if (fn.getFirstChild().getString().isEmpty() && (NodeUtil.isExprAssign(gramps) || NodeUtil.isName(parent))) {
+  if (fn.getFirstChild().getString().isEmpty() && (NodeUtil.isExprAssign(gramps) || parent.isName())) {
     return true;
   }
   return false;

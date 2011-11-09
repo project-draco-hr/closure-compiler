@@ -1,24 +1,24 @@
 {
-  if (NodeUtil.isName(lhs)) {
+  if (lhs.isName()) {
     Var var=scope.getVar(lhs.getString());
     if (var == null || var.scope != scope) {
       sideEffectInfo.setTaintsGlobalState();
     }
  else {
       Preconditions.checkState(NodeUtil.isAssignmentOp(op) || isIncDec(op) || op.getType() == Token.DELPROP);
-      if (rhs != null && NodeUtil.isAssign(op) && !NodeUtil.evaluatesToLocalValue(rhs)) {
+      if (rhs != null && op.isAssign() && !NodeUtil.evaluatesToLocalValue(rhs)) {
         sideEffectInfo.blacklistLocal(var);
       }
     }
   }
  else   if (NodeUtil.isGet(lhs)) {
-    if (NodeUtil.isThis(lhs.getFirstChild())) {
+    if (lhs.getFirstChild().isThis()) {
       sideEffectInfo.setTaintsThis();
     }
  else {
       Var var=null;
       Node objectNode=lhs.getFirstChild();
-      if (NodeUtil.isName(objectNode)) {
+      if (objectNode.isName()) {
         var=scope.getVar(objectNode.getString());
       }
       if (var == null || var.scope != scope) {

@@ -6,7 +6,7 @@
   if (NodeUtil.isVarDeclaration(n) && n.hasChildren()) {
     return new VarDefinition(n,isExtern);
   }
- else   if (NodeUtil.isFunction(parent) && parent.getFirstChild() == n) {
+ else   if (parent.isFunction() && parent.getFirstChild() == n) {
     if (!NodeUtil.isFunctionExpression(parent)) {
       return new NamedFunctionDefinition(parent,isExtern);
     }
@@ -14,7 +14,7 @@
       return new FunctionExpressionDefinition(parent,isExtern);
     }
   }
- else   if (NodeUtil.isAssign(parent) && parent.getFirstChild() == n) {
+ else   if (parent.isAssign() && parent.getFirstChild() == n) {
     return new AssignmentDefinition(parent,isExtern);
   }
  else   if (NodeUtil.isObjectLitKey(n,parent)) {

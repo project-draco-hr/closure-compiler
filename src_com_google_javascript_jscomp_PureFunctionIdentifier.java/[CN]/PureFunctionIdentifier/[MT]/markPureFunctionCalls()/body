@@ -19,7 +19,7 @@
         if (functionInfo.functionThrows) {
           flags.setThrows();
         }
-        if (!NodeUtil.isNew(callNode)) {
+        if (!callNode.isNew()) {
           if (functionInfo.taintsThis) {
             flags.setMutatesThis();
           }
@@ -32,13 +32,13 @@
         }
       }
     }
-    if (NodeUtil.isCall(callNode)) {
+    if (callNode.isCall()) {
       Preconditions.checkState(compiler != null);
       if (!NodeUtil.functionCallHasSideEffects(callNode,compiler)) {
         flags.clearSideEffectFlags();
       }
     }
- else     if (NodeUtil.isNew(callNode)) {
+ else     if (callNode.isNew()) {
       if (!NodeUtil.constructorCallHasSideEffects(callNode)) {
         flags.clearSideEffectFlags();
       }

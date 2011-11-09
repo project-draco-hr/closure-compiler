@@ -12,14 +12,14 @@
   if (callee.mutatesThis()) {
     if (callSite.getType() != Token.NEW) {
       Node objectNode=getCallThisObject(callSite);
-      if (objectNode != null && NodeUtil.isName(objectNode) && !isCallOrApply(callSite)) {
+      if (objectNode != null && objectNode.isName() && !isCallOrApply(callSite)) {
         String name=objectNode.getString();
         if (!caller.mutatesGlobalState()) {
           caller.setTaintsGlobalState();
           changed=true;
         }
       }
- else       if (objectNode != null && NodeUtil.isThis(objectNode)) {
+ else       if (objectNode != null && objectNode.isThis()) {
         if (!caller.mutatesThis()) {
           caller.setTaintsThis();
           changed=true;

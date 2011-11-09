@@ -1,7 +1,7 @@
 {
   Preconditions.checkArgument(callsite.getType() == Token.CALL || callsite.getType() == Token.NEW);
   Node targetExpression=callsite.getFirstChild();
-  if (!useNameReferenceGraph || (NodeUtil.isGetProp(targetExpression) || NodeUtil.isName(targetExpression))) {
+  if (!useNameReferenceGraph || (targetExpression.isGetProp() || targetExpression.isName())) {
     Collection<Definition> definitions=definitionProvider.getDefinitionsReferencedAt(targetExpression);
     if (definitions != null && !definitions.isEmpty()) {
       return definitions;

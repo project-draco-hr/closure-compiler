@@ -2,13 +2,13 @@
 switch (n.getType()) {
 case Token.NAME:
 case Token.GETPROP:
-    if (NodeUtil.isGetProp(parent)) {
+    if (parent.isGetProp()) {
       return;
     }
- else     if (NodeUtil.isFunction(parent)) {
+ else     if (parent.isFunction()) {
       return;
     }
- else     if (NodeUtil.isAssign(parent)) {
+ else     if (parent.isAssign()) {
       return;
     }
   if (isLocalNameReference(t,n)) {
@@ -27,10 +27,10 @@ break;
 case Token.ASSIGN:
 Node lhs=n.getFirstChild();
 Node rhs=n.getLastChild();
-if (NodeUtil.isFunction(rhs)) {
+if (rhs.isFunction()) {
 return;
 }
-if (NodeUtil.isName(lhs) || NodeUtil.isGetProp(lhs) || NodeUtil.isGetProp(rhs)) {
+if (lhs.isName() || lhs.isGetProp() || rhs.isGetProp()) {
 if (NodeUtil.isPrototypeProperty(lhs)) {
 Name name=recordPrototypePropDefinition(t,lhs,getType(rhs),n,parent,parent.getParent());
 name.setAliased(true);
@@ -49,7 +49,7 @@ break;
 case Token.CALL:
 Node param=n.getFirstChild();
 while ((param=param.getNext()) != null) {
-if (NodeUtil.isName(param) || NodeUtil.isGetProp(param)) {
+if (param.isName() || param.isGetProp()) {
 safeAlias(param);
 }
 }

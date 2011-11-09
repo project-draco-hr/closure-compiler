@@ -18,10 +18,10 @@ computeMayUse(NodeUtil.getConditionExpression(n),cfgNode,output,conditional);
  else {
 Node lhs=n.getFirstChild();
 Node rhs=lhs.getNext();
-if (NodeUtil.isVar(lhs)) {
+if (lhs.isVar()) {
 lhs=lhs.getLastChild();
 }
-if (NodeUtil.isName(lhs) && !conditional) {
+if (lhs.isName() && !conditional) {
 removeFromUseIfLocal(lhs.getString(),output);
 }
 computeMayUse(rhs,cfgNode,output,conditional);
@@ -48,12 +48,12 @@ removeFromUseIfLocal(varName.getString(),output);
 }
 return;
 default :
-if (NodeUtil.isAssignmentOp(n) && NodeUtil.isName(n.getFirstChild())) {
+if (NodeUtil.isAssignmentOp(n) && n.getFirstChild().isName()) {
 Node name=n.getFirstChild();
 if (!conditional) {
 removeFromUseIfLocal(name.getString(),output);
 }
-if (!NodeUtil.isAssign(n)) {
+if (!n.isAssign()) {
 addToUseIfLocal(name.getString(),cfgNode,output);
 }
 computeMayUse(name.getNext(),cfgNode,output,conditional);

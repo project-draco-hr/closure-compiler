@@ -1,5 +1,5 @@
 {
-  if (!NodeUtil.isName(n)) {
+  if (!n.isName()) {
     return;
   }
   if (!NodeUtil.isGet(parent)) {
@@ -10,7 +10,7 @@
   Node lastAssign=null;
   Node prevParent=n;
   while (!(NodeUtil.isExpressionNode(parent) || NodeUtil.isStatementBlock(parent))) {
-    if (NodeUtil.isAssign(parent) && NodeUtil.isName(parent.getFirstChild()) && parent.getFirstChild().getString().equals(n.getString())&& nested) {
+    if (parent.isAssign() && parent.getFirstChild().isName() && parent.getFirstChild().getString().equals(n.getString())&& nested) {
       reassign=true;
       break;
     }

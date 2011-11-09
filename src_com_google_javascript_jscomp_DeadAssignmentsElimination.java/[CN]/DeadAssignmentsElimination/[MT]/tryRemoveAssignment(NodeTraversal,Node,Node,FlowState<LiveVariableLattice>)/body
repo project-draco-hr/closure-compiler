@@ -8,7 +8,7 @@
       rhs=lhs.getNext();
     }
     Scope scope=t.getScope();
-    if (!NodeUtil.isName(lhs)) {
+    if (!lhs.isName()) {
       return;
     }
     String name=lhs.getString();
@@ -19,7 +19,7 @@
     if (liveness.getEscapedLocals().contains(var)) {
       return;
     }
-    if (rhs != null && NodeUtil.isName(rhs) && rhs.getString().equals(var.name) && NodeUtil.isAssign(n)) {
+    if (rhs != null && rhs.isName() && rhs.getString().equals(var.name) && n.isAssign()) {
       n.removeChild(rhs);
       n.getParent().replaceChild(n,rhs);
       compiler.reportCodeChange();
@@ -31,7 +31,7 @@
     if (state.getIn().isLive(var) && isVariableStillLiveWithinExpression(n,exprRoot,var.name)) {
       return;
     }
-    if (NodeUtil.isAssign(n)) {
+    if (n.isAssign()) {
       n.removeChild(rhs);
       n.getParent().replaceChild(n,rhs);
     }

@@ -1,5 +1,5 @@
 {
-  if (inExterns && NodeUtil.isName(node) && parent.getType() == Token.LP) {
+  if (inExterns && node.isName() && parent.getType() == Token.LP) {
     return;
   }
   Definition def=DefinitionsRemover.getDefinition(node,inExterns);
@@ -7,7 +7,7 @@
     String name=getSimplifiedName(def.getLValue());
     if (name != null) {
       Node rValue=def.getRValue();
-      if ((rValue != null) && !NodeUtil.isImmutableValue(rValue) && !NodeUtil.isFunction(rValue)) {
+      if ((rValue != null) && !NodeUtil.isImmutableValue(rValue) && !rValue.isFunction()) {
         Definition unknownDef=new UnknownDefinition(def.getLValue(),inExterns);
         def=unknownDef;
       }

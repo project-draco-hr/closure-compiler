@@ -1,5 +1,5 @@
 {
-  if (!(NodeUtil.isName(n) || NodeUtil.isGet(n) && !NodeUtil.isGetProp(parent))) {
+  if (!(n.isName() || NodeUtil.isGet(n) && !parent.isGetProp())) {
     return;
   }
   NameInformation nameInfo=createNameInformation(t,n,parent);
@@ -59,7 +59,7 @@
   }
  else {
     for (    Node ancestor : n.getAncestors()) {
-      if (NodeUtil.isAssignmentOp(ancestor) || NodeUtil.isFunction(ancestor)) {
+      if (NodeUtil.isAssignmentOp(ancestor) || ancestor.isFunction()) {
         recordReference(WINDOW,name,RefType.REGULAR);
         break;
       }

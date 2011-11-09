@@ -1,6 +1,6 @@
 {
   Node parent=expr.getParent();
-  boolean isLhsOfAssignOp=NodeUtil.isAssignmentOp(parent) && !NodeUtil.isAssign(parent) && parent.getFirstChild() == expr;
+  boolean isLhsOfAssignOp=NodeUtil.isAssignmentOp(parent) && !parent.isAssign() && parent.getFirstChild() == expr;
   Node firstExtractedNode=null;
   if (isLhsOfAssignOp && NodeUtil.isGet(expr)) {
     for (    Node n : expr.children()) {
@@ -16,7 +16,7 @@
   Node replacementValueNode=Node.newString(Token.NAME,tempName).copyInformationFrom(expr);
   Node tempNameValue;
   if (isLhsOfAssignOp) {
-    Preconditions.checkState(NodeUtil.isName(expr) || NodeUtil.isGet(expr));
+    Preconditions.checkState(expr.isName() || NodeUtil.isGet(expr));
     Node opNode=new Node(NodeUtil.getOpFromAssignmentOp(parent)).copyInformationFrom(parent);
     Node rightOperand=parent.getLastChild();
     parent.setType(Token.ASSIGN);

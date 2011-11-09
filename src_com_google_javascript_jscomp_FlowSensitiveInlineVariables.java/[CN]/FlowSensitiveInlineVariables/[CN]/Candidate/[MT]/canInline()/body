@@ -1,5 +1,5 @@
 {
-  if (NodeUtil.isFunction(defCfgNode)) {
+  if (defCfgNode.isFunction()) {
     return false;
   }
   getDefinition(defCfgNode,null);
@@ -7,7 +7,7 @@
   if (def == null) {
     return false;
   }
-  if (NodeUtil.isAssign(def) && !NodeUtil.isExprAssign(def.getParent())) {
+  if (def.isAssign() && !NodeUtil.isExprAssign(def.getParent())) {
     return false;
   }
   if (checkRightOf(def,defCfgNode,SIDE_EFFECT_PREDICATE)) {
@@ -45,7 +45,7 @@ case Token.NEW:
 }
 ,new Predicate<Node>(){
   @Override public boolean apply(  Node input){
-    return !NodeUtil.isFunction(input);
+    return !input.isFunction();
   }
 }
 )) {

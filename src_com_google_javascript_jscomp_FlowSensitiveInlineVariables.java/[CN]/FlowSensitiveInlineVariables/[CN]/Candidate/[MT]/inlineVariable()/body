@@ -1,7 +1,7 @@
 {
   Node defParent=def.getParent();
   Node useParent=use.getParent();
-  if (NodeUtil.isAssign(def)) {
+  if (def.isAssign()) {
     Node rhs=def.getLastChild();
     rhs.detachFromParent();
     Preconditions.checkState(NodeUtil.isExpressionNode(defParent));
@@ -11,7 +11,7 @@
     defParent.detachFromParent();
     useParent.replaceChild(use,rhs);
   }
- else   if (NodeUtil.isVar(defParent)) {
+ else   if (defParent.isVar()) {
     Node rhs=def.getLastChild();
     def.removeChild(rhs);
     useParent.replaceChild(use,rhs);

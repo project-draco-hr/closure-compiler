@@ -16,10 +16,10 @@ computeGenKill(NodeUtil.getConditionExpression(n),gen,kill,conditional);
  else {
 Node lhs=n.getFirstChild();
 Node rhs=lhs.getNext();
-if (NodeUtil.isVar(lhs)) {
+if (lhs.isVar()) {
   lhs=lhs.getLastChild();
 }
-if (NodeUtil.isName(lhs)) {
+if (lhs.isName()) {
   addToSetIfLocal(lhs,kill);
   addToSetIfLocal(lhs,gen);
 }
@@ -58,12 +58,12 @@ addToSetIfLocal(n,gen);
 }
 return;
 default :
-if (NodeUtil.isAssignmentOp(n) && NodeUtil.isName(n.getFirstChild())) {
+if (NodeUtil.isAssignmentOp(n) && n.getFirstChild().isName()) {
 Node lhs=n.getFirstChild();
 if (!conditional) {
 addToSetIfLocal(lhs,kill);
 }
-if (!NodeUtil.isAssign(n)) {
+if (!n.isAssign()) {
 addToSetIfLocal(lhs,gen);
 }
 computeGenKill(lhs.getNext(),gen,kill,conditional);

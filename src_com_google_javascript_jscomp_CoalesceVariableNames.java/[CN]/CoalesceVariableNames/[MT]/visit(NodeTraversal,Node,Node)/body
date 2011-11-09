@@ -1,5 +1,5 @@
 {
-  if (colorings.isEmpty() || !NodeUtil.isName(n) || NodeUtil.isFunction(parent)) {
+  if (colorings.isEmpty() || !n.isName() || parent.isFunction()) {
     return;
   }
   Var var=t.getScope().getVar(n.getString());
@@ -14,7 +14,7 @@
     }
     n.setString(coalescedVar.name);
     compiler.reportCodeChange();
-    if (NodeUtil.isVar(parent)) {
+    if (parent.isVar()) {
       removeVarDeclaration(n);
     }
   }
@@ -36,7 +36,7 @@
     }
     n.setString(pseudoName);
     compiler.reportCodeChange();
-    if (!vNode.getValue().equals(coalescedVar) && NodeUtil.isVar(parent)) {
+    if (!vNode.getValue().equals(coalescedVar) && parent.isVar()) {
       removeVarDeclaration(n);
     }
   }

@@ -8,7 +8,7 @@
       Node next=n.getNext();
       Preconditions.checkState(var.getNext() == n);
       collapse.parent.removeChildAfter(var);
-      if (NodeUtil.isVar(n)) {
+      if (n.isVar()) {
         while (n.hasChildren()) {
           var.addChildToBack(n.removeFirstChild());
         }
@@ -16,7 +16,7 @@
  else {
         Node assign=n.getFirstChild();
         Node lhs=assign.getFirstChild();
-        Preconditions.checkState(NodeUtil.isName(lhs));
+        Preconditions.checkState(lhs.isName());
         Node rhs=assign.getLastChild();
         lhs.addChildToBack(rhs.detachFromParent());
         var.addChildToBack(lhs.detachFromParent());

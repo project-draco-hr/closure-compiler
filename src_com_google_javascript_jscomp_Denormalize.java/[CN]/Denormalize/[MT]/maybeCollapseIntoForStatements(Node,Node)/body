@@ -2,7 +2,7 @@
   if (parent == null || !NodeUtil.isStatementBlock(parent)) {
     return;
   }
-  if (!NodeUtil.isExpressionNode(n) && !NodeUtil.isVar(n)) {
+  if (!NodeUtil.isExpressionNode(n) && !n.isVar()) {
     return;
   }
   Node nextSibling=n.getNext();
@@ -12,7 +12,7 @@
  else   if (NodeUtil.isForIn(nextSibling)) {
     Node forNode=nextSibling;
     Node forVar=forNode.getFirstChild();
-    if (NodeUtil.isName(forVar) && NodeUtil.isVar(n) && n.hasOneChild()) {
+    if (forVar.isName() && n.isVar() && n.hasOneChild()) {
       Node name=n.getFirstChild();
       if (!name.hasChildren() && forVar.getString().equals(name.getString())) {
         parent.removeChild(n);
@@ -29,7 +29,7 @@
     Node oldInitializer=forNode.getFirstChild();
     parent.removeChild(n);
     Node newInitializer;
-    if (NodeUtil.isVar(n)) {
+    if (n.isVar()) {
       newInitializer=n;
     }
  else {

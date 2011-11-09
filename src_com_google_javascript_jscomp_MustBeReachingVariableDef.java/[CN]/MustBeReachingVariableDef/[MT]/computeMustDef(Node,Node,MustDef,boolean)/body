@@ -15,10 +15,10 @@ computeMustDef(NodeUtil.getConditionExpression(n),cfgNode,output,conditional);
  else {
 Node lhs=n.getFirstChild();
 Node rhs=lhs.getNext();
-if (NodeUtil.isVar(lhs)) {
+if (lhs.isVar()) {
   lhs=lhs.getLastChild();
 }
-if (NodeUtil.isName(lhs)) {
+if (lhs.isName()) {
   addToDefIfLocal(lhs.getString(),cfgNode,rhs,output);
 }
 }
@@ -43,7 +43,7 @@ addToDefIfLocal(c.getString(),conditional ? null : cfgNode,c.getFirstChild(),out
 return;
 default :
 if (NodeUtil.isAssignmentOp(n)) {
-if (NodeUtil.isName(n.getFirstChild())) {
+if (n.getFirstChild().isName()) {
 Node name=n.getFirstChild();
 computeMustDef(name.getNext(),cfgNode,output,conditional);
 addToDefIfLocal(name.getString(),conditional ? null : cfgNode,n.getLastChild(),output);
@@ -51,17 +51,17 @@ return;
 }
  else if (NodeUtil.isGet(n.getFirstChild())) {
 Node obj=n.getFirstChild().getFirstChild();
-if (NodeUtil.isName(obj) && "arguments".equals(obj.getString())) {
+if (obj.isName() && "arguments".equals(obj.getString())) {
 escapeParameters(output);
 }
 }
 }
-if (NodeUtil.isName(n) && "arguments".equals(n.getString())) {
+if (n.isName() && "arguments".equals(n.getString())) {
 escapeParameters(output);
 }
 if (n.getType() == Token.DEC || n.getType() == Token.INC) {
 Node target=n.getFirstChild();
-if (NodeUtil.isName(target)) {
+if (target.isName()) {
 addToDefIfLocal(target.getString(),conditional ? null : cfgNode,null,output);
 return;
 }

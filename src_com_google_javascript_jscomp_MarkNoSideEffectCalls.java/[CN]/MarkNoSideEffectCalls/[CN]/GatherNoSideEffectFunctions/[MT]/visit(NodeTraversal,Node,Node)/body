@@ -2,24 +2,24 @@
   if (!inExterns && hasNoSideEffectsAnnotation(node)) {
     traversal.report(node,INVALID_NO_SIDE_EFFECT_ANNOTATION);
   }
-  if (NodeUtil.isGetProp(node)) {
+  if (node.isGetProp()) {
     if (NodeUtil.isExpressionNode(parent) && hasNoSideEffectsAnnotation(node)) {
       noSideEffectFunctionNames.add(node);
     }
   }
- else   if (NodeUtil.isFunction(node)) {
+ else   if (node.isFunction()) {
     boolean hasAnnotation=hasNoSideEffectsAnnotation(node);
     List<Node> nameNodes=Lists.newArrayList();
     nameNodes.add(node.getFirstChild());
     Node nameNode=null;
-    if (NodeUtil.isName(parent)) {
+    if (parent.isName()) {
       Node gramp=parent.getParent();
-      if (NodeUtil.isVar(gramp) && gramp.hasOneChild() && hasNoSideEffectsAnnotation(gramp)) {
+      if (gramp.isVar() && gramp.hasOneChild() && hasNoSideEffectsAnnotation(gramp)) {
         hasAnnotation=true;
       }
       nameNodes.add(parent);
     }
- else     if (NodeUtil.isAssign(parent)) {
+ else     if (parent.isAssign()) {
       if (hasNoSideEffectsAnnotation(parent)) {
         hasAnnotation=true;
       }

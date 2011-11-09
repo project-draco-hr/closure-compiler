@@ -8,8 +8,8 @@
   final Node cfgNode=n;
   AbstractCfgNodeTraversalCallback gatherCb=new AbstractCfgNodeTraversalCallback(){
     @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
-      if (NodeUtil.isName(n)) {
-        if ((NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || NodeUtil.isVar(parent) || parent.getType() == Token.INC || parent.getType() == Token.DEC || parent.getType() == Token.LP || parent.getType() == Token.CATCH) {
+      if (n.isName()) {
+        if ((NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || parent.isVar() || parent.getType() == Token.INC || parent.getType() == Token.DEC || parent.getType() == Token.LP || parent.getType() == Token.CATCH) {
           return;
         }
         String name=n.getString();

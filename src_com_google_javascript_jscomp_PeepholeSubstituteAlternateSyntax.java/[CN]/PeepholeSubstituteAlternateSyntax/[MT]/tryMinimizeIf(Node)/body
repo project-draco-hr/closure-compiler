@@ -105,7 +105,7 @@
   }
   boolean thenBranchIsVar=isVarBlock(thenBranch);
   boolean elseBranchIsVar=isVarBlock(elseBranch);
-  if (thenBranchIsVar && elseBranchIsExpressionBlock && NodeUtil.isAssign(getBlockExpression(elseBranch).getFirstChild())) {
+  if (thenBranchIsVar && elseBranchIsExpressionBlock && getBlockExpression(elseBranch).getFirstChild().isAssign()) {
     Node var=getBlockVar(thenBranch);
     Node elseAssign=getBlockExpression(elseBranch).getFirstChild();
     Node name1=var.getFirstChild();
@@ -122,7 +122,7 @@
       return var;
     }
   }
- else   if (elseBranchIsVar && thenBranchIsExpressionBlock && NodeUtil.isAssign(getBlockExpression(thenBranch).getFirstChild())) {
+ else   if (elseBranchIsVar && thenBranchIsExpressionBlock && getBlockExpression(thenBranch).getFirstChild().isAssign()) {
     Node var=getBlockVar(elseBranch);
     Node thenAssign=getBlockExpression(thenBranch).getFirstChild();
     Node maybeName1=thenAssign.getFirstChild();
