@@ -1,0 +1,16 @@
+{
+  if (late) {
+    return n;
+  }
+  if (!n.hasChildren() || n.getFirstChild().getNext() != n.getLastChild()) {
+    return n;
+  }
+  if (mayHaveSideEffects(left)) {
+    return n;
+  }
+  int op=NodeUtil.getOpFromAssignmentOp(n);
+  Node replacement=new Node(Token.ASSIGN,left.detachFromParent(),new Node(op,left.cloneTree(),right.detachFromParent()).useSourceInfoFrom(n));
+  n.getParent().replaceChild(n,replacement);
+  reportCodeChange();
+  return replacement;
+}
