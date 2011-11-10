@@ -1,0 +1,19 @@
+{
+  if (owner.isGlobalThisType()) {
+    Symbol sym=globalScope.getSlot(propName);
+    if (sym != null) {
+      sym.defineReferenceAt(n);
+    }
+  }
+ else   if (owner.isNominalConstructor()) {
+    maybeDefineReference(n,propName,getSymbolDeclaredBy(owner.toMaybeFunctionType()));
+  }
+ else   if (owner.isEnumType()) {
+    maybeDefineReference(n,propName,getSymbolDeclaredBy(owner.toMaybeEnumType()));
+  }
+ else {
+    for (    Symbol ctor : getAllSymbolsForType(owner)) {
+      maybeDefineReference(n,propName,getSymbolForInstancesOf(ctor));
+    }
+  }
+}

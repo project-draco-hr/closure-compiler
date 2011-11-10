@@ -1,8 +1,7 @@
 {
   List<Symbol> types=Lists.newArrayList();
   for (  Symbol sym : getAllSymbols()) {
-    ObjectType type=ObjectType.cast(sym.getType());
-    if (type != null && (type.getReferenceName() == null || sym.getName().equals(type.getReferenceName()))) {
+    if (needsPropertyScope(sym)) {
       types.add(sym);
     }
   }
@@ -10,4 +9,5 @@
   for (  Symbol s : types) {
     createPropertyScopeFor(s);
   }
+  pruneOrphanedNames();
 }

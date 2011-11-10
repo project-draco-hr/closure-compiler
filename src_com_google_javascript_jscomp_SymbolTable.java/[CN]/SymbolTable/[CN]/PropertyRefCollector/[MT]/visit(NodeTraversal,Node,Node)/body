@@ -2,28 +2,17 @@
   if (n.isGetProp()) {
     JSType owner=n.getFirstChild().getJSType();
     if (owner == null || owner.isUnknownType()) {
-      String name=n.getQualifiedName();
-      if (name != null) {
-        Symbol lexicalSym=getEnclosingScope(n).getSlot(name);
-        if (lexicalSym != null) {
-          lexicalSym.defineReferenceAt(n);
-        }
-      }
+      tryDefineLexicalPropRef(n.getQualifiedName(),n);
       return;
     }
-    if (owner.isGlobalThisType()) {
-      Symbol sym=globalScope.getSlot(n.getLastChild().getString());
-      if (sym != null) {
-        sym.defineReferenceAt(n);
-      }
+    maybeDefineTypedReference(n,n.getLastChild().getString(),owner);
+  }
+ else   if (NodeUtil.isObjectLitKey(n,parent) && n.getType() == Token.STRING) {
+    JSType owner=parent.getJSType();
+    if (owner == null || owner.isUnknownType()) {
+      tryDefineLexicalPropRef(NodeUtil.getBestLValueName(n),n);
+      return;
     }
- else     if (owner.isNominalConstructor()) {
-      maybeDefineReference(n,getSymbolDeclaredBy(owner.toMaybeFunctionType()));
-    }
- else {
-      for (      Symbol ctor : getAllSymbolsForType(owner)) {
-        maybeDefineReference(n,getSymbolForInstancesOf(ctor));
-      }
-    }
+    maybeDefineTypedReference(n,n.getString(),owner);
   }
 }

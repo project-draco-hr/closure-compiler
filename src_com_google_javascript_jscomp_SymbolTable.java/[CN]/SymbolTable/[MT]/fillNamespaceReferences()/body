@@ -1,14 +1,26 @@
 {
   for (  Symbol symbol : getAllSymbolsSorted()) {
+    String qName=symbol.getName();
+    int rootIndex=qName.indexOf('.');
+    if (rootIndex == -1) {
+      continue;
+    }
+    Symbol root=symbol.scope.getSlot(qName.substring(0,rootIndex));
+    if (root == null) {
+      continue;
+    }
     for (    Reference ref : getReferences(symbol)) {
       Node currentNode=ref.getNode();
+      if (!currentNode.isQualifiedName()) {
+        continue;
+      }
       while (currentNode.isGetProp()) {
         currentNode=currentNode.getFirstChild();
         String name=currentNode.getQualifiedName();
         if (name != null) {
-          Symbol namespace=symbol.scope.getSlot(name);
-          if (namespace == null && symbol.scope.isGlobalScope()) {
-            namespace=declareSymbol(name,registry.getNativeType(JSTypeNative.UNKNOWN_TYPE),true,symbol.scope,currentNode,null);
+          Symbol namespace=root.scope.getSlot(name);
+          if (namespace == null && root.scope.isGlobalScope()) {
+            namespace=declareSymbol(name,registry.getNativeType(JSTypeNative.UNKNOWN_TYPE),true,root.scope,currentNode,null);
           }
           if (namespace != null) {
             namespace.defineReferenceAt(currentNode);
