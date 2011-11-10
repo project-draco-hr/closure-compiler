@@ -4,7 +4,7 @@
       return;
     }
     Node curNode=iterator.current();
-    if (curNode.getType() == Token.NAME && varName.equals(curNode.getString())) {
+    if (curNode.isName() && varName.equals(curNode.getString())) {
       lookAhead=null;
       return;
     }
@@ -23,8 +23,8 @@
         blocked=true;
       }
  else {
-        boolean assignsName=(nextParent.getType() == Token.ASSIGN && nextNode == nextParent.getFirstChild());
-        boolean isVarDeclaration=(nextParent.getType() == Token.VAR);
+        boolean assignsName=(nextParent.isAssign() && nextNode == nextParent.getFirstChild());
+        boolean isVarDeclaration=(nextParent.isVar());
         if (!assignsName && !isVarDeclaration) {
           blocked=true;
         }
@@ -35,7 +35,7 @@
       }
     }
   }
-  if (NodeUtil.nodeTypeMayHaveSideEffects(nextNode) && type != Token.NAME || type == Token.NAME && nextParent.getType() == Token.CATCH) {
+  if (NodeUtil.nodeTypeMayHaveSideEffects(nextNode) && type != Token.NAME || type == Token.NAME && nextParent.isCatch()) {
     lookAhead=null;
     return;
   }

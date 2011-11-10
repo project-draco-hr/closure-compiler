@@ -5,7 +5,7 @@
   while (true) {
     if (NodeUtil.isGet(rootNameNode)) {
       Node prop=rootNameNode.getLastChild();
-      if (rootNameNode.getType() == Token.GETPROP) {
+      if (rootNameNode.isGetProp()) {
         name="." + prop.getString() + name;
       }
  else {
@@ -18,13 +18,13 @@
       name="." + rootNameNode.getString() + name;
       Node objLit=rootNameNode.getParent();
       Node objLitParent=objLit.getParent();
-      if (objLitParent.getType() == Token.ASSIGN) {
+      if (objLitParent.isAssign()) {
         rootNameNode=objLitParent.getFirstChild();
       }
- else       if (objLitParent.getType() == Token.NAME) {
+ else       if (objLitParent.isName()) {
         rootNameNode=objLitParent;
       }
- else       if (objLitParent.getType() == Token.STRING) {
+ else       if (objLitParent.isString()) {
         rootNameNode=objLitParent;
       }
  else {
@@ -55,7 +55,7 @@
   }
 switch (rootNameNode.getType()) {
 case Token.NAME:
-    if (!bNameWasShortened && n.getType() == Token.GETPROP && parent.getType() == Token.ASSIGN && "prototype".equals(n.getLastChild().getString())) {
+    if (!bNameWasShortened && n.isGetProp() && parent.isAssign()&& "prototype".equals(n.getLastChild().getString())) {
       if (createNameInformation(t,n.getFirstChild(),n) != null) {
         name=rootNameNode.getString() + name;
         name=name.substring(0,name.length() - PROTOTYPE_SUFFIX_LEN);

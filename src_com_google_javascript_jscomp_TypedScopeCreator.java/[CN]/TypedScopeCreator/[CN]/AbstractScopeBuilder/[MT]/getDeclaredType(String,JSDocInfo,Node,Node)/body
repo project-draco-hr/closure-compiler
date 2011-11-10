@@ -2,12 +2,12 @@
   if (info != null && info.hasType()) {
     return getDeclaredTypeInAnnotation(sourceName,lValue,info);
   }
- else   if (rValue != null && rValue.getType() == Token.FUNCTION && shouldUseFunctionLiteralType(JSType.toMaybeFunctionType(rValue.getJSType()),info,lValue)) {
+ else   if (rValue != null && rValue.isFunction() && shouldUseFunctionLiteralType(JSType.toMaybeFunctionType(rValue.getJSType()),info,lValue)) {
     return rValue.getJSType();
   }
  else   if (info != null) {
     if (info.hasEnumParameterType()) {
-      if (rValue != null && rValue.getType() == Token.OBJECTLIT) {
+      if (rValue != null && rValue.isObjectLit()) {
         return rValue.getJSType();
       }
  else {
@@ -24,10 +24,10 @@
           if (rValue.getJSType() != null && !rValue.getJSType().isUnknownType()) {
             return rValue.getJSType();
           }
- else           if (rValue.getType() == Token.OR) {
+ else           if (rValue.isOr()) {
             Node firstClause=rValue.getFirstChild();
             Node secondClause=firstClause.getNext();
-            boolean namesMatch=firstClause.getType() == Token.NAME && lValue.getType() == Token.NAME && firstClause.getString().equals(lValue.getString());
+            boolean namesMatch=firstClause.isName() && lValue.isName() && firstClause.getString().equals(lValue.getString());
             if (namesMatch && secondClause.getJSType() != null && !secondClause.getJSType().isUnknownType()) {
               return secondClause.getJSType();
             }

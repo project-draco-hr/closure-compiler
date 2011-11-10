@@ -28,7 +28,7 @@
 switch (type) {
 case Token.TRY:
 {
-      Preconditions.checkState(first.getNext().getType() == Token.BLOCK && !first.getNext().hasMoreThanOneChild());
+      Preconditions.checkState(first.getNext().isBlock() && !first.getNext().hasMoreThanOneChild());
       Preconditions.checkState(childCount >= 2 && childCount <= 3);
       add("try");
       add(first,Context.PRESERVE_BLOCK);
@@ -76,14 +76,14 @@ Preconditions.checkState(!n.getString().isEmpty());
 addIdentifier(n.getString());
 break;
 case Token.NAME:
-if (first == null || first.getType() == Token.EMPTY) {
+if (first == null || first.isEmpty()) {
 addIdentifier(n.getString());
 }
  else {
 Preconditions.checkState(childCount == 1);
 addIdentifier(n.getString());
 cc.addOp("=",true);
-if (first.getType() == Token.COMMA) {
+if (first.isComma()) {
 addExpr(first,NodeUtil.precedence(Token.ASSIGN));
 }
  else {
@@ -123,7 +123,7 @@ break;
 case Token.NEG:
 {
 Preconditions.checkState(childCount == 1);
-if (n.getFirstChild().getType() == Token.NUMBER) {
+if (n.getFirstChild().isNumber()) {
 cc.addNumber(-n.getFirstChild().getDouble());
 }
  else {
@@ -176,9 +176,9 @@ add(")");
 break;
 case Token.GET:
 case Token.SET:
-Preconditions.checkState(n.getParent().getType() == Token.OBJECTLIT);
+Preconditions.checkState(n.getParent().isObjectLit());
 Preconditions.checkState(childCount == 1);
-Preconditions.checkState(first.getType() == Token.FUNCTION);
+Preconditions.checkState(first.isFunction());
 Preconditions.checkState(first.getFirstChild().getString().isEmpty());
 if (type == Token.GET) {
 Preconditions.checkState(!first.getChildAtIndex(1).hasChildren());
@@ -217,13 +217,13 @@ boolean preserveBlock=context == Context.PRESERVE_BLOCK;
 if (preserveBlock) {
 cc.beginBlock();
 }
-boolean preferLineBreaks=type == Token.SCRIPT || (type == Token.BLOCK && !preserveBlock && n.getParent() != null && n.getParent().getType() == Token.SCRIPT);
+boolean preferLineBreaks=type == Token.SCRIPT || (type == Token.BLOCK && !preserveBlock && n.getParent() != null && n.getParent().isScript());
 for (Node c=first; c != null; c=c.getNext()) {
 add(c,Context.STATEMENT);
-if (c.getType() == Token.VAR) {
+if (c.isVar()) {
 cc.endStatement();
 }
-if (c.getType() == Token.FUNCTION) {
+if (c.isFunction()) {
 cc.maybeLineBreak();
 }
 if (preferLineBreaks) {
@@ -238,7 +238,7 @@ break;
 case Token.FOR:
 if (childCount == 4) {
 add("for(");
-if (first.getType() == Token.VAR) {
+if (first.isVar()) {
 add(first,Context.IN_FOR_INIT_CLAUSE);
 }
  else {
@@ -283,8 +283,8 @@ break;
 case Token.GETPROP:
 {
 Preconditions.checkState(childCount == 2,"Bad GETPROP: expected 2 children, but got %s",childCount);
-Preconditions.checkState(last.getType() == Token.STRING,"Bad GETPROP: RHS should be STRING");
-boolean needsParens=(first.getType() == Token.NUMBER);
+Preconditions.checkState(last.isString(),"Bad GETPROP: RHS should be STRING");
+boolean needsParens=(first.isNumber());
 if (needsParens) {
 add("(");
 }
@@ -417,7 +417,7 @@ add(")");
 }
 break;
 case Token.STRING:
-if (childCount != ((n.getParent() != null && n.getParent().getType() == Token.OBJECTLIT) ? 1 : 0)) {
+if (childCount != ((n.getParent() != null && n.getParent().isObjectLit()) ? 1 : 0)) {
 throw new IllegalStateException("Unexpected String children: " + n.getParent().toStringTree());
 }
 addJsString(n.getString());
@@ -438,11 +438,11 @@ for (Node c=first; c != null; c=c.getNext()) {
 if (c != first) {
 cc.listSeparator();
 }
-if (c.getType() == Token.GET || c.getType() == Token.SET) {
+if (c.isGet() || c.isSet()) {
 add(c);
 }
  else {
-Preconditions.checkState(c.getType() == Token.STRING);
+Preconditions.checkState(c.isString());
 String key=c.getString();
 if (!c.isQuotedString() && !TokenStream.isKeyword(key) && TokenStream.isJSIdentifier(key)&& NodeUtil.isLatin(key)) {
 add(key);

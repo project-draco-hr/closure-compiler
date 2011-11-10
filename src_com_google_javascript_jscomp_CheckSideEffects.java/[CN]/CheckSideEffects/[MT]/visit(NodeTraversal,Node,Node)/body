@@ -1,13 +1,13 @@
 {
-  if (n.getType() == Token.EMPTY || n.getType() == Token.COMMA) {
+  if (n.isEmpty() || n.isComma()) {
     return;
   }
   if (parent == null)   return;
   int pt=parent.getType();
   if (pt == Token.COMMA) {
     Node gramps=parent.getParent();
-    if (gramps.getType() == Token.CALL && parent == gramps.getFirstChild()) {
-      if (n == parent.getFirstChild() && parent.getChildCount() == 2 && n.getNext().getType() == Token.NAME && "eval".equals(n.getNext().getString())) {
+    if (gramps.isCall() && parent == gramps.getFirstChild()) {
+      if (n == parent.getFirstChild() && parent.getChildCount() == 2 && n.getNext().isName() && "eval".equals(n.getNext().getString())) {
         return;
       }
     }
@@ -36,7 +36,7 @@
       return;
     }
     String msg="This code lacks side-effects. Is there a bug?";
-    if (n.getType() == Token.STRING) {
+    if (n.isString()) {
       msg="Is there a missing '+' on the previous line?";
     }
  else     if (isSimpleOp) {

@@ -4,7 +4,7 @@
     if (ref.isLvalue() || ref.isInitializingDeclaration()) {
       Node val=ref.getAssignedValue();
       if (val != null) {
-        Preconditions.checkState(val.getType() == Token.OBJECTLIT);
+        Preconditions.checkState(val.isObjectLit());
         for (Node child=val.getFirstChild(); child != null; child=child.getNext()) {
           String varname=child.getString();
           if (varmap.containsKey(varname)) {
@@ -15,11 +15,11 @@
         }
       }
     }
- else     if (ref.getParent().getType() == Token.VAR) {
+ else     if (ref.getParent().isVar()) {
     }
  else {
       Node getprop=ref.getParent();
-      Preconditions.checkState(getprop.getType() == Token.GETPROP);
+      Preconditions.checkState(getprop.isGetProp());
       String varname=getprop.getLastChild().getString();
       if (varmap.containsKey(varname)) {
         continue;

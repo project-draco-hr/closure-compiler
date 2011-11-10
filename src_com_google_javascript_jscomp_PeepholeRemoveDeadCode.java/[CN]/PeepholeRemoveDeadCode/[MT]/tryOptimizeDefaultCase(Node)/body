@@ -1,8 +1,8 @@
 {
-  Preconditions.checkState(n.getType() == Token.SWITCH);
+  Preconditions.checkState(n.isSwitch());
   Node lastNonRemovable=n.getFirstChild();
   for (Node c=n.getFirstChild().getNext(); c != null; c=c.getNext()) {
-    if (c.getType() == Token.DEFAULT) {
+    if (c.isDefault()) {
       Node caseToRemove=lastNonRemovable.getNext();
       for (Node next; caseToRemove != c; caseToRemove=next) {
         next=caseToRemove.getNext();
@@ -16,7 +16,7 @@
       return c;
     }
  else {
-      Preconditions.checkState(c.getType() == Token.CASE);
+      Preconditions.checkState(c.isCase());
       if (c.getLastChild().hasChildren() || mayHaveSideEffects(c.getFirstChild())) {
         lastNonRemovable=c;
       }

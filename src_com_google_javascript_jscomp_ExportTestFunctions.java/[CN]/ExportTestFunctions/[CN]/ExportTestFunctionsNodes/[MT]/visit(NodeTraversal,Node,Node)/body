@@ -2,7 +2,7 @@
   if (parent == null) {
     return;
   }
-  if (parent.getType() == Token.SCRIPT) {
+  if (parent.isScript()) {
     if (NodeUtil.isFunctionDeclaration(n)) {
       String functionName=NodeUtil.getFunctionName(n);
       if (isTestFunction(n,functionName)) {
@@ -19,7 +19,7 @@
   }
  else   if (NodeUtil.isExprAssign(parent) && n.getLastChild().getType() != Token.ASSIGN) {
     Node grandparent=parent.getParent();
-    if (grandparent != null && grandparent.getType() == Token.SCRIPT) {
+    if (grandparent != null && grandparent.isScript()) {
       String functionName=n.getFirstChild().getQualifiedName();
       if (isTestFunction(n,functionName)) {
         exportTestFunctionAsProperty(functionName,parent,n,grandparent);

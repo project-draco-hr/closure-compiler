@@ -5,7 +5,7 @@
   for (Node key=objlit.getFirstChild(), nextKey; key != null; key=nextKey) {
     Node value=key.getFirstChild();
     nextKey=key.getNext();
-    if (key.getType() == Token.GET || key.getType() == Token.SET) {
+    if (key.isGet() || key.isSet()) {
       continue;
     }
     boolean isJsIdentifier=key.getType() != Token.NUMBER && TokenStream.isJSIdentifier(key.getString());
@@ -49,7 +49,7 @@
         p.addRef(newAlias);
       }
       p.getDeclaration().node=nameNode;
-      if (value.getType() == Token.FUNCTION) {
+      if (value.isFunction()) {
         checkForHosedThisReferences(value,value.getJSDocInfo(),p);
       }
     }

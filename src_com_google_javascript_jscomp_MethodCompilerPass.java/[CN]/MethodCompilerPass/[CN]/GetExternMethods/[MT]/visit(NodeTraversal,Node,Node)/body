@@ -8,7 +8,7 @@ case Token.GETELEM:
         return;
       }
       String name=dest.getString();
-      if (parent.getType() == Token.ASSIGN && parent.getFirstChild() == n && n.getNext().getType() == Token.FUNCTION) {
+      if (parent.isAssign() && parent.getFirstChild() == n && n.getNext().isFunction()) {
         addSignature(name,n.getNext(),t.getSourceName());
       }
  else {
@@ -23,7 +23,7 @@ case Token.OBJECTLIT:
   for (Node key=n.getFirstChild(); key != null; key=key.getNext()) {
     Node value=key.getFirstChild();
     String name=key.getString();
-    if (key.getType() == Token.STRING && value.getType() == Token.FUNCTION) {
+    if (key.isString() && value.isFunction()) {
       addSignature(name,value,t.getSourceName());
     }
  else {

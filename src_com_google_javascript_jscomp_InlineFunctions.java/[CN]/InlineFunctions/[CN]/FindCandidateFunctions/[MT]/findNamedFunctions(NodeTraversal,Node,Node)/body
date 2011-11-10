@@ -6,12 +6,12 @@ switch (n.getType()) {
 case Token.VAR:
     Preconditions.checkState(n.hasOneChild());
   Node nameNode=n.getFirstChild();
-if (nameNode.getType() == Token.NAME && nameNode.hasChildren() && nameNode.getFirstChild().getType() == Token.FUNCTION) {
+if (nameNode.isName() && nameNode.hasChildren() && nameNode.getFirstChild().isFunction()) {
   maybeAddFunction(new FunctionVar(n),t.getModule());
 }
 break;
 case Token.FUNCTION:
-Preconditions.checkState(NodeUtil.isStatementBlock(parent) || parent.getType() == Token.LABEL);
+Preconditions.checkState(NodeUtil.isStatementBlock(parent) || parent.isLabel());
 if (!NodeUtil.isFunctionExpression(n)) {
 Function fn=new NamedFunction(n);
 maybeAddFunction(fn,t.getModule());

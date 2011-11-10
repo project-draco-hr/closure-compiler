@@ -4,7 +4,7 @@
     compiler.reportCodeChange();
     return;
   }
-  if (n.getType() == Token.IF) {
+  if (n.isIf()) {
     Node ifBlock=n.getFirstChild().getNext();
     tryMinimizeExits(ifBlock,exitType,labelName);
     Node elseBlock=ifBlock.getNext();
@@ -13,7 +13,7 @@
     }
     return;
   }
-  if (n.getType() == Token.TRY) {
+  if (n.isTry()) {
     Node tryBlock=n.getFirstChild();
     tryMinimizeExits(tryBlock,exitType,labelName);
     Node allCatchNodes=NodeUtil.getCatchBlock(n);
@@ -28,7 +28,7 @@
       tryMinimizeExits(finallyBlock,exitType,labelName);
     }
   }
-  if (n.getType() == Token.LABEL) {
+  if (n.isLabel()) {
     Node labelBlock=n.getLastChild();
     tryMinimizeExits(labelBlock,exitType,labelName);
   }
@@ -36,7 +36,7 @@
     return;
   }
   for (  Node c : n.children()) {
-    if (c.getType() == Token.IF) {
+    if (c.isIf()) {
       Node ifTree=c;
       Node trueBlock, falseBlock;
       trueBlock=ifTree.getFirstChild().getNext();

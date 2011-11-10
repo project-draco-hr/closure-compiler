@@ -3,19 +3,19 @@ switch (n.getType()) {
 case Token.CALL:
     Node child=n.getFirstChild();
   String name=null;
-if (child.getType() == Token.NAME) {
+if (child.isName()) {
   name=child.getString();
 }
- else if (child.getType() == Token.FUNCTION) {
+ else if (child.isFunction()) {
   name=anonFunctionMap.get(child);
 }
  else if (NodeUtil.isFunctionObjectCall(n)) {
   Preconditions.checkState(NodeUtil.isGet(child));
   Node fnIdentifingNode=child.getFirstChild();
-  if (fnIdentifingNode.getType() == Token.NAME) {
+  if (fnIdentifingNode.isName()) {
     name=fnIdentifingNode.getString();
   }
- else   if (fnIdentifingNode.getType() == Token.FUNCTION) {
+ else   if (fnIdentifingNode.isFunction()) {
     name=anonFunctionMap.get(fnIdentifingNode);
   }
 }

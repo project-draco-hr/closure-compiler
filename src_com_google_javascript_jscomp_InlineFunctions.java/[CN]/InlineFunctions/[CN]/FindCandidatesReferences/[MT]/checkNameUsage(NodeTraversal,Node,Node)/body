@@ -1,5 +1,5 @@
 {
-  Preconditions.checkState(n.getType() == Token.NAME);
+  Preconditions.checkState(n.isName());
   if (isCandidateUsage(n)) {
     return;
   }
@@ -8,13 +8,13 @@
   if (fs == null) {
     return;
   }
-  if (parent.getType() == Token.NEW) {
+  if (parent.isNew()) {
     Node target=parent.getFirstChild();
-    if (target.getType() == Token.NAME && target.getString().equals(ObjectPropertyStringPreprocess.EXTERN_OBJECT_PROPERTY_STRING)) {
+    if (target.isName() && target.getString().equals(ObjectPropertyStringPreprocess.EXTERN_OBJECT_PROPERTY_STRING)) {
       fs.setInline(false);
     }
   }
-  if (parent.getType() == Token.ASSIGN && parent.getFirstChild() == n) {
+  if (parent.isAssign() && parent.getFirstChild() == n) {
     fs.setInline(false);
   }
  else {

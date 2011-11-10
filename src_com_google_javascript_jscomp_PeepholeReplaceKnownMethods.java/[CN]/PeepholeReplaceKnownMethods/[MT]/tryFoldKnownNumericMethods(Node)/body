@@ -1,5 +1,5 @@
 {
-  Preconditions.checkArgument(subtree.getType() == Token.CALL);
+  Preconditions.checkArgument(subtree.isCall());
   if (isASTNormalized()) {
     Node callTarget=subtree.getFirstChild();
     if (!callTarget.isName()) {
@@ -7,7 +7,7 @@
     }
     String functionNameString=callTarget.getString();
     Node firstArgument=callTarget.getNext();
-    if ((firstArgument != null) && (firstArgument.getType() == Token.STRING || firstArgument.getType() == Token.NUMBER)) {
+    if ((firstArgument != null) && (firstArgument.isString() || firstArgument.isNumber())) {
       if (functionNameString.equals("parseInt") || functionNameString.equals("parseFloat")) {
         subtree=tryFoldParseNumber(subtree,functionNameString,firstArgument);
       }

@@ -14,10 +14,10 @@ case ON_TRUE:
         Node item=source.getFirstChild();
         Node obj=item.getNext();
         FlowScope informed=traverse(obj,output.createChildFlowScope());
-        if (item.getType() == Token.VAR) {
+        if (item.isVar()) {
           item=item.getFirstChild();
         }
-        if (item.getType() == Token.NAME) {
+        if (item.isName()) {
           JSType iterKeyType=getNativeType(STRING_TYPE);
           ObjectType objType=getJSType(obj).dereference();
           JSType objIndexType=objType == null ? null : objType.getIndexType();
@@ -35,7 +35,7 @@ case ON_TRUE:
 case ON_FALSE:
     if (condition == null) {
       condition=NodeUtil.getConditionExpression(source);
-      if (condition == null && source.getType() == Token.CASE) {
+      if (condition == null && source.isCase()) {
         condition=source;
         if (conditionFlowScope == null) {
           conditionFlowScope=traverse(condition.getFirstChild(),output.createChildFlowScope());
@@ -43,9 +43,9 @@ case ON_FALSE:
       }
     }
   if (condition != null) {
-    if (condition.getType() == Token.AND || condition.getType() == Token.OR) {
+    if (condition.isAnd() || condition.isOr()) {
       if (conditionOutcomes == null) {
-        conditionOutcomes=condition.getType() == Token.AND ? traverseAnd(condition,output.createChildFlowScope()) : traverseOr(condition,output.createChildFlowScope());
+        conditionOutcomes=condition.isAnd() ? traverseAnd(condition,output.createChildFlowScope()) : traverseOr(condition,output.createChildFlowScope());
       }
       newScope=reverseInterpreter.getPreciserScopeKnowingConditionOutcome(condition,conditionOutcomes.getOutcomeFlowScope(condition.getType(),branch == Branch.ON_TRUE),branch == Branch.ON_TRUE);
     }

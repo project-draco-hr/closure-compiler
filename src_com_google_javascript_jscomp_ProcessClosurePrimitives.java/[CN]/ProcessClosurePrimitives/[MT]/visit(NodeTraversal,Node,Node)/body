@@ -1,11 +1,11 @@
 {
 switch (n.getType()) {
 case Token.CALL:
-    boolean isExpr=parent.getType() == Token.EXPR_RESULT;
+    boolean isExpr=parent.isExprResult();
   Node left=n.getFirstChild();
-if (left.getType() == Token.GETPROP) {
+if (left.isGetProp()) {
   Node name=left.getFirstChild();
-  if (name.getType() == Token.NAME && GOOG.equals(name.getString())) {
+  if (name.isName() && GOOG.equals(name.getString())) {
     String methodName=name.getNext().getString();
     if ("base".equals(methodName)) {
       processBaseClassCall(t,n);
@@ -21,7 +21,7 @@ if (left.getType() == Token.GETPROP) {
     }
  else     if ("exportSymbol".equals(methodName)) {
       Node arg=left.getNext();
-      if (arg.getType() == Token.STRING) {
+      if (arg.isString()) {
         int dot=arg.getString().indexOf('.');
         if (dot == -1) {
           exportedVariables.add(arg.getString());
@@ -68,7 +68,7 @@ case Token.NEW:
 trySimplifyNewDate(t,n,parent);
 break;
 case Token.GETPROP:
-if (n.getFirstChild().getType() == Token.NAME && parent.getType() != Token.CALL && parent.getType() != Token.ASSIGN && "goog.base".equals(n.getQualifiedName())) {
+if (n.getFirstChild().isName() && parent.getType() != Token.CALL && parent.getType() != Token.ASSIGN && "goog.base".equals(n.getQualifiedName())) {
 reportBadBaseClassUse(t,n,"May only be called directly.");
 }
 break;

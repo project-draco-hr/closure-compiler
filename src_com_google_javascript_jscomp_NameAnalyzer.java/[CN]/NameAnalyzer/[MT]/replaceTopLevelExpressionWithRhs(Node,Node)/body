@@ -14,7 +14,7 @@ case Token.FUNCTION:
 case Token.VAR:
 break;
 case Token.ASSIGN:
-Preconditions.checkArgument(parent.getType() == Token.FOR,"Unsupported assignment in replaceWithRhs. parent: %s",Token.name(parent.getType()));
+Preconditions.checkArgument(parent.isFor(),"Unsupported assignment in replaceWithRhs. parent: %s",Token.name(parent.getType()));
 break;
 default :
 throw new IllegalArgumentException("Unsupported node type in replaceWithRhs " + Token.name(n.getType()));
@@ -23,7 +23,7 @@ List<Node> replacements=Lists.newArrayList();
 for (Node rhs : getRhsSubexpressions(n)) {
 replacements.addAll(getSideEffectNodes(rhs));
 }
-if (parent.getType() == Token.FOR) {
+if (parent.isFor()) {
 if (replacements.isEmpty()) {
 replacements.add(new Node(Token.EMPTY));
 }

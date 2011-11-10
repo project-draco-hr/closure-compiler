@@ -12,7 +12,7 @@
       if (isPropertyAssignmentInExpression(expr)) {
         return n;
       }
-      if (cond.getType() == Token.NOT) {
+      if (cond.isNot()) {
         if (isLowerPrecedenceInExpression(cond,OR_PRECEDENCE) && isLowerPrecedenceInExpression(expr.getFirstChild(),OR_PRECEDENCE)) {
           return n;
         }
@@ -35,7 +35,7 @@
  else {
       if (NodeUtil.isStatementBlock(thenBranch) && thenBranch.hasOneChild()) {
         Node innerIf=thenBranch.getFirstChild();
-        if (innerIf.getType() == Token.IF) {
+        if (innerIf.isIf()) {
           Node innerCond=innerIf.getFirstChild();
           Node innerThenBranch=innerCond.getNext();
           Node innerElseBranch=innerThenBranch.getNext();
@@ -52,7 +52,7 @@
     return n;
   }
   tryRemoveRepeatedStatements(n);
-  if (cond.getType() == Token.NOT && !consumesDanglingElse(elseBranch)) {
+  if (cond.isNot() && !consumesDanglingElse(elseBranch)) {
     n.replaceChild(cond,cond.removeFirstChild());
     n.removeChild(thenBranch);
     n.addChildToBack(thenBranch);
@@ -110,7 +110,7 @@
     Node elseAssign=getBlockExpression(elseBranch).getFirstChild();
     Node name1=var.getFirstChild();
     Node maybeName2=elseAssign.getFirstChild();
-    if (name1.hasChildren() && maybeName2.getType() == Token.NAME && name1.getString().equals(maybeName2.getString())) {
+    if (name1.hasChildren() && maybeName2.isName() && name1.getString().equals(maybeName2.getString())) {
       Node thenExpr=name1.removeChildren();
       Node elseExpr=elseAssign.getLastChild().detachFromParent();
       cond.detachFromParent();
@@ -127,7 +127,7 @@
     Node thenAssign=getBlockExpression(thenBranch).getFirstChild();
     Node maybeName1=thenAssign.getFirstChild();
     Node name2=var.getFirstChild();
-    if (name2.hasChildren() && maybeName1.getType() == Token.NAME && maybeName1.getString().equals(name2.getString())) {
+    if (name2.hasChildren() && maybeName1.isName() && maybeName1.getString().equals(name2.getString())) {
       Node thenExpr=thenAssign.getLastChild().detachFromParent();
       Node elseExpr=name2.removeChildren();
       cond.detachFromParent();

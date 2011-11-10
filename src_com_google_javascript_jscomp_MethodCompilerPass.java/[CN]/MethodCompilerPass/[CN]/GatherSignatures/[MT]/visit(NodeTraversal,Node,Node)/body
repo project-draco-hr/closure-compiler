@@ -3,12 +3,12 @@ switch (n.getType()) {
 case Token.GETPROP:
 case Token.GETELEM:
     Node dest=n.getFirstChild().getNext();
-  if (dest.getType() == Token.STRING) {
+  if (dest.isString()) {
     if (dest.getString().equals("prototype")) {
       processPrototypeParent(t,parent);
     }
  else {
-      if (parent.getType() == Token.ASSIGN && parent.getFirstChild() == n) {
+      if (parent.isAssign() && parent.getFirstChild() == n) {
         addPossibleSignature(dest.getString(),n.getNext(),t);
       }
     }

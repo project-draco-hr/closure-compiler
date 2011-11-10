@@ -1,15 +1,15 @@
 {
   Node parent=name.getParent();
-  Preconditions.checkState(name.getType() == Token.NAME);
-  if (parent.getType() == Token.VAR || parent.getType() == Token.FUNCTION) {
+  Preconditions.checkState(name.isName());
+  if (parent.isVar() || parent.isFunction()) {
     return true;
   }
-  if (parent.getType() == Token.CALL && parent.getFirstChild() == name) {
+  if (parent.isCall() && parent.getFirstChild() == name) {
     return true;
   }
-  if (NodeUtil.isGet(parent) && name == parent.getFirstChild() && name.getNext().getType() == Token.STRING && name.getNext().getString().equals("call")) {
+  if (NodeUtil.isGet(parent) && name == parent.getFirstChild() && name.getNext().isString() && name.getNext().getString().equals("call")) {
     Node gramps=name.getAncestor(2);
-    if (gramps.getType() == Token.CALL && gramps.getFirstChild() == parent) {
+    if (gramps.isCall() && gramps.getFirstChild() == parent) {
       return true;
     }
   }

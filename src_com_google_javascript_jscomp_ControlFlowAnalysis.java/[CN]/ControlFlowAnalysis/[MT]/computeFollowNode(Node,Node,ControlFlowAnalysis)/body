@@ -1,6 +1,6 @@
 {
   Node parent=node.getParent();
-  if (parent == null || parent.getType() == Token.FUNCTION || (cfa != null && node == cfa.root)) {
+  if (parent == null || parent.isFunction() || (cfa != null && node == cfa.root)) {
     return null;
   }
 switch (parent.getType()) {
@@ -9,10 +9,10 @@ case Token.IF:
 case Token.CASE:
 case Token.DEFAULT:
   if (parent.getNext() != null) {
-    if (parent.getNext().getType() == Token.CASE) {
+    if (parent.getNext().isCase()) {
       return parent.getNext().getFirstChild().getNext();
     }
- else     if (parent.getNext().getType() == Token.DEFAULT) {
+ else     if (parent.getNext().isDefault()) {
       return parent.getNext().getFirstChild();
     }
  else {
@@ -60,7 +60,7 @@ return computeFollowNode(fromNode,parent,cfa);
 }
 }
 Node nextSibling=node.getNext();
-while (nextSibling != null && nextSibling.getType() == Token.FUNCTION) {
+while (nextSibling != null && nextSibling.isFunction()) {
 nextSibling=nextSibling.getNext();
 }
 if (nextSibling != null) {

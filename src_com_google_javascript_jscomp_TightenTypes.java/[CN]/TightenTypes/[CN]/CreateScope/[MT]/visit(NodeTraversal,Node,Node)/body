@@ -46,7 +46,7 @@ case Token.ASSIGN:
 Node lhs=n.getFirstChild();
 if (inExterns) {
 ConcreteScope scope;
-if (lhs.getType() == Token.GETPROP) {
+if (lhs.isGetProp()) {
 ConcreteType type=inferConcreteType(getTopScope(),lhs.getFirstChild());
 scope=(ConcreteScope)type.getScope();
 }
@@ -81,10 +81,10 @@ break;
 case Token.NEW:
 case Token.CALL:
 Node receiver=n.getFirstChild();
-if (receiver.getType() == Token.GETPROP) {
+if (receiver.isGetProp()) {
 Node first=receiver.getFirstChild();
 if ("call".equals(first.getNext().getString())) {
-if (first.getType() == Token.GETPROP) {
+if (first.isGetProp()) {
 addAction(new FunctionCallBuilder(first,receiver.getNext()).setPropName(first.getFirstChild().getNext().getString()).setIsCallFunction().build());
 }
  else {
@@ -96,11 +96,11 @@ addAction(new FunctionCallBuilder(first,receiver.getNext()).setPropName(first.ge
 }
 }
  else {
-addAction(new FunctionCallBuilder(receiver,receiver.getNext()).setIsNewCall(n.getType() == Token.NEW).build());
+addAction(new FunctionCallBuilder(receiver,receiver.getNext()).setIsNewCall(n.isNew()).build());
 }
 break;
 case Token.NAME:
-if (parent.getType() == Token.CATCH && parent.getFirstChild() == n) {
+if (parent.isCatch() && parent.getFirstChild() == n) {
 scope.declareSlot(n.getString(),n,createUnionWithSubTypes(createType(getTypeRegistry().getType("Error")).toInstance()));
 }
 break;

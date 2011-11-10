@@ -1,6 +1,6 @@
 {
-  boolean isCallTarget=(parent.getType() == Token.CALL) && (parent.getFirstChild() == getPropNode);
+  boolean isCallTarget=(parent.isCall()) && (parent.getFirstChild() == getPropNode);
   boolean isAssignTarget=NodeUtil.isAssignmentOp(parent) && (parent.getFirstChild() == getPropNode);
-  boolean isIncOrDec=(parent.getType() == Token.INC) || (parent.getType() == Token.DEC);
-  return (propNameNode.getType() == Token.STRING) && !isAssignTarget && (!isCallTarget || !"eval".equals(propNameNode.getString()))&& !isIncOrDec&& props.containsKey(propNameNode.getString());
+  boolean isIncOrDec=(parent.isInc()) || (parent.isDec());
+  return (propNameNode.isString()) && !isAssignTarget && (!isCallTarget || !"eval".equals(propNameNode.getString()))&& !isIncOrDec&& props.containsKey(propNameNode.getString());
 }

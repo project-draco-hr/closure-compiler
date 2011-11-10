@@ -1,9 +1,9 @@
 {
   Preconditions.checkArgument(!variableName.isEmpty());
-  boolean isGlobalVar=n.getType() == Token.NAME && scope.isGlobal();
-  boolean shouldDeclareOnGlobalThis=isGlobalVar && (parent.getType() == Token.VAR || parent.getType() == Token.FUNCTION);
+  boolean isGlobalVar=n.isName() && scope.isGlobal();
+  boolean shouldDeclareOnGlobalThis=isGlobalVar && (parent.isVar() || parent.isFunction());
   Scope scopeToDeclareIn=scope;
-  if (n.getType() == Token.GETPROP && !scope.isGlobal() && isQnameRootedInGlobalScope(n)) {
+  if (n.isGetProp() && !scope.isGlobal() && isQnameRootedInGlobalScope(n)) {
     Scope globalScope=scope.getGlobalScope();
     if (!globalScope.isDeclared(variableName,false)) {
       scopeToDeclareIn=scope.getGlobalScope();
@@ -22,7 +22,7 @@
     Var newVar=scopeToDeclareIn.declare(variableName,n,type,input,inferred);
     if (type instanceof EnumType) {
       Node initialValue=newVar.getInitialValue();
-      boolean isValidValue=initialValue != null && (initialValue.getType() == Token.OBJECTLIT || initialValue.isQualifiedName());
+      boolean isValidValue=initialValue != null && (initialValue.isObjectLit() || initialValue.isQualifiedName());
       if (!isValidValue) {
         compiler.report(JSError.make(sourceName,n,ENUM_INITIALIZER));
       }

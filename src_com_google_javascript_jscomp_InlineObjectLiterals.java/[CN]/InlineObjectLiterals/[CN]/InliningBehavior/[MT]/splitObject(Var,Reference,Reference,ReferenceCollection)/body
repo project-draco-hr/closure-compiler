@@ -2,7 +2,7 @@
   Map<String,String> varmap=computeVarList(v,referenceInfo);
   Map<String,Node> initvals=Maps.newHashMap();
   Node vnode;
-  boolean defined=referenceInfo.isWellDefined() && init.getParent().getType() == Token.VAR;
+  boolean defined=referenceInfo.isWellDefined() && init.getParent().isVar();
   if (defined) {
     vnode=init.getParent();
     fillInitialValues(init,initvals);
@@ -29,12 +29,12 @@
     if (ref.isLvalue()) {
       replaceAssignmentExpression(v,ref,varmap);
     }
- else     if (ref.getParent().getType() == Token.VAR) {
+ else     if (ref.getParent().isVar()) {
       ref.getGrandparent().removeChild(ref.getParent());
     }
  else {
       Node getprop=ref.getParent();
-      Preconditions.checkState(getprop.getType() == Token.GETPROP);
+      Preconditions.checkState(getprop.isGetProp());
       String var=getprop.getChildAtIndex(1).getString();
       Preconditions.checkState(varmap.containsKey(var));
       Node replacement=Node.newString(Token.NAME,varmap.get(var));

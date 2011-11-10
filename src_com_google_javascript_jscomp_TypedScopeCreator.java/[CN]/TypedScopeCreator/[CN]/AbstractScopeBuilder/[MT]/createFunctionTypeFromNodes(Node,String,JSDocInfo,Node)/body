@@ -14,7 +14,7 @@
   }
   if (functionType == null) {
     Node errorRoot=rValue == null ? lvalueNode : rValue;
-    boolean isFnLiteral=rValue != null && rValue.getType() == Token.FUNCTION;
+    boolean isFnLiteral=rValue != null && rValue.isFunction();
     Node fnRoot=isFnLiteral ? rValue : null;
     Node parametersNode=isFnLiteral ? rValue.getFirstChild().getNext() : null;
     Node fnBlock=isFnLiteral ? parametersNode.getNext() : null;
@@ -51,7 +51,7 @@
         builder.inferThisType(info,ownerType.getOwnerFunction().getInstanceType());
         searchedForThisType=true;
       }
- else       if (ownerNode != null && ownerNode.getType() == Token.THIS) {
+ else       if (ownerNode != null && ownerNode.isThis()) {
         builder.inferThisType(info,ownerNode.getJSType());
         searchedForThisType=true;
       }

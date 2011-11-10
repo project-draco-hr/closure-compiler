@@ -2,7 +2,7 @@
   if (parent == null) {
     return true;
   }
-  if (n.getType() == Token.FOR) {
+  if (n.isFor()) {
     if (!NodeUtil.isForIn(n)) {
       Node decl=n.getFirstChild();
       Node pred=decl.getNext();
@@ -18,13 +18,13 @@
       addAllChildren(iter);
     }
   }
-  if (parent.getType() == Token.VAR || parent.getType() == Token.EXPR_RESULT || parent.getType() == Token.RETURN || parent.getType() == Token.THROW) {
+  if (parent.isVar() || parent.isExprResult() || parent.isReturn()|| parent.isThrow()) {
     addSimplifiedExpression(n,parent);
   }
-  if ((parent.getType() == Token.IF || parent.getType() == Token.WHILE || parent.getType() == Token.WITH || parent.getType() == Token.SWITCH || parent.getType() == Token.CASE) && parent.getFirstChild() == n) {
+  if ((parent.isIf() || parent.getType() == Token.WHILE || parent.getType() == Token.WITH || parent.isSwitch() || parent.isCase()) && parent.getFirstChild() == n) {
     addAllChildren(n);
   }
-  if (parent.getType() == Token.DO && parent.getLastChild() == n) {
+  if (parent.isDo() && parent.getLastChild() == n) {
     addAllChildren(n);
   }
   return true;

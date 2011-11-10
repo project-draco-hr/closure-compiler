@@ -1,10 +1,10 @@
 {
   Iterator<Node> it;
-  if (initialization.getParent().getType() == Token.VAR) {
+  if (initialization.getParent().isVar()) {
     it=NodeIterators.LocalVarMotion.forVar(initialization.getNode(),initialization.getParent(),initialization.getGrandparent());
   }
- else   if (initialization.getParent().getType() == Token.ASSIGN) {
-    Preconditions.checkState(initialization.getGrandparent().getType() == Token.EXPR_RESULT);
+ else   if (initialization.getParent().isAssign()) {
+    Preconditions.checkState(initialization.getGrandparent().isExprResult());
     it=NodeIterators.LocalVarMotion.forAssign(initialization.getNode(),initialization.getParent(),initialization.getGrandparent(),initialization.getGrandparent().getParent());
   }
  else {

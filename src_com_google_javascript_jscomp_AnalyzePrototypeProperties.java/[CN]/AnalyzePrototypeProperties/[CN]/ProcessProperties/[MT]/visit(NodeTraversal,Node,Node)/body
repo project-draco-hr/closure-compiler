@@ -1,5 +1,5 @@
 {
-  if (n.getType() == Token.GETPROP) {
+  if (n.isGetProp()) {
     String propName=n.getFirstChild().getNext().getString();
     if (propName.equals("prototype")) {
       processPrototypeParent(t,parent);
@@ -11,19 +11,19 @@
       addSymbolUse(propName,t.getModule(),PROPERTY);
     }
   }
- else   if (n.getType() == Token.OBJECTLIT && !(parent.getType() == Token.ASSIGN && parent.getFirstChild().getType() == Token.GETPROP && parent.getFirstChild().getLastChild().getString().equals("prototype"))) {
+ else   if (n.isObjectLit() && !(parent.isAssign() && parent.getFirstChild().isGetProp() && parent.getFirstChild().getLastChild().getString().equals("prototype"))) {
     for (Node propNameNode=n.getFirstChild(); propNameNode != null; propNameNode=propNameNode.getNext()) {
       if (!propNameNode.isQuotedString()) {
         addSymbolUse(propNameNode.getString(),t.getModule(),PROPERTY);
       }
     }
   }
- else   if (n.getType() == Token.NAME) {
+ else   if (n.isName()) {
     String name=n.getString();
     Var var=t.getScope().getVar(name);
     if (var != null) {
       if (var.isGlobal()) {
-        if (var.getInitialValue() != null && var.getInitialValue().getType() == Token.FUNCTION) {
+        if (var.getInitialValue() != null && var.getInitialValue().isFunction()) {
           if (t.inGlobalScope()) {
             if (!processGlobalFunctionDeclaration(t,n,parent,parent.getParent())) {
               addGlobalUseOfSymbol(name,t.getModule(),VAR);

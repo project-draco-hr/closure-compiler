@@ -1,8 +1,8 @@
 {
-  Preconditions.checkState(n.getType() == Token.NAME || n.getType() == Token.STRING || n.getType() == Token.GET || n.getType() == Token.SET);
+  Preconditions.checkState(n.isName() || n.isString() || n.isGet()|| n.isSet());
   boolean isObjLitKey=NodeUtil.isObjectLitKey(n,parent);
-  boolean isProperty=isObjLitKey || (parent.getType() == Token.GETPROP && parent.getLastChild() == n);
-  if (n.getType() == Token.NAME || isProperty) {
+  boolean isProperty=isObjLitKey || (parent.isGetProp() && parent.getLastChild() == n);
+  if (n.isName() || isProperty) {
     boolean isMarkedConstant=n.getBooleanProp(Node.IS_CONSTANT_NAME);
     if (!isMarkedConstant && NodeUtil.isConstantByConvention(compiler.getCodingConvention(),n,parent)) {
       if (assertOnChange) {

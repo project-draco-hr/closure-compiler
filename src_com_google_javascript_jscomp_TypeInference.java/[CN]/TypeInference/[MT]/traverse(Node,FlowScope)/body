@@ -100,7 +100,7 @@ scope=traverseGetElem(n,scope);
 break;
 case Token.EXPR_RESULT:
 scope=traverseChildren(n,scope);
-if (n.getFirstChild().getType() == Token.GETPROP) {
+if (n.getFirstChild().isGetProp()) {
 ensurePropertyDeclared(n.getFirstChild());
 }
 break;
@@ -120,7 +120,7 @@ if (n.getType() != Token.FUNCTION) {
 JSDocInfo info=n.getJSDocInfo();
 if (info != null && info.hasType()) {
 JSType castType=info.getType().evaluate(syntacticScope,registry);
-if (n.isQualifiedName() && n.getParent().getType() == Token.EXPR_RESULT) {
+if (n.isQualifiedName() && n.getParent().isExprResult()) {
 updateScopeForTypeChange(scope,n,n.getJSType(),castType);
 }
 n.setJSType(castType);

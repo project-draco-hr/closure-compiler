@@ -1,14 +1,14 @@
 {
   Node parent=n.getParent();
-  if (parent != null && (parent.getType() == Token.BLOCK || parent.getType() == Token.SCRIPT)) {
-    if (n.getType() == Token.FUNCTION) {
+  if (parent != null && (parent.isBlock() || parent.isScript())) {
+    if (n.isFunction()) {
       add(getFunctionAnnotation(n));
     }
- else     if (n.getType() == Token.EXPR_RESULT && n.getFirstChild().getType() == Token.ASSIGN) {
+ else     if (n.isExprResult() && n.getFirstChild().isAssign()) {
       Node rhs=n.getFirstChild().getLastChild();
       add(getTypeAnnotation(rhs));
     }
- else     if (n.getType() == Token.VAR && n.getFirstChild().getFirstChild() != null && n.getFirstChild().getFirstChild().getType() == Token.FUNCTION) {
+ else     if (n.isVar() && n.getFirstChild().getFirstChild() != null && n.getFirstChild().getFirstChild().isFunction()) {
       add(getFunctionAnnotation(n.getFirstChild().getFirstChild()));
     }
   }

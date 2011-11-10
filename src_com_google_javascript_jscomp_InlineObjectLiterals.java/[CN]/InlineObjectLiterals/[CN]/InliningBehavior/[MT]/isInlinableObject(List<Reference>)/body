@@ -4,9 +4,9 @@
     Node name=ref.getNode();
     Node parent=ref.getParent();
     Node gramps=ref.getGrandparent();
-    if (parent.getType() == Token.GETPROP) {
+    if (parent.isGetProp()) {
       Preconditions.checkState(parent.getFirstChild() == name);
-      if (gramps.getType() == Token.CALL && gramps.getFirstChild() == parent) {
+      if (gramps.isCall() && gramps.getFirstChild() == parent) {
         return false;
       }
       continue;
@@ -22,7 +22,7 @@
       return false;
     }
     for (Node child=val.getFirstChild(); child != null; child=child.getNext()) {
-      if (child.getType() == Token.GET || child.getType() == Token.SET) {
+      if (child.isGet() || child.isSet()) {
         return false;
       }
       Node childVal=child.getFirstChild();

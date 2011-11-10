@@ -3,13 +3,13 @@
     return;
   }
   Node grandparent=parent.getParent();
-  if (!(parent.getType() == Token.SCRIPT || grandparent != null && grandparent.getType() == Token.FUNCTION && parent.getType() == Token.BLOCK)) {
+  if (!(parent.isScript() || grandparent != null && grandparent.isFunction() && parent.isBlock())) {
     return;
   }
   Preconditions.checkState(n.hasOneChild());
   Node name=n.getFirstChild();
   Node value=name.getFirstChild();
-  if (value != null && value.getType() == Token.FUNCTION && !isRecursiveFunction(value)) {
+  if (value != null && value.isFunction() && !isRecursiveFunction(value)) {
     Node fnName=value.getFirstChild();
     fnName.setString(name.getString());
     NodeUtil.copyNameAnnotations(name,fnName);

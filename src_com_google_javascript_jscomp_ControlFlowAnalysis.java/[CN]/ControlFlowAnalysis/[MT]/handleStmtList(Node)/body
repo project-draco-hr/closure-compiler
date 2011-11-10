@@ -1,10 +1,10 @@
 {
   Node parent=node.getParent();
-  if (node.getType() == Token.BLOCK && parent != null && parent.getType() == Token.TRY && NodeUtil.getCatchBlock(parent) == node && !NodeUtil.hasCatchHandler(node)) {
+  if (node.isBlock() && parent != null && parent.isTry() && NodeUtil.getCatchBlock(parent) == node && !NodeUtil.hasCatchHandler(node)) {
     return;
   }
   Node child=node.getFirstChild();
-  while (child != null && child.getType() == Token.FUNCTION) {
+  while (child != null && child.isFunction()) {
     child=child.getNext();
   }
   if (child != null) {
@@ -20,7 +20,7 @@ case Token.CASE:
 case Token.TRY:
       break;
 default :
-    if (node.getType() == Token.BLOCK && node.isSyntheticBlock()) {
+    if (node.isBlock() && node.isSyntheticBlock()) {
       createEdge(node,Branch.SYN_BLOCK,computeFollowNode(node,this));
     }
   break;

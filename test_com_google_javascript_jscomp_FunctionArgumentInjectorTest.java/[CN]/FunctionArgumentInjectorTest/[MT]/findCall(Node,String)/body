@@ -1,15 +1,15 @@
 {
-  if (n.getType() == Token.CALL) {
+  if (n.isCall()) {
     Node callee;
     if (NodeUtil.isGet(n.getFirstChild())) {
       callee=n.getFirstChild().getFirstChild();
       Node prop=callee.getNext();
-      Preconditions.checkArgument(prop.getType() == Token.STRING && prop.getString().equals("call"));
+      Preconditions.checkArgument(prop.isString() && prop.getString().equals("call"));
     }
  else {
       callee=n.getFirstChild();
     }
-    if (callee.getType() == Token.NAME && callee.getString().equals(name)) {
+    if (callee.isName() && callee.getString().equals(name)) {
       return n;
     }
   }

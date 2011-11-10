@@ -15,9 +15,9 @@ case Token.ASSIGN:
 case Token.GETPROP:
 Node child=name;
 for (Node current : name.getAncestors()) {
-if (current.getType() == Token.GETPROP) {
+if (current.isGetProp()) {
 }
- else if (current.getType() == Token.ASSIGN && current.getFirstChild() == child) {
+ else if (current.isAssign() && current.getFirstChild() == child) {
 Node currentParent=current.getParent();
 if (NodeUtil.isExpressionNode(currentParent) && canMoveValue(current.getLastChild())) {
 return info.addDeclaration(new Declaration(t.getModule(),current,currentParent,currentParent.getParent()));

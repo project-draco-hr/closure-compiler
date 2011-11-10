@@ -4,12 +4,12 @@ case Token.FUNCTION:
     Node functionNameNode=n.getFirstChild();
   String functionName=functionNameNode.getString();
 if (functionName.length() == 0) {
-  if (parent.getType() == Token.ASSIGN) {
+  if (parent.isAssign()) {
     Node lhs=parent.getFirstChild();
     String name=namer.getName(lhs);
     namer.setFunctionName(name,n);
   }
- else   if (parent.getType() == Token.NAME) {
+ else   if (parent.isName()) {
     String name=namer.getName(parent);
     namer.setFunctionName(name,n);
   }
@@ -18,7 +18,7 @@ break;
 case Token.ASSIGN:
 Node lhs=n.getFirstChild();
 Node rhs=lhs.getNext();
-if (rhs.getType() == Token.OBJECTLIT) {
+if (rhs.isObjectLit()) {
 nameObjectLiteralMethods(rhs,namer.getName(lhs));
 }
 }

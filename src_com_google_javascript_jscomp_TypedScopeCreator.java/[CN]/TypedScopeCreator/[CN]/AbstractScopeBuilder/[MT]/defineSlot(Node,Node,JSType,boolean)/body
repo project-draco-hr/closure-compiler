@@ -1,10 +1,10 @@
 {
   Preconditions.checkArgument(inferred || type != null);
-  if (n.getType() == Token.NAME) {
-    Preconditions.checkArgument(parent.getType() == Token.FUNCTION || parent.getType() == Token.VAR || parent.getType() == Token.LP || parent.getType() == Token.CATCH);
+  if (n.isName()) {
+    Preconditions.checkArgument(parent.isFunction() || parent.isVar() || parent.isLP()|| parent.isCatch());
   }
  else {
-    Preconditions.checkArgument(n.getType() == Token.GETPROP && (parent.getType() == Token.ASSIGN || parent.getType() == Token.EXPR_RESULT));
+    Preconditions.checkArgument(n.isGetProp() && (parent.isAssign() || parent.isExprResult()));
   }
   defineSlot(n,parent,n.getQualifiedName(),type,inferred);
 }

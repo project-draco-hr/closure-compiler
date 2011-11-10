@@ -4,7 +4,7 @@
   Node varNode=new Node(Token.VAR);
   Node varParent=ref.node.getAncestor(3);
   Node gramps=ref.node.getAncestor(2);
-  boolean isObjLit=rvalue.getType() == Token.OBJECTLIT;
+  boolean isObjLit=rvalue.isObjectLit();
   boolean insertedVarNode=false;
   if (isObjLit && n.canEliminate()) {
     varParent.replaceChild(gramps,varNode);
@@ -12,7 +12,7 @@
     insertedVarNode=true;
   }
  else   if (!n.isSimpleName()) {
-    if (rvalue.getType() == Token.FUNCTION) {
+    if (rvalue.isFunction()) {
       checkForHosedThisReferences(rvalue,n.docInfo,n);
     }
     ref.node.getParent().removeChild(rvalue);

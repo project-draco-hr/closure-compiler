@@ -3,7 +3,7 @@
   if (!allowNonBlockChild && n.getType() != Token.BLOCK) {
     throw new Error("Missing BLOCK child.");
   }
-  if (n.getType() == Token.BLOCK) {
+  if (n.isBlock()) {
     int count=getNonEmptyChildCount(n,2);
     if (count == 0) {
       if (cc.shouldPreserveExtraBlocks()) {
@@ -33,12 +33,12 @@
       context=Context.PRESERVE_BLOCK;
     }
   }
-  if (nodeToProcess.getType() == Token.EMPTY) {
+  if (nodeToProcess.isEmpty()) {
     cc.endStatement(true);
   }
  else {
     add(nodeToProcess,context);
-    if (nodeToProcess.getType() == Token.VAR) {
+    if (nodeToProcess.isVar()) {
       cc.endStatement();
     }
   }

@@ -1,5 +1,5 @@
 {
-  if (n.getType() == Token.NAME) {
+  if (n.isName()) {
     String name=n.getString();
     Scope.Var var=t.getScope().getVar(name);
     if (var != null && var.isLocal()) {
@@ -7,11 +7,11 @@
     }
     Symbol global=globals.get(name);
     if (global != null) {
-      if (n.getParent().getType() == Token.VAR || n.getParent().getType() == Token.FUNCTION) {
+      if (n.getParent().isVar() || n.getParent().isFunction()) {
         globals.remove(name);
       }
       boolean isFirst=parent.getFirstChild() == n;
-      if ((NodeUtil.isAssignmentOp(parent) && isFirst) || (parent.getType() == Token.NEW && isFirst) || parent.getType() == Token.INC || parent.getType() == Token.DEC) {
+      if ((NodeUtil.isAssignmentOp(parent) && isFirst) || (parent.isNew() && isFirst) || parent.isInc()|| parent.isDec()) {
         global.recordMutator(t);
       }
  else {

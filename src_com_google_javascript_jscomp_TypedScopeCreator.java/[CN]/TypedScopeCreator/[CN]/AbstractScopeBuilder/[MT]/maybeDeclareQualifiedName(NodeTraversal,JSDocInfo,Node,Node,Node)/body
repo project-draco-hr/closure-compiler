@@ -12,7 +12,7 @@
     Var qVar=scope.getVar(qName);
     if (qVar != null) {
       ObjectType qVarType=ObjectType.cast(qVar.getType());
-      if (qVarType != null && rhsValue != null && rhsValue.getType() == Token.OBJECTLIT) {
+      if (qVarType != null && rhsValue != null && rhsValue.isObjectLit()) {
         typeRegistry.resetImplicitPrototype(rhsValue.getJSType(),qVarType.getImplicitPrototype());
       }
  else       if (!qVar.isTypeInferred()) {
@@ -24,7 +24,7 @@
     }
   }
   if (valueType == null) {
-    if (parent.getType() == Token.EXPR_RESULT) {
+    if (parent.isExprResult()) {
       stubDeclarations.add(new StubDeclaration(n,t.getInput() != null && t.getInput().isExtern(),ownerName));
     }
     return;
@@ -34,7 +34,7 @@
     inferred=!(info.hasType() || info.hasEnumParameterType() || (info.isConstant() && valueType != null && !valueType.isUnknownType())|| FunctionTypeBuilder.isFunctionTypeDeclaration(info));
   }
   if (inferred) {
-    inferred=!(rhsValue != null && rhsValue.getType() == Token.FUNCTION && (info != null || !scope.isDeclared(qName,false)));
+    inferred=!(rhsValue != null && rhsValue.isFunction() && (info != null || !scope.isDeclared(qName,false)));
   }
   if (!inferred) {
     ObjectType ownerType=getObjectSlot(ownerName);
@@ -46,7 +46,7 @@
     }
     defineSlot(n,parent,valueType,inferred);
   }
- else   if (rhsValue != null && rhsValue.getType() == Token.TRUE) {
+ else   if (rhsValue != null && rhsValue.isTrue()) {
     FunctionType ownerType=JSType.toMaybeFunctionType(getObjectSlot(ownerName));
     if (ownerType != null) {
       JSType ownerTypeOfThis=ownerType.getTypeOfThis();

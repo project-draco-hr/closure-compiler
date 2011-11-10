@@ -1,13 +1,13 @@
 {
-  if (n == null || NodeUtil.isLiteralValue(n,true) || n.getType() == Token.FUNCTION) {
+  if (n == null || NodeUtil.isLiteralValue(n,true) || n.isFunction()) {
     return true;
   }
- else   if (n.getType() == Token.CALL) {
+ else   if (n.isCall()) {
     Node functionName=n.getFirstChild();
-    return functionName.getType() == Token.NAME && (functionName.getString().equals(CrossModuleMethodMotion.STUB_METHOD_NAME) || functionName.getString().equals(CrossModuleMethodMotion.UNSTUB_METHOD_NAME));
+    return functionName.isName() && (functionName.getString().equals(CrossModuleMethodMotion.STUB_METHOD_NAME) || functionName.getString().equals(CrossModuleMethodMotion.UNSTUB_METHOD_NAME));
   }
- else   if (n.getType() == Token.ARRAYLIT || n.getType() == Token.OBJECTLIT) {
-    boolean isObjectLit=n.getType() == Token.OBJECTLIT;
+ else   if (n.getType() == Token.ARRAYLIT || n.isObjectLit()) {
+    boolean isObjectLit=n.isObjectLit();
     for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
       if (!canMoveValue(isObjectLit ? child.getFirstChild() : child)) {
         return false;

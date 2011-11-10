@@ -13,9 +13,9 @@
   String enclosingQname=enclosingFnNameNode.getQualifiedName();
   if (enclosingQname.indexOf(".prototype.") == -1) {
     Node enclosingParent=enclosingFnNameNode.getParent();
-    Node maybeInheritsExpr=(enclosingParent.getType() == Token.ASSIGN ? enclosingParent.getParent() : enclosingParent).getNext();
+    Node maybeInheritsExpr=(enclosingParent.isAssign() ? enclosingParent.getParent() : enclosingParent).getNext();
     Node baseClassNode=null;
-    if (maybeInheritsExpr != null && maybeInheritsExpr.getType() == Token.EXPR_RESULT && maybeInheritsExpr.getFirstChild().getType() == Token.CALL) {
+    if (maybeInheritsExpr != null && maybeInheritsExpr.isExprResult() && maybeInheritsExpr.getFirstChild().isCall()) {
       Node callNode=maybeInheritsExpr.getFirstChild();
       if ("goog.inherits".equals(callNode.getFirstChild().getQualifiedName()) && callNode.getLastChild().isQualifiedName()) {
         baseClassNode=callNode.getLastChild();

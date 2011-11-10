@@ -1,6 +1,6 @@
 {
   Preconditions.checkState(n.getChildCount() == 3);
-  Preconditions.checkState(n.getType() == Token.FUNCTION);
+  Preconditions.checkState(n.isFunction());
   final Node fnName=n.getFirstChild();
   boolean isFunctionExpression=(parent != null) && NodeUtil.isFunctionExpression(n);
   if (!isFunctionExpression) {
@@ -14,7 +14,7 @@
   final Node args=fnName.getNext();
   final Node body=args.getNext();
   traverseBranch(args,n);
-  Preconditions.checkState(body.getNext() == null && body.getType() == Token.BLOCK);
+  Preconditions.checkState(body.getNext() == null && body.isBlock());
   traverseBranch(body,n);
   popScope();
 }

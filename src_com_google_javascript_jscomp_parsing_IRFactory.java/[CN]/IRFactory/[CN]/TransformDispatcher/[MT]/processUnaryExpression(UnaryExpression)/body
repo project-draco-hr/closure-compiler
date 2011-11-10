@@ -1,12 +1,12 @@
 {
   int type=transformTokenType(exprNode.getType());
   Node operand=transform(exprNode.getOperand());
-  if (type == Token.NEG && operand.getType() == Token.NUMBER) {
+  if (type == Token.NEG && operand.isNumber()) {
     operand.setDouble(-operand.getDouble());
     return operand;
   }
  else {
-    if (type == Token.DELPROP && !(operand.getType() == Token.GETPROP || operand.getType() == Token.GETELEM || operand.getType() == Token.NAME)) {
+    if (type == Token.DELPROP && !(operand.isGetProp() || operand.isGetElem() || operand.isName())) {
       String msg="Invalid delete operand. Only properties can be deleted.";
       errorReporter.error(msg,sourceName,operand.getLineno(),"",0);
     }

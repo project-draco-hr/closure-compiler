@@ -1,5 +1,5 @@
 {
-  if (node.getType() == Token.NAME) {
+  if (node.isName()) {
     Node replacementTemplate=replacements.get(node.getString());
     if (replacementTemplate != null) {
       Preconditions.checkState(parent.getType() != Token.FUNCTION || parent.getType() != Token.VAR || parent.getType() != Token.CATCH);
@@ -8,7 +8,7 @@
       return replacement;
     }
   }
- else   if (replaceThis && node.getType() == Token.THIS) {
+ else   if (replaceThis && node.isThis()) {
     Node replacementTemplate=replacements.get(THIS_MARKER);
     Preconditions.checkNotNull(replacementTemplate);
     if (replacementTemplate.getType() != Token.THIS) {
@@ -20,7 +20,7 @@
       return replacement;
     }
   }
- else   if (node.getType() == Token.FUNCTION) {
+ else   if (node.isFunction()) {
     replaceThis=false;
   }
   for (Node c=node.getFirstChild(); c != null; c=c.getNext()) {

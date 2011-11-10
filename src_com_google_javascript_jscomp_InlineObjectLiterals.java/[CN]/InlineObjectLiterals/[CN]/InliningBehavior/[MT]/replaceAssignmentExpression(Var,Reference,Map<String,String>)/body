@@ -2,7 +2,7 @@
   List<Node> nodes=Lists.newArrayList();
   Node val=ref.getAssignedValue();
   blacklistVarReferencesInTree(val,v.scope);
-  Preconditions.checkState(val.getType() == Token.OBJECTLIT);
+  Preconditions.checkState(val.isObjectLit());
   Set<String> all=Sets.newLinkedHashSet(varmap.keySet());
   for (Node key=val.getFirstChild(); key != null; key=key.getNext()) {
     String var=key.getString();
@@ -34,7 +34,7 @@
   }
   Node replace=ref.getParent();
   replacement.copyInformationFromForTree(replace);
-  if (replace.getType() == Token.VAR) {
+  if (replace.isVar()) {
     replace.getParent().replaceChild(replace,NodeUtil.newExpr(replacement));
   }
  else {

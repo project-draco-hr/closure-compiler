@@ -2,7 +2,7 @@
   Preconditions.checkState(fnNode.isFunction());
   NodeUtil.visitPostOrder(fnNode.getLastChild(),new NodeUtil.Visitor(){
     @Override public void visit(    Node node){
-      if (node.getType() == Token.RETURN && node.hasOneChild()) {
+      if (node.isReturn() && node.hasOneChild()) {
         boolean keepValue=NodeUtil.mayHaveSideEffects(node.getFirstChild(),compiler);
         if (!keepValue) {
           defFinder.removeReferences(node.getFirstChild());

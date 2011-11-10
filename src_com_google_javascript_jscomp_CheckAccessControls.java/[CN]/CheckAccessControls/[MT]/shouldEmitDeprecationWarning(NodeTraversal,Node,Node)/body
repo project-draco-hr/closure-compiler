@@ -1,10 +1,10 @@
 {
   if (t.inGlobalScope()) {
-    if (!((parent.getType() == Token.CALL && parent.getFirstChild() == n) || n.getType() == Token.NEW)) {
+    if (!((parent.isCall() && parent.getFirstChild() == n) || n.isNew())) {
       return false;
     }
   }
-  if (n.getType() == Token.GETPROP && n == parent.getFirstChild() && NodeUtil.isAssignmentOp(parent)) {
+  if (n.isGetProp() && n == parent.getFirstChild() && NodeUtil.isAssignmentOp(parent)) {
     return false;
   }
   return !canAccessDeprecatedTypes(t);

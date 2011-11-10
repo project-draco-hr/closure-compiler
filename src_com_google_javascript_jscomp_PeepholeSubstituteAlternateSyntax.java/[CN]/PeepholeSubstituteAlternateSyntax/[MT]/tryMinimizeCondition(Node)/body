@@ -23,21 +23,21 @@ case Token.OR:
         return n;
       }
     }
-    if (leftParent.getType() == Token.NOT) {
+    if (leftParent.isNot()) {
       left=leftParent.removeFirstChild();
     }
  else {
       leftParent.detachFromParent();
       left=new Node(Token.NOT,leftParent).copyInformationFrom(leftParent);
     }
-    if (rightParent.getType() == Token.NOT) {
+    if (rightParent.isNot()) {
       right=rightParent.removeFirstChild();
     }
  else {
       rightParent.detachFromParent();
       right=new Node(Token.NOT,rightParent).copyInformationFrom(rightParent);
     }
-    int newOp=(first.getType() == Token.AND) ? Token.OR : Token.AND;
+    int newOp=(first.isAnd()) ? Token.OR : Token.AND;
     Node newRoot=new Node(newOp,left,right);
     parent.replaceChild(n,newRoot);
     reportCodeChange();

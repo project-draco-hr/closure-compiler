@@ -1,5 +1,5 @@
 {
-  if (n.getType() == Token.FUNCTION) {
+  if (n.isFunction()) {
     JSDocInfo jsDoc=getFunctionJsDocInfo(n);
     if (jsDoc != null && (jsDoc.isConstructor() || jsDoc.isInterface() || jsDoc.hasThisType()|| jsDoc.isOverride())) {
       return false;
@@ -16,7 +16,7 @@
       }
     }
   }
-  if (parent != null && parent.getType() == Token.ASSIGN) {
+  if (parent != null && parent.isAssign()) {
     Node lhs=parent.getFirstChild();
     Node rhs=lhs.getNext();
     if (n == lhs) {
@@ -26,11 +26,11 @@
     }
  else {
       if (NodeUtil.isGet(lhs)) {
-        if (lhs.getType() == Token.GETPROP && lhs.getLastChild().getString().equals("prototype")) {
+        if (lhs.isGetProp() && lhs.getLastChild().getString().equals("prototype")) {
           return false;
         }
         Node llhs=lhs.getFirstChild();
-        if (llhs.getType() == Token.GETPROP && llhs.getLastChild().getString().equals("prototype")) {
+        if (llhs.isGetProp() && llhs.getLastChild().getString().equals("prototype")) {
           return false;
         }
       }

@@ -1,10 +1,10 @@
 {
   Node n=assign.getFirstChild();
-  if (n != null && NodeUtil.isVarOrSimpleAssignLhs(n,assign) && n.getType() == Token.GETPROP && assign.getParent().getType() == Token.EXPR_RESULT) {
-    boolean isChainedProperty=n.getFirstChild().getType() == Token.GETPROP;
+  if (n != null && NodeUtil.isVarOrSimpleAssignLhs(n,assign) && n.isGetProp() && assign.getParent().isExprResult()) {
+    boolean isChainedProperty=n.getFirstChild().isGetProp();
     if (isChainedProperty) {
       Node child=n.getFirstChild().getFirstChild().getNext();
-      if (child.getType() == Token.STRING && child.getString().equals("prototype")) {
+      if (child.isString() && child.getString().equals("prototype")) {
         return true;
       }
     }

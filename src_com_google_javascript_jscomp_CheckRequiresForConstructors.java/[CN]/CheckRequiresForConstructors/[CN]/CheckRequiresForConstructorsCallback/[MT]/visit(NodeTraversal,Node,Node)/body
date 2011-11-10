@@ -10,7 +10,7 @@ case Token.ASSIGN:
 break;
 case Token.FUNCTION:
 if (NodeUtil.isFunctionExpression(n)) {
-if (parent.getType() == Token.NAME) {
+if (parent.isName()) {
   String functionName=parent.getString();
   info=(JSDocInfo)parent.getProp(Node.JSDOC_INFO_PROP);
   if (info != null && info.isConstructor()) {
@@ -18,7 +18,7 @@ if (parent.getType() == Token.NAME) {
   }
  else {
     Node gramps=parent.getParent();
-    Preconditions.checkState(gramps != null && gramps.getType() == Token.VAR);
+    Preconditions.checkState(gramps != null && gramps.isVar());
     info=(JSDocInfo)gramps.getProp(Node.JSDOC_INFO_PROP);
     if (info != null && info.isConstructor()) {
       constructors.add(functionName);

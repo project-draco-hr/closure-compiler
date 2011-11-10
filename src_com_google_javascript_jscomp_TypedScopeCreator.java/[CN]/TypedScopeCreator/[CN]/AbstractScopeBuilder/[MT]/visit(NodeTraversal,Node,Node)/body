@@ -16,7 +16,7 @@ defineFunctionLiteral(n,parent);
 break;
 case Token.ASSIGN:
 Node firstChild=n.getFirstChild();
-if (firstChild.getType() == Token.GETPROP && firstChild.isQualifiedName()) {
+if (firstChild.isGetProp() && firstChild.isQualifiedName()) {
 maybeDeclareQualifiedName(t,n.getJSDocInfo(),firstChild,n,firstChild.getNext());
 }
 break;
@@ -27,7 +27,7 @@ case Token.VAR:
 defineVar(n,parent);
 break;
 case Token.GETPROP:
-if (parent.getType() == Token.EXPR_RESULT && n.isQualifiedName()) {
+if (parent.isExprResult() && n.isQualifiedName()) {
 maybeDeclareQualifiedName(t,n.getJSDocInfo(),n,parent,null);
 }
 break;

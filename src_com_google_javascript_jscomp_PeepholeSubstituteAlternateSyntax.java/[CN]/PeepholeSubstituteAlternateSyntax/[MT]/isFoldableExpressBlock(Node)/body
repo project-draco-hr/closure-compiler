@@ -1,14 +1,14 @@
 {
-  if (n.getType() == Token.BLOCK) {
+  if (n.isBlock()) {
     if (n.hasOneChild()) {
       Node maybeExpr=n.getFirstChild();
-      if (maybeExpr.getType() == Token.EXPR_RESULT) {
-        if (maybeExpr.getFirstChild().getType() == Token.CALL) {
+      if (maybeExpr.isExprResult()) {
+        if (maybeExpr.getFirstChild().isCall()) {
           Node calledFn=maybeExpr.getFirstChild().getFirstChild();
-          if (calledFn.getType() == Token.GETELEM) {
+          if (calledFn.isGetElem()) {
             return false;
           }
- else           if (calledFn.getType() == Token.GETPROP && calledFn.getLastChild().getString().startsWith("on")) {
+ else           if (calledFn.isGetProp() && calledFn.getLastChild().getString().startsWith("on")) {
             return false;
           }
         }

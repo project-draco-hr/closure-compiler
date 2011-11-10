@@ -3,7 +3,7 @@
   if (mayHaveSecondarySideEffects) {
     Node replacement=assignNode.getLastChild().detachFromParent();
     for (Node current=assignNode.getFirstChild(); current.getType() != Token.NAME; current=current.getFirstChild()) {
-      if (current.getType() == Token.GETELEM) {
+      if (current.isGetElem()) {
         replacement=new Node(Token.COMMA,current.getLastChild().detachFromParent(),replacement);
         replacement.copyInformationFrom(current);
       }
@@ -12,7 +12,7 @@
   }
  else {
     Node gramps=parent.getParent();
-    if (parent.getType() == Token.EXPR_RESULT) {
+    if (parent.isExprResult()) {
       gramps.removeChild(parent);
     }
  else {

@@ -1,6 +1,6 @@
 {
   boolean allowDupe=false;
-  if (n.getType() == Token.GETPROP || NodeUtil.isObjectLitKey(n,parent)) {
+  if (n.isGetProp() || NodeUtil.isObjectLitKey(n,parent)) {
     JSDocInfo info=n.getJSDocInfo();
     if (info == null) {
       info=parent.getJSDocInfo();
@@ -14,18 +14,18 @@
       s.undeclare(var);
       s.declare(variableName,n,varType,input,false);
       n.setJSType(varType);
-      if (parent.getType() == Token.VAR) {
+      if (parent.isVar()) {
         if (n.getFirstChild() != null) {
           n.getFirstChild().setJSType(varType);
         }
       }
  else {
-        Preconditions.checkState(parent.getType() == Token.FUNCTION);
+        Preconditions.checkState(parent.isFunction());
         parent.setJSType(varType);
       }
     }
  else {
-      if (!(allowDupe || var.getParentNode().getType() == Token.EXPR_RESULT) || !newType.equals(varType)) {
+      if (!(allowDupe || var.getParentNode().isExprResult()) || !newType.equals(varType)) {
         report(JSError.make(sourceName,n,DUP_VAR_DECLARATION,variableName,newType.toString(),var.getInputName(),String.valueOf(var.nameNode.getLineno()),varType.toString()));
       }
     }

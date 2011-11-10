@@ -1,7 +1,7 @@
 {
 switch (n.getType()) {
 case Token.NAME:
-    if (parent != null && parent.getType() == Token.VAR && n.hasChildren()) {
+    if (parent != null && parent.isVar() && n.hasChildren()) {
       String name=n.getString();
       Scope.Var var=t.getScope().getVar(name);
       if (isConstant(var)) {
@@ -28,7 +28,7 @@ case Token.ASSIGN_DIV:
 case Token.ASSIGN_MOD:
 {
   Node lhs=n.getFirstChild();
-  if (lhs.getType() == Token.NAME) {
+  if (lhs.isName()) {
     String name=lhs.getString();
     Scope.Var var=t.getScope().getVar(name);
     if (isConstant(var)) {
@@ -46,7 +46,7 @@ case Token.INC:
 case Token.DEC:
 {
 Node lhs=n.getFirstChild();
-if (lhs.getType() == Token.NAME) {
+if (lhs.isName()) {
   String name=lhs.getString();
   Scope.Var var=t.getScope().getVar(name);
   if (isConstant(var)) {

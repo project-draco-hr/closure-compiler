@@ -2,23 +2,23 @@
   if (FORBIDDEN_TYPES.contains(node.getType()) || NodeUtil.isControlStructure(node)) {
     throw new IllegalArgumentException(Token.name(node.getType()) + " nodes are not supported.");
   }
-  if (node.getType() == Token.FUNCTION) {
+  if (node.isFunction()) {
     return false;
   }
-  if (node.getType() == Token.HOOK) {
+  if (node.isHook()) {
     return processHook(node);
   }
-  if ((node.getType() == Token.AND) || (node.getType() == Token.OR)) {
+  if ((node.isAnd()) || (node.isOr())) {
     return processShortCircuitExpression(node);
   }
   if (!NodeUtil.nodeTypeMayHaveSideEffects(node)) {
     return true;
   }
  else {
-    if (node.getType() == Token.CALL) {
+    if (node.isCall()) {
       return processFunctionCall(node);
     }
- else     if (node.getType() == Token.NEW) {
+ else     if (node.isNew()) {
       return processConstructorCall(node);
     }
  else {

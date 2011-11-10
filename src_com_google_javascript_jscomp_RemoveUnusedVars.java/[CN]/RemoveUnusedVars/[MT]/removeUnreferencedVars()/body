@@ -11,8 +11,8 @@
     Node nameNode=var.nameNode;
     Node toRemove=nameNode.getParent();
     Node parent=toRemove.getParent();
-    Preconditions.checkState(toRemove.getType() == Token.VAR || toRemove.getType() == Token.FUNCTION || toRemove.getType() == Token.LP && parent.getType() == Token.FUNCTION,"We should only declare vars and functions and function args");
-    if (toRemove.getType() == Token.LP && parent.getType() == Token.FUNCTION) {
+    Preconditions.checkState(toRemove.isVar() || toRemove.isFunction() || toRemove.isLP() && parent.isFunction(),"We should only declare vars and functions and function args");
+    if (toRemove.isLP() && parent.isFunction()) {
     }
  else     if (NodeUtil.isFunctionExpression(toRemove)) {
       if (!preserveFunctionExpressionNames) {
@@ -20,15 +20,15 @@
         compiler.reportCodeChange();
       }
     }
- else     if (parent != null && parent.getType() == Token.FOR && parent.getChildCount() < 4) {
+ else     if (parent != null && parent.isFor() && parent.getChildCount() < 4) {
     }
- else     if (toRemove.getType() == Token.VAR && nameNode.hasChildren() && NodeUtil.mayHaveSideEffects(nameNode.getFirstChild())) {
+ else     if (toRemove.isVar() && nameNode.hasChildren() && NodeUtil.mayHaveSideEffects(nameNode.getFirstChild())) {
       if (toRemove.getChildCount() == 1) {
         parent.replaceChild(toRemove,new Node(Token.EXPR_RESULT,nameNode.removeFirstChild()));
         compiler.reportCodeChange();
       }
     }
- else     if (toRemove.getType() == Token.VAR && toRemove.getChildCount() > 1) {
+ else     if (toRemove.isVar() && toRemove.getChildCount() > 1) {
       toRemove.removeChild(nameNode);
       compiler.reportCodeChange();
     }
