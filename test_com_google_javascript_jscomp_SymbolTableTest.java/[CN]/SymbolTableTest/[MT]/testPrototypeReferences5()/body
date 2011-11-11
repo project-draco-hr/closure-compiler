@@ -1,0 +1,9 @@
+{
+  SymbolTable table=createSymbolTable("var goog = {}; /** @constructor */ goog.Foo = function() {};");
+  Symbol fooPrototype=getGlobalVar(table,"goog.Foo.prototype");
+  assertNotNull(fooPrototype);
+  List<Reference> refs=table.getReferenceList(fooPrototype);
+  assertEquals(1,refs.size());
+  assertEquals(Token.GETPROP,refs.get(0).getNode().getType());
+  assertEquals(refs.get(0).getNode(),table.getReferenceList(getGlobalVar(table,"goog.Foo")).get(0).getNode());
+}
