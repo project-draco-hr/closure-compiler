@@ -7,7 +7,17 @@
     return;
   }
   Scope.Var var=t.getScope().getVar(name);
-  if (var == null || !var.isGlobal() || var.isExtern()) {
+  if (var == null) {
+    return;
+  }
+  if (var.isExtern()) {
+    return;
+  }
+  if (!var.isExtern() && (name.equals(globalSymbolNamespace) || name.indexOf(globalSymbolNamespace + DISAMBIGUATION_SUFFIX) == 0)) {
+    n.setString(name + DISAMBIGUATION_SUFFIX);
+    compiler.reportCodeChange();
+  }
+  if (!var.isGlobal()) {
     return;
   }
   Node nameNode=var.getNameNode();
