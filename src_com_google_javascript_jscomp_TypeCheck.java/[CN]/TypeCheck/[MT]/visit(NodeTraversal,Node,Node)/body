@@ -7,7 +7,7 @@ switch (n.getType()) {
 case Token.NAME:
     typeable=visitName(t,n,parent);
   break;
-case Token.LP:
+case Token.PARAM_LIST:
 if (parent.getType() != Token.FUNCTION) {
   ensureTyped(t,n,getJSType(n.getFirstChild()));
 }
@@ -39,8 +39,8 @@ ensureTyped(t,n,STRING_TYPE);
 typeable=false;
 }
 break;
-case Token.GET:
-case Token.SET:
+case Token.GETTER_DEF:
+case Token.SETTER_DEF:
 break;
 case Token.ARRAYLIT:
 ensureTyped(t,n,ARRAY_TYPE);
@@ -230,7 +230,7 @@ case Token.SCRIPT:
 case Token.EXPR_RESULT:
 case Token.BLOCK:
 case Token.EMPTY:
-case Token.DEFAULT:
+case Token.DEFAULT_CASE:
 case Token.CONTINUE:
 case Token.DEBUGGER:
 case Token.THROW:

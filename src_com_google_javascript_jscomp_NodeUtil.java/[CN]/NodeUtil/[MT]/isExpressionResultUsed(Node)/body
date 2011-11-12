@@ -1,0 +1,19 @@
+{
+  Node parent=expr.getParent();
+switch (parent.getType()) {
+case Token.EXPR_RESULT:
+    return false;
+case Token.HOOK:
+case Token.AND:
+case Token.OR:
+  return (expr == parent.getFirstChild()) ? true : isExpressionResultUsed(parent);
+case Token.COMMA:
+return (expr == parent.getFirstChild()) ? false : isExpressionResultUsed(parent);
+case Token.FOR:
+if (!NodeUtil.isForIn(parent)) {
+return (parent.getChildAtIndex(1) == expr);
+}
+break;
+}
+return true;
+}
