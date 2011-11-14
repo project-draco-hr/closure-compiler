@@ -1,0 +1,11 @@
+{
+  SymbolTable table=createSymbolTable("var a = {b: {c: function() {}}};");
+  Symbol a=getGlobalVar(table,"a");
+  Symbol ab=getGlobalVar(table,"a.b");
+  Symbol abc=getGlobalVar(table,"a.b.c");
+  assertNotNull(abc);
+  assertEquals(1,table.getReferenceList(abc).size());
+  assertEquals("{b: {c: function (): undefined}}",a.getType().toString());
+  assertEquals("{c: function (): undefined}",ab.getType().toString());
+  assertEquals("function (): undefined",abc.getType().toString());
+}

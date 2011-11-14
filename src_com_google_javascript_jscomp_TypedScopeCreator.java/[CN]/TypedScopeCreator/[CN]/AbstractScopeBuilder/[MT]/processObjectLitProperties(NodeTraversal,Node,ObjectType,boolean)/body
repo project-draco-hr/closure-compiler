@@ -5,18 +5,16 @@
     JSDocInfo info=keyNode.getJSDocInfo();
     JSType valueType=getDeclaredType(t.getSourceName(),info,keyNode,value);
     JSType keyType=objLitType.isEnumType() ? objLitType.toMaybeEnumType().getElementsType() : NodeUtil.getObjectLitKeyTypeFromValueType(keyNode,valueType);
-    if (keyType != null) {
-      String qualifiedName=NodeUtil.getBestLValueName(keyNode);
-      if (qualifiedName != null) {
-        defineSlot(keyNode,objLit,qualifiedName,keyType,false);
-      }
- else {
-        setDeferredType(keyNode,keyType);
-      }
-      if (objLitType != null && declareOnOwner) {
-        boolean isExtern=t.getInput() != null && t.getInput().isExtern();
-        objLitType.defineDeclaredProperty(memberName,keyType,keyNode);
-      }
+    String qualifiedName=NodeUtil.getBestLValueName(keyNode);
+    if (qualifiedName != null) {
+      defineSlot(keyNode,objLit,qualifiedName,keyType,keyType == null);
+    }
+ else     if (keyType != null) {
+      setDeferredType(keyNode,keyType);
+    }
+    if (keyType != null && objLitType != null && declareOnOwner) {
+      boolean isExtern=t.getInput() != null && t.getInput().isExtern();
+      objLitType.defineDeclaredProperty(memberName,keyType,keyNode);
     }
   }
 }
