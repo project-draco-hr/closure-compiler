@@ -16,6 +16,13 @@
     assertNotNull(inputToken);
     assertEquals(mapping.getOriginalFile(),inputToken.inputName);
     assertEquals(mapping.getLineNumber(),inputToken.position.getLine() + 1);
+    int start=inputToken.position.getColumn() + 1;
+    if (inputToken.tokenName.startsWith("STR")) {
+      start--;
+    }
+    if (validateColumns) {
+      assertEquals(start,mapping.getColumnPosition());
+    }
     if (!inputToken.tokenName.startsWith("STR")) {
       assertTrue("missing name for " + inputToken.tokenName,!mapping.getIdentifier().isEmpty());
     }
