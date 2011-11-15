@@ -29,18 +29,7 @@
     }
     return;
   }
-  boolean inferred=true;
-  if (info != null) {
-    inferred=!(info.hasType() || info.hasEnumParameterType() || (info.isConstant() && valueType != null && !valueType.isUnknownType())|| FunctionTypeBuilder.isFunctionTypeDeclaration(info));
-  }
-  if (inferred && rhsValue != null && rhsValue.isFunction()) {
-    if (info != null) {
-      inferred=false;
-    }
- else     if (!scope.isDeclared(qName,false) && n.isUnscopedQualifiedName()) {
-      inferred=false;
-    }
-  }
+  boolean inferred=isQualifiedNameInferred(qName,n,info,rhsValue,valueType);
   if (!inferred) {
     ObjectType ownerType=getObjectSlot(ownerName);
     if (ownerType != null) {

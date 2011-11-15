@@ -7,7 +7,8 @@
     JSType keyType=objLitType.isEnumType() ? objLitType.toMaybeEnumType().getElementsType() : NodeUtil.getObjectLitKeyTypeFromValueType(keyNode,valueType);
     String qualifiedName=NodeUtil.getBestLValueName(keyNode);
     if (qualifiedName != null) {
-      defineSlot(keyNode,objLit,qualifiedName,keyType,keyType == null);
+      boolean inferred=keyType == null;
+      defineSlot(keyNode,objLit,qualifiedName,keyType,inferred);
     }
  else     if (keyType != null) {
       setDeferredType(keyNode,keyType);

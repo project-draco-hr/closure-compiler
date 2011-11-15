@@ -1,0 +1,8 @@
+{
+  testSame("var x = {/** This is jsdoc */ prop: function(){}};");
+  Var prop=globalScope.getVar("x.prop");
+  JSType propType=prop.getType();
+  assertEquals("function (): undefined",propType.toString());
+  assertFalse(prop.isTypeInferred());
+  assertFalse(ObjectType.cast(globalScope.getVar("x").getType()).isPropertyTypeInferred("prop"));
+}
