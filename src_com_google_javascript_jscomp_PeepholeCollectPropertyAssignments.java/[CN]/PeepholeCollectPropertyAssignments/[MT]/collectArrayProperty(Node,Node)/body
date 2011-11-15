@@ -4,12 +4,12 @@
   int maxIndexAssigned=sizeOfArrayAtStart - 1;
   Node lhs=assignment.getFirstChild();
   Node rhs=lhs.getNext();
-  if (lhs.getType() != Token.GETELEM) {
+  if (!lhs.isGetElem()) {
     return false;
   }
   Node obj=lhs.getFirstChild();
   Node property=obj.getNext();
-  if (property.getType() != Token.NUMBER) {
+  if (!property.isNumber()) {
     return false;
   }
   double dindex=property.getDouble();
@@ -33,7 +33,7 @@
   }
  else {
     Node currentValue=arrayLiteral.getChildAtIndex(index);
-    if (currentValue.getType() != Token.EMPTY) {
+    if (!currentValue.isEmpty()) {
       return false;
     }
     arrayLiteral.replaceChild(currentValue,rhs.detachFromParent());

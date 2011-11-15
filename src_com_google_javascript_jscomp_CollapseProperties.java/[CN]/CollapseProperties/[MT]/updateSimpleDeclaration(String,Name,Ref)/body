@@ -19,7 +19,7 @@
     Preconditions.checkNotNull(ref.getTwin());
     Node current=gramps;
     Node currentParent=gramps.getParent();
-    for (; currentParent.getType() != Token.SCRIPT && currentParent.getType() != Token.BLOCK; current=currentParent, currentParent=currentParent.getParent()) {
+    for (; !currentParent.isScript() && !currentParent.isBlock(); current=currentParent, currentParent=currentParent.getParent()) {
     }
     Node stubVar=new Node(Token.VAR,nameNode.cloneTree()).copyInformationFrom(nameNode);
     currentParent.addChildBefore(stubVar,current);

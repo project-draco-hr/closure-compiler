@@ -2,7 +2,7 @@
   Node parent=assignNode.getParent();
   if (mayHaveSecondarySideEffects) {
     Node replacement=assignNode.getLastChild().detachFromParent();
-    for (Node current=assignNode.getFirstChild(); current.getType() != Token.NAME; current=current.getFirstChild()) {
+    for (Node current=assignNode.getFirstChild(); !current.isName(); current=current.getFirstChild()) {
       if (current.isGetElem()) {
         replacement=new Node(Token.COMMA,current.getLastChild().detachFromParent(),replacement);
         replacement.copyInformationFrom(current);

@@ -6,11 +6,11 @@
   int highestIndex=numNamedParameter - 1;
   for (  Node ref : currentArgumentsAccess) {
     Node getElem=ref.getParent();
-    if (getElem.getType() != Token.GETELEM) {
+    if (!getElem.isGetElem()) {
       return false;
     }
     Node index=ref.getNext();
-    if (index.getType() != Token.NUMBER) {
+    if (!index.isNumber()) {
       return false;
     }
     Node getElemParent=getElem.getParent();
@@ -32,7 +32,7 @@
   }
   for (  Node ref : currentArgumentsAccess) {
     Node index=ref.getNext();
-    if (index.getType() != Token.NUMBER) {
+    if (!index.isNumber()) {
       continue;
     }
     int value=(int)index.getDouble();

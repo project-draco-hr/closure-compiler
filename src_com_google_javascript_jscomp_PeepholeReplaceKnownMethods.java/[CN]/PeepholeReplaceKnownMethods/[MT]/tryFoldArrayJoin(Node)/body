@@ -11,7 +11,7 @@
   }
   Node arrayNode=callTarget.getFirstChild();
   Node functionName=arrayNode.getNext();
-  if ((arrayNode.getType() != Token.ARRAYLIT) || !functionName.getString().equals("join")) {
+  if (!arrayNode.isArrayLit() || !functionName.getString().equals("join")) {
     return n;
   }
   if (right != null && right.isString() && ",".equals(right.getString())) {
@@ -66,7 +66,7 @@ if (foldedSize > originalSize) {
 return n;
 }
 arrayNode.detachChildren();
-if (foldedStringNode.getType() != Token.STRING) {
+if (!foldedStringNode.isString()) {
 Node replacement=new Node(Token.ADD,Node.newString("").copyInformationFrom(n),foldedStringNode);
 foldedStringNode=replacement;
 }

@@ -2,7 +2,7 @@
   if (node.isName()) {
     Node replacementTemplate=replacements.get(node.getString());
     if (replacementTemplate != null) {
-      Preconditions.checkState(parent.getType() != Token.FUNCTION || parent.getType() != Token.VAR || parent.getType() != Token.CATCH);
+      Preconditions.checkState(!parent.isFunction() || !parent.isVar() || !parent.isCatch());
       Node replacement=replacementTemplate.cloneTree();
       parent.replaceChild(node,replacement);
       return replacement;
@@ -11,7 +11,7 @@
  else   if (replaceThis && node.isThis()) {
     Node replacementTemplate=replacements.get(THIS_MARKER);
     Preconditions.checkNotNull(replacementTemplate);
-    if (replacementTemplate.getType() != Token.THIS) {
+    if (!replacementTemplate.isThis()) {
       Node replacement=replacementTemplate.cloneTree();
       parent.replaceChild(node,replacement);
       if (NodeUtil.mayHaveSideEffects(replacementTemplate,compiler)) {

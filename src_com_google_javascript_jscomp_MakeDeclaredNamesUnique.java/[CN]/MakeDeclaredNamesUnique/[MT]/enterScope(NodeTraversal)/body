@@ -2,14 +2,14 @@
   Node declarationRoot=t.getScopeRoot();
   Renamer renamer;
   if (nameStack.isEmpty()) {
-    Preconditions.checkState(declarationRoot.getType() != Token.FUNCTION || !(rootRenamer instanceof ContextualRenamer));
+    Preconditions.checkState(!declarationRoot.isFunction() || !(rootRenamer instanceof ContextualRenamer));
     Preconditions.checkState(t.inGlobalScope());
     renamer=rootRenamer;
   }
  else {
     renamer=nameStack.peek().forChildScope();
   }
-  if (declarationRoot.getType() != Token.FUNCTION) {
+  if (!declarationRoot.isFunction()) {
     findDeclaredNames(declarationRoot,null,renamer);
   }
   nameStack.push(renamer);

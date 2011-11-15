@@ -6,7 +6,7 @@
     compiler.reportCodeChange();
     return;
   }
-  if (n.getType() != Token.NEW) {
+  if (!n.isNew()) {
     return;
   }
   Node objectName=n.getFirstChild();
@@ -23,7 +23,7 @@
     return;
   }
   Node secondArgument=firstArgument.getNext();
-  if (secondArgument.getType() != Token.STRING) {
+  if (!secondArgument.isString()) {
     compiler.report(t.makeError(secondArgument,STRING_LITERAL_EXPECTED_ERROR,Token.name(secondArgument.getType())));
     return;
   }

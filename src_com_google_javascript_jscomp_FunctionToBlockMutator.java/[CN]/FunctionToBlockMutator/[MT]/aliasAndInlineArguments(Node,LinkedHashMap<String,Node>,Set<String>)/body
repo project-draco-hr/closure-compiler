@@ -13,7 +13,7 @@
         if (name.equals(THIS_MARKER)) {
           boolean referencesThis=NodeUtil.referencesThis(fnTemplateRoot);
           Node value=entry.getValue();
-          if (value.getType() != Token.THIS && (referencesThis || NodeUtil.mayHaveSideEffects(value,compiler))) {
+          if (!value.isThis() && (referencesThis || NodeUtil.mayHaveSideEffects(value,compiler))) {
             String newName=getUniqueThisName();
             Node newValue=entry.getValue().cloneTree();
             Node newNode=NodeUtil.newVarNode(newName,newValue).copyInformationFromForTree(newValue);

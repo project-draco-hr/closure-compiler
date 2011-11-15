@@ -6,13 +6,13 @@
   Node init=n.getFirstChild();
   Node cond=init.getNext();
   Node increment=cond.getNext();
-  if (init.getType() != Token.EMPTY && init.getType() != Token.VAR) {
+  if (!init.isEmpty() && !init.isVar()) {
     init=trySimplifyUnusedResult(init,false);
   }
-  if (increment.getType() != Token.EMPTY) {
+  if (!increment.isEmpty()) {
     increment=trySimplifyUnusedResult(increment,false);
   }
-  if (n.getFirstChild().getType() != Token.EMPTY) {
+  if (!n.getFirstChild().isEmpty()) {
     return n;
   }
   if (NodeUtil.getImpureBooleanValue(cond) != TernaryValue.FALSE) {

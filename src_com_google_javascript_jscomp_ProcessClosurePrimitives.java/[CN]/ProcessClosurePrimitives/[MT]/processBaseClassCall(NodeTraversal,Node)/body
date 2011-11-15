@@ -1,7 +1,7 @@
 {
   Node callee=n.getFirstChild();
   Node thisArg=callee.getNext();
-  if (thisArg == null || thisArg.getType() != Token.THIS) {
+  if (thisArg == null || !thisArg.isThis()) {
     reportBadBaseClassUse(t,n,"First argument must be 'this'.");
     return;
   }
@@ -30,7 +30,7 @@
   }
  else {
     Node methodNameNode=thisArg.getNext();
-    if (methodNameNode == null || methodNameNode.getType() != Token.STRING) {
+    if (methodNameNode == null || !methodNameNode.isString()) {
       reportBadBaseClassUse(t,n,"Second argument must name a method.");
       return;
     }

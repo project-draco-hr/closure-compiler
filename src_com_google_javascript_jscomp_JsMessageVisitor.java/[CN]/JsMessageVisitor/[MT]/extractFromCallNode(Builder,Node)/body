@@ -1,5 +1,5 @@
 {
-  if (node.getType() != Token.CALL) {
+  if (!node.isCall()) {
     throw new MalformedException("Message must be initialized using " + MSG_FUNCTION_NAME + " function.",node);
   }
   Node fnNameNode=node.getFirstChild();
@@ -14,11 +14,11 @@
   Node objLitNode=stringLiteralNode.getNext();
   Set<String> phNames=Sets.newHashSet();
   if (objLitNode != null) {
-    if (objLitNode.getType() != Token.OBJECTLIT) {
+    if (!objLitNode.isObjectLit()) {
       throw new MalformedException("OBJLIT node expected",objLitNode);
     }
     for (Node aNode=objLitNode.getFirstChild(); aNode != null; aNode=aNode.getNext()) {
-      if (aNode.getType() != Token.STRING) {
+      if (!aNode.isString()) {
         throw new MalformedException("STRING node expected as OBJLIT key",aNode);
       }
       String phName=aNode.getString();

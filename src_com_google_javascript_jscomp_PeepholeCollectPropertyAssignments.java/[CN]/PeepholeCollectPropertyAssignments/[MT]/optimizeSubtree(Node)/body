@@ -1,10 +1,10 @@
 {
-  if (subtree.getType() != Token.SCRIPT && subtree.getType() != Token.BLOCK) {
+  if (!subtree.isScript() && !subtree.isBlock()) {
     return subtree;
   }
   boolean codeChanged=false;
   for (Node child=subtree.getFirstChild(); child != null; child=child.getNext()) {
-    if (child.getType() != Token.VAR && !NodeUtil.isExprAssign(child)) {
+    if (!child.isVar() && !NodeUtil.isExprAssign(child)) {
       continue;
     }
     if (!isPropertyAssignmentToName(child.getNext())) {
@@ -12,7 +12,7 @@
     }
     Preconditions.checkState(child.hasOneChild());
     Node name=getName(child);
-    if (name.getType() != Token.NAME) {
+    if (!name.isName()) {
       continue;
     }
     Node value=getValue(child);
