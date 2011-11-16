@@ -4,9 +4,9 @@
   }
   Node block=n.getLastChild();
   Node maybeIf=block.getFirstChild();
-  if (maybeIf != null && maybeIf.getType() == Token.IF) {
+  if (maybeIf != null && maybeIf.isIf()) {
     Node maybeBreak=maybeIf.getChildAtIndex(1).getFirstChild();
-    if (maybeBreak != null && maybeBreak.getType() == Token.BREAK && !maybeBreak.hasChildren()) {
+    if (maybeBreak != null && maybeBreak.isBreak() && !maybeBreak.hasChildren()) {
       if (maybeIf.getChildCount() == 3) {
         block.replaceChild(maybeIf,maybeIf.getLastChild().detachFromParent());
       }
@@ -16,7 +16,7 @@
       Node ifCondition=maybeIf.removeFirstChild();
       Node fixedIfCondition=new Node(Token.NOT,ifCondition).copyInformationFrom(ifCondition);
       Node forCondition=NodeUtil.getConditionExpression(n);
-      if (forCondition.getType() == Token.EMPTY) {
+      if (forCondition.isEmpty()) {
         n.replaceChild(forCondition,fixedIfCondition);
       }
  else {
