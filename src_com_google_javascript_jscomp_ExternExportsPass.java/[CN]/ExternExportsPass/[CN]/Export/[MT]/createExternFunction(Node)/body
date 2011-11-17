@@ -1,9 +1,6 @@
 {
-  List<Node> externParameters=Lists.newLinkedList();
-  for (  Node param : NodeUtil.getFunctionParameters(exportedFunction).children()) {
-    externParameters.add(param.cloneNode());
-  }
-  Node externFunction=NodeUtil.newFunctionNode("",externParameters,new Node(Token.BLOCK),-1,-1);
+  Node paramList=NodeUtil.getFunctionParameters(exportedFunction).cloneTree();
+  Node externFunction=IR.function(IR.name(""),paramList,IR.block());
   checkForFunctionsWithUnknownTypes(exportedFunction);
   externFunction.setJSType(exportedFunction.getJSType());
   return externFunction;
