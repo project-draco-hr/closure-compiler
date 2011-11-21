@@ -92,18 +92,21 @@ break;
 if (Token.STRING != right.getType()) {
 return n;
 }
+TernaryValue ternary=TernaryValue.UNKNOWN;
 switch (op) {
 case Token.SHEQ:
 case Token.EQ:
-result=left.getString().equals(right.getString());
+ternary=areStringsEqual(left.getString(),right.getString());
 break;
 case Token.SHNE:
 case Token.NE:
-result=!left.getString().equals(right.getString());
+ternary=areStringsEqual(left.getString(),right.getString()).not();
 break;
-default :
+}
+if (ternary == TernaryValue.UNKNOWN) {
 return n;
 }
+result=ternary.toBoolean(true);
 break;
 case Token.NUMBER:
 if (undefinedRight) {
