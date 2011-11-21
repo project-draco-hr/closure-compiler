@@ -1,6 +1,6 @@
 {
   NodeTraversal.traverseRoots(compiler,Lists.newArrayList(externs,root),new JSDocInfoCollector(compiler.getTypeRegistry()));
-  for (  Symbol sym : getAllSymbols()) {
+  for (  Symbol sym : getAllSymbolsSorted()) {
     JSDocInfo info=sym.getJSDocInfo();
     if (info == null) {
       continue;
@@ -11,8 +11,23 @@
         continue;
       }
       Node paramNode=pos.getItem();
-      Symbol param=getParameterInFunction(sym,paramNode.getString());
-      if (param != null) {
+      String name=paramNode.getString();
+      Symbol param=getParameterInFunction(sym,name);
+      if (param == null) {
+        SourcePosition<Node> typePos=marker.getType();
+        JSType type=null;
+        if (typePos != null) {
+          type=typePos.getItem().getJSType();
+        }
+        if (sym.docScope == null) {
+          sym.docScope=new SymbolScope(null,null,null,sym);
+        }
+        Symbol existingSymbol=isAnySymbolDeclared(name,paramNode,sym.docScope);
+        if (existingSymbol == null) {
+          declareSymbol(name,type,type == null,sym.docScope,paramNode,null);
+        }
+      }
+ else {
         param.defineReferenceAt(paramNode);
       }
     }
