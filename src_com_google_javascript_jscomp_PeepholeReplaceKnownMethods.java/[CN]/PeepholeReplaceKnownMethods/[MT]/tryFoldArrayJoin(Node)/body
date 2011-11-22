@@ -38,7 +38,7 @@
       if (sb != null) {
         Preconditions.checkNotNull(prev);
         foldedSize+=sb.length() + 2;
-        arrayFoldedChildren.add(Node.newString(sb.toString()).copyInformationFrom(prev));
+        arrayFoldedChildren.add(IR.string(sb.toString()).copyInformationFrom(prev));
         sb=null;
       }
       foldedSize+=InlineCostEstimator.getCost(elem);
@@ -50,13 +50,13 @@
   if (sb != null) {
     Preconditions.checkNotNull(prev);
     foldedSize+=sb.length() + 2;
-    arrayFoldedChildren.add(Node.newString(sb.toString()).copyInformationFrom(prev));
+    arrayFoldedChildren.add(IR.string(sb.toString()).copyInformationFrom(prev));
   }
   foldedSize+=arrayFoldedChildren.size() - 1;
   int originalSize=InlineCostEstimator.getCost(n);
 switch (arrayFoldedChildren.size()) {
 case 0:
-    Node emptyStringNode=Node.newString("");
+    Node emptyStringNode=IR.string("");
   n.getParent().replaceChild(n,emptyStringNode);
 reportCodeChange();
 return emptyStringNode;

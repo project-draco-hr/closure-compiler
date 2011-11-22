@@ -5,8 +5,7 @@
   if (current.isReturn()) {
     Preconditions.checkState(NodeUtil.isStatementBlock(parent));
     Node resultNode=getReplacementReturnStatement(current,resultName);
-    Node name=Node.newString(Token.LABEL_NAME,labelName);
-    Node breakNode=new Node(Token.BREAK,name);
+    Node breakNode=IR.breakNode(IR.labelName(labelName));
     breakNode.copyInformationFromForTree(current);
     parent.replaceChild(current,breakNode);
     if (resultNode != null) {

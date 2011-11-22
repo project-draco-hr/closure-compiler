@@ -8,9 +8,9 @@
   }
   if (!reportFunctionName.isEmpty()) {
     Node body=n.getFirstChild().getNext().getNext();
-    Node call=new Node(Token.CALL,Node.newString(Token.NAME,reportFunctionName),Node.newNumber(id));
+    Node call=IR.call(IR.name(reportFunctionName),IR.number(id));
     call.putBooleanProp(Node.FREE_CALL,true);
-    Node expr=new Node(Token.EXPR_RESULT,call);
+    Node expr=IR.exprResult(call);
     body.addChildToFront(expr);
     compiler.reportCodeChange();
   }
@@ -19,7 +19,7 @@
     (new InstrumentReturns(id)).process(body);
   }
   if (!definedFunctionName.isEmpty()) {
-    Node call=new Node(Token.CALL,Node.newString(Token.NAME,definedFunctionName),Node.newNumber(id));
+    Node call=IR.call(IR.name(definedFunctionName),IR.number(id));
     call.putBooleanProp(Node.FREE_CALL,true);
     Node expr=NodeUtil.newExpr(call);
     Node addingRoot=null;

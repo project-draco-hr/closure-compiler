@@ -12,7 +12,7 @@
   if (gramps.isExprResult()) {
     parent.removeChild(rvalue);
     nameNode.addChildToFront(rvalue);
-    Node varNode=new Node(Token.VAR,nameNode);
+    Node varNode=IR.var(nameNode);
     greatGramps.replaceChild(gramps,varNode);
   }
  else {
@@ -21,7 +21,7 @@
     Node currentParent=gramps.getParent();
     for (; !currentParent.isScript() && !currentParent.isBlock(); current=currentParent, currentParent=currentParent.getParent()) {
     }
-    Node stubVar=new Node(Token.VAR,nameNode.cloneTree()).copyInformationFrom(nameNode);
+    Node stubVar=IR.var(nameNode.cloneTree()).copyInformationFrom(nameNode);
     currentParent.addChildBefore(stubVar,current);
     parent.replaceChild(ref.node,nameNode);
   }

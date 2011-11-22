@@ -1,9 +1,9 @@
 {
   Node parent=node.getParent();
-  Node replacement=new Node(Token.GETPROP,Node.newString(Token.NAME,globalSymbolNamespace).copyInformationFrom(node),Node.newString(name).copyInformationFrom(node));
-  replacement.copyInformationFrom(node);
+  Node replacement=IR.getprop(IR.name(globalSymbolNamespace).srcref(node),IR.string(name).srcref(node));
+  replacement.srcref(node);
   if (node.hasChildren()) {
-    Node assign=new Node(Token.ASSIGN,replacement,node.removeFirstChild());
+    Node assign=IR.assign(replacement,node.removeFirstChild());
     parent.replaceChild(node,assign);
   }
  else {

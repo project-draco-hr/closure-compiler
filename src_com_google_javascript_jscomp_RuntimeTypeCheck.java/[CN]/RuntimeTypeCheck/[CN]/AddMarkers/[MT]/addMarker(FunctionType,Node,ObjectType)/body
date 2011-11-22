@@ -7,8 +7,8 @@
     return nodeToInsertAfter;
   }
   Node classNode=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),className,-1,-1);
-  Node marker=Node.newString(interfaceType == null ? "instance_of__" + className : "implements__" + interfaceType.getReferenceName());
-  Node assign=new Node(Token.EXPR_RESULT,new Node(Token.ASSIGN,new Node(Token.GETELEM,new Node(Token.GETPROP,classNode,Node.newString("prototype")),marker),new Node(Token.TRUE)));
+  Node marker=IR.string(interfaceType == null ? "instance_of__" + className : "implements__" + interfaceType.getReferenceName());
+  Node assign=IR.exprResult(IR.assign(IR.getelem(IR.getprop(classNode,IR.string("prototype")),marker),IR.trueNode()));
   nodeToInsertAfter.getParent().addChildAfter(assign,nodeToInsertAfter);
   compiler.reportCodeChange();
   nodeToInsertAfter=assign;

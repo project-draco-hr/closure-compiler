@@ -6,8 +6,8 @@
   Node last=expr.getLastChild();
   expr.detachChildren();
   Node cond=null;
-  Node trueExpr=new Node(Token.BLOCK).copyInformationFrom(expr);
-  Node falseExpr=new Node(Token.BLOCK).copyInformationFrom(expr);
+  Node trueExpr=IR.block().srcref(expr);
+  Node falseExpr=IR.block().srcref(expr);
 switch (expr.getType()) {
 case Token.HOOK:
     cond=first;
@@ -27,10 +27,10 @@ throw new IllegalStateException("Unexpected.");
 }
 Node ifNode;
 if (falseExpr.hasChildren()) {
-ifNode=new Node(Token.IF,cond,trueExpr,falseExpr);
+ifNode=IR.ifNode(cond,trueExpr,falseExpr);
 }
  else {
-ifNode=new Node(Token.IF,cond,trueExpr);
+ifNode=IR.ifNode(cond,trueExpr);
 }
 ifNode.copyInformationFrom(expr);
 if (needResult) {
@@ -38,7 +38,7 @@ Node tempVarNode=NodeUtil.newVarNode(tempName,null).copyInformationFromForTree(e
 Node injectionPointParent=injectionPoint.getParent();
 injectionPointParent.addChildBefore(tempVarNode,injectionPoint);
 injectionPointParent.addChildAfter(ifNode,tempVarNode);
-Node replacementValueNode=Node.newString(Token.NAME,tempName);
+Node replacementValueNode=IR.name(tempName);
 parent.replaceChild(expr,replacementValueNode);
 }
  else {

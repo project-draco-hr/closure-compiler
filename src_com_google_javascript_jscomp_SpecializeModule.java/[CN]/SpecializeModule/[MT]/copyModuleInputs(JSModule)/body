@@ -1,7 +1,7 @@
 {
   specializedInputRootsByOriginal=Maps.newLinkedHashMap();
   functionInfoBySpecializedFunctionNode=Maps.newLinkedHashMap();
-  Node syntheticModuleJsRoot=new Node(Token.BLOCK);
+  Node syntheticModuleJsRoot=IR.block();
   syntheticModuleJsRoot.setIsSyntheticBlock(true);
   for (  CompilerInput input : module.getInputs()) {
     Node originalInputRoot=input.getAstRoot(compiler);
@@ -11,7 +11,7 @@
     matchTopLevelFunctions(originalInputRoot,copiedInputRoot);
     syntheticModuleJsRoot.addChildToBack(copiedInputRoot);
   }
-  Node syntheticExternsAndJsRoot=new Node(Token.BLOCK);
+  Node syntheticExternsAndJsRoot=IR.block();
   syntheticExternsAndJsRoot.addChildToBack(syntheticModuleJsRoot);
   return syntheticModuleJsRoot;
 }

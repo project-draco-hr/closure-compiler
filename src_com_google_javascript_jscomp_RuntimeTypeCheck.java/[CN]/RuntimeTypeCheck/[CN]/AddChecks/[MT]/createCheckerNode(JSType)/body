@@ -3,16 +3,16 @@
     return jsCode("nullChecker");
   }
  else   if (type.isBooleanValueType() || type.isNumberValueType() || type.isStringValueType()|| type.isVoidType()) {
-    return new Node(Token.CALL,jsCode("valueChecker"),Node.newString(type.toString()));
+    return IR.call(jsCode("valueChecker"),IR.string(type.toString()));
   }
  else   if (type.isInstanceType()) {
     ObjectType objType=(ObjectType)type;
     String refName=objType.getReferenceName();
     StaticSourceFile sourceFile=NodeUtil.getSourceFile(objType.getConstructor().getSource());
     if (sourceFile == null || sourceFile.isExtern()) {
-      return new Node(Token.CALL,jsCode("externClassChecker"),Node.newString(refName));
+      return IR.call(jsCode("externClassChecker"),IR.string(refName));
     }
-    return new Node(Token.CALL,jsCode(objType.getConstructor().isInterface() ? "interfaceChecker" : "classChecker"),Node.newString(refName));
+    return IR.call(jsCode(objType.getConstructor().isInterface() ? "interfaceChecker" : "classChecker"),IR.string(refName));
   }
  else {
     return null;

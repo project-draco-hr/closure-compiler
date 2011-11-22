@@ -4,8 +4,8 @@
   if (props.get(propName).aliasAccessor) {
     Node propSrc=getPropNode.getFirstChild();
     getPropNode.removeChild(propSrc);
-    Node newNameNode=Node.newString(Token.NAME,getArrayNotationNameFor(propName));
-    Node elemNode=new Node(Token.GETELEM,propSrc,newNameNode);
+    Node newNameNode=IR.name(getArrayNotationNameFor(propName));
+    Node elemNode=IR.getelem(propSrc,newNameNode);
     replaceNode(getPropNode.getParent(),getPropNode,elemNode);
     compiler.reportCodeChange();
   }

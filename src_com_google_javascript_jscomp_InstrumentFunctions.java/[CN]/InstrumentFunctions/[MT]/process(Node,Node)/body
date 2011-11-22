@@ -12,9 +12,9 @@
   NodeTraversal.traverse(compiler,root,new RemoveCallback(declarationsToRemove));
   NodeTraversal.traverse(compiler,root,new InstrumentCallback());
   if (!appNameSetter.isEmpty()) {
-    Node call=new Node(Token.CALL,Node.newString(Token.NAME,appNameSetter),Node.newString(appNameStr));
+    Node call=IR.call(IR.name(appNameSetter),IR.string(appNameStr));
     call.putBooleanProp(Node.FREE_CALL,true);
-    Node expr=new Node(Token.EXPR_RESULT,call);
+    Node expr=IR.exprResult(call);
     Node addingRoot=compiler.getNodeForCodeInsertion(null);
     addingRoot.addChildrenToFront(expr);
     compiler.reportCodeChange();

@@ -2,7 +2,7 @@
   for (  Node callNode : callNodes) {
     Node curParam=callNode.getFirstChild().getNext();
     if (canOptimizeObjectCreate(curParam)) {
-      Node objNode=new Node(Token.OBJECTLIT).copyInformationFrom(callNode);
+      Node objNode=IR.objectlit().srcref(callNode);
       while (curParam != null) {
         Node keyNode=curParam;
         Node valueNode=curParam.getNext();
@@ -10,11 +10,10 @@
         callNode.removeChild(keyNode);
         callNode.removeChild(valueNode);
         if (!keyNode.isString()) {
-          keyNode=Node.newString(NodeUtil.getStringValue(keyNode)).copyInformationFrom(keyNode);
+          keyNode=IR.string(NodeUtil.getStringValue(keyNode)).srcref(keyNode);
         }
         keyNode.setQuotedString();
-        keyNode.addChildToBack(valueNode);
-        objNode.addChildToBack(keyNode);
+        objNode.addChildToBack(IR.propdef(keyNode,valueNode));
       }
       callNode.getParent().replaceChild(callNode,objNode);
       compiler.reportCodeChange();

@@ -12,11 +12,9 @@
     }
     if (returnCount > 0) {
       replaceReturnWithBreak(block,null,resultName,labelName);
-      Node label=new Node(Token.LABEL).copyInformationFrom(block);
-      Node name=Node.newString(Token.LABEL_NAME,labelName).copyInformationFrom(block);
-      label.addChildToFront(name);
-      label.addChildToBack(block);
-      Node newRoot=new Node(Token.BLOCK).copyInformationFrom(block);
+      Node name=IR.labelName(labelName).srcref(block);
+      Node label=IR.label(name,block).srcref(block);
+      Node newRoot=IR.block().srcref(block);
       newRoot.addChildrenToBack(label);
       root=newRoot;
     }

@@ -27,13 +27,13 @@
         }
         Node proto=prop.getPrototype();
         int stubId=idGenerator.newId();
-        Node stubCall=new Node(Token.CALL,Node.newString(Token.NAME,STUB_METHOD_NAME),Node.newNumber(stubId)).copyInformationFromForTree(value);
+        Node stubCall=IR.call(IR.name(STUB_METHOD_NAME),IR.number(stubId)).copyInformationFromForTree(value);
         stubCall.putBooleanProp(Node.FREE_CALL,true);
         valueParent.replaceChild(value,stubCall);
         Node unstubParent=compiler.getNodeForCodeInsertion(deepestCommonModuleRef);
-        Node unstubCall=new Node(Token.CALL,Node.newString(Token.NAME,UNSTUB_METHOD_NAME),Node.newNumber(stubId),value);
+        Node unstubCall=IR.call(IR.name(UNSTUB_METHOD_NAME),IR.number(stubId),value);
         unstubCall.putBooleanProp(Node.FREE_CALL,true);
-        unstubParent.addChildToFront(new Node(Token.EXPR_RESULT,new Node(Token.ASSIGN,new Node(Token.GETPROP,proto.cloneTree(),Node.newString(Token.STRING,nameInfo.name)),unstubCall)).copyInformationFromForTree(value));
+        unstubParent.addChildToFront(IR.exprResult(IR.assign(IR.getprop(proto.cloneTree(),IR.string(nameInfo.name)),unstubCall)).copyInformationFromForTree(value));
         compiler.reportCodeChange();
         logger.fine("Moved method: " + proto.getQualifiedName() + "."+ nameInfo.name+ " from module "+ prop.getModule()+ " to module "+ deepestCommonModuleRef);
       }

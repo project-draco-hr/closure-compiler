@@ -3,16 +3,16 @@
   Node functionNode=parent.getLastChild();
   Node expr=parent.getParent();
   Node block=expr.getParent();
-  Node newNameNode=Node.newString(Token.NAME,newMethodName).copyInformationFrom(parent.getFirstChild());
+  Node newNameNode=IR.name(newMethodName).copyInformationFrom(parent.getFirstChild());
   if (specializationState != null) {
     specializationState.reportRemovedFunction(functionNode,block);
   }
   parent.removeChild(functionNode);
   newNameNode.addChildToFront(functionNode);
-  block.replaceChild(expr,new Node(Token.VAR,newNameNode));
+  block.replaceChild(expr,IR.var(newNameNode));
   String self=newMethodName + "$self";
   Node argList=functionNode.getFirstChild().getNext();
-  argList.addChildToFront(Node.newString(Token.NAME,self).copyInformationFrom(functionNode));
+  argList.addChildToFront(IR.name(self).copyInformationFrom(functionNode));
   Node body=functionNode.getLastChild();
   replaceReferencesToThis(body,self);
   fixFunctionType(functionNode);

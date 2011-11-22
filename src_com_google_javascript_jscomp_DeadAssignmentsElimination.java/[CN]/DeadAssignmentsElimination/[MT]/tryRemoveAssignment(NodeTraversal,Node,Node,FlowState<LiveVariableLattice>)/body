@@ -43,13 +43,13 @@
     }
  else     if (n.isInc() || n.isDec()) {
       if (NodeUtil.isExpressionNode(parent)) {
-        parent.replaceChild(n,new Node(Token.VOID,Node.newNumber(0).copyInformationFrom(n)));
+        parent.replaceChild(n,IR.voidNode(IR.number(0).srcref(n)));
       }
  else       if (n.isComma() && n != parent.getLastChild()) {
         parent.removeChild(n);
       }
  else       if (parent.isFor() && !NodeUtil.isForIn(parent) && NodeUtil.getConditionExpression(parent) != n) {
-        parent.replaceChild(n,new Node(Token.EMPTY));
+        parent.replaceChild(n,IR.empty());
       }
  else {
         return;

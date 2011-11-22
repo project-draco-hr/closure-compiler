@@ -1,10 +1,10 @@
 {
-  Node nodeName=Node.newString(Token.NAME,name);
+  Node nodeName=IR.name(name);
   if (value != null) {
     Preconditions.checkState(value.getNext() == null);
     nodeName.addChildToBack(value);
-    nodeName.copyInformationFrom(value);
+    nodeName.srcref(value);
   }
-  Node var=new Node(Token.VAR,nodeName).copyInformationFrom(nodeName);
+  Node var=IR.var(nodeName).srcref(nodeName);
   return var;
 }

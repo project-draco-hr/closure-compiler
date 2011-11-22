@@ -2,11 +2,10 @@
   if (n.isFunction()) {
     if (NodeUtil.isFunctionDeclaration(n)) {
       Node fnNameNode=n.getFirstChild();
-      Node var=new Node(Token.VAR).copyInformationFrom(n);
-      Node name=Node.newString(Token.NAME,fnNameNode.getString()).copyInformationFrom(fnNameNode);
+      Node name=IR.name(fnNameNode.getString()).srcref(fnNameNode);
+      Node var=IR.var(name).srcref(n);
       fnNameNode.setString("");
       n.getParent().replaceChild(n,var);
-      var.addChildToFront(name);
       name.addChildToFront(n);
     }
     return;

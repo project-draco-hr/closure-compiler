@@ -10,7 +10,7 @@
   state.extractBeforeStatement=thisVarNode;
   Node thisNameNode=thisVarNode.getFirstChild();
   Node functionNameNode=getVarNode.getFirstChild();
-  Node newCall=new Node(Token.CALL,new Node(Token.GETPROP,functionNameNode.cloneNode(),Node.newString("call")),thisNameNode.cloneNode(),call.getLineno(),call.getCharno());
+  Node newCall=IR.call(IR.getprop(functionNameNode.cloneNode(),IR.string("call")),thisNameNode.cloneNode()).srcref(call);
   call.removeFirstChild();
   if (call.hasChildren()) {
     newCall.addChildrenToBack(call.removeChildren());

@@ -7,18 +7,18 @@
   for (Node key=val.getFirstChild(); key != null; key=key.getNext()) {
     String var=key.getString();
     Node value=key.removeFirstChild();
-    nodes.add(new Node(Token.ASSIGN,Node.newString(Token.NAME,varmap.get(var)),value));
+    nodes.add(IR.assign(IR.name(varmap.get(var)),value));
     all.remove(var);
   }
   for (  String var : all) {
-    nodes.add(new Node(Token.ASSIGN,Node.newString(Token.NAME,varmap.get(var)),NodeUtil.newUndefinedNode(null)));
+    nodes.add(IR.assign(IR.name(varmap.get(var)),NodeUtil.newUndefinedNode(null)));
   }
   Node replacement;
   if (nodes.isEmpty()) {
-    replacement=new Node(Token.TRUE);
+    replacement=IR.trueNode();
   }
  else {
-    nodes.add(new Node(Token.TRUE));
+    nodes.add(IR.trueNode());
     nodes=Lists.reverse(nodes);
     replacement=new Node(Token.COMMA);
     Node cur=replacement;

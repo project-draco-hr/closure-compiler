@@ -17,10 +17,8 @@
     }
     Node clone=initializedName.cloneNode();
     groupVar.replaceChild(initializedName,clone);
-    Node initializedVal=initializedName.getFirstChild();
-    initializedName.removeChild(initializedVal);
-    Node assignmentNode=new Node(Token.ASSIGN,initializedName);
-    assignmentNode.addChildAfter(initializedVal,initializedName);
+    Node initializedVal=initializedName.removeFirstChild();
+    Node assignmentNode=IR.assign(initializedName,initializedVal);
     if (groupVarParent.isFor()) {
       groupVarParent.replaceChild(groupVar,assignmentNode);
     }
@@ -36,7 +34,7 @@
         groupVarParent.replaceChild(groupVar,nameNodeClone);
       }
  else {
-        Node emptyNode=new Node(Token.EMPTY);
+        Node emptyNode=IR.empty();
         groupVarParent.replaceChild(groupVar,emptyNode);
       }
     }

@@ -22,18 +22,18 @@
       value.detachFromParent();
     }
  else {
-      refNode=Node.newString(Token.NAME,propAlias);
+      refNode=IR.name(propAlias);
       if (key.getBooleanProp(Node.IS_CONSTANT_NAME)) {
         refNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
       }
       key.replaceChild(value,refNode);
     }
-    Node nameNode=Node.newString(Token.NAME,propAlias);
+    Node nameNode=IR.name(propAlias);
     nameNode.addChildToFront(value);
     if (key.getBooleanProp(Node.IS_CONSTANT_NAME)) {
       nameNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
     }
-    Node newVar=new Node(Token.VAR,nameNode).copyInformationFromForTree(key);
+    Node newVar=IR.var(nameNode).copyInformationFromForTree(key);
     if (nameToAddAfter != null) {
       varParent.addChildAfter(newVar,nameToAddAfter);
     }
