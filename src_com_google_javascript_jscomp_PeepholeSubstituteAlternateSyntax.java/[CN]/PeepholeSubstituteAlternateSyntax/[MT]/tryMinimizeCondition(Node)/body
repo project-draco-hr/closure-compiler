@@ -28,14 +28,14 @@ case Token.OR:
     }
  else {
       leftParent.detachFromParent();
-      left=new Node(Token.NOT,leftParent).copyInformationFrom(leftParent);
+      left=IR.not(leftParent).srcref(leftParent);
     }
     if (rightParent.isNot()) {
       right=rightParent.removeFirstChild();
     }
  else {
       rightParent.detachFromParent();
-      right=new Node(Token.NOT,rightParent).copyInformationFrom(rightParent);
+      right=IR.not(rightParent).srcref(rightParent);
     }
     int newOp=(first.isAnd()) ? Token.OR : Token.AND;
     Node newRoot=new Node(newOp,left,right);
@@ -95,15 +95,15 @@ replacement=condition;
 }
  else if (trueNodeVal == TernaryValue.FALSE && falseNodeVal == TernaryValue.TRUE) {
 condition.detachFromParent();
-replacement=new Node(Token.NOT,condition);
+replacement=IR.not(condition);
 }
  else if (trueNodeVal == TernaryValue.TRUE) {
 n.detachChildren();
-replacement=new Node(Token.OR,condition,falseNode);
+replacement=IR.or(condition,falseNode);
 }
  else if (falseNodeVal == TernaryValue.FALSE) {
 n.detachChildren();
-replacement=new Node(Token.AND,condition,trueNode);
+replacement=IR.and(condition,trueNode);
 }
 if (replacement != null) {
 parent.replaceChild(n,replacement);

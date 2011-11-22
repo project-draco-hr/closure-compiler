@@ -47,18 +47,8 @@ break;
 default :
 throw new Error("Unexpected arithmetic operator");
 }
-if (String.valueOf(result).length() <= String.valueOf(lval).length() + String.valueOf(rval).length() + 1 && Math.abs(result) <= MAX_FOLD_NUMBER) {
-Node newNumber=Node.newNumber(result);
-return newNumber;
-}
- else if (Double.isNaN(result)) {
-return Node.newString(Token.NAME,"NaN");
-}
- else if (result == Double.POSITIVE_INFINITY) {
-return Node.newString(Token.NAME,"Infinity");
-}
- else if (result == Double.NEGATIVE_INFINITY) {
-return new Node(Token.NEG,Node.newString(Token.NAME,"Infinity"));
+if ((String.valueOf(result).length() <= String.valueOf(lval).length() + String.valueOf(rval).length() + 1 && Math.abs(result) <= MAX_FOLD_NUMBER) || Double.isNaN(result) || result == Double.POSITIVE_INFINITY || result == Double.NEGATIVE_INFINITY) {
+return NodeUtil.numberNode(result,null);
 }
 return null;
 }

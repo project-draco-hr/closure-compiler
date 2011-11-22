@@ -7,8 +7,8 @@
       Node rhsAssign=getSimpleAssignmentValue(n);
       TernaryValue value=NodeUtil.getImpureBooleanValue(rhsAssign);
       if (value != TernaryValue.UNKNOWN) {
-        int replacementConditionNodeType=(value.toBoolean(true)) ? Token.TRUE : Token.FALSE;
-        condition.getParent().replaceChild(condition,new Node(replacementConditionNodeType));
+        Node replacementConditionNode=NodeUtil.booleanNode(value.toBoolean(true));
+        condition.getParent().replaceChild(condition,replacementConditionNode);
         reportCodeChange();
       }
     }

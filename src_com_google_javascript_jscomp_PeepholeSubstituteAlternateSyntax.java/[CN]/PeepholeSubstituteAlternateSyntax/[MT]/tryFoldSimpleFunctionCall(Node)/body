@@ -4,10 +4,7 @@
   if (callTarget != null && callTarget.isName() && callTarget.getString().equals("String")) {
     Node value=callTarget.getNext();
     if (value != null) {
-      Node addition=new Node(Token.ADD);
-      Node stringNode=Node.newString("").copyInformationFrom(callTarget);
-      addition.addChildToFront(stringNode);
-      addition.addChildToBack(value.detachFromParent());
+      Node addition=IR.add(IR.string("").srcref(callTarget),value.detachFromParent());
       n.getParent().replaceChild(n,addition);
       reportCodeChange();
       return addition;

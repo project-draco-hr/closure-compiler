@@ -13,9 +13,7 @@
   Node branchToKeep=condValue.toBoolean(true) ? thenBody : elseBody;
   Node replacement;
   if (mayHaveSideEffects(cond)) {
-    replacement=new Node(Token.COMMA).copyInformationFrom(n);
-    replacement.addChildToFront(cond);
-    replacement.addChildToBack(branchToKeep);
+    replacement=IR.comma(cond,branchToKeep).srcref(n);
   }
  else {
     replacement=branchToKeep;

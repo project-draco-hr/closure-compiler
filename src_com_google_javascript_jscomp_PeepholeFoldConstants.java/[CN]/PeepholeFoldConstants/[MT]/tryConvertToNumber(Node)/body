@@ -22,20 +22,7 @@ if (result == null) {
 return;
 }
 double value=result;
-Node replacement;
-if (Double.isNaN(value)) {
-replacement=Node.newString(Token.NAME,"NaN");
-}
- else if (value == Double.POSITIVE_INFINITY) {
-replacement=Node.newString(Token.NAME,"Infinity");
-}
- else if (value == Double.NEGATIVE_INFINITY) {
-replacement=new Node(Token.NEG,Node.newString(Token.NAME,"Infinity"));
-replacement.copyInformationFromForTree(n);
-}
- else {
-replacement=Node.newNumber(value);
-}
+Node replacement=NodeUtil.numberNode(value,n);
 n.getParent().replaceChild(n,replacement);
 reportCodeChange();
 }

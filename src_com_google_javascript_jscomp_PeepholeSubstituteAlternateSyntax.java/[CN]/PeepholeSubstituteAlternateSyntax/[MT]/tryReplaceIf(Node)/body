@@ -20,7 +20,7 @@
  else         if (nextElse != null && thenBranch.isEquivalentToTyped(nextElse)) {
           child.detachFromParent();
           child.detachChildren();
-          Node newCond=new Node(Token.AND,new Node(Token.NOT,cond).copyInformationFrom(cond));
+          Node newCond=new Node(Token.AND,IR.not(cond).srcref(cond));
           nextNode.replaceChild(nextCond,newCond);
           newCond.addChildToBack(nextCond);
           reportCodeChange();
@@ -38,8 +38,7 @@
         Node elseExpr=nextNode.getFirstChild();
         cond.detachFromParent();
         elseExpr.detachFromParent();
-        Node hookNode=new Node(Token.HOOK,cond,thenExpr,elseExpr).copyInformationFrom(child);
-        Node returnNode=new Node(Token.RETURN,hookNode);
+        Node returnNode=IR.returnNode(IR.hook(cond,thenExpr,elseExpr).srcref(child));
         n.replaceChild(child,returnNode);
         n.removeChild(nextNode);
         reportCodeChange();

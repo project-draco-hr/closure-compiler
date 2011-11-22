@@ -43,13 +43,13 @@
   if (mayHaveSideEffects(cond)) {
     boolean newConditionValue=condValue == TernaryValue.TRUE;
     if (!newConditionValue && elseBody == null) {
-      elseBody=new Node(Token.BLOCK).copyInformationFrom(n);
+      elseBody=IR.block().srcref(n);
       n.addChildToBack(elseBody);
     }
-    Node newCond=new Node(newConditionValue ? Token.TRUE : Token.FALSE);
+    Node newCond=NodeUtil.booleanNode(newConditionValue);
     n.replaceChild(cond,newCond);
     Node branchToKeep=newConditionValue ? thenBody : elseBody;
-    branchToKeep.addChildToFront(new Node(Token.EXPR_RESULT,cond).copyInformationFrom(cond));
+    branchToKeep.addChildToFront(IR.exprResult(cond).srcref(cond));
     reportCodeChange();
     cond=newCond;
   }
