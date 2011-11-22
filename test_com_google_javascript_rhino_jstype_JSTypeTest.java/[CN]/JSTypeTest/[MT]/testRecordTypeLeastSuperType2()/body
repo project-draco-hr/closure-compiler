@@ -3,9 +3,6 @@
   builder.addProperty("e",NUMBER_TYPE,null);
   builder.addProperty("b",STRING_TYPE,null);
   builder.addProperty("c",STRING_TYPE,null);
-  JSType subRecordType=builder.build();
-  JSType leastSupertype=recordType.getLeastSupertype(subRecordType);
-  builder=new RecordTypeBuilder(registry);
-  builder.addProperty("b",STRING_TYPE,null);
-  assertTypeEquals(leastSupertype,builder.build());
+  JSType otherRecordType=builder.build();
+  assertTypeEquals(registry.createUnionType(recordType,otherRecordType),recordType.getLeastSupertype(otherRecordType));
 }
