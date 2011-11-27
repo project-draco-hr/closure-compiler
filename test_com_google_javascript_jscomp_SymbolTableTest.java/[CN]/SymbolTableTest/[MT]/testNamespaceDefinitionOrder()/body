@@ -1,0 +1,11 @@
+{
+  SymbolTable table=createSymbolTable("/** @const */ var goog = {};\n" + "/** @constructor */ goog.dom.Foo = function() {};\n" + "/** @const */ goog.dom = {};\n");
+  Symbol goog=getGlobalVar(table,"goog");
+  Symbol dom=getGlobalVar(table,"goog.dom");
+  Symbol Foo=getGlobalVar(table,"goog.dom.Foo");
+  assertNotNull(goog);
+  assertNotNull(dom);
+  assertNotNull(Foo);
+  assertEquals(dom,goog.getPropertyScope().getSlot("dom"));
+  assertEquals(Foo,dom.getPropertyScope().getSlot("Foo"));
+}

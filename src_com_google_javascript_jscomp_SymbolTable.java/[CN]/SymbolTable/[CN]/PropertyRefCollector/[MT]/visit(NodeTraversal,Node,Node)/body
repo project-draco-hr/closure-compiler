@@ -2,7 +2,7 @@
   if (n.isGetProp()) {
     JSType owner=n.getFirstChild().getJSType();
     if (owner == null || owner.isUnknownType()) {
-      tryDefineLexicalPropRef(n.getQualifiedName(),n);
+      tryDefineLexicalQualifiedNameRef(n.getQualifiedName(),n);
       return;
     }
     maybeDefineTypedReference(n,n.getLastChild().getString(),owner);
@@ -10,7 +10,7 @@
  else   if (NodeUtil.isObjectLitKey(n,parent) && n.isString()) {
     JSType owner=parent.getJSType();
     if (owner == null || owner.isUnknownType()) {
-      tryDefineLexicalPropRef(NodeUtil.getBestLValueName(n),n);
+      tryDefineLexicalQualifiedNameRef(NodeUtil.getBestLValueName(n),n);
       return;
     }
     maybeDefineTypedReference(n,n.getString(),owner);

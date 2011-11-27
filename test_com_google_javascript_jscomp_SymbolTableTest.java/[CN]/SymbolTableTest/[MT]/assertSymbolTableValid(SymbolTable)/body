@@ -1,11 +1,14 @@
 {
+  Set<Symbol> allSymbols=Sets.newHashSet(table.getAllSymbols());
   for (  Symbol sym : table.getAllSymbols()) {
-    assertEquals(sym,table.getScope(sym).getSlot(sym.getName()));
+    assertEquals(sym,table.getScope(sym).getQualifiedSlot(sym.getName()));
     for (    Reference ref : table.getReferences(sym)) {
       assertEquals(sym,ref.getSymbol());
     }
+    Symbol scope=table.getSymbolForScope(table.getScope(sym));
+    assertTrue("The symbol's scope is a zombie scope that shouldn't exist: " + sym,scope == null || allSymbols.contains(scope));
   }
-  Symbol global=getGlobalVar(table,"*global*");
+  Symbol global=getGlobalVar(table,SymbolTable.GLOBAL_THIS);
   assertNotNull(global);
   assertNotNull(global.getDeclaration());
   assertEquals(Token.SCRIPT,global.getDeclaration().getNode().getType());

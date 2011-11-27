@@ -1,0 +1,11 @@
+{
+  if (scope.isLexicalScope() || scope.isDocScope()) {
+    return scope.getScopeDepth();
+  }
+ else {
+    Preconditions.checkState(scope.isPropertyScope());
+    Symbol sym=scope.getSymbolForScope();
+    Preconditions.checkNotNull(sym);
+    return getLexicalScopeDepth(getScope(sym)) + 1;
+  }
+}
