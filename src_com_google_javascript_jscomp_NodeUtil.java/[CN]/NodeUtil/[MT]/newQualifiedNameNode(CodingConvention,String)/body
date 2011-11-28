@@ -1,19 +1,19 @@
 {
   int endPos=name.indexOf('.');
   if (endPos == -1) {
-    return newName(convention,name,lineno,charno);
+    return newName(convention,name);
   }
-  Node node=newName(convention,name.substring(0,endPos),lineno,charno);
+  Node node=newName(convention,name.substring(0,endPos));
   int startPos;
   do {
     startPos=endPos + 1;
     endPos=name.indexOf('.',startPos);
     String part=(endPos == -1 ? name.substring(startPos) : name.substring(startPos,endPos));
-    Node propNode=Node.newString(part,lineno,charno);
+    Node propNode=IR.string(part);
     if (convention.isConstantKey(part)) {
       propNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
     }
-    node=new Node(Token.GETPROP,node,propNode,lineno,charno);
+    node=IR.getprop(node,propNode);
   }
  while (endPos != -1);
   return node;

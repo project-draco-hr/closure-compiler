@@ -27,8 +27,8 @@
     compiler.report(t.makeError(secondArgument,STRING_LITERAL_EXPECTED_ERROR,Token.name(secondArgument.getType())));
     return;
   }
-  Node newFirstArgument=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),compiler.getCodingConvention().getGlobalObject(),firstArgument.getLineno(),firstArgument.getCharno());
-  Node newSecondArgument=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),firstArgument.getQualifiedName() + "." + firstArgument.getNext().getString(),secondArgument.getLineno(),secondArgument.getCharno());
+  Node newFirstArgument=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),compiler.getCodingConvention().getGlobalObject()).srcrefTree(firstArgument);
+  Node newSecondArgument=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),firstArgument.getQualifiedName() + "." + firstArgument.getNext().getString()).srcrefTree(secondArgument);
   n.replaceChild(firstArgument,newFirstArgument);
   n.replaceChild(secondArgument,newSecondArgument);
   compiler.reportCodeChange();
