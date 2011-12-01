@@ -1,4 +1,5 @@
 {
+  Var newVar=var;
   boolean allowDupe=false;
   if (n.isGetProp() || NodeUtil.isObjectLitKey(n,parent)) {
     JSDocInfo info=n.getJSDocInfo();
@@ -12,7 +13,7 @@
     if (var.input == null) {
       Scope s=var.getScope();
       s.undeclare(var);
-      s.declare(variableName,n,varType,input,false);
+      newVar=s.declare(variableName,n,varType,input,false);
       n.setJSType(varType);
       if (parent.isVar()) {
         if (n.getFirstChild() != null) {
@@ -30,4 +31,5 @@
       }
     }
   }
+  return newVar;
 }
