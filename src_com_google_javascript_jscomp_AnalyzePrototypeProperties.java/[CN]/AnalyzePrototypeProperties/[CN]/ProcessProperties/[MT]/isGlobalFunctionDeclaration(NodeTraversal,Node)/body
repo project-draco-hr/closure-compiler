@@ -1,3 +1,7 @@
 {
-  return t.inGlobalScope() && (NodeUtil.isFunctionDeclaration(n) || n.isFunction() && n.getParent().isName());
+  Scope s=t.getScope();
+  if (!(s.isGlobal() || s.getDepth() == 1 && s.getRootNode() == n)) {
+    return false;
+  }
+  return NodeUtil.isFunctionDeclaration(n) || n.isFunction() && n.getParent().isName();
 }

@@ -1,0 +1,13 @@
+{
+  Node firstChild=nameNode.getFirstChild();
+  Node parent=nameNode.getParent();
+  if (isGlobalFunctionDeclaration(t,parent) || firstChild != null && isGlobalFunctionDeclaration(t,firstChild)) {
+    String name=nameNode.getString();
+    getNameInfoForName(name,VAR).getDeclarations().add(new GlobalFunction(nameNode,v,t.getModule()));
+    if (compiler.getCodingConvention().isExported(name) || anchorUnusedVars) {
+      addGlobalUseOfSymbol(name,t.getModule(),VAR);
+    }
+    return true;
+  }
+  return false;
+}

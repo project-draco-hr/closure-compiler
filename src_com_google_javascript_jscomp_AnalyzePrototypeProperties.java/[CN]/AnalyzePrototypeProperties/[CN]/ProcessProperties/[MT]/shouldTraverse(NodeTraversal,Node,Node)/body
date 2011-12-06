@@ -1,13 +1,7 @@
 {
-  if (isPrototypePropertyAssign(n)) {
-    symbolStack.push(new NameContext(getNameInfoForName(n.getFirstChild().getLastChild().getString(),PROPERTY)));
-  }
- else   if (isGlobalFunctionDeclaration(t,n)) {
-    String name=parent.isName() ? parent.getString() : n.getFirstChild().getString();
-    symbolStack.push(new NameContext(getNameInfoForName(name,VAR)));
-  }
- else   if (n.isFunction()) {
-    symbolStack.push(new NameContext(anonymousNode));
+  String propName=processNonFunctionPrototypeAssign(n,parent);
+  if (propName != null) {
+    symbolStack.push(new NameContext(getNameInfoForName(propName,PROPERTY),null));
   }
   return true;
 }

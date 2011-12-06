@@ -19,6 +19,9 @@
         continue;
       }
       Property prop=(Property)symbol;
+      if (!(prop.getRootVar() != null && prop.getRootVar().isGlobal())) {
+        continue;
+      }
       Node value=prop.getValue();
       if (moduleGraph.dependsOn(deepestCommonModuleRef,prop.getModule()) && value.isFunction()) {
         Node valueParent=value.getParent();
@@ -35,7 +38,6 @@
         unstubCall.putBooleanProp(Node.FREE_CALL,true);
         unstubParent.addChildToFront(IR.exprResult(IR.assign(IR.getprop(proto.cloneTree(),IR.string(nameInfo.name)),unstubCall)).copyInformationFromForTree(value));
         compiler.reportCodeChange();
-        logger.fine("Moved method: " + proto.getQualifiedName() + "."+ nameInfo.name+ " from module "+ prop.getModule()+ " to module "+ deepestCommonModuleRef);
       }
     }
   }
