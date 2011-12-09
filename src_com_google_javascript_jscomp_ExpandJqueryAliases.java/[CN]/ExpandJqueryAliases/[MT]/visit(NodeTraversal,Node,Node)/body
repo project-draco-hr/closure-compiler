@@ -1,0 +1,12 @@
+{
+  if (compiler.getCodingConvention().isPrototypeAlias(n)) {
+    replaceJqueryPrototypeAlias(n);
+  }
+ else   if (n.isCall()) {
+    Node callTarget=n.getFirstChild();
+    String qName=callTarget.getQualifiedName();
+    if (isJqueryExtendReference(callTarget,qName)) {
+      replaceJqueryExtendCall(n);
+    }
+  }
+}
