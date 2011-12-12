@@ -18,6 +18,7 @@
  else {
           assignedToUnknownValue=true;
         }
+        boolean maybeEscaped=false;
         for (        Assign assign : assignsByVar.get(var)) {
           if (assign.isPropertyAssign) {
             hasPropertyAssign=true;
@@ -25,8 +26,11 @@
  else           if (!NodeUtil.isLiteralValue(assign.assignNode.getLastChild(),true)) {
             assignedToUnknownValue=true;
           }
+          if (assign.maybeAliased) {
+            maybeEscaped=true;
+          }
         }
-        if (assignedToUnknownValue && hasPropertyAssign) {
+        if ((assignedToUnknownValue || maybeEscaped) && hasPropertyAssign) {
           changes=markReferencedVar(var) || changes;
           maybeUnreferenced.remove(current);
           current--;
