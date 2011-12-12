@@ -25,7 +25,7 @@
       }
       externsRoot.addChildToBack(n);
     }
-    if (options.manageClosureDependencies) {
+    if (options.dependencyOptions.needsManagement()) {
       for (      CompilerInput input : inputs) {
         input.setCompiler(this);
         for (        String provide : input.getProvides()) {
@@ -33,7 +33,7 @@
         }
       }
       try {
-        inputs=(moduleGraph == null ? new JSModuleGraph(modules) : moduleGraph).manageDependencies(options.manageClosureDependenciesEntryPoints,inputs);
+        inputs=(moduleGraph == null ? new JSModuleGraph(modules) : moduleGraph).manageDependencies(options.dependencyOptions,inputs);
       }
  catch (      CircularDependencyException e) {
         report(JSError.make(JSModule.CIRCULAR_DEPENDENCY_ERROR,e.getMessage()));

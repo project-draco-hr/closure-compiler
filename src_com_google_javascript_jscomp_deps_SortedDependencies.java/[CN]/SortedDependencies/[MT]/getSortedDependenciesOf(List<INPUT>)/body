@@ -1,23 +1,3 @@
 {
-  Preconditions.checkArgument(inputs.containsAll(roots));
-  Set<INPUT> included=Sets.newHashSet();
-  Deque<INPUT> worklist=new ArrayDeque<INPUT>(roots);
-  while (!worklist.isEmpty()) {
-    INPUT current=worklist.pop();
-    if (included.add(current)) {
-      for (      String req : current.getRequires()) {
-        INPUT dep=provideMap.get(req);
-        if (dep != null) {
-          worklist.add(dep);
-        }
-      }
-    }
-  }
-  ImmutableList.Builder<INPUT> builder=ImmutableList.builder();
-  for (  INPUT current : sortedList) {
-    if (included.contains(current)) {
-      builder.add(current);
-    }
-  }
-  return builder.build();
+  return getDependenciesOf(roots,true);
 }

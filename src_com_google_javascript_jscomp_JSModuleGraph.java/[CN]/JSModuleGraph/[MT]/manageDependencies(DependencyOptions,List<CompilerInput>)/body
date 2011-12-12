@@ -1,0 +1,41 @@
+{
+  SortedDependencies<CompilerInput> sorter=new SortedDependencies<CompilerInput>(inputs);
+  Set<CompilerInput> entryPointInputs=Sets.newLinkedHashSet(depOptions.shouldDropMoochers() ? ImmutableList.<CompilerInput>of() : sorter.getInputsWithoutProvides());
+  for (  String entryPoint : depOptions.getEntryPoints()) {
+    entryPointInputs.add(sorter.getInputProviding(entryPoint));
+  }
+  List<CompilerInput> absoluteOrder=sorter.getDependenciesOf(inputs,depOptions.shouldSortDependencies());
+  ListMultimap<JSModule,CompilerInput> entryPointInputsPerModule=LinkedListMultimap.create();
+  for (  CompilerInput input : entryPointInputs) {
+    JSModule module=input.getModule();
+    Preconditions.checkNotNull(module);
+    entryPointInputsPerModule.put(module,input);
+  }
+  for (  JSModule module : getAllModules()) {
+    module.removeAll();
+  }
+  for (  JSModule module : entryPointInputsPerModule.keySet()) {
+    List<CompilerInput> transitiveClosure=sorter.getDependenciesOf(entryPointInputsPerModule.get(module),depOptions.shouldSortDependencies());
+    for (    CompilerInput input : transitiveClosure) {
+      JSModule oldModule=input.getModule();
+      if (oldModule == null) {
+        input.setModule(module);
+      }
+ else {
+        input.setModule(null);
+        input.setModule(getDeepestCommonDependencyInclusive(oldModule,module));
+      }
+    }
+  }
+  for (  CompilerInput input : absoluteOrder) {
+    JSModule module=input.getModule();
+    if (module != null) {
+      module.add(input);
+    }
+  }
+  List<CompilerInput> result=Lists.newArrayList();
+  for (  JSModule module : getAllModulesInDependencyOrder()) {
+    result.addAll(module.getInputs());
+  }
+  return result;
+}

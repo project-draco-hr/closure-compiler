@@ -1,0 +1,14 @@
+{
+  List<CompilerInput> inputs=setUpManageDependenciesTest();
+  DependencyOptions depOptions=new DependencyOptions();
+  depOptions.setDependencySorting(true);
+  depOptions.setDependencyPruning(true);
+  depOptions.setMoocherDropping(true);
+  depOptions.setEntryPoints(ImmutableList.<String>of("c2"));
+  List<CompilerInput> results=graph.manageDependencies(depOptions,inputs);
+  assertInputs(A);
+  assertInputs(B);
+  assertInputs(C,"a1","c1","c2");
+  assertInputs(E);
+  assertEquals(Lists.newArrayList("a1","c1","c2"),sourceNames(results));
+}
