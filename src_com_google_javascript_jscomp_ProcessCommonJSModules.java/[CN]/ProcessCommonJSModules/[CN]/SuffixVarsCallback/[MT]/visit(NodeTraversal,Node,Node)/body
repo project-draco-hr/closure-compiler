@@ -1,0 +1,19 @@
+{
+  if (n.isName()) {
+    String name=n.getString();
+    if (suffix.equals(name)) {
+      return;
+    }
+    if (EXPORTS.equals(name)) {
+      n.setString(suffix);
+      n.putProp(Node.ORIGINALNAME_PROP,EXPORTS);
+    }
+ else {
+      Scope.Var var=t.getScope().getVar(name);
+      if (var != null && var.isGlobal()) {
+        n.setString(name + "$$" + suffix);
+        n.putProp(Node.ORIGINALNAME_PROP,name);
+      }
+    }
+  }
+}

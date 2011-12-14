@@ -1,0 +1,40 @@
+{
+  String moduleName=null;
+  if (modNode != null) {
+    moduleName=handlePlugins(t,script,modNode.getString(),modNode);
+  }
+  if (isVirtualModuleName(moduleName)) {
+    return;
+  }
+  String aliasName=aliasNode != null ? aliasNode.getString() : null;
+  Scope globalScope=t.getScope();
+  if (aliasName != null && globalScope.isDeclared(aliasName,true)) {
+    while (true) {
+      String renamed=aliasName + VAR_RENAME_SUFFIX + renameIndex;
+      if (!globalScope.isDeclared(renamed,true)) {
+        NodeTraversal.traverse(compiler,callback,new RenameCallback(aliasName,renamed));
+        aliasName=renamed;
+        break;
+      }
+      renameIndex++;
+    }
+  }
+  Node requireNode;
+  if (moduleName != null) {
+    Node call=IR.call(IR.name("require"),IR.string(moduleName));
+    call.putBooleanProp(Node.FREE_CALL,true);
+    if (aliasName != null) {
+      requireNode=IR.var(IR.name(aliasName),call).copyInformationFromForTree(aliasNode);
+    }
+ else {
+      requireNode=IR.exprResult(call).copyInformationFromForTree(modNode);
+    }
+  }
+ else {
+    if (isVirtualModuleName(aliasName)) {
+      return;
+    }
+    requireNode=IR.var(IR.name(aliasName),IR.nullNode()).copyInformationFromForTree(aliasNode);
+  }
+  script.addChildBefore(requireNode,defineNode.getParent());
+}

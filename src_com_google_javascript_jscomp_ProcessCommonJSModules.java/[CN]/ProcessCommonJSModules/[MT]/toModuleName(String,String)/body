@@ -1,0 +1,13 @@
+{
+  requiredFilename=requiredFilename.replaceAll("\\.js$","");
+  currentFilename=currentFilename.replaceAll("\\.js$","");
+  if (requiredFilename.startsWith("./") || requiredFilename.startsWith("../")) {
+    try {
+      requiredFilename=(new URI(currentFilename)).resolve(new URI(requiredFilename)).toString();
+    }
+ catch (    URISyntaxException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  return toModuleName(requiredFilename);
+}

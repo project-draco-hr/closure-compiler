@@ -1,0 +1,11 @@
+{
+  String moduleName=toModuleName(require.getChildAtIndex(1).getString(),normalizeSourceName(t.getSourceName()));
+  Node moduleRef=IR.name(moduleName).srcref(require);
+  parent.replaceChild(require,moduleRef);
+  Node script=getCurrentScriptNode(parent);
+  if (reportDependencies) {
+    t.getInput().addRequire(moduleName);
+  }
+  script.addChildToFront(IR.exprResult(IR.call(IR.getprop(IR.name("goog"),IR.string("require")),IR.string(moduleName))).copyInformationFromForTree(require));
+  compiler.reportCodeChange();
+}
