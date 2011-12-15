@@ -40,11 +40,15 @@
       }
  catch (      CircularDependencyException e) {
         report(JSError.make(JSModule.CIRCULAR_DEPENDENCY_ERROR,e.getMessage()));
-        return null;
+        if (hasErrors()) {
+          return null;
+        }
       }
 catch (      MissingProvideException e) {
         report(JSError.make(MISSING_ENTRY_ERROR,e.getMessage()));
-        return null;
+        if (hasErrors()) {
+          return null;
+        }
       }
     }
     boolean staleInputs=false;
