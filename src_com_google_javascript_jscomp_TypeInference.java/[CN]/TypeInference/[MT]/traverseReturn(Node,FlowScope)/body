@@ -1,0 +1,14 @@
+{
+  scope=traverseChildren(n,scope);
+  Node retValue=n.getFirstChild();
+  if (retValue != null) {
+    JSType type=functionScope.getRootNode().getJSType();
+    if (type != null) {
+      FunctionType fnType=type.toMaybeFunctionType();
+      if (fnType != null) {
+        inferPropertyTypesToMatchConstraint(retValue.getJSType(),fnType.getReturnType());
+      }
+    }
+  }
+  return scope;
+}
