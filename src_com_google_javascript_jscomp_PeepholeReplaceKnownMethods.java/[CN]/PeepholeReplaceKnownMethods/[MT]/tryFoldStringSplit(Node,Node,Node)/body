@@ -1,0 +1,39 @@
+{
+  if (late) {
+    return n;
+  }
+  Preconditions.checkArgument(n.isCall());
+  Preconditions.checkArgument(stringNode.isString());
+  String separator=null;
+  String stringValue=stringNode.getString();
+  int limit=stringValue.length() + 1;
+  if (arg1 != null) {
+    if (arg1.isString()) {
+      separator=arg1.getString();
+    }
+ else     if (!arg1.isNull()) {
+      return n;
+    }
+    Node arg2=arg1.getNext();
+    if (arg2 != null) {
+      if (arg2.isNumber()) {
+        limit=Math.min((int)arg2.getDouble(),limit);
+        if (limit < 0) {
+          return n;
+        }
+      }
+ else {
+        return n;
+      }
+    }
+  }
+  String[] stringArray=jsSplit(stringValue,separator,limit);
+  Node arrayOfStrings=IR.arraylit();
+  for (int i=0; i < stringArray.length; i++) {
+    arrayOfStrings.addChildToBack(IR.string(stringArray[i]).srcref(stringNode));
+  }
+  Node parent=n.getParent();
+  parent.replaceChild(n,arrayOfStrings);
+  reportCodeChange();
+  return arrayOfStrings;
+}

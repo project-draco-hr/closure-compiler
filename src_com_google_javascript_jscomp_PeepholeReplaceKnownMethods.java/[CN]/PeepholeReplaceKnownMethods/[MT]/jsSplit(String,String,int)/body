@@ -1,0 +1,29 @@
+{
+  Preconditions.checkArgument(limit >= 0);
+  if (limit == 0) {
+    return new String[0];
+  }
+  if (separator == null) {
+    return new String[]{stringValue};
+  }
+  List<String> splitStrings=Lists.newArrayList();
+  if (separator.length() == 0) {
+    for (int i=0; i < stringValue.length() && i < limit; i++) {
+      splitStrings.add(stringValue.substring(i,i + 1));
+    }
+  }
+ else {
+    int startIndex=0, matchEndIndex;
+    while ((matchEndIndex=jsSplitMatch(stringValue,startIndex,separator)) >= 0 && splitStrings.size() < limit) {
+      if (separator.length() == 0) {
+        matchEndIndex++;
+      }
+      splitStrings.add(stringValue.substring(startIndex,matchEndIndex - separator.length()));
+      startIndex=matchEndIndex;
+    }
+    if (startIndex < stringValue.length() && splitStrings.size() < limit) {
+      splitStrings.add(stringValue.substring(startIndex));
+    }
+  }
+  return splitStrings.toArray(new String[splitStrings.size()]);
+}
