@@ -1,0 +1,13 @@
+{
+  Node calledFn=n.getFirstChild();
+  boolean looksLikeBind=calledFn.isGetProp() && calledFn.getLastChild().getString().equals("bind");
+  if (!looksLikeBind) {
+    return;
+  }
+  Node callTarget=calledFn.getFirstChild();
+  FunctionType callTargetFn=getJSType(callTarget).restrictByNotNullOrUndefined().toMaybeFunctionType();
+  if (callTargetFn == null) {
+    return;
+  }
+  n.setJSType(callTargetFn.getBindReturnType(n.getChildCount() - 1));
+}

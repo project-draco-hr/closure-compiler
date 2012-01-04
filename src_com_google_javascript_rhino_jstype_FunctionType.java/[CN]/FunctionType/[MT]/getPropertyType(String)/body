@@ -3,22 +3,7 @@
     boolean isCall="call".equals(name);
     boolean isBind="bind".equals(name);
     if (isCall || isBind) {
-      FunctionBuilder builder=new FunctionBuilder(registry).withReturnType(isCall ? getReturnType() : (new FunctionBuilder(registry).withReturnType(getReturnType()).build()));
-      Node origParams=getParametersNode();
-      if (origParams != null) {
-        Node params=origParams.cloneTree();
-        Node thisTypeNode=Node.newString(Token.NAME,"thisType");
-        thisTypeNode.setJSType(registry.createOptionalNullableType(getTypeOfThis()));
-        params.addChildToFront(thisTypeNode);
-        thisTypeNode.setOptionalArg(isCall);
-        if (isBind) {
-          for (Node current=thisTypeNode.getNext(); current != null; current=current.getNext()) {
-            current.setOptionalArg(true);
-          }
-        }
-        builder.withParamsNode(params);
-      }
-      defineDeclaredProperty(name,builder.build(),source);
+      defineDeclaredProperty(name,getCallOrBindSignature(isCall),source);
     }
  else     if ("apply".equals(name)) {
       FunctionParamBuilder builder=new FunctionParamBuilder(registry);
