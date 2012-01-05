@@ -2,16 +2,20 @@
   if (n.isGetProp()) {
     JSType owner=n.getFirstChild().getJSType();
     if (owner == null || owner.isUnknownType()) {
-      tryDefineLexicalQualifiedNameRef(n.getQualifiedName(),n);
-      return;
+      boolean defined=tryDefineLexicalQualifiedNameRef(n.getQualifiedName(),n);
+      if (defined || owner == null) {
+        return;
+      }
     }
     maybeDefineTypedReference(n,n.getLastChild().getString(),owner);
   }
  else   if (NodeUtil.isObjectLitKey(n,parent) && n.isString()) {
     JSType owner=parent.getJSType();
     if (owner == null || owner.isUnknownType()) {
-      tryDefineLexicalQualifiedNameRef(NodeUtil.getBestLValueName(n),n);
-      return;
+      boolean defined=tryDefineLexicalQualifiedNameRef(NodeUtil.getBestLValueName(n),n);
+      if (defined || owner == null) {
+        return;
+      }
     }
     maybeDefineTypedReference(n,n.getString(),owner);
   }
