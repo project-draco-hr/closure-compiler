@@ -1,0 +1,33 @@
+{
+  if (args.length < 1)   return Undefined.instance;
+  Object x=args[0];
+  if (!(x instanceof CharSequence)) {
+    if (cx.hasFeature(Context.FEATURE_STRICT_MODE) || cx.hasFeature(Context.FEATURE_STRICT_EVAL)) {
+      throw Context.reportRuntimeError0("msg.eval.nonstring.strict");
+    }
+    String message=ScriptRuntime.getMessage0("msg.eval.nonstring");
+    Context.reportWarning(message);
+    return x;
+  }
+  if (filename == null) {
+    int[] linep=new int[1];
+    filename=Context.getSourcePositionFromStack(linep);
+    if (filename != null) {
+      lineNumber=linep[0];
+    }
+ else {
+      filename="";
+    }
+  }
+  String sourceName=ScriptRuntime.makeUrlForGeneratedScript(true,filename,lineNumber);
+  ErrorReporter reporter;
+  reporter=DefaultErrorReporter.forEval(cx.getErrorReporter());
+  Evaluator evaluator=Context.createInterpreter();
+  if (evaluator == null) {
+    throw new JavaScriptException("Interpreter not present",filename,lineNumber);
+  }
+  Script script=cx.compileString(x.toString(),evaluator,reporter,sourceName,1,null);
+  evaluator.setEvalScriptFlag(script);
+  Callable c=(Callable)script;
+  return c.call(cx,scope,(Scriptable)thisArg,ScriptRuntime.emptyArgs);
+}

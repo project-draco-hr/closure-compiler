@@ -1,0 +1,199 @@
+{
+  this.debugGui=debugGui;
+  enabled=false;
+  JPanel left=new JPanel();
+  JToolBar t1=new JToolBar();
+  t1.setName("Variables");
+  t1.setLayout(new GridLayout());
+  t1.add(left);
+  JPanel p1=new JPanel();
+  p1.setLayout(new GridLayout());
+  JPanel p2=new JPanel();
+  p2.setLayout(new GridLayout());
+  p1.add(t1);
+  JLabel label=new JLabel("Context:");
+  context=new JComboBox();
+  context.setLightWeightPopupEnabled(false);
+  toolTips=Collections.synchronizedList(new java.util.ArrayList<String>());
+  label.setBorder(context.getBorder());
+  context.addActionListener(this);
+  context.setActionCommand("ContextSwitch");
+  GridBagLayout layout=new GridBagLayout();
+  left.setLayout(layout);
+  GridBagConstraints lc=new GridBagConstraints();
+  lc.insets.left=5;
+  lc.anchor=GridBagConstraints.WEST;
+  lc.ipadx=5;
+  layout.setConstraints(label,lc);
+  left.add(label);
+  GridBagConstraints c=new GridBagConstraints();
+  c.gridwidth=GridBagConstraints.REMAINDER;
+  c.fill=GridBagConstraints.HORIZONTAL;
+  c.anchor=GridBagConstraints.WEST;
+  layout.setConstraints(context,c);
+  left.add(context);
+  tabs=new JTabbedPane(SwingConstants.BOTTOM);
+  tabs.setPreferredSize(new Dimension(500,300));
+  thisTable=new MyTreeTable(new VariableModel());
+  JScrollPane jsp=new JScrollPane(thisTable);
+  jsp.getViewport().setViewSize(new Dimension(5,2));
+  tabs.add("this",jsp);
+  localsTable=new MyTreeTable(new VariableModel());
+  localsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+  localsTable.setPreferredSize(null);
+  jsp=new JScrollPane(localsTable);
+  tabs.add("Locals",jsp);
+  c.weightx=c.weighty=1;
+  c.gridheight=GridBagConstraints.REMAINDER;
+  c.fill=GridBagConstraints.BOTH;
+  c.anchor=GridBagConstraints.WEST;
+  layout.setConstraints(tabs,c);
+  left.add(tabs);
+  evaluator=new Evaluator(debugGui);
+  cmdLine=new EvalTextArea(debugGui);
+  tableModel=evaluator.tableModel;
+  jsp=new JScrollPane(evaluator);
+  JToolBar t2=new JToolBar();
+  t2.setName("Evaluate");
+  tabs2=new JTabbedPane(SwingConstants.BOTTOM);
+  tabs2.add("Watch",jsp);
+  tabs2.add("Evaluate",new JScrollPane(cmdLine));
+  tabs2.setPreferredSize(new Dimension(500,300));
+  t2.setLayout(new GridLayout());
+  t2.add(tabs2);
+  p2.add(t2);
+  evaluator.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+  split=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,p1,p2);
+  split.setOneTouchExpandable(true);
+  SwingGui.setResizeWeight(split,0.5);
+  setLayout(new BorderLayout());
+  add(split,BorderLayout.CENTER);
+  final JToolBar finalT1=t1;
+  final JToolBar finalT2=t2;
+  final JPanel finalP1=p1;
+  final JPanel finalP2=p2;
+  final JSplitPane finalSplit=split;
+  final JPanel finalThis=this;
+  ComponentListener clistener=new ComponentListener(){
+    boolean t2Docked=true;
+    void check(    Component comp){
+      Component thisParent=finalThis.getParent();
+      if (thisParent == null) {
+        return;
+      }
+      Component parent=finalT1.getParent();
+      boolean leftDocked=true;
+      boolean rightDocked=true;
+      boolean adjustVerticalSplit=false;
+      if (parent != null) {
+        if (parent != finalP1) {
+          while (!(parent instanceof JFrame)) {
+            parent=parent.getParent();
+          }
+          JFrame frame=(JFrame)parent;
+          debugGui.addTopLevel("Variables",frame);
+          if (!frame.isResizable()) {
+            frame.setResizable(true);
+            frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            final EventListener[] l=frame.getListeners(WindowListener.class);
+            frame.removeWindowListener((WindowListener)l[0]);
+            frame.addWindowListener(new WindowAdapter(){
+              @Override public void windowClosing(              WindowEvent e){
+                context.hidePopup();
+                ((WindowListener)l[0]).windowClosing(e);
+              }
+            }
+);
+          }
+          leftDocked=false;
+        }
+ else {
+          leftDocked=true;
+        }
+      }
+      parent=finalT2.getParent();
+      if (parent != null) {
+        if (parent != finalP2) {
+          while (!(parent instanceof JFrame)) {
+            parent=parent.getParent();
+          }
+          JFrame frame=(JFrame)parent;
+          debugGui.addTopLevel("Evaluate",frame);
+          frame.setResizable(true);
+          rightDocked=false;
+        }
+ else {
+          rightDocked=true;
+        }
+      }
+      if (leftDocked && t2Docked && rightDocked&& t2Docked) {
+        return;
+      }
+      t2Docked=rightDocked;
+      JSplitPane split=(JSplitPane)thisParent;
+      if (leftDocked) {
+        if (rightDocked) {
+          finalSplit.setDividerLocation(0.5);
+        }
+ else {
+          finalSplit.setDividerLocation(1.0);
+        }
+        if (adjustVerticalSplit) {
+          split.setDividerLocation(0.66);
+        }
+      }
+ else       if (rightDocked) {
+        finalSplit.setDividerLocation(0.0);
+        split.setDividerLocation(0.66);
+      }
+ else {
+        split.setDividerLocation(1.0);
+      }
+    }
+    public void componentHidden(    ComponentEvent e){
+      check(e.getComponent());
+    }
+    public void componentMoved(    ComponentEvent e){
+      check(e.getComponent());
+    }
+    public void componentResized(    ComponentEvent e){
+      check(e.getComponent());
+    }
+    public void componentShown(    ComponentEvent e){
+      check(e.getComponent());
+    }
+  }
+;
+  p1.addContainerListener(new ContainerListener(){
+    public void componentAdded(    ContainerEvent e){
+      Component thisParent=finalThis.getParent();
+      JSplitPane split=(JSplitPane)thisParent;
+      if (e.getChild() == finalT1) {
+        if (finalT2.getParent() == finalP2) {
+          finalSplit.setDividerLocation(0.5);
+        }
+ else {
+          finalSplit.setDividerLocation(1.0);
+        }
+        split.setDividerLocation(0.66);
+      }
+    }
+    public void componentRemoved(    ContainerEvent e){
+      Component thisParent=finalThis.getParent();
+      JSplitPane split=(JSplitPane)thisParent;
+      if (e.getChild() == finalT1) {
+        if (finalT2.getParent() == finalP2) {
+          finalSplit.setDividerLocation(0.0);
+          split.setDividerLocation(0.66);
+        }
+ else {
+          split.setDividerLocation(1.0);
+        }
+      }
+    }
+  }
+);
+  t1.addComponentListener(clistener);
+  t2.addComponentListener(clistener);
+  setEnabled(false);
+}

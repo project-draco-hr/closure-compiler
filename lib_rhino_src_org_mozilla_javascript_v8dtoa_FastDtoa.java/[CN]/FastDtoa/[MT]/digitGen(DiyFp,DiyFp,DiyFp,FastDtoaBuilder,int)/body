@@ -1,0 +1,44 @@
+{
+  assert(low.e() == w.e() && w.e() == high.e());
+  assert(low.f() + 1 <= high.f() - 1);
+  assert(minimal_target_exponent <= w.e() && w.e() <= maximal_target_exponent);
+  long unit=1;
+  DiyFp too_low=new DiyFp(low.f() - unit,low.e());
+  DiyFp too_high=new DiyFp(high.f() + unit,high.e());
+  DiyFp unsafe_interval=DiyFp.minus(too_high,too_low);
+  DiyFp one=new DiyFp(1l << -w.e(),w.e());
+  int integrals=(int)((too_high.f() >>> -one.e()) & 0xffffffffL);
+  long fractionals=too_high.f() & (one.f() - 1);
+  long result=biggestPowerTen(integrals,DiyFp.kSignificandSize - (-one.e()));
+  int divider=(int)((result >>> 32) & 0xffffffffL);
+  int divider_exponent=(int)(result & 0xffffffffL);
+  int kappa=divider_exponent + 1;
+  while (kappa > 0) {
+    int digit=integrals / divider;
+    buffer.append((char)('0' + digit));
+    integrals%=divider;
+    kappa--;
+    long rest=((long)integrals << -one.e()) + fractionals;
+    if (rest < unsafe_interval.f()) {
+      buffer.point=buffer.end - mk + kappa;
+      return roundWeed(buffer,DiyFp.minus(too_high,w).f(),unsafe_interval.f(),rest,(long)divider << -one.e(),unit);
+    }
+    divider/=10;
+  }
+  while (true) {
+    fractionals*=5;
+    unit*=5;
+    unsafe_interval.setF(unsafe_interval.f() * 5);
+    unsafe_interval.setE(unsafe_interval.e() + 1);
+    one.setF(one.f() >>> 1);
+    one.setE(one.e() + 1);
+    int digit=(int)((fractionals >>> -one.e()) & 0xffffffffL);
+    buffer.append((char)('0' + digit));
+    fractionals&=one.f() - 1;
+    kappa--;
+    if (fractionals < unsafe_interval.f()) {
+      buffer.point=buffer.end - mk + kappa;
+      return roundWeed(buffer,DiyFp.minus(too_high,w).f() * unit,unsafe_interval.f(),fractionals,one.f(),unit);
+    }
+  }
+}

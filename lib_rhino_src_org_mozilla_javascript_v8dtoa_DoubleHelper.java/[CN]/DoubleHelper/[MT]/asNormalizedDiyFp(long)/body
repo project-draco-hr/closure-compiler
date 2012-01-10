@@ -1,0 +1,12 @@
+{
+  long f=significand(d64);
+  int e=exponent(d64);
+  assert(f != 0);
+  while ((f & kHiddenBit) == 0) {
+    f<<=1;
+    e--;
+  }
+  f<<=DiyFp.kSignificandSize - kSignificandSize - 1;
+  e-=DiyFp.kSignificandSize - kSignificandSize - 1;
+  return new DiyFp(f,e);
+}

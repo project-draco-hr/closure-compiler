@@ -1,0 +1,19 @@
+{
+  if (newValue == NOT_FOUND) {
+    return true;
+  }
+  if (currentValue == NOT_FOUND) {
+    currentValue=Undefined.instance;
+  }
+  if (currentValue instanceof Number && newValue instanceof Number) {
+    double d1=((Number)currentValue).doubleValue();
+    double d2=((Number)newValue).doubleValue();
+    if (Double.isNaN(d1) && Double.isNaN(d2)) {
+      return true;
+    }
+    if (d1 == 0.0 && Double.doubleToLongBits(d1) != Double.doubleToLongBits(d2)) {
+      return false;
+    }
+  }
+  return ScriptRuntime.shallowEq(currentValue,newValue);
+}

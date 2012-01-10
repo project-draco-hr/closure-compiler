@@ -1,0 +1,27 @@
+{
+  Scriptable target;
+  Object value;
+  search: {
+    do {
+      if (cx.useDynamicScope && scopeChain.getParentScope() == null) {
+        scopeChain=checkDynamicScope(cx.topCallScope,scopeChain);
+      }
+      target=scopeChain;
+      do {
+        if (target instanceof NativeWith && target.getPrototype() instanceof XMLObject) {
+          break;
+        }
+        value=target.get(id,scopeChain);
+        if (value != Scriptable.NOT_FOUND) {
+          break search;
+        }
+        target=target.getPrototype();
+      }
+ while (target != null);
+      scopeChain=scopeChain.getParentScope();
+    }
+ while (scopeChain != null);
+    throw notFoundError(scopeChain,id);
+  }
+  return doScriptableIncrDecr(target,id,scopeChain,value,incrDecrMask);
+}

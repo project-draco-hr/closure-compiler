@@ -1,0 +1,25 @@
+{
+  if (methods.length > 1) {
+    if (overloadCache != null) {
+      for (      ResolvedOverload ovl : overloadCache) {
+        if (ovl.matches(args)) {
+          return ovl.index;
+        }
+      }
+    }
+ else {
+      overloadCache=new LinkedList<ResolvedOverload>();
+    }
+    int index=findFunction(cx,methods,args);
+    if (overloadCache.size() < methods.length * 2) {
+synchronized (overloadCache) {
+        ResolvedOverload ovl=new ResolvedOverload(args,index);
+        if (!overloadCache.contains(ovl)) {
+          overloadCache.addFirst(ovl);
+        }
+      }
+    }
+    return index;
+  }
+  return findFunction(cx,methods,args);
+}

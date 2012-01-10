@@ -1,0 +1,48 @@
+{
+  Slot slot=getSlot(cx,id,SLOT_QUERY);
+  boolean isNew=slot == null;
+  if (checkValid) {
+    ScriptableObject current=slot == null ? null : slot.getPropertyDescriptor(cx,this);
+    String name=ScriptRuntime.toString(id);
+    checkPropertyChange(name,current,desc);
+  }
+  boolean isAccessor=isAccessorDescriptor(desc);
+  final int attributes;
+  if (slot == null) {
+    slot=getSlot(cx,id,isAccessor ? SLOT_MODIFY_GETTER_SETTER : SLOT_MODIFY);
+    attributes=applyDescriptorToAttributeBitset(DONTENUM | READONLY | PERMANENT,desc);
+  }
+ else {
+    attributes=applyDescriptorToAttributeBitset(slot.getAttributes(),desc);
+  }
+  slot=unwrapSlot(slot);
+  if (isAccessor) {
+    if (!(slot instanceof GetterSlot)) {
+      slot=getSlot(cx,id,SLOT_MODIFY_GETTER_SETTER);
+    }
+    GetterSlot gslot=(GetterSlot)slot;
+    Object getter=getProperty(desc,"get");
+    if (getter != NOT_FOUND) {
+      gslot.getter=getter;
+    }
+    Object setter=getProperty(desc,"set");
+    if (setter != NOT_FOUND) {
+      gslot.setter=setter;
+    }
+    gslot.value=Undefined.instance;
+    gslot.setAttributes(attributes);
+  }
+ else {
+    if (slot instanceof GetterSlot && isDataDescriptor(desc)) {
+      slot=getSlot(cx,id,SLOT_CONVERT_ACCESSOR_TO_DATA);
+    }
+    Object value=getProperty(desc,"value");
+    if (value != NOT_FOUND) {
+      slot.value=value;
+    }
+ else     if (isNew) {
+      slot.value=Undefined.instance;
+    }
+    slot.setAttributes(attributes);
+  }
+}

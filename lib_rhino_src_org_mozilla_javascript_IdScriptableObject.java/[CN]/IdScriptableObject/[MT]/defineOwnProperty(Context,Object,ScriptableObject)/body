@@ -1,0 +1,51 @@
+{
+  if (key instanceof String) {
+    String name=(String)key;
+    int info=findInstanceIdInfo(name);
+    if (info != 0) {
+      int id=(info & 0xFFFF);
+      if (isAccessorDescriptor(desc)) {
+        delete(id);
+      }
+ else {
+        checkPropertyDefinition(desc);
+        ScriptableObject current=getOwnPropertyDescriptor(cx,key);
+        checkPropertyChange(name,current,desc);
+        int attr=(info >>> 16);
+        Object value=getProperty(desc,"value");
+        if (value != NOT_FOUND && (attr & READONLY) == 0) {
+          Object currentValue=getInstanceIdValue(id);
+          if (!sameValue(value,currentValue)) {
+            setInstanceIdValue(id,value);
+          }
+        }
+        setAttributes(name,applyDescriptorToAttributeBitset(attr,desc));
+        return;
+      }
+    }
+    if (prototypeValues != null) {
+      int id=prototypeValues.findId(name);
+      if (id != 0) {
+        if (isAccessorDescriptor(desc)) {
+          prototypeValues.delete(id);
+        }
+ else {
+          checkPropertyDefinition(desc);
+          ScriptableObject current=getOwnPropertyDescriptor(cx,key);
+          checkPropertyChange(name,current,desc);
+          int attr=prototypeValues.getAttributes(id);
+          Object value=getProperty(desc,"value");
+          if (value != NOT_FOUND && (attr & READONLY) == 0) {
+            Object currentValue=prototypeValues.get(id);
+            if (!sameValue(value,currentValue)) {
+              prototypeValues.set(id,this,value);
+            }
+          }
+          prototypeValues.setAttributes(id,applyDescriptorToAttributeBitset(attr,desc));
+          return;
+        }
+      }
+    }
+  }
+  super.defineOwnProperty(cx,key,desc);
+}

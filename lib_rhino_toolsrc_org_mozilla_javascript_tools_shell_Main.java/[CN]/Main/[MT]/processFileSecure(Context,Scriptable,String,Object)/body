@@ -1,0 +1,34 @@
+{
+  boolean isClass=path.endsWith(".class");
+  Object source=readFileOrUrl(path,!isClass);
+  if (source == null) {
+    exitCode=EXITCODE_FILE_NOT_FOUND;
+    return;
+  }
+  byte[] digest=getDigest(source);
+  String key=path + "_" + cx.getOptimizationLevel();
+  ScriptReference ref=scriptCache.get(key,digest);
+  Script script=ref != null ? ref.get() : null;
+  if (script == null) {
+    if (isClass) {
+      script=loadCompiledScript(cx,path,(byte[])source,securityDomain);
+    }
+ else {
+      String strSrc=(String)source;
+      if (strSrc.length() > 0 && strSrc.charAt(0) == '#') {
+        for (int i=1; i != strSrc.length(); ++i) {
+          int c=strSrc.charAt(i);
+          if (c == '\n' || c == '\r') {
+            strSrc=strSrc.substring(i);
+            break;
+          }
+        }
+      }
+      script=loadScriptFromSource(cx,strSrc,path,1,securityDomain);
+    }
+    scriptCache.put(key,digest,script);
+  }
+  if (script != null) {
+    evaluateScript(script,cx,scope);
+  }
+}

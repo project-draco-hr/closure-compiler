@@ -1,0 +1,39 @@
+{
+  if (this.mainModuleId != null) {
+    if (!this.mainModuleId.equals(mainModuleId)) {
+      throw new IllegalStateException("Main module already set to " + this.mainModuleId);
+    }
+    return mainExports;
+  }
+  ModuleScript moduleScript;
+  try {
+    moduleScript=moduleScriptProvider.getModuleScript(cx,mainModuleId,null,paths);
+  }
+ catch (  RuntimeException x) {
+    throw x;
+  }
+catch (  Exception x) {
+    throw new RuntimeException(x);
+  }
+  if (moduleScript != null) {
+    mainExports=getExportedModuleInterface(cx,mainModuleId,null,true);
+  }
+ else   if (!sandboxed) {
+    URI mainUri=null;
+    try {
+      mainUri=new URI(mainModuleId);
+    }
+ catch (    URISyntaxException usx) {
+    }
+    if (mainUri == null || !mainUri.isAbsolute()) {
+      File file=new File(mainModuleId);
+      if (!file.isFile()) {
+        throw ScriptRuntime.throwError(cx,nativeScope,"Module \"" + mainModuleId + "\" not found.");
+      }
+      mainUri=file.toURI();
+    }
+    mainExports=getExportedModuleInterface(cx,mainUri.toString(),mainUri,true);
+  }
+  this.mainModuleId=mainModuleId;
+  return mainExports;
+}

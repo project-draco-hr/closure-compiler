@@ -1,0 +1,33 @@
+{
+  if (!DEBUG)   return null;
+  StringWriter sw=new StringWriter();
+  PrintWriter pw=new PrintWriter(sw);
+  pw.println(blockList.length + " Blocks");
+  for (int i=0; i < blockList.length; i++) {
+    Block b=blockList[i];
+    pw.println("#" + b.itsBlockID);
+    pw.println("from " + b.itsStartNodeIndex + " "+ statementNodes[b.itsStartNodeIndex].toString());
+    pw.println("thru " + b.itsEndNodeIndex + " "+ statementNodes[b.itsEndNodeIndex].toString());
+    pw.print("Predecessors ");
+    if (b.itsPredecessors != null) {
+      for (int j=0; j < b.itsPredecessors.length; j++) {
+        pw.print(b.itsPredecessors[j].itsBlockID + " ");
+      }
+      pw.println();
+    }
+ else {
+      pw.println("none");
+    }
+    pw.print("Successors ");
+    if (b.itsSuccessors != null) {
+      for (int j=0; j < b.itsSuccessors.length; j++) {
+        pw.print(b.itsSuccessors[j].itsBlockID + " ");
+      }
+      pw.println();
+    }
+ else {
+      pw.println("none");
+    }
+  }
+  return sw.toString();
+}

@@ -1,0 +1,12 @@
+{
+  Scriptable sobj=toObjectOrNull(cx,obj);
+  if (sobj == null) {
+    if (isName) {
+      return Boolean.TRUE;
+    }
+    String idStr=(id == null) ? "null" : id.toString();
+    throw typeError2("msg.undef.prop.delete",toString(obj),idStr);
+  }
+  boolean result=deleteObjectElem(sobj,id,cx);
+  return wrapBoolean(result);
+}

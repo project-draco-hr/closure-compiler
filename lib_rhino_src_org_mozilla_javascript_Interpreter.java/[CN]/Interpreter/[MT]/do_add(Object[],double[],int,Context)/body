@@ -1,0 +1,60 @@
+{
+  Object rhs=stack[stackTop + 1];
+  Object lhs=stack[stackTop];
+  double d;
+  boolean leftRightOrder;
+  if (rhs == UniqueTag.DOUBLE_MARK) {
+    d=sDbl[stackTop + 1];
+    if (lhs == UniqueTag.DOUBLE_MARK) {
+      sDbl[stackTop]+=d;
+      return;
+    }
+    leftRightOrder=true;
+  }
+ else   if (lhs == UniqueTag.DOUBLE_MARK) {
+    d=sDbl[stackTop];
+    lhs=rhs;
+    leftRightOrder=false;
+  }
+ else {
+    if (lhs instanceof Scriptable || rhs instanceof Scriptable) {
+      stack[stackTop]=ScriptRuntime.add(lhs,rhs,cx);
+    }
+ else     if (lhs instanceof CharSequence || rhs instanceof CharSequence) {
+      CharSequence lstr=ScriptRuntime.toCharSequence(lhs);
+      CharSequence rstr=ScriptRuntime.toCharSequence(rhs);
+      stack[stackTop]=new ConsString(lstr,rstr);
+    }
+ else {
+      double lDbl=(lhs instanceof Number) ? ((Number)lhs).doubleValue() : ScriptRuntime.toNumber(lhs);
+      double rDbl=(rhs instanceof Number) ? ((Number)rhs).doubleValue() : ScriptRuntime.toNumber(rhs);
+      stack[stackTop]=UniqueTag.DOUBLE_MARK;
+      sDbl[stackTop]=lDbl + rDbl;
+    }
+    return;
+  }
+  if (lhs instanceof Scriptable) {
+    rhs=ScriptRuntime.wrapNumber(d);
+    if (!leftRightOrder) {
+      Object tmp=lhs;
+      lhs=rhs;
+      rhs=tmp;
+    }
+    stack[stackTop]=ScriptRuntime.add(lhs,rhs,cx);
+  }
+ else   if (lhs instanceof CharSequence) {
+    CharSequence lstr=(CharSequence)lhs;
+    CharSequence rstr=ScriptRuntime.toCharSequence(d);
+    if (leftRightOrder) {
+      stack[stackTop]=new ConsString(lstr,rstr);
+    }
+ else {
+      stack[stackTop]=new ConsString(rstr,lstr);
+    }
+  }
+ else {
+    double lDbl=(lhs instanceof Number) ? ((Number)lhs).doubleValue() : ScriptRuntime.toNumber(lhs);
+    stack[stackTop]=UniqueTag.DOUBLE_MARK;
+    sDbl[stackTop]=lDbl + d;
+  }
+}

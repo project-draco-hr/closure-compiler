@@ -1,0 +1,24 @@
+{
+  byte[] bytes, digest=null;
+  if (source != null) {
+    if (source instanceof String) {
+      try {
+        bytes=((String)source).getBytes("UTF-8");
+      }
+ catch (      UnsupportedEncodingException ue) {
+        bytes=((String)source).getBytes();
+      }
+    }
+ else {
+      bytes=(byte[])source;
+    }
+    try {
+      MessageDigest md=MessageDigest.getInstance("MD5");
+      digest=md.digest(bytes);
+    }
+ catch (    NoSuchAlgorithmException nsa) {
+      throw new RuntimeException(nsa);
+    }
+  }
+  return digest;
+}

@@ -1,0 +1,31 @@
+{
+  superBlocks=new SuperBlock[itsSuperBlockStartsTop];
+  int[] initialLocals=createInitialLocals();
+  for (int i=0; i < itsSuperBlockStartsTop; i++) {
+    int start=itsSuperBlockStarts[i];
+    int end;
+    if (i == itsSuperBlockStartsTop - 1) {
+      end=itsCodeBufferTop;
+    }
+ else {
+      end=itsSuperBlockStarts[i + 1];
+    }
+    superBlocks[i]=new SuperBlock(i,start,end,initialLocals);
+  }
+  if (DEBUGSTACKMAP) {
+    System.out.println("super blocks: ");
+    for (int i=0; i < superBlocks.length && superBlocks[i] != null; i++) {
+      System.out.println("sb " + i + ": ["+ superBlocks[i].getStart()+ ", "+ superBlocks[i].getEnd()+ ")");
+    }
+  }
+  superBlockDeps=getSuperBlockDependencies();
+  verify();
+  if (DEBUGSTACKMAP) {
+    System.out.println("type information:");
+    for (int i=0; i < superBlocks.length; i++) {
+      SuperBlock sb=superBlocks[i];
+      System.out.println("sb " + i + ":");
+      TypeInfo.print(sb.getLocals(),sb.getStack(),itsConstantPool);
+    }
+  }
+}

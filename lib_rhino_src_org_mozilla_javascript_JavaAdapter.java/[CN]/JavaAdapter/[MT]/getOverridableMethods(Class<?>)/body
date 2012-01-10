@@ -1,0 +1,11 @@
+{
+  ArrayList<Method> list=new ArrayList<Method>();
+  HashSet<String> skip=new HashSet<String>();
+  for (Class<?> c=clazz; c != null; c=c.getSuperclass()) {
+    appendOverridableMethods(c,list,skip);
+  }
+  for (Class<?> c=clazz; c != null; c=c.getSuperclass()) {
+    for (    Class<?> intf : c.getInterfaces())     appendOverridableMethods(intf,list,skip);
+  }
+  return list.toArray(new Method[list.size()]);
+}

@@ -1,0 +1,36 @@
+{
+switch (n.getType()) {
+case Token.DEC:
+case Token.INC:
+{
+      Node child=n.getFirstChild();
+      if (child.getType() == Token.GETVAR) {
+        int varIndex=fn.getVarIndex(child);
+        if (!itsNotDefSet.get(varIndex))         itsUseBeforeDefSet.set(varIndex);
+        itsNotDefSet.set(varIndex);
+      }
+    }
+  break;
+case Token.SETVAR:
+{
+  Node lhs=n.getFirstChild();
+  Node rhs=lhs.getNext();
+  lookForVariableAccess(fn,rhs);
+  itsNotDefSet.set(fn.getVarIndex(n));
+}
+break;
+case Token.GETVAR:
+{
+int varIndex=fn.getVarIndex(n);
+if (!itsNotDefSet.get(varIndex)) itsUseBeforeDefSet.set(varIndex);
+}
+break;
+default :
+Node child=n.getFirstChild();
+while (child != null) {
+lookForVariableAccess(fn,child);
+child=child.getNext();
+}
+break;
+}
+}

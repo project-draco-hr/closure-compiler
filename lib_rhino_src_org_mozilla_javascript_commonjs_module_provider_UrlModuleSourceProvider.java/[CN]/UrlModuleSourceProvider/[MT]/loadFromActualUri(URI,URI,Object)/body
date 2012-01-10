@@ -1,0 +1,35 @@
+{
+  final URL url=new URL(base == null ? null : base.toURL(),uri.toString());
+  final long request_time=System.currentTimeMillis();
+  final URLConnection urlConnection=openUrlConnection(url);
+  final URLValidator applicableValidator;
+  if (validator instanceof URLValidator) {
+    final URLValidator uriValidator=((URLValidator)validator);
+    applicableValidator=uriValidator.appliesTo(uri) ? uriValidator : null;
+  }
+ else {
+    applicableValidator=null;
+  }
+  if (applicableValidator != null) {
+    applicableValidator.applyConditionals(urlConnection);
+  }
+  try {
+    urlConnection.connect();
+    if (applicableValidator != null && applicableValidator.updateValidator(urlConnection,request_time,urlConnectionExpiryCalculator)) {
+      close(urlConnection);
+      return NOT_MODIFIED;
+    }
+    return new ModuleSource(getReader(urlConnection),getSecurityDomain(urlConnection),uri,base,new URLValidator(uri,urlConnection,request_time,urlConnectionExpiryCalculator));
+  }
+ catch (  FileNotFoundException e) {
+    return null;
+  }
+catch (  RuntimeException e) {
+    close(urlConnection);
+    throw e;
+  }
+catch (  IOException e) {
+    close(urlConnection);
+    throw e;
+  }
+}

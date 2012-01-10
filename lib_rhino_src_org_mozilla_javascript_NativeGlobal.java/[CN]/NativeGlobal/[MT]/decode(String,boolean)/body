@@ -1,0 +1,97 @@
+{
+  char[] buf=null;
+  int bufTop=0;
+  for (int k=0, length=str.length(); k != length; ) {
+    char C=str.charAt(k);
+    if (C != '%') {
+      if (buf != null) {
+        buf[bufTop++]=C;
+      }
+      ++k;
+    }
+ else {
+      if (buf == null) {
+        buf=new char[length];
+        str.getChars(0,k,buf,0);
+        bufTop=k;
+      }
+      int start=k;
+      if (k + 3 > length)       throw uriError();
+      int B=unHex(str.charAt(k + 1),str.charAt(k + 2));
+      if (B < 0)       throw uriError();
+      k+=3;
+      if ((B & 0x80) == 0) {
+        C=(char)B;
+      }
+ else {
+        int utf8Tail, ucs4Char, minUcs4Char;
+        if ((B & 0xC0) == 0x80) {
+          throw uriError();
+        }
+ else         if ((B & 0x20) == 0) {
+          utf8Tail=1;
+          ucs4Char=B & 0x1F;
+          minUcs4Char=0x80;
+        }
+ else         if ((B & 0x10) == 0) {
+          utf8Tail=2;
+          ucs4Char=B & 0x0F;
+          minUcs4Char=0x800;
+        }
+ else         if ((B & 0x08) == 0) {
+          utf8Tail=3;
+          ucs4Char=B & 0x07;
+          minUcs4Char=0x10000;
+        }
+ else         if ((B & 0x04) == 0) {
+          utf8Tail=4;
+          ucs4Char=B & 0x03;
+          minUcs4Char=0x200000;
+        }
+ else         if ((B & 0x02) == 0) {
+          utf8Tail=5;
+          ucs4Char=B & 0x01;
+          minUcs4Char=0x4000000;
+        }
+ else {
+          throw uriError();
+        }
+        if (k + 3 * utf8Tail > length)         throw uriError();
+        for (int j=0; j != utf8Tail; j++) {
+          if (str.charAt(k) != '%')           throw uriError();
+          B=unHex(str.charAt(k + 1),str.charAt(k + 2));
+          if (B < 0 || (B & 0xC0) != 0x80)           throw uriError();
+          ucs4Char=(ucs4Char << 6) | (B & 0x3F);
+          k+=3;
+        }
+        if (ucs4Char < minUcs4Char || (ucs4Char >= 0xD800 && ucs4Char <= 0xDFFF)) {
+          ucs4Char=INVALID_UTF8;
+        }
+ else         if (ucs4Char == 0xFFFE || ucs4Char == 0xFFFF) {
+          ucs4Char=0xFFFD;
+        }
+        if (ucs4Char >= 0x10000) {
+          ucs4Char-=0x10000;
+          if (ucs4Char > 0xFFFFF) {
+            throw uriError();
+          }
+          char H=(char)((ucs4Char >>> 10) + 0xD800);
+          C=(char)((ucs4Char & 0x3FF) + 0xDC00);
+          buf[bufTop++]=H;
+        }
+ else {
+          C=(char)ucs4Char;
+        }
+      }
+      if (fullUri && URI_DECODE_RESERVED.indexOf(C) >= 0) {
+        for (int x=start; x != k; x++) {
+          buf[bufTop++]=str.charAt(x);
+        }
+      }
+ else {
+        buf[bufTop++]=C;
+      }
+    }
+  }
+  return (buf == null) ? str : new String(buf,0,bufTop);
+}

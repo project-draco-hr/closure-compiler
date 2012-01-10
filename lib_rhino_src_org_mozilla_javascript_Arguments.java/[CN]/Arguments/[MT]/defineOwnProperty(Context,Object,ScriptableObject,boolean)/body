@@ -1,0 +1,18 @@
+{
+  super.defineOwnProperty(cx,id,desc,checkValid);
+  double d=ScriptRuntime.toNumber(id);
+  int index=(int)d;
+  if (d != index)   return;
+  Object value=arg(index);
+  if (value == NOT_FOUND)   return;
+  if (isAccessorDescriptor(desc)) {
+    removeArg(index);
+    return;
+  }
+  Object newValue=getProperty(desc,"value");
+  if (newValue == NOT_FOUND)   return;
+  replaceArg(index,newValue);
+  if (isFalse(getProperty(desc,"writable"))) {
+    removeArg(index);
+  }
+}

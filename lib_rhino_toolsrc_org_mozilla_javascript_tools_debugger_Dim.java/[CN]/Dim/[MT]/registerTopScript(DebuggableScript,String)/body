@@ -1,0 +1,35 @@
+{
+  if (!topScript.isTopLevel()) {
+    throw new IllegalArgumentException();
+  }
+  String url=getNormalizedUrl(topScript);
+  DebuggableScript[] functions=getAllFunctions(topScript);
+  if (sourceProvider != null) {
+    final String providedSource=sourceProvider.getSource(topScript);
+    if (providedSource != null) {
+      source=providedSource;
+    }
+  }
+  final SourceInfo sourceInfo=new SourceInfo(source,functions,url);
+synchronized (urlToSourceInfo) {
+    SourceInfo old=urlToSourceInfo.get(url);
+    if (old != null) {
+      sourceInfo.copyBreakpointsFrom(old);
+    }
+    urlToSourceInfo.put(url,sourceInfo);
+    for (int i=0; i != sourceInfo.functionSourcesTop(); ++i) {
+      FunctionSource fsource=sourceInfo.functionSource(i);
+      String name=fsource.name();
+      if (name.length() != 0) {
+        functionNames.put(name,fsource);
+      }
+    }
+  }
+synchronized (functionToSource) {
+    for (int i=0; i != functions.length; ++i) {
+      FunctionSource fsource=sourceInfo.functionSource(i);
+      functionToSource.put(functions[i],fsource);
+    }
+  }
+  callback.updateSourceText(sourceInfo);
+}

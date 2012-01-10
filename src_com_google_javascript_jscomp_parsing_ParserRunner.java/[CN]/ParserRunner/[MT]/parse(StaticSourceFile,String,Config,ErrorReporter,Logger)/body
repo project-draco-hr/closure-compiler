@@ -7,14 +7,12 @@
   compilerEnv.setRecordingComments(true);
   compilerEnv.setRecordingLocalJsDocComments(true);
   compilerEnv.setWarnTrailingComma(config.languageMode == LanguageMode.ECMASCRIPT3);
-  if (config.isIdeMode || config.languageMode != LanguageMode.ECMASCRIPT3) {
-    compilerEnv.setReservedKeywordAsIdentifier(true);
-    compilerEnv.setAllowKeywordAsObjectPropertyName(true);
-  }
-  if (config.isIdeMode) {
-    compilerEnv.setAllowMemberExprAsFunctionName(true);
-  }
+  boolean acceptEs5=config.isIdeMode || config.languageMode != LanguageMode.ECMASCRIPT3;
+  compilerEnv.setReservedKeywordAsIdentifier(acceptEs5);
+  compilerEnv.setAllowKeywordAsObjectPropertyName(acceptEs5);
+  compilerEnv.setAllowMemberExprAsFunctionName(config.isIdeMode);
   compilerEnv.setIdeMode(config.isIdeMode);
+  compilerEnv.setRecoverFromErrors(config.isIdeMode);
   Parser p=new Parser(compilerEnv,errorReporter);
   AstRoot astRoot=null;
   try {

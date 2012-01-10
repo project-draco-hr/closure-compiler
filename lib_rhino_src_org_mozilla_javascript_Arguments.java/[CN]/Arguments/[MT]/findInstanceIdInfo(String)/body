@@ -1,0 +1,43 @@
+{
+  int id;
+  L0: {
+    id=0;
+    String X=null;
+    int c;
+    int s_length=s.length();
+    if (s_length == 6) {
+      c=s.charAt(5);
+      if (c == 'e') {
+        X="callee";
+        id=Id_callee;
+      }
+ else       if (c == 'h') {
+        X="length";
+        id=Id_length;
+      }
+ else       if (c == 'r') {
+        X="caller";
+        id=Id_caller;
+      }
+    }
+ else     if (s_length == 11) {
+      X="constructor";
+      id=Id_constructor;
+    }
+    if (X != null && X != s && !X.equals(s))     id=0;
+    break L0;
+  }
+  if (id == 0)   return super.findInstanceIdInfo(s);
+  int attr;
+switch (id) {
+case Id_callee:
+case Id_caller:
+case Id_length:
+case Id_constructor:
+    attr=DONTENUM;
+  break;
+default :
+throw new IllegalStateException();
+}
+return instanceIdInfo(attr,id);
+}

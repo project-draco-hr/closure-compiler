@@ -1,0 +1,24 @@
+{
+  if (end - firstDigit > 1) {
+    int dot=firstDigit + 1;
+    System.arraycopy(chars,dot,chars,dot + 1,end - dot);
+    chars[dot]='.';
+    end++;
+  }
+  chars[end++]='e';
+  char sign='+';
+  int exp=decPoint - 1;
+  if (exp < 0) {
+    sign='-';
+    exp=-exp;
+  }
+  chars[end++]=sign;
+  int charPos=exp > 99 ? end + 2 : exp > 9 ? end + 1 : end;
+  end=charPos + 1;
+  for (; ; ) {
+    int r=exp % 10;
+    chars[charPos--]=digits[r];
+    exp=exp / 10;
+    if (exp == 0)     break;
+  }
+}

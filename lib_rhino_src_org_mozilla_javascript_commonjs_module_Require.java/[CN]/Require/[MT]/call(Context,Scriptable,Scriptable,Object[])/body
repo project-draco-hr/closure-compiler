@@ -1,0 +1,31 @@
+{
+  if (args == null || args.length < 1) {
+    throw ScriptRuntime.throwError(cx,scope,"require() needs one argument");
+  }
+  String id=(String)Context.jsToJava(args[0],String.class);
+  URI uri=null;
+  if (id.startsWith("./") || id.startsWith("../")) {
+    if (!(thisObj instanceof ModuleScope)) {
+      throw ScriptRuntime.throwError(cx,scope,"Can't resolve relative module ID \"" + id + "\" when require() is used outside of a module");
+    }
+    ModuleScope moduleScope=(ModuleScope)thisObj;
+    URI base=moduleScope.getBase();
+    URI current=moduleScope.getUri();
+    uri=current.resolve(id);
+    if (base == null) {
+      id=uri.toString();
+    }
+ else {
+      id=base.relativize(current).resolve(id).toString();
+      if (id.charAt(0) == '.') {
+        if (sandboxed) {
+          throw ScriptRuntime.throwError(cx,scope,"Module \"" + id + "\" is not contained in sandbox.");
+        }
+ else {
+          id=uri.toString();
+        }
+      }
+    }
+  }
+  return getExportedModuleInterface(cx,id,uri,false);
+}

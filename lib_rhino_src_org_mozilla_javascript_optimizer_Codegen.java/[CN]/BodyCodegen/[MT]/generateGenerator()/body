@@ -1,0 +1,30 @@
+{
+  cfw.startMethod(codegen.getBodyMethodName(scriptOrFn),codegen.getBodyMethodSignature(scriptOrFn),(short)(ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE));
+  initBodyGeneration();
+  argsLocal=firstFreeLocal++;
+  localsMax=firstFreeLocal;
+  if (fnCurrent != null) {
+    cfw.addALoad(funObjLocal);
+    cfw.addInvoke(ByteCode.INVOKEINTERFACE,"org/mozilla/javascript/Scriptable","getParentScope","()Lorg/mozilla/javascript/Scriptable;");
+    cfw.addAStore(variableObjectLocal);
+  }
+  cfw.addALoad(funObjLocal);
+  cfw.addALoad(variableObjectLocal);
+  cfw.addALoad(argsLocal);
+  addScriptRuntimeInvoke("createFunctionActivation","(Lorg/mozilla/javascript/NativeFunction;" + "Lorg/mozilla/javascript/Scriptable;" + "[Ljava/lang/Object;"+ ")Lorg/mozilla/javascript/Scriptable;");
+  cfw.addAStore(variableObjectLocal);
+  cfw.add(ByteCode.NEW,codegen.mainClassName);
+  cfw.add(ByteCode.DUP);
+  cfw.addALoad(variableObjectLocal);
+  cfw.addALoad(contextLocal);
+  cfw.addPush(scriptOrFnIndex);
+  cfw.addInvoke(ByteCode.INVOKESPECIAL,codegen.mainClassName,"<init>",Codegen.FUNCTION_CONSTRUCTOR_SIGNATURE);
+  generateNestedFunctionInits();
+  cfw.addALoad(variableObjectLocal);
+  cfw.addALoad(thisObjLocal);
+  cfw.addLoadConstant(maxLocals);
+  cfw.addLoadConstant(maxStack);
+  addOptRuntimeInvoke("createNativeGenerator","(Lorg/mozilla/javascript/NativeFunction;" + "Lorg/mozilla/javascript/Scriptable;" + "Lorg/mozilla/javascript/Scriptable;II"+ ")Lorg/mozilla/javascript/Scriptable;");
+  cfw.add(ByteCode.ARETURN);
+  cfw.stopMethod((short)(localsMax + 1));
+}

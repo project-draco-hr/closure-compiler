@@ -1,0 +1,24 @@
+{
+  Node target=node.target;
+  if (type == Token.IFEQ || type == Token.IFNE) {
+    if (child == null)     throw Codegen.badTree();
+    int targetLabel=getTargetLabel(target);
+    int fallThruLabel=cfw.acquireLabel();
+    if (type == Token.IFEQ)     generateIfJump(child,node,targetLabel,fallThruLabel);
+ else     generateIfJump(child,node,fallThruLabel,targetLabel);
+    cfw.markLabel(fallThruLabel);
+  }
+ else {
+    if (type == Token.JSR) {
+      if (isGenerator) {
+        addGotoWithReturn(target);
+      }
+ else {
+        inlineFinally(target);
+      }
+    }
+ else {
+      addGoto(target,ByteCode.GOTO);
+    }
+  }
+}

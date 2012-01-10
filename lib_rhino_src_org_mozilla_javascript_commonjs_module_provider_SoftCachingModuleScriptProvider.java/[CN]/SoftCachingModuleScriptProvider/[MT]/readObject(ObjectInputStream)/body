@@ -1,0 +1,9 @@
+{
+  scriptRefQueue=new ReferenceQueue<Script>();
+  scripts=new ConcurrentHashMap<String,ScriptReference>();
+  final Map<String,CachedModuleScript> serScripts=(Map)in.readObject();
+  for (  Map.Entry<String,CachedModuleScript> entry : serScripts.entrySet()) {
+    final CachedModuleScript cachedModuleScript=entry.getValue();
+    putLoadedModule(entry.getKey(),cachedModuleScript.getModule(),cachedModuleScript.getValidator());
+  }
+}

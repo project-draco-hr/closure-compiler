@@ -1,0 +1,45 @@
+{
+  if (scope == null) {
+    scope=new NativeObject();
+  }
+  scope.associateValue(LIBRARY_SCOPE_KEY,scope);
+  (new ClassCache()).associate(scope);
+  BaseFunction.init(scope,sealed);
+  NativeObject.init(scope,sealed);
+  Scriptable objectProto=ScriptableObject.getObjectPrototype(scope);
+  Scriptable functionProto=ScriptableObject.getClassPrototype(scope,"Function");
+  functionProto.setPrototype(objectProto);
+  if (scope.getPrototype() == null)   scope.setPrototype(objectProto);
+  NativeError.init(scope,sealed);
+  NativeGlobal.init(cx,scope,sealed);
+  NativeArray.init(scope,sealed);
+  if (cx.getOptimizationLevel() > 0) {
+    NativeArray.setMaximumInitialCapacity(200000);
+  }
+  NativeString.init(scope,sealed);
+  NativeBoolean.init(scope,sealed);
+  NativeNumber.init(scope,sealed);
+  NativeDate.init(scope,sealed);
+  NativeMath.init(scope,sealed);
+  NativeJSON.init(scope,sealed);
+  NativeWith.init(scope,sealed);
+  NativeCall.init(scope,sealed);
+  NativeScript.init(scope,sealed);
+  NativeIterator.init(scope,sealed);
+  boolean withXml=cx.hasFeature(Context.FEATURE_E4X) && cx.getE4xImplementationFactory() != null;
+  for (int i=0; i != lazilyNames.length; i+=2) {
+    String topProperty=lazilyNames[i];
+    String className=lazilyNames[i + 1];
+    if (!withXml && className.equals("(xml)")) {
+      continue;
+    }
+ else     if (withXml && className.equals("(xml)")) {
+      className=cx.getE4xImplementationFactory().getImplementationClassName();
+    }
+    new LazilyLoadedCtor(scope,topProperty,className,sealed,true);
+  }
+  if (scope instanceof TopLevel) {
+    ((TopLevel)scope).cacheBuiltins();
+  }
+  return scope;
+}

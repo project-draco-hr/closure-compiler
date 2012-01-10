@@ -1,0 +1,21 @@
+{
+  if (value == NOT_FOUND)   throw new IllegalArgumentException();
+  ensureId(id);
+  int attr=attributeArray[id - 1];
+  if ((attr & READONLY) == 0) {
+    if (start == obj) {
+      if (value == null) {
+        value=UniqueTag.NULL_VALUE;
+      }
+      int valueSlot=(id - 1) * SLOT_SPAN;
+synchronized (this) {
+        valueArray[valueSlot]=value;
+      }
+    }
+ else {
+      int nameSlot=(id - 1) * SLOT_SPAN + NAME_SLOT;
+      String name=(String)valueArray[nameSlot];
+      start.put(name,start,value);
+    }
+  }
+}

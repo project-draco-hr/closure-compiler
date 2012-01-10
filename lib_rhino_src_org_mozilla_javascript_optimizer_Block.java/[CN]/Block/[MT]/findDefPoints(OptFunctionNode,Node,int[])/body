@@ -1,0 +1,39 @@
+{
+  boolean result=false;
+  Node child=n.getFirstChild();
+switch (n.getType()) {
+default :
+    while (child != null) {
+      result|=findDefPoints(fn,child,varTypes);
+      child=child.getNext();
+    }
+  break;
+case Token.DEC:
+case Token.INC:
+if (child.getType() == Token.GETVAR) {
+  int i=fn.getVarIndex(child);
+  result=assignType(varTypes,i,Optimizer.NumberType);
+}
+break;
+case Token.SETPROP:
+case Token.SETPROP_OP:
+if (child.getType() == Token.GETVAR) {
+int i=fn.getVarIndex(child);
+assignType(varTypes,i,Optimizer.AnyType);
+}
+while (child != null) {
+result|=findDefPoints(fn,child,varTypes);
+child=child.getNext();
+}
+break;
+case Token.SETVAR:
+{
+Node rValue=child.getNext();
+int theType=findExpressionType(fn,rValue,varTypes);
+int i=fn.getVarIndex(n);
+result=assignType(varTypes,i,theType);
+break;
+}
+}
+return result;
+}

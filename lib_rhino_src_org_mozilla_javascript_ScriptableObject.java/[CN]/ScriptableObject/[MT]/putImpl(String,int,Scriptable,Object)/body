@@ -1,0 +1,20 @@
+{
+  Slot slot;
+  if (this != start) {
+    slot=getSlot(name,index,SLOT_QUERY);
+    if (slot == null) {
+      return false;
+    }
+  }
+ else   if (!isExtensible) {
+    slot=getSlot(name,index,SLOT_QUERY);
+    if (slot == null) {
+      return true;
+    }
+  }
+ else {
+    if (count < 0)     checkNotSealed(name,index);
+    slot=getSlot(name,index,SLOT_MODIFY);
+  }
+  return slot.setValue(value,this,start);
+}

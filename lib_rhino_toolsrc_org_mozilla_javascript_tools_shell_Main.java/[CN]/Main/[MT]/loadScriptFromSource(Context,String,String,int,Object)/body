@@ -1,0 +1,16 @@
+{
+  try {
+    return cx.compileString(scriptSource,path,lineno,securityDomain);
+  }
+ catch (  RhinoException rex) {
+    ToolErrorReporter.reportException(cx.getErrorReporter(),rex);
+    exitCode=EXITCODE_RUNTIME_ERROR;
+  }
+catch (  VirtualMachineError ex) {
+    ex.printStackTrace();
+    String msg=ToolErrorReporter.getMessage("msg.uncaughtJSException",ex.toString());
+    exitCode=EXITCODE_RUNTIME_ERROR;
+    Context.reportError(msg);
+  }
+  return null;
+}

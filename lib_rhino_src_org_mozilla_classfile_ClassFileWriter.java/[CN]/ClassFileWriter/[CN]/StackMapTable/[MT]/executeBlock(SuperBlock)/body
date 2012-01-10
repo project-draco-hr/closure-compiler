@@ -1,0 +1,79 @@
+{
+  int bc=0;
+  int next=0;
+  if (DEBUGSTACKMAP) {
+    System.out.println("working on sb " + work.getIndex());
+    System.out.println("initial type state:");
+    TypeInfo.print(locals,localsTop,stack,stackTop,itsConstantPool);
+  }
+  for (int bci=work.getStart(); bci < work.getEnd(); bci+=next) {
+    bc=itsCodeBuffer[bci] & 0xFF;
+    next=execute(bci);
+    if (isBranch(bc)) {
+      SuperBlock targetSB=getBranchTarget(bci);
+      if (DEBUGSTACKMAP) {
+        System.out.println("sb " + work.getIndex() + " points to sb "+ targetSB.getIndex()+ " (offset "+ bci+ " -> "+ targetSB.getStart()+ ")");
+        System.out.println("type state at " + bci + ":");
+        TypeInfo.print(locals,localsTop,stack,stackTop,itsConstantPool);
+      }
+      flowInto(targetSB);
+      if (DEBUGSTACKMAP) {
+        System.out.println("type state of " + targetSB + " after merge:");
+        TypeInfo.print(targetSB.getLocals(),targetSB.getStack(),itsConstantPool);
+      }
+    }
+ else     if (bc == ByteCode.TABLESWITCH) {
+      int switchStart=bci + 1 + (3 & ~bci);
+      int defaultOffset=getOperand(switchStart,4);
+      SuperBlock targetSB=getSuperBlockFromOffset(bci + defaultOffset);
+      if (DEBUGSTACK) {
+        System.out.println("merging sb " + work.getIndex() + " with sb "+ targetSB.getIndex());
+      }
+      flowInto(targetSB);
+      int low=getOperand(switchStart + 4,4);
+      int high=getOperand(switchStart + 8,4);
+      int numCases=high - low + 1;
+      int caseBase=switchStart + 12;
+      for (int i=0; i < numCases; i++) {
+        int label=bci + getOperand(caseBase + 4 * i,4);
+        targetSB=getSuperBlockFromOffset(label);
+        if (DEBUGSTACKMAP) {
+          System.out.println("merging sb " + work.getIndex() + " with sb "+ targetSB.getIndex());
+        }
+        flowInto(targetSB);
+      }
+    }
+    for (int i=0; i < itsExceptionTableTop; i++) {
+      ExceptionTableEntry ete=itsExceptionTable[i];
+      short startPC=(short)getLabelPC(ete.itsStartLabel);
+      short endPC=(short)getLabelPC(ete.itsEndLabel);
+      if (bci < startPC || bci >= endPC) {
+        continue;
+      }
+      short handlerPC=(short)getLabelPC(ete.itsHandlerLabel);
+      SuperBlock sb=getSuperBlockFromOffset(handlerPC);
+      int exceptionType;
+      if (ete.itsCatchType == 0) {
+        exceptionType=TypeInfo.OBJECT(itsConstantPool.addClass("java/lang/Throwable"));
+      }
+ else {
+        exceptionType=TypeInfo.OBJECT(ete.itsCatchType);
+      }
+      sb.merge(locals,localsTop,new int[]{exceptionType},1,itsConstantPool);
+      addToWorkList(sb);
+    }
+  }
+  if (DEBUGSTACKMAP) {
+    System.out.println("end of sb " + work.getIndex() + ":");
+    TypeInfo.print(locals,localsTop,stack,stackTop,itsConstantPool);
+  }
+  if (!isSuperBlockEnd(bc)) {
+    int nextIndex=work.getIndex() + 1;
+    if (nextIndex < superBlocks.length) {
+      if (DEBUGSTACKMAP) {
+        System.out.println("continuing from sb " + work.getIndex() + " into sb "+ nextIndex);
+      }
+      flowInto(superBlocks[nextIndex]);
+    }
+  }
+}

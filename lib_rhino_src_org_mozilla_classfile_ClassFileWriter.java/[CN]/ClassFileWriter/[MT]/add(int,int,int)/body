@@ -1,0 +1,37 @@
+{
+  if (DEBUGCODE) {
+    System.out.println("Add " + bytecodeStr(theOpCode) + ", "+ Integer.toHexString(theOperand1)+ ", "+ Integer.toHexString(theOperand2));
+  }
+  int newStack=itsStackTop + stackChange(theOpCode);
+  if (newStack < 0 || Short.MAX_VALUE < newStack)   badStack(newStack);
+  if (theOpCode == ByteCode.IINC) {
+    if (!(0 <= theOperand1 && theOperand1 < 65536))     throw new ClassFileFormatException("out of range variable");
+    if (!(0 <= theOperand2 && theOperand2 < 65536))     throw new ClassFileFormatException("out of range increment");
+    if (theOperand1 > 255 || theOperand2 < -128 || theOperand2 > 127) {
+      addToCodeBuffer(ByteCode.WIDE);
+      addToCodeBuffer(ByteCode.IINC);
+      addToCodeInt16(theOperand1);
+      addToCodeInt16(theOperand2);
+    }
+ else {
+      addToCodeBuffer(ByteCode.IINC);
+      addToCodeBuffer(theOperand1);
+      addToCodeBuffer(theOperand2);
+    }
+  }
+ else   if (theOpCode == ByteCode.MULTIANEWARRAY) {
+    if (!(0 <= theOperand1 && theOperand1 < 65536))     throw new IllegalArgumentException("out of range index");
+    if (!(0 <= theOperand2 && theOperand2 < 256))     throw new IllegalArgumentException("out of range dimensions");
+    addToCodeBuffer(ByteCode.MULTIANEWARRAY);
+    addToCodeInt16(theOperand1);
+    addToCodeBuffer(theOperand2);
+  }
+ else {
+    throw new IllegalArgumentException("Unexpected opcode for 2 operands");
+  }
+  itsStackTop=(short)newStack;
+  if (newStack > itsMaxStack)   itsMaxStack=(short)newStack;
+  if (DEBUGSTACK) {
+    System.out.println("After " + bytecodeStr(theOpCode) + " stack = "+ itsStackTop);
+  }
+}

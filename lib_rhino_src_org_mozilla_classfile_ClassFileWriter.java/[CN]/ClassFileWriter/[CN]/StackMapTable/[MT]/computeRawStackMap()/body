@@ -1,0 +1,47 @@
+{
+  SuperBlock prev=superBlocks[0];
+  int[] prevLocals=prev.getTrimmedLocals();
+  int prevOffset=-1;
+  for (int i=1; i < superBlocks.length; i++) {
+    SuperBlock current=superBlocks[i];
+    int[] currentLocals=current.getTrimmedLocals();
+    int[] currentStack=current.getStack();
+    int offsetDelta=current.getStart() - prevOffset - 1;
+    if (currentStack.length == 0) {
+      int last=prevLocals.length > currentLocals.length ? currentLocals.length : prevLocals.length;
+      int delta=Math.abs(prevLocals.length - currentLocals.length);
+      int j;
+      for (j=0; j < last; j++) {
+        if (prevLocals[j] != currentLocals[j]) {
+          break;
+        }
+      }
+      if (j == currentLocals.length && delta == 0) {
+        writeSameFrame(currentLocals,offsetDelta);
+      }
+ else       if (j == currentLocals.length && delta <= 3) {
+        writeChopFrame(delta,offsetDelta);
+      }
+ else       if (j == prevLocals.length && delta <= 3) {
+        writeAppendFrame(currentLocals,delta,offsetDelta);
+      }
+ else {
+        writeFullFrame(currentLocals,currentStack,offsetDelta);
+      }
+    }
+ else     if (currentStack.length == 1) {
+      if (Arrays.equals(prevLocals,currentLocals)) {
+        writeSameLocalsOneStackItemFrame(currentLocals,currentStack,offsetDelta);
+      }
+ else {
+        writeFullFrame(currentLocals,currentStack,offsetDelta);
+      }
+    }
+ else {
+      writeFullFrame(currentLocals,currentStack,offsetDelta);
+    }
+    prev=current;
+    prevLocals=currentLocals;
+    prevOffset=current.getStart();
+  }
+}

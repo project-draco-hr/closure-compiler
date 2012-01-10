@@ -1,0 +1,16 @@
+{
+  ListIterator<ExceptionInfo> iter=exceptionInfo.listIterator(exceptionInfo.size());
+  while (iter.hasPrevious()) {
+    ExceptionInfo ei=iter.previous();
+    for (int i=0; i < EXCEPTION_MAX; i++) {
+      if (ei.handlerLabels[i] != 0 && ei.currentFinally == null) {
+        endCatch(ei,i,finallyStart);
+        ei.exceptionStarts[i]=0;
+        ei.currentFinally=finallyBlock;
+      }
+    }
+    if (ei.finallyBlock == finallyBlock) {
+      break;
+    }
+  }
+}

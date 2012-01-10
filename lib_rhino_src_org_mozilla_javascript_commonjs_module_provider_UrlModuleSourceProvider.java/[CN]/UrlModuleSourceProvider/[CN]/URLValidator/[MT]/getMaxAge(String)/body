@@ -1,0 +1,24 @@
+{
+  final int maxAgeIndex=cacheControl.indexOf("max-age");
+  if (maxAgeIndex == -1) {
+    return -1;
+  }
+  final int eq=cacheControl.indexOf('=',maxAgeIndex + 7);
+  if (eq == -1) {
+    return -1;
+  }
+  final int comma=cacheControl.indexOf(',',eq + 1);
+  final String strAge;
+  if (comma == -1) {
+    strAge=cacheControl.substring(eq + 1);
+  }
+ else {
+    strAge=cacheControl.substring(eq + 1,comma);
+  }
+  try {
+    return Integer.parseInt(strAge);
+  }
+ catch (  NumberFormatException e) {
+    return -1;
+  }
+}

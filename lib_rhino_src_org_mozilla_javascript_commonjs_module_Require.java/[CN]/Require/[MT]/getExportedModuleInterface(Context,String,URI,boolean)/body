@@ -1,0 +1,51 @@
+{
+  Scriptable exports=exportedModuleInterfaces.get(id);
+  if (exports != null) {
+    if (isMain) {
+      throw new IllegalStateException("Attempt to set main module after it was loaded");
+    }
+    return exports;
+  }
+  Map<String,Scriptable> threadLoadingModules=loadingModuleInterfaces.get();
+  if (threadLoadingModules != null) {
+    exports=threadLoadingModules.get(id);
+    if (exports != null) {
+      return exports;
+    }
+  }
+synchronized (loadLock) {
+    exports=exportedModuleInterfaces.get(id);
+    if (exports != null) {
+      return exports;
+    }
+    final ModuleScript moduleScript=getModule(cx,id,uri);
+    if (sandboxed && !moduleScript.isSandboxed()) {
+      throw ScriptRuntime.throwError(cx,nativeScope,"Module \"" + id + "\" is not contained in sandbox.");
+    }
+    exports=cx.newObject(nativeScope);
+    final boolean outermostLocked=threadLoadingModules == null;
+    if (outermostLocked) {
+      threadLoadingModules=new HashMap<String,Scriptable>();
+      loadingModuleInterfaces.set(threadLoadingModules);
+    }
+    threadLoadingModules.put(id,exports);
+    try {
+      Scriptable newExports=executeModuleScript(cx,id,exports,moduleScript,isMain);
+      if (exports != newExports) {
+        threadLoadingModules.put(id,newExports);
+        exports=newExports;
+      }
+    }
+ catch (    RuntimeException e) {
+      threadLoadingModules.remove(id);
+      throw e;
+    }
+ finally {
+      if (outermostLocked) {
+        exportedModuleInterfaces.putAll(threadLoadingModules);
+        loadingModuleInterfaces.set(null);
+      }
+    }
+  }
+  return exports;
+}

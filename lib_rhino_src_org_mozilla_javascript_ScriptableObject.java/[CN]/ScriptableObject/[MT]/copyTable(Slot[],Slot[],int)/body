@@ -1,0 +1,16 @@
+{
+  if (count == 0)   throw Kit.codeBug();
+  int tableSize=newSlots.length;
+  int i=oldSlots.length;
+  for (; ; ) {
+    --i;
+    Slot slot=oldSlots[i];
+    while (slot != null) {
+      int insertPos=getSlotIndex(tableSize,slot.indexOrHash);
+      Slot insSlot=slot.next == null ? slot : new RelinkedSlot(slot);
+      addKnownAbsentSlot(newSlots,insSlot,insertPos);
+      slot=slot.next;
+      if (--count == 0)       return;
+    }
+  }
+}

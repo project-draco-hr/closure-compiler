@@ -1,0 +1,46 @@
+{
+  byte[] utf8buf=null;
+  StringBuffer sb=null;
+  for (int k=0, length=str.length(); k != length; ++k) {
+    char C=str.charAt(k);
+    if (encodeUnescaped(C,fullUri)) {
+      if (sb != null) {
+        sb.append(C);
+      }
+    }
+ else {
+      if (sb == null) {
+        sb=new StringBuffer(length + 3);
+        sb.append(str);
+        sb.setLength(k);
+        utf8buf=new byte[6];
+      }
+      if (0xDC00 <= C && C <= 0xDFFF) {
+        throw uriError();
+      }
+      int V;
+      if (C < 0xD800 || 0xDBFF < C) {
+        V=C;
+      }
+ else {
+        k++;
+        if (k == length) {
+          throw uriError();
+        }
+        char C2=str.charAt(k);
+        if (!(0xDC00 <= C2 && C2 <= 0xDFFF)) {
+          throw uriError();
+        }
+        V=((C - 0xD800) << 10) + (C2 - 0xDC00) + 0x10000;
+      }
+      int L=oneUcs4ToUtf8Char(utf8buf,V);
+      for (int j=0; j < L; j++) {
+        int d=0xff & utf8buf[j];
+        sb.append('%');
+        sb.append(toHexChar(d >>> 4));
+        sb.append(toHexChar(d & 0xf));
+      }
+    }
+  }
+  return (sb == null) ? str : sb.toString();
+}

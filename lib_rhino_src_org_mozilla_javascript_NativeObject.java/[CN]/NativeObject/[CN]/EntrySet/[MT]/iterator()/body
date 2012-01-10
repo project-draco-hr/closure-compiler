@@ -1,0 +1,47 @@
+{
+  return new Iterator<Map.Entry<Object,Object>>(){
+    Object[] ids=getIds();
+    Object key=null;
+    int index=0;
+    public boolean hasNext(){
+      return index < ids.length;
+    }
+    public Map.Entry<Object,Object> next(){
+      final Object ekey=key=ids[index++];
+      final Object value=get(key);
+      return new Map.Entry<Object,Object>(){
+        public Object getKey(){
+          return ekey;
+        }
+        public Object getValue(){
+          return value;
+        }
+        public Object setValue(        Object value){
+          throw new UnsupportedOperationException();
+        }
+        public boolean equals(        Object other){
+          if (!(other instanceof Map.Entry)) {
+            return false;
+          }
+          Map.Entry e=(Map.Entry)other;
+          return (ekey == null ? e.getKey() == null : ekey.equals(e.getKey())) && (value == null ? e.getValue() == null : value.equals(e.getValue()));
+        }
+        public int hashCode(){
+          return (ekey == null ? 0 : ekey.hashCode()) ^ (value == null ? 0 : value.hashCode());
+        }
+        public String toString(){
+          return ekey + "=" + value;
+        }
+      }
+;
+    }
+    public void remove(){
+      if (key == null) {
+        throw new IllegalStateException();
+      }
+      NativeObject.this.remove(key);
+      key=null;
+    }
+  }
+;
+}

@@ -1,0 +1,18 @@
+{
+  Scriptable proto=(Scriptable)(ctorObj.get("prototype",ctorObj));
+  NativeError obj=new NativeError();
+  obj.setPrototype(proto);
+  obj.setParentScope(scope);
+  int arglen=args.length;
+  if (arglen >= 1) {
+    ScriptableObject.putProperty(obj,"message",ScriptRuntime.toString(args[0]));
+    if (arglen >= 2) {
+      ScriptableObject.putProperty(obj,"fileName",args[1]);
+      if (arglen >= 3) {
+        int line=ScriptRuntime.toInt32(args[2]);
+        ScriptableObject.putProperty(obj,"lineNumber",Integer.valueOf(line));
+      }
+    }
+  }
+  return obj;
+}

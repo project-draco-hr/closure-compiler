@@ -1,0 +1,17 @@
+{
+  String str=toStringIdOrIndex(cx,elem);
+  if (str != null) {
+    return getPropFunctionAndThis(obj,str,cx);
+  }
+  int index=lastIndexResult(cx);
+  Scriptable thisObj=toObjectOrNull(cx,obj);
+  if (thisObj == null) {
+    throw undefCallError(obj,String.valueOf(index));
+  }
+  Object value=ScriptableObject.getProperty(thisObj,index);
+  if (!(value instanceof Callable)) {
+    throw notFunctionError(value,elem);
+  }
+  storeScriptable(cx,thisObj);
+  return (Callable)value;
+}

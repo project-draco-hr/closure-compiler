@@ -1,0 +1,34 @@
+{
+  Slot[] slotsLocalRef=slots;
+  if (slotsLocalRef == null && accessType == SLOT_QUERY) {
+    return null;
+  }
+  int indexOrHash=(name != null ? name.hashCode() : index);
+  if (slotsLocalRef != null) {
+    Slot slot;
+    int slotIndex=getSlotIndex(slotsLocalRef.length,indexOrHash);
+    for (slot=slotsLocalRef[slotIndex]; slot != null; slot=slot.next) {
+      Object sname=slot.name;
+      if (indexOrHash == slot.indexOrHash && (sname == name || (name != null && name.equals(sname)))) {
+        break;
+      }
+    }
+switch (accessType) {
+case SLOT_QUERY:
+      return slot;
+case SLOT_MODIFY:
+case SLOT_MODIFY_CONST:
+    if (slot != null)     return slot;
+  break;
+case SLOT_MODIFY_GETTER_SETTER:
+slot=unwrapSlot(slot);
+if (slot instanceof GetterSlot) return slot;
+break;
+case SLOT_CONVERT_ACCESSOR_TO_DATA:
+slot=unwrapSlot(slot);
+if (!(slot instanceof GetterSlot)) return slot;
+break;
+}
+}
+return createSlot(name,indexOrHash,accessType);
+}

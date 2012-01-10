@@ -1,0 +1,19 @@
+{
+  if (count >= 0) {
+    Slot slot=firstAdded;
+    while (slot != null) {
+      Object value=slot.value;
+      if (value instanceof LazilyLoadedCtor) {
+        LazilyLoadedCtor initializer=(LazilyLoadedCtor)value;
+        try {
+          initializer.init();
+        }
+  finally {
+          slot.value=initializer.getValue();
+        }
+      }
+      slot=slot.orderedNext;
+    }
+    count=~count;
+  }
+}

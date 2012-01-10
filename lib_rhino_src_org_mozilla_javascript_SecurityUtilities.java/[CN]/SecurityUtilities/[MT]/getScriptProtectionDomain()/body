@@ -1,0 +1,13 @@
+{
+  final SecurityManager securityManager=System.getSecurityManager();
+  if (securityManager instanceof RhinoSecurityManager) {
+    return AccessController.doPrivileged(new PrivilegedAction<ProtectionDomain>(){
+      public ProtectionDomain run(){
+        Class c=((RhinoSecurityManager)securityManager).getCurrentScriptClass();
+        return c == null ? null : c.getProtectionDomain();
+      }
+    }
+);
+  }
+  return null;
+}

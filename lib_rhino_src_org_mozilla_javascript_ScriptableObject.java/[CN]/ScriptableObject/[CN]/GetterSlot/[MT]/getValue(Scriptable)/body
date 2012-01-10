@@ -1,0 +1,34 @@
+{
+  if (getter != null) {
+    if (getter instanceof MemberBox) {
+      MemberBox nativeGetter=(MemberBox)getter;
+      Object getterThis;
+      Object[] args;
+      if (nativeGetter.delegateTo == null) {
+        getterThis=start;
+        args=ScriptRuntime.emptyArgs;
+      }
+ else {
+        getterThis=nativeGetter.delegateTo;
+        args=new Object[]{start};
+      }
+      return nativeGetter.invoke(getterThis,args);
+    }
+ else     if (getter instanceof Function) {
+      Function f=(Function)getter;
+      Context cx=Context.getContext();
+      return f.call(cx,f.getParentScope(),start,ScriptRuntime.emptyArgs);
+    }
+  }
+  Object val=this.value;
+  if (val instanceof LazilyLoadedCtor) {
+    LazilyLoadedCtor initializer=(LazilyLoadedCtor)val;
+    try {
+      initializer.init();
+    }
+  finally {
+      this.value=val=initializer.getValue();
+    }
+  }
+  return val;
+}

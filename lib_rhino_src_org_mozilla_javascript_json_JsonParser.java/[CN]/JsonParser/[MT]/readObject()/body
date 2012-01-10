@@ -1,0 +1,40 @@
+{
+  Scriptable object=cx.newObject(scope);
+  String id;
+  Object value;
+  boolean needsComma=false;
+  consumeWhitespace();
+  while (pos < length) {
+    char c=src.charAt(pos++);
+switch (c) {
+case '}':
+      return object;
+case ',':
+    if (!needsComma) {
+      throw new ParseException("Unexpected comma in object literal");
+    }
+  needsComma=false;
+break;
+case '"':
+if (needsComma) {
+throw new ParseException("Missing comma in object literal");
+}
+id=readString();
+consume(':');
+value=readValue();
+long index=ScriptRuntime.indexFromString(id);
+if (index < 0) {
+object.put(id,object,value);
+}
+ else {
+object.put((int)index,object,value);
+}
+needsComma=true;
+break;
+default :
+throw new ParseException("Unexpected token in object literal");
+}
+consumeWhitespace();
+}
+throw new ParseException("Unterminated object literal");
+}

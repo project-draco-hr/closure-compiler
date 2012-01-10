@@ -1,0 +1,21 @@
+{
+  final long llength=ScriptRuntime.toUint32(ScriptableObject.getProperty(paths,"length"));
+  int ilength=llength > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)llength;
+  for (int i=0; i < ilength; ++i) {
+    final String path=ensureTrailingSlash(ScriptableObject.getTypedProperty(paths,i,String.class));
+    try {
+      URI uri=new URI(path);
+      if (!uri.isAbsolute()) {
+        uri=new File(path).toURI().resolve("");
+      }
+      final ModuleSource moduleSource=loadFromUri(uri.resolve(moduleId),uri,validator);
+      if (moduleSource != null) {
+        return moduleSource;
+      }
+    }
+ catch (    URISyntaxException e) {
+      throw new MalformedURLException(e.getMessage());
+    }
+  }
+  return null;
+}

@@ -1,0 +1,48 @@
+{
+  if ((lengthAttr & READONLY) != 0) {
+    return;
+  }
+  double d=ScriptRuntime.toNumber(val);
+  long longVal=ScriptRuntime.toUint32(d);
+  if (longVal != d) {
+    String msg=ScriptRuntime.getMessage0("msg.arraylength.bad");
+    throw ScriptRuntime.constructError("RangeError",msg);
+  }
+  if (denseOnly) {
+    if (longVal < length) {
+      Arrays.fill(dense,(int)longVal,dense.length,NOT_FOUND);
+      length=longVal;
+      return;
+    }
+ else     if (longVal < MAX_PRE_GROW_SIZE && longVal < (length * GROW_FACTOR) && ensureCapacity((int)longVal)) {
+      length=longVal;
+      return;
+    }
+ else {
+      denseOnly=false;
+    }
+  }
+  if (longVal < length) {
+    if (length - longVal > 0x1000) {
+      Object[] e=getIds();
+      for (int i=0; i < e.length; i++) {
+        Object id=e[i];
+        if (id instanceof String) {
+          String strId=(String)id;
+          long index=toArrayIndex(strId);
+          if (index >= longVal)           delete(strId);
+        }
+ else {
+          int index=((Integer)id).intValue();
+          if (index >= longVal)           delete(index);
+        }
+      }
+    }
+ else {
+      for (long i=longVal; i < length; i++) {
+        deleteElem(this,i);
+      }
+    }
+  }
+  length=longVal;
+}

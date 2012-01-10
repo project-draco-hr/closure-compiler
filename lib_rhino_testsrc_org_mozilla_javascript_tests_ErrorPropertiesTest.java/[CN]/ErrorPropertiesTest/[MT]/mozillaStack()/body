@@ -1,0 +1,9 @@
+{
+  RhinoException.useMozillaStackStyle(true);
+  testScriptStackTrace("null.method()","@myScript.js:1" + LS);
+  final String script="function f() \n{\n  null.method();\n}\nf();\n";
+  testScriptStackTrace(script,"f()@myScript.js:3" + LS + "@myScript.js:5"+ LS);
+  testIt("try { null.method() } catch (e) { e.stack }","@myScript.js:1" + LS);
+  final String expectedStack="f()@myScript.js:2" + LS + "@myScript.js:4"+ LS;
+  testIt("function f() {\n null.method(); \n}\n try { f() } catch (e) { e.stack }",expectedStack);
+}

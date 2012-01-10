@@ -1,0 +1,20 @@
+{
+  ScriptableObject.checkValidAttributes(attributes);
+  int info=findInstanceIdInfo(name);
+  if (info != 0) {
+    int id=(info & 0xFFFF);
+    int currentAttributes=(info >>> 16);
+    if (attributes != currentAttributes) {
+      setInstanceIdAttributes(id,attributes);
+    }
+    return;
+  }
+  if (prototypeValues != null) {
+    int id=prototypeValues.findId(name);
+    if (id != 0) {
+      prototypeValues.setAttributes(id,attributes);
+      return;
+    }
+  }
+  super.setAttributes(name,attributes);
+}
