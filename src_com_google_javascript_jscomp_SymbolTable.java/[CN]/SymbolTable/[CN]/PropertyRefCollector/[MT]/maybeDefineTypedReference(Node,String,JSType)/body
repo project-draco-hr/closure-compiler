@@ -3,17 +3,23 @@
     Symbol sym=globalScope.getSlot(propName);
     if (sym != null) {
       sym.defineReferenceAt(n);
+      return true;
     }
   }
  else   if (owner.isNominalConstructor()) {
-    maybeDefineReference(n,propName,getSymbolDeclaredBy(owner.toMaybeFunctionType()));
+    return maybeDefineReference(n,propName,getSymbolDeclaredBy(owner.toMaybeFunctionType()));
   }
  else   if (owner.isEnumType()) {
-    maybeDefineReference(n,propName,getSymbolDeclaredBy(owner.toMaybeEnumType()));
+    return maybeDefineReference(n,propName,getSymbolDeclaredBy(owner.toMaybeEnumType()));
   }
  else {
+    boolean defined=false;
     for (    Symbol ctor : getAllSymbolsForType(owner)) {
-      maybeDefineReference(n,propName,getSymbolForInstancesOf(ctor));
+      if (maybeDefineReference(n,propName,getSymbolForInstancesOf(ctor))) {
+        defined=true;
+      }
     }
+    return defined;
   }
+  return false;
 }

@@ -1,22 +1,22 @@
 {
   if (n.isGetProp()) {
     JSType owner=n.getFirstChild().getJSType();
-    if (owner == null || owner.isUnknownType()) {
-      boolean defined=tryDefineLexicalQualifiedNameRef(n.getQualifiedName(),n);
-      if (defined || owner == null) {
+    if (owner != null) {
+      boolean defined=maybeDefineTypedReference(n,n.getLastChild().getString(),owner);
+      if (defined) {
         return;
       }
     }
-    maybeDefineTypedReference(n,n.getLastChild().getString(),owner);
+    tryDefineLexicalQualifiedNameRef(n.getQualifiedName(),n);
   }
  else   if (NodeUtil.isObjectLitKey(n,parent) && n.isString()) {
     JSType owner=parent.getJSType();
-    if (owner == null || owner.isUnknownType()) {
-      boolean defined=tryDefineLexicalQualifiedNameRef(NodeUtil.getBestLValueName(n),n);
-      if (defined || owner == null) {
+    if (owner != null) {
+      boolean defined=maybeDefineTypedReference(n,n.getString(),owner);
+      if (defined) {
         return;
       }
     }
-    maybeDefineTypedReference(n,n.getString(),owner);
+    tryDefineLexicalQualifiedNameRef(NodeUtil.getBestLValueName(n),n);
   }
 }
