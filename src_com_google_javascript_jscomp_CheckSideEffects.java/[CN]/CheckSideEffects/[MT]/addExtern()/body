@@ -1,0 +1,11 @@
+{
+  Node name=IR.name(PROTECTOR_FN);
+  name.putBooleanProp(Node.IS_CONSTANT_NAME,true);
+  Node var=IR.var(name);
+  JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+  builder.recordNoAlias();
+  var.setJSDocInfo(builder.build(var));
+  CompilerInput input=compiler.getSynthesizedExternsInput();
+  input.getAstRoot(compiler).addChildrenToBack(var);
+  compiler.reportCodeChange();
+}
