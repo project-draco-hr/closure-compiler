@@ -22,7 +22,16 @@ case Token.REGEXP:
 n.setJSType(getNativeType(REGEXP_TYPE));
 break;
 case Token.OBJECTLIT:
-defineObjectLiteral(t,n);
+JSDocInfo info=n.getJSDocInfo();
+if (info != null && info.getLendsName() != null) {
+if (lentObjectLiterals == null) {
+lentObjectLiterals=Lists.newArrayList();
+}
+lentObjectLiterals.add(n);
+}
+ else {
+defineObjectLiteral(n);
+}
 break;
 }
 }
