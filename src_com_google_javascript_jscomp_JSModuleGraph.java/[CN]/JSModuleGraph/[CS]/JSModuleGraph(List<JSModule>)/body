@@ -1,5 +1,6 @@
 {
-  modules=Sets.newHashSetWithExpectedSize(modulesInDepOrder.size());
+  Preconditions.checkState(modulesInDepOrder.size() == Sets.newHashSet(modulesInDepOrder).size(),"Found duplicate modules");
+  modules=ImmutableList.copyOf(modulesInDepOrder);
   modulesByDepth=Lists.newArrayList();
   for (  JSModule module : modulesInDepOrder) {
     int depth=0;
@@ -11,7 +12,6 @@
       depth=Math.max(depth,depDepth + 1);
     }
     module.setDepth(depth);
-    modules.add(module);
     if (depth == modulesByDepth.size()) {
       modulesByDepth.add(new ArrayList<JSModule>());
     }
