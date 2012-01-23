@@ -17,7 +17,14 @@
       }
       lastJump=cur;
     }
-    Preconditions.checkState(parent != null,"Cannot find break target.");
+    if (parent == null) {
+      if (compiler.isIdeMode()) {
+        return;
+      }
+ else {
+        throw new IllegalStateException("Cannot find break target.");
+      }
+    }
     previous=cur;
   }
   if (lastJump == node) {
