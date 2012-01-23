@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  String code="function f() { var x = 3; 4; x = 5; return x; } f(); ";
+  testSame(options,code);
+  options.deadAssignmentElimination=true;
+  testSame(options,code);
+  options.removeUnusedVars=true;
+  test(options,code,"function f() { var x = 3; 4; x = 5; return x; } f();");
+}

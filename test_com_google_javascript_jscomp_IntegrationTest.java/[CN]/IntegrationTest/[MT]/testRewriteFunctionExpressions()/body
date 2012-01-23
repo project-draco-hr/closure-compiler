@@ -1,0 +1,12 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  String code="var a = function() {};";
+  String expected="function JSCompiler_emptyFn(){return function(){}} " + "var a = JSCompiler_emptyFn();";
+  for (int i=0; i < 10; i++) {
+    code+="a = function() {};";
+    expected+="a = JSCompiler_emptyFn();";
+  }
+  testSame(options,code);
+  options.rewriteFunctionExpressions=true;
+  test(options,code,expected);
+}

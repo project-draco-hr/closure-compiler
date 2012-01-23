@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.foldConstants=true;
+  String code="/** @constructor */\n" + "function InternalWidget(){this.x = 1;}" + "InternalWidget.prototype.internalGo = function (){this.x = 2};"+ "new InternalWidget().internalGo();";
+  testSame(options,code);
+  options.computeFunctionSideEffects=true;
+  String optimized="" + "function InternalWidget(){this.x = 1;}" + "InternalWidget.prototype.internalGo = function (){this.x = 2};";
+  test(options,code,optimized);
+}

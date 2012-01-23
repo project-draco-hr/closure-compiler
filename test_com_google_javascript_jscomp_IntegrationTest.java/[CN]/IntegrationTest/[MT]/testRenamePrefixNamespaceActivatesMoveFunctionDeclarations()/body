@@ -1,0 +1,8 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  String code="var x = f; function f() { return 3; }";
+  testSame(options,code);
+  assertFalse(options.moveFunctionDeclarations);
+  options.renamePrefixNamespace="_";
+  test(options,code,"_.f = function() { return 3; }; _.x = _.f;");
+}

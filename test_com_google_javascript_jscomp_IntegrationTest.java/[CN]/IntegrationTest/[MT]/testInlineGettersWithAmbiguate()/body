@@ -1,0 +1,10 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  String code="/** @constructor */" + "function Foo() {}" + "/** @type {number} */ Foo.prototype.field;"+ "Foo.prototype.getField = function() { return this.field; };"+ "/** @constructor */"+ "function Bar() {}"+ "/** @type {string} */ Bar.prototype.field;"+ "Bar.prototype.getField = function() { return this.field; };"+ "new Foo().getField();"+ "new Bar().getField();";
+  testSame(options,code);
+  options.inlineGetters=true;
+  test(options,code,"function Foo() {}" + "Foo.prototype.field;" + "Foo.prototype.getField = function() { return this.field; };"+ "function Bar() {}"+ "Bar.prototype.field;"+ "Bar.prototype.getField = function() { return this.field; };"+ "new Foo().field;"+ "new Bar().field;");
+  options.checkTypes=true;
+  options.ambiguateProperties=true;
+  testSame(options,code);
+}

@@ -1,0 +1,17 @@
+{
+  Compiler compiler=compile(options,original);
+  checkUnexpectedErrorsOrWarnings(compiler,1);
+  assertEquals("Expected exactly one warning or error",1,compiler.getErrors().length + compiler.getWarnings().length);
+  if (compiler.getErrors().length > 0) {
+    assertEquals(warning,compiler.getErrors()[0].getType());
+  }
+ else {
+    assertEquals(warning,compiler.getWarnings()[0].getType());
+  }
+  if (compiled != null) {
+    Node root=compiler.getRoot().getLastChild();
+    Node expectedRoot=parse(compiled,options);
+    String explanation=expectedRoot.checkTreeEquals(root);
+    assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult: "+ compiler.toSource(root)+ "\n"+ explanation,explanation);
+  }
+}

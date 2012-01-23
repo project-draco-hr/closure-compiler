@@ -1,0 +1,11 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  String code="function f() { var x = 3; x = 5; return x; }";
+  testSame(options,code);
+  options.flowSensitiveInlineVariables=true;
+  test(options,code,"function f() { var x = 3; return 5; }");
+  String unusedVar="function f() { var x; x = 5; return x; } f()";
+  test(options,unusedVar,"function f() { var x; return 5; } f()");
+  options.removeUnusedVars=true;
+  test(options,unusedVar,"function f() { return 5; } f()");
+}

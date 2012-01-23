@@ -1,0 +1,11 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  String code="var f = function() {};";
+  testSame(options,code);
+  options.anonymousFunctionNaming=AnonymousFunctionNamingPolicy.MAPPED;
+  test(options,code,"var f = function $() {}");
+  assertNotNull(lastCompiler.getResult().namedAnonFunctionMap);
+  options.anonymousFunctionNaming=AnonymousFunctionNamingPolicy.UNMAPPED;
+  test(options,code,"var f = function $f$() {}");
+  assertNull(lastCompiler.getResult().namedAnonFunctionMap);
+}

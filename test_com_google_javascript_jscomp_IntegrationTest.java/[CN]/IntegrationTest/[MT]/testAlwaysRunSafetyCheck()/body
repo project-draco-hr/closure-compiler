@@ -1,0 +1,20 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.checkSymbols=false;
+  options.customPasses=ArrayListMultimap.create();
+  options.customPasses.put(CustomPassExecutionTime.BEFORE_OPTIMIZATIONS,new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      Node var=root.getLastChild().getFirstChild();
+      assertEquals(Token.VAR,var.getType());
+      var.detachFromParent();
+    }
+  }
+);
+  try {
+    test(options,"var x = 3; function f() { return x + z; }","function f() { return x + z; }");
+    fail("Expected runtime exception");
+  }
+ catch (  RuntimeException e) {
+    assertTrue(e.getMessage().indexOf("Unexpected variable x") != -1);
+  }
+}

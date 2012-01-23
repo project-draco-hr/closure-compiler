@@ -1,0 +1,9 @@
+{
+  String[] code={"/** @private */ function f() { }","function g() { f(); }"};
+  CompilerOptions options=createCompilerOptions();
+  testSame(options,code);
+  options.setWarningLevel(DiagnosticGroups.VISIBILITY,CheckLevel.ERROR);
+  testSame(options,code);
+  options.checkTypes=true;
+  test(options,code,CheckAccessControls.BAD_PRIVATE_GLOBAL_ACCESS);
+}

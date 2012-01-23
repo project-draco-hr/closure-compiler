@@ -1,0 +1,16 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  String code="var f = function() {};";
+  String expected="var a; var b = function() {}; a = b.prototype;";
+  for (int i=0; i < 10; i++) {
+    code+="f.prototype.a = " + i + ";";
+    expected+="a.a = " + i + ";";
+  }
+  testSame(options,code);
+  options.extractPrototypeMemberDeclarations=true;
+  options.variableRenaming=VariableRenamingPolicy.ALL;
+  test(options,code,expected);
+  options.propertyRenaming=PropertyRenamingPolicy.HEURISTIC;
+  options.variableRenaming=VariableRenamingPolicy.OFF;
+  testSame(options,code);
+}

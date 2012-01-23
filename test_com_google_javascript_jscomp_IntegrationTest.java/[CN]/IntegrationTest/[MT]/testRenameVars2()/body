@@ -1,0 +1,11 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.variableRenaming=VariableRenamingPolicy.ALL;
+  String code="var abc = 3; function f() { window['a'] = 5; }";
+  String noexport="var a = 3;   function b() { window['a'] = 5; }";
+  String export="var b = 3;   function c() { window['a'] = 5; }";
+  options.reserveRawExports=false;
+  test(options,code,noexport);
+  options.reserveRawExports=true;
+  test(options,code,export);
+}

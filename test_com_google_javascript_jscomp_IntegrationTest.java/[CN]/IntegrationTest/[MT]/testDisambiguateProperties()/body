@@ -1,0 +1,8 @@
+{
+  String code="/** @constructor */ function Foo(){} Foo.prototype.bar = 3;" + "/** @constructor */ function Baz(){} Baz.prototype.bar = 3;";
+  CompilerOptions options=createCompilerOptions();
+  testSame(options,code);
+  options.disambiguateProperties=true;
+  options.checkTypes=true;
+  test(options,code,"function Foo(){} Foo.prototype.Foo_prototype$bar = 3;" + "function Baz(){} Baz.prototype.Baz_prototype$bar = 3;");
+}

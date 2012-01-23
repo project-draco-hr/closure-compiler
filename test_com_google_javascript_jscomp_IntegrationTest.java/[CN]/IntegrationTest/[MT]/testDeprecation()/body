@@ -1,0 +1,9 @@
+{
+  String code="/** @deprecated */ function f() { } function g() { f(); }";
+  CompilerOptions options=createCompilerOptions();
+  testSame(options,code);
+  options.setWarningLevel(DiagnosticGroups.DEPRECATED,CheckLevel.ERROR);
+  testSame(options,code);
+  options.checkTypes=true;
+  test(options,code,CheckAccessControls.DEPRECATED_NAME);
+}

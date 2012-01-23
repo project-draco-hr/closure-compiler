@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  String code="function f() { return this['bar']; } f.prototype.bar = 3;";
+  String expected="function f() { return this.bar; } f.prototype.a = 3;";
+  testSame(options,code);
+  options.convertToDottedProperties=true;
+  options.propertyRenaming=PropertyRenamingPolicy.ALL_UNQUOTED;
+  test(options,code,expected);
+}

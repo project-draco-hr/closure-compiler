@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.foldConstants=true;
+  String code="" + "function InternalWidget(){return [];}" + "Array.prototype.internalGo = function (){this.x = 2};"+ "InternalWidget().internalGo();";
+  testSame(options,code);
+  options.computeFunctionSideEffects=true;
+  String optimized="" + "function InternalWidget(){return [];}" + "Array.prototype.internalGo = function (){this.x = 2};";
+  test(options,code,optimized);
+}

@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.foldConstants=true;
+  String code="" + "function fn(){var a={};a.x={};return a}" + "fn().x.y = 1;";
+  String result="" + "function fn(){var a={x:{}};return a}" + "fn().x.y = 1;";
+  test(options,code,result);
+  options.computeFunctionSideEffects=true;
+  test(options,code,result);
+}

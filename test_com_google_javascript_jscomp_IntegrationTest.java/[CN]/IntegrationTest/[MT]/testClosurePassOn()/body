@@ -1,0 +1,6 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.closurePass=true;
+  test(options,"var goog = {}; goog.require = function(x) {}; goog.require('foo');",ProcessClosurePrimitives.MISSING_PROVIDE_ERROR);
+  test(options,"/** @define {boolean} */ var COMPILED = false;" + "var goog = {}; goog.getCssName = function(x) {};" + "goog.getCssName('foo');","var COMPILED = true;" + "var goog = {}; goog.getCssName = function(x) {};" + "'foo';");
+}

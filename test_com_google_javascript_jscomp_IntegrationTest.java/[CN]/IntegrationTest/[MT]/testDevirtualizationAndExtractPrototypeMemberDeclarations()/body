@@ -1,0 +1,24 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.devirtualizePrototypeMethods=true;
+  options.collapseAnonymousFunctions=true;
+  options.extractPrototypeMemberDeclarations=true;
+  options.variableRenaming=VariableRenamingPolicy.ALL;
+  String code="var f = function() {};";
+  String expected="var a; function b() {} a = b.prototype;";
+  for (int i=0; i < 10; i++) {
+    code+="f.prototype.argz = function() {arguments};";
+    code+="f.prototype.devir" + i + " = function() {};";
+    char letter=(char)('d' + i);
+    expected+="a.argz = function() {arguments};";
+    expected+="function " + letter + "(c){}";
+  }
+  code+="var F = new f(); F.argz();";
+  expected+="var n = new b(); n.argz();";
+  for (int i=0; i < 10; i++) {
+    code+="F.devir" + i + "();";
+    char letter=(char)('d' + i);
+    expected+=letter + "(n);";
+  }
+  test(options,code,expected);
+}
