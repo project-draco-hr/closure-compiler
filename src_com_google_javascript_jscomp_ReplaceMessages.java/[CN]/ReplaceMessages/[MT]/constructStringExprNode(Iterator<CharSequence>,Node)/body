@@ -3,6 +3,9 @@
   Node partNode=null;
   if (part instanceof JsMessage.PlaceholderReference) {
     JsMessage.PlaceholderReference phRef=(JsMessage.PlaceholderReference)part;
+    if (objLitNode == null) {
+      throw new MalformedException("Empty placeholder value map " + "for a translated message with placeholders.",objLitNode);
+    }
     for (Node key=objLitNode.getFirstChild(); key != null; key=key.getNext()) {
       if (key.getString().equals(phRef.getName())) {
         Node valueNode=key.getFirstChild();
