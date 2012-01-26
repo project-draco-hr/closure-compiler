@@ -1,4 +1,8 @@
 {
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(node);
+  if (jsdoc == null && !node.isFunction()) {
+    return "";
+  }
   JSType type=node.getJSType();
   if (type == null) {
     return "";
@@ -6,8 +10,11 @@
  else   if (type.isFunctionType()) {
     return getFunctionAnnotation(node);
   }
+ else   if (type.isEnumType()) {
+    return "/** @enum {" + type.toMaybeEnumType().getElementsType().toAnnotationString() + "} */\n";
+  }
  else   if (!type.isUnknownType() && !type.isEmptyType() && !type.isVoidType()&& !type.isFunctionPrototypeType()) {
-    return "/** @type {" + node.getJSType() + "} */\n";
+    return "/** @type {" + node.getJSType().toAnnotationString() + "} */\n";
   }
  else {
     return "";

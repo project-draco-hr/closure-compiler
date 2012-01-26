@@ -1,0 +1,12 @@
+{
+  Node lit=IR.objectlit();
+  lit.setJSType(exportedObjectLit.getJSType());
+  lit.setJSDocInfo(new JSDocInfo());
+  int index=1;
+  for (Node child=exportedObjectLit.getFirstChild(); child != null; child=child.getNext()) {
+    if (child.isString()) {
+      lit.addChildToBack(IR.propdef(IR.string(child.getString()),IR.number(index++)));
+    }
+  }
+  return lit;
+}

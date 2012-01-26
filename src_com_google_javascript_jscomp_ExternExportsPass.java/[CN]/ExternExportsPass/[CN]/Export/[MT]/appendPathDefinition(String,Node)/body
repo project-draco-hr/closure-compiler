@@ -1,11 +1,21 @@
 {
   Node pathDefinition;
   if (!path.contains(".")) {
-    pathDefinition=NodeUtil.newVarNode(path,initializer);
+    if (initializer.isEmpty()) {
+      pathDefinition=IR.var(IR.name(path));
+    }
+ else {
+      pathDefinition=NodeUtil.newVarNode(path,initializer);
+    }
   }
  else {
     Node qualifiedPath=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),path);
-    pathDefinition=NodeUtil.newExpr(IR.assign(qualifiedPath,initializer));
+    if (initializer.isEmpty()) {
+      pathDefinition=NodeUtil.newExpr(qualifiedPath);
+    }
+ else {
+      pathDefinition=NodeUtil.newExpr(IR.assign(qualifiedPath,initializer));
+    }
   }
   externsRoot.addChildToBack(pathDefinition);
   alreadyExportedPaths.add(path);

@@ -6,11 +6,17 @@
     boolean skipPathPrefix=pathPrefix.endsWith(".prototype") || (alreadyExportedPaths.contains(pathPrefix) && !isCompletePathPrefix);
     if (!skipPathPrefix) {
       Node initializer;
-      if (isCompletePathPrefix && functionToExport != null) {
-        initializer=createExternFunction(functionToExport);
+      if (isCompletePathPrefix && valueToExport != null) {
+        if (valueToExport.isFunction()) {
+          initializer=createExternFunction(valueToExport);
+        }
+ else {
+          Preconditions.checkState(valueToExport.isObjectLit());
+          initializer=createExternObjectLit(valueToExport);
+        }
       }
  else {
-        initializer=IR.objectlit();
+        initializer=IR.empty();
       }
       appendPathDefinition(pathPrefix,initializer);
     }

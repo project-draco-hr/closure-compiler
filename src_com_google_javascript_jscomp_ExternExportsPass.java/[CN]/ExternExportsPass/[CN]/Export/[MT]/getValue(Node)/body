@@ -1,0 +1,25 @@
+{
+  String qualifiedName=value.getQualifiedName();
+  if (qualifiedName == null) {
+    return null;
+  }
+  Node definitionParent=definitionMap.get(qualifiedName);
+  if (definitionParent == null) {
+    return null;
+  }
+  Node definition;
+switch (definitionParent.getType()) {
+case Token.ASSIGN:
+    definition=definitionParent.getLastChild();
+  break;
+case Token.VAR:
+definition=definitionParent.getLastChild().getLastChild();
+break;
+default :
+return null;
+}
+if (!definition.isFunction() && !definition.isObjectLit()) {
+return null;
+}
+return definition;
+}
