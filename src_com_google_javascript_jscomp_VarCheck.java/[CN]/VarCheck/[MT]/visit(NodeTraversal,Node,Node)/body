@@ -39,11 +39,11 @@
   JSModule currModule=currInput.getModule();
   JSModule varModule=varInput.getModule();
   JSModuleGraph moduleGraph=compiler.getModuleGraph();
-  if (varModule != currModule && varModule != null && currModule != null) {
+  if (!sanityCheck && varModule != currModule && varModule != null && currModule != null) {
     if (moduleGraph.dependsOn(currModule,varModule)) {
     }
  else {
-      if (!sanityCheck && scope.isGlobal()) {
+      if (scope.isGlobal()) {
         if (moduleGraph.dependsOn(varModule,currModule)) {
           t.report(n,VIOLATED_MODULE_DEP_ERROR,currModule.getName(),varModule.getName(),varName);
         }
