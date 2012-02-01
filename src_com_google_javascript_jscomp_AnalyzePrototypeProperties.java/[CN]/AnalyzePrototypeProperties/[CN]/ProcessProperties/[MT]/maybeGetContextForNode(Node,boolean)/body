@@ -1,0 +1,23 @@
+{
+  NameContext context=null;
+  if (n.isHook() || n.isOr() || n.isAnd()) {
+    if (checkSideEffects && NodeUtil.mayHaveSideEffects(n,compiler)) {
+      context=scopeStack.peek();
+    }
+ else {
+      context=symbolStack.peek();
+    }
+  }
+ else   if (NodeUtil.nodeTypeMayHaveSideEffects(n,compiler)) {
+    String propName=null;
+    if (isUnpinnedPropertyUseParent(n)) {
+      propName=getPrototypePropertyName(n.getFirstChild());
+    }
+    context=getContextForPropName(propName,NodeUtil.isExpressionResultUsed(n));
+  }
+ else   if (NodeUtil.isObjectLitKey(n,n.getParent())) {
+    String propName=getPrototypePropertyName(n);
+    context=getContextForPropName(propName,false);
+  }
+  return context;
+}

@@ -1,0 +1,16 @@
+{
+  Node target=n.getFirstChild();
+  if (n.hasMoreThanOneChild() && target.isName() && target.getString().equals(NodeUtil.JSC_PROPERTY_NAME_FN)) {
+    Node propNode=target.getNext();
+    if (propNode.isString()) {
+      String propName=propNode.getString();
+      addSymbolUse(propName,t.getModule(),PROPERTY);
+    }
+  }
+ else {
+    ObjectLiteralCast cast=compiler.getCodingConvention().getObjectLiteralCast(t,n);
+    if (cast != null) {
+      pinObjectLiteralProperties(cast.objectNode,t.getModule());
+    }
+  }
+}

@@ -1,13 +1,5 @@
 {
   NameInfo info=getNameInfoForName(name,type);
-  NameInfo def=null;
-  for (int i=symbolStack.size() - 1; i >= 0; i--) {
-    def=symbolStack.get(i).name;
-    if (def != anonymousNode) {
-      break;
-    }
-  }
-  if (!def.equals(info)) {
-    symbolGraph.connect(def,module,info);
-  }
+  NameContext context=symbolStack.peek();
+  context.connect(symbolGraph,module,info);
 }

@@ -1,5 +1,10 @@
 {
   if (n.isGetProp()) {
-    symbolGraph.connect(externNode,firstModule,getNameInfoForName(n.getLastChild().getString(),PROPERTY));
+    if (doNotPinExternsPropertiesOnPrototypes) {
+      deferredExternPropNames.add(n.getLastChild().getString());
+    }
+ else {
+      connectExternProp(n.getLastChild().getString());
+    }
   }
 }

@@ -1,8 +1,13 @@
 {
   String constructor="function Foo() {}";
   String declaration=constructor + "Foo.prototype.baz = 3;";
+  this.anchorObjectLitProps=false;
   test(declaration,"");
-  testSame(declaration + "var x = {}; x.baz = 5;");
+  test(declaration + "var x = {}; x.baz = 5;","var x = {}; x.baz = 5;");
+  test(declaration + "var x = {baz: 5};","var x = {baz: 5};");
+  test(declaration + "var x = {'baz': 5};","var x = {'baz': 5};");
+  this.anchorObjectLitProps=true;
+  test(declaration,"");
   testSame(declaration + "var x = {baz: 5};");
   test(declaration + "var x = {'baz': 5};","var x = {'baz': 5};");
 }

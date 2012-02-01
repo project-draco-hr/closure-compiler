@@ -1,0 +1,29 @@
+{
+  this.compiler=compiler;
+  this.moduleGraph=moduleGraph;
+  this.doNotPinExternsPropertiesOnPrototypes=doNotPinExternsPropertiesOnPrototypes;
+  this.trackThisPropertiesDefinitions=trackThisPropertiesDefinitions;
+  this.anchorUnusedVars=anchorUnusedVars;
+  this.anchorObjectLiteralProperties=pinPropertiesDefinedOnObjectLiterals;
+  if (moduleGraph != null) {
+    firstModule=moduleGraph.getRootModule();
+  }
+ else {
+    firstModule=null;
+  }
+  globalNode.markReference(null);
+  externNode.markReference(null);
+  symbolGraph.createNode(globalNode);
+  symbolGraph.createNode(externNode);
+  for (  String property : IMPLICITLY_USED_PROPERTIES) {
+    NameInfo nameInfo=getNameInfoForName(property,PROPERTY);
+    if (moduleGraph == null) {
+      symbolGraph.connect(externNode,null,nameInfo);
+    }
+ else {
+      for (      JSModule module : moduleGraph.getAllModules()) {
+        symbolGraph.connect(externNode,module,nameInfo);
+      }
+    }
+  }
+}
