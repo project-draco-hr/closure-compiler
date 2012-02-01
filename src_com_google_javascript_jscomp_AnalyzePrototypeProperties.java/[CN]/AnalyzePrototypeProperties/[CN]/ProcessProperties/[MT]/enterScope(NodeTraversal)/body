@@ -1,20 +1,21 @@
 {
   Node n=t.getCurrentNode();
-  NameContext nameContext;
   if (n.isFunction()) {
-    if (isGlobalFunctionDeclaration(t,n)) {
+    String propName=getPrototypePropertyNameFromRValue(n);
+    if (propName != null) {
+      symbolStack.push(new NameContext(getNameInfoForName(propName,PROPERTY),t.getScope()));
+    }
+ else     if (isGlobalFunctionDeclaration(t,n)) {
       Node parent=n.getParent();
       String name=parent.isName() ? parent.getString() : n.getFirstChild().getString();
-      nameContext=new NameContext(symbolStack.peek(),getNameInfoForName(name,VAR),t.getScope(),false);
+      symbolStack.push(new NameContext(getNameInfoForName(name,VAR),t.getScope()));
     }
  else {
-      nameContext=new NameContext(symbolStack.peek(),anonymousNode,t.getScope(),true);
+      symbolStack.push(new NameContext(anonymousNode,t.getScope()));
     }
   }
  else {
     Preconditions.checkState(t.inGlobalScope());
-    nameContext=new NameContext(null,globalNode,t.getScope(),false);
+    symbolStack.push(new NameContext(globalNode,t.getScope()));
   }
-  symbolStack.push(nameContext);
-  scopeStack.push(nameContext);
 }

@@ -1,19 +1,66 @@
 {
-switch (n.getType()) {
-case Token.GETPROP:
-    visitGetProp(t,n);
-  break;
-case Token.OBJECTLIT:
-visitObjectLit(t,n);
-break;
-case Token.NAME:
-visitName(t,n);
-break;
-case Token.CALL:
-visitCall(t,n);
-break;
-}
-if (isContextIntroducingNode(n)) {
-symbolStack.pop();
-}
+  if (n.isGetProp()) {
+    String propName=n.getFirstChild().getNext().getString();
+    if (n.isQualifiedName()) {
+      if (propName.equals("prototype")) {
+        if (processPrototypeRef(t,n)) {
+          return;
+        }
+      }
+ else       if (compiler.getCodingConvention().isExported(propName)) {
+        addGlobalUseOfSymbol(propName,t.getModule(),PROPERTY);
+        return;
+      }
+ else {
+        if (n.getParent().isAssign() && n.getNext() != null) {
+          String rValueName=getPrototypePropertyNameFromRValue(n);
+          if (rValueName != null) {
+            return;
+          }
+        }
+      }
+    }
+    addSymbolUse(propName,t.getModule(),PROPERTY);
+  }
+ else   if (n.isObjectLit()) {
+    String lValueName=NodeUtil.getBestLValueName(NodeUtil.getBestLValue(n));
+    if (lValueName != null && lValueName.endsWith(".prototype")) {
+      return;
+    }
+    for (Node propNameNode=n.getFirstChild(); propNameNode != null; propNameNode=propNameNode.getNext()) {
+      if (!propNameNode.isQuotedString()) {
+        addSymbolUse(propNameNode.getString(),t.getModule(),PROPERTY);
+      }
+    }
+  }
+ else   if (n.isName()) {
+    String name=n.getString();
+    Var var=t.getScope().getVar(name);
+    if (var != null) {
+      if (var.isGlobal()) {
+        if (var.getInitialValue() != null && var.getInitialValue().isFunction()) {
+          if (t.inGlobalScope()) {
+            if (!processGlobalFunctionDeclaration(t,n,var)) {
+              addGlobalUseOfSymbol(name,t.getModule(),VAR);
+            }
+          }
+ else {
+            addSymbolUse(name,t.getModule(),VAR);
+          }
+        }
+      }
+ else       if (var.getScope() != t.getScope()) {
+        for (int i=symbolStack.size() - 1; i >= 0; i--) {
+          NameContext context=symbolStack.get(i);
+          if (context.scope == var.getScope()) {
+            break;
+          }
+          context.name.readClosureVariables=true;
+        }
+      }
+    }
+  }
+  if (processNonFunctionPrototypeAssign(n,parent) != null) {
+    symbolStack.pop();
+  }
 }
