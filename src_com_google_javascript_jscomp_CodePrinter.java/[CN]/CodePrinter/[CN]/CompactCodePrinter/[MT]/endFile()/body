@@ -1,0 +1,26 @@
+{
+  super.endFile();
+  if (!preferLineBreakAtEndOfFile) {
+    return;
+  }
+  if (lineLength > lineLengthThreshold / 2) {
+    append(";");
+    startNewLine();
+  }
+ else   if (prevCutPosition > 0) {
+    for (int i=prevCutPosition; i < code.length() - 1; i++) {
+      code.setCharAt(i,code.charAt(i + 1));
+    }
+    code.setLength(code.length() - 1);
+    lineStartPosition=prevLineStartPosition;
+    lineLength=code.length() - lineStartPosition;
+    reportLineCut(lineIndex,prevCutPosition,false);
+    lineIndex--;
+    prevCutPosition=0;
+    prevLineStartPosition=0;
+    append(";");
+    startNewLine();
+  }
+ else {
+  }
+}

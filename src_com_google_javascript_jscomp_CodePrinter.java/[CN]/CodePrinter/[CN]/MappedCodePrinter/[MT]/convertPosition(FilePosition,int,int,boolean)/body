@@ -1,0 +1,23 @@
+{
+  int originalLine=position.getLine();
+  int originalChar=position.getColumn();
+  if (insertion) {
+    if (originalLine == lineIndex && originalChar >= characterPosition) {
+      return new FilePosition(originalLine + 1,originalChar - characterPosition);
+    }
+ else {
+      return position;
+    }
+  }
+ else {
+    if (originalLine == lineIndex) {
+      return new FilePosition(originalLine - 1,originalChar + characterPosition);
+    }
+ else     if (originalLine > lineIndex) {
+      throw new IllegalStateException("Cannot undo line cut on a previous line.");
+    }
+ else {
+      return position;
+    }
+  }
+}
