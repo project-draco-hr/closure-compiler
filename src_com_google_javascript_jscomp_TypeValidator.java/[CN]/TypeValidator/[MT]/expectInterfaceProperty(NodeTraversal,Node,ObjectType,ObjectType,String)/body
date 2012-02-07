@@ -1,17 +1,20 @@
 {
-  if (!instance.hasProperty(prop)) {
+  StaticSlot<JSType> propSlot=instance.getSlot(prop);
+  if (propSlot == null) {
     String sourceName=n.getSourceFileName();
     sourceName=sourceName == null ? "" : sourceName;
     registerMismatch(instance,implementedInterface,report(JSError.make(sourceName,n,INTERFACE_METHOD_NOT_IMPLEMENTED,prop,implementedInterface.toString(),instance.toString())));
   }
  else {
-    JSType found=instance.getPropertyType(prop);
+    Node propNode=propSlot.getDeclaration() == null ? null : propSlot.getDeclaration().getNode();
+    propNode=propNode == null ? n : propNode;
+    JSType found=propSlot.getType();
     JSType required=implementedInterface.getImplicitPrototype().getPropertyType(prop);
     found=found.restrictByNotNullOrUndefined();
     required=required.restrictByNotNullOrUndefined();
     if (!found.canAssignTo(required)) {
       FunctionType constructor=implementedInterface.toObjectType().getConstructor();
-      registerMismatch(found,required,report(t.makeError(n,HIDDEN_INTERFACE_PROPERTY_MISMATCH,prop,constructor.getTopMostDefiningType(prop).toString(),required.toString(),found.toString())));
+      registerMismatch(found,required,report(t.makeError(propNode,HIDDEN_INTERFACE_PROPERTY_MISMATCH,prop,constructor.getTopMostDefiningType(prop).toString(),required.toString(),found.toString())));
     }
   }
 }

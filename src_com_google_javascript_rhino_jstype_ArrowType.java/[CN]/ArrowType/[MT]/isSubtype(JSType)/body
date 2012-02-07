@@ -10,14 +10,22 @@
   Node thatParam=that.parameters.getFirstChild();
   while (thisParam != null && thatParam != null) {
     JSType thisParamType=thisParam.getJSType();
+    JSType thatParamType=thatParam.getJSType();
     if (thisParamType != null) {
-      JSType thatParamType=thatParam.getJSType();
       if (thatParamType == null || !thatParamType.isSubtype(thisParamType)) {
         return false;
       }
     }
     boolean thisIsVarArgs=thisParam.isVarArgs();
     boolean thatIsVarArgs=thatParam.isVarArgs();
+    boolean thisIsOptional=thisIsVarArgs || thisParam.isOptionalArg();
+    boolean thatIsOptional=thatIsVarArgs || thatParam.isOptionalArg();
+    if (!thisIsOptional && thatIsOptional) {
+      boolean isTopFunction=thatIsVarArgs && (thatParamType == null || thatParamType.isUnknownType() || thatParamType.isNoType());
+      if (!isTopFunction) {
+        return false;
+      }
+    }
     if (!thisIsVarArgs) {
       thisParam=thisParam.getNext();
     }
@@ -28,6 +36,9 @@
       thisParam=null;
       thatParam=null;
     }
+  }
+  if (thisParam != null && !thisParam.isOptionalArg() && !thisParam.isVarArgs() && thatParam == null) {
+    return false;
   }
   return true;
 }
