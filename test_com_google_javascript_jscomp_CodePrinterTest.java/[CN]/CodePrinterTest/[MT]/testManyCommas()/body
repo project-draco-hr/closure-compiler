@@ -1,0 +1,14 @@
+{
+  int numCommas=10000;
+  List<String> numbers=Lists.newArrayList("0","1");
+  Node current=new Node(Token.COMMA,Node.newNumber(0),Node.newNumber(1));
+  for (int i=2; i < numCommas; i++) {
+    current=new Node(Token.COMMA,current);
+    int num=i % 1000;
+    numbers.add(String.valueOf(num));
+    current.addChildToBack(Node.newNumber(num));
+  }
+  String expected=Joiner.on(",").join(numbers);
+  String actual=printNode(current).replace("\n","");
+  assertEquals(expected,actual);
+}
