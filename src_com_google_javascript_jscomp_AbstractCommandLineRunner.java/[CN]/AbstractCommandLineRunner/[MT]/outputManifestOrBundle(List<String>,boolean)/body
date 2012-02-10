@@ -6,8 +6,8 @@
     if (output.isEmpty()) {
       continue;
     }
-    JSModuleGraph graph=compiler.getModuleGraph();
     if (shouldGenerateOutputPerModule(output)) {
+      JSModuleGraph graph=compiler.getDegenerateModuleGraph();
       Iterable<JSModule> modules=graph.getAllModules();
       for (      JSModule module : modules) {
         Writer out=fileNameToOutputWriter2(expandCommandLinePath(output,module));
@@ -22,7 +22,7 @@
     }
  else {
       Writer out=fileNameToOutputWriter2(expandCommandLinePath(output,null));
-      if (graph == null) {
+      if (config.module.isEmpty()) {
         if (isManifest) {
           printManifestTo(compiler.getInputsInOrder(),out);
         }
@@ -31,7 +31,7 @@
         }
       }
  else {
-        printModuleGraphManifestOrBundleTo(graph,out,isManifest);
+        printModuleGraphManifestOrBundleTo(compiler.getDegenerateModuleGraph(),out,isManifest);
       }
       out.close();
     }
