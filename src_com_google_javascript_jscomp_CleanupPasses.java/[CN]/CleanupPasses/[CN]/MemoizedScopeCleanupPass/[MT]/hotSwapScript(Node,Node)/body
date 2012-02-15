@@ -1,0 +1,17 @@
+{
+  ScopeCreator creator=compiler.getTypedScopeCreator();
+  if (creator instanceof MemoizedScopeCreator) {
+    MemoizedScopeCreator scopeCreator=(MemoizedScopeCreator)creator;
+    String newSrc=scriptRoot.getSourceFileName();
+    for (    Var var : scopeCreator.getAllSymbols()) {
+      JSType type=var.getType();
+      if (type != null) {
+        FunctionType fnType=type.toMaybeFunctionType();
+        if (fnType != null && newSrc.equals(NodeUtil.getSourceName(fnType.getSource()))) {
+          fnType.setSource(null);
+        }
+      }
+    }
+    scopeCreator.removeScopesForScript(originalRoot.getSourceFileName());
+  }
+}
