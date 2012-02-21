@@ -35,6 +35,10 @@
   }
   node.addChildToBack(lp);
   Node bodyNode=transform(functionNode.getBody());
+  if (!bodyNode.isBlock()) {
+    Preconditions.checkState(config.isIdeMode);
+    bodyNode=IR.block();
+  }
   parseDirectives(bodyNode);
   node.addChildToBack(bodyNode);
   return node;

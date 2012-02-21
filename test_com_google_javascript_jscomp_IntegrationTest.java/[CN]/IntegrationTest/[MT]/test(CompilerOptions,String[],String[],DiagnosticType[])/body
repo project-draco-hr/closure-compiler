@@ -1,0 +1,10 @@
+{
+  Compiler compiler=compile(options,original);
+  checkUnexpectedErrorsOrWarnings(compiler,warnings.length);
+  if (compiled != null) {
+    Node root=compiler.getRoot().getLastChild();
+    Node expectedRoot=parse(compiled,options);
+    String explanation=expectedRoot.checkTreeEquals(root);
+    assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult: "+ compiler.toSource(root)+ "\n"+ explanation,explanation);
+  }
+}
