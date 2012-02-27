@@ -7,7 +7,9 @@
   Node elseBody=thenBody.getNext();
   TernaryValue condValue=NodeUtil.getImpureBooleanValue(cond);
   if (condValue == TernaryValue.UNKNOWN) {
-    return n;
+    if (!areNodesEqualForInlining(thenBody,elseBody)) {
+      return n;
+    }
   }
   n.detachChildren();
   Node branchToKeep=condValue.toBoolean(true) ? thenBody : elseBody;
