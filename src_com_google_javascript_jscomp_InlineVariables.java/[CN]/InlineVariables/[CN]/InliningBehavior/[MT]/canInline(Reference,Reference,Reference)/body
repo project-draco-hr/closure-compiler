@@ -16,8 +16,12 @@
   if (value.isFunction()) {
     Node callNode=reference.getParent();
     if (reference.getParent().isCall()) {
-      SubclassRelationship relationship=compiler.getCodingConvention().getClassesDefinedByCall(callNode);
+      CodingConvention convention=compiler.getCodingConvention();
+      SubclassRelationship relationship=convention.getClassesDefinedByCall(callNode);
       if (relationship != null) {
+        return false;
+      }
+      if (convention.getSingletonGetterClassName(callNode) != null) {
         return false;
       }
     }
