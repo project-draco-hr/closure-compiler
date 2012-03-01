@@ -3,15 +3,25 @@
   if (!passName.equals(currentPassName)) {
     throw new RuntimeException(passName + " is not running.");
   }
-  Long total=runtimeRecord.get(passName);
-  if (total == null) {
-    total=0L;
+  CodeSizeEstimatePrinter printer=null;
+  if (codeChange.hasCodeChanged() && (trackSize || trackGzippedSize)) {
+    printer=estimateCodeSize(jsRoot);
   }
-  total=total.longValue() + result;
-  runtimeRecord.put(passName,total);
-  if (codeChange.hasCodeChanged()) {
-    CodeSizeEstimatePrinter printer=estimateCodeSize(jsRoot);
-    curCodeSizeEstimate=recordSizeChange(curCodeSizeEstimate,printer.calcSize(),passName,codeSizeRecord);
-    curZippedCodeSizeEstimate=recordSizeChange(curZippedCodeSizeEstimate,printer.calcZippedSize(),passName,zippedCodeSizeRecord);
+  Stats logStats=new Stats(currentPassName);
+  log.add(logStats);
+  updateStats(logStats,result,printer);
+  Stats summaryStats=summary.get(passName);
+  if (summaryStats == null) {
+    summaryStats=new Stats(passName);
+    summary.put(passName,summaryStats);
+  }
+  updateStats(summaryStats,result,printer);
+  if (printer != null) {
+    if (trackSize) {
+      curCodeSizeEstimate=printer.calcSize();
+    }
+    if (trackGzippedSize) {
+      curZippedCodeSizeEstimate=printer.calcZippedSize();
+    }
   }
 }
