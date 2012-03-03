@@ -1,0 +1,48 @@
+{
+  if (pretty) {
+    out.println("\nMemory usage");
+  }
+  if (verbose) {
+    MemoryMXBean overallMemBean=ManagementFactory.getMemoryMXBean();
+    MemoryUsage usage=overallMemBean.getHeapMemoryUsage();
+    writeOverallMemoryUsage(out,usage,"Heap",pretty);
+    usage=overallMemBean.getNonHeapMemoryUsage();
+    writeOverallMemoryUsage(out,usage,"Non-heap",pretty);
+  }
+  if (verbose) {
+    List<MemoryPoolMXBean> mpBeans=ManagementFactory.getMemoryPoolMXBeans();
+    for (    MemoryPoolMXBean mpBean : mpBeans) {
+      MemoryUsage currentUsage=mpBean.getUsage();
+      MemoryUsage peakUsage=mpBean.getPeakUsage();
+      if (pretty) {
+        out.println("\tPool " + mpBean.getName());
+        writePoolMemoryUsage(out,currentUsage,peakUsage,null,true);
+      }
+ else {
+        writePoolMemoryUsage(out,currentUsage,peakUsage,"mem-pool-" + normalizeName(mpBean.getName()),false);
+      }
+    }
+  }
+ else {
+    long available=0;
+    long current=0;
+    long peak=0;
+    List<MemoryPoolMXBean> mpBeans=ManagementFactory.getMemoryPoolMXBeans();
+    for (    MemoryPoolMXBean mpBean : mpBeans) {
+      MemoryUsage currentUsage=mpBean.getUsage();
+      available+=currentUsage.getMax();
+      current+=currentUsage.getUsed();
+      MemoryUsage peakUsage=mpBean.getPeakUsage();
+      peak+=peakUsage.getUsed();
+    }
+    MemoryUsage summaryUsage=new MemoryUsage(0,current,current,available);
+    MemoryUsage summaryPeakUsage=new MemoryUsage(0,peak,peak,peak);
+    if (pretty) {
+      out.format("\tAggregate of %d memory pools\n",mpBeans.size());
+      writePoolMemoryUsage(out,summaryUsage,summaryPeakUsage,null,true);
+    }
+ else {
+      writePoolMemoryUsage(out,summaryUsage,summaryPeakUsage,"mem",false);
+    }
+  }
+}

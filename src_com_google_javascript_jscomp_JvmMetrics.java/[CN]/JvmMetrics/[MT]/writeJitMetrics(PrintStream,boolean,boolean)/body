@@ -1,0 +1,17 @@
+{
+  CompilationMXBean cBean=ManagementFactory.getCompilationMXBean();
+  String name;
+  if (verbose) {
+    name=cBean.getName();
+  }
+ else {
+    name="total";
+  }
+  if (pretty) {
+    out.println("\nJIT Stats");
+    out.println(String.format("\t%s jit time: %d ms",name,cBean.getTotalCompilationTime()));
+  }
+ else {
+    out.println(normalizeTabularColonPos(String.format("%s-jit-time-ms : %d",normalizeName(name),cBean.getTotalCompilationTime())));
+  }
+}

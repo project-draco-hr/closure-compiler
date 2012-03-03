@@ -1,0 +1,33 @@
+{
+  if (options == null) {
+    return;
+  }
+  boolean verboseMode=false;
+  boolean prettyMode=false;
+  StringTokenizer st=new StringTokenizer(options,":");
+  if (st.hasMoreTokens()) {
+    String mode=st.nextToken();
+    if (mode.equalsIgnoreCase("verbose")) {
+      verboseMode=true;
+    }
+  }
+  if (st.hasMoreTokens()) {
+    String mode=st.nextToken();
+    if (mode.equalsIgnoreCase("pretty")) {
+      prettyMode=true;
+    }
+  }
+  if (st.hasMoreTokens()) {
+    while (st.hasMoreTokens()) {
+      String types=st.nextToken();
+      StringTokenizer typeSt=new StringTokenizer(types,",");
+      while (typeSt.hasMoreElements()) {
+        String type=typeSt.nextToken();
+        writeMetrics(out,type,verboseMode,prettyMode);
+      }
+    }
+  }
+ else {
+    writeMetrics(out,"all",verboseMode,prettyMode);
+  }
+}

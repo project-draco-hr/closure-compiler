@@ -1,0 +1,40 @@
+{
+  List<GarbageCollectorMXBean> gcBeans=ManagementFactory.getGarbageCollectorMXBeans();
+  if (verbose) {
+    if (pretty) {
+      out.println("\nGarbage collection stats");
+      for (      GarbageCollectorMXBean gcBean : gcBeans) {
+        out.println("\tCollector " + gcBean.getName());
+        out.format("\t\tcollection count   : %d\n",gcBean.getCollectionCount());
+        out.format("\t\tcollection time    : %d ms\n",gcBean.getCollectionTime());
+      }
+    }
+ else {
+      for (      GarbageCollectorMXBean gcBean : gcBeans) {
+        String name=normalizeName(gcBean.getName());
+        out.println(normalizeTabularColonPos(String.format("gc-" + name + "-collection-count : %d",gcBean.getCollectionCount())));
+        out.println(normalizeTabularColonPos(String.format("gc-" + name + "-collection-time-ms : %d",gcBean.getCollectionTime())));
+      }
+    }
+  }
+ else {
+    long collectionCount=0;
+    long collectionTime=0;
+    int collectorCount=gcBeans.size();
+    for (    GarbageCollectorMXBean gcBean : gcBeans) {
+      collectionCount+=gcBean.getCollectionCount();
+      collectionTime+=gcBean.getCollectionTime();
+    }
+    if (pretty) {
+      out.println("\nGarbage collection stats");
+      out.format("\tAggregate of %d collectors\n",collectorCount);
+      out.format("\t\tcollection count   : %d\n",collectionCount);
+      out.format("\t\tcollection time    : %d ms\n",collectionTime);
+    }
+ else {
+      String name=normalizeName("aggregate");
+      out.println(normalizeTabularColonPos(String.format("gc-" + name + "-collection-count : %d",collectionCount)));
+      out.println(normalizeTabularColonPos(String.format("gc-" + name + "-collection-time-ms : %d",collectionTime)));
+    }
+  }
+}
