@@ -1,10 +1,10 @@
 {
   CommandLineRunner runner=createCommandLineRunner(original);
   assertTrue(runner.shouldRunCompiler());
-  Supplier<List<JSSourceFile>> inputsSupplier=null;
+  Supplier<List<SourceFile>> inputsSupplier=null;
   Supplier<List<JSModule>> modulesSupplier=null;
   if (useModules == ModulePattern.NONE) {
-    List<JSSourceFile> inputs=Lists.newArrayList();
+    List<SourceFile> inputs=Lists.newArrayList();
     for (int i=0; i < original.length; i++) {
       inputs.add(JSSourceFile.fromCode(getFilename(i),original[i]));
     }
@@ -19,7 +19,7 @@
  else {
     throw new IllegalArgumentException("Unknown module type: " + useModules);
   }
-  runner.enableTestMode(Suppliers.<List<JSSourceFile>>ofInstance(externs),inputsSupplier,modulesSupplier,new Function<Integer,Boolean>(){
+  runner.enableTestMode(Suppliers.<List<SourceFile>>ofInstance(externs),inputsSupplier,modulesSupplier,new Function<Integer,Boolean>(){
     @Override public Boolean apply(    Integer code){
       return exitCodes.add(code);
     }
