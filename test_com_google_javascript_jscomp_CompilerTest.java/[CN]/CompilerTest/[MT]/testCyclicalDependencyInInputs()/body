@@ -1,10 +1,10 @@
 {
-  JSSourceFile[] inputs={JSSourceFile.fromCode("gin","goog.provide('gin'); goog.require('tonic'); var gin = {};"),JSSourceFile.fromCode("tonic","goog.provide('tonic'); goog.require('gin'); var tonic = {};"),JSSourceFile.fromCode("mix","goog.require('gin'); goog.require('tonic');")};
+  List<SourceFile> inputs=Lists.newArrayList(SourceFile.fromCode("gin","goog.provide('gin'); goog.require('tonic'); var gin = {};"),SourceFile.fromCode("tonic","goog.provide('tonic'); goog.require('gin'); var tonic = {};"),SourceFile.fromCode("mix","goog.require('gin'); goog.require('tonic');"));
   CompilerOptions options=new CompilerOptions();
   options.ideMode=true;
   options.setManageClosureDependencies(true);
   Compiler compiler=new Compiler();
-  compiler.init(new JSSourceFile[0],inputs,options);
+  compiler.init(ImmutableList.<SourceFile>of(),inputs,options);
   compiler.parseInputs();
   assertEquals(compiler.externAndJsRoot,compiler.jsRoot.getParent());
   assertEquals(compiler.externAndJsRoot,compiler.externsRoot.getParent());
