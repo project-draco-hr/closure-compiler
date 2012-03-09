@@ -1,5 +1,8 @@
 {
-  Node js=getBoilerplateCode(compiler,logFunction);
-  compiler.getNodeForCodeInsertion(null).addChildrenToFront(js.removeChildren());
-  compiler.reportCodeChange();
+  Node newNode=compiler.ensureLibraryInjected("runtime_type_check");
+  if (newNode != null && logFunction != null) {
+    Node logOverride=IR.exprResult(IR.assign(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"jscomp.typecheck.log"),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),logFunction)));
+    newNode.getParent().addChildAfter(logOverride,newNode);
+    compiler.reportCodeChange();
+  }
 }

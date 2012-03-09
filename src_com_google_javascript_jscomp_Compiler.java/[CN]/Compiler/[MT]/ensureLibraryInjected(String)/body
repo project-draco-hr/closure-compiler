@@ -1,0 +1,21 @@
+{
+  if (injectedLibraries.containsKey(resourceName)) {
+    return null;
+  }
+  boolean isBase="base".equals(resourceName);
+  if (!isBase) {
+    ensureLibraryInjected("base");
+  }
+  Node firstChild=loadLibraryCode(resourceName).removeChildren();
+  Node lastChild=firstChild.getLastSibling();
+  Node parent=getNodeForCodeInsertion(null);
+  if (isBase) {
+    parent.addChildrenToFront(firstChild);
+  }
+ else {
+    parent.addChildrenAfter(firstChild,injectedLibraries.get("base"));
+  }
+  reportCodeChange();
+  injectedLibraries.put(resourceName,lastChild);
+  return lastChild;
+}
