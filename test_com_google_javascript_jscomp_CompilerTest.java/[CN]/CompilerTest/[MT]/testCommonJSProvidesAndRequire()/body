@@ -1,14 +1,7 @@
 {
   List<SourceFile> inputs=Lists.newArrayList(SourceFile.fromCode("gin.js","require('tonic')"),SourceFile.fromCode("tonic.js",""),SourceFile.fromCode("mix.js","require('gin'); require('tonic');"));
-  CompilerOptions options=new CompilerOptions();
-  options.ideMode=true;
   List<String> entryPoints=Lists.newArrayList("module$mix");
-  options.setManageClosureDependencies(entryPoints);
-  options.closurePass=true;
-  options.processCommonJSModules=true;
-  Compiler compiler=new Compiler();
-  compiler.init(Lists.<SourceFile>newArrayList(),inputs,options);
-  compiler.parseInputs();
+  Compiler compiler=initCompilerForCommonJS(inputs,entryPoints);
   JSModuleGraph graph=compiler.getModuleGraph();
   assertEquals(graph.getModuleCount(),3);
   List<CompilerInput> result=graph.manageDependencies(entryPoints,compiler.getInputsForTesting());

@@ -29,7 +29,13 @@
     for (    JSModule module : modules) {
       for (      CompilerInput input : module.getInputs()) {
         for (        String require : input.getRequires()) {
-          module.addDependency(modulesByName.get(require));
+          JSModule dependency=modulesByName.get(require);
+          if (dependency == null) {
+            report(JSError.make(MISSING_ENTRY_ERROR,require));
+          }
+ else {
+            module.addDependency(dependency);
+          }
         }
       }
     }

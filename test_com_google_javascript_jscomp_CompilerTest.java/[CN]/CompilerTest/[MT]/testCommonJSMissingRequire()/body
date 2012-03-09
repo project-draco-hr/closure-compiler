@@ -1,0 +1,8 @@
+{
+  List<SourceFile> inputs=Lists.newArrayList(SourceFile.fromCode("gin.js","require('missing')"));
+  Compiler compiler=initCompilerForCommonJS(inputs,ImmutableList.of("module$gin"));
+  compiler.processAMDAndCommonJSModules();
+  assertEquals(1,compiler.getErrorManager().getErrorCount());
+  String error=compiler.getErrorManager().getErrors()[0].toString();
+  assertTrue("Unexpected error: " + error,error.contains("required entry point \"module$missing\" never provided"));
+}
