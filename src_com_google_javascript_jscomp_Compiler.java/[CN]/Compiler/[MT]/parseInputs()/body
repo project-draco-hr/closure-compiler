@@ -28,15 +28,16 @@
     if (options.transformAMDToCJSModules || options.processCommonJSModules) {
       processAMDAndCommonJSModules();
     }
-    if (options.dependencyOptions.needsManagement()) {
+    boolean staleInputs=false;
+    if (options.dependencyOptions.needsManagement() && !options.skipAllPasses && options.closurePass) {
       for (      CompilerInput input : inputs) {
-        input.setCompiler(this);
         for (        String provide : input.getProvides()) {
           getTypeRegistry().forwardDeclareType(provide);
         }
       }
       try {
         inputs=(moduleGraph == null ? new JSModuleGraph(modules) : moduleGraph).manageDependencies(options.dependencyOptions,inputs);
+        staleInputs=true;
       }
  catch (      CircularDependencyException e) {
         report(JSError.make(JSModule.CIRCULAR_DEPENDENCY_ERROR,e.getMessage()));
@@ -51,7 +52,6 @@ catch (      MissingProvideException e) {
         }
       }
     }
-    boolean staleInputs=false;
     for (    CompilerInput input : inputs) {
       Node n=input.getAstRoot(this);
       if (n == null) {
