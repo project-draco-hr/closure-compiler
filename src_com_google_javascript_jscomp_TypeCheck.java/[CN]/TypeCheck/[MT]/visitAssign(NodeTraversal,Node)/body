@@ -12,10 +12,6 @@
         visitInterfaceGetprop(t,assign,object,property,lvalue,rvalue);
       }
     }
-    if (info != null && info.hasType()) {
-      visitAnnotatedAssignGetprop(t,assign,info.getType().evaluate(t.getScope(),typeRegistry),object,property,rvalue);
-      return;
-    }
     checkEnumAlias(t,info,rvalue);
     if (property.equals("prototype")) {
       if (objectJsType != null && objectJsType.isFunctionType()) {
@@ -23,11 +19,9 @@
         if (functionType.isConstructor()) {
           JSType rvalueType=rvalue.getJSType();
           validator.expectObject(t,rvalue,rvalueType,OVERRIDING_PROTOTYPE_WITH_NON_OBJECT);
+          return;
         }
       }
- else {
-      }
-      return;
     }
     if (object.isGetProp()) {
       Node object2=object.getFirstChild();
@@ -40,29 +34,29 @@
             checkDeclaredPropertyInheritance(t,assign,functionType,property,info,getJSType(rvalue));
           }
         }
- else {
-        }
-        return;
       }
     }
     ObjectType type=ObjectType.cast(objectJsType.restrictByNotNullOrUndefined());
     if (type != null) {
       if (type.hasProperty(property) && !type.isPropertyTypeInferred(property) && !propertyIsImplicitCast(type,property)) {
         validator.expectCanAssignToPropertyOf(t,assign,getJSType(rvalue),type.getPropertyType(property),object,property);
-      }
-      return;
-    }
-  }
- else   if (lvalue.isName()) {
-    JSType rvalueType=getJSType(assign.getLastChild());
-    Var var=t.getScope().getVar(lvalue.getString());
-    if (var != null) {
-      if (var.isTypeInferred()) {
         return;
       }
     }
   }
   JSType leftType=getJSType(lvalue);
+  if (lvalue.isQualifiedName()) {
+    JSType rvalueType=getJSType(assign.getLastChild());
+    Var var=t.getScope().getVar(lvalue.getQualifiedName());
+    if (var != null) {
+      if (var.isTypeInferred()) {
+        return;
+      }
+      if (var.getType() != null) {
+        leftType=var.getType();
+      }
+    }
+  }
   Node rightChild=assign.getLastChild();
   JSType rightType=getJSType(rightChild);
   if (validator.expectCanAssignTo(t,assign,rightType,leftType,"assignment")) {

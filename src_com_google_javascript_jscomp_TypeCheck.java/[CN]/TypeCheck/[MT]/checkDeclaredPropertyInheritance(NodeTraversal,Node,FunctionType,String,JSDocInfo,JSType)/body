@@ -3,7 +3,7 @@
     return;
   }
   FunctionType superClass=ctorType.getSuperClassConstructor();
-  boolean superClassHasProperty=superClass != null && superClass.getPrototype().hasProperty(propertyName);
+  boolean superClassHasProperty=superClass != null && superClass.getInstanceType().hasProperty(propertyName);
   boolean superInterfacesHasProperty=false;
   if (ctorType.isInterface()) {
     for (    ObjectType interfaceType : ctorType.getExtendedInterfaces()) {
@@ -37,7 +37,7 @@
     return;
   }
   if (superClassHasProperty) {
-    JSType superClassPropType=superClass.getPrototype().getPropertyType(propertyName);
+    JSType superClassPropType=superClass.getInstanceType().getPropertyType(propertyName);
     if (!propertyType.canAssignTo(superClassPropType)) {
       compiler.report(t.makeError(n,HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,propertyName,topInstanceType.toString(),superClassPropType.toString(),propertyType.toString()));
     }
