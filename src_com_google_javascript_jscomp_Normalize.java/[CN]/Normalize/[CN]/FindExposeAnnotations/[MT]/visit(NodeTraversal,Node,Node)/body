@@ -1,0 +1,12 @@
+{
+  if (NodeUtil.isExprAssign(n)) {
+    Node assign=n.getFirstChild();
+    Node lhs=assign.getFirstChild();
+    if (lhs.isGetProp() && isMarkedExpose(assign)) {
+      exposedProperties.add(lhs.getLastChild().getString());
+    }
+  }
+ else   if (NodeUtil.isObjectLitKey(n,parent) && n.isString() && isMarkedExpose(n)) {
+    exposedProperties.add(n.getString());
+  }
+}

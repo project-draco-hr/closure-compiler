@@ -1,0 +1,18 @@
+{
+  if (n.isGetProp()) {
+    String propName=n.getLastChild().getString();
+    if (exposedProperties.contains(propName)) {
+      Node obj=n.removeFirstChild();
+      Node prop=n.removeFirstChild();
+      n.getParent().replaceChild(n,IR.getelem(obj,prop));
+      compiler.reportCodeChange();
+    }
+  }
+ else   if (n.isString() && NodeUtil.isObjectLitKey(n,parent)) {
+    String propName=n.getString();
+    if (exposedProperties.contains(propName)) {
+      n.setQuotedString();
+      compiler.reportCodeChange();
+    }
+  }
+}
