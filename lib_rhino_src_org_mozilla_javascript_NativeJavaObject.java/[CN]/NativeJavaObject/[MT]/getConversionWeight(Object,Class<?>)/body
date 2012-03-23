@@ -95,14 +95,14 @@ return 1;
 }
 if (to.isArray()) {
 if (fromObj instanceof NativeArray) {
-return 1;
+return 2;
 }
 }
  else if (to == ScriptRuntime.ObjectClass) {
-return 2;
+return 3;
 }
  else if (to == ScriptRuntime.StringClass) {
-return 3;
+return 4;
 }
  else if (to == ScriptRuntime.DateClass) {
 if (fromObj instanceof NativeDate) {
@@ -110,15 +110,13 @@ return 1;
 }
 }
  else if (to.isInterface()) {
-if (fromObj instanceof Function) {
-if (to.getMethods().length == 1) {
+if (fromObj instanceof NativeObject || fromObj instanceof NativeFunction) {
 return 1;
 }
-}
-return 11;
+return 12;
 }
  else if (to.isPrimitive() && to != Boolean.TYPE) {
-return 3 + getSizeRank(to);
+return 4 + getSizeRank(to);
 }
 break;
 }

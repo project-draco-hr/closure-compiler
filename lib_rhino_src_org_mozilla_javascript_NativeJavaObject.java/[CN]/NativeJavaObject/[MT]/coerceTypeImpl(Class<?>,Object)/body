@@ -123,7 +123,7 @@ Class<?> arrayType=type.getComponentType();
 Object Result=Array.newInstance(arrayType,(int)length);
 for (int i=0; i < length; ++i) {
 try {
-Array.set(Result,i,coerceType(arrayType,array.get(i,array)));
+Array.set(Result,i,coerceTypeImpl(arrayType,array.get(i,array)));
 }
  catch (EvaluatorException ee) {
 reportConversionError(value,type);
@@ -136,20 +136,8 @@ value=((Wrapper)value).unwrap();
 if (type.isInstance(value)) return value;
 reportConversionError(value,type);
 }
- else if (type.isInterface() && value instanceof Callable) {
-if (value instanceof ScriptableObject) {
-ScriptableObject so=(ScriptableObject)value;
-Object key=Kit.makeHashKeyFromPair(COERCED_INTERFACE_KEY,type);
-Object old=so.getAssociatedValue(key);
-if (old != null) {
-return old;
-}
-Context cx=Context.getContext();
-Object glue=InterfaceAdapter.create(cx,type,(Callable)value);
-glue=so.associateValue(key,glue);
-return glue;
-}
-reportConversionError(value,type);
+ else if (type.isInterface() && (value instanceof NativeObject || value instanceof NativeFunction)) {
+return createInterfaceAdapter(type,(ScriptableObject)value);
 }
  else {
 reportConversionError(value,type);

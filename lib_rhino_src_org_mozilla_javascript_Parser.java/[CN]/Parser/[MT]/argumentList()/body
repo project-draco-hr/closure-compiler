@@ -5,8 +5,20 @@
   inForInit=false;
   try {
     do {
-      if (peekToken() == Token.YIELD)       reportError("msg.yield.parenthesized");
-      result.add(assignExpr());
+      if (peekToken() == Token.YIELD) {
+        reportError("msg.yield.parenthesized");
+      }
+      AstNode en=assignExpr();
+      if (peekToken() == Token.FOR) {
+        try {
+          result.add(generatorExpression(en,0,true));
+        }
+ catch (        IOException ex) {
+        }
+      }
+ else {
+        result.add(en);
+      }
     }
  while (matchToken(Token.COMMA));
   }

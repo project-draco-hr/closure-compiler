@@ -1,0 +1,41 @@
+{
+  if (nextToken() != Token.FOR)   codeBug();
+  int pos=ts.tokenBeg;
+  int lp=-1, rp=-1, inPos=-1;
+  GeneratorExpressionLoop pn=new GeneratorExpressionLoop(pos);
+  pushScope(pn);
+  try {
+    if (mustMatchToken(Token.LP,"msg.no.paren.for")) {
+      lp=ts.tokenBeg - pos;
+    }
+    AstNode iter=null;
+switch (peekToken()) {
+case Token.LB:
+case Token.LC:
+      iter=destructuringPrimaryExpr();
+    markDestructuring(iter);
+  break;
+case Token.NAME:
+consumeToken();
+iter=createNameNode();
+break;
+default :
+reportError("msg.bad.var");
+}
+if (iter.getType() == Token.NAME) {
+defineSymbol(Token.LET,ts.getString(),true);
+}
+if (mustMatchToken(Token.IN,"msg.in.after.for.name")) inPos=ts.tokenBeg - pos;
+AstNode obj=expr();
+if (mustMatchToken(Token.RP,"msg.no.paren.for.ctrl")) rp=ts.tokenBeg - pos;
+pn.setLength(ts.tokenEnd - pos);
+pn.setIterator(iter);
+pn.setIteratedObject(obj);
+pn.setInPosition(inPos);
+pn.setParens(lp,rp);
+return pn;
+}
+  finally {
+popScope();
+}
+}

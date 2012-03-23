@@ -27,16 +27,21 @@
   NativeScript.init(scope,sealed);
   NativeIterator.init(scope,sealed);
   boolean withXml=cx.hasFeature(Context.FEATURE_E4X) && cx.getE4xImplementationFactory() != null;
-  for (int i=0; i != lazilyNames.length; i+=2) {
-    String topProperty=lazilyNames[i];
-    String className=lazilyNames[i + 1];
-    if (!withXml && className.equals("(xml)")) {
-      continue;
-    }
- else     if (withXml && className.equals("(xml)")) {
-      className=cx.getE4xImplementationFactory().getImplementationClassName();
-    }
-    new LazilyLoadedCtor(scope,topProperty,className,sealed,true);
+  new LazilyLoadedCtor(scope,"RegExp","org.mozilla.javascript.regexp.NativeRegExp",sealed,true);
+  new LazilyLoadedCtor(scope,"Packages","org.mozilla.javascript.NativeJavaTopPackage",sealed,true);
+  new LazilyLoadedCtor(scope,"getClass","org.mozilla.javascript.NativeJavaTopPackage",sealed,true);
+  new LazilyLoadedCtor(scope,"JavaAdapter","org.mozilla.javascript.JavaAdapter",sealed,true);
+  new LazilyLoadedCtor(scope,"JavaImporter","org.mozilla.javascript.ImporterTopLevel",sealed,true);
+  new LazilyLoadedCtor(scope,"Continuation","org.mozilla.javascript.NativeContinuation",sealed,true);
+  for (  String packageName : getTopPackageNames()) {
+    new LazilyLoadedCtor(scope,packageName,"org.mozilla.javascript.NativeJavaTopPackage",sealed,true);
+  }
+  if (withXml) {
+    String xmlImpl=cx.getE4xImplementationFactory().getImplementationClassName();
+    new LazilyLoadedCtor(scope,"XML",xmlImpl,sealed,true);
+    new LazilyLoadedCtor(scope,"XMLList",xmlImpl,sealed,true);
+    new LazilyLoadedCtor(scope,"Namespace",xmlImpl,sealed,true);
+    new LazilyLoadedCtor(scope,"QName",xmlImpl,sealed,true);
   }
   if (scope instanceof TopLevel) {
     ((TopLevel)scope).cacheBuiltins();

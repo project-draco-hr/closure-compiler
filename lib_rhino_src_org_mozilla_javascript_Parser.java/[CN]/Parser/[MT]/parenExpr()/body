@@ -4,7 +4,11 @@
   try {
     Comment jsdocNode=getAndResetJsDoc();
     int lineno=ts.lineno;
+    int begin=ts.tokenBeg;
     AstNode e=expr();
+    if (peekToken() == Token.FOR) {
+      return generatorExpression(e,begin);
+    }
     ParenthesizedExpression pn=new ParenthesizedExpression(e);
     if (jsdocNode == null) {
       jsdocNode=getAndResetJsDoc();

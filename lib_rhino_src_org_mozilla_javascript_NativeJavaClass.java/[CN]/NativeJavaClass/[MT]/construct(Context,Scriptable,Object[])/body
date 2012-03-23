@@ -11,9 +11,16 @@
     return constructSpecific(cx,scope,args,ctors.methods[index]);
   }
  else {
+    if (args.length == 0) {
+      throw Context.reportRuntimeError0("msg.adapter.zero.args");
+    }
     Scriptable topLevel=ScriptableObject.getTopLevelScope(this);
     String msg="";
     try {
+      if ("Dalvik".equals(System.getProperty("java.vm.name")) && classObject.isInterface()) {
+        Object obj=createInterfaceAdapter(classObject,ScriptableObject.ensureScriptableObject(args[0]));
+        return cx.getWrapFactory().wrapAsJavaObject(cx,scope,obj,null);
+      }
       Object v=topLevel.get("JavaAdapter",topLevel);
       if (v != NOT_FOUND) {
         Function f=(Function)v;

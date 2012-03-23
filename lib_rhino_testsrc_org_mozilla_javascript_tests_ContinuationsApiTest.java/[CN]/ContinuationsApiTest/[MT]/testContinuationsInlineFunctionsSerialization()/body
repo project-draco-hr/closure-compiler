@@ -1,0 +1,41 @@
+{
+  Scriptable globalScope;
+  Context cx=Context.enter();
+  try {
+    globalScope=cx.initStandardObjects();
+    cx.setOptimizationLevel(-1);
+    globalScope.put("myObject",globalScope,Context.javaToJS(new MyClass(),globalScope));
+  }
+  finally {
+    Context.exit();
+  }
+  cx=Context.enter();
+  try {
+    cx.setOptimizationLevel(-1);
+    cx.evaluateString(globalScope,"function f(a) { var k = eval(myObject.h()); var t = []; return k; }","function test source",1,null);
+    Function f=(Function)globalScope.get("f",globalScope);
+    Object[] args={7};
+    cx.callFunctionWithContinuations(f,globalScope,args);
+    fail("Should throw ContinuationPending");
+  }
+ catch (  ContinuationPending pending) {
+    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+    ScriptableOutputStream sos=new ScriptableOutputStream(baos,globalScope);
+    sos.writeObject(globalScope);
+    sos.writeObject(pending.getContinuation());
+    sos.close();
+    baos.close();
+    byte[] serializedData=baos.toByteArray();
+    ByteArrayInputStream bais=new ByteArrayInputStream(serializedData);
+    ScriptableInputStream sis=new ScriptableInputStream(bais,globalScope);
+    globalScope=(Scriptable)sis.readObject();
+    Object continuation=sis.readObject();
+    sis.close();
+    bais.close();
+    Object result=cx.resumeContinuation(continuation,globalScope,"2+3");
+    assertEquals(5,((Number)result).intValue());
+  }
+ finally {
+    Context.exit();
+  }
+}

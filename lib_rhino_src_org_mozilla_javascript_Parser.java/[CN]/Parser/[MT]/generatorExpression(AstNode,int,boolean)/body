@@ -1,0 +1,26 @@
+{
+  List<GeneratorExpressionLoop> loops=new ArrayList<GeneratorExpressionLoop>();
+  while (peekToken() == Token.FOR) {
+    loops.add(generatorExpressionLoop());
+  }
+  int ifPos=-1;
+  ConditionData data=null;
+  if (peekToken() == Token.IF) {
+    consumeToken();
+    ifPos=ts.tokenBeg - pos;
+    data=condition();
+  }
+  if (!inFunctionParams) {
+    mustMatchToken(Token.RP,"msg.no.paren.let");
+  }
+  GeneratorExpression pn=new GeneratorExpression(pos,ts.tokenEnd - pos);
+  pn.setResult(result);
+  pn.setLoops(loops);
+  if (data != null) {
+    pn.setIfPosition(ifPos);
+    pn.setFilter(data.condition);
+    pn.setFilterLp(data.lp - pos);
+    pn.setFilterRp(data.rp - pos);
+  }
+  return pn;
+}

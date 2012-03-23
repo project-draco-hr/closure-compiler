@@ -8,9 +8,14 @@
     if (interfaces[i] != null)     cfw.addInterface(interfaces[i].getName());
   }
   String superName=superClass.getName().replace('.','/');
-  generateCtor(cfw,adapterName,superName);
+  Constructor<?>[] ctors=superClass.getConstructors();
+  for (  Constructor<?> ctor : ctors) {
+    generateCtor(cfw,adapterName,superName,ctor);
+  }
   generateSerialCtor(cfw,adapterName,superName);
-  if (scriptClassName != null)   generateEmptyCtor(cfw,adapterName,superName,scriptClassName);
+  if (scriptClassName != null) {
+    generateEmptyCtor(cfw,adapterName,superName,scriptClassName);
+  }
   ObjToIntMap generatedOverrides=new ObjToIntMap();
   ObjToIntMap generatedMethods=new ObjToIntMap();
   for (int i=0; i < interfacesCount; i++) {

@@ -3,15 +3,21 @@
   if (N == 0) {
     throw ScriptRuntime.typeError0("msg.adapter.zero.args");
   }
-  Class<?> superClass=null;
-  Class<?>[] intfs=new Class[N - 1];
-  int interfaceCount=0;
-  for (int i=0; i != N - 1; ++i) {
-    Object arg=args[i];
-    if (!(arg instanceof NativeJavaClass)) {
-      throw ScriptRuntime.typeError2("msg.not.java.class.arg",String.valueOf(i),ScriptRuntime.toString(arg));
+  int classCount;
+  for (classCount=0; classCount < N - 1; classCount++) {
+    Object arg=args[classCount];
+    if (arg instanceof NativeObject) {
+      break;
     }
-    Class<?> c=((NativeJavaClass)arg).getClassObject();
+    if (!(arg instanceof NativeJavaClass)) {
+      throw ScriptRuntime.typeError2("msg.not.java.class.arg",String.valueOf(classCount),ScriptRuntime.toString(arg));
+    }
+  }
+  Class<?> superClass=null;
+  Class<?>[] intfs=new Class[classCount];
+  int interfaceCount=0;
+  for (int i=0; i < classCount; ++i) {
+    Class<?> c=((NativeJavaClass)args[i]).getClassObject();
     if (!c.isInterface()) {
       if (superClass != null) {
         throw ScriptRuntime.typeError2("msg.only.one.super",superClass.getName(),c.getName());
@@ -22,15 +28,35 @@
       intfs[interfaceCount++]=c;
     }
   }
-  if (superClass == null)   superClass=ScriptRuntime.ObjectClass;
+  if (superClass == null) {
+    superClass=ScriptRuntime.ObjectClass;
+  }
   Class<?>[] interfaces=new Class[interfaceCount];
   System.arraycopy(intfs,0,interfaces,0,interfaceCount);
-  Scriptable obj=ScriptRuntime.toObject(cx,scope,args[N - 1]);
+  Scriptable obj=ScriptableObject.ensureScriptable(args[classCount]);
   Class<?> adapterClass=getAdapterClass(scope,superClass,interfaces,obj);
-  Class<?>[] ctorParms={ScriptRuntime.ContextFactoryClass,ScriptRuntime.ScriptableClass};
-  Object[] ctorArgs={cx.getFactory(),obj};
+  Object adapter;
+  int argsCount=N - classCount - 1;
   try {
-    Object adapter=adapterClass.getConstructor(ctorParms).newInstance(ctorArgs);
+    if (argsCount > 0) {
+      Object[] ctorArgs=new Object[argsCount + 2];
+      ctorArgs[0]=obj;
+      ctorArgs[1]=cx.getFactory();
+      System.arraycopy(args,classCount + 1,ctorArgs,2,argsCount);
+      NativeJavaClass classWrapper=new NativeJavaClass(scope,adapterClass);
+      NativeJavaMethod ctors=classWrapper.members.ctors;
+      int index=ctors.findCachedFunction(cx,ctorArgs);
+      if (index < 0) {
+        String sig=NativeJavaMethod.scriptSignature(args);
+        throw Context.reportRuntimeError2("msg.no.java.ctor",adapterClass.getName(),sig);
+      }
+      adapter=NativeJavaClass.constructInternal(ctorArgs,ctors.methods[index]);
+    }
+ else {
+      Class<?>[] ctorParms={ScriptRuntime.ScriptableClass,ScriptRuntime.ContextFactoryClass};
+      Object[] ctorArgs={obj,cx.getFactory()};
+      adapter=adapterClass.getConstructor(ctorParms).newInstance(ctorArgs);
+    }
     Object self=getAdapterSelf(adapterClass,adapter);
     if (self instanceof Wrapper) {
       Object unwrapped=((Wrapper)self).unwrap();
