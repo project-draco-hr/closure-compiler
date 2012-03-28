@@ -11,7 +11,10 @@
       inferred=false;
     }
  else     if (!scope.isDeclared(qName,false) && n.isUnscopedQualifiedName()) {
-      inferred=false;
+      AstFunctionContents contents=getFunctionAnalysisResults(scope.getRootNode());
+      if (contents == null || !contents.getEscapedQualifiedNames().contains(qName)) {
+        inferred=false;
+      }
     }
   }
   return inferred;
