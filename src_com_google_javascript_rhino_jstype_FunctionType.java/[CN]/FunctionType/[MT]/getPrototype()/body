@@ -1,6 +1,12 @@
 {
   if (prototypeSlot == null) {
-    setPrototype(new PrototypeObjectType(registry,this.getReferenceName() + ".prototype",registry.getNativeObjectType(OBJECT_TYPE),isNativeObjectType()),null);
+    String refName=getReferenceName();
+    if (refName == null) {
+      setPrototype(registry.getNativeObjectType(JSTypeNative.UNKNOWN_TYPE),null);
+    }
+ else {
+      setPrototype(new PrototypeObjectType(registry,this.getReferenceName() + ".prototype",registry.getNativeObjectType(OBJECT_TYPE),isNativeObjectType()),null);
+    }
   }
   return (ObjectType)prototypeSlot.getType();
 }
