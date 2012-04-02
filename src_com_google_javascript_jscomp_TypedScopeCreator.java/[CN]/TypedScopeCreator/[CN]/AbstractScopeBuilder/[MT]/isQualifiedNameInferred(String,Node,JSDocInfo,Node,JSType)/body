@@ -8,12 +8,17 @@
   }
   if (inferred && rhsValue != null && rhsValue.isFunction()) {
     if (info != null) {
-      inferred=false;
+      return false;
     }
  else     if (!scope.isDeclared(qName,false) && n.isUnscopedQualifiedName()) {
+      for (Node current=n.getParent(); !(current.isScript() || current.isFunction()); current=current.getParent()) {
+        if (NodeUtil.isControlStructure(current)) {
+          return true;
+        }
+      }
       AstFunctionContents contents=getFunctionAnalysisResults(scope.getRootNode());
       if (contents == null || !contents.getEscapedQualifiedNames().contains(qName)) {
-        inferred=false;
+        return false;
       }
     }
   }
