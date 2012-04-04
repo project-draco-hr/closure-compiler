@@ -1,7 +1,9 @@
 {
-  if (returnType == null && !contents.mayHaveNonEmptyReturns() && !contents.mayBeFromExterns()) {
-    returnType=typeRegistry.getNativeType(VOID_TYPE);
-    returnTypeInferred=true;
+  if (returnType == null) {
+    if (!contents.mayHaveNonEmptyReturns() && !contents.mayHaveSingleThrow() && !contents.mayBeFromExterns()) {
+      returnType=typeRegistry.getNativeType(VOID_TYPE);
+      returnTypeInferred=true;
+    }
   }
   if (returnType == null) {
     returnType=typeRegistry.getNativeType(UNKNOWN_TYPE);
