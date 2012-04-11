@@ -1,9 +1,13 @@
 {
-  boolean hasProvidesOrRequires=false;
+  boolean lineHasProvidesOrRequires=false;
   if (line.indexOf("provide") != -1 || line.indexOf("require") != -1) {
     googMatcher.reset(line);
     while (googMatcher.find()) {
-      hasProvidesOrRequires=true;
+      lineHasProvidesOrRequires=true;
+      if (includeGoogBase && !fileHasProvidesOrRequires) {
+        fileHasProvidesOrRequires=true;
+        requires.add("goog");
+      }
       boolean isRequire=googMatcher.group(1).charAt(0) == 'r';
       String arg=parseJsString(googMatcher.group(2));
       if (isRequire) {
@@ -16,5 +20,8 @@
       }
     }
   }
-  return !shortcutMode || hasProvidesOrRequires || CharMatcher.WHITESPACE.matchesAllOf(line);
+ else   if (includeGoogBase && line.startsWith(BASE_JS_START)) {
+    provides.add("goog");
+  }
+  return !shortcutMode || lineHasProvidesOrRequires || CharMatcher.WHITESPACE.matchesAllOf(line);
 }
