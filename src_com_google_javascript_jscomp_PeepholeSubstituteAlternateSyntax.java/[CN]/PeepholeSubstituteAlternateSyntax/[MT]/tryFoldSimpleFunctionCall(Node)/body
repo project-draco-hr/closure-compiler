@@ -1,14 +1,22 @@
 {
   Preconditions.checkState(n.isCall());
   Node callTarget=n.getFirstChild();
-  if (callTarget != null && callTarget.isName() && callTarget.getString().equals("String")) {
+  Preconditions.checkNotNull(callTarget);
+  if (callTarget.isName() && callTarget.getString().equals("String")) {
     Node value=callTarget.getNext();
-    if (value != null) {
-      Node addition=IR.add(IR.string("").srcref(callTarget),value.detachFromParent());
-      n.getParent().replaceChild(n,addition);
+    if (value != null && value.getNext() == null) {
+      Node replacement=IR.add(IR.string("").srcref(callTarget),value.detachFromParent());
+      n.getParent().replaceChild(n,replacement);
       reportCodeChange();
-      return addition;
+      return replacement;
     }
+  }
+ else   if (n.hasOneChild() && NodeUtil.isObjectCallMethod(n,"toString")) {
+    Node value=callTarget.getFirstChild();
+    Node replacement=IR.add(IR.string("").srcref(callTarget),value.detachFromParent());
+    n.getParent().replaceChild(n,replacement);
+    reportCodeChange();
+    return replacement;
   }
   return n;
 }
