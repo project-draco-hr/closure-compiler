@@ -1,8 +1,14 @@
 {
   NodeTraversal.traverse(compiler,rValue,new AbstractCfgNodeTraversalCallback(){
     @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
-      if (n.isName() && jsScope.isDeclared(n.getString(),true)) {
-        def.depends.add(jsScope.getVar(n.getString()));
+      if (n.isName()) {
+        Var dep=jsScope.getVar(n.getString());
+        if (dep == null) {
+          def.unknownDependencies=true;
+        }
+ else {
+          def.depends.add(dep);
+        }
       }
     }
   }
