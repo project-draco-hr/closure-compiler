@@ -1,10 +1,6 @@
 {
-  List<String> argsInFile=Lists.newArrayList();
   File flagFileInput=new File(flags.flag_file);
-  StringTokenizer tokenizer=new StringTokenizer(Files.toString(flagFileInput,Charset.defaultCharset()));
-  while (tokenizer.hasMoreTokens()) {
-    argsInFile.add(tokenizer.nextToken());
-  }
+  List<String> argsInFile=tokenizeKeepingQuotedStrings(Files.readLines(flagFileInput,Charset.defaultCharset()));
   flags.flag_file="";
   List<String> processedFileArgs=processArgs(argsInFile.toArray(new String[]{}));
   CmdLineParser parserFileArgs=new CmdLineParser(flags);
