@@ -1,0 +1,31 @@
+{
+  Node objectToLoopOver=n.getChildAtIndex(1);
+  if (objectToLoopOver == null) {
+    return;
+  }
+  Node callbackFunction=objectToLoopOver.getNext();
+  if (callbackFunction == null || !callbackFunction.isFunction()) {
+    return;
+  }
+  peepholePasses.process(null,n.getChildAtIndex(1));
+  Node nClone=n.cloneTree();
+  objectToLoopOver=nClone.getChildAtIndex(1);
+  if (!objectToLoopOver.isObjectLit() && !(objectToLoopOver.isArrayLit() && isArrayLitValidForExpansion(objectToLoopOver))) {
+    t.report(n,JQUERY_UNABLE_TO_EXPAND_INVALID_LIT_ERROR,(String)null);
+    return;
+  }
+  List<Node> keyNodeReferences=Lists.newArrayList();
+  List<Node> valueNodeReferences=Lists.newArrayList();
+  NodeTraversal.traverse(compiler,NodeUtil.getFunctionBody(callbackFunction),new FindCallbackArgumentReferences(callbackFunction,keyNodeReferences,valueNodeReferences,objectToLoopOver.isArrayLit()));
+  if (keyNodeReferences.size() == 0) {
+    t.report(n,JQUERY_USELESS_EACH_EXPANSION,(String)null);
+    return;
+  }
+  Node fncBlock=tryExpandJqueryEachCall(t,nClone,callbackFunction,keyNodeReferences,valueNodeReferences);
+  if (fncBlock != null && fncBlock.hasChildren()) {
+    replaceOriginalJqueryEachCall(n,fncBlock);
+  }
+ else {
+    t.report(n,JQUERY_USELESS_EACH_EXPANSION,(String)null);
+  }
+}

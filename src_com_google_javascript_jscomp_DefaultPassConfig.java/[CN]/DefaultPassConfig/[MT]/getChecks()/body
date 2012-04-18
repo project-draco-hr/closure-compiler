@@ -12,6 +12,9 @@
     }
     return checks;
   }
+  if (options.jqueryPass) {
+    checks.add(jqueryAliases.makeOneTimePass());
+  }
   checks.add(checkSideEffects);
   if (options.checkSuspiciousCode || options.enables(DiagnosticGroups.GLOBAL_THIS) || options.enables(DiagnosticGroups.DEBUGGER_STATEMENT_PRESENT)) {
     checks.add(suspiciousCode);
@@ -33,9 +36,6 @@
   }
   if (options.closurePass) {
     checks.add(closurePrimitives.makeOneTimePass());
-  }
-  if (options.jqueryPass) {
-    checks.add(jqueryAliases.makeOneTimePass());
   }
   if (options.closurePass && options.checkMissingGetCssNameLevel.isOn()) {
     checks.add(closureCheckGetCssName);

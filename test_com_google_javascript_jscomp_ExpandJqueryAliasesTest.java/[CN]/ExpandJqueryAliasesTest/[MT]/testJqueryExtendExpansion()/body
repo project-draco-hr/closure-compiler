@@ -1,0 +1,10 @@
+{
+  String setupCode="var jQuery={},obj2={};";
+  testSame(setupCode + "jQuery.extend()");
+  testSame(setupCode + "jQuery.extend({})");
+  test(setupCode + "jQuery.extend({a:'test'})",setupCode + "{jQuery.a = 'test';}");
+  test(setupCode + "jQuery.fn=jQuery.prototype;" + "jQuery.fn.extend({a:'test', b:'test2'});",setupCode + "jQuery.fn=jQuery.prototype;" + "{jQuery.prototype.a = 'test'; jQuery.prototype.b = 'test2';}");
+  test(setupCode + "jQuery.extend(obj2, {a:'test', b:'test2'});",setupCode + "{obj2=obj2||{}; obj2.a='test'; obj2.b='test2';}");
+  test(setupCode + "jQuery.extend(jQuery,{a:'test', b:'test2'});",setupCode + "{jQuery = jQuery || {}; jQuery.a = 'test';" + "jQuery.b = 'test2';}");
+  testSame(setupCode + "obj2.meth=function() { return { a:{} }; };" + "jQuery.extend(obj2.meth().a, {a: 'test'});");
+}

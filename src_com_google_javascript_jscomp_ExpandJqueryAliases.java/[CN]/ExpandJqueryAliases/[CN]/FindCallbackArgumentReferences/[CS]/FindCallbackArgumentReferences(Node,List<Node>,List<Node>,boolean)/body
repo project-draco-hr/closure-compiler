@@ -1,0 +1,26 @@
+{
+  Preconditions.checkState(functionRoot.isFunction());
+  String keyString=null, valueString=null;
+  Node callbackParams=NodeUtil.getFunctionParameters(functionRoot);
+  Node param=callbackParams.getFirstChild();
+  if (param != null) {
+    Preconditions.checkState(param.isName());
+    keyString=param.getString();
+    param=param.getNext();
+    if (param != null) {
+      Preconditions.checkState(param.isName());
+      valueString=param.getString();
+    }
+  }
+  this.keyName=keyString;
+  this.valueName=valueString;
+  if (useArrayMode) {
+    this.keyReferences=valueReferences;
+    this.valueReferences=keyReferences;
+  }
+ else {
+    this.keyReferences=keyReferences;
+    this.valueReferences=valueReferences;
+  }
+  this.startingScope=null;
+}

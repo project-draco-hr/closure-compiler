@@ -1,0 +1,27 @@
+{
+  if (n.getParent().isExprResult()) {
+    Node parent=n.getParent();
+    Node grandparent=parent.getParent();
+    Node insertAfter=parent;
+    while (expandedBlock.hasChildren()) {
+      Node child=expandedBlock.getFirstChild().detachFromParent();
+      grandparent.addChildAfter(child,insertAfter);
+      insertAfter=child;
+    }
+    grandparent.removeChild(parent);
+  }
+ else {
+    Node callTarget=n.getFirstChild();
+    Node objectToLoopOver=callTarget.getNext();
+    objectToLoopOver.detachFromParent();
+    Node ret=IR.returnNode(objectToLoopOver).srcref(callTarget);
+    expandedBlock.addChildToBack(ret);
+    Node fnc=IR.function(IR.name("").srcref(callTarget),IR.paramList().srcref(callTarget),expandedBlock);
+    n.replaceChild(callTarget,fnc);
+    n.putBooleanProp(Node.FREE_CALL,true);
+    while (fnc.getNext() != null) {
+      n.removeChildAfter(fnc);
+    }
+  }
+  compiler.reportCodeChange();
+}

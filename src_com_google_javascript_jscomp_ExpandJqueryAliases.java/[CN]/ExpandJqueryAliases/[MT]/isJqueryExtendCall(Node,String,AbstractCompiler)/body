@@ -1,0 +1,13 @@
+{
+  if (JQUERY_EXTEND_NAMES.contains(qname)) {
+    Node firstArgument=n.getNext();
+    if (firstArgument == null) {
+      return false;
+    }
+    Node secondArgument=firstArgument.getNext();
+    if ((firstArgument.isObjectLit() && secondArgument == null) || (firstArgument.isName() || NodeUtil.isGet(firstArgument) && !NodeUtil.mayHaveSideEffects(firstArgument,compiler) && secondArgument != null && secondArgument.isObjectLit() && secondArgument.getNext() == null)) {
+      return true;
+    }
+  }
+  return false;
+}

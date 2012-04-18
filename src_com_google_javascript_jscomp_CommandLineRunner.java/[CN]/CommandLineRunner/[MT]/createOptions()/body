@@ -1,6 +1,11 @@
 {
   CompilerOptions options=new CompilerOptions();
-  options.setCodingConvention(new ClosureCodingConvention());
+  if (flags.process_jquery_primitives) {
+    options.setCodingConvention(new JqueryCodingConvention());
+  }
+ else {
+    options.setCodingConvention(new ClosureCodingConvention());
+  }
   CompilationLevel level=flags.compilation_level;
   level.setOptionsForCompilationLevel(options);
   if (flags.debug) {
@@ -16,9 +21,6 @@
   }
   options.closurePass=flags.process_closure_primitives;
   options.jqueryPass=flags.process_jquery_primitives && CompilationLevel.ADVANCED_OPTIMIZATIONS == level;
-  if (flags.process_jquery_primitives) {
-    options.setCodingConvention(new JqueryCodingConvention());
-  }
   if (!flags.translationsFile.isEmpty()) {
     try {
       options.messageBundle=new XtbMessageBundle(new FileInputStream(flags.translationsFile),flags.translationsProject);

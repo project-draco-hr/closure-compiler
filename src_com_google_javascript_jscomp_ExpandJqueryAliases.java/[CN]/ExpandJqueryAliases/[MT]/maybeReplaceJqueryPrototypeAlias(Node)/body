@@ -1,0 +1,19 @@
+{
+  if (NodeUtil.isLValue(n)) {
+    Node maybeAssign=n.getParent();
+    while (!NodeUtil.isStatement(maybeAssign) && !maybeAssign.isAssign()) {
+      maybeAssign=maybeAssign.getParent();
+    }
+    if (maybeAssign.isAssign()) {
+      maybeAssign=maybeAssign.getParent();
+      if (maybeAssign.isBlock() || maybeAssign.isScript() || NodeUtil.isStatement(maybeAssign)) {
+        return;
+      }
+    }
+  }
+  Node fn=n.getLastChild();
+  if (fn != null) {
+    n.replaceChild(fn,IR.string("prototype"));
+    compiler.reportCodeChange();
+  }
+}

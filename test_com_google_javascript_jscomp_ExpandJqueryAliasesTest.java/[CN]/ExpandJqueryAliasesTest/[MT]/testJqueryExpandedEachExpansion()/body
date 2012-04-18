@@ -1,0 +1,15 @@
+{
+  String setupCode="var jQuery={};" + "jQuery.expandedEach=function(vals, callback){};";
+  testSame(setupCode);
+  test(setupCode + "jQuery.expandedEach({'a': 1, 'b': 2, 'c': 8}," + "function(key, val) { var a = key; jQuery[key] = val; });",setupCode + "(function(){ var a = 'a'; jQuery.a = 1 })();" + "(function(){ var a = 'b'; jQuery.b = 2 })();"+ "(function(){ var a = 'c'; jQuery.c = 8 })();");
+  test(setupCode + "jQuery.expandedEach(['a', 'b', 'c']," + "function(key, val){ jQuery[val] = key; });",setupCode + "(function(){ jQuery.a = 0; })();" + "(function(){ jQuery.b = 1; })();"+ "(function(){ jQuery.c = 2 })();");
+  test(setupCode + "jQuery.expandedEach({'a': 1, 'b': 2, 'c': 8}," + "function(key, val) { var a = key; jQuery[key] = this; });",setupCode + "(function(){ var a = 'a'; jQuery.a = 1 })();" + "(function(){ var a = 'b'; jQuery.b = 2 })();"+ "(function(){ var a = 'c'; jQuery.c = 8 })();");
+  test(setupCode + "jQuery.expandedEach(['a', 'b', 'c']," + "function(key, val){ jQuery[this] = key; });",setupCode + "(function(){ jQuery.a = 0; })();" + "(function(){ jQuery.b = 1; })();"+ "(function(){ jQuery.c = 2 })();");
+  test(setupCode + "jQuery.expandedEach(['a'], function(key,val) {" + "jQuery[val] = key; (function(key) { jQuery[key] = 1;})('test'); })",setupCode + "(function(){ jQuery.a = 0;" + "(function(key){ jQuery[key] = 1})('test') })()");
+  test(setupCode + "jQuery.expandedEach(['a'], function(key,val) {" + "jQuery[val] = key; (function(key) { var val = 2;"+ "jQuery[key] = val;})('test');})",setupCode + "(function(){" + "jQuery.a=0;"+ "(function(key){var val = 2; jQuery[key] = val;})('test')})()");
+  test(setupCode + "jQuery.expandedEach(['a'], function(key,val) {" + "jQuery[val] = key; (function(key1) {"+ "function key() {}; key();"+ "})('test');})",setupCode + "(function(){" + "jQuery.a=0;(function(key1) {"+ "function key() {}; key(); })('test')})()");
+  test(setupCode + "alert(jQuery.expandedEach(['a']," + "function(key,val) { jQuery[val] = key;})[0])",setupCode + "alert((function(){" + "(function(){ jQuery.a = 0;})(); return ['a']})()[0]);");
+  testSame(setupCode + "var a = ['a'];" + "jQuery.expandedEach(a, function(key,val){ jQuery[key]=val; })",INVALID_LIT_ERROR);
+  testSame(setupCode + "var obj2={};" + "jQuery.expandedEach(['foo','bar'], function(i, name) {"+ "obj2[ '[object ' + name + ']' ] = 'a';});",NAME_ERROR,true);
+  testSame(setupCode + "var obj2={};" + "jQuery.expandedEach(['foo','bar'], function(i, name) {"+ "obj2[i] = 1;});",USELESS_EACH_ERROR,false);
+}

@@ -1,0 +1,78 @@
+{
+  Node callTarget=n.getFirstChild();
+  Node objectToLoopOver=callTarget.getNext();
+  Node fncBlock=IR.block().srcref(callTarget);
+  boolean isValidExpansion=true;
+  Node key=objectToLoopOver.getFirstChild(), val=null;
+  for (int i=0; key != null; key=key.getNext(), i++) {
+    if (key != null) {
+      if (objectToLoopOver.isArrayLit()) {
+        val=IR.number(i).srcref(key);
+      }
+ else {
+        val=key.getFirstChild();
+      }
+    }
+    List<Node> newKeys=Lists.newArrayList();
+    List<Node> newValues=Lists.newArrayList();
+    List<Node> origGetElems=Lists.newArrayList();
+    List<Node> newGetProps=Lists.newArrayList();
+    for (int j=0; j < keyNodes.size(); j++) {
+      Node origNode=keyNodes.get(j);
+      Node ancestor=origNode.getParent();
+      Node newNode=IR.string(key.getString()).srcref(key);
+      newKeys.add(newNode);
+      ancestor.replaceChild(origNode,newNode);
+      while (ancestor != null && !NodeUtil.isStatement(ancestor) && !ancestor.isGetElem()) {
+        ancestor=ancestor.getParent();
+      }
+      if (ancestor != null && ancestor.isGetElem()) {
+        Node propObject=ancestor;
+        while (propObject.isGetProp() || propObject.isGetElem()) {
+          propObject=propObject.getFirstChild();
+        }
+        Node ancestorClone=ancestor.cloneTree();
+        peepholePasses.process(null,ancestorClone.getChildAtIndex(1));
+        Node prop=ancestorClone.getChildAtIndex(1);
+        if (prop.isString() && NodeUtil.isValidPropertyName(prop.getString())) {
+          Node target=ancestorClone.getFirstChild();
+          Node newGetProp=IR.getprop(target.detachFromParent(),prop.detachFromParent());
+          newGetProps.add(newGetProp);
+          origGetElems.add(ancestor);
+          ancestor.getParent().replaceChild(ancestor,newGetProp);
+        }
+ else {
+          if (prop.isString() && !NodeUtil.isValidPropertyName(prop.getString())) {
+            t.report(n,JQUERY_UNABLE_TO_EXPAND_INVALID_NAME_ERROR,prop.getString());
+          }
+          isValidExpansion=false;
+        }
+      }
+    }
+    if (isValidExpansion) {
+      for (int j=0; val != null && j < valueNodes.size(); j++) {
+        Node origNode=valueNodes.get(j);
+        Node newNode=val.cloneTree();
+        newValues.add(newNode);
+        origNode.getParent().replaceChild(origNode,newNode);
+      }
+      Node fnc=IR.function(IR.name("").srcref(key),IR.paramList().srcref(key),callbackFunction.getChildAtIndex(2).cloneTree()).srcref(key);
+      Node call=IR.call(fnc).srcref(key);
+      call.putBooleanProp(Node.FREE_CALL,true);
+      fncBlock.addChildToBack(IR.exprResult(call).srcref(call));
+    }
+    for (int j=0; j < newGetProps.size(); j++) {
+      newGetProps.get(j).getParent().replaceChild(newGetProps.get(j),origGetElems.get(j));
+    }
+    for (int j=0; j < newKeys.size(); j++) {
+      newKeys.get(j).getParent().replaceChild(newKeys.get(j),keyNodes.get(j));
+    }
+    for (int j=0; j < newValues.size(); j++) {
+      newValues.get(j).getParent().replaceChild(newValues.get(j),valueNodes.get(j));
+    }
+    if (!isValidExpansion) {
+      return null;
+    }
+  }
+  return fncBlock;
+}

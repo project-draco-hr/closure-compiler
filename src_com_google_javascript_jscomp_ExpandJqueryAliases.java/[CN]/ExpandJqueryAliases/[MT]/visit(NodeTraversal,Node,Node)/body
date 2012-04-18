@@ -1,12 +1,15 @@
 {
-  if (compiler.getCodingConvention().isPrototypeAlias(n)) {
-    replaceJqueryPrototypeAlias(n);
+  if (n.isGetProp() && convention.isPrototypeAlias(n)) {
+    maybeReplaceJqueryPrototypeAlias(n);
   }
  else   if (n.isCall()) {
     Node callTarget=n.getFirstChild();
     String qName=callTarget.getQualifiedName();
-    if (isJqueryExtendReference(callTarget,qName)) {
-      replaceJqueryExtendCall(n);
+    if (isJqueryExtendCall(callTarget,qName,this.compiler)) {
+      maybeExpandJqueryExtendCall(n);
+    }
+ else     if (isJqueryExpandedEachCall(n,qName)) {
+      maybeExpandJqueryEachCall(t,n);
     }
   }
 }
