@@ -1,6 +1,6 @@
 {
   boolean lineHasProvidesOrRequires=false;
-  if (line.indexOf("provide") != -1 || line.indexOf("require") != -1) {
+  if (line.indexOf("provide") != -1 || line.indexOf("require") != -1 || line.indexOf("addDependency") != -1) {
     googMatcher.reset(line);
     while (googMatcher.find()) {
       lineHasProvidesOrRequires=true;
@@ -8,15 +8,19 @@
         fileHasProvidesOrRequires=true;
         requires.add("goog");
       }
-      boolean isRequire=googMatcher.group(1).charAt(0) == 'r';
-      String arg=parseJsString(googMatcher.group(2));
-      if (isRequire) {
-        if (!"goog".equals(arg)) {
-          requires.add(arg);
+      char firstChar=googMatcher.group(1).charAt(0);
+      boolean isProvide=firstChar == 'p';
+      boolean isRequire=firstChar == 'r';
+      if (isProvide || isRequire) {
+        String arg=parseJsString(googMatcher.group(2));
+        if (isRequire) {
+          if (!"goog".equals(arg)) {
+            requires.add(arg);
+          }
         }
-      }
  else {
-        provides.add(arg);
+          provides.add(arg);
+        }
       }
     }
   }
