@@ -12,12 +12,8 @@
   for (Node cur=n.getFirstChild(); cur != null; cur=cur.getNext()) {
     strings[idx++]=cur.getString();
   }
-  NEXT_DELIMITER:   for (  char delimiter : new char[]{',',' ',';','{','}'}) {
-    for (    String cur : strings) {
-      if (cur.indexOf(delimiter) != -1) {
-        continue NEXT_DELIMITER;
-      }
-    }
+  String delimiter=pickDelimiter(strings);
+  if (delimiter != null) {
     String template=Joiner.on(delimiter).join(strings);
     Node call=IR.call(IR.getprop(IR.string(template),IR.string("split")),IR.string("" + delimiter));
     call.copyInformationFromForTree(n);
