@@ -28,6 +28,7 @@
     if (options.transformAMDToCJSModules || options.processCommonJSModules) {
       processAMDAndCommonJSModules();
     }
+    hoistExterns(externsRoot);
     boolean staleInputs=false;
     if (options.dependencyOptions.needsManagement() && options.closurePass) {
       for (      CompilerInput input : inputs) {
@@ -52,29 +53,9 @@ catch (      MissingProvideException e) {
         }
       }
     }
-    for (    CompilerInput input : inputs) {
-      Node n=input.getAstRoot(this);
-      if (n == null) {
-        continue;
-      }
-      if (n.getJSDocInfo() != null) {
-        JSDocInfo info=n.getJSDocInfo();
-        if (info.isExterns()) {
-          externsRoot.addChildToBack(n);
-          input.setIsExtern(true);
-          input.getModule().remove(input);
-          externs.add(input);
-          staleInputs=true;
-        }
- else         if (info.isNoCompile()) {
-          input.getModule().remove(input);
-          staleInputs=true;
-        }
-      }
-    }
+    hoistNoCompileFiles();
     if (staleInputs) {
-      fillEmptyModules(modules);
-      rebuildInputsFromModules();
+      repartitionInputs();
     }
     for (    CompilerInput input : inputs) {
       Node n=input.getAstRoot(this);

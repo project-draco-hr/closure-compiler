@@ -1,0 +1,17 @@
+{
+  boolean staleInputs=false;
+  for (  CompilerInput input : inputs) {
+    Node n=input.getAstRoot(this);
+    if (n == null) {
+      continue;
+    }
+    JSDocInfo info=n.getJSDocInfo();
+    if (info != null && info.isNoCompile()) {
+      input.getModule().remove(input);
+      staleInputs=true;
+    }
+  }
+  if (staleInputs) {
+    repartitionInputs();
+  }
+}

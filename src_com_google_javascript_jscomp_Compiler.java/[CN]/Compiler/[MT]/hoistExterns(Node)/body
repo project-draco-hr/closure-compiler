@@ -1,0 +1,25 @@
+{
+  boolean staleInputs=false;
+  for (  CompilerInput input : inputs) {
+    if (options.dependencyOptions.needsManagement() && options.closurePass) {
+      if (!input.getProvides().isEmpty() || !input.getRequires().isEmpty()) {
+        continue;
+      }
+    }
+    Node n=input.getAstRoot(this);
+    if (n == null) {
+      continue;
+    }
+    JSDocInfo info=n.getJSDocInfo();
+    if (info != null && info.isExterns()) {
+      externsRoot.addChildToBack(n);
+      input.setIsExtern(true);
+      input.getModule().remove(input);
+      externs.add(input);
+      staleInputs=true;
+    }
+  }
+  if (staleInputs) {
+    repartitionInputs();
+  }
+}
