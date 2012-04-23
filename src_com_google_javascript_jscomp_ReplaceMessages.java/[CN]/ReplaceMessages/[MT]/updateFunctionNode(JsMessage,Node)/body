@@ -9,5 +9,9 @@
   Iterator<CharSequence> iterator=message.parts().iterator();
   Node valueNode=iterator.hasNext() ? constructAddOrStringNode(iterator,argListNode) : IR.string("");
   Node newBlockNode=IR.block(IR.returnNode(valueNode));
-  functionNode.replaceChild(oldBlockNode,newBlockNode);
+  if (newBlockNode.checkTreeEquals(oldBlockNode) != null) {
+    newBlockNode.copyInformationFromForTree(oldBlockNode);
+    functionNode.replaceChild(oldBlockNode,newBlockNode);
+    compiler.reportCodeChange();
+  }
 }

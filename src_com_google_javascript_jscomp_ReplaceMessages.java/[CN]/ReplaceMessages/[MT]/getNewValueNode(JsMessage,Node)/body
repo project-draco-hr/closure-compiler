@@ -4,7 +4,11 @@ case Token.FUNCTION:
     updateFunctionNode(message,origValueNode);
   return origValueNode;
 case Token.STRING:
-origValueNode.setString(message.toString());
+String newString=message.toString();
+if (!origValueNode.getString().equals(newString)) {
+origValueNode.setString(newString);
+compiler.reportCodeChange();
+}
 return origValueNode;
 case Token.ADD:
 return IR.string(message.toString());
