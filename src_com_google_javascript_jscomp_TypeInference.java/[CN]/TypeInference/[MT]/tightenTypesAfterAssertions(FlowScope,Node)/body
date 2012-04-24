@@ -11,23 +11,20 @@
   }
   JSTypeNative assertedType=assertionFunctionSpec.getAssertedType();
   String assertedNodeName=assertedNode.getQualifiedName();
+  JSType narrowed;
   if (assertedType == null) {
     scope=reverseInterpreter.getPreciserScopeKnowingConditionOutcome(assertedNode,scope,true);
-    JSType type=getJSType(assertedNode);
-    JSType narrowed=type.restrictByNotNullOrUndefined();
-    if (type != narrowed) {
-      callNode.setJSType(narrowed);
-    }
+    narrowed=getJSType(assertedNode).restrictByNotNullOrUndefined();
   }
  else {
     JSType type=getJSType(assertedNode);
-    JSType narrowed=type.getGreatestSubtype(getNativeType(assertedType));
-    if (type != narrowed) {
-      if (assertedNodeName != null) {
-        scope=narrowScope(scope,assertedNode,narrowed);
-      }
-      callNode.setJSType(narrowed);
+    narrowed=type.getGreatestSubtype(getNativeType(assertedType));
+    if (assertedNodeName != null && type.differsFrom(narrowed)) {
+      scope=narrowScope(scope,assertedNode,narrowed);
     }
+  }
+  if (getJSType(callNode).differsFrom(narrowed)) {
+    callNode.setJSType(narrowed);
   }
   return scope;
 }
