@@ -1,5 +1,8 @@
 {
   Node block=NodeUtil.getFunctionBody(fnNode);
+  if (!compiler.getCodingConvention().isInlinableFunction(fnNode)) {
+    return false;
+  }
   final String fnRecursionName=fnNode.getFirstChild().getString();
   Preconditions.checkState(fnRecursionName != null);
   boolean referencesArguments=NodeUtil.isNameReferenced(block,"arguments",NodeUtil.MATCH_NOT_FUNCTION);

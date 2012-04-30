@@ -3,11 +3,17 @@
     return false;
   }
  else   if (initialization.isDeclaration()) {
-    return NodeUtil.isFunctionDeclaration(initialization.getParent()) || initialization.getNode().getFirstChild() != null;
+    if (!NodeUtil.isFunctionDeclaration(initialization.getParent()) && initialization.getNode().getFirstChild() == null) {
+      return false;
+    }
   }
  else {
     Node parent=initialization.getParent();
     Preconditions.checkState(parent.isAssign() && parent.getFirstChild() == initialization.getNode());
-    return true;
   }
+  Node n=initialization.getAssignedValue();
+  if (n.isFunction()) {
+    return compiler.getCodingConvention().isInlinableFunction(n);
+  }
+  return true;
 }
