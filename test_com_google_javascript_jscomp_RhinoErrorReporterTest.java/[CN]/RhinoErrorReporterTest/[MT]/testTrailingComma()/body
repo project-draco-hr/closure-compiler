@@ -1,5 +1,7 @@
 {
   String message="Parse error. IE8 (and below) will parse trailing commas in " + "array and object literals incorrectly. " + "If you are targeting newer versions of JS, "+ "set the appropriate language_in option.";
   assertError("var x = [1,];",RhinoErrorReporter.TRAILING_COMMA,message);
-  assertError("var x = {1: 2,};",RhinoErrorReporter.TRAILING_COMMA,message);
+  JSError error=assertError("var x = {\n" + "    1: 2,\n" + "};",RhinoErrorReporter.TRAILING_COMMA,message);
+  assertEquals(2,error.getLineNumber());
+  assertEquals(4,error.getCharno());
 }
