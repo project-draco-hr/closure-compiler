@@ -9,6 +9,9 @@
   AbstractCfgNodeTraversalCallback gatherCb=new AbstractCfgNodeTraversalCallback(){
     @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
       if (n.isName()) {
+        if (parent == null) {
+          return;
+        }
         if ((NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || parent.isVar() || parent.isInc()|| parent.isDec()|| parent.isParamList()|| parent.isCatch()) {
           return;
         }
