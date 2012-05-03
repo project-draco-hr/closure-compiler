@@ -1,0 +1,17 @@
+{
+  if (!t.isObject() || t.isAllType()) {
+    return;
+  }
+  if (t.isUnionType()) {
+    for (    JSType alt : t.toMaybeUnionType().getAlternates()) {
+      printErrorLocations(errors,alt);
+    }
+    return;
+  }
+  for (  JSError error : invalidationMap.get(t)) {
+    if (errors.size() > MAX_INVALDIATION_WARNINGS_PER_PROPERTY) {
+      return;
+    }
+    errors.add(t.toString() + " at " + error.sourceName+ ":"+ error.lineNumber);
+  }
+}

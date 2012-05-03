@@ -2,17 +2,19 @@
   type=type.restrictByNotNullOrUndefined();
   if (type.isUnionType()) {
     for (    JSType alt : type.toMaybeUnionType().getAlternates()) {
-      addInvalidatingType(alt);
+      addInvalidatingType(alt,error);
     }
   }
  else   if (type.isEnumElementType()) {
-    addInvalidatingType(type.toMaybeEnumElementType().getPrimitiveType());
+    addInvalidatingType(type.toMaybeEnumElementType().getPrimitiveType(),error);
   }
  else {
     typeSystem.addInvalidatingType(type);
+    recordInvalidationError(type,error);
     ObjectType objType=ObjectType.cast(type);
     if (objType != null && objType.getImplicitPrototype() != null) {
       typeSystem.addInvalidatingType(objType.getImplicitPrototype());
+      recordInvalidationError(objType.getImplicitPrototype(),error);
     }
   }
 }
