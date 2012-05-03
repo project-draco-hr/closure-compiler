@@ -1,0 +1,15 @@
+{
+  if (type.isUnionType()) {
+    type=type.restrictByNotNullOrUndefined();
+    if (type.isUnionType()) {
+      for (      JSType alt : type.toMaybeUnionType().getAlternates()) {
+        if (isInvalidatingType(alt)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+  ObjectType objType=ObjectType.cast(type);
+  return objType == null || invalidatingTypes.contains(objType) || !objType.hasReferenceName() || objType.isUnknownType() || objType.isEmptyType() || objType.isEnumType() || objType.autoboxesTo() != null;
+}

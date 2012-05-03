@@ -1,0 +1,15 @@
+{
+  if (n.isGetProp() && !NodeUtil.isLValue(n)) {
+    Node target=n.getFirstChild();
+    String propName=n.getLastChild().getString();
+    PropertyInfo info=props.get(propName);
+    if (info != null && info != INVALIDATED && isMatchingType(target,info.type)) {
+      Node replacement=info.value.cloneTree();
+      if (NodeUtil.mayHaveSideEffects(n.getFirstChild(),compiler)) {
+        replacement=IR.comma(n.removeFirstChild(),replacement).srcref(n);
+      }
+      parent.replaceChild(n,replacement);
+      compiler.reportCodeChange();
+    }
+  }
+}

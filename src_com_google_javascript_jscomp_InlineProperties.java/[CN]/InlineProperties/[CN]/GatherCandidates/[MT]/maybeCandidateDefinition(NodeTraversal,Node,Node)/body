@@ -1,0 +1,19 @@
+{
+  Preconditions.checkState(n.isGetProp() && parent.isAssign());
+  boolean isCandidate=false;
+  Node src=n.getFirstChild();
+  String propName=n.getLastChild().getString();
+  Node value=parent.getLastChild();
+  if (src.isThis()) {
+    if (inContructor(t)) {
+      isCandidate=maybeStoreCandidateValue(getJSType(src),propName,value);
+    }
+  }
+ else   if (t.inGlobalScope() && src.isGetProp() && src.getLastChild().getString().equals("prototype")) {
+    JSType instanceType=maybeGetInstanceTypeFromPrototypeRef(src);
+    if (instanceType != null) {
+      isCandidate=maybeStoreCandidateValue(instanceType,propName,value);
+    }
+  }
+  return isCandidate;
+}
