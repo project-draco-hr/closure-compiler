@@ -1,0 +1,32 @@
+{
+  if (!n.isCall()) {
+    return null;
+  }
+  Node callTarget=n.getFirstChild();
+  String name=callTarget.getQualifiedName();
+  if (name != null) {
+    if (name.equals("Function.prototype.bind.call")) {
+      Node fn=callTarget.getNext();
+      if (fn == null) {
+        return null;
+      }
+      Node thisValue=safeNext(fn);
+      Node parameters=safeNext(thisValue);
+      return new Bind(fn,thisValue,parameters);
+    }
+  }
+  if (callTarget.isGetProp() && callTarget.getLastChild().getString().equals("bind")) {
+    Node maybeFn=callTarget.getFirstChild();
+    JSType maybeFnType=maybeFn.getJSType();
+    FunctionType fnType=null;
+    if (useTypeInfo && maybeFnType != null) {
+      fnType=maybeFnType.restrictByNotNullOrUndefined().toMaybeFunctionType();
+    }
+    if (fnType != null || maybeFn.isFunction()) {
+      Node thisValue=callTarget.getNext();
+      Node parameters=safeNext(thisValue);
+      return new Bind(maybeFn,thisValue,parameters);
+    }
+  }
+  return null;
+}
