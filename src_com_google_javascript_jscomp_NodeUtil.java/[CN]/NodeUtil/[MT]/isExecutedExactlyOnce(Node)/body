@@ -11,15 +11,25 @@ case Token.OR:
       }
     continue inspect;
 case Token.FOR:
-  if (parent.getFirstChild() != n) {
-    return false;
+  if (NodeUtil.isForIn(parent)) {
+    if (parent.getChildAtIndex(1) != n) {
+      return false;
+    }
+  }
+ else {
+    if (parent.getFirstChild() != n) {
+      return false;
+    }
   }
 continue inspect;
 case Token.WHILE:
 case Token.DO:
 return false;
 case Token.TRY:
+if (!hasFinally(parent) || parent.getLastChild() != n) {
 return false;
+}
+continue inspect;
 case Token.CASE:
 case Token.DEFAULT_CASE:
 return false;
