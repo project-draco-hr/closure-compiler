@@ -4,16 +4,43 @@
     return false;
   }
   Node gramp=parent.getParent();
-  if ((gramp == null) || (parent.getFirstChild() != node) || !NodeUtil.isExprAssign(gramp)) {
+  if (gramp == null) {
     return false;
   }
-  Node functionNode=parent.getLastChild();
-  if ((functionNode == null) || !functionNode.isFunction()) {
+  if (node.isGetProp()) {
+    if (parent.getFirstChild() != node) {
+      return false;
+    }
+    if (!NodeUtil.isExprAssign(gramp)) {
+      return false;
+    }
+    Node functionNode=parent.getLastChild();
+    if ((functionNode == null) || !functionNode.isFunction()) {
+      return false;
+    }
+    Node nameNode=node.getFirstChild();
+    return nameNode.isGetProp() && nameNode.getLastChild().getString().equals("prototype");
+  }
+ else   if (node.isStringKey()) {
+    Preconditions.checkState(parent.isObjectLit());
+    if (!gramp.isAssign()) {
+      return false;
+    }
+    if (gramp.getLastChild() != parent) {
+      return false;
+    }
+    Node greatGramp=gramp.getParent();
+    if (greatGramp == null || !greatGramp.isExprResult()) {
+      return false;
+    }
+    Node functionNode=node.getFirstChild();
+    if ((functionNode == null) || !functionNode.isFunction()) {
+      return false;
+    }
+    Node target=gramp.getFirstChild();
+    return target.isGetProp() && target.getLastChild().getString().equals("prototype");
+  }
+ else {
     return false;
   }
-  if (!node.isGetProp()) {
-    return false;
-  }
-  Node nameNode=node.getFirstChild();
-  return nameNode.isGetProp() && nameNode.getLastChild().getString().equals("prototype");
 }

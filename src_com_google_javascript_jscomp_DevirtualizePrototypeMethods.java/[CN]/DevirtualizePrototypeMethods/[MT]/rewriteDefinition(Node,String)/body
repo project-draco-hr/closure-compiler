@@ -1,15 +1,36 @@
 {
+  boolean isObjLitDefKey=node.isStringKey();
   Node parent=node.getParent();
-  Node functionNode=parent.getLastChild();
-  Node expr=parent.getParent();
-  Node block=expr.getParent();
-  Node newNameNode=IR.name(newMethodName).copyInformationFrom(parent.getFirstChild());
-  if (specializationState != null) {
-    specializationState.reportRemovedFunction(functionNode,block);
+  Node refNode=isObjLitDefKey ? node : parent.getFirstChild();
+  Node newNameNode=IR.name(newMethodName).copyInformationFrom(refNode);
+  Node newVarNode=IR.var(newNameNode).copyInformationFrom(refNode);
+  Node functionNode;
+  if (!isObjLitDefKey) {
+    Preconditions.checkState(parent.isAssign());
+    functionNode=parent.getLastChild();
+    Node expr=parent.getParent();
+    Node block=expr.getParent();
+    parent.removeChild(functionNode);
+    newNameNode.addChildToFront(functionNode);
+    block.replaceChild(expr,newVarNode);
+    if (specializationState != null) {
+      specializationState.reportRemovedFunction(functionNode,block);
+    }
   }
-  parent.removeChild(functionNode);
-  newNameNode.addChildToFront(functionNode);
-  block.replaceChild(expr,IR.var(newNameNode));
+ else {
+    Preconditions.checkState(parent.isObjectLit());
+    functionNode=node.getFirstChild();
+    Node assign=parent.getParent();
+    Node expr=assign.getParent();
+    Node block=expr.getParent();
+    node.removeChild(functionNode);
+    parent.removeChild(node);
+    newNameNode.addChildToFront(functionNode);
+    block.addChildAfter(newVarNode,expr);
+    if (specializationState != null) {
+      specializationState.reportRemovedFunction(functionNode,block);
+    }
+  }
   String self=newMethodName + "$self";
   Node argList=functionNode.getFirstChild().getNext();
   argList.addChildToFront(IR.name(self).copyInformationFrom(functionNode));
