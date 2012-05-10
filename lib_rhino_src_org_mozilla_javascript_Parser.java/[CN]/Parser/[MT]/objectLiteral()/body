@@ -21,7 +21,9 @@ case Token.NAME:
   propertyName=ts.getString();
 int ppos=ts.tokenBeg;
 consumeToken();
-if ((peekToken() != Token.COLON && ("get".equals(propertyName) || "set".equals(propertyName)))) {
+int peeked=peekToken();
+boolean maybeGetterOrSetter="get".equals(propertyName) || "set".equals(propertyName);
+if (maybeGetterOrSetter && peeked != Token.COMMA && peeked != Token.COLON && peeked != Token.RC) {
 boolean isGet="get".equals(propertyName);
 entryKind=isGet ? GET_ENTRY : SET_ENTRY;
 AstNode pname=objliteralProperty();
