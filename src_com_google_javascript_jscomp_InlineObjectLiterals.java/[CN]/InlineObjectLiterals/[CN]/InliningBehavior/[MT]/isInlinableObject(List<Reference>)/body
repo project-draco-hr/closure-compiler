@@ -1,5 +1,6 @@
 {
   boolean ret=false;
+  Set<String> validProperties=Sets.newHashSet();
   for (  Reference ref : refs) {
     Node name=ref.getNode();
     Node parent=ref.getParent();
@@ -8,6 +9,15 @@
       Preconditions.checkState(parent.getFirstChild() == name);
       if (gramps.isCall() && gramps.getFirstChild() == parent) {
         return false;
+      }
+      String propName=parent.getLastChild().getString();
+      if (!validProperties.contains(propName)) {
+        if (NodeUtil.isVarOrSimpleAssignLhs(parent,gramps)) {
+          validProperties.add(propName);
+        }
+ else {
+          return false;
+        }
       }
       continue;
     }
@@ -25,6 +35,7 @@
       if (child.isGetterDef() || child.isSetterDef()) {
         return false;
       }
+      validProperties.add(child.getString());
       Node childVal=child.getFirstChild();
       for (      Reference t : refs) {
         Node refNode=t.getParent();
