@@ -1,6 +1,11 @@
 {
   Preconditions.checkArgument(paths != null);
   Preconditions.checkArgument(showType != null);
-  this.paths=paths;
-  this.showType=showType;
+  List<String> pathList=Lists.newArrayList(paths);
+  if (showType == ShowType.INCLUDE) {
+    warningsGuard=ByPathWarningsGuard.exceptPath(pathList,CheckLevel.OFF);
+  }
+ else {
+    warningsGuard=ByPathWarningsGuard.forPath(pathList,CheckLevel.OFF);
+  }
 }
