@@ -1,0 +1,8 @@
+{
+  test("var foo = {};" + "/** @constructor */\n" + "foo.bar = function() {}","var foo$bar = function() {}");
+  Node root=getLastCompiler().getRoot();
+  Node fooBarNode=findQualifiedNameNode("foo$bar",root);
+  Node varNode=fooBarNode.getParent();
+  assertTrue(varNode.isVar());
+  assertTrue(varNode.getJSDocInfo().isConstructor());
+}
