@@ -443,11 +443,11 @@ token=parseSuppressTag(next());
 continue retry;
 case TEMPLATE:
 ExtractionInfo templateInfo=extractSingleLineBlock();
-String templateTypeName=templateInfo.string;
-if (templateTypeName.length() == 0) {
+List<String> names=Lists.newArrayList(Splitter.on(',').trimResults().split(templateInfo.string));
+if (names.size() == 0 || names.get(0).length() == 0) {
 parser.addTypeWarning("msg.jsdoc.templatemissing",stream.getLineno(),stream.getCharno());
 }
- else if (!jsdocBuilder.recordTemplateTypeName(templateTypeName)) {
+ else if (!jsdocBuilder.recordTemplateTypeNames(names)) {
 parser.addTypeWarning("msg.jsdoc.template.at.most.once",stream.getLineno(),stream.getCharno());
 }
 token=templateInfo.token;

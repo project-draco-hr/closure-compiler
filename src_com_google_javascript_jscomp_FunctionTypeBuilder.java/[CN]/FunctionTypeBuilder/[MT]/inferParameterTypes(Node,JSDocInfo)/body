@@ -33,7 +33,7 @@
  else {
       parameterType=typeRegistry.getNativeType(UNKNOWN_TYPE);
     }
-    if (templateTypeName != null && parameterType.restrictByNotNullOrUndefined().isTemplateType()) {
+    if (!templateTypeNames.isEmpty() && parameterType.restrictByNotNullOrUndefined().isTemplateType()) {
       if (foundTemplateType) {
         reportError(TEMPLATE_TYPE_DUPLICATED,fnName);
       }
@@ -50,7 +50,7 @@
       oldParameterType=oldParameterType.getNext();
     }
   }
-  if (templateTypeName != null && !foundTemplateType) {
+  if (!templateTypeNames.isEmpty() && !foundTemplateType) {
     reportError(TEMPLATE_TYPE_EXPECTED,fnName);
   }
   for (  String inexistentName : allJsDocParams) {
