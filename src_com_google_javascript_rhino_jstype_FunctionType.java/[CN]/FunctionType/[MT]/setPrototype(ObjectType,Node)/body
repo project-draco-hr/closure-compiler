@@ -5,28 +5,5 @@
   if (isConstructor() && prototype == getInstanceType()) {
     return false;
   }
-  ObjectType oldPrototype=prototypeSlot == null ? null : (ObjectType)prototypeSlot.getType();
-  boolean replacedPrototype=oldPrototype != null;
-  this.prototypeSlot=new Property("prototype",prototype,true,propertyNode == null ? source : propertyNode);
-  prototype.setOwnerFunction(this);
-  if (oldPrototype != null) {
-    oldPrototype.setOwnerFunction(null);
-  }
-  if (isConstructor() || isInterface()) {
-    FunctionType superClass=getSuperClassConstructor();
-    if (superClass != null) {
-      superClass.addSubType(this);
-    }
-    if (isInterface()) {
-      for (      ObjectType interfaceType : getExtendedInterfaces()) {
-        if (interfaceType.getConstructor() != null) {
-          interfaceType.getConstructor().addSubType(this);
-        }
-      }
-    }
-  }
-  if (replacedPrototype) {
-    clearCachedValues();
-  }
-  return true;
+  return setPrototypeNoCheck(prototype,propertyNode);
 }
