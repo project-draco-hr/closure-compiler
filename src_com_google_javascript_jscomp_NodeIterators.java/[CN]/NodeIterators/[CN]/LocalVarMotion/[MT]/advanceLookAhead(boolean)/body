@@ -17,22 +17,18 @@
   Node nextParent=iterator.currentParent();
   int type=nextNode.getType();
   if (valueHasSideEffects) {
-    if (type == Token.NAME && !varName.equals(nextNode.getString())) {
-      boolean blocked=false;
-      if (nextParent == null) {
-        blocked=true;
+    boolean readsState=false;
+    if ((nextNode.isName() && !varName.equals(nextNode.getString())) || (nextNode.isGetProp() || nextNode.isGetElem())) {
+      if (nextParent == null || !NodeUtil.isVarOrSimpleAssignLhs(nextNode,nextParent)) {
+        readsState=true;
       }
- else {
-        boolean assignsName=(nextParent.isAssign() && nextNode == nextParent.getFirstChild());
-        boolean isVarDeclaration=(nextParent.isVar());
-        if (!assignsName && !isVarDeclaration) {
-          blocked=true;
-        }
-      }
-      if (blocked) {
-        lookAhead=null;
-        return;
-      }
+    }
+ else     if (nextNode.isCall() || nextNode.isNew()) {
+      readsState=true;
+    }
+    if (readsState) {
+      lookAhead=null;
+      return;
     }
   }
   if (NodeUtil.nodeTypeMayHaveSideEffects(nextNode) && type != Token.NAME || type == Token.NAME && nextParent.isCatch()) {
