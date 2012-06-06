@@ -4,10 +4,13 @@
   }
   FunctionType superClass=ctorType.getSuperClassConstructor();
   boolean superClassHasProperty=superClass != null && superClass.getInstanceType().hasProperty(propertyName);
-  boolean superInterfacesHasProperty=false;
+  boolean superClassHasDeclaredProperty=superClass != null && superClass.getInstanceType().isPropertyTypeDeclared(propertyName);
+  boolean superInterfaceHasProperty=false;
+  boolean superInterfaceHasDeclaredProperty=false;
   if (ctorType.isInterface()) {
     for (    ObjectType interfaceType : ctorType.getExtendedInterfaces()) {
-      superInterfacesHasProperty=superInterfacesHasProperty || interfaceType.hasProperty(propertyName);
+      superInterfaceHasProperty=superInterfaceHasProperty || interfaceType.hasProperty(propertyName);
+      superInterfaceHasDeclaredProperty=superInterfaceHasDeclaredProperty || interfaceType.isPropertyTypeDeclared(propertyName);
     }
   }
   boolean declaredOverride=info != null && info.isOverride();
@@ -26,20 +29,21 @@
       }
     }
   }
-  if (!declaredOverride && !superClassHasProperty && !superInterfacesHasProperty) {
+  if (!declaredOverride && !superClassHasProperty && !superInterfaceHasProperty) {
     return;
   }
-  JSType topInstanceType=superClassHasProperty ? superClass.getTopMostDefiningType(propertyName) : null;
-  if (reportMissingOverride.isOn() && ctorType.isConstructor() && !declaredOverride&& superClassHasProperty) {
+  ObjectType topInstanceType=superClassHasDeclaredProperty ? superClass.getTopMostDefiningType(propertyName) : null;
+  boolean declaredLocally=ctorType.isConstructor() && (ctorType.getPrototype().hasOwnProperty(propertyName) || ctorType.getInstanceType().hasOwnProperty(propertyName));
+  if (reportMissingOverride.isOn() && !declaredOverride && superClassHasDeclaredProperty&& declaredLocally) {
     compiler.report(t.makeError(n,reportMissingOverride,HIDDEN_SUPERCLASS_PROPERTY,propertyName,topInstanceType.toString()));
   }
-  if (superClassHasProperty) {
+  if (superClassHasDeclaredProperty) {
     JSType superClassPropType=superClass.getInstanceType().getPropertyType(propertyName);
     if (!propertyType.canAssignTo(superClassPropType)) {
       compiler.report(t.makeError(n,HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,propertyName,topInstanceType.toString(),superClassPropType.toString(),propertyType.toString()));
     }
   }
- else   if (superInterfacesHasProperty) {
+ else   if (superInterfaceHasDeclaredProperty) {
     for (    ObjectType interfaceType : ctorType.getExtendedInterfaces()) {
       if (interfaceType.hasProperty(propertyName)) {
         JSType superPropertyType=interfaceType.getPropertyType(propertyName);
@@ -50,7 +54,7 @@
       }
     }
   }
- else   if (!foundInterfaceProperty) {
+ else   if (!foundInterfaceProperty && !superClassHasProperty && !superInterfaceHasProperty) {
     compiler.report(t.makeError(n,UNKNOWN_OVERRIDE,propertyName,ctorType.getInstanceType().toString()));
   }
 }
