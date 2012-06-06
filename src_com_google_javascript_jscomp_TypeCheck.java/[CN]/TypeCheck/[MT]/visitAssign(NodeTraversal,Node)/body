@@ -23,29 +23,18 @@
         }
       }
     }
-    if (object.isGetProp()) {
-      Node object2=object.getFirstChild();
-      String property2=NodeUtil.getStringValue(object.getLastChild());
-      if ("prototype".equals(property2)) {
-        JSType jsType=getJSType(object2);
-        if (jsType.isFunctionType()) {
-          FunctionType functionType=jsType.toMaybeFunctionType();
-          if (functionType.isConstructor() || functionType.isInterface()) {
-            checkDeclaredPropertyInheritance(t,assign,functionType,property,info,getJSType(rvalue));
-          }
-        }
-      }
-    }
     ObjectType type=ObjectType.cast(objectJsType.restrictByNotNullOrUndefined());
     if (type != null) {
       if (type.hasProperty(property) && !type.isPropertyTypeInferred(property) && !propertyIsImplicitCast(type,property)) {
         JSType expectedType=type.getPropertyType(property);
         if (!expectedType.isUnknownType()) {
           validator.expectCanAssignToPropertyOf(t,assign,getJSType(rvalue),expectedType,object,property);
+          checkPropertyInheritanceOnGetpropAssign(t,assign,object,property,info,expectedType);
           return;
         }
       }
     }
+    checkPropertyInheritanceOnGetpropAssign(t,assign,object,property,info,getNativeType(UNKNOWN_TYPE));
   }
   JSType leftType=getJSType(lvalue);
   if (lvalue.isQualifiedName()) {

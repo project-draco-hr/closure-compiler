@@ -1,0 +1,15 @@
+{
+  if (object.isGetProp()) {
+    Node object2=object.getFirstChild();
+    String property2=NodeUtil.getStringValue(object.getLastChild());
+    if ("prototype".equals(property2)) {
+      JSType jsType=getJSType(object2);
+      if (jsType.isFunctionType()) {
+        FunctionType functionType=jsType.toMaybeFunctionType();
+        if (functionType.isConstructor() || functionType.isInterface()) {
+          checkDeclaredPropertyInheritance(t,assign,functionType,property,info,propertyType);
+        }
+      }
+    }
+  }
+}
