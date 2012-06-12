@@ -9,10 +9,10 @@
     Node iArgument=n.getChildAtIndex(i + 1);
     JSType iArgumentType=getJSType(iArgument);
     inferPropertyTypesToMatchConstraint(iArgumentType,iParameterType);
-    if (iParameterType.isFunctionType()) {
-      FunctionType iParameterFnType=iParameterType.toMaybeFunctionType();
+    JSType restrictedParameter=iParameterType.restrictByNotNullOrUndefined().toMaybeFunctionType();
+    if (restrictedParameter != null) {
       if (iArgument.isFunction() && iArgumentType.isFunctionType() && iArgument.getJSDocInfo() == null) {
-        iArgument.setJSType(iParameterFnType);
+        iArgument.setJSType(restrictedParameter);
       }
     }
     i++;

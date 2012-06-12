@@ -1,0 +1,44 @@
+{
+  if (isNativeFunctionType(type)) {
+    return type;
+  }
+  if (!type.isOrdinaryFunction()) {
+    return type;
+  }
+  boolean changed=false;
+  ObjectType beforeThis=type.getTypeOfThis();
+  ObjectType afterThis=coerseToThisType(beforeThis.visit(this));
+  if (beforeThis != afterThis) {
+    changed=true;
+  }
+  JSType beforeReturn=type.getReturnType();
+  JSType afterReturn=beforeReturn.visit(this);
+  if (beforeReturn != afterReturn) {
+    changed=true;
+  }
+  FunctionParamBuilder paramBuilder=new FunctionParamBuilder(registry);
+  for (  Node paramNode : type.getParameters()) {
+    JSType beforeParamType=paramNode.getJSType();
+    JSType afterParamType=beforeParamType.visit(this);
+    if (beforeParamType != afterParamType) {
+      changed=true;
+    }
+    if (paramNode.isOptionalArg()) {
+      paramBuilder.addOptionalParams(afterParamType);
+    }
+ else     if (paramNode.isVarArgs()) {
+      paramBuilder.addVarArgs(afterParamType);
+    }
+ else {
+      paramBuilder.addRequiredParams(afterParamType);
+    }
+  }
+  if (changed) {
+    FunctionBuilder builder=new FunctionBuilder(registry);
+    builder.withParams(paramBuilder);
+    builder.withReturnType(afterReturn);
+    builder.withTypeOfThis(afterThis);
+    return builder.build();
+  }
+  return type;
+}

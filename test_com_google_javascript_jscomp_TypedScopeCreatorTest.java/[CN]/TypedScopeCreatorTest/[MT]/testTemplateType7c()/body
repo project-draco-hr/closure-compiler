@@ -1,0 +1,8 @@
+{
+  testSame("var goog = {};\n" + "goog.array = {};\n" + "/**\n"+ " * @param {Array.<T>} arr\n"+ " * @param {function(this:S, T, number, Array.<T>):boolean} f\n"+ " * @param {!S=} opt_obj\n"+ " * @return {!Array.<T>}\n"+ " * @template T,S\n"+ " */\n"+ "goog.array.filter = function(arr, f, opt_obj) {\n"+ "  var res = [];\n"+ "  for (var i = 0; i < arr.length; i++) {\n"+ "     if (f.call(opt_obj, arr[i], i, arr)) {\n"+ "        res.push(val);\n"+ "     }\n"+ "  }\n"+ "  return res;\n"+ "}"+ "/** @constructor */\n"+ "function Foo() {}\n"+ "/** @type {Array.<string>} */\n"+ "var arr = [];\n"+ "var result = goog.array.filter(arr,"+ "  function(a,b,c) {var self=this;}, new Foo());");
+  assertEquals("Foo",findNameType("self",lastLocalScope).toString());
+  assertEquals("string",findNameType("a",lastLocalScope).toString());
+  assertEquals("number",findNameType("b",lastLocalScope).toString());
+  assertEquals("(Array.<string>|null)",findNameType("c",lastLocalScope).toString());
+  assertEquals("Array.<string>",findNameType("result",globalScope).toString());
+}

@@ -1,0 +1,6 @@
+{
+  String FN_DECL="/** \n" + " * @param {T} x \n" + " * @param {function(T):T} y \n"+ " * @template T\n"+ " */ \n"+ "function f(x,y) { return y(x); }\n";
+  testTypes(FN_DECL + "/** @type {string} */" + "var out;"+ "/** @type {string} */"+ "var result = f('hi', function(x){ out = x; return x; });");
+  testTypes(FN_DECL + "/** @type {string} */" + "var out;"+ "var result = f(0, function(x){ out = x; return x; });","assignment\n" + "found   : number\n" + "required: string");
+  testTypes(FN_DECL + "var out;" + "/** @type {string} */"+ "var result = f(0, function(x){ out = x; return x; });","assignment\n" + "found   : number\n" + "required: string");
+}

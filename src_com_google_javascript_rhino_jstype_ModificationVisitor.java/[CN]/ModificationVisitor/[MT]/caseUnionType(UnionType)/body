@@ -1,0 +1,19 @@
+{
+  boolean changed=false;
+  List<JSType> results=Lists.newArrayList();
+  for (  JSType alternative : type.getAlternates()) {
+    JSType replacement=alternative.visit(this);
+    if (replacement != alternative) {
+      changed=true;
+    }
+    results.add(replacement);
+  }
+  if (changed) {
+    UnionTypeBuilder builder=new UnionTypeBuilder(registry);
+    for (    JSType alternate : results) {
+      builder.addAlternate(alternate);
+    }
+    return builder.build();
+  }
+  return type;
+}

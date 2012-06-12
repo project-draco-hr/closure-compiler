@@ -33,12 +33,6 @@
  else {
       parameterType=typeRegistry.getNativeType(UNKNOWN_TYPE);
     }
-    if (!templateTypeNames.isEmpty() && parameterType.restrictByNotNullOrUndefined().isTemplateType()) {
-      if (foundTemplateType) {
-        reportError(TEMPLATE_TYPE_DUPLICATED,fnName);
-      }
-      foundTemplateType=true;
-    }
     warnedAboutArgList|=addParameter(builder,parameterType,warnedAboutArgList,isOptionalParam,isVarArgs);
     if (oldParameterType != null) {
       oldParameterType=oldParameterType.getNext();
@@ -49,9 +43,6 @@
       builder.newParameterFromNode(oldParameterType);
       oldParameterType=oldParameterType.getNext();
     }
-  }
-  if (!templateTypeNames.isEmpty() && !foundTemplateType) {
-    reportError(TEMPLATE_TYPE_EXPECTED,fnName);
   }
   for (  String inexistentName : allJsDocParams) {
     reportWarning(INEXISTANT_PARAM,inexistentName,fnName);

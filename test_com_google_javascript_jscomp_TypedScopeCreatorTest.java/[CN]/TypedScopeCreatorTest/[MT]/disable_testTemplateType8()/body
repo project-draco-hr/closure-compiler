@@ -1,0 +1,6 @@
+{
+  testSame("/** @constructor */ NodeList = function() {};" + "/** @constructor */ Arguments = function() {};" + "var goog = {};"+ "goog.array = {};"+ "/**\n"+ " * @typedef {Array.<T>|NodeList|Arguments|{length: number}}\n"+ " * @template T\n"+ " */\n"+ "goog.array.ArrayLike;"+ "/**\n"+ " * @param {function(this:T, ...)} fn\n"+ " * @param {T} thisObj\n"+ " * @template T\n"+ " */\n"+ "function bind(fn, thisObj) {}"+ "/** @constructor */\n"+ "function Foo() {}\n"+ "/** @return {number} */\n"+ "Foo.prototype.baz = function() {};\n"+ "bind(function() { var g = this; var f = this.baz(); }, new Foo());");
+  assertEquals("T",findNameType("g",lastLocalScope).toString());
+  assertTrue(findNameType("g",lastLocalScope).isEquivalentTo(registry.getType("Foo")));
+  assertEquals("number",findNameType("f",lastLocalScope).toString());
+}
