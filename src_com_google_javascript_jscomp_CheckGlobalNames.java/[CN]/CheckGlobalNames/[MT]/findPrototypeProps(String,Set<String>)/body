@@ -1,0 +1,13 @@
+{
+  Name slot=namespace.getSlot(type);
+  if (slot != null) {
+    for (    Ref ref : slot.getRefs()) {
+      if (ref.type == Ref.Type.PROTOTYPE_GET) {
+        Node fullName=ref.getNode().getParent().getParent();
+        if (fullName.isGetProp()) {
+          props.add(fullName.getLastChild().getString());
+        }
+      }
+    }
+  }
+}
