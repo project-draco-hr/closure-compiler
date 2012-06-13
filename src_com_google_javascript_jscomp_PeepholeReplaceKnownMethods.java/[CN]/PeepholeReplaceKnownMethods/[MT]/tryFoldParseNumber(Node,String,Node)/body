@@ -49,9 +49,15 @@
       return n;
     }
     stringVal=NodeUtil.trimJsWhiteSpace(stringVal);
+    if (stringVal.length() == 0) {
+      return n;
+    }
   }
   Node newNode;
-  if (isParseInt) {
+  if (stringVal.equals("0")) {
+    newNode=IR.number(0);
+  }
+ else   if (isParseInt) {
     if (radix == 0 || radix == 16) {
       if (stringVal.length() > 1 && stringVal.substring(0,2).equalsIgnoreCase("0x")) {
         radix=16;
