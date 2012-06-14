@@ -3,8 +3,11 @@
   Name parent=name.parent;
   JSModuleGraph moduleGraph=compiler.getModuleGraph();
   for (  Ref ref : name.getRefs()) {
+    boolean isGlobalExpr=ref.getNode().getParent().isExprResult();
     if (!isDefined && !isTypedef(ref)) {
-      reportRefToUndefinedName(name,ref);
+      if (!isGlobalExpr) {
+        reportRefToUndefinedName(name,ref);
+      }
     }
  else     if (declaration != null && ref.getModule() != declaration.getModule() && !moduleGraph.dependsOn(ref.getModule(),declaration.getModule())) {
       reportBadModuleReference(name,ref);
