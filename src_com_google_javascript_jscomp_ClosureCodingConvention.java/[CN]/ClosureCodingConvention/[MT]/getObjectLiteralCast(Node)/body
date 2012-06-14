@@ -1,5 +1,9 @@
 {
   Preconditions.checkArgument(callNode.isCall());
+  ObjectLiteralCast proxyCast=super.getObjectLiteralCast(callNode);
+  if (proxyCast != null) {
+    return proxyCast;
+  }
   Node callName=callNode.getFirstChild();
   if (!"goog.reflect.object".equals(callName.getQualifiedName()) || callNode.getChildCount() != 3) {
     return null;
