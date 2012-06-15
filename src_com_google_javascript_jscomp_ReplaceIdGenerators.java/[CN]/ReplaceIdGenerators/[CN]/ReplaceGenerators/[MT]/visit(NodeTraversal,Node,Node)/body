@@ -4,7 +4,7 @@
   }
   String callName=n.getFirstChild().getQualifiedName();
   boolean consistent=false;
-  NameGenerator nameGenerator=nameGenerators.get(callName);
+  NameSupplier nameGenerator=nameGenerators.get(callName);
   if (nameGenerator == null) {
     nameGenerator=consistNameGenerators.get(callName);
     consistent=true;
@@ -34,12 +34,12 @@
     Map<String,String> entry=consistNameMap.get(callName);
     rename=entry.get(id.getString());
     if (rename == null) {
-      rename=nameGenerator.generateNextName();
+      rename=nameGenerator.getName(id.getString());
       entry.put(id.getString(),rename);
     }
   }
  else {
-    rename=nameGenerator.generateNextName();
+    rename=nameGenerator.getName(id.getString());
   }
   parent.replaceChild(n,IR.string(rename));
   idGeneratorMap.add(new Replacement(rename,t.getSourceName(),t.getLineNumber()));
