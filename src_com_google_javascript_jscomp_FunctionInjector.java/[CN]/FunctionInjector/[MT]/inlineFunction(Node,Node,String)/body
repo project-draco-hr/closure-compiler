@@ -18,11 +18,9 @@ resultName=null;
 needsDefaultReturnResult=false;
 break;
 case EXPRESSION:
-resultName=getUniqueResultName();
-needsDefaultReturnResult=isCallInLoop;
-break;
+throw new IllegalStateException("Movable expressions must be moved before inlining.");
 case DECOMPOSABLE_EXPRESSION:
-throw new IllegalStateException("Decomposable expressions must decomposed before inlining.");
+throw new IllegalStateException("Decomposable expressions must be decomposed before inlining.");
 default :
 throw new IllegalStateException("Unexpected call site type.");
 }
@@ -42,16 +40,6 @@ break;
 case SIMPLE_CALL:
 Preconditions.checkState(parent.isExprResult());
 grandParent.replaceChild(parent,newBlock);
-break;
-case EXPRESSION:
-Node injectionPoint=ExpressionDecomposer.findInjectionPoint(callNode);
-Preconditions.checkNotNull(injectionPoint);
-Node injectionPointParent=injectionPoint.getParent();
-Preconditions.checkNotNull(injectionPointParent);
-Preconditions.checkState(NodeUtil.isStatementBlock(injectionPointParent));
-newBlock.addChildrenToFront(NodeUtil.newVarNode(resultName,null).copyInformationFromForTree(callNode));
-injectionPointParent.addChildBefore(newBlock,injectionPoint);
-parent.replaceChild(callNode,IR.name(resultName));
 break;
 default :
 throw new IllegalStateException("Unexpected call site type.");

@@ -3,14 +3,14 @@
   if (callSiteType == CallSiteType.UNSUPPORTED) {
     return CanInlineResult.NO;
   }
-  if (!allowDecomposition && callSiteType == CallSiteType.DECOMPOSABLE_EXPRESSION) {
+  if (!allowDecomposition && (callSiteType == CallSiteType.DECOMPOSABLE_EXPRESSION || callSiteType == CallSiteType.EXPRESSION)) {
     return CanInlineResult.NO;
   }
   if (!callMeetsBlockInliningRequirements(t,callNode,fnNode,namesToAlias)) {
     return CanInlineResult.NO;
   }
-  if (callSiteType == CallSiteType.DECOMPOSABLE_EXPRESSION) {
-    return CanInlineResult.AFTER_DECOMPOSITION;
+  if (callSiteType == CallSiteType.DECOMPOSABLE_EXPRESSION || callSiteType == CallSiteType.EXPRESSION) {
+    return CanInlineResult.AFTER_PREPARATION;
   }
  else {
     return CanInlineResult.YES;
