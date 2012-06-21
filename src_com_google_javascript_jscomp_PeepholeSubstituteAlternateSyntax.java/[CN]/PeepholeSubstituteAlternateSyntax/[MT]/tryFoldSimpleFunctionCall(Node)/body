@@ -3,7 +3,7 @@
   Node callTarget=n.getFirstChild();
   if (callTarget != null && callTarget.isName() && callTarget.getString().equals("String")) {
     Node value=callTarget.getNext();
-    if (value != null) {
+    if (value != null && value.getNext() == null && NodeUtil.isImmutableValue(value)) {
       Node addition=IR.add(IR.string("").srcref(callTarget),value.detachFromParent());
       n.getParent().replaceChild(n,addition);
       reportCodeChange();
