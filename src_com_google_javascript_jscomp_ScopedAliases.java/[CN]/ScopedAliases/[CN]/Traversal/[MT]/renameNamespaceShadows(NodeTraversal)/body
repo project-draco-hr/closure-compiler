@@ -1,0 +1,10 @@
+{
+  if (hasNamespaceShadows) {
+    MakeDeclaredNamesUnique.Renamer renamer=new MakeDeclaredNamesUnique.WhitelistedRenamer(new MakeDeclaredNamesUnique.ContextualRenamer(),forbiddenLocals);
+    for (    String s : forbiddenLocals) {
+      renamer.addDeclaredName(s);
+    }
+    MakeDeclaredNamesUnique uniquifier=new MakeDeclaredNamesUnique(renamer);
+    NodeTraversal.traverse(compiler,t.getScopeRoot(),uniquifier);
+  }
+}
