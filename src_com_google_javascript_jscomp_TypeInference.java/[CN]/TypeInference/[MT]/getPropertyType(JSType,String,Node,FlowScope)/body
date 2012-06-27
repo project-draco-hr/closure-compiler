@@ -1,20 +1,24 @@
 {
+  JSType unknownType=getNativeType(UNKNOWN_TYPE);
+  JSType propertyType=null;
+  boolean isLocallyInferred=false;
   String qualifiedName=n.getQualifiedName();
   StaticSlot<JSType> var=scope.getSlot(qualifiedName);
   if (var != null) {
     JSType varType=var.getType();
     if (varType != null) {
-      if (varType.equals(getNativeType(UNKNOWN_TYPE)) && var != syntacticScope.getSlot(qualifiedName)) {
-        return getNativeType(CHECKED_UNKNOWN_TYPE);
-      }
- else {
-        return varType;
+      boolean isDeclared=!var.isTypeInferred();
+      isLocallyInferred=(var != syntacticScope.getSlot(qualifiedName));
+      if (isDeclared || isLocallyInferred) {
+        propertyType=varType;
       }
     }
   }
-  JSType propertyType=null;
-  if (objType != null) {
-    propertyType=objType.findPropertyType(propName);
+  if (propertyType == null && objType != null) {
+    JSType foundType=objType.findPropertyType(propName);
+    if (foundType != null) {
+      propertyType=foundType;
+    }
   }
   if ((propertyType == null || propertyType.isUnknownType()) && qualifiedName != null) {
     ObjectType regType=ObjectType.cast(registry.getType(qualifiedName));
@@ -22,5 +26,13 @@
       propertyType=regType.getConstructor();
     }
   }
-  return propertyType;
+  if (propertyType == null) {
+    return getNativeType(UNKNOWN_TYPE);
+  }
+ else   if (propertyType.equals(unknownType) && isLocallyInferred) {
+    return getNativeType(CHECKED_UNKNOWN_TYPE);
+  }
+ else {
+    return propertyType;
+  }
 }
