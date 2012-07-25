@@ -2,10 +2,9 @@
   Compiler compiler=new Compiler();
   CompilerOptions options=getCompilerOptions();
   options.ideMode=true;
-  JSSourceFile[] inputs={JSSourceFile.fromCode(fileName1,js1)};
+  List<SourceFile> inputs=ImmutableList.of(SourceFile.fromCode(fileName1,js1));
   if (js2 != null && fileName2 != null) {
-    JSSourceFile[] multiple={JSSourceFile.fromCode(fileName1,js1),JSSourceFile.fromCode(fileName2,js2)};
-    inputs=multiple;
+    inputs=ImmutableList.of(SourceFile.fromCode(fileName1,js1),SourceFile.fromCode(fileName2,js2));
   }
   Result result=compiler.compile(EXTERNS,inputs,options);
   assertTrue("compilation failed",result.success);
