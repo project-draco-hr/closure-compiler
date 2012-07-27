@@ -1,3 +1,51 @@
 {
-  return runCallable(callable,useThreads,options.tracer.isOn());
+  final boolean dumpTraceReport=options != null && options.tracer.isOn();
+  T result=null;
+  final Throwable[] exception=new Throwable[1];
+  Callable<T> bootCompilerThread=new Callable<T>(){
+    @Override public T call(){
+      try {
+        compilerThread=Thread.currentThread();
+        if (dumpTraceReport) {
+          Tracer.initCurrentThreadTrace();
+        }
+        return callable.call();
+      }
+ catch (      Throwable e) {
+        exception[0]=e;
+      }
+ finally {
+        compilerThread=null;
+        if (dumpTraceReport) {
+          Tracer.logAndClearCurrentThreadTrace();
+        }
+      }
+      return null;
+    }
+  }
+;
+  Preconditions.checkState(compilerThread == null || compilerThread == Thread.currentThread(),"Please do not share the Compiler across threads");
+  if (useThreads && compilerThread == null) {
+    try {
+      result=compilerExecutor.submit(bootCompilerThread).get();
+    }
+ catch (    InterruptedException e) {
+      throw Throwables.propagate(e);
+    }
+catch (    ExecutionException e) {
+      throw Throwables.propagate(e);
+    }
+  }
+ else {
+    try {
+      result=callable.call();
+    }
+ catch (    Exception e) {
+      exception[0]=e;
+    }
+  }
+  if (exception[0] != null) {
+    throw new RuntimeException(exception[0]);
+  }
+  return result;
 }
