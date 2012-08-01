@@ -5,6 +5,9 @@
       diagnosticGroups.setWarningLevel(options,entry.groupName,entry.level);
     }
   }
+  if (!config.warningsWhitelistFile.isEmpty()) {
+    options.addWarningsGuard(WhitelistWarningsGuard.fromFile(new File(config.warningsWhitelistFile)));
+  }
   createDefineOrTweakReplacements(config.define,options,false);
   options.setTweakProcessing(config.tweakProcessing);
   createDefineOrTweakReplacements(config.tweak,options,true);
