@@ -8,12 +8,7 @@ case Token.NAME:
     typeable=visitName(t,n,parent);
   break;
 case Token.PARAM_LIST:
-if (!parent.isFunction()) {
-  ensureTyped(t,n,getJSType(n.getFirstChild()));
-}
- else {
-  typeable=false;
-}
+typeable=false;
 break;
 case Token.COMMA:
 ensureTyped(t,n,getJSType(n.getLastChild()));
@@ -60,7 +55,6 @@ typeable=false;
 break;
 case Token.NEW:
 visitNew(t,n);
-typeable=true;
 break;
 case Token.CALL:
 visitCall(t,n);
