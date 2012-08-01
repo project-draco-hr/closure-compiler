@@ -103,8 +103,18 @@ case Token.NE:
 case Token.SHEQ:
 case Token.SHNE:
 {
-leftType=getJSType(n.getFirstChild());
-rightType=getJSType(n.getLastChild());
+left=n.getFirstChild();
+right=n.getLastChild();
+if (left.isTypeOf()) {
+if (right.isString()) {
+checkTypeofString(t,right,right.getString());
+}
+}
+ else if (right.isTypeOf() && left.isString()) {
+checkTypeofString(t,left,left.getString());
+}
+leftType=getJSType(left);
+rightType=getJSType(right);
 JSType leftTypeRestricted=leftType.restrictByNotNullOrUndefined();
 JSType rightTypeRestricted=rightType.restrictByNotNullOrUndefined();
 TernaryValue result=TernaryValue.UNKNOWN;
