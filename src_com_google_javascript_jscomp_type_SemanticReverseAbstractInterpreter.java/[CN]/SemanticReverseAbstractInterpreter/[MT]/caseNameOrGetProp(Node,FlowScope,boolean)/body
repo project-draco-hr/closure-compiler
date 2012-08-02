@@ -1,10 +1,7 @@
 {
   JSType type=getTypeIfRefinable(name,blindScope);
   if (type != null) {
-    JSType restrictedType=type.getRestrictedTypeGivenToBooleanOutcome(outcome);
-    FlowScope informed=blindScope.createChildFlowScope();
-    declareNameInScope(informed,name,restrictedType);
-    return informed;
+    return maybeRestrictName(blindScope,name,type,type.getRestrictedTypeGivenToBooleanOutcome(outcome));
   }
   return blindScope;
 }

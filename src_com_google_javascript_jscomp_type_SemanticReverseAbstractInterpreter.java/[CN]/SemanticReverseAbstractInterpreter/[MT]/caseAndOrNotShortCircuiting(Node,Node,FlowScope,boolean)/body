@@ -9,8 +9,8 @@
     leftType=left.getJSType();
     blindScope=firstPreciserScopeKnowingConditionOutcome(left,blindScope,condition);
   }
-  leftType=(leftType == null) ? null : leftType.getRestrictedTypeGivenToBooleanOutcome(condition);
-  if (leftType == null) {
+  JSType restrictedLeftType=(leftType == null) ? null : leftType.getRestrictedTypeGivenToBooleanOutcome(condition);
+  if (restrictedLeftType == null) {
     return firstPreciserScopeKnowingConditionOutcome(right,blindScope,condition);
   }
   JSType rightType=getTypeIfRefinable(right,blindScope);
@@ -24,17 +24,8 @@
     blindScope=firstPreciserScopeKnowingConditionOutcome(right,blindScope,condition);
   }
   if (condition) {
-    rightType=(rightType == null) ? null : rightType.getRestrictedTypeGivenToBooleanOutcome(condition);
-    if ((leftType != null && leftIsRefineable) || (rightType != null && rightIsRefineable)) {
-      FlowScope informed=blindScope.createChildFlowScope();
-      if (leftIsRefineable && leftType != null) {
-        declareNameInScope(informed,left,leftType);
-      }
-      if (rightIsRefineable && rightType != null) {
-        declareNameInScope(informed,right,rightType);
-      }
-      return informed;
-    }
+    JSType restrictedRightType=(rightType == null) ? null : rightType.getRestrictedTypeGivenToBooleanOutcome(condition);
+    return maybeRestrictTwoNames(blindScope,left,leftType,leftIsRefineable ? restrictedLeftType : null,right,rightType,rightIsRefineable ? restrictedRightType : null);
   }
   return blindScope;
 }

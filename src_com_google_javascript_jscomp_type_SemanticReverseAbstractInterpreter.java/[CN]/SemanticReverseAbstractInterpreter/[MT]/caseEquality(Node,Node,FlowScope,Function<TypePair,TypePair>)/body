@@ -18,15 +18,8 @@
     rightType=right.getJSType();
   }
   TypePair merged=merging.apply(new TypePair(leftType,rightType));
-  if (merged != null && ((leftIsRefineable && merged.typeA != null) || (rightIsRefineable && merged.typeB != null))) {
-    FlowScope informed=blindScope.createChildFlowScope();
-    if (leftIsRefineable && merged.typeA != null) {
-      declareNameInScope(informed,left,merged.typeA);
-    }
-    if (rightIsRefineable && merged.typeB != null) {
-      declareNameInScope(informed,right,merged.typeB);
-    }
-    return informed;
+  if (merged != null) {
+    return maybeRestrictTwoNames(blindScope,left,leftType,leftIsRefineable ? merged.typeA : null,right,rightType,rightIsRefineable ? merged.typeB : null);
   }
   return blindScope;
 }

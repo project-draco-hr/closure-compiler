@@ -15,11 +15,5 @@
  else {
     visitor=new RestrictByFalseInstanceOfResultVisitor(targetType);
   }
-  JSType restrictedLeftType=leftType.visit(visitor);
-  if (restrictedLeftType != null && !restrictedLeftType.equals(leftType)) {
-    FlowScope informed=blindScope.createChildFlowScope();
-    declareNameInScope(informed,left,restrictedLeftType);
-    return informed;
-  }
-  return blindScope;
+  return maybeRestrictName(blindScope,left,leftType,leftType.visit(visitor));
 }
