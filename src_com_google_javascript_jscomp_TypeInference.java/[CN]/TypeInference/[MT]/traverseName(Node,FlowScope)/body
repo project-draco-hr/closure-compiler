@@ -12,13 +12,7 @@
     if (var != null) {
       boolean isInferred=var.isTypeInferred();
       boolean unflowable=isInferred && isUnflowable(syntacticScope.getVar(varName));
-      boolean nonLocalInferredSlot=false;
-      if (isInferred && syntacticScope.isLocal()) {
-        Var maybeOuterVar=syntacticScope.getParent().getVar(varName);
-        if (var == maybeOuterVar && !maybeOuterVar.isMarkedAssignedExactlyOnce()) {
-          nonLocalInferredSlot=true;
-        }
-      }
+      boolean nonLocalInferredSlot=isInferred && syntacticScope.getParent() != null && var == syntacticScope.getParent().getSlot(varName);
       if (!unflowable && !nonLocalInferredSlot) {
         type=var.getType();
         if (type == null) {
