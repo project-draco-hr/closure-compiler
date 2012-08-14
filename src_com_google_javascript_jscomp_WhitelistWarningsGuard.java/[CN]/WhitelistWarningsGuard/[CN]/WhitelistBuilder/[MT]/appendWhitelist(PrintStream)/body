@@ -8,12 +8,13 @@
   }
   Multimap<DiagnosticType,String> warningsByType=TreeMultimap.create();
   for (  JSError warning : warnings) {
-    warningsByType.put(warning.getType(),formatWarning(warning,withLineNumber));
+    warningsByType.put(warning.getType(),formatWarning(warning,true));
   }
   for (  DiagnosticType type : warningsByType.keySet()) {
-    out.append("\n# Warning ").append(type.key).append(": ").println(getFirstLine(type.format.toPattern()));
+    out.append("\n# Warning ").append(type.key).append(": ").println(Iterables.get(LINE_SPLITTER.split(type.format.toPattern()),0));
     for (    String warning : warningsByType.get(type)) {
       out.println(warning);
     }
   }
+  out.flush();
 }

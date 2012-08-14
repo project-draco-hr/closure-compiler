@@ -1,7 +1,11 @@
 {
   Set<String> result=Sets.newHashSet();
-  for (  String match : whitelist) {
-    result.add(LINE_NUMBER.matcher(match).replaceFirst(":"));
+  for (  String line : whitelist) {
+    String trimmed=line.trim();
+    if (trimmed.isEmpty() || trimmed.charAt(0) == '#') {
+      continue;
+    }
+    result.add(LINE_NUMBER.matcher(trimmed).replaceFirst(":"));
   }
   return ImmutableSet.copyOf(result);
 }

@@ -1,13 +1,16 @@
 {
   StringBuilder sb=new StringBuilder();
   sb.append(error.sourceName).append(":");
-  if (withLineNumber) {
+  if (withMetaData) {
     sb.append(error.lineNumber);
   }
-  String descriptionFirstLine=getFirstLine(error.description);
-  if (!withLineNumber) {
-    descriptionFirstLine=LINE_NUMBER.matcher(descriptionFirstLine).replaceAll(":");
+  List<String> lines=ImmutableList.copyOf(LINE_SPLITTER.split(error.description));
+  sb.append("  ").append(lines.get(0));
+  if (withMetaData) {
+    for (int i=1; i < lines.size(); i++) {
+      sb.append("\n# ").append(lines.get(i));
+    }
+    sb.append("\n");
   }
-  sb.append("  ").append(descriptionFirstLine);
   return sb.toString();
 }
