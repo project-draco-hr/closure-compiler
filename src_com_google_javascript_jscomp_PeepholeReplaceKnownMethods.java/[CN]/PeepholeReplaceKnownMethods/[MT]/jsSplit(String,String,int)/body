@@ -1,5 +1,6 @@
 {
   Preconditions.checkArgument(limit >= 0);
+  Preconditions.checkArgument(stringValue != null);
   if (limit == 0) {
     return new String[0];
   }
@@ -13,16 +14,18 @@
     }
   }
  else {
-    int startIndex=0, matchEndIndex;
-    while ((matchEndIndex=jsSplitMatch(stringValue,startIndex,separator)) >= 0 && splitStrings.size() < limit) {
-      if (separator.length() == 0) {
-        matchEndIndex++;
-      }
-      splitStrings.add(stringValue.substring(startIndex,matchEndIndex - separator.length()));
-      startIndex=matchEndIndex;
+    int startIndex=0, matchIndex;
+    while ((matchIndex=jsSplitMatch(stringValue,startIndex,separator)) >= 0 && splitStrings.size() < limit) {
+      splitStrings.add(stringValue.substring(startIndex,matchIndex));
+      startIndex=matchIndex + separator.length();
     }
-    if (startIndex < stringValue.length() && splitStrings.size() < limit) {
-      splitStrings.add(stringValue.substring(startIndex));
+    if (splitStrings.size() < limit) {
+      if (startIndex < stringValue.length()) {
+        splitStrings.add(stringValue.substring(startIndex));
+      }
+ else {
+        splitStrings.add("");
+      }
     }
   }
   return splitStrings.toArray(new String[splitStrings.size()]);
