@@ -1,20 +1,20 @@
 {
   FlowScope joined=join(chainA,chainB);
   for (int i=0; i < LONG_CHAIN_LENGTH; i++) {
-    assertEquals(i % 2 == 0 ? NUMBER_TYPE : BOOLEAN_TYPE,chainA.getSlot("local" + i).getType());
-    assertEquals(i % 3 == 0 ? STRING_TYPE : BOOLEAN_TYPE,chainB.getSlot("local" + i).getType());
+    assertTypeEquals(i % 2 == 0 ? NUMBER_TYPE : BOOLEAN_TYPE,chainA.getSlot("local" + i).getType());
+    assertTypeEquals(i % 3 == 0 ? STRING_TYPE : BOOLEAN_TYPE,chainB.getSlot("local" + i).getType());
     JSType joinedSlotType=joined.getSlot("local" + i).getType();
     if (i % 6 == 0) {
-      assertEquals(createUnionType(STRING_TYPE,NUMBER_TYPE),joinedSlotType);
+      assertTypeEquals(createUnionType(STRING_TYPE,NUMBER_TYPE),joinedSlotType);
     }
  else     if (i % 2 == 0) {
-      assertEquals(createUnionType(NUMBER_TYPE,BOOLEAN_TYPE),joinedSlotType);
+      assertTypeEquals(createUnionType(NUMBER_TYPE,BOOLEAN_TYPE),joinedSlotType);
     }
  else     if (i % 3 == 0) {
-      assertEquals(createUnionType(STRING_TYPE,BOOLEAN_TYPE),joinedSlotType);
+      assertTypeEquals(createUnionType(STRING_TYPE,BOOLEAN_TYPE),joinedSlotType);
     }
  else {
-      assertEquals(BOOLEAN_TYPE,joinedSlotType);
+      assertTypeEquals(BOOLEAN_TYPE,joinedSlotType);
     }
   }
   assertScopesDiffer(chainA,chainB);
