@@ -82,7 +82,12 @@
   if (options.closurePass) {
     checks.add(closureReplaceGetCssName);
   }
-  checks.add(options.messageBundle != null ? replaceMessages : createEmptyPass("replaceMessages"));
+  if (options.replaceMessagesWithChromeI18n) {
+    checks.add(replaceMessagesForChrome);
+  }
+ else   if (options.messageBundle != null) {
+    checks.add(replaceMessages);
+  }
   if (options.getTweakProcessing().isOn()) {
     checks.add(processTweaks);
   }

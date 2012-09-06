@@ -1,0 +1,26 @@
+{
+  Node newValueNode=getChromeI18nGetMessageNode(message.getId());
+  if (!message.placeholders().isEmpty()) {
+    Node placeholderValues=origNode.getLastChild();
+    checkNode(placeholderValues,Token.OBJECTLIT);
+    List<String> placeholderNames=Lists.newArrayList();
+    for (    CharSequence cs : message.parts()) {
+      if (cs instanceof PlaceholderReference) {
+        String placeholderName=((PlaceholderReference)cs).getName();
+        placeholderNames.add(placeholderName);
+      }
+    }
+    Collections.sort(placeholderNames);
+    Node placeholderValueArray=IR.arraylit();
+    for (    String name : placeholderNames) {
+      Node value=getPlaceholderValue(placeholderValues,name);
+      if (value == null) {
+        throw new MalformedException("No value was provided for placeholder " + name,origNode);
+      }
+      placeholderValueArray.addChildToBack(value);
+    }
+    newValueNode.addChildToBack(placeholderValueArray);
+  }
+  newValueNode.copyInformationFromForTree(origNode);
+  return newValueNode;
+}

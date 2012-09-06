@@ -1,0 +1,12 @@
+{
+  try {
+    Node msgNode=definition.getMessageNode();
+    Node newValue=getNewValueNode(msgNode,message);
+    newValue.copyInformationFromForTree(msgNode);
+    definition.getMessageParentNode().replaceChild(msgNode,newValue);
+    compiler.reportCodeChange();
+  }
+ catch (  MalformedException e) {
+    compiler.report(JSError.make(message.getSourceName(),e.getNode(),MESSAGE_TREE_MALFORMED,e.getMessage()));
+  }
+}
