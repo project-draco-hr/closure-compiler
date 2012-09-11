@@ -1,0 +1,8 @@
+{
+  String code="var x = null; try { +x.FOO; } catch (e) {}";
+  CompilerOptions options=createCompilerOptions();
+  testSame(options,code);
+  CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
+  options.renamePrefixNamespace="_";
+  test(options,code,"_.x = null; try { +_.x.FOO; } catch (e) {}");
+}
