@@ -4,11 +4,13 @@
   Preconditions.checkArgument(source == null || Token.FUNCTION == source.getType());
   Preconditions.checkNotNull(arrowType);
   this.source=source;
-  this.kind=isConstructor ? Kind.CONSTRUCTOR : Kind.ORDINARY;
   if (isConstructor) {
+    this.kind=Kind.CONSTRUCTOR;
+    this.propAccess=PropAccess.ANY;
     this.typeOfThis=typeOfThis != null ? typeOfThis : new InstanceObjectType(registry,this,nativeType);
   }
  else {
+    this.kind=Kind.ORDINARY;
     this.typeOfThis=typeOfThis != null ? typeOfThis : registry.getNativeObjectType(JSTypeNative.UNKNOWN_TYPE);
   }
   this.call=arrowType;

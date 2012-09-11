@@ -1,6 +1,12 @@
 {
   FunctionType fnType=typeRegistry.createConstructorType(fnName,contents.getSourceNode(),parametersNode,returnType);
   JSType existingType=typeRegistry.getType(fnName);
+  if (makesStructs) {
+    fnType.setStruct();
+  }
+ else   if (makesDicts) {
+    fnType.setDict();
+  }
   if (existingType != null) {
     boolean isInstanceObject=existingType.isInstanceType();
     if (isInstanceObject || fnName.equals("Function")) {

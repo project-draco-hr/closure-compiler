@@ -154,20 +154,16 @@ validator.expectNotNullOrUndefined(t,n,rightType,message,getNativeType(STRING_TY
 ensureTyped(t,n,BOOLEAN_TYPE);
 break;
 case Token.IN:
+validator.expectObject(t,n,getJSType(n.getLastChild()),"'in' requires an object");
 left=n.getFirstChild();
-right=n.getLastChild();
-leftType=getJSType(left);
-rightType=getJSType(right);
-validator.expectObject(t,n,rightType,"'in' requires an object");
-validator.expectString(t,left,leftType,"left side of 'in'");
+validator.expectString(t,left,getJSType(left),"left side of 'in'");
 ensureTyped(t,n,BOOLEAN_TYPE);
 break;
 case Token.INSTANCEOF:
 left=n.getFirstChild();
 right=n.getLastChild();
-leftType=getJSType(left);
 rightType=getJSType(right).restrictByNotNullOrUndefined();
-validator.expectAnyObject(t,left,leftType,"deterministic instanceof yields false");
+validator.expectAnyObject(t,left,getJSType(left),"deterministic instanceof yields false");
 validator.expectActualObject(t,right,rightType,"instanceof requires an object");
 ensureTyped(t,n,BOOLEAN_TYPE);
 break;

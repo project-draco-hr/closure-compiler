@@ -1,6 +1,9 @@
 {
   Preconditions.checkState(n.isGetElem());
   Node indexNode=n.getLastChild();
+  if (objType.isStruct()) {
+    report(JSError.make(t.getSourceName(),indexNode,ILLEGAL_PROPERTY_ACCESS,"'[]'","struct"));
+  }
   if (objType.isUnknownType()) {
     expectStringOrNumber(t,indexNode,indexType,"property access");
   }
