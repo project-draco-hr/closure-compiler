@@ -1,5 +1,8 @@
 {
   Preconditions.checkArgument(n.isName() || n.isGetProp() || n.isGetElem());
   Node parent=n.getParent();
+  if (parent == null) {
+    return false;
+  }
   return (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || (NodeUtil.isForIn(parent) && parent.getFirstChild() == n) || parent.isVar()|| (parent.isFunction() && parent.getFirstChild() == n)|| parent.isDec()|| parent.isInc()|| parent.isParamList()|| parent.isCatch();
 }
