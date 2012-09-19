@@ -1,5 +1,6 @@
 {
-  if ((parent.isName() || parent.isAssign()) && referring != null && scopes.get(parent) == referring) {
+  boolean isPrototypePropAssignment=parent.isAssign() && NodeUtil.isPrototypeProperty(parent.getFirstChild());
+  if ((parent.isName() || parent.isAssign()) && !isPrototypePropAssignment && referring != null && scopes.get(parent) == referring) {
     recordAlias(referringName,name);
     return true;
   }
