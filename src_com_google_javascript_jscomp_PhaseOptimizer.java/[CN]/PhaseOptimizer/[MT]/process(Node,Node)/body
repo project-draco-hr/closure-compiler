@@ -1,16 +1,12 @@
 {
-  double progress=0.0;
-  double progressStep=0.0;
+  progress=0.0;
+  progressStep=0.0;
   if (progressRange != null) {
     progressStep=(progressRange.maxValue - progressRange.initialValue) / passes.size();
     progress=progressRange.initialValue;
   }
   for (  CompilerPass pass : passes) {
     pass.process(externs,root);
-    if (progressRange != null) {
-      progress+=progressStep;
-      compiler.setProgress(progress);
-    }
     if (hasHaltingErrors()) {
       return;
     }
