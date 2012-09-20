@@ -19,14 +19,14 @@
   while (cArg != null || fnParam != null) {
     if (fnParam != null) {
       if (cArg != null) {
-        if (NodeUtil.mayEffectMutableState(cArg) && NodeUtil.getNameReferenceCount(block,fnParam.getString()) > 1) {
+        if (NodeUtil.mayEffectMutableState(cArg,compiler) && NodeUtil.getNameReferenceCount(block,fnParam.getString()) > 1) {
           return CanInlineResult.NO;
         }
       }
       fnParam=fnParam.getNext();
     }
     if (cArg != null) {
-      if (NodeUtil.mayHaveSideEffects(cArg)) {
+      if (NodeUtil.mayHaveSideEffects(cArg,compiler)) {
         return CanInlineResult.NO;
       }
       cArg=cArg.getNext();

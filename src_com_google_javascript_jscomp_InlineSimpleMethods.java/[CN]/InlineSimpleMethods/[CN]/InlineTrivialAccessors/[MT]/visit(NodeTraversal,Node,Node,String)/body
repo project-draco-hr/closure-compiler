@@ -15,12 +15,12 @@
           logger.fine("Inlining property accessor: " + callName);
           inlinePropertyReturn(parent,callNode,returned);
         }
- else         if (NodeUtil.isLiteralValue(returned,false) && !NodeUtil.mayHaveSideEffects(callNode.getFirstChild())) {
+ else         if (NodeUtil.isLiteralValue(returned,false) && !NodeUtil.mayHaveSideEffects(callNode.getFirstChild(),compiler)) {
           logger.fine("Inlining constant accessor: " + callName);
           inlineConstReturn(parent,callNode,returned);
         }
       }
- else       if (isEmptyMethod(firstDefinition) && !NodeUtil.mayHaveSideEffects(callNode.getFirstChild())) {
+ else       if (isEmptyMethod(firstDefinition) && !NodeUtil.mayHaveSideEffects(callNode.getFirstChild(),compiler)) {
         logger.fine("Inlining empty method: " + callName);
         inlineEmptyMethod(t,parent,callNode);
       }
