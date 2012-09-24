@@ -4,17 +4,17 @@
   Node thenBranch=condition.getNext();
   Node elseBranch=thenBranch.getNext();
   if (thenHasSideEffects && elseHasSideEffects) {
-    Node simplified=hook.cloneNode();
-    simplified.addChildToBack(condition.cloneTree());
-    simplified.addChildToBack(simplifyShortCircuitBranch(thenBranch));
-    simplified.addChildToBack(simplifyShortCircuitBranch(elseBranch));
-    replacements.add(simplified);
+    hook.detachChildren();
+    hook.addChildToBack(condition);
+    hook.addChildToBack(simplifyShortCircuitBranch(thenBranch));
+    hook.addChildToBack(simplifyShortCircuitBranch(elseBranch));
+    keepSubTree(hook);
   }
  else   if (thenHasSideEffects || elseHasSideEffects) {
     int type=thenHasSideEffects ? Token.AND : Token.OR;
     Node body=thenHasSideEffects ? thenBranch : elseBranch;
-    Node simplified=new Node(type,condition.cloneTree(),simplifyShortCircuitBranch(body)).copyInformationFrom(hook);
-    replacements.add(simplified);
+    Node simplified=new Node(type,condition.detachFromParent(),simplifyShortCircuitBranch(body)).copyInformationFrom(hook);
+    keepSubTree(simplified);
   }
  else {
     throw new IllegalArgumentException("keepSimplifiedHookExpression must keep at least 1 branch");
