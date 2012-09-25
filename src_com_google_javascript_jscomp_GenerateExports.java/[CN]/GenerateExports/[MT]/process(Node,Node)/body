@@ -2,6 +2,7 @@
   FindExportableNodes findExportableNodes=new FindExportableNodes(compiler);
   NodeTraversal.traverse(compiler,root,findExportableNodes);
   Map<String,GenerateNodeContext> exports=findExportableNodes.getExports();
+  CodingConvention convention=compiler.getCodingConvention();
   for (  Map.Entry<String,GenerateNodeContext> entry : exports.entrySet()) {
     String export=entry.getKey();
     GenerateNodeContext context=entry.getValue();
@@ -23,16 +24,15 @@
     }
     Node call;
     if (useExportSymbol) {
-      call=IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),exportSymbolFunction,context.getNode(),export),IR.string(export),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),export,context.getNode(),export));
+      call=IR.call(NodeUtil.newQualifiedNameNode(convention,exportSymbolFunction,context.getNode(),export),IR.string(export),NodeUtil.newQualifiedNameNode(convention,export,context.getNode(),export));
     }
  else {
       String property=getPropertyName(node);
-      call=IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),exportPropertyFunction,context.getNode(),exportPropertyFunction),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),parent,context.getNode(),exportPropertyFunction),IR.string(property),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),export,context.getNode(),exportPropertyFunction));
+      call=IR.call(NodeUtil.newQualifiedNameNode(convention,exportPropertyFunction,context.getNode(),exportPropertyFunction),NodeUtil.newQualifiedNameNode(convention,parent,context.getNode(),exportPropertyFunction),IR.string(property),NodeUtil.newQualifiedNameNode(convention,export,context.getNode(),exportPropertyFunction));
     }
     Node expression=IR.exprResult(call);
     annotate(expression);
     Node insertionPoint=context.getContextNode().getNext();
-    CodingConvention convention=compiler.getCodingConvention();
     while (insertionPoint != null && NodeUtil.isExprCall(insertionPoint) && convention.getClassesDefinedByCall(insertionPoint.getFirstChild()) != null) {
       insertionPoint=insertionPoint.getNext();
     }
