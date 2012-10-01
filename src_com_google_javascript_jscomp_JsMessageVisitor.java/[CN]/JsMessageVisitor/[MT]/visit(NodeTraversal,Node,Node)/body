@@ -26,8 +26,12 @@ msgNode=node.getLastChild();
 msgNodeParent=node;
 break;
 case Token.CALL:
-if (MSG_FUNCTION_NAME.equals(node.getFirstChild().getQualifiedName())) {
+String fnName=node.getFirstChild().getQualifiedName();
+if (MSG_FUNCTION_NAME.equals(fnName)) {
 googMsgNodes.put(node,traversal.getSourceName());
+}
+ else if (MSG_FALLBACK_FUNCTION_NAME.equals(fnName)) {
+visitFallbackFunctionCall(traversal,node);
 }
 return;
 default :
@@ -64,8 +68,9 @@ return;
 }
 JsMessage extractedMessage=builder.build(idGenerator);
 if (needToCheckDuplications && !isUnnamedMsg && !extractedMessage.isExternal()) {
-checkIfMessageDuplicated(traversal.getSourceName(),messageKey,msgNode);
+checkIfMessageDuplicated(extractedMessage,messageKey,msgNode);
 }
+trackMessage(traversal,extractedMessage,messageKey,msgNode,isUnnamedMsg);
 if (extractedMessage.isEmpty()) {
 compiler.report(traversal.makeError(node,MESSAGE_HAS_NO_TEXT,messageKey));
 }
