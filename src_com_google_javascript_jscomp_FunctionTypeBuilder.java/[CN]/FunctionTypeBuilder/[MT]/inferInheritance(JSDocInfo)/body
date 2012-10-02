@@ -21,17 +21,22 @@
         reportWarning(EXTENDS_WITHOUT_TYPEDEF,fnName);
       }
     }
-    if (isConstructor || isInterface) {
-      implementedInterfaces=Lists.newArrayList();
-      for (      JSTypeExpression t : info.getImplementedInterfaces()) {
-        JSType maybeInterType=t.evaluate(scope,typeRegistry);
-        if (maybeInterType != null && maybeInterType.setValidator(new ImplementedTypeValidator())) {
-          implementedInterfaces.add((ObjectType)maybeInterType);
+    if (info.getImplementedInterfaceCount() > 0) {
+      if (isConstructor) {
+        implementedInterfaces=Lists.newArrayList();
+        for (        JSTypeExpression t : info.getImplementedInterfaces()) {
+          JSType maybeInterType=t.evaluate(scope,typeRegistry);
+          if (maybeInterType != null && maybeInterType.setValidator(new ImplementedTypeValidator())) {
+            implementedInterfaces.add((ObjectType)maybeInterType);
+          }
         }
       }
-    }
- else     if (info.getImplementedInterfaceCount() > 0) {
-      reportWarning(CONSTRUCTOR_REQUIRED,"@implements",fnName);
+ else       if (isInterface) {
+        reportWarning(TypeCheck.CONFLICTING_IMPLEMENTED_TYPE,fnName);
+      }
+ else {
+        reportWarning(CONSTRUCTOR_REQUIRED,"@implements",fnName);
+      }
     }
     if (isInterface) {
       extendedInterfaces=Lists.newArrayList();
