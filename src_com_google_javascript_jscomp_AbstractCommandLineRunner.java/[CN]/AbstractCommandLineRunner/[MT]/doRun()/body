@@ -32,16 +32,6 @@
  else {
       result=compiler.compile(externs,inputs,options);
     }
-    if (options.processCommonJSModules) {
-      modules=Lists.newArrayList(compiler.getDegenerateModuleGraph().getAllModules());
-      try {
-        SortedDependencies<JSModule> sorter=new SortedDependencies<JSModule>(modules);
-        modules=sorter.getDependenciesOf(modules,true);
-      }
- catch (      CircularDependencyException e) {
-        throw Throwables.propagate(e);
-      }
-    }
   }
   int errCode=processResults(result,modules,options);
   if (jsOutput instanceof Flushable) {
