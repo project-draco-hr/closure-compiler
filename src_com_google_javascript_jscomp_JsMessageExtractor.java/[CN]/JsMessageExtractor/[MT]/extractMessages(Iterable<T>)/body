@@ -1,10 +1,10 @@
 {
   Compiler compiler=new Compiler();
-  compiler.init(ImmutableList.<SourceFile>of(),Lists.newArrayList(inputs),new CompilerOptions());
+  compiler.init(ImmutableList.<SourceFile>of(),Lists.newArrayList(inputs),options);
+  compiler.parseInputs();
   ExtractMessagesVisitor extractCompilerPass=new ExtractMessagesVisitor(compiler);
-  for (  SourceFile input : inputs) {
-    Node root=new JsAst(input).getAstRoot(compiler);
-    extractCompilerPass.process(null,root);
+  if (compiler.getErrors().length == 0) {
+    extractCompilerPass.process(null,compiler.getRoot());
   }
   JSError[] errors=compiler.getErrors();
   if (errors.length > 0) {
