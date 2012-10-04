@@ -20,7 +20,7 @@
       JSType rawValueType=name.getFirstChild().getJSType();
       JSType valueType=NodeUtil.getObjectLitKeyTypeFromValueType(name,rawValueType);
       if (valueType == null) {
-        valueType=getNativeType(UNKNOWN_TYPE);
+        valueType=unknownType;
       }
       objectType.defineInferredProperty(memberName,valueType,name);
       if (qObjName != null && name.isStringKey()) {
@@ -30,11 +30,11 @@
         if (var != null && var.isTypeInferred()) {
           var.setType(oldType == null ? valueType : oldType.getLeastSupertype(oldType));
         }
-        scope.inferQualifiedSlot(name,qKeyName,oldType == null ? getNativeType(UNKNOWN_TYPE) : oldType,valueType);
+        scope.inferQualifiedSlot(name,qKeyName,oldType == null ? unknownType : oldType,valueType);
       }
     }
  else {
-      n.setJSType(getNativeType(UNKNOWN_TYPE));
+      n.setJSType(unknownType);
     }
   }
   return scope;

@@ -3,7 +3,9 @@
   this.compiler=compiler;
   this.registry=compiler.getTypeRegistry();
   this.reverseInterpreter=reverseInterpreter;
+  this.unknownType=registry.getNativeObjectType(UNKNOWN_TYPE);
   this.syntacticScope=functionScope;
+  inferArguments(functionScope);
   this.functionScope=LinkedFlowScope.createEntryLattice(functionScope);
   this.assertionFunctionsMap=assertionFunctionsMap;
   Iterator<Var> varIt=functionScope.getDeclarativelyUnboundVarsWithoutTypes();
@@ -14,5 +16,5 @@
     }
     this.functionScope.inferSlotType(var.getName(),getNativeType(VOID_TYPE));
   }
-  this.bottomScope=LinkedFlowScope.createEntryLattice(new Scope(functionScope.getRootNode(),functionScope.getTypeOfThis()));
+  this.bottomScope=LinkedFlowScope.createEntryLattice(Scope.createLatticeBottom(functionScope.getRootNode()));
 }

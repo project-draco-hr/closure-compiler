@@ -1,3 +1,13 @@
 {
-  return thisType;
+  if (isGlobal()) {
+    return ObjectType.cast(rootNode.getJSType());
+  }
+  Preconditions.checkState(rootNode.isFunction());
+  JSType nodeType=rootNode.getJSType();
+  if (nodeType != null && nodeType.isFunctionType()) {
+    return nodeType.toMaybeFunctionType().getTypeOfThis();
+  }
+ else {
+    return parent.getTypeOfThis();
+  }
 }

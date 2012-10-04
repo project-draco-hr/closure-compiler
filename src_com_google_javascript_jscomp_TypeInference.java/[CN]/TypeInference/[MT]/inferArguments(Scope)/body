@@ -1,0 +1,24 @@
+{
+  Node functionNode=functionScope.getRootNode();
+  Node astParameters=functionNode.getFirstChild().getNext();
+  FunctionType functionType=JSType.toMaybeFunctionType(functionNode.getJSType());
+  if (functionType != null) {
+    Node parameterTypes=functionType.getParametersNode();
+    if (parameterTypes != null) {
+      Node parameterTypeNode=parameterTypes.getFirstChild();
+      for (      Node astParameter : astParameters.children()) {
+        if (parameterTypeNode == null) {
+          return;
+        }
+        Var var=functionScope.getVar(astParameter.getString());
+        Preconditions.checkNotNull(var);
+        if (var.isTypeInferred() && var.getType() == unknownType && parameterTypeNode.getJSType() != null) {
+          JSType newType=parameterTypeNode.getJSType();
+          var.setType(newType);
+          astParameter.setJSType(newType);
+        }
+        parameterTypeNode=parameterTypeNode.getNext();
+      }
+    }
+  }
+}

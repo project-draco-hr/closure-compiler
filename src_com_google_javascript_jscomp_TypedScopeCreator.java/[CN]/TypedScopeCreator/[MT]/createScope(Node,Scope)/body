@@ -2,6 +2,10 @@
   Scope newScope=null;
   AbstractScopeBuilder scopeBuilder=null;
   if (parent == null) {
+    JSType globalThis=typeRegistry.getNativeObjectType(JSTypeNative.GLOBAL_THIS);
+    root.setJSType(globalThis);
+    root.getFirstChild().setJSType(globalThis);
+    root.getLastChild().setJSType(globalThis);
     (new FirstOrderFunctionAnalyzer(compiler,functionAnalysisResults)).process(root.getFirstChild(),root.getLastChild());
     newScope=createInitialScope(root);
     GlobalScopeBuilder globalScopeBuilder=new GlobalScopeBuilder(newScope);

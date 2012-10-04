@@ -41,11 +41,11 @@
           propName=name.substring(ownerName.length() + 1);
         }
       }
-      FunctionType overriddenPropType=null;
+      FunctionType overriddenType=null;
       if (ownerType != null && propName != null) {
-        overriddenPropType=findOverriddenFunction(ownerType,propName);
+        overriddenType=findOverriddenFunction(ownerType,propName);
       }
-      FunctionTypeBuilder builder=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setContents(getFunctionAnalysisResults(fnRoot)).inferFromOverriddenFunction(overriddenPropType,parametersNode).inferTemplateTypeName(info).inferReturnType(info).inferInheritance(info);
+      FunctionTypeBuilder builder=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setContents(getFunctionAnalysisResults(fnRoot)).inferFromOverriddenFunction(overriddenType,parametersNode).inferTemplateTypeName(info).inferReturnType(info).inferInheritance(info);
       boolean searchedForThisType=false;
       if (ownerType != null && ownerType.isFunctionPrototypeType() && ownerType.getOwnerFunction().hasInstanceType()) {
         builder.inferThisType(info,ownerType.getOwnerFunction().getInstanceType());
