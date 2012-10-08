@@ -1,0 +1,10 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  CompilationLevel level=CompilationLevel.ADVANCED_OPTIMIZATIONS;
+  level.setOptionsForCompilationLevel(options);
+  level.setTypeBasedOptimizationOptions(options);
+  String code="" + "var C = goog.defineClass(null, {\n" + "  /** @constructor */\n"+ "  constructor: function () {this.someProperty = 1}\n"+ "});\n"+ "alert(new C().someProperty + new C().someProperty);\n";
+  assertTrue(options.inlineProperties);
+  assertTrue(options.collapseProperties);
+  test(options,code,"alert(2);");
+}

@@ -1,0 +1,12 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  CompilationLevel level=CompilationLevel.ADVANCED_OPTIMIZATIONS;
+  level.setOptionsForCompilationLevel(options);
+  level.setTypeBasedOptimizationOptions(options);
+  WarningLevel warnings=WarningLevel.VERBOSE;
+  warnings.setOptionsForWarningLevel(options);
+  String code="" + "var C = goog.defineClass(null, {\n" + "  /** @constructor */\n"+ "  constructor: function () {\n"+ "    /** @type {number} */\n"+ "    this.someProperty = 1},\n"+ "  /** @param {string} a */\n"+ "  someMethod: function (a) {}\n"+ "});"+ "var x = new C();\n"+ "x.someMethod(x.someProperty);\n";
+  assertTrue(options.inlineProperties);
+  assertTrue(options.collapseProperties);
+  test(options,code,TypeValidator.TYPE_MISMATCH_WARNING);
+}

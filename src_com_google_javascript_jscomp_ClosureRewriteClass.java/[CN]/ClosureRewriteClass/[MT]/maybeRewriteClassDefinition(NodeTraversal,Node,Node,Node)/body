@@ -1,0 +1,13 @@
+{
+  if (isGoogDefineClass(value)) {
+    if (!target.isQualifiedName()) {
+      compiler.report(t.makeError(n,GOOG_CLASS_TARGET_INVALID));
+    }
+    ClassDefinition def=extractClassDefinition(t,target,value);
+    if (def != null) {
+      value.detachFromParent();
+      target.detachFromParent();
+      rewriteGoogDefineClass(n,def);
+    }
+  }
+}
