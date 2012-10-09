@@ -1,7 +1,7 @@
 {
   Node superClass=NodeUtil.getArgumentForCallOrNew(callNode,0);
   if (superClass == null || (!superClass.isNull() && !superClass.isQualifiedName())) {
-    compiler.report(t.makeError(callNode,GOOG_CLASS_SUPER_CLASS_NOT_VALID));
+    compiler.report(JSError.make(callNode,GOOG_CLASS_SUPER_CLASS_NOT_VALID));
     return null;
   }
   if (NodeUtil.isNullOrUndefined(superClass)) {
@@ -9,18 +9,23 @@
   }
   Node description=NodeUtil.getArgumentForCallOrNew(callNode,1);
   if (description == null || !description.isObjectLit() || !validateObjLit(description)) {
-    compiler.report(t.makeError(callNode,GOOG_CLASS_DESCRIPTOR_NOT_VALID));
+    compiler.report(JSError.make(callNode,GOOG_CLASS_DESCRIPTOR_NOT_VALID));
+    return null;
+  }
+  int paramCount=callNode.getChildCount() - 1;
+  if (paramCount > 3) {
+    compiler.report(JSError.make(callNode,GOOG_CLASS_UNEXPECTED_PARAMS));
     return null;
   }
   Node constructor=extractProperty(description,"constructor");
   if (constructor == null) {
-    compiler.report(t.makeError(description,GOOG_CLASS_CONSTRUCTOR_MISING));
+    compiler.report(JSError.make(description,GOOG_CLASS_CONSTRUCTOR_MISING));
     return null;
   }
   JSDocInfo info=NodeUtil.getBestJSDocInfo(constructor);
   Node statics=extractProperty(description,"statics");
   if (statics != null && !(statics.isObjectLit() && validateObjLit(statics))) {
-    compiler.report(t.makeError(statics,GOOG_CLASS_STATICS_NOT_VALID));
+    compiler.report(JSError.make(statics,GOOG_CLASS_STATICS_NOT_VALID));
     return null;
   }
   if (statics == null) {
@@ -28,7 +33,7 @@
   }
   Node modifiers=NodeUtil.getArgumentForCallOrNew(callNode,2);
   if (modifiers != null && !modifiers.isArrayLit()) {
-    compiler.report(t.makeError(modifiers,GOOG_CLASS_MODIFIERS_NOT_VALID));
+    compiler.report(JSError.make(modifiers,GOOG_CLASS_MODIFIERS_NOT_VALID));
     return null;
   }
   if (modifiers == null) {

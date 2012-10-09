@@ -11,9 +11,11 @@
   }
   for (  MemberDefinition def : cls.staticProps) {
     block.addChildToBack(fixupSrcref(IR.exprResult(fixupSrcref(IR.assign(IR.getprop(cls.name.cloneTree(),IR.string(def.name.getString()).srcref(def.name)).srcref(def.name),def.value)).setJSDocInfo(def.info))));
+    maybeRewriteClassDefinition(block.getLastChild());
   }
   for (  MemberDefinition def : cls.props) {
     block.addChildToBack(fixupSrcref(IR.exprResult(fixupSrcref(IR.assign(IR.getprop(fixupSrcref(IR.getprop(cls.name.cloneTree(),IR.string("prototype").srcref(def.name))),IR.string(def.name.getString()).srcref(def.name)).srcref(def.name),def.value)).setJSDocInfo(def.info))));
+    maybeRewriteClassDefinition(block.getLastChild());
   }
   for (  Node modifier : cls.modifiers) {
     block.addChildToBack(IR.exprResult(fixupFreeCall(IR.call(modifier,cls.name.cloneTree()).srcref(modifier))).srcref(modifier));
