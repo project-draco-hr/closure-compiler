@@ -13,7 +13,7 @@
     return null;
   }
   int paramCount=callNode.getChildCount() - 1;
-  if (paramCount > 3) {
+  if (paramCount > 2) {
     compiler.report(JSError.make(callNode,GOOG_CLASS_UNEXPECTED_PARAMS));
     return null;
   }
@@ -23,24 +23,29 @@
     return null;
   }
   JSDocInfo info=NodeUtil.getBestJSDocInfo(constructor);
-  Node statics=extractProperty(description,"statics");
-  if (statics != null && !(statics.isObjectLit() && validateObjLit(statics))) {
-    compiler.report(JSError.make(statics,GOOG_CLASS_STATICS_NOT_VALID));
-    return null;
+  Node classModifier=null;
+  Node statics=null;
+  Node staticsProp=extractProperty(description,"statics");
+  if (staticsProp != null) {
+    if (staticsProp.isObjectLit() && validateObjLit(staticsProp)) {
+      statics=staticsProp;
+    }
+ else     if (staticsProp.isFunction()) {
+      classModifier=staticsProp;
+    }
+ else {
+      compiler.report(JSError.make(staticsProp,GOOG_CLASS_STATICS_NOT_VALID));
+      return null;
+    }
   }
   if (statics == null) {
     statics=IR.objectlit();
   }
-  Node modifiers=NodeUtil.getArgumentForCallOrNew(callNode,2);
-  if (modifiers != null && !modifiers.isArrayLit()) {
-    compiler.report(JSError.make(modifiers,GOOG_CLASS_MODIFIERS_NOT_VALID));
-    return null;
-  }
-  if (modifiers == null) {
-    modifiers=IR.arraylit();
-  }
   maybeDetach(constructor.getParent());
   maybeDetach(statics.getParent());
-  ClassDefinition def=new ClassDefinition(targetName,maybeDetach(superClass),new MemberDefinition(info,null,maybeDetach(constructor)),objectLitToList(maybeDetach(statics)),objectLitToList(description),arrayNodeToList(modifiers));
+  if (classModifier != null) {
+    maybeDetach(classModifier.getParent());
+  }
+  ClassDefinition def=new ClassDefinition(targetName,maybeDetach(superClass),new MemberDefinition(info,null,maybeDetach(constructor)),objectLitToList(maybeDetach(statics)),objectLitToList(description),maybeDetach(classModifier));
   return def;
 }
