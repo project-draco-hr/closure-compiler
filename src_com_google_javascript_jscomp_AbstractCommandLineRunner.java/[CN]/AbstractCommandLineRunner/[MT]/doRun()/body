@@ -15,6 +15,13 @@
   }
   List<String> jsFiles=config.js;
   List<String> moduleSpecs=config.module;
+  boolean createCommonJsModules=false;
+  if (options.processCommonJSModules) {
+    if (moduleSpecs.size() == 1 && "auto".equals(moduleSpecs.get(0))) {
+      createCommonJsModules=true;
+      moduleSpecs.remove(0);
+    }
+  }
   if (!moduleSpecs.isEmpty()) {
     modules=createJsModules(moduleSpecs,jsFiles);
     if (config.skipNormalOutputs) {
@@ -32,6 +39,9 @@
  else {
       result=compiler.compile(externs,inputs,options);
     }
+  }
+  if (createCommonJsModules) {
+    modules=Lists.newArrayList(compiler.getDegenerateModuleGraph().getAllModules());
   }
   int errCode=processResults(result,modules,options);
   if (jsOutput instanceof Flushable) {

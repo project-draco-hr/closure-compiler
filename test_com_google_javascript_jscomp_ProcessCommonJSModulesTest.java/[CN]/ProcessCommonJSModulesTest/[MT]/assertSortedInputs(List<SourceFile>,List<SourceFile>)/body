@@ -1,0 +1,14 @@
+{
+  Compiler compiler=new Compiler(System.err);
+  compiler.initCompilerOptionsIfTesting();
+  compiler.getOptions().setProcessCommonJSModules(true);
+  compiler.getOptions().dependencyOptions.setEntryPoints(Lists.newArrayList(ProcessCommonJSModules.toModuleName("a")));
+  compiler.compile(Lists.newArrayList(SourceFile.fromCode("externs.js","")),shuffled,compiler.getOptions());
+  List<SourceFile> result=Lists.newArrayList();
+  for (  JSModule m : compiler.getModuleGraph().getAllModules()) {
+    for (    CompilerInput i : m.getInputs()) {
+      result.add(i.getSourceFile());
+    }
+  }
+  assertEquals(expected,result);
+}
