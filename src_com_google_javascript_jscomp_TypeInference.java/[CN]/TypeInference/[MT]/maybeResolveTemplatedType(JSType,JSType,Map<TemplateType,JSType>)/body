@@ -12,6 +12,7 @@
     FunctionType paramFunctionType=paramType.toMaybeFunctionType();
     FunctionType argFunctionType=argType.restrictByNotNullOrUndefined().collapseUnion().toMaybeFunctionType();
     if (argFunctionType != null && argFunctionType.isSubtype(paramType)) {
+      maybeResolveTemplatedType(paramFunctionType.getTypeOfThis(),argFunctionType.getTypeOfThis(),resolvedTypes);
       maybeResolveTemplatedType(paramFunctionType.getReturnType(),argFunctionType.getReturnType(),resolvedTypes);
       maybeResolveTemplateTypeFromNodes(paramFunctionType.getParameters(),argFunctionType.getParameters(),resolvedTypes);
     }
