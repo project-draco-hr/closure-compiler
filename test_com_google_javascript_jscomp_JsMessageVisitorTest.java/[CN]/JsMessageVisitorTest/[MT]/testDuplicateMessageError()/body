@@ -1,7 +1,5 @@
 {
   extractMessages("(function () {/** @desc Hello */ var MSG_HELLO = goog.getMsg('a')})" + "(function () {/** @desc Hello2 */ var MSG_HELLO = goog.getMsg('a')})");
   assertEquals(0,compiler.getWarningCount());
-  String errors=Joiner.on("\n").join(compiler.getErrors());
-  assertEquals("There should be one error. " + errors,1,compiler.getErrorCount());
-  assertEquals(errors,JsMessageVisitor.MESSAGE_DUPLICATE_KEY,compiler.getErrors()[0].getType());
+  assertOneError(JsMessageVisitor.MESSAGE_DUPLICATE_KEY);
 }
