@@ -1,0 +1,13 @@
+{
+  if (lvalue.isGetProp()) {
+    Node obj=lvalue.getFirstChild();
+    Node prop=lvalue.getLastChild();
+    JSType objType=getJSType(obj);
+    String pname=prop.getString();
+    if (objType.isStruct() && !objType.hasProperty(pname)) {
+      if (!(obj.isThis() && getJSType(t.getScope().getRootNode()).isConstructor())) {
+        report(t,prop,ILLEGAL_PROPERTY_CREATION);
+      }
+    }
+  }
+}
