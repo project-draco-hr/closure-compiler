@@ -44,37 +44,11 @@
  else   if (result.success) {
     outputModuleGraphJson();
     if (modules == null) {
-      writeOutput(jsOutput,compiler,compiler.toSource(),config.outputWrapper,OUTPUT_WRAPPER_MARKER);
+      outputSingleBinary();
       outputSourceMap(options,config.jsOutputFile);
     }
  else {
-      parsedModuleWrappers=parseModuleWrappers(config.moduleWrapper,modules);
-      maybeCreateDirsForPath(config.moduleOutputPathPrefix);
-      Writer mapOut=null;
-      if (!shouldGenerateMapPerModule(options)) {
-        mapOut=fileNameToOutputWriter2(expandSourceMapPath(options,null));
-      }
-      for (      JSModule m : modules) {
-        if (shouldGenerateMapPerModule(options)) {
-          mapOut=fileNameToOutputWriter2(expandSourceMapPath(options,m));
-        }
-        Writer writer=fileNameToLegacyOutputWriter(getModuleOutputFileName(m));
-        if (options.sourceMapOutputPath != null) {
-          compiler.getSourceMap().reset();
-        }
-        writeModuleOutput(writer,m);
-        if (options.sourceMapOutputPath != null) {
-          compiler.getSourceMap().appendTo(mapOut,m.getName());
-        }
-        writer.close();
-        if (shouldGenerateMapPerModule(options) && mapOut != null) {
-          mapOut.close();
-          mapOut=null;
-        }
-      }
-      if (mapOut != null) {
-        mapOut.close();
-      }
+      outputModuleBinaryAndSourceMaps(modules,options);
     }
     if (options.externExportsPath != null) {
       Writer eeOut=openExternExportsStream(options,config.jsOutputFile);
