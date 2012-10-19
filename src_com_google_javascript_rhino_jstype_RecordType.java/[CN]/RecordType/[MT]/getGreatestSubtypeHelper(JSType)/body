@@ -4,7 +4,7 @@
     RecordTypeBuilder builder=new RecordTypeBuilder(registry);
     builder.setSynthesized(true);
     for (    String property : properties.keySet()) {
-      if (thatRecord.hasProperty(property) && !thatRecord.getPropertyType(property).isEquivalentTo(getPropertyType(property))) {
+      if (thatRecord.hasProperty(property) && !thatRecord.getPropertyType(property).isInvariant(getPropertyType(property))) {
         return registry.getNativeObjectType(JSTypeNative.NO_TYPE);
       }
       builder.addProperty(property,getPropertyType(property),getPropertyNode(property));
@@ -25,7 +25,7 @@
       UnionTypeBuilder builder=new UnionTypeBuilder(registry);
       for (      ObjectType alt : registry.getEachReferenceTypeWithProperty(propName)) {
         JSType altPropType=alt.getPropertyType(propName);
-        if (altPropType != null && !alt.isEquivalentTo(this) && alt.isSubtype(that) && (propType.isUnknownType() || altPropType.isUnknownType() || altPropType.isEquivalentTo(propType))) {
+        if (altPropType != null && !alt.isEquivalentTo(this) && alt.isSubtype(that) && propType.isInvariant(altPropType)) {
           builder.addAlternate(alt);
         }
       }
