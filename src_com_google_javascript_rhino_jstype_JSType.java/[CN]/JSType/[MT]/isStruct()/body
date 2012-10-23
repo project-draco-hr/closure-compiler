@@ -1,7 +1,14 @@
 {
   if (isObject()) {
-    FunctionType ctor=toObjectType().getConstructor();
-    return ctor != null && ctor.makesStructs();
+    ObjectType objType=toObjectType();
+    FunctionType ctor=objType.getConstructor();
+    if (ctor == null) {
+      JSDocInfo info=objType.getJSDocInfo();
+      return info != null && info.makesStructs();
+    }
+ else {
+      return ctor.makesStructs();
+    }
   }
   return false;
 }

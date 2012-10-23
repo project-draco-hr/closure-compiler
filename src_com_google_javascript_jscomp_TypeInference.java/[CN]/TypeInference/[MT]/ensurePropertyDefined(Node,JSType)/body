@@ -1,11 +1,17 @@
 {
   String propName=getprop.getLastChild().getString();
-  JSType nodeType=getJSType(getprop.getFirstChild());
+  Node obj=getprop.getFirstChild();
+  JSType nodeType=getJSType(obj);
   ObjectType objectType=ObjectType.cast(nodeType.restrictByNotNullOrUndefined());
   if (objectType == null) {
     registry.registerPropertyOnType(propName,nodeType);
   }
  else {
+    if (nodeType.isStruct() && !objectType.hasProperty(propName)) {
+      if (!(obj.isThis() && getJSType(syntacticScope.getRootNode()).isConstructor())) {
+        return;
+      }
+    }
     if (ensurePropertyDeclaredHelper(getprop,objectType)) {
       return;
     }
@@ -18,7 +24,7 @@
           objectType.defineInferredProperty(propName,rightType,getprop);
         }
       }
- else       if (getprop.getFirstChild().isThis() && getJSType(syntacticScope.getRootNode()).isConstructor()) {
+ else       if (obj.isThis() && getJSType(syntacticScope.getRootNode()).isConstructor()) {
         objectType.defineInferredProperty(propName,rightType,getprop);
       }
  else {
