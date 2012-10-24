@@ -1,5 +1,5 @@
 {
-  super(registry,name,registry.getNativeObjectType(JSTypeNative.FUNCTION_INSTANCE_TYPE),nativeType);
+  super(registry,name,registry.getNativeObjectType(JSTypeNative.FUNCTION_INSTANCE_TYPE),nativeType,templateKeys,null);
   setPrettyPrint(true);
   Preconditions.checkArgument(source == null || Token.FUNCTION == source.getType());
   Preconditions.checkNotNull(arrowType);
@@ -7,12 +7,11 @@
   if (isConstructor) {
     this.kind=Kind.CONSTRUCTOR;
     this.propAccess=PropAccess.ANY;
-    this.typeOfThis=typeOfThis != null ? typeOfThis : new InstanceObjectType(registry,this,nativeType);
+    this.typeOfThis=typeOfThis != null ? typeOfThis : new InstanceObjectType(registry,this,nativeType,null);
   }
  else {
     this.kind=Kind.ORDINARY;
     this.typeOfThis=typeOfThis != null ? typeOfThis : registry.getNativeObjectType(JSTypeNative.UNKNOWN_TYPE);
   }
   this.call=arrowType;
-  this.templateTypeNames=templateTypeNames != null ? templateTypeNames : ImmutableList.<String>of();
 }

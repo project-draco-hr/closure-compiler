@@ -1,6 +1,11 @@
 {
   if (constructor.hasReferenceName()) {
-    return constructor.getReferenceName();
+    String typeString=constructor.getReferenceName();
+    ImmutableList<JSType> templatizedTypes=getTemplatizedTypes();
+    if (!templatizedTypes.isEmpty()) {
+      typeString+=".<" + Joiner.on(",").join(templatizedTypes) + ">";
+    }
+    return typeString;
   }
  else {
     return super.toStringHelper(forAnnotations);
