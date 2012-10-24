@@ -1,0 +1,17 @@
+{
+  Preconditions.checkState(options.sourceMapDetailLevel != null);
+  boolean createSourceMap=(sourceMap != null);
+  Charset outputCharset=options.outputCharset == null ? null : Charset.forName(options.outputCharset);
+  MappedCodePrinter mcp=outputFormat == Format.COMPACT ? new CompactCodePrinter(options.lineBreak,options.preferLineBreakAtEndOfFile,options.lineLengthThreshold,createSourceMap,options.sourceMapDetailLevel) : new PrettyCodePrinter(options.lineLengthThreshold,createSourceMap,options.sourceMapDetailLevel);
+  CodeGenerator cg=outputFormat == Format.TYPED ? new TypedCodeGenerator(mcp,outputCharset) : new CodeGenerator(mcp,outputCharset,options.preferSingleQuotes);
+  if (tagAsStrict) {
+    cg.tagAsStrict();
+  }
+  cg.add(root);
+  mcp.endFile();
+  String code=mcp.getCode();
+  if (createSourceMap) {
+    mcp.generateSourceMap(sourceMap);
+  }
+  return code;
+}
