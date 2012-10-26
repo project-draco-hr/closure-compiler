@@ -28,20 +28,22 @@
   if (!id.isString()) {
     return;
   }
-  List<Replacement> idGeneratorMap=idGeneratorMaps.get(callName);
+  Map<String,String> idGeneratorMap=idGeneratorMaps.get(callName);
   String rename=null;
+  String name=id.getString();
+  String instanceId=getIdForGeneratorNode(consistent,id);
   if (consistent) {
     Map<String,String> entry=consistNameMap.get(callName);
-    rename=entry.get(id.getString());
+    rename=entry.get(instanceId);
     if (rename == null) {
-      rename=nameGenerator.getName(id.getString());
-      entry.put(id.getString(),rename);
+      rename=nameGenerator.getName(instanceId,name);
+      entry.put(instanceId,rename);
     }
   }
  else {
-    rename=nameGenerator.getName(id.getString());
+    rename=nameGenerator.getName(instanceId,name);
   }
   parent.replaceChild(n,IR.string(rename));
-  idGeneratorMap.add(new Replacement(rename,t.getSourceName(),t.getLineNumber()));
+  idGeneratorMap.put(rename,instanceId);
   compiler.reportCodeChange();
 }

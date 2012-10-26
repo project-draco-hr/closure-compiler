@@ -1,0 +1,17 @@
+{
+  this.compiler=compiler;
+  this.generatePseudoNames=generatePseudoNames;
+  nameGenerators=Maps.newLinkedHashMap();
+  consistNameGenerators=Maps.newLinkedHashMap();
+  idGeneratorMaps=Maps.newLinkedHashMap();
+  consistNameMap=Maps.newLinkedHashMap();
+  Map<String,BiMap<String,String>> previousMap;
+  previousMap=parsePreviousResults(previousMapSerialized);
+  this.previousMap=previousMap;
+  if (idGens != null) {
+    for (    String gen : idGens) {
+      nameGenerators.put(gen,createNameSupplier(previousMap.get(gen)));
+      idGeneratorMaps.put(gen,Maps.<String,String>newLinkedHashMap());
+    }
+  }
+}
