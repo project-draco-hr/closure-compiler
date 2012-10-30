@@ -1,0 +1,36 @@
+{
+  if (info.getType() != null) {
+    boolean valid=false;
+switch (node.getType()) {
+case com.google.javascript.rhino.head.Token.LP:
+      valid=node instanceof ParenthesizedExpression;
+    break;
+case com.google.javascript.rhino.head.Token.VAR:
+  valid=true;
+break;
+case com.google.javascript.rhino.head.Token.FUNCTION:
+FunctionNode fnNode=(FunctionNode)node;
+valid=fnNode.getFunctionType() == FunctionNode.FUNCTION_STATEMENT;
+break;
+case com.google.javascript.rhino.head.Token.GET:
+case com.google.javascript.rhino.head.Token.SET:
+case com.google.javascript.rhino.head.Token.NAME:
+case com.google.javascript.rhino.head.Token.NUMBER:
+case com.google.javascript.rhino.head.Token.STRING:
+valid=node.getParent() instanceof ObjectProperty;
+break;
+case com.google.javascript.rhino.head.Token.ASSIGN:
+if (node instanceof Assignment) {
+valid=isExprStmt(node.getParent()) && isPropAccess(((Assignment)node).getLeft());
+}
+break;
+case com.google.javascript.rhino.head.Token.GETPROP:
+case com.google.javascript.rhino.head.Token.GETELEM:
+valid=isExprStmt(node.getParent());
+break;
+}
+if (!valid) {
+errorReporter.warning(MISPLACED_TYPE_ANNOTATION,sourceName,node.getLineno(),"",0);
+}
+}
+}

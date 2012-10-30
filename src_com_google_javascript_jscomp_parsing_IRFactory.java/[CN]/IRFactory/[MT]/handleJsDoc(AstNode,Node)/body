@@ -4,7 +4,11 @@
     JsDocInfoParser jsDocParser=createJsDocInfoParser(comment,irNode);
     parsedComments.add(comment);
     if (!handlePossibleFileOverviewJsDoc(jsDocParser)) {
-      return jsDocParser.retrieveAndResetParsedJSDocInfo();
+      JSDocInfo info=jsDocParser.retrieveAndResetParsedJSDocInfo();
+      if (info != null) {
+        validateTypeAnnotations(info,node,irNode);
+      }
+      return info;
     }
   }
   return null;
