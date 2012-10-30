@@ -6,7 +6,13 @@
       return true;
     }
     FunctionType ctor=objType.getConstructor();
-    return ctor != null && ctor.makesDicts();
+    if (ctor == null) {
+      JSDocInfo info=objType.getJSDocInfo();
+      return info != null && info.makesDicts();
+    }
+ else {
+      return ctor.makesDicts();
+    }
   }
   return false;
 }
