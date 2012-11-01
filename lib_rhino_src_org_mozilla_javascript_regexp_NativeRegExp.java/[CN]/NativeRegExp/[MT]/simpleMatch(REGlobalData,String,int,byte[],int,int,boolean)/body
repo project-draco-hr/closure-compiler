@@ -1,0 +1,167 @@
+{
+  boolean result=false;
+  char matchCh;
+  int parenIndex;
+  int offset, length, index;
+  int startcp=gData.cp;
+switch (op) {
+case REOP_EMPTY:
+    result=true;
+  break;
+case REOP_BOL:
+if (gData.cp != 0) {
+  if (!gData.multiline || !isLineTerm(input.charAt(gData.cp - 1))) {
+    break;
+  }
+}
+result=true;
+break;
+case REOP_EOL:
+if (gData.cp != end) {
+if (!gData.multiline || !isLineTerm(input.charAt(gData.cp))) {
+break;
+}
+}
+result=true;
+break;
+case REOP_WBDRY:
+result=((gData.cp == 0 || !isWord(input.charAt(gData.cp - 1))) ^ !((gData.cp < end) && isWord(input.charAt(gData.cp))));
+break;
+case REOP_WNONBDRY:
+result=((gData.cp == 0 || !isWord(input.charAt(gData.cp - 1))) ^ ((gData.cp < end) && isWord(input.charAt(gData.cp))));
+break;
+case REOP_DOT:
+if (gData.cp != end && !isLineTerm(input.charAt(gData.cp))) {
+result=true;
+gData.cp++;
+}
+break;
+case REOP_DIGIT:
+if (gData.cp != end && isDigit(input.charAt(gData.cp))) {
+result=true;
+gData.cp++;
+}
+break;
+case REOP_NONDIGIT:
+if (gData.cp != end && !isDigit(input.charAt(gData.cp))) {
+result=true;
+gData.cp++;
+}
+break;
+case REOP_ALNUM:
+if (gData.cp != end && isWord(input.charAt(gData.cp))) {
+result=true;
+gData.cp++;
+}
+break;
+case REOP_NONALNUM:
+if (gData.cp != end && !isWord(input.charAt(gData.cp))) {
+result=true;
+gData.cp++;
+}
+break;
+case REOP_SPACE:
+if (gData.cp != end && isREWhiteSpace(input.charAt(gData.cp))) {
+result=true;
+gData.cp++;
+}
+break;
+case REOP_NONSPACE:
+if (gData.cp != end && !isREWhiteSpace(input.charAt(gData.cp))) {
+result=true;
+gData.cp++;
+}
+break;
+case REOP_BACKREF:
+{
+parenIndex=getIndex(program,pc);
+pc+=INDEX_LEN;
+result=backrefMatcher(gData,parenIndex,input,end);
+}
+break;
+case REOP_FLAT:
+{
+offset=getIndex(program,pc);
+pc+=INDEX_LEN;
+length=getIndex(program,pc);
+pc+=INDEX_LEN;
+result=flatNMatcher(gData,offset,length,input,end);
+}
+break;
+case REOP_FLAT1:
+{
+matchCh=(char)(program[pc++] & 0xFF);
+if (gData.cp != end && input.charAt(gData.cp) == matchCh) {
+result=true;
+gData.cp++;
+}
+}
+break;
+case REOP_FLATi:
+{
+offset=getIndex(program,pc);
+pc+=INDEX_LEN;
+length=getIndex(program,pc);
+pc+=INDEX_LEN;
+result=flatNIMatcher(gData,offset,length,input,end);
+}
+break;
+case REOP_FLAT1i:
+{
+matchCh=(char)(program[pc++] & 0xFF);
+if (gData.cp != end) {
+char c=input.charAt(gData.cp);
+if (matchCh == c || upcase(matchCh) == upcase(c)) {
+result=true;
+gData.cp++;
+}
+}
+}
+break;
+case REOP_UCFLAT1:
+{
+matchCh=(char)getIndex(program,pc);
+pc+=INDEX_LEN;
+if (gData.cp != end && input.charAt(gData.cp) == matchCh) {
+result=true;
+gData.cp++;
+}
+}
+break;
+case REOP_UCFLAT1i:
+{
+matchCh=(char)getIndex(program,pc);
+pc+=INDEX_LEN;
+if (gData.cp != end) {
+char c=input.charAt(gData.cp);
+if (matchCh == c || upcase(matchCh) == upcase(c)) {
+result=true;
+gData.cp++;
+}
+}
+}
+break;
+case REOP_CLASS:
+case REOP_NCLASS:
+{
+index=getIndex(program,pc);
+pc+=INDEX_LEN;
+if (gData.cp != end) {
+if (classMatcher(gData,gData.regexp.classList[index],input.charAt(gData.cp))) {
+gData.cp++;
+result=true;
+break;
+}
+}
+}
+break;
+default :
+throw Kit.codeBug();
+}
+if (result) {
+if (!updatecp) gData.cp=startcp;
+return pc;
+}
+gData.cp=startcp;
+return -1;
+}

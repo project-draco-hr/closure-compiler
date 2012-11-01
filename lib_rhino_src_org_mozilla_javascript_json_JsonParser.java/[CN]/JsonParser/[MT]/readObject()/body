@@ -1,19 +1,26 @@
 {
+  consumeWhitespace();
   Scriptable object=cx.newObject(scope);
+  if (pos < length && src.charAt(pos) == '}') {
+    pos+=1;
+    return object;
+  }
   String id;
   Object value;
   boolean needsComma=false;
-  consumeWhitespace();
   while (pos < length) {
     char c=src.charAt(pos++);
 switch (c) {
 case '}':
-      return object;
+      if (!needsComma) {
+        throw new ParseException("Unexpected comma in object literal");
+      }
+    return object;
 case ',':
-    if (!needsComma) {
-      throw new ParseException("Unexpected comma in object literal");
-    }
-  needsComma=false;
+  if (!needsComma) {
+    throw new ParseException("Unexpected comma in object literal");
+  }
+needsComma=false;
 break;
 case '"':
 if (needsComma) {

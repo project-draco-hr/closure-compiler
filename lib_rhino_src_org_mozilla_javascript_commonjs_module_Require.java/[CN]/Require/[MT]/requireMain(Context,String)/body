@@ -7,7 +7,7 @@
   }
   ModuleScript moduleScript;
   try {
-    moduleScript=moduleScriptProvider.getModuleScript(cx,mainModuleId,null,paths);
+    moduleScript=moduleScriptProvider.getModuleScript(cx,mainModuleId,null,null,paths);
   }
  catch (  RuntimeException x) {
     throw x;
@@ -16,7 +16,7 @@ catch (  Exception x) {
     throw new RuntimeException(x);
   }
   if (moduleScript != null) {
-    mainExports=getExportedModuleInterface(cx,mainModuleId,null,true);
+    mainExports=getExportedModuleInterface(cx,mainModuleId,null,null,true);
   }
  else   if (!sandboxed) {
     URI mainUri=null;
@@ -32,7 +32,7 @@ catch (  Exception x) {
       }
       mainUri=file.toURI();
     }
-    mainExports=getExportedModuleInterface(cx,mainUri.toString(),mainUri,true);
+    mainExports=getExportedModuleInterface(cx,mainUri.toString(),mainUri,null,true);
   }
   this.mainModuleId=mainModuleId;
   return mainExports;

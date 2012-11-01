@@ -1,14 +1,13 @@
 {
-  if (Modifier.isPublic(clazz.getModifiers()) || includePrivate) {
+  if (isPublic(clazz.getModifiers()) || includePrivate) {
     try {
       if (includeProtected || includePrivate) {
         while (clazz != null) {
           try {
             Method[] methods=clazz.getDeclaredMethods();
-            for (int i=0; i < methods.length; i++) {
-              Method method=methods[i];
+            for (            Method method : methods) {
               int mods=method.getModifiers();
-              if (Modifier.isPublic(mods) || Modifier.isProtected(mods) || includePrivate) {
+              if (isPublic(mods) || isProtected(mods) || includePrivate) {
                 MethodSignature sig=new MethodSignature(method);
                 if (!map.containsKey(sig)) {
                   if (includePrivate && !method.isAccessible())                   method.setAccessible(true);
@@ -20,8 +19,7 @@
           }
  catch (          SecurityException e) {
             Method[] methods=clazz.getMethods();
-            for (int i=0; i < methods.length; i++) {
-              Method method=methods[i];
+            for (            Method method : methods) {
               MethodSignature sig=new MethodSignature(method);
               if (!map.containsKey(sig))               map.put(sig,method);
             }
@@ -31,8 +29,7 @@
       }
  else {
         Method[] methods=clazz.getMethods();
-        for (int i=0; i < methods.length; i++) {
-          Method method=methods[i];
+        for (        Method method : methods) {
           MethodSignature sig=new MethodSignature(method);
           if (!map.containsKey(sig))           map.put(sig,method);
         }
@@ -44,8 +41,8 @@
     }
   }
   Class<?>[] interfaces=clazz.getInterfaces();
-  for (int i=0; i < interfaces.length; i++) {
-    discoverAccessibleMethods(interfaces[i],map,includeProtected,includePrivate);
+  for (  Class<?> intface : interfaces) {
+    discoverAccessibleMethods(intface,map,includeProtected,includePrivate);
   }
   Class<?> superclass=clazz.getSuperclass();
   if (superclass != null) {

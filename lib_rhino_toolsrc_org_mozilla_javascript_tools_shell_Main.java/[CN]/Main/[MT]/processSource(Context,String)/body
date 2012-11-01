@@ -1,35 +1,33 @@
 {
   if (filename == null || filename.equals("-")) {
     Scriptable scope=getShellScope();
-    PrintStream ps=global.getErr();
-    if (filename == null) {
-      ps.println(cx.getImplementationVersion());
-    }
+    Charset cs;
     String charEnc=shellContextFactory.getCharacterEncoding();
-    if (charEnc == null) {
-      charEnc=System.getProperty("file.encoding");
+    if (charEnc != null) {
+      cs=Charset.forName(charEnc);
     }
-    BufferedReader in;
-    try {
-      in=new BufferedReader(new InputStreamReader(global.getIn(),charEnc));
+ else {
+      cs=Charset.defaultCharset();
     }
- catch (    UnsupportedEncodingException e) {
-      throw new UndeclaredThrowableException(e);
+    ShellConsole console=global.getConsole(cs);
+    if (filename == null) {
+      console.println(cx.getImplementationVersion());
     }
     int lineno=1;
     boolean hitEOF=false;
     while (!hitEOF) {
       String[] prompts=global.getPrompts(cx);
-      if (filename == null)       ps.print(prompts[0]);
-      ps.flush();
+      String prompt=null;
+      if (filename == null)       prompt=prompts[0];
+      console.flush();
       String source="";
       while (true) {
         String newline;
         try {
-          newline=in.readLine();
+          newline=console.readLine(prompt);
         }
  catch (        IOException ioe) {
-          ps.println(ioe.toString());
+          console.println(ioe.toString());
           break;
         }
         if (newline == null) {
@@ -39,39 +37,40 @@
         source=source + newline + "\n";
         lineno++;
         if (cx.stringIsCompilableUnit(source))         break;
-        ps.print(prompts[1]);
+        prompt=prompts[1];
       }
-      Script script=loadScriptFromSource(cx,source,"<stdin>",lineno,null);
-      if (script != null) {
-        Object result=evaluateScript(script,cx,scope);
-        if (result != Context.getUndefinedValue() && !(result instanceof Function && source.trim().startsWith("function"))) {
-          try {
-            ps.println(Context.toString(result));
+      try {
+        Script script=cx.compileString(source,"<stdin>",lineno,null);
+        if (script != null) {
+          Object result=script.exec(cx,scope);
+          if (result != Context.getUndefinedValue() && !(result instanceof Function && source.trim().startsWith("function"))) {
+            try {
+              console.println(Context.toString(result));
+            }
+ catch (            RhinoException rex) {
+              ToolErrorReporter.reportException(cx.getErrorReporter(),rex);
+            }
           }
- catch (          RhinoException rex) {
-            ToolErrorReporter.reportException(cx.getErrorReporter(),rex);
-          }
+          NativeArray h=global.history;
+          h.put((int)h.getLength(),h,source);
         }
-        NativeArray h=global.history;
-        h.put((int)h.getLength(),h,source);
+      }
+ catch (      RhinoException rex) {
+        ToolErrorReporter.reportException(cx.getErrorReporter(),rex);
+        exitCode=EXITCODE_RUNTIME_ERROR;
+      }
+catch (      VirtualMachineError ex) {
+        ex.printStackTrace();
+        String msg=ToolErrorReporter.getMessage("msg.uncaughtJSException",ex.toString());
+        Context.reportError(msg);
+        exitCode=EXITCODE_RUNTIME_ERROR;
       }
     }
-    ps.println();
+    console.println();
+    console.flush();
   }
  else   if (useRequire && filename.equals(mainModule)) {
-    try {
-      require.requireMain(cx,filename);
-    }
- catch (    RhinoException rex) {
-      ToolErrorReporter.reportException(cx.getErrorReporter(),rex);
-      exitCode=EXITCODE_RUNTIME_ERROR;
-    }
-catch (    VirtualMachineError ex) {
-      ex.printStackTrace();
-      String msg=ToolErrorReporter.getMessage("msg.uncaughtJSException",ex.toString());
-      exitCode=EXITCODE_RUNTIME_ERROR;
-      Context.reportError(msg);
-    }
+    require.requireMain(cx,filename);
   }
  else {
     processFile(cx,getScope(filename),filename);

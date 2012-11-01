@@ -1,0 +1,22 @@
+{
+  stackTop-=2;
+  Object rhs=stack[stackTop + 2];
+  if (rhs == DOUBLE_MARK) {
+    rhs=ScriptRuntime.wrapNumber(sDbl[stackTop + 2]);
+  }
+  Object lhs=stack[stackTop];
+  if (lhs == DOUBLE_MARK) {
+    lhs=ScriptRuntime.wrapNumber(sDbl[stackTop]);
+  }
+  Object value;
+  Object id=stack[stackTop + 1];
+  if (id != DOUBLE_MARK) {
+    value=ScriptRuntime.setObjectElem(lhs,id,rhs,cx);
+  }
+ else {
+    double d=sDbl[stackTop + 1];
+    value=ScriptRuntime.setObjectIndex(lhs,d,rhs,cx);
+  }
+  stack[stackTop]=value;
+  return stackTop;
+}

@@ -2,12 +2,6 @@
   if (!charSet.converted) {
     processCharSet(gData,charSet);
   }
-  int byteIndex=ch / 8;
-  if (charSet.sense) {
-    if ((charSet.length == 0) || ((ch >= charSet.length) || ((charSet.bits[byteIndex] & (1 << (ch & 0x7))) == 0)))     return false;
-  }
- else {
-    if (!((charSet.length == 0) || ((ch >= charSet.length) || ((charSet.bits[byteIndex] & (1 << (ch & 0x7))) == 0))))     return false;
-  }
-  return true;
+  int byteIndex=ch >> 3;
+  return (charSet.length == 0 || ch >= charSet.length || (charSet.bits[byteIndex] & (1 << (ch & 0x7))) == 0) ^ charSet.sense;
 }

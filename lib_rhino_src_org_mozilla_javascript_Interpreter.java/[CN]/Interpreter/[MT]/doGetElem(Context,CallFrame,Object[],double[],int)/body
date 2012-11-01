@@ -1,0 +1,18 @@
+{
+  --stackTop;
+  Object lhs=stack[stackTop];
+  if (lhs == DOUBLE_MARK) {
+    lhs=ScriptRuntime.wrapNumber(sDbl[stackTop]);
+  }
+  Object value;
+  Object id=stack[stackTop + 1];
+  if (id != DOUBLE_MARK) {
+    value=ScriptRuntime.getObjectElem(lhs,id,cx,frame.scope);
+  }
+ else {
+    double d=sDbl[stackTop + 1];
+    value=ScriptRuntime.getObjectIndex(lhs,d,cx);
+  }
+  stack[stackTop]=value;
+  return stackTop;
+}

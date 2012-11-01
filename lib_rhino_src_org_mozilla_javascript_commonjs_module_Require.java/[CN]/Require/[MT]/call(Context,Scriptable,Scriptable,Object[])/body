@@ -4,12 +4,13 @@
   }
   String id=(String)Context.jsToJava(args[0],String.class);
   URI uri=null;
+  URI base=null;
   if (id.startsWith("./") || id.startsWith("../")) {
     if (!(thisObj instanceof ModuleScope)) {
       throw ScriptRuntime.throwError(cx,scope,"Can't resolve relative module ID \"" + id + "\" when require() is used outside of a module");
     }
     ModuleScope moduleScope=(ModuleScope)thisObj;
-    URI base=moduleScope.getBase();
+    base=moduleScope.getBase();
     URI current=moduleScope.getUri();
     uri=current.resolve(id);
     if (base == null) {
@@ -27,5 +28,5 @@
       }
     }
   }
-  return getExportedModuleInterface(cx,id,uri,false);
+  return getExportedModuleInterface(cx,id,uri,base,false);
 }

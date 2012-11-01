@@ -8,9 +8,12 @@
     if (interfaces[i] != null)     cfw.addInterface(interfaces[i].getName());
   }
   String superName=superClass.getName().replace('.','/');
-  Constructor<?>[] ctors=superClass.getConstructors();
+  Constructor<?>[] ctors=superClass.getDeclaredConstructors();
   for (  Constructor<?> ctor : ctors) {
-    generateCtor(cfw,adapterName,superName,ctor);
+    int mod=ctor.getModifiers();
+    if (Modifier.isPublic(mod) || Modifier.isProtected(mod)) {
+      generateCtor(cfw,adapterName,superName,ctor);
+    }
   }
   generateSerialCtor(cfw,adapterName,superName);
   if (scriptClassName != null) {
@@ -39,7 +42,7 @@
       String methodSignature=getMethodSignature(method,argTypes);
       String methodKey=methodName + methodSignature;
       if (!generatedOverrides.has(methodKey)) {
-        generateMethod(cfw,adapterName,methodName,argTypes,method.getReturnType());
+        generateMethod(cfw,adapterName,methodName,argTypes,method.getReturnType(),true);
         generatedOverrides.put(methodKey,0);
         generatedMethods.put(methodName,0);
       }
@@ -56,7 +59,7 @@
       String methodSignature=getMethodSignature(method,argTypes);
       String methodKey=methodName + methodSignature;
       if (!generatedOverrides.has(methodKey)) {
-        generateMethod(cfw,adapterName,methodName,argTypes,method.getReturnType());
+        generateMethod(cfw,adapterName,methodName,argTypes,method.getReturnType(),true);
         generatedOverrides.put(methodKey,0);
         generatedMethods.put(methodName,0);
         if (!isAbstractMethod) {
@@ -72,7 +75,7 @@
     int length=iter.getValue();
     Class<?>[] parms=new Class[length];
     for (int k=0; k < length; k++)     parms[k]=ScriptRuntime.ObjectClass;
-    generateMethod(cfw,adapterName,functionName,parms,ScriptRuntime.ObjectClass);
+    generateMethod(cfw,adapterName,functionName,parms,ScriptRuntime.ObjectClass,false);
   }
   return cfw.toByteArray();
 }

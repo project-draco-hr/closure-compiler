@@ -8,19 +8,27 @@ switch (t.op) {
 case REOP_EMPTY:
       --pc;
     break;
+case REOP_ALTPREREQ:
+case REOP_ALTPREREQi:
+case REOP_ALTPREREQ2:
+  boolean ignoreCase=t.op == REOP_ALTPREREQi;
+addIndex(program,pc,ignoreCase ? upcase(t.chr) : t.chr);
+pc+=INDEX_LEN;
+addIndex(program,pc,ignoreCase ? upcase((char)t.index) : t.index);
+pc+=INDEX_LEN;
 case REOP_ALT:
-  nextAlt=t.kid2;
+nextAlt=t.kid2;
 nextAltFixup=pc;
-pc+=OFFSET_LEN;
+pc+=INDEX_LEN;
 pc=emitREBytecode(state,re,pc,t.kid);
 program[pc++]=REOP_JUMP;
 nextTermFixup=pc;
-pc+=OFFSET_LEN;
+pc+=INDEX_LEN;
 resolveForwardJump(program,nextAltFixup,pc);
 pc=emitREBytecode(state,re,pc,nextAlt);
 program[pc++]=REOP_JUMP;
 nextAltFixup=pc;
-pc+=OFFSET_LEN;
+pc+=INDEX_LEN;
 resolveForwardJump(program,nextTermFixup,pc);
 resolveForwardJump(program,nextAltFixup,pc);
 break;
@@ -61,14 +69,14 @@ pc=addIndex(program,pc,t.parenIndex);
 break;
 case REOP_ASSERT:
 nextTermFixup=pc;
-pc+=OFFSET_LEN;
+pc+=INDEX_LEN;
 pc=emitREBytecode(state,re,pc,t.kid);
 program[pc++]=REOP_ASSERTTEST;
 resolveForwardJump(program,nextTermFixup,pc);
 break;
 case REOP_ASSERT_NOT:
 nextTermFixup=pc;
-pc+=OFFSET_LEN;
+pc+=INDEX_LEN;
 pc=emitREBytecode(state,re,pc,t.kid);
 program[pc++]=REOP_ASSERTNOTTEST;
 resolveForwardJump(program,nextTermFixup,pc);
@@ -85,14 +93,15 @@ pc=addIndex(program,pc,t.max + 1);
 pc=addIndex(program,pc,t.parenCount);
 pc=addIndex(program,pc,t.parenIndex);
 nextTermFixup=pc;
-pc+=OFFSET_LEN;
+pc+=INDEX_LEN;
 pc=emitREBytecode(state,re,pc,t.kid);
 program[pc++]=REOP_ENDCHILD;
 resolveForwardJump(program,nextTermFixup,pc);
 break;
 case REOP_CLASS:
+if (!t.sense) program[pc - 1]=REOP_NCLASS;
 pc=addIndex(program,pc,t.index);
-re.classList[t.index]=new RECharSet(t.bmsize,t.startIndex,t.kidlen);
+re.classList[t.index]=new RECharSet(t.bmsize,t.startIndex,t.kidlen,t.sense);
 break;
 default :
 break;

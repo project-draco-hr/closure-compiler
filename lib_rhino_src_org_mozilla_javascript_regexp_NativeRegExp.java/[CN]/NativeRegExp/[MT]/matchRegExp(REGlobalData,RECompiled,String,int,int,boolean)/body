@@ -7,9 +7,8 @@
   }
   gData.backTrackStackTop=null;
   gData.stateStackTop=null;
-  gData.multiline=multiline;
+  gData.multiline=multiline || (re.flags & JSREG_MULTILINE) != 0;
   gData.regexp=re;
-  gData.lastParen=0;
   int anchorCh=gData.regexp.anchorCh;
   for (int i=start; i <= end; ++i) {
     if (anchorCh >= 0) {
@@ -25,16 +24,21 @@
       }
     }
     gData.cp=i;
+    gData.skipped=i - start;
     for (int j=0; j < re.parenCount; j++) {
-      gData.set_parens(j,-1,0);
+      gData.parens[j]=-1l;
     }
     boolean result=executeREBytecode(gData,input,end);
     gData.backTrackStackTop=null;
     gData.stateStackTop=null;
     if (result) {
-      gData.skipped=i - start;
       return true;
     }
+    if (anchorCh == ANCHOR_BOL && !gData.multiline) {
+      gData.skipped=end;
+      return false;
+    }
+    i=start + gData.skipped;
   }
   return false;
 }

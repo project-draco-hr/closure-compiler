@@ -16,10 +16,9 @@
     Comment jsdocNode=getAndResetJsDoc();
 switch (tt) {
 case Token.NAME:
-      afterComma=-1;
-    Name name=createNameNode();
-  propertyName=ts.getString();
-int ppos=ts.tokenBeg;
+      Name name=createNameNode();
+    propertyName=ts.getString();
+  int ppos=ts.tokenBeg;
 consumeToken();
 int peeked=peekToken();
 boolean maybeGetterOrSetter="get".equals(propertyName) || "set".equals(propertyName);
@@ -38,9 +37,8 @@ elems.add(objectProp);
 }
 }
  else {
-AstNode pname=name;
-pname.setJsDocNode(jsdocNode);
-elems.add(plainProperty(pname,tt));
+name.setJsDocNode(jsdocNode);
+elems.add(plainProperty(name,tt));
 }
 break;
 case Token.RC:
@@ -52,7 +50,6 @@ if (pname == null) {
 propertyName=null;
 }
  else {
-afterComma=-1;
 propertyName=ts.getString();
 pname.setJsDocNode(jsdocNode);
 elems.add(plainProperty(pname,tt));

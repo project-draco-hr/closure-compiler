@@ -1,0 +1,19 @@
+{
+  try {
+    processFile(cx,scope,filename);
+  }
+ catch (  IOException ioex) {
+    Context.reportError(ToolErrorReporter.getMessage("msg.couldnt.read.source",filename,ioex.getMessage()));
+    exitCode=EXITCODE_FILE_NOT_FOUND;
+  }
+catch (  RhinoException rex) {
+    ToolErrorReporter.reportException(cx.getErrorReporter(),rex);
+    exitCode=EXITCODE_RUNTIME_ERROR;
+  }
+catch (  VirtualMachineError ex) {
+    ex.printStackTrace();
+    String msg=ToolErrorReporter.getMessage("msg.uncaughtJSException",ex.toString());
+    Context.reportError(msg);
+    exitCode=EXITCODE_RUNTIME_ERROR;
+  }
+}

@@ -1,6 +1,5 @@
 {
-  RECompiled regexp=new RECompiled();
-  regexp.source=str.toCharArray();
+  RECompiled regexp=new RECompiled(str);
   int length=str.length();
   int flags=0;
   if (global != null) {
@@ -62,6 +61,15 @@ case REOP_FLAT:
 case REOP_FLATi:
 int k=getIndex(regexp.program,1);
 regexp.anchorCh=regexp.source[k];
+break;
+case REOP_BOL:
+regexp.anchorCh=ANCHOR_BOL;
+break;
+case REOP_ALT:
+RENode n=state.result;
+if (n.kid.op == REOP_BOL && n.kid2.op == REOP_BOL) {
+regexp.anchorCh=ANCHOR_BOL;
+}
 break;
 }
 if (debug) {

@@ -8,13 +8,15 @@
   int nDigits;
   int i;
   boolean inRange=false;
-  charSet.sense=true;
   byteLength=(charSet.length + 7) / 8;
   charSet.bits=new byte[byteLength];
   if (src == end)   return;
   if (gData.regexp.source[src] == '^') {
-    charSet.sense=false;
+    assert(!charSet.sense);
     ++src;
+  }
+ else {
+    assert(charSet.sense);
   }
   while (src != end) {
     nDigits=2;
@@ -117,8 +119,15 @@ break;
 }
 if (inRange) {
 if ((gData.regexp.flags & JSREG_FOLD) != 0) {
-addCharacterRangeToCharSet(charSet,upcase(rangeStart),upcase(thisCh));
-addCharacterRangeToCharSet(charSet,downcase(rangeStart),downcase(thisCh));
+assert(rangeStart <= thisCh);
+for (c=rangeStart; c <= thisCh; ) {
+addCharacterToCharSet(charSet,c);
+char uch=upcase(c);
+char dch=downcase(c);
+if (c != uch) addCharacterToCharSet(charSet,uch);
+if (c != dch) addCharacterToCharSet(charSet,dch);
+if (++c == 0) break;
+}
 }
  else {
 addCharacterRangeToCharSet(charSet,rangeStart,thisCh);

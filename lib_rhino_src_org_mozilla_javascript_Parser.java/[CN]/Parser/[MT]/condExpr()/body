@@ -3,7 +3,15 @@
   if (matchToken(Token.HOOK)) {
     int line=ts.lineno;
     int qmarkPos=ts.tokenBeg, colonPos=-1;
-    AstNode ifTrue=assignExpr();
+    boolean wasInForInit=inForInit;
+    inForInit=false;
+    AstNode ifTrue;
+    try {
+      ifTrue=assignExpr();
+    }
+  finally {
+      inForInit=wasInForInit;
+    }
     if (mustMatchToken(Token.COLON,"msg.no.colon.cond"))     colonPos=ts.tokenBeg;
     AstNode ifFalse=assignExpr();
     int beg=pn.getPosition(), len=getNodeEnd(ifFalse) - beg;

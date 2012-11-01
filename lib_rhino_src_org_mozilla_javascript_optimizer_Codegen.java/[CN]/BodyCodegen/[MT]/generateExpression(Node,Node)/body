@@ -83,16 +83,11 @@ cfw.add(ByteCode.GETSTATIC,"java/lang/Boolean","FALSE","Ljava/lang/Boolean;");
 break;
 case Token.REGEXP:
 {
+cfw.addALoad(contextLocal);
+cfw.addALoad(variableObjectLocal);
 int i=node.getExistingIntProp(Node.REGEXP_PROP);
-if (fnCurrent == null) {
-cfw.addALoad(scriptRegexpLocal);
-}
- else {
-cfw.addALoad(funObjLocal);
-cfw.add(ByteCode.GETFIELD,codegen.mainClassName,Codegen.REGEXP_ARRAY_FIELD_NAME,Codegen.REGEXP_ARRAY_FIELD_TYPE);
-}
-cfw.addPush(i);
-cfw.add(ByteCode.AALOAD);
+cfw.add(ByteCode.GETSTATIC,codegen.mainClassName,codegen.getCompiledRegexpName(scriptOrFn,i),"Ljava/lang/Object;");
+cfw.addInvoke(ByteCode.INVOKESTATIC,"org/mozilla/javascript/ScriptRuntime","wrapRegExp","(Lorg/mozilla/javascript/Context;" + "Lorg/mozilla/javascript/Scriptable;" + "Ljava/lang/Object;"+ ")Lorg/mozilla/javascript/Scriptable;");
 }
 break;
 case Token.COMMA:
@@ -122,10 +117,10 @@ addScriptRuntimeInvoke("enumId","(Ljava/lang/Object;" + "Lorg/mozilla/javascript
 break;
 }
 case Token.ARRAYLIT:
-visitArrayLiteral(node,child);
+visitArrayLiteral(node,child,false);
 break;
 case Token.OBJECTLIT:
-visitObjectLiteral(node,child);
+visitObjectLiteral(node,child,false);
 break;
 case Token.NOT:
 {

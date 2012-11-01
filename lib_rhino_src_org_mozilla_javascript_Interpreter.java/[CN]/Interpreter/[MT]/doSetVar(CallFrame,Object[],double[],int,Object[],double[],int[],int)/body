@@ -1,0 +1,15 @@
+{
+  if (!frame.useActivation) {
+    if ((varAttributes[indexReg] & ScriptableObject.READONLY) == 0) {
+      vars[indexReg]=stack[stackTop];
+      varDbls[indexReg]=sDbl[stackTop];
+    }
+  }
+ else {
+    Object val=stack[stackTop];
+    if (val == DOUBLE_MARK)     val=ScriptRuntime.wrapNumber(sDbl[stackTop]);
+    String stringReg=frame.idata.argNames[indexReg];
+    frame.scope.put(stringReg,frame.scope,val);
+  }
+  return stackTop;
+}

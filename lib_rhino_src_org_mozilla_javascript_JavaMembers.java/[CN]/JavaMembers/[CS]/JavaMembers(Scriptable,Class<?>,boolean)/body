@@ -5,11 +5,11 @@
     if (shutter != null && !shutter.visibleToScripts(cl.getName())) {
       throw Context.reportRuntimeError1("msg.access.prohibited",cl.getName());
     }
-    this.includePrivate=cx.hasFeature(Context.FEATURE_ENHANCED_JAVA_ACCESS);
     this.members=new HashMap<String,Object>();
     this.staticMembers=new HashMap<String,Object>();
     this.cl=cl;
-    reflect(scope,includeProtected);
+    boolean includePrivate=cx.hasFeature(Context.FEATURE_ENHANCED_JAVA_ACCESS);
+    reflect(scope,includeProtected,includePrivate);
   }
   finally {
     Context.exit();

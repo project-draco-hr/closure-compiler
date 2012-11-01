@@ -1,0 +1,9 @@
+{
+  Constructor<?> c=readerClass.getConstructor();
+  Object reader=c.newInstance();
+  tryInvoke(reader,"setBellEnabled",BOOLEAN_ARG,Boolean.FALSE);
+  Class<?> completorClass=Kit.classOrNull(classLoader,"jline.console.completer.Completer");
+  Object completor=Proxy.newProxyInstance(classLoader,new Class[]{completorClass},new FlexibleCompletor(completorClass,scope));
+  tryInvoke(reader,"addCompleter",new Class[]{completorClass},completor);
+  return new JLineShellConsoleV2(reader,cs);
+}

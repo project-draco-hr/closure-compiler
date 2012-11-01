@@ -4,6 +4,22 @@
   Scriptable argsObj=cx.newArray(global,array);
   global.defineProperty("arguments",argsObj,ScriptableObject.DONTENUM);
   for (  String file : fileList) {
-    processSource(cx,file);
+    try {
+      processSource(cx,file);
+    }
+ catch (    IOException ioex) {
+      Context.reportError(ToolErrorReporter.getMessage("msg.couldnt.read.source",file,ioex.getMessage()));
+      exitCode=EXITCODE_FILE_NOT_FOUND;
+    }
+catch (    RhinoException rex) {
+      ToolErrorReporter.reportException(cx.getErrorReporter(),rex);
+      exitCode=EXITCODE_RUNTIME_ERROR;
+    }
+catch (    VirtualMachineError ex) {
+      ex.printStackTrace();
+      String msg=ToolErrorReporter.getMessage("msg.uncaughtJSException",ex.toString());
+      Context.reportError(msg);
+      exitCode=EXITCODE_RUNTIME_ERROR;
+    }
   }
 }

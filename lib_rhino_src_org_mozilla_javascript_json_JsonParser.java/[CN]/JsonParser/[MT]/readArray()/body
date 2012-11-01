@@ -1,17 +1,24 @@
 {
+  consumeWhitespace();
+  if (pos < length && src.charAt(pos) == ']') {
+    pos+=1;
+    return cx.newArray(scope,0);
+  }
   List<Object> list=new ArrayList<Object>();
   boolean needsComma=false;
-  consumeWhitespace();
   while (pos < length) {
     char c=src.charAt(pos);
 switch (c) {
 case ']':
-      pos+=1;
-    return cx.newArray(scope,list.toArray());
+      if (!needsComma) {
+        throw new ParseException("Unexpected comma in array literal");
+      }
+    pos+=1;
+  return cx.newArray(scope,list.toArray());
 case ',':
-  if (!needsComma) {
-    throw new ParseException("Unexpected comma in array literal");
-  }
+if (!needsComma) {
+  throw new ParseException("Unexpected comma in array literal");
+}
 needsComma=false;
 pos+=1;
 break;

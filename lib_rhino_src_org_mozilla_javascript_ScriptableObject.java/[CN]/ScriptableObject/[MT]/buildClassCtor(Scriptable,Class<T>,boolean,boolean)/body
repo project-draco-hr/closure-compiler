@@ -28,6 +28,13 @@
   }
   Scriptable proto=(Scriptable)protoCtor.newInstance(ScriptRuntime.emptyArgs);
   String className=proto.getClassName();
+  Object existing=getProperty(getTopLevelScope(scope),className);
+  if (existing instanceof BaseFunction) {
+    Object existingProto=((BaseFunction)existing).getPrototypeProperty();
+    if (existingProto != null && clazz.equals(existingProto.getClass())) {
+      return (BaseFunction)existing;
+    }
+  }
   Scriptable superProto=null;
   if (mapInheritance) {
     Class<? super T> superClass=clazz.getSuperclass();

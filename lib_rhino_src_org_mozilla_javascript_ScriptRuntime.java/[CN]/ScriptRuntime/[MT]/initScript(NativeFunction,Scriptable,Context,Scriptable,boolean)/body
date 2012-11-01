@@ -10,9 +10,11 @@
       String name=funObj.getParamOrVarName(i);
       boolean isConst=funObj.getParamOrVarConst(i);
       if (!ScriptableObject.hasProperty(scope,name)) {
-        if (!evalScript) {
-          if (isConst)           ScriptableObject.defineConstProperty(varScope,name);
- else           ScriptableObject.defineProperty(varScope,name,Undefined.instance,ScriptableObject.PERMANENT);
+        if (isConst) {
+          ScriptableObject.defineConstProperty(varScope,name);
+        }
+ else         if (!evalScript) {
+          ScriptableObject.defineProperty(varScope,name,Undefined.instance,ScriptableObject.PERMANENT);
         }
  else {
           varScope.put(name,varScope,Undefined.instance);

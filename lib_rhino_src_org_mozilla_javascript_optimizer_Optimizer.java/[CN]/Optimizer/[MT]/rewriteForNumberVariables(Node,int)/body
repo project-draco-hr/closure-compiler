@@ -27,16 +27,17 @@ case Token.INC:
 case Token.DEC:
 {
 Node child=n.getFirstChild();
+int type=rewriteForNumberVariables(child,NumberType);
 if (child.getType() == Token.GETVAR) {
-if (rewriteForNumberVariables(child,NumberType) == NumberType && !convertParameter(child)) {
+if (type == NumberType && !convertParameter(child)) {
   n.putIntProp(Node.ISNUMBER_PROP,Node.BOTH);
   markDCPNumberContext(child);
   return NumberType;
 }
 return NoType;
 }
- else if (child.getType() == Token.GETELEM) {
-return rewriteForNumberVariables(child,NumberType);
+ else if (child.getType() == Token.GETELEM || child.getType() == Token.GETPROP) {
+return type;
 }
 return NoType;
 }

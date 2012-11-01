@@ -1,234 +1,132 @@
 {
   int pc=0;
   byte program[]=gData.regexp.program;
-  int currentContinuation_op;
-  int currentContinuation_pc;
+  int continuationOp=REOP_END;
+  int continuationPc=0;
   boolean result=false;
-  currentContinuation_pc=0;
-  currentContinuation_op=REOP_END;
-  if (debug) {
-    System.out.println("Input = \"" + input + "\", start at "+ gData.cp);
-  }
   int op=program[pc++];
-  for (; ; ) {
-    if (debug) {
-      System.out.println("Testing at " + gData.cp + ", op = "+ op);
-    }
-switch (op) {
-case REOP_EMPTY:
-      result=true;
-    break;
-case REOP_BOL:
-  if (gData.cp != 0) {
-    if (gData.multiline || ((gData.regexp.flags & JSREG_MULTILINE) != 0)) {
-      if (!isLineTerm(input.charAt(gData.cp - 1))) {
-        result=false;
+  if (gData.regexp.anchorCh < 0 && reopIsSimple(op)) {
+    boolean anchor=false;
+    while (gData.cp <= end) {
+      int match=simpleMatch(gData,input,op,program,pc,end,true);
+      if (match >= 0) {
+        anchor=true;
+        pc=match;
+        op=program[pc++];
         break;
       }
+      gData.skipped++;
+      gData.cp++;
     }
- else {
-      result=false;
-      break;
-    }
+    if (!anchor)     return false;
   }
-result=true;
-break;
-case REOP_EOL:
-if (gData.cp != end) {
-if (gData.multiline || ((gData.regexp.flags & JSREG_MULTILINE) != 0)) {
-if (!isLineTerm(input.charAt(gData.cp))) {
-  result=false;
-  break;
-}
-}
+  for (; ; ) {
+    if (reopIsSimple(op)) {
+      int match=simpleMatch(gData,input,op,program,pc,end,true);
+      result=match >= 0;
+      if (result)       pc=match;
+    }
  else {
-result=false;
-break;
-}
-}
-result=true;
-break;
-case REOP_WBDRY:
-result=((gData.cp == 0 || !isWord(input.charAt(gData.cp - 1))) ^ !((gData.cp < end) && isWord(input.charAt(gData.cp))));
-break;
-case REOP_WNONBDRY:
-result=((gData.cp == 0 || !isWord(input.charAt(gData.cp - 1))) ^ ((gData.cp < end) && isWord(input.charAt(gData.cp))));
-break;
-case REOP_DOT:
-result=(gData.cp != end && !isLineTerm(input.charAt(gData.cp)));
-if (result) {
-gData.cp++;
-}
-break;
-case REOP_DIGIT:
-result=(gData.cp != end && isDigit(input.charAt(gData.cp)));
-if (result) {
-gData.cp++;
-}
-break;
-case REOP_NONDIGIT:
-result=(gData.cp != end && !isDigit(input.charAt(gData.cp)));
-if (result) {
-gData.cp++;
-}
-break;
-case REOP_SPACE:
-result=(gData.cp != end && isREWhiteSpace(input.charAt(gData.cp)));
-if (result) {
-gData.cp++;
-}
-break;
-case REOP_NONSPACE:
-result=(gData.cp != end && !isREWhiteSpace(input.charAt(gData.cp)));
-if (result) {
-gData.cp++;
-}
-break;
-case REOP_ALNUM:
-result=(gData.cp != end && isWord(input.charAt(gData.cp)));
-if (result) {
-gData.cp++;
-}
-break;
-case REOP_NONALNUM:
-result=(gData.cp != end && !isWord(input.charAt(gData.cp)));
-if (result) {
-gData.cp++;
-}
-break;
-case REOP_FLAT:
+      switchStatement: switch (op) {
+case REOP_ALTPREREQ:
+case REOP_ALTPREREQi:
+case REOP_ALTPREREQ2:
 {
-int offset=getIndex(program,pc);
-pc+=INDEX_LEN;
-int length=getIndex(program,pc);
-pc+=INDEX_LEN;
-result=flatNMatcher(gData,offset,length,input,end);
-}
-break;
-case REOP_FLATi:
-{
-int offset=getIndex(program,pc);
-pc+=INDEX_LEN;
-int length=getIndex(program,pc);
-pc+=INDEX_LEN;
-result=flatNIMatcher(gData,offset,length,input,end);
-}
-break;
-case REOP_FLAT1:
-{
-char matchCh=(char)(program[pc++] & 0xFF);
-result=(gData.cp != end && input.charAt(gData.cp) == matchCh);
-if (result) {
-gData.cp++;
-}
-}
-break;
-case REOP_FLAT1i:
-{
-char matchCh=(char)(program[pc++] & 0xFF);
-result=(gData.cp != end && upcase(input.charAt(gData.cp)) == upcase(matchCh));
-if (result) {
-gData.cp++;
-}
-}
-break;
-case REOP_UCFLAT1:
-{
-char matchCh=(char)getIndex(program,pc);
-pc+=INDEX_LEN;
-result=(gData.cp != end && input.charAt(gData.cp) == matchCh);
-if (result) {
-gData.cp++;
-}
-}
-break;
-case REOP_UCFLAT1i:
-{
-char matchCh=(char)getIndex(program,pc);
-pc+=INDEX_LEN;
-result=(gData.cp != end && upcase(input.charAt(gData.cp)) == upcase(matchCh));
-if (result) {
-gData.cp++;
-}
-}
-break;
+          char matchCh1=(char)getIndex(program,pc);
+          pc+=INDEX_LEN;
+          char matchCh2=(char)getIndex(program,pc);
+          pc+=INDEX_LEN;
+          if (gData.cp == end) {
+            result=false;
+            break;
+          }
+          char c=input.charAt(gData.cp);
+          if (op == REOP_ALTPREREQ2) {
+            if (c != matchCh1 && !classMatcher(gData,gData.regexp.classList[matchCh2],c)) {
+              result=false;
+              break;
+            }
+          }
+ else {
+            if (op == REOP_ALTPREREQi)             c=upcase(c);
+            if (c != matchCh1 && c != matchCh2) {
+              result=false;
+              break;
+            }
+          }
+        }
 case REOP_ALT:
 {
-int nextpc;
-byte nextop;
-pushProgState(gData,0,0,null,currentContinuation_pc,currentContinuation_op);
-nextpc=pc + getOffset(program,pc);
-nextop=program[nextpc++];
-pushBackTrackState(gData,nextop,nextpc);
-pc+=INDEX_LEN;
-op=program[pc++];
-}
-continue;
+        int nextpc=pc + getOffset(program,pc);
+        pc+=INDEX_LEN;
+        op=program[pc++];
+        int startcp=gData.cp;
+        if (reopIsSimple(op)) {
+          int match=simpleMatch(gData,input,op,program,pc,end,true);
+          if (match < 0) {
+            op=program[nextpc++];
+            pc=nextpc;
+            continue;
+          }
+          result=true;
+          pc=match;
+          op=program[pc++];
+        }
+        byte nextop=program[nextpc++];
+        pushBackTrackState(gData,nextop,nextpc,startcp,continuationOp,continuationPc);
+      }
+    continue;
 case REOP_JUMP:
 {
-int offset;
-REProgState state=popProgState(gData);
-currentContinuation_pc=state.continuation_pc;
-currentContinuation_op=state.continuation_op;
-offset=getOffset(program,pc);
-pc+=offset;
-op=program[pc++];
-}
+    int offset=getOffset(program,pc);
+    pc+=offset;
+    op=program[pc++];
+  }
 continue;
 case REOP_LPAREN:
 {
 int parenIndex=getIndex(program,pc);
 pc+=INDEX_LEN;
-gData.set_parens(parenIndex,gData.cp,0);
+gData.setParens(parenIndex,gData.cp,0);
 op=program[pc++];
 }
 continue;
 case REOP_RPAREN:
 {
-int cap_index;
 int parenIndex=getIndex(program,pc);
 pc+=INDEX_LEN;
-cap_index=gData.parens_index(parenIndex);
-gData.set_parens(parenIndex,cap_index,gData.cp - cap_index);
-if (parenIndex > gData.lastParen) gData.lastParen=parenIndex;
+int cap_index=gData.parensIndex(parenIndex);
+gData.setParens(parenIndex,cap_index,gData.cp - cap_index);
 op=program[pc++];
 }
 continue;
-case REOP_BACKREF:
-{
-int parenIndex=getIndex(program,pc);
-pc+=INDEX_LEN;
-result=backrefMatcher(gData,parenIndex,input,end);
-}
-break;
-case REOP_CLASS:
-{
-int index=getIndex(program,pc);
-pc+=INDEX_LEN;
-if (gData.cp != end) {
-if (classMatcher(gData,gData.regexp.classList[index],input.charAt(gData.cp))) {
-gData.cp++;
-result=true;
-break;
-}
-}
-result=false;
-}
-break;
 case REOP_ASSERT:
-case REOP_ASSERT_NOT:
 {
-byte testOp;
-pushProgState(gData,0,0,gData.backTrackStackTop,currentContinuation_pc,currentContinuation_op);
-if (op == REOP_ASSERT) {
-testOp=REOP_ASSERTTEST;
-}
- else {
-testOp=REOP_ASSERTNOTTEST;
-}
-pushBackTrackState(gData,testOp,pc + getOffset(program,pc));
+int nextpc=pc + getIndex(program,pc);
 pc+=INDEX_LEN;
 op=program[pc++];
+if (reopIsSimple(op) && simpleMatch(gData,input,op,program,pc,end,false) < 0) {
+result=false;
+break;
+}
+pushProgState(gData,0,0,gData.cp,gData.backTrackStackTop,continuationOp,continuationPc);
+pushBackTrackState(gData,REOP_ASSERTTEST,nextpc);
+}
+continue;
+case REOP_ASSERT_NOT:
+{
+int nextpc=pc + getIndex(program,pc);
+pc+=INDEX_LEN;
+op=program[pc++];
+if (reopIsSimple(op)) {
+int match=simpleMatch(gData,input,op,program,pc,end,false);
+if (match >= 0 && program[match] == REOP_ASSERTNOTTEST) {
+result=false;
+break;
+}
+}
+pushProgState(gData,0,0,gData.cp,gData.backTrackStackTop,continuationOp,continuationPc);
+pushBackTrackState(gData,REOP_ASSERTNOTTEST,nextpc);
 }
 continue;
 case REOP_ASSERTTEST:
@@ -237,22 +135,10 @@ case REOP_ASSERTNOTTEST:
 REProgState state=popProgState(gData);
 gData.cp=state.index;
 gData.backTrackStackTop=state.backTrack;
-currentContinuation_pc=state.continuation_pc;
-currentContinuation_op=state.continuation_op;
-if (result) {
-if (op == REOP_ASSERTTEST) {
-result=true;
-}
- else {
-result=false;
-}
-}
- else {
-if (op == REOP_ASSERTTEST) {
-}
- else {
-result=true;
-}
+continuationPc=state.continuationPc;
+continuationOp=state.continuationOp;
+if (op == REOP_ASSERTNOTTEST) {
+result=!result;
 }
 }
 break;
@@ -297,18 +183,18 @@ break;
 default :
 throw Kit.codeBug();
 }
-pushProgState(gData,min,max,null,currentContinuation_pc,currentContinuation_op);
+pushProgState(gData,min,max,gData.cp,null,continuationOp,continuationPc);
 if (greedy) {
-currentContinuation_op=REOP_REPEAT;
-currentContinuation_pc=pc;
 pushBackTrackState(gData,REOP_REPEAT,pc);
+continuationOp=REOP_REPEAT;
+continuationPc=pc;
 pc+=3 * INDEX_LEN;
 op=program[pc++];
 }
  else {
 if (min != 0) {
-currentContinuation_op=REOP_MINIMALREPEAT;
-currentContinuation_pc=pc;
+continuationOp=REOP_MINIMALREPEAT;
+continuationPc=pc;
 pc+=3 * INDEX_LEN;
 op=program[pc++];
 }
@@ -324,53 +210,73 @@ op=program[pc++];
 continue;
 case REOP_ENDCHILD:
 result=true;
-pc=currentContinuation_pc;
-op=currentContinuation_op;
+pc=continuationPc;
+op=continuationOp;
 continue;
 case REOP_REPEAT:
 {
+int nextpc, nextop;
+do {
 REProgState state=popProgState(gData);
 if (!result) {
 if (state.min == 0) result=true;
-currentContinuation_pc=state.continuation_pc;
-currentContinuation_op=state.continuation_op;
+continuationPc=state.continuationPc;
+continuationOp=state.continuationOp;
 pc+=2 * INDEX_LEN;
-pc=pc + getOffset(program,pc);
-break;
+pc+=getOffset(program,pc);
+break switchStatement;
 }
- else {
 if (state.min == 0 && gData.cp == state.index) {
 result=false;
-currentContinuation_pc=state.continuation_pc;
-currentContinuation_op=state.continuation_op;
+continuationPc=state.continuationPc;
+continuationOp=state.continuationOp;
 pc+=2 * INDEX_LEN;
-pc=pc + getOffset(program,pc);
-break;
+pc+=getOffset(program,pc);
+break switchStatement;
 }
 int new_min=state.min, new_max=state.max;
 if (new_min != 0) new_min--;
 if (new_max != -1) new_max--;
 if (new_max == 0) {
 result=true;
-currentContinuation_pc=state.continuation_pc;
-currentContinuation_op=state.continuation_op;
+continuationPc=state.continuationPc;
+continuationOp=state.continuationOp;
 pc+=2 * INDEX_LEN;
-pc=pc + getOffset(program,pc);
-break;
+pc+=getOffset(program,pc);
+break switchStatement;
 }
-pushProgState(gData,new_min,new_max,null,state.continuation_pc,state.continuation_op);
-currentContinuation_op=REOP_REPEAT;
-currentContinuation_pc=pc;
-pushBackTrackState(gData,REOP_REPEAT,pc);
+nextpc=pc + 3 * INDEX_LEN;
+nextop=program[nextpc];
+int startcp=gData.cp;
+if (reopIsSimple(nextop)) {
+nextpc++;
+int match=simpleMatch(gData,input,nextop,program,nextpc,end,true);
+if (match < 0) {
+result=(new_min == 0);
+continuationPc=state.continuationPc;
+continuationOp=state.continuationOp;
+pc+=2 * INDEX_LEN;
+pc+=getOffset(program,pc);
+break switchStatement;
+}
+result=true;
+nextpc=match;
+}
+continuationOp=REOP_REPEAT;
+continuationPc=pc;
+pushProgState(gData,new_min,new_max,startcp,null,state.continuationOp,state.continuationPc);
+if (new_min == 0) {
+pushBackTrackState(gData,REOP_REPEAT,pc,startcp,state.continuationOp,state.continuationPc);
 int parenCount=getIndex(program,pc);
-pc+=INDEX_LEN;
-int parenIndex=getIndex(program,pc);
-pc+=2 * INDEX_LEN;
-op=program[pc++];
+int parenIndex=getIndex(program,pc + INDEX_LEN);
 for (int k=0; k < parenCount; k++) {
-gData.set_parens(parenIndex + k,-1,0);
+gData.setParens(parenIndex + k,-1,0);
 }
 }
+}
+ while (program[nextpc] == REOP_ENDCHILD);
+pc=nextpc;
+op=program[pc++];
 }
 continue;
 case REOP_MINIMALREPEAT:
@@ -378,51 +284,51 @@ case REOP_MINIMALREPEAT:
 REProgState state=popProgState(gData);
 if (!result) {
 if (state.max == -1 || state.max > 0) {
-pushProgState(gData,state.min,state.max,null,state.continuation_pc,state.continuation_op);
-currentContinuation_op=REOP_MINIMALREPEAT;
-currentContinuation_pc=pc;
+pushProgState(gData,state.min,state.max,gData.cp,null,state.continuationOp,state.continuationPc);
+continuationOp=REOP_MINIMALREPEAT;
+continuationPc=pc;
 int parenCount=getIndex(program,pc);
 pc+=INDEX_LEN;
 int parenIndex=getIndex(program,pc);
 pc+=2 * INDEX_LEN;
 for (int k=0; k < parenCount; k++) {
-gData.set_parens(parenIndex + k,-1,0);
+gData.setParens(parenIndex + k,-1,0);
 }
 op=program[pc++];
 continue;
 }
  else {
-currentContinuation_pc=state.continuation_pc;
-currentContinuation_op=state.continuation_op;
+continuationPc=state.continuationPc;
+continuationOp=state.continuationOp;
 break;
 }
 }
  else {
 if (state.min == 0 && gData.cp == state.index) {
 result=false;
-currentContinuation_pc=state.continuation_pc;
-currentContinuation_op=state.continuation_op;
+continuationPc=state.continuationPc;
+continuationOp=state.continuationOp;
 break;
 }
 int new_min=state.min, new_max=state.max;
 if (new_min != 0) new_min--;
 if (new_max != -1) new_max--;
-pushProgState(gData,new_min,new_max,null,state.continuation_pc,state.continuation_op);
+pushProgState(gData,new_min,new_max,gData.cp,null,state.continuationOp,state.continuationPc);
 if (new_min != 0) {
-currentContinuation_op=REOP_MINIMALREPEAT;
-currentContinuation_pc=pc;
+continuationOp=REOP_MINIMALREPEAT;
+continuationPc=pc;
 int parenCount=getIndex(program,pc);
 pc+=INDEX_LEN;
 int parenIndex=getIndex(program,pc);
 pc+=2 * INDEX_LEN;
 for (int k=0; k < parenCount; k++) {
-gData.set_parens(parenIndex + k,-1,0);
+gData.setParens(parenIndex + k,-1,0);
 }
 op=program[pc++];
 }
  else {
-currentContinuation_pc=state.continuation_pc;
-currentContinuation_op=state.continuation_op;
+continuationPc=state.continuationPc;
+continuationOp=state.continuationOp;
 pushBackTrackState(gData,REOP_MINIMALREPEAT,pc);
 popProgState(gData);
 pc+=2 * INDEX_LEN;
@@ -435,22 +341,20 @@ continue;
 case REOP_END:
 return true;
 default :
-throw Kit.codeBug();
+throw Kit.codeBug("invalid bytecode");
+}
 }
 if (!result) {
 REBackTrackData backTrackData=gData.backTrackStackTop;
 if (backTrackData != null) {
 gData.backTrackStackTop=backTrackData.previous;
-gData.lastParen=backTrackData.lastParen;
-if (backTrackData.parens != null) {
-gData.parens=backTrackData.parens.clone();
-}
+gData.parens=backTrackData.parens;
 gData.cp=backTrackData.cp;
 gData.stateStackTop=backTrackData.stateStackTop;
-currentContinuation_op=gData.stateStackTop.continuation_op;
-currentContinuation_pc=gData.stateStackTop.continuation_pc;
-pc=backTrackData.continuation_pc;
-op=backTrackData.continuation_op;
+continuationOp=backTrackData.continuationOp;
+continuationPc=backTrackData.continuationPc;
+pc=backTrackData.pc;
+op=backTrackData.op;
 continue;
 }
  else return false;

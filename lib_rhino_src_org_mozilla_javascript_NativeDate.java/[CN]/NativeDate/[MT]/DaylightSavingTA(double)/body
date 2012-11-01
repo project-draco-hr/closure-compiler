@@ -1,19 +1,10 @@
 {
-  if (t < 0.0 || t > 2145916800000.0) {
+  if (t < 0.0) {
     int year=EquivalentYear(YearFromTime(t));
     double day=MakeDay(year,MonthFromTime(t),DateFromTime(t));
     t=MakeDate(day,TimeWithinDay(t));
   }
-  if (!TZO_WORKAROUND) {
-    Date date=new Date((long)t);
-    if (thisTimeZone.inDaylightTime(date))     return msPerHour;
- else     return 0;
-  }
- else {
-    t+=LocalTZA + (HourFromTime(t) <= 2 ? msPerHour : 0);
-    int year=YearFromTime(t);
-    double offset=thisTimeZone.getOffset(year > 0 ? 1 : 0,year,MonthFromTime(t),DateFromTime(t),WeekDay(t),(int)TimeWithinDay(t));
-    if ((offset - LocalTZA) != 0)     return msPerHour;
- else     return 0;
-  }
+  Date date=new Date((long)t);
+  if (thisTimeZone.inDaylightTime(date))   return msPerHour;
+ else   return 0;
 }

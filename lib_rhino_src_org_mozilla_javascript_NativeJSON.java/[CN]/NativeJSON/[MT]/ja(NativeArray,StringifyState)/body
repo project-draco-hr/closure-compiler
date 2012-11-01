@@ -6,9 +6,15 @@
   String stepback=state.indent;
   state.indent=state.indent + state.gap;
   List<Object> partial=new LinkedList<Object>();
-  int len=(int)value.getLength();
-  for (int index=0; index < len; index++) {
-    Object strP=str(index,value,state);
+  long len=value.getLength();
+  for (long index=0; index < len; index++) {
+    Object strP;
+    if (index > Integer.MAX_VALUE) {
+      strP=str(Long.toString(index),value,state);
+    }
+ else {
+      strP=str((int)index,value,state);
+    }
     if (strP == Undefined.instance) {
       partial.add("null");
     }

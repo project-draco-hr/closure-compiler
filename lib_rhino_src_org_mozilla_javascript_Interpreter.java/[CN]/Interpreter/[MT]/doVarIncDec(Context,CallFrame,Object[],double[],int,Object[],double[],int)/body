@@ -1,0 +1,25 @@
+{
+  ++stackTop;
+  int incrDecrMask=frame.idata.itsICode[frame.pc];
+  if (!frame.useActivation) {
+    stack[stackTop]=DOUBLE_MARK;
+    Object varValue=vars[indexReg];
+    double d;
+    if (varValue == DOUBLE_MARK) {
+      d=varDbls[indexReg];
+    }
+ else {
+      d=ScriptRuntime.toNumber(varValue);
+      vars[indexReg]=DOUBLE_MARK;
+    }
+    double d2=((incrDecrMask & Node.DECR_FLAG) == 0) ? d + 1.0 : d - 1.0;
+    varDbls[indexReg]=d2;
+    sDbl[stackTop]=((incrDecrMask & Node.POST_FLAG) == 0) ? d2 : d;
+  }
+ else {
+    String varName=frame.idata.argNames[indexReg];
+    stack[stackTop]=ScriptRuntime.nameIncrDecr(frame.scope,varName,cx,incrDecrMask);
+  }
+  ++frame.pc;
+  return stackTop;
+}

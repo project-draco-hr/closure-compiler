@@ -49,12 +49,9 @@
       generateCheckForThrowOrClose(-1,false,GENERATOR_START);
     }
   }
-  if (fnCurrent == null) {
-    if (scriptOrFn.getRegexpCount() != 0) {
-      scriptRegexpLocal=getNewWordLocal();
-      codegen.pushRegExpArray(cfw,scriptOrFn,contextLocal,variableObjectLocal);
-      cfw.addAStore(scriptRegexpLocal);
-    }
+  if (fnCurrent == null && scriptOrFn.getRegexpCount() != 0) {
+    cfw.addALoad(contextLocal);
+    cfw.addInvoke(ByteCode.INVOKESTATIC,codegen.mainClassName,Codegen.REGEXP_INIT_METHOD_NAME,Codegen.REGEXP_INIT_METHOD_SIGNATURE);
   }
   if (compilerEnv.isGenerateObserverCount())   saveCurrentCodeOffset();
   if (hasVarsInRegs) {

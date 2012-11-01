@@ -1,7 +1,6 @@
 {
   if (data == null) {
-    exitCode=EXITCODE_FILE_NOT_FOUND;
-    return null;
+    throw new FileNotFoundException(path);
   }
   int nameStart=path.lastIndexOf('/');
   if (nameStart < 0) {
@@ -24,17 +23,12 @@
     }
     return (Script)clazz.newInstance();
   }
- catch (  RhinoException rex) {
-    ToolErrorReporter.reportException(cx.getErrorReporter(),rex);
-    exitCode=EXITCODE_RUNTIME_ERROR;
-  }
-catch (  IllegalAccessException iaex) {
-    exitCode=EXITCODE_RUNTIME_ERROR;
+ catch (  IllegalAccessException iaex) {
     Context.reportError(iaex.toString());
+    throw new RuntimeException(iaex);
   }
 catch (  InstantiationException inex) {
-    exitCode=EXITCODE_RUNTIME_ERROR;
     Context.reportError(inex.toString());
+    throw new RuntimeException(inex);
   }
-  return null;
 }

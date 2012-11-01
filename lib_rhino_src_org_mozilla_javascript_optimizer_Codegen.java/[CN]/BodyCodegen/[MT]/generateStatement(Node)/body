@@ -19,6 +19,8 @@ case Token.EMPTY:
 break;
 case Token.LOCAL_BLOCK:
 {
+boolean prevLocal=inLocalBlock;
+inLocalBlock=true;
 int local=getNewWordLocal();
 if (isGenerator) {
   cfw.add(ByteCode.ACONST_NULL);
@@ -31,6 +33,7 @@ while (child != null) {
 }
 releaseWordLocal((short)local);
 node.removeProp(Node.LOCAL_PROP);
+inLocalBlock=prevLocal;
 break;
 }
 case Token.FUNCTION:
