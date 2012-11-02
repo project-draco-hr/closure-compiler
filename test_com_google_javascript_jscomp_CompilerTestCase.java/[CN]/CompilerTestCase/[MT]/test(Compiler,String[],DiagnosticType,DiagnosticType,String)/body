@@ -56,8 +56,11 @@
   if (error == null) {
     assertEquals("Unexpected error(s): " + Joiner.on("\n").join(compiler.getErrors()),0,compiler.getErrorCount());
     ErrorManager symbolTableErrorManager=new BlackHoleErrorManager(compiler);
-    Node expectedRoot=parseExpectedJs(expected);
-    expectedRoot.detachFromParent();
+    Node expectedRoot=null;
+    if (expected != null) {
+      expectedRoot=parseExpectedJs(expected);
+      expectedRoot.detachFromParent();
+    }
     JSError[] stErrors=symbolTableErrorManager.getErrors();
     if (expectedSymbolTableError != null) {
       assertEquals("There should be one error.",1,stErrors.length);
@@ -100,12 +103,14 @@
  else {
       assertTrue("compiler.reportCodeChange() should have been called",hasCodeChanged);
     }
-    if (compareAsTree) {
-      String explanation=expectedRoot.checkTreeEquals(mainRoot);
-      assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult: "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
-    }
- else     if (expected != null) {
-      assertEquals(Joiner.on("").join(expected),compiler.toSource(mainRoot));
+    if (expected != null) {
+      if (compareAsTree) {
+        String explanation=expectedRoot.checkTreeEquals(mainRoot);
+        assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult: "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
+      }
+ else       if (expected != null) {
+        assertEquals(Joiner.on("").join(expected),compiler.toSource(mainRoot));
+      }
     }
     Node normalizeCheckRootClone=root.cloneTree();
     Node normalizeCheckExternsRootClone=root.getFirstChild();
