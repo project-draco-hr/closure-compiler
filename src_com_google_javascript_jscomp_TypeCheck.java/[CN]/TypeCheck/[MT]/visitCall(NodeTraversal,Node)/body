@@ -16,7 +16,7 @@
     if (functionType.isConstructor() && !functionType.isNativeObjectType() && (functionType.getReturnType().isUnknownType() || functionType.getReturnType().isVoidType() || !isExtern)) {
       report(t,n,CONSTRUCTOR_NOT_CALLABLE,childType.toString());
     }
-    if (functionType.isOrdinaryFunction() && !functionType.getTypeOfThis().isUnknownType() && !functionType.getTypeOfThis().isNativeObjectType()&& !(child.isGetElem() || child.isGetProp())) {
+    if (functionType.isOrdinaryFunction() && !functionType.getTypeOfThis().isUnknownType() && !(functionType.getTypeOfThis().toObjectType() != null && functionType.getTypeOfThis().toObjectType().isNativeObjectType())&& !(child.isGetElem() || child.isGetProp())) {
       report(t,n,EXPECTED_THIS_TYPE,functionType.toString());
     }
     visitParameterList(t,n,functionType);
