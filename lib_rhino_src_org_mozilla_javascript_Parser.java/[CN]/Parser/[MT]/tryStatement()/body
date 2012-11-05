@@ -21,6 +21,10 @@
       if (mustMatchToken(Token.LP,"msg.no.paren.catch"))       lp=ts.tokenBeg;
       mustMatchToken(Token.NAME,"msg.bad.catchcond");
       Name varName=createNameNode();
+      Comment jsdocNodeForName=getAndResetJsDoc();
+      if (jsdocNodeForName != null) {
+        varName.setJsDocNode(jsdocNodeForName);
+      }
       String varNameString=varName.getIdentifier();
       if (inUseStrictDirective) {
         if ("eval".equals(varNameString) || "arguments".equals(varNameString)) {
