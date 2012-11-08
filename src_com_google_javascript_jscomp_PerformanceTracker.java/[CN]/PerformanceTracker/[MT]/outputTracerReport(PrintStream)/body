@@ -1,6 +1,6 @@
 {
-  JvmMetrics.maybeWriteJvmMetrics(this.err,"verbose:pretty:all");
-  OutputStreamWriter output=new OutputStreamWriter(this.err);
+  JvmMetrics.maybeWriteJvmMetrics(pstr,"verbose:pretty:all");
+  OutputStreamWriter output=new OutputStreamWriter(pstr);
   try {
     int runtime=0;
     int runs=0;
@@ -8,9 +8,13 @@
     int diff=0;
     int gzDiff=0;
     output.write("Summary:\n");
-    output.write("pass,runtime,runs,chancingRuns,reduction,gzReduction\n");
-    Map<String,Stats> runtimeMap=compiler.tracker.getStats();
-    for (    Entry<String,Stats> entry : runtimeMap.entrySet()) {
+    output.write("pass,runtime,runs,changingRuns,reduction,gzReduction\n");
+    ArrayList<Entry<String,Stats>> a=new ArrayList<Entry<String,Stats>>();
+    for (    Entry<String,Stats> entry : summary.entrySet()) {
+      a.add(entry);
+    }
+    Collections.sort(a,new CmpEntries());
+    for (    Entry<String,Stats> entry : a) {
       String key=entry.getKey();
       Stats stats=entry.getValue();
       output.write(key);
@@ -45,9 +49,8 @@
     output.write("\n");
     output.write("\n");
     output.write("Log:\n");
-    output.write("pass,runtime,runs,chancingRuns,reduction,gzReduction,size,gzSize\n");
-    List<Stats> runtimeLog=compiler.tracker.getLog();
-    for (    Stats stats : runtimeLog) {
+    output.write("pass,runtime,runs,changingRuns,reduction,gzReduction,size,gzSize\n");
+    for (    Stats stats : log) {
       output.write(stats.pass);
       output.write(",");
       output.write(String.valueOf(stats.runtime));
