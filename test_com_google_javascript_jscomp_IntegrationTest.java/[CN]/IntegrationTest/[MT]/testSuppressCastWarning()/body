@@ -1,0 +1,7 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.setWarningLevel(DiagnosticGroups.CHECK_TYPES,CheckLevel.WARNING);
+  normalizeResults=true;
+  test(options,"function f() { var xyz = /** @type {string} */ (0); }",DiagnosticType.warning("JSC_INVALID_CAST","invalid cast"));
+  testSame(options,"/** @suppress{cast} */\n" + "function f() { var xyz = /** @type {string} */ (0); }");
+}
