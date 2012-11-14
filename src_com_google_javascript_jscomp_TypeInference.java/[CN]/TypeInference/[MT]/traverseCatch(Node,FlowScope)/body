@@ -1,7 +1,15 @@
 {
-  Node name=n.getFirstChild();
-  JSType type=getNativeType(JSTypeNative.UNKNOWN_TYPE);
-  name.setJSType(type);
+  Node name=catchNode.getFirstChild();
+  String varName=name.getString();
+  JSType type;
+  JSDocInfo info=name.getJSDocInfo();
+  if (info != null && info.hasType()) {
+    type=info.getType().evaluate(syntacticScope,registry);
+  }
+ else {
+    type=getNativeType(JSTypeNative.UNKNOWN_TYPE);
+  }
   redeclareSimpleVar(scope,name,type);
+  name.setJSType(type);
   return scope;
 }
