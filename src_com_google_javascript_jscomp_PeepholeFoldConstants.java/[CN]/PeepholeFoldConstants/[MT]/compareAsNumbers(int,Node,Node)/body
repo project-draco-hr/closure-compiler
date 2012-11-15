@@ -1,40 +1,32 @@
 {
   Double leftValue=NodeUtil.getNumberValue(left);
   if (leftValue == null) {
-    return null;
+    return TernaryValue.UNKNOWN;
   }
   Double rightValue=NodeUtil.getNumberValue(right);
   if (rightValue == null) {
-    return null;
+    return TernaryValue.UNKNOWN;
   }
   double lv=leftValue;
   double rv=rightValue;
-  Boolean result;
 switch (op) {
 case Token.SHEQ:
 case Token.EQ:
     Preconditions.checkState(left.isNumber() && right.isNumber());
-  result=lv == rv;
-break;
+  return TernaryValue.forBoolean(lv == rv);
 case Token.SHNE:
 case Token.NE:
 Preconditions.checkState(left.isNumber() && right.isNumber());
-result=lv != rv;
-break;
+return TernaryValue.forBoolean(lv != rv);
 case Token.LE:
-result=lv <= rv;
-break;
+return TernaryValue.forBoolean(lv <= rv);
 case Token.LT:
-result=lv < rv;
-break;
+return TernaryValue.forBoolean(lv < rv);
 case Token.GE:
-result=lv >= rv;
-break;
+return TernaryValue.forBoolean(lv >= rv);
 case Token.GT:
-result=lv > rv;
-break;
+return TernaryValue.forBoolean(lv > rv);
 default :
-return null;
+return TernaryValue.UNKNOWN;
 }
-return result;
 }
