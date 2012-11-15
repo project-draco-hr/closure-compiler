@@ -6,14 +6,14 @@
         return getRestrictedWithoutUndefined(p.type);
       }
  else {
-        return null;
+        return p.type != null ? getNativeType(VOID_TYPE).getGreatestSubtype(p.type) : null;
       }
     }
   }
 ).put("isNull",new Function<TypeRestriction,JSType>(){
     @Override public JSType apply(    TypeRestriction p){
       if (p.outcome) {
-        return getNativeType(NULL_TYPE);
+        return p.type != null ? getNativeType(NULL_TYPE).getGreatestSubtype(p.type) : null;
       }
  else {
         return getRestrictedWithoutNull(p.type);
@@ -26,7 +26,7 @@
         return getRestrictedWithoutUndefined(getRestrictedWithoutNull(p.type));
       }
  else {
-        return null;
+        return p.type != null ? getNativeType(NULL_VOID).getGreatestSubtype(p.type) : null;
       }
     }
   }
