@@ -1,17 +1,19 @@
 {
 switch (n.getType()) {
+case Token.CAST:
+    return isLiteralValue(n.getFirstChild(),includeFunctions);
 case Token.ARRAYLIT:
-    for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-      if ((!child.isEmpty()) && !isLiteralValue(child,includeFunctions)) {
-        return false;
-      }
+  for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+    if ((!child.isEmpty()) && !isLiteralValue(child,includeFunctions)) {
+      return false;
     }
-  return true;
+  }
+return true;
 case Token.REGEXP:
 for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-  if (!isLiteralValue(child,includeFunctions)) {
-    return false;
-  }
+if (!isLiteralValue(child,includeFunctions)) {
+  return false;
+}
 }
 return true;
 case Token.OBJECTLIT:
