@@ -1,5 +1,7 @@
 {
-  if (!type.isEmptyType() && !castType.isEmptyType() && type.getGreatestSubtype(castType).isEmptyType()) {
+  castType=castType.restrictByNotNullOrUndefined();
+  type=type.restrictByNotNullOrUndefined();
+  if (!type.canAssignTo(castType) && !castType.canAssignTo(type)) {
     registerMismatch(type,castType,report(t.makeError(n,INVALID_CAST,castType.toString(),type.toString())));
   }
 }
