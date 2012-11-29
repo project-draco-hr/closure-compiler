@@ -1,12 +1,19 @@
 {
+  boolean visited=false;
   for (  JSType type : thisType.getAlternates()) {
     if (type.isVoidType() || type.isNullType()) {
     }
  else {
+      visited=true;
       if (type.visit(this,thatType)) {
         return true;
       }
     }
+  }
+  if (!visited) {
+    JSType NULL_TYPE=thisType.getNativeType(JSTypeNative.NULL_TYPE);
+    JSType VOID_TYPE=thisType.getNativeType(JSTypeNative.VOID_TYPE);
+    return NULL_TYPE.visit(this,thatType) || VOID_TYPE.visit(this,thatType);
   }
   return false;
 }
