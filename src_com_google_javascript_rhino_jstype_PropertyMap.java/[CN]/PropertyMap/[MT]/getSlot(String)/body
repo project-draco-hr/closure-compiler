@@ -1,0 +1,21 @@
+{
+  if (properties.containsKey(name)) {
+    return properties.get(name);
+  }
+  PropertyMap primaryParent=getPrimaryParent();
+  if (primaryParent != null) {
+    Property prop=primaryParent.getSlot(name);
+    if (prop != null) {
+      return prop;
+    }
+  }
+  for (  PropertyMap p : getSecondaryParents()) {
+    if (p != null) {
+      Property prop=p.getSlot(name);
+      if (prop != null) {
+        return prop;
+      }
+    }
+  }
+  return null;
+}
