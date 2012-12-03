@@ -1,5 +1,11 @@
 {
   while (declParams.hasNext() && callParams.hasNext()) {
-    maybeResolveTemplatedType(getJSType(declParams.next()),getJSType(callParams.next()),resolvedTypes);
+    Node declParam=declParams.next();
+    maybeResolveTemplatedType(getJSType(declParam),getJSType(callParams.next()),resolvedTypes);
+    if (declParam.isVarArgs()) {
+      while (callParams.hasNext()) {
+        maybeResolveTemplatedType(getJSType(declParam),getJSType(callParams.next()),resolvedTypes);
+      }
+    }
   }
 }
