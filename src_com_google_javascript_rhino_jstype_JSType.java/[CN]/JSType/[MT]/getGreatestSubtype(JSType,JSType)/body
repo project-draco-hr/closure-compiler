@@ -8,17 +8,17 @@
  else   if (thisType.isUnknownType() || thatType.isUnknownType()) {
     return thisType.isEquivalentTo(thatType) ? thisType : thisType.getNativeType(JSTypeNative.UNKNOWN_TYPE);
   }
- else   if (thisType.isSubtype(thatType)) {
-    return filterNoResolvedType(thisType);
-  }
- else   if (thatType.isSubtype(thisType)) {
-    return filterNoResolvedType(thatType);
-  }
  else   if (thisType.isUnionType()) {
     return thisType.toMaybeUnionType().meet(thatType);
   }
  else   if (thatType.isUnionType()) {
     return thatType.toMaybeUnionType().meet(thisType);
+  }
+ else   if (thisType.isSubtype(thatType)) {
+    return filterNoResolvedType(thisType);
+  }
+ else   if (thatType.isSubtype(thisType)) {
+    return filterNoResolvedType(thatType);
   }
  else   if (thisType.isRecordType()) {
     return thisType.toMaybeRecordType().getGreatestSubtypeHelper(thatType);
