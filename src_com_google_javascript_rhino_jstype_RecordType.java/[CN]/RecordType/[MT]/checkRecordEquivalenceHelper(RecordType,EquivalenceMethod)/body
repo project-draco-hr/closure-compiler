@@ -1,11 +1,11 @@
 {
-  Set<String> keySet=properties.keySet();
-  Map<String,JSType> otherProps=otherRecord.properties;
-  if (!otherProps.keySet().equals(keySet)) {
+  Set<String> keySet=getOwnPropertyNames();
+  Set<String> otherKeySet=otherRecord.getOwnPropertyNames();
+  if (!otherKeySet.equals(keySet)) {
     return false;
   }
   for (  String key : keySet) {
-    if (!otherProps.get(key).checkEquivalenceHelper(properties.get(key),eqMethod)) {
+    if (!otherRecord.getPropertyType(key).checkEquivalenceHelper(getPropertyType(key),eqMethod)) {
       return false;
     }
   }
