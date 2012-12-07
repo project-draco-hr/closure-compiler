@@ -45,22 +45,46 @@ break;
 case '\u2029':
 sb.append("\\u2029");
 break;
+case '=':
+if (trustedStrings || isRegexp) {
+sb.append(c);
+}
+ else {
+sb.append("\\x3d");
+}
+break;
+case '&':
+if (trustedStrings || isRegexp) {
+sb.append(c);
+}
+ else {
+sb.append("\\x26");
+}
+break;
 case '>':
+if (!trustedStrings && !isRegexp) {
+sb.append(GT_ESCAPED);
+break;
+}
 if (i >= 2 && ((s.charAt(i - 1) == '-' && s.charAt(i - 2) == '-') || (s.charAt(i - 1) == ']' && s.charAt(i - 2) == ']'))) {
-sb.append("\\>");
+sb.append(GT_ESCAPED);
 }
  else {
 sb.append(c);
 }
 break;
 case '<':
+if (!trustedStrings && !isRegexp) {
+sb.append(LT_ESCAPED);
+break;
+}
 final String END_SCRIPT="/script";
 final String START_COMMENT="!--";
 if (s.regionMatches(true,i + 1,END_SCRIPT,0,END_SCRIPT.length())) {
-sb.append("<\\");
+sb.append(LT_ESCAPED);
 }
  else if (s.regionMatches(false,i + 1,START_COMMENT,0,START_COMMENT.length())) {
-sb.append("<\\");
+sb.append(LT_ESCAPED);
 }
  else {
 sb.append(c);
