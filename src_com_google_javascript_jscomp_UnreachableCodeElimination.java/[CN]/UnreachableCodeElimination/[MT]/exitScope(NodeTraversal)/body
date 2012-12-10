@@ -1,3 +1,12 @@
 {
-  curCfg=cfgStack.pop();
+  Scope scope=t.getScope();
+  ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false,false);
+  cfa.process(null,scope.getRootNode());
+  ControlFlowGraph<Node> cfg=cfa.getCfg();
+  new GraphReachability<Node,ControlFlowGraph.Branch>(cfg).compute(cfg.getEntry().getValue());
+  Node root=scope.getRootNode();
+  if (scope.isLocal()) {
+    root=root.getLastChild();
+  }
+  NodeTraversal.traverse(compiler,root,new EliminationPass(cfg));
 }

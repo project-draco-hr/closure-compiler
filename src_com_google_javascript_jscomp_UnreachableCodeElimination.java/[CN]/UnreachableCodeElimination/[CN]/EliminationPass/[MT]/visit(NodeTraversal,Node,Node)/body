@@ -1,0 +1,17 @@
+{
+  if (parent == null) {
+    return;
+  }
+  if (n.isFunction() || n.isScript()) {
+    return;
+  }
+  DiGraphNode<Node,Branch> gNode=cfg.getDirectedGraphNode(n);
+  if (gNode == null) {
+    return;
+  }
+  if (gNode.getAnnotation() != GraphReachability.REACHABLE || (removeNoOpStatements && !NodeUtil.mayHaveSideEffects(n,compiler))) {
+    removeDeadExprStatementSafely(n);
+    return;
+  }
+  tryRemoveUnconditionalBranching(n);
+}
