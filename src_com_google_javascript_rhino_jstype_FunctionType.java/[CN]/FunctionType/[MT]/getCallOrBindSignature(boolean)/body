@@ -7,10 +7,15 @@
     Node thisTypeNode=Node.newString(Token.NAME,"thisType");
     thisTypeNode.setJSType(registry.createOptionalNullableType(getTypeOfThis()));
     params.addChildToFront(thisTypeNode);
-    thisTypeNode.setOptionalArg(isCall);
     if (isBind) {
       for (Node current=thisTypeNode.getNext(); current != null; current=current.getNext()) {
         current.setOptionalArg(true);
+      }
+    }
+ else     if (isCall) {
+      Node firstArg=thisTypeNode.getNext();
+      if (firstArg == null || firstArg.isOptionalArg() || firstArg.isVarArgs()) {
+        thisTypeNode.setOptionalArg(true);
       }
     }
     builder.withParamsNode(params);
