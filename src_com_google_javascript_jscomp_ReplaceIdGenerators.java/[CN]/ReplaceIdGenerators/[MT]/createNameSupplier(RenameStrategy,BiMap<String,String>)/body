@@ -1,0 +1,12 @@
+{
+  previousMappings=previousMappings != null ? previousMappings : ImmutableBiMap.<String,String>of();
+  if (renameStrategy == RenameStrategy.STABLE) {
+    return new StableNameSupplier();
+  }
+ else   if (generatePseudoNames) {
+    return new PseudoNameSuppier(renameStrategy);
+  }
+ else {
+    return new ObfuscatedNameSuppier(renameStrategy,previousMappings);
+  }
+}

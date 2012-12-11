@@ -1,4 +1,6 @@
 {
   testSame(new String[]{"/** @idGenerator \n @consistentIdGenerator \n*/" + "var id = function() {}; "},ReplaceIdGenerators.CONFLICTING_GENERATOR_TYPE);
+  testSame(new String[]{"/** @stableIdGenerator \n @idGenerator \n*/" + "var id = function() {}; "},ReplaceIdGenerators.CONFLICTING_GENERATOR_TYPE);
+  testSame(new String[]{"/** @stableIdGenerator \n @consistentIdGenerator \n*/" + "var id = function() {}; "},ReplaceIdGenerators.CONFLICTING_GENERATOR_TYPE);
   test("/** @consistentIdGenerator */ var id = function() {};" + "if (x) {foo.bar = id('foo_bar')}","var id = function() {};" + "if (x) {foo.bar = 'a'}","var id = function() {};" + "if (x) {foo.bar = 'foo_bar$0'}");
 }

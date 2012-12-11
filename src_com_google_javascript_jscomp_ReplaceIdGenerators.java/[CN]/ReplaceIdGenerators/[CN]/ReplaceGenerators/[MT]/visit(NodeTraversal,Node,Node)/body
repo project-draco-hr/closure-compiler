@@ -3,20 +3,15 @@
     return;
   }
   String callName=n.getFirstChild().getQualifiedName();
-  boolean consistent=false;
   NameSupplier nameGenerator=nameGenerators.get(callName);
-  if (nameGenerator == null) {
-    nameGenerator=consistNameGenerators.get(callName);
-    consistent=true;
-  }
   if (nameGenerator == null) {
     return;
   }
-  if (!t.inGlobalScope() && !consistent) {
+  if (!t.inGlobalScope() && nameGenerator.getRenameStrategy() == RenameStrategy.INCONSISTENT) {
     compiler.report(t.makeError(n,NON_GLOBAL_ID_GENERATOR_CALL));
     return;
   }
-  if (!consistent) {
+  if (nameGenerator.getRenameStrategy() == RenameStrategy.INCONSISTENT) {
     for (    Node ancestor : n.getAncestors()) {
       if (NodeUtil.isControlStructure(ancestor)) {
         compiler.report(t.makeError(n,CONDITIONAL_ID_GENERATOR_CALL));
@@ -31,8 +26,8 @@
   Map<String,String> idGeneratorMap=idGeneratorMaps.get(callName);
   String rename=null;
   String name=id.getString();
-  String instanceId=getIdForGeneratorNode(consistent,id);
-  if (consistent) {
+  String instanceId=getIdForGeneratorNode(nameGenerator.getRenameStrategy() == RenameStrategy.CONSISTENT,id);
+  if (nameGenerator.getRenameStrategy() == RenameStrategy.CONSISTENT) {
     Map<String,String> entry=consistNameMap.get(callName);
     rename=entry.get(instanceId);
     if (rename == null) {
