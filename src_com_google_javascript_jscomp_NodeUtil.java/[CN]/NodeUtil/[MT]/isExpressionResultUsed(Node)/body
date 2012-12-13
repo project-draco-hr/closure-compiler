@@ -4,15 +4,17 @@ switch (parent.getType()) {
 case Token.BLOCK:
 case Token.EXPR_RESULT:
     return false;
+case Token.CAST:
+  return isExpressionResultUsed(parent);
 case Token.HOOK:
 case Token.AND:
 case Token.OR:
-  return (expr == parent.getFirstChild()) ? true : isExpressionResultUsed(parent);
+return (expr == parent.getFirstChild()) ? true : isExpressionResultUsed(parent);
 case Token.COMMA:
 Node gramps=parent.getParent();
 if (gramps.isCall() && parent == gramps.getFirstChild()) {
 if (expr == parent.getFirstChild() && parent.getChildCount() == 2 && expr.getNext().isName() && "eval".equals(expr.getNext().getString())) {
-  return true;
+return true;
 }
 }
 return (expr == parent.getFirstChild()) ? false : isExpressionResultUsed(parent);
