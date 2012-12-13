@@ -55,16 +55,10 @@ case CONSISTENTIDGENERATOR:
         }
       token=eatTokensUntilEOL();
     continue retry;
-case CONSTANT:
-  if (!jsdocBuilder.recordConstancy()) {
-    parser.addParserWarning("msg.jsdoc.const",stream.getLineno(),stream.getCharno());
-  }
-token=eatTokensUntilEOL();
-continue retry;
 case STRUCT:
-if (!jsdocBuilder.recordStruct()) {
-parser.addTypeWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
-}
+  if (!jsdocBuilder.recordStruct()) {
+    parser.addTypeWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
+  }
 token=eatTokensUntilEOL();
 continue retry;
 case DICT:
@@ -468,6 +462,7 @@ parser.addParserWarning("msg.jsdoc.extraversion",stream.getLineno(),stream.getCh
 }
 token=versionInfo.token;
 continue retry;
+case CONSTANT:
 case DEFINE:
 case RETURN:
 case PRIVATE:
@@ -480,8 +475,8 @@ lineno=stream.getLineno();
 charno=stream.getCharno();
 Node typeNode=null;
 boolean hasType=lookAheadForTypeAnnotation();
-boolean isVisibilityAnnotation=(annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC);
-boolean canSkipTypeAnnotation=(isVisibilityAnnotation || annotation == Annotation.RETURN);
+boolean isAlternateTypeAnnotation=(annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC || annotation == Annotation.CONSTANT);
+boolean canSkipTypeAnnotation=(isAlternateTypeAnnotation || annotation == Annotation.RETURN);
 type=null;
 if (hasType || !canSkipTypeAnnotation) {
 skipEOLs();
@@ -494,12 +489,17 @@ type=createJSTypeExpression(typeNode);
 }
 boolean hasError=type == null && !canSkipTypeAnnotation;
 if (!hasError) {
-if ((type != null && isVisibilityAnnotation) || annotation == Annotation.TYPE) {
+if ((type != null && isAlternateTypeAnnotation) || annotation == Annotation.TYPE) {
 if (!jsdocBuilder.recordType(type)) {
 parser.addTypeWarning("msg.jsdoc.incompat.type",lineno,charno);
 }
 }
 switch (annotation) {
+case CONSTANT:
+if (!jsdocBuilder.recordConstancy()) {
+parser.addParserWarning("msg.jsdoc.const",stream.getLineno(),stream.getCharno());
+}
+break;
 case DEFINE:
 if (!jsdocBuilder.recordDefineType(type)) {
 parser.addParserWarning("msg.jsdoc.define",lineno,charno);
