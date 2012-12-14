@@ -29,7 +29,6 @@ return left;
 }
 return n;
 case Token.NEG:
-try {
 if (left.isName()) {
 if (left.getString().equals("Infinity")) {
 return n;
@@ -41,14 +40,15 @@ reportCodeChange();
 return left;
 }
 }
+if (left.isNumber()) {
 double negNum=-left.getDouble();
 Node negNumNode=IR.number(negNum);
 parent.replaceChild(n,negNumNode);
 reportCodeChange();
 return negNumNode;
 }
- catch (UnsupportedOperationException ex) {
-error(NEGATING_A_NON_NUMBER_ERROR,left);
+ else {
+report(NEGATING_A_NON_NUMBER_ERROR,left);
 return n;
 }
 case Token.BITNOT:
@@ -63,17 +63,17 @@ reportCodeChange();
 return notIntValNode;
 }
  else {
-error(FRACTIONAL_BITWISE_OPERAND,left);
+report(FRACTIONAL_BITWISE_OPERAND,left);
 return n;
 }
 }
  else {
-error(BITWISE_OPERAND_OUT_OF_RANGE,left);
+report(BITWISE_OPERAND_OUT_OF_RANGE,left);
 return n;
 }
 }
  catch (UnsupportedOperationException ex) {
-error(NEGATING_A_NON_NUMBER_ERROR,left);
+report(NEGATING_A_NON_NUMBER_ERROR,left);
 return n;
 }
 default :
