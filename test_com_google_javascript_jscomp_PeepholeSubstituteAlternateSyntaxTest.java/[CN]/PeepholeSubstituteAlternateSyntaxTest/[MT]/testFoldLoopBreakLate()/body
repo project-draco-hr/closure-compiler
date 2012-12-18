@@ -4,7 +4,8 @@
   foldSame("for(;;) if (a) { f(); break }");
   fold("for(;;) if (a) break; else f()","for(;!a;) { { f(); } }");
   fold("for(;a;) if (b) break","for(;a && !b;);");
-  fold("for(;a;) { if (b) break; if (c) break; }","for(;(a && !b) && !c;);");
+  fold("for(;a;) { if (b) break; if (c) break; }","for(;(a && !b);) if (c) break;");
+  fold("for(;(a && !b);) if (c) break;","for(;(a && !b) && !c;);");
   enableNormalize(true);
   fold("while(true) if (a) break","for(;1&&!a;);");
 }

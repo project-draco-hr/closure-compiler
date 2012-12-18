@@ -6,7 +6,10 @@
   foldSame("a:a(),b()");
   fold("(x=2), foo()","x=2; foo()");
   fold("foo(), boo();","foo(); boo()");
-  fold("(a(), b()), (c(), d());","a(); b(); c(); d();");
-  fold("foo(), true","foo();1");
-  fold("function x(){foo(), !0}","function x(){foo(); 1}");
+  fold("(a(), b()), (c(), d());","a(); b(); (c(), d());");
+  fold("a(); b(); (c(), d());","a(); b(); c(); d();");
+  fold("foo(), true","foo();true");
+  fold("foo();true","foo();1");
+  fold("function x(){foo(), !0}","function x(){foo(); !0}");
+  fold("function x(){foo(); !0}","function x(){foo(); 1}");
 }
