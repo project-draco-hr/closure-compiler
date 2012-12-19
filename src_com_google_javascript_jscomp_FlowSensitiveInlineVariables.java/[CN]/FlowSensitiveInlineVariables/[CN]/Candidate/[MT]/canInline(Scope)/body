@@ -44,23 +44,28 @@ case Token.OBJECTLIT:
 case Token.REGEXP:
 case Token.NEW:
         return true;
+case Token.NAME:
+      Var var=scope.getOwnSlot(input.getString());
+    if (var != null && var.getParentNode().isCatch()) {
+      return true;
     }
-    return false;
-  }
+}
+return false;
+}
 }
 ,new Predicate<Node>(){
-  @Override public boolean apply(  Node input){
-    return !input.isFunction();
-  }
+@Override public boolean apply(Node input){
+return !input.isFunction();
+}
 }
 )) {
-  return false;
+return false;
 }
 if (NodeUtil.isStatementBlock(getDefCfgNode().getParent()) && getDefCfgNode().getNext() != useCfgNode) {
-  CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch> pathCheck=new CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch>(cfg,cfg.getDirectedGraphNode(getDefCfgNode()),cfg.getDirectedGraphNode(useCfgNode),SIDE_EFFECT_PREDICATE,Predicates.<DiGraphEdge<Node,ControlFlowGraph.Branch>>alwaysTrue(),false);
-  if (pathCheck.somePathsSatisfyPredicate()) {
-    return false;
-  }
+CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch> pathCheck=new CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch>(cfg,cfg.getDirectedGraphNode(getDefCfgNode()),cfg.getDirectedGraphNode(useCfgNode),SIDE_EFFECT_PREDICATE,Predicates.<DiGraphEdge<Node,ControlFlowGraph.Branch>>alwaysTrue(),false);
+if (pathCheck.somePathsSatisfyPredicate()) {
+return false;
+}
 }
 return true;
 }
