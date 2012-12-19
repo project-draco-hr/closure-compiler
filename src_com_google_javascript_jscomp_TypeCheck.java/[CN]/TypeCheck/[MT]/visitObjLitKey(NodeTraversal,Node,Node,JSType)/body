@@ -3,6 +3,12 @@
     ensureTyped(t,key);
     return;
   }
+  if (litType.isStruct() && key.isQuotedString()) {
+    report(t,key,ILLEGAL_OBJLIT_KEY,"struct");
+  }
+ else   if (litType.isDict() && !key.isQuotedString()) {
+    report(t,key,ILLEGAL_OBJLIT_KEY,"dict");
+  }
   Node rvalue=key.getFirstChild();
   JSType rightType=NodeUtil.getObjectLitKeyTypeFromValueType(key,getJSType(rvalue));
   if (rightType == null) {
