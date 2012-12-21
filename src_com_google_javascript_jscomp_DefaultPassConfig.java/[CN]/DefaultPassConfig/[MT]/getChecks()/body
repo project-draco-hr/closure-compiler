@@ -15,7 +15,7 @@
     return checks;
   }
   if (options.jqueryPass) {
-    checks.add(jqueryAliases.makeOneTimePass());
+    checks.add(jqueryAliases);
   }
   checks.add(checkSideEffects);
   if (options.checkSuspiciousCode || options.enables(DiagnosticGroups.GLOBAL_THIS) || options.enables(DiagnosticGroups.DEBUGGER_STATEMENT_PRESENT)) {
@@ -37,7 +37,7 @@
     checks.add(exportTestFunctions);
   }
   if (options.closurePass) {
-    checks.add(closurePrimitives.makeOneTimePass());
+    checks.add(closurePrimitives);
   }
   if (options.closurePass && options.checkMissingGetCssNameLevel.isOn()) {
     checks.add(closureCheckGetCssName);
@@ -56,16 +56,16 @@
     checks.add(objectPropertyStringPreprocess);
   }
   if (options.checkTypes || options.inferTypes) {
-    checks.add(resolveTypes.makeOneTimePass());
-    checks.add(inferTypes.makeOneTimePass());
+    checks.add(resolveTypes);
+    checks.add(inferTypes);
     if (options.checkTypes) {
-      checks.add(checkTypes.makeOneTimePass());
+      checks.add(checkTypes);
     }
  else {
-      checks.add(inferJsDocInfo.makeOneTimePass());
+      checks.add(inferJsDocInfo);
     }
     if (!options.ideMode && !options.saveDataStructures) {
-      checks.add(clearTypedScopePass.makeOneTimePass());
+      checks.add(clearTypedScopePass);
     }
   }
   if (options.checkUnreachableCode.isOn() || (options.checkTypes && options.checkMissingReturn.isOn())) {
