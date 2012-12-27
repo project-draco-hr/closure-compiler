@@ -47,9 +47,6 @@
   if (options.closurePass) {
     passes.add(closureOptimizePrimitives);
   }
-  if (options.crossModuleCodeMotion) {
-    passes.add(crossModuleCodeMotion);
-  }
   if (options.devirtualizePrototypeMethods) {
     passes.add(devirtualizePrototypeMethods);
   }
@@ -57,8 +54,8 @@
     passes.add(getCustomPasses(CustomPassExecutionTime.BEFORE_OPTIMIZATION_LOOP));
   }
   passes.add(createEmptyPass("beforeMainOptimizations"));
+  passes.addAll(getMainOptimizationLoop());
   if (options.specializeInitialModule) {
-    passes.addAll(getMainOptimizationLoop());
     if (options.crossModuleCodeMotion) {
       passes.add(crossModuleCodeMotion);
     }
@@ -66,8 +63,8 @@
       passes.add(crossModuleMethodMotion);
     }
     passes.add(specializeInitialModule);
+    passes.addAll(getMainOptimizationLoop());
   }
-  passes.addAll(getMainOptimizationLoop());
   passes.add(createEmptyPass("beforeModuleMotion"));
   if (options.crossModuleCodeMotion) {
     passes.add(crossModuleCodeMotion);
