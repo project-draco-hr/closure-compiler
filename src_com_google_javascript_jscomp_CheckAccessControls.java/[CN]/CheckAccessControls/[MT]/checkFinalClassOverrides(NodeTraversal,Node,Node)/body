@@ -1,0 +1,9 @@
+{
+  JSType type=fn.getJSType().toMaybeFunctionType();
+  if (type != null && type.isConstructor()) {
+    JSType finalParentClass=getFinalParentClass(getClassOfMethod(fn,parent));
+    if (finalParentClass != null) {
+      compiler.report(t.makeError(fn,EXTEND_FINAL_CLASS,type.getDisplayName(),finalParentClass.getDisplayName()));
+    }
+  }
+}
