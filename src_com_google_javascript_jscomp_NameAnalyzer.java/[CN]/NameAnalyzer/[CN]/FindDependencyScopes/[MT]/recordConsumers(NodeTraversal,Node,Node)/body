@@ -1,0 +1,25 @@
+{
+  Node parent=n.getParent();
+switch (parent.getType()) {
+case Token.ASSIGN:
+    if (n == parent.getLastChild()) {
+      recordAssignment(t,parent,recordNode);
+    }
+  recordConsumers(t,parent,recordNode);
+break;
+case Token.NAME:
+NameInformation ns=createNameInformation(t,parent);
+recordDepScope(recordNode,ns);
+break;
+case Token.OR:
+recordConsumers(t,parent,recordNode);
+break;
+case Token.AND:
+case Token.COMMA:
+case Token.HOOK:
+if (n != parent.getFirstChild()) {
+recordConsumers(t,parent,recordNode);
+}
+break;
+}
+}

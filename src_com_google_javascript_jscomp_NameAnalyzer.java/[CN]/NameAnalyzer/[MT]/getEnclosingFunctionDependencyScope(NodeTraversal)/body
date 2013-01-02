@@ -1,11 +1,11 @@
 {
   Node function=t.getEnclosingFunction();
   if (function == null) {
-    return null;
+    return Collections.emptyList();
   }
-  NameInformation ref=scopes.get(function);
-  if (ref != null) {
-    return ref;
+  List<NameInformation> refs=scopes.get(function);
+  if (!refs.isEmpty()) {
+    return refs;
   }
   Node parent=function.getParent();
   if (parent != null) {
@@ -19,5 +19,5 @@
       return scopes.get(parent);
     }
   }
-  return null;
+  return Collections.emptyList();
 }

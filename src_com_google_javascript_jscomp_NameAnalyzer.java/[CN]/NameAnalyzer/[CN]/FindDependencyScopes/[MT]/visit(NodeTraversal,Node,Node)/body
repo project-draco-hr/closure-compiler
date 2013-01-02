@@ -3,34 +3,23 @@
     return;
   }
   if (n.isAssign()) {
-    Node nameNode=n.getFirstChild();
-    NameInformation ns=createNameInformation(t,nameNode,n);
-    if (ns != null) {
-      if (parent.isFor() && !NodeUtil.isForIn(parent)) {
-        if (parent.getFirstChild().getNext() != n) {
-          recordDepScope(n,ns);
-        }
- else {
-          recordDepScope(nameNode,ns);
-        }
-      }
- else {
-        recordDepScope(n,ns);
-      }
+    recordAssignment(t,n,n);
+    if (!NodeUtil.isImmutableResult(n.getLastChild())) {
+      recordConsumers(t,n,n);
     }
   }
  else   if (NodeUtil.isVarDeclaration(n)) {
-    NameInformation ns=createNameInformation(t,n,parent);
+    NameInformation ns=createNameInformation(t,n);
     recordDepScope(n,ns);
   }
  else   if (NodeUtil.isFunctionDeclaration(n)) {
-    NameInformation ns=createNameInformation(t,n.getFirstChild(),n);
+    NameInformation ns=createNameInformation(t,n.getFirstChild());
     recordDepScope(n,ns);
   }
  else   if (NodeUtil.isExprCall(n)) {
     Node callNode=n.getFirstChild();
     Node nameNode=callNode.getFirstChild();
-    NameInformation ns=createNameInformation(t,nameNode,callNode);
+    NameInformation ns=createNameInformation(t,nameNode);
     if (ns != null && ns.onlyAffectsClassDef) {
       recordDepScope(n,ns);
     }

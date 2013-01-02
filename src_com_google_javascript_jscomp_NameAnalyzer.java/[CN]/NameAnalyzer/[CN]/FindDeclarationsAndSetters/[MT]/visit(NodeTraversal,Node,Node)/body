@@ -1,20 +1,20 @@
 {
   if (t.inGlobalScope()) {
     if (NodeUtil.isVarDeclaration(n)) {
-      NameInformation ns=createNameInformation(t,n,parent);
+      NameInformation ns=createNameInformation(t,n);
       Preconditions.checkNotNull(ns);
       recordSet(ns.name,n);
     }
  else     if (NodeUtil.isFunctionDeclaration(n)) {
       Node nameNode=n.getFirstChild();
-      NameInformation ns=createNameInformation(t,nameNode,n);
+      NameInformation ns=createNameInformation(t,nameNode);
       if (ns != null) {
         JsName nameInfo=getName(nameNode.getString(),true);
         recordSet(nameInfo.name,nameNode);
       }
     }
  else     if (NodeUtil.isObjectLitKey(n,parent)) {
-      NameInformation ns=createNameInformation(t,n,parent);
+      NameInformation ns=createNameInformation(t,n);
       if (ns != null) {
         recordSet(ns.name,n);
       }
@@ -22,7 +22,7 @@
   }
   if (n.isAssign()) {
     Node nameNode=n.getFirstChild();
-    NameInformation ns=createNameInformation(t,nameNode,n);
+    NameInformation ns=createNameInformation(t,nameNode);
     if (ns != null) {
       if (ns.isPrototype) {
         recordPrototypeSet(ns.prototypeClass,ns.prototypeProperty,n);
@@ -34,7 +34,7 @@
   }
  else   if (n.isCall()) {
     Node nameNode=n.getFirstChild();
-    NameInformation ns=createNameInformation(t,nameNode,n);
+    NameInformation ns=createNameInformation(t,nameNode);
     if (ns != null && ns.onlyAffectsClassDef) {
       JsName name=getName(ns.name,true);
       refNodes.add(new ClassDefiningFunctionNode(name,n));

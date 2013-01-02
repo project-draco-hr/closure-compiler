@@ -1,4 +1,5 @@
 {
+  Node parent=n.getParent();
   String name="";
   Node rootNameNode=n;
   boolean bNameWasShortened=false;
@@ -56,7 +57,7 @@
 switch (rootNameNode.getType()) {
 case Token.NAME:
     if (!bNameWasShortened && n.isGetProp() && parent.isAssign()&& "prototype".equals(n.getLastChild().getString())) {
-      if (createNameInformation(t,n.getFirstChild(),n) != null) {
+      if (createNameInformation(t,n.getFirstChild()) != null) {
         name=rootNameNode.getString() + name;
         name=name.substring(0,name.length() - PROTOTYPE_SUFFIX_LEN);
         NameInformation nameInfo=new NameInformation();

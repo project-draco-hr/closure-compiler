@@ -2,7 +2,7 @@
   if (!(n.isName() || NodeUtil.isGet(n) && !parent.isGetProp())) {
     return;
   }
-  NameInformation nameInfo=createNameInformation(t,n,parent);
+  NameInformation nameInfo=createNameInformation(t,n);
   if (nameInfo == null) {
     return;
   }
@@ -22,47 +22,14 @@
     checkedClass.hasInstanceOfReference=true;
     return;
   }
-  NameInformation referring=getDependencyScope(n);
-  String referringName="";
-  if (referring != null) {
-    referringName=referring.isPrototype ? referring.prototypeClass : referring.name;
-  }
-  String name=nameInfo.name;
-  if (maybeHiddenAlias(name,n)) {
-    recordAlias(name,WINDOW);
-  }
-  if (nameInfo.isExternallyReferenceable) {
-    recordReference(WINDOW,name,RefType.REGULAR);
-    maybeRecordAlias(name,parent,referring,referringName);
-    return;
-  }
-  if (NodeUtil.isVarOrSimpleAssignLhs(n,parent)) {
-    if (referring != null) {
-      recordReference(referringName,name,RefType.REGULAR);
-    }
-    return;
-  }
-  if (nodesToKeep.contains(n)) {
-    NameInformation functionScope=getEnclosingFunctionDependencyScope(t);
-    if (functionScope != null) {
-      recordReference(functionScope.name,name,RefType.REGULAR);
-    }
- else {
-      recordReference(WINDOW,name,RefType.REGULAR);
-    }
-  }
- else   if (referring != null) {
-    if (!maybeRecordAlias(name,parent,referring,referringName)) {
-      RefType depType=referring.onlyAffectsClassDef ? RefType.INHERITANCE : RefType.REGULAR;
-      recordReference(referringName,name,depType);
-    }
+  List<NameInformation> referers=getDependencyScope(n);
+  if (referers.isEmpty()) {
+    maybeRecordReferenceOrAlias(t,n,parent,nameInfo,null);
   }
  else {
-    for (    Node ancestor : n.getAncestors()) {
-      if (NodeUtil.isAssignmentOp(ancestor) || ancestor.isFunction()) {
-        recordReference(WINDOW,name,RefType.REGULAR);
-        break;
-      }
+    for (    NameInformation referring : referers) {
+      maybeRecordReferenceOrAlias(t,n,parent,nameInfo,referring);
     }
+    recordAliases(referers);
   }
 }
