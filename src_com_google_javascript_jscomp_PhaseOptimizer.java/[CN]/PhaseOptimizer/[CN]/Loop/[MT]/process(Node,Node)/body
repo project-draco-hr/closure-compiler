@@ -7,23 +7,48 @@
  else {
     optimizePasses();
   }
+  Set<NamedPass> madeChanges=new HashSet<NamedPass>();
+  Set<NamedPass> runInPrevIter=new HashSet<NamedPass>();
+  State s=State.RUN_PASSES_NOT_RUN_IN_PREV_ITER;
+  boolean lastIterMadeChanges;
+  int count=0;
   try {
-    int count=0;
-    out:     do {
+    while (true) {
       if (count++ > MAX_LOOPS) {
         compiler.throwInternalError(OPTIMIZE_LOOP_ERROR,null);
       }
-      recentChange.reset();
-      for (      CompilerPass pass : myPasses) {
-        pass.process(externs,root);
-        if (hasHaltingErrors()) {
-          break out;
+      lastIterMadeChanges=false;
+      for (      NamedPass pass : myPasses) {
+        recentChange.reset();
+        if ((s == State.RUN_PASSES_NOT_RUN_IN_PREV_ITER && !runInPrevIter.contains(pass)) || (s == State.RUN_PASSES_THAT_CHANGED_STH_IN_PREV_ITER && madeChanges.contains(pass))) {
+          pass.process(externs,root);
+          runInPrevIter.add(pass);
+          if (hasHaltingErrors()) {
+            return;
+          }
+ else           if (recentChange.hasCodeChanged()) {
+            madeChanges.add(pass);
+            lastIterMadeChanges=true;
+          }
+ else {
+            madeChanges.remove(pass);
+          }
+        }
+ else {
+          runInPrevIter.remove(pass);
         }
       }
-    }
- while (recentChange.hasCodeChanged() && !hasHaltingErrors());
-    if (randomizeLoops) {
-      loopsRun.add(getPassOrder());
+      if (s == State.RUN_PASSES_NOT_RUN_IN_PREV_ITER) {
+        if (lastIterMadeChanges) {
+          s=State.RUN_PASSES_THAT_CHANGED_STH_IN_PREV_ITER;
+        }
+ else {
+          return;
+        }
+      }
+ else       if (!lastIterMadeChanges) {
+        s=State.RUN_PASSES_NOT_RUN_IN_PREV_ITER;
+      }
     }
   }
   finally {
