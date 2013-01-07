@@ -1,0 +1,12 @@
+{
+  if (info != null && info.isConstant()) {
+    return true;
+  }
+switch (node.getType()) {
+case Token.NAME:
+    return NodeUtil.isConstantByConvention(compiler.getCodingConvention(),node,node.getParent());
+case Token.GETPROP:
+  return node.isQualifiedName() && NodeUtil.isConstantByConvention(compiler.getCodingConvention(),node.getLastChild(),node);
+}
+return false;
+}

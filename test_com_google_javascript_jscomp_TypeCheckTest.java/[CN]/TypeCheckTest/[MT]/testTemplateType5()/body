@@ -1,3 +1,4 @@
 {
-  testTypes("/**" + " * @param {Array.<T>} arr \n" + " * @param {?function(T)} f \n"+ " * @return {T} \n"+ " * @template T\n"+ " */\n"+ "function fn(arr, f) { return arr[0]; }\n"+ "/** @param {Array.<number>} arr */ function g(arr) {"+ "  /** @type {!Object} */ var x = fn.call(null, arr, null);"+ "}","initializing variable\n" + "found   : number\n" + "required: Object");
+  compiler.getOptions().setCodingConvention(new GoogleCodingConvention());
+  testTypes("var CGI_PARAM_RETRY_COUNT = 'rc';" + "" + "/**"+ " * @param {...T} p\n"+ " * @return {T} \n"+ " * @template T\n"+ " */\n"+ "function fn(p) { return p; }\n"+ "/** @type {!Object} */ var x;"+ ""+ "/** @return {void} */\n"+ "function aScope() {\n"+ "  x = fn(CGI_PARAM_RETRY_COUNT, 1);\n"+ "}","assignment\n" + "found   : (number|string)\n" + "required: Object");
 }
