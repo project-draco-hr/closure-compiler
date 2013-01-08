@@ -2,13 +2,13 @@
   if (n.isString() && !parent.isGetProp() && !parent.isRegExp()) {
     String s=n.getString();
     for (blacklist.reset(s); blacklist.find(); ) {
-      if (insideGetCssNameCall(n,parent)) {
+      if (insideGetCssNameCall(n)) {
         continue;
       }
-      if (insideGetUniqueIdCall(n,parent)) {
+      if (insideGetUniqueIdCall(n)) {
         continue;
       }
-      if (insideAssignmentToIdConstant(n,parent)) {
+      if (insideAssignmentToIdConstant(n)) {
         continue;
       }
       compiler.report(t.makeError(n,level,MISSING_GETCSSNAME,blacklist.group()));

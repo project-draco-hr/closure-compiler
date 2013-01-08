@@ -1,0 +1,18 @@
+{
+  if (getNamedContainingFunction() != graph.MAIN) {
+  }
+  if (type.isConstructor()) {
+    return recordClassConstructorOrInterface(name,type.toMaybeFunctionType(),n,rValue);
+  }
+ else {
+    Name symbol=graph.defineNameIfNotExists(name,isExtern);
+    symbol.setType(type);
+    if (n.isAssign()) {
+      symbol.addAssignmentDeclaration(n);
+    }
+ else {
+      symbol.addFunctionDeclaration(n);
+    }
+    return symbol;
+  }
+}

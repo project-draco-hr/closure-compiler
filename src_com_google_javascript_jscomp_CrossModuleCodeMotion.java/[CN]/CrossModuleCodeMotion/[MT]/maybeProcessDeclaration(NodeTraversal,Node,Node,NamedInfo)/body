@@ -3,12 +3,12 @@
 switch (parent.getType()) {
 case Token.VAR:
     if (canMoveValue(name.getFirstChild())) {
-      return info.addDeclaration(new Declaration(t.getModule(),name,parent,gramps));
+      return info.addDeclaration(new Declaration(t.getModule(),name));
     }
   return false;
 case Token.FUNCTION:
 if (NodeUtil.isFunctionDeclaration(parent)) {
-  return info.addDeclaration(new Declaration(t.getModule(),name,parent,gramps));
+  return info.addDeclaration(new Declaration(t.getModule(),name));
 }
 return false;
 case Token.ASSIGN:
@@ -20,7 +20,7 @@ if (current.isGetProp()) {
  else if (current.isAssign() && current.getFirstChild() == child) {
 Node currentParent=current.getParent();
 if (currentParent.isExprResult() && canMoveValue(current.getLastChild())) {
-return info.addDeclaration(new Declaration(t.getModule(),current,currentParent,currentParent.getParent()));
+return info.addDeclaration(new Declaration(t.getModule(),current));
 }
 }
  else {
@@ -33,7 +33,7 @@ case Token.CALL:
 if (NodeUtil.isExprCall(gramps)) {
 SubclassRelationship relationship=compiler.getCodingConvention().getClassesDefinedByCall(parent);
 if (relationship != null && name.getString().equals(relationship.subclassName)) {
-return info.addDeclaration(new Declaration(t.getModule(),parent,gramps,gramps.getParent()));
+return info.addDeclaration(new Declaration(t.getModule(),parent));
 }
 }
 return false;
