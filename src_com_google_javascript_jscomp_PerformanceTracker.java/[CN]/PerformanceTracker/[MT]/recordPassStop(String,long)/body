@@ -1,5 +1,6 @@
 {
-  if (!passName.equals(currentRunningPass.pop())) {
+  Stats logStats=currentPass.pop();
+  if (!passName.equals(logStats.pass)) {
     throw new RuntimeException(passName + " is not running.");
   }
   if (passName.equals(Compiler.PARSING_PASS_NAME) && trackSize) {
@@ -10,11 +11,10 @@
       initGzCodeSize=gzCodeSize=printer.calcZippedSize();
     }
   }
-  Stats logStats=new Stats(passName);
   log.add(logStats);
   Stats summaryStats=summary.get(passName);
   if (summaryStats == null) {
-    summaryStats=new Stats(passName);
+    summaryStats=new Stats(passName,logStats.isOneTime);
     summary.put(passName,summaryStats);
   }
   logStats.runtime=result;
