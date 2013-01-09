@@ -1,27 +1,45 @@
 {
-  String currentPassName=currentRunningPass.pop();
-  if (!passName.equals(currentPassName)) {
+  if (!passName.equals(currentRunningPass.pop())) {
     throw new RuntimeException(passName + " is not running.");
   }
-  CodeSizeEstimatePrinter printer=null;
-  if (codeChange.hasCodeChanged() && (trackSize || trackGzippedSize)) {
-    printer=estimateCodeSize(jsRoot);
+  if (passName.equals(Compiler.PARSING_PASS_NAME) && trackSize) {
+    CodeSizeEstimatePrinter printer=new CodeSizeEstimatePrinter();
+    CodeGenerator.forCostEstimation(printer).add(jsRoot);
+    initCodeSize=codeSize=printer.calcSize();
+    if (this.trackGzSize) {
+      initGzCodeSize=gzCodeSize=printer.calcZippedSize();
+    }
   }
-  Stats logStats=new Stats(currentPassName);
+  Stats logStats=new Stats(passName);
   log.add(logStats);
-  updateStats(logStats,result,printer);
   Stats summaryStats=summary.get(passName);
   if (summaryStats == null) {
     summaryStats=new Stats(passName);
     summary.put(passName,summaryStats);
   }
-  updateStats(summaryStats,result,printer);
-  if (printer != null) {
+  logStats.runtime=result;
+  logStats.runs=1;
+  summaryStats.runtime+=result;
+  summaryStats.runs+=1;
+  if (codeChange.hasCodeChanged()) {
+    logStats.changes=1;
+    summaryStats.changes+=1;
+  }
+  if (codeChange.hasCodeChanged() && trackSize) {
+    int newSize=0;
+    CodeSizeEstimatePrinter printer=new CodeSizeEstimatePrinter();
+    CodeGenerator.forCostEstimation(printer).add(jsRoot);
     if (trackSize) {
-      curCodeSizeEstimate=printer.calcSize();
+      newSize=printer.calcSize();
+      logStats.diff=codeSize - newSize;
+      summaryStats.diff+=logStats.diff;
+      codeSize=summaryStats.size=logStats.size=newSize;
     }
-    if (trackGzippedSize) {
-      curZippedCodeSizeEstimate=printer.calcZippedSize();
+    if (trackGzSize) {
+      newSize=printer.calcZippedSize();
+      logStats.gzDiff=gzCodeSize - newSize;
+      summaryStats.gzDiff+=logStats.gzDiff;
+      gzCodeSize=summaryStats.gzSize=logStats.gzSize=newSize;
     }
   }
 }

@@ -1,0 +1,15 @@
+{
+  ByteArrayOutputStream output=new ByteArrayOutputStream();
+  PrintStream outstream=new PrintStream(output);
+  Compiler compiler=new Compiler(outstream);
+  CompilerOptions options=new CompilerOptions();
+  List<SourceFile> inputs=Lists.newArrayList();
+  List<SourceFile> externs=Lists.newArrayList();
+  options.setTracerMode(TracerMode.ALL);
+  inputs.add(SourceFile.fromCode("foo","function fun(){}"));
+  compiler.compile(externs,inputs,options);
+  outstream.flush();
+  outstream.close();
+  Pattern p=Pattern.compile(".*Summary:.pass,runtime,runs,changingRuns,reduction,gzReduction" + ".*TOTAL,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+[^,]" + ".*Log:."+ "pass,runtime,runs,changingRuns,reduction,gzReduction,size,gzSize.*",Pattern.DOTALL);
+  assertTrue(p.matcher(output.toString()).matches());
+}
