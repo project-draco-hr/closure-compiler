@@ -19,7 +19,7 @@
     }
   }
   JSType retType=funType.getReturnType();
-  if (retType != null && !retType.isUnknownType() && !retType.isEmptyType()) {
+  if (retType != null && (retType.isTemplateType() || !retType.isUnknownType()) && !retType.isEmptyType()) {
     sb.append(" * ");
     appendAnnotation(sb,"return",retType.toAnnotationString());
     sb.append("\n");
@@ -56,6 +56,11 @@
  else     if (funType.isInterface()) {
       sb.append(" * @interface\n");
     }
+  }
+  if (!funType.getTemplateKeys().isEmpty()) {
+    sb.append(" * @template ");
+    sb.append(Joiner.on(",").join(funType.getTemplateKeys()));
+    sb.append("\n");
   }
   if (fnNode != null && fnNode.getBooleanProp(Node.IS_DISPATCHER)) {
     sb.append(" * @javadispatch\n");
