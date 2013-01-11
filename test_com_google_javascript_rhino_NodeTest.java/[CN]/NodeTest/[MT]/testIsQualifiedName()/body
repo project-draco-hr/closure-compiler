@@ -1,0 +1,20 @@
+{
+  assertTrue(IR.name("a").isQualifiedName());
+  assertTrue(IR.name("$").isQualifiedName());
+  assertTrue(IR.name("_").isQualifiedName());
+  assertTrue(IR.getprop(IR.name("a"),IR.string("b")).isQualifiedName());
+  assertTrue(IR.getprop(IR.thisNode(),IR.string("b")).isQualifiedName());
+  assertFalse(IR.number(0).isQualifiedName());
+  assertFalse(IR.arraylit().isQualifiedName());
+  assertFalse(IR.objectlit().isQualifiedName());
+  assertFalse(IR.string("").isQualifiedName());
+  assertFalse(IR.getelem(IR.name("a"),IR.string("b")).isQualifiedName());
+  assertFalse(IR.getprop(IR.getelem(IR.name("a"),IR.string("b")),IR.string("c")).isQualifiedName());
+  assertFalse(IR.getelem(IR.getprop(IR.name("a"),IR.string("b")),IR.string("c")).isQualifiedName());
+  assertFalse(IR.call(IR.name("a")).isQualifiedName());
+  assertFalse(IR.getprop(IR.call(IR.name("a")),IR.string("b")).isQualifiedName());
+  assertFalse(IR.call(IR.getprop(IR.name("a"),IR.string("b"))).isQualifiedName());
+  assertFalse(IR.string("a").isQualifiedName());
+  assertFalse(IR.regexp(IR.string("x")).isQualifiedName());
+  assertFalse(new Node(Token.INC,IR.name("x")).isQualifiedName());
+}

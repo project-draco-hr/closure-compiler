@@ -1,10 +1,7 @@
 {
   Node actual=parse("try {foo()} catch(e) {} finally {}");
   Node tryNode=actual.getFirstChild();
-  Node tryBlock=tryNode.getFirstChild();
   Node catchBlocks=tryNode.getFirstChild().getNext();
-  Node catchBlock=catchBlocks.getFirstChild();
-  Node finallyBlock=tryNode.getLastChild();
   NodeUtil.removeChild(tryNode,catchBlocks);
   String expected="try {foo()} finally {}";
   String difference=parse(expected).checkTreeEquals(actual);

@@ -15,13 +15,13 @@ case Token.GETPROP:
     return;
   }
 if (isPrototypeNameReference(n)) {
-  recordPrototypePropUse(t,n,parent);
+  recordPrototypePropUse(n,parent);
 }
  else if (isStaticNameReference(n,t.getScope())) {
-  recordStaticNameUse(t,n,parent);
+  recordStaticNameUse(n,parent);
 }
  else {
-  recordUnknownUse(t,n,parent);
+  recordUnknownUse(n,parent);
 }
 break;
 case Token.ASSIGN:
@@ -32,7 +32,7 @@ return;
 }
 if (lhs.isName() || lhs.isGetProp() || rhs.isGetProp()) {
 if (NodeUtil.isPrototypeProperty(lhs)) {
-Name name=recordPrototypePropDefinition(t,lhs,getType(rhs),n);
+Name name=recordPrototypePropDefinition(lhs,getType(rhs),n);
 name.setAliased(true);
 }
 }
