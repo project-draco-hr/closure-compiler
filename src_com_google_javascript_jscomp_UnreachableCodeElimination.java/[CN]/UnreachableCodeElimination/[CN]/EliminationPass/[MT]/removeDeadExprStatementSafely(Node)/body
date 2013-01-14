@@ -10,10 +10,8 @@ switch (n.getType()) {
 case Token.DO:
     return;
 case Token.BLOCK:
-  if (parent.isTry()) {
-    if (NodeUtil.isTryCatchNodeContainer(n)) {
-      return;
-    }
+  if (parent.isTry() && NodeUtil.isTryCatchNodeContainer(n)) {
+    return;
   }
 break;
 case Token.CATCH:
@@ -24,10 +22,5 @@ break;
 if (n.isVar() && !n.getFirstChild().hasChildren()) {
 return;
 }
-NodeUtil.redeclareVarsInsideBranch(n);
-compiler.reportCodeChange();
-if (logger.isLoggable(Level.FINE)) {
-logger.fine("Removing " + n.toString());
-}
-NodeUtil.removeChild(n.getParent(),n);
+removeNode(n);
 }

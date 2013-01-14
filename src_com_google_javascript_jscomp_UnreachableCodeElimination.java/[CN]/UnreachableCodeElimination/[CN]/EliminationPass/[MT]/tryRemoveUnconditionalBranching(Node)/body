@@ -1,10 +1,10 @@
 {
   if (n == null) {
-    return n;
+    return;
   }
   DiGraphNode<Node,Branch> gNode=cfg.getDirectedGraphNode(n);
   if (gNode == null) {
-    return n;
+    return;
   }
 switch (n.getType()) {
 case Token.RETURN:
@@ -19,10 +19,8 @@ if (outEdges.size() == 1 && (n.getNext() == null || n.getNext().isFunction())) {
   Node fallThrough=computeFollowing(n);
   Node nextCfgNode=outEdges.get(0).getDestination().getValue();
   if (nextCfgNode == fallThrough) {
-    removeDeadExprStatementSafely(n);
-    return fallThrough;
+    removeNode(n);
   }
 }
 }
-return n;
 }
