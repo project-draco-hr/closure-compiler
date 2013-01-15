@@ -33,32 +33,41 @@ case ANNOTATION:
  else {
           jsdocBuilder.markAnnotation(annotationName,lineno,charno);
 switch (annotation) {
+case ANGULAR_INJECT:
+            if (jsdocBuilder.isAngularInjectRecorded()) {
+              parser.addParserWarning("msg.jsdoc.angularinject.extra",stream.getLineno(),stream.getCharno());
+            }
+ else {
+              jsdocBuilder.recordAngularInject(true);
+            }
+          token=eatTokensUntilEOL();
+        continue retry;
 case AUTHOR:
-            if (jsdocBuilder.shouldParseDocumentation()) {
-              ExtractionInfo authorInfo=extractSingleLineBlock();
-              String author=authorInfo.string;
-              if (author.length() == 0) {
-                parser.addParserWarning("msg.jsdoc.authormissing",stream.getLineno(),stream.getCharno());
-              }
- else {
-                jsdocBuilder.addAuthor(author);
-              }
-              token=authorInfo.token;
-            }
- else {
-              token=eatTokensUntilEOL(token);
-            }
-          continue retry;
-case CONSISTENTIDGENERATOR:
-        if (!jsdocBuilder.recordConsistentIdGenerator()) {
-          parser.addParserWarning("msg.jsdoc.consistidgen",stream.getLineno(),stream.getCharno());
+      if (jsdocBuilder.shouldParseDocumentation()) {
+        ExtractionInfo authorInfo=extractSingleLineBlock();
+        String author=authorInfo.string;
+        if (author.length() == 0) {
+          parser.addParserWarning("msg.jsdoc.authormissing",stream.getLineno(),stream.getCharno());
         }
-      token=eatTokensUntilEOL();
+ else {
+          jsdocBuilder.addAuthor(author);
+        }
+        token=authorInfo.token;
+      }
+ else {
+        token=eatTokensUntilEOL(token);
+      }
     continue retry;
-case STRUCT:
-  if (!jsdocBuilder.recordStruct()) {
-    parser.addTypeWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
+case CONSISTENTIDGENERATOR:
+  if (!jsdocBuilder.recordConsistentIdGenerator()) {
+    parser.addParserWarning("msg.jsdoc.consistidgen",stream.getLineno(),stream.getCharno());
   }
+token=eatTokensUntilEOL();
+continue retry;
+case STRUCT:
+if (!jsdocBuilder.recordStruct()) {
+parser.addTypeWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
+}
 token=eatTokensUntilEOL();
 continue retry;
 case DICT:
