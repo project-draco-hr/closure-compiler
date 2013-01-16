@@ -1,19 +1,14 @@
 {
   JSType parameterType=parameterNode.getJSType();
   String typeString;
-  if (!parameterType.isTemplateType() && parameterType.isUnknownType()) {
-    typeString="*";
+  if (parameterNode.isOptionalArg()) {
+    typeString=restrictByUndefined(parameterType).toAnnotationString() + "=";
+  }
+ else   if (parameterNode.isVarArgs()) {
+    typeString="..." + restrictByUndefined(parameterType).toAnnotationString();
   }
  else {
-    if (parameterNode.isOptionalArg()) {
-      typeString=parameterType.restrictByNotNullOrUndefined().toAnnotationString() + "=";
-    }
- else     if (parameterNode.isVarArgs()) {
-      typeString="..." + parameterType.restrictByNotNullOrUndefined().toAnnotationString();
-    }
- else {
-      typeString=parameterType.toAnnotationString();
-    }
+    typeString=parameterType.toAnnotationString();
   }
   return typeString;
 }

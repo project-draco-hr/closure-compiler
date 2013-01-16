@@ -1,11 +1,14 @@
 {
   Preconditions.checkState(fnNode.isFunction());
-  StringBuilder sb=new StringBuilder("/**\n");
   JSType type=fnNode.getJSType();
   if (type == null || type.isUnknownType()) {
     return "";
   }
   FunctionType funType=type.toMaybeFunctionType();
+  if (JSType.isEquivalent(type,registry.getNativeType(JSTypeNative.FUNCTION_INSTANCE_TYPE))) {
+    return "/** @type {!Function} */\n";
+  }
+  StringBuilder sb=new StringBuilder("/**\n");
   if (fnNode != null) {
     Node paramNode=NodeUtil.getFunctionParameters(fnNode).getFirstChild();
     for (    Node n : funType.getParameters()) {
@@ -19,7 +22,7 @@
     }
   }
   JSType retType=funType.getReturnType();
-  if (retType != null && (retType.isTemplateType() || !retType.isUnknownType()) && !retType.isEmptyType()) {
+  if (retType != null && !retType.isEmptyType() && !funType.isInterface()) {
     sb.append(" * ");
     appendAnnotation(sb,"return",retType.toAnnotationString());
     sb.append("\n");
