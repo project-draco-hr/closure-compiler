@@ -1,0 +1,23 @@
+{
+  Preconditions.checkNotNull(rawThat);
+  if (!wrapsSameRawType(rawThat)) {
+    if (!rawThat.isTemplatizedType()) {
+      if (this.isSubtype(rawThat)) {
+        return this;
+      }
+ else       if (rawThat.isSubtype(this)) {
+        return filterNoResolvedType(rawThat);
+      }
+    }
+    if (this.isObject() && rawThat.isObject()) {
+      return this.getNativeType(JSTypeNative.NO_OBJECT_TYPE);
+    }
+    return this.getNativeType(JSTypeNative.NO_TYPE);
+  }
+  TemplatizedType that=rawThat.toMaybeTemplatizedType();
+  Preconditions.checkNotNull(that);
+  if (this.templateType.isEquivalentTo(that.templateType)) {
+    return this;
+  }
+  return getReferencedObjTypeInternal();
+}

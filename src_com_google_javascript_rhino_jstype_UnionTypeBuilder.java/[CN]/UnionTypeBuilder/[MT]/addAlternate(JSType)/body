@@ -37,28 +37,28 @@
           }
         }
  else {
-          if (alternate.isParameterizedType() || current.isParameterizedType()) {
-            if (!current.isParameterizedType()) {
+          if (alternate.isTemplatizedType() || current.isTemplatizedType()) {
+            if (!current.isTemplatizedType()) {
               if (alternate.isSubtype(current)) {
                 return this;
               }
             }
- else             if (!alternate.isParameterizedType()) {
+ else             if (!alternate.isTemplatizedType()) {
               if (current.isSubtype(alternate)) {
                 removeCurrent=true;
               }
             }
  else {
-              Preconditions.checkState(current.isParameterizedType() && alternate.isParameterizedType());
-              ParameterizedType parameterizedAlternate=alternate.toMaybeParameterizedType();
-              ParameterizedType parameterizedCurrent=current.toMaybeParameterizedType();
-              if (parameterizedCurrent.wrapsSameRawType(parameterizedAlternate)) {
-                JSType currentTypeParameter=parameterizedCurrent.getParameterType();
-                if (currentTypeParameter.isEquivalentTo(parameterizedCurrent)) {
+              Preconditions.checkState(current.isTemplatizedType() && alternate.isTemplatizedType());
+              TemplatizedType templatizedAlternate=alternate.toMaybeTemplatizedType();
+              TemplatizedType templatizedCurrent=current.toMaybeTemplatizedType();
+              if (templatizedCurrent.wrapsSameRawType(templatizedAlternate)) {
+                JSType currentTypeParameter=templatizedCurrent.getTemplateType();
+                if (currentTypeParameter.isEquivalentTo(templatizedCurrent)) {
                   return this;
                 }
  else {
-                  JSType merged=parameterizedCurrent.getReferencedObjTypeInternal();
+                  JSType merged=templatizedCurrent.getReferencedObjTypeInternal();
                   return addAlternate(merged);
                 }
               }

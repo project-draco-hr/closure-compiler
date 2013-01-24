@@ -17,14 +17,14 @@
       maybeResolveTemplateTypeFromNodes(paramFunctionType.getParameters(),argFunctionType.getParameters(),resolvedTypes);
     }
   }
- else   if (paramType.isParameterizedType()) {
-    ParameterizedType paramObjectType=paramType.toMaybeParameterizedType();
-    JSType typeParameter=paramObjectType.getParameterType();
+ else   if (paramType.isTemplatizedType()) {
+    TemplatizedType paramObjectType=paramType.toMaybeTemplatizedType();
+    JSType typeParameter=paramObjectType.getTemplateType();
     Preconditions.checkNotNull(typeParameter);
     if (typeParameter != null) {
-      ObjectType argObjectType=argType.restrictByNotNullOrUndefined().collapseUnion().toMaybeParameterizedType();
+      ObjectType argObjectType=argType.restrictByNotNullOrUndefined().collapseUnion().toMaybeTemplatizedType();
       if (argObjectType != null && argObjectType.isSubtype(paramType)) {
-        JSType argTypeParameter=argObjectType.getParameterType();
+        JSType argTypeParameter=argObjectType.getTemplateType();
         Preconditions.checkNotNull(argTypeParameter);
         maybeResolveTemplatedType(typeParameter,argTypeParameter,resolvedTypes);
       }
