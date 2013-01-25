@@ -1,0 +1,35 @@
+{
+  Node target=null;
+  Node fn=null;
+  String name=null;
+switch (n.getType()) {
+case Token.ASSIGN:
+    name=n.getFirstChild().getQualifiedName();
+  fn=n;
+while (fn.isAssign()) {
+  fn=fn.getLastChild();
+}
+target=n.getParent();
+break;
+case Token.FUNCTION:
+name=NodeUtil.getFunctionName(n);
+fn=n;
+target=n;
+break;
+case Token.VAR:
+name=n.getFirstChild().getString();
+fn=getDeclarationRValue(n);
+target=n;
+break;
+}
+if (!target.getParent().isScript() && !target.getParent().isBlock()) {
+compiler.report(t.makeError(n,INJECT_IN_NON_GLOBAL_OR_BLOCK_ERROR));
+return;
+}
+if (fn == null || !fn.isFunction()) {
+compiler.report(t.makeError(n,INJECT_NON_FUNCTION_ERROR));
+return;
+}
+Preconditions.checkNotNull(name);
+injectables.add(new NodeContext(name,n,fn,target));
+}
