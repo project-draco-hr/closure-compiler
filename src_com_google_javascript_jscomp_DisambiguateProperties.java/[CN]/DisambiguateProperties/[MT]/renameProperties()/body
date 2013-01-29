@@ -1,5 +1,6 @@
 {
   int propsRenamed=0, propsSkipped=0, instancesRenamed=0, instancesSkipped=0, singleTypeProps=0;
+  Set<String> reported=Sets.newHashSet();
   for (  Property prop : properties.values()) {
     if (prop.shouldRename()) {
       Map<T,String> propNames=buildPropNames(prop.getTypes(),prop.name);
@@ -15,6 +16,11 @@
         }
  else {
           ++instancesSkipped;
+          CheckLevel checkLevelForProp=propertiesToErrorFor.get(prop.name);
+          if (checkLevelForProp != null && checkLevelForProp != CheckLevel.OFF && !reported.contains(prop.name)) {
+            reported.add(prop.name);
+            compiler.report(JSError.make(NodeUtil.getSourceName(node),node,checkLevelForProp,Warnings.INVALIDATION_ON_TYPE,prop.name,rootType.toString(),""));
+          }
         }
       }
     }
