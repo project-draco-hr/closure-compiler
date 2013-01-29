@@ -1,0 +1,12 @@
+{
+  int thisNumKeys=templateKeys.size();
+  int thatNumKeys=that.getTemplateKeys().size();
+  for (int i=0; i < Math.min(thisNumKeys,thatNumKeys); i++) {
+    JSType thisTemplateType=getTemplateType(templateKeys.get(i));
+    JSType thatTemplateType=that.getTemplateType(that.getTemplateKeys().get(i));
+    if (!thisTemplateType.checkEquivalenceHelper(thatTemplateType,eqMethod)) {
+      return false;
+    }
+  }
+  return thisNumKeys == thatNumKeys || eqMethod == EquivalenceMethod.INVARIANT;
+}
