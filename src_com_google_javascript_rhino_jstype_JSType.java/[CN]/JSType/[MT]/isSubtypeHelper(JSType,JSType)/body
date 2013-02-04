@@ -18,7 +18,12 @@
     return false;
   }
   if (thisType.isTemplatizedType()) {
-    return thisType.toMaybeTemplatizedType().isTemplatizedSubtypeOf(thatType);
+    return !areIncompatibleArrays(thisType,thatType) && thisType.toMaybeTemplatizedType().getReferencedType().isSubtype(thatType);
+  }
+  if (thatType.isTemplatizedType()) {
+    if (!isExemptFromTemplateTypeInvariance(thatType) && !thisType.getTemplateTypeMap().checkEquivalenceHelper(thatType.getTemplateTypeMap(),EquivalenceMethod.IDENTITY)) {
+      return false;
+    }
   }
   if (thatType instanceof ProxyObjectType) {
     return thisType.isSubtype(((ProxyObjectType)thatType).getReferencedTypeInternal());

@@ -18,15 +18,13 @@
     }
   }
  else   if (paramType.isTemplatizedType()) {
-    TemplatizedType paramObjectType=paramType.toMaybeTemplatizedType();
-    JSType typeParameter=paramObjectType.getTemplateType();
-    Preconditions.checkNotNull(typeParameter);
-    if (typeParameter != null) {
-      ObjectType argObjectType=argType.restrictByNotNullOrUndefined().collapseUnion().toMaybeTemplatizedType();
-      if (argObjectType != null && argObjectType.isSubtype(paramType)) {
-        JSType argTypeParameter=argObjectType.getTemplateType();
-        Preconditions.checkNotNull(argTypeParameter);
-        maybeResolveTemplatedType(typeParameter,argTypeParameter,resolvedTypes);
+    ObjectType referencedParamType=paramType.toMaybeTemplatizedType().getReferencedType();
+    JSType argObjectType=argType.restrictByNotNullOrUndefined().collapseUnion();
+    if (argObjectType.isSubtype(referencedParamType)) {
+      TemplateTypeMap paramTypeMap=paramType.getTemplateTypeMap();
+      TemplateTypeMap argTypeMap=argObjectType.getTemplateTypeMap();
+      for (      String key : paramTypeMap.getTemplateKeys()) {
+        maybeResolveTemplatedType(paramTypeMap.getTemplateType(key),argTypeMap.getTemplateType(key),resolvedTypes);
       }
     }
   }

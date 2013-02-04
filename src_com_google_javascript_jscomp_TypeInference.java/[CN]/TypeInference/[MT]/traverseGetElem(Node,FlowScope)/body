@@ -1,11 +1,9 @@
 {
   scope=traverseChildren(n,scope);
-  ObjectType objType=ObjectType.cast(getJSType(n.getFirstChild()).restrictByNotNullOrUndefined());
-  if (objType != null) {
-    JSType type=objType.getTemplateType();
-    if (type != null) {
-      n.setJSType(type);
-    }
+  JSType type=getJSType(n.getFirstChild()).restrictByNotNullOrUndefined();
+  TemplateTypeMap typeMap=type.getTemplateTypeMap();
+  if (typeMap.hasTemplateType(OBJECT_ELEMENT_TEMPLATE)) {
+    n.setJSType(typeMap.getTemplateType(OBJECT_ELEMENT_TEMPLATE));
   }
   return dereferencePointer(n.getFirstChild(),scope);
 }

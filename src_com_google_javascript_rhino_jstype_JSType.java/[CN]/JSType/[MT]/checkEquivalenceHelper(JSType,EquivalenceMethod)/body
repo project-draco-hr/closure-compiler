@@ -24,22 +24,8 @@
   if (isRecordType() && that.isRecordType()) {
     return toMaybeRecordType().checkRecordEquivalenceHelper(that.toMaybeRecordType(),eqMethod);
   }
-  TemplatizedType thisParamType=toMaybeTemplatizedType();
-  TemplatizedType thatParamType=that.toMaybeTemplatizedType();
-  if (thisParamType != null || thatParamType != null) {
-    boolean paramsMatch=false;
-    if (thisParamType != null && thatParamType != null) {
-      paramsMatch=thisParamType.getTemplateType().checkEquivalenceHelper(thatParamType.getTemplateType(),eqMethod);
-    }
- else     if (eqMethod == EquivalenceMethod.IDENTITY) {
-      paramsMatch=false;
-    }
- else {
-      paramsMatch=true;
-    }
-    JSType thisRootType=thisParamType == null ? this : thisParamType.getReferencedTypeInternal();
-    JSType thatRootType=thatParamType == null ? that : thatParamType.getReferencedTypeInternal();
-    return paramsMatch && thisRootType.checkEquivalenceHelper(thatRootType,eqMethod);
+  if (!getTemplateTypeMap().checkEquivalenceHelper(that.getTemplateTypeMap(),eqMethod)) {
+    return false;
   }
   if (isNominalType() && that.isNominalType()) {
     return toObjectType().getReferenceName().equals(that.toObjectType().getReferenceName());
