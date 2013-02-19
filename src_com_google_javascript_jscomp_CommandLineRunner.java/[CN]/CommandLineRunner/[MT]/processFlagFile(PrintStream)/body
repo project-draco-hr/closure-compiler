@@ -4,8 +4,10 @@
   flags.flag_file="";
   List<String> processedFileArgs=processArgs(argsInFile.toArray(new String[]{}));
   CmdLineParser parserFileArgs=new CmdLineParser(flags);
-  Flags.warningGuardSpec.clear();
+  List<GuardLevel> previous=Lists.newArrayList(Flags.guardLevels);
+  Flags.guardLevels.clear();
   parserFileArgs.parseArgument(processedFileArgs.toArray(new String[]{}));
+  Flags.guardLevels.addAll(previous);
   if (!flags.flag_file.equals("")) {
     err.println("ERROR - Arguments in the file cannot contain " + "--flagfile option.");
     isConfigValid=false;
