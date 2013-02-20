@@ -1,8 +1,7 @@
 {
-  for (  Entry<Pattern,DiagnosticType> entry : typeMap.entrySet()) {
-    if (entry.getKey().matcher(message).matches()) {
-      return JSError.make(sourceName,line,lineOffset,entry.getValue(),message);
-    }
+  DiagnosticType type=mapError(message);
+  if (type != null) {
+    return JSError.make(sourceName,line,lineOffset,type,message);
   }
   return JSError.make(sourceName,line,lineOffset,defaultLevel,PARSE_ERROR,message);
 }
