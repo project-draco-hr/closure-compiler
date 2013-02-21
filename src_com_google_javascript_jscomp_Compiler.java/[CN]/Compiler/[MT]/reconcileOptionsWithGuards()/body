@@ -1,0 +1,20 @@
+{
+  if (options.enables(DiagnosticGroups.CHECK_TYPES)) {
+    options.checkTypes=true;
+  }
+ else   if (options.disables(DiagnosticGroups.CHECK_TYPES)) {
+    options.checkTypes=false;
+  }
+ else   if (!options.checkTypes) {
+    options.setWarningLevel(DiagnosticGroup.forType(RhinoErrorReporter.TYPE_PARSE_ERROR),CheckLevel.OFF);
+  }
+  if (options.checkGlobalThisLevel.isOn() && !options.disables(DiagnosticGroups.GLOBAL_THIS)) {
+    options.setWarningLevel(DiagnosticGroups.GLOBAL_THIS,options.checkGlobalThisLevel);
+  }
+  if (options.getLanguageIn() == LanguageMode.ECMASCRIPT5_STRICT) {
+    options.setWarningLevel(DiagnosticGroups.ES5_STRICT,CheckLevel.ERROR);
+  }
+  if (!options.checkSymbols && !options.enables(DiagnosticGroups.CHECK_VARIABLES)) {
+    options.setWarningLevel(DiagnosticGroups.CHECK_VARIABLES,CheckLevel.OFF);
+  }
+}
