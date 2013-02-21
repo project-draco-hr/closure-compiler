@@ -1,16 +1,8 @@
 {
   setResolvedTypeInternal(this);
-  boolean changed=false;
-  ImmutableList.Builder<JSType> resolvedTypes=ImmutableList.builder();
   for (  JSType alternate : alternates) {
-    JSType newAlternate=alternate.resolve(t,scope);
-    changed|=(alternate != newAlternate);
-    resolvedTypes.add(alternate);
+    alternate.resolve(t,scope);
   }
-  if (changed) {
-    Collection<JSType> newAlternates=resolvedTypes.build();
-    Preconditions.checkState(newAlternates.hashCode() == this.hashcode);
-    alternates=newAlternates;
-  }
+  rebuildAlternates();
   return this;
 }
