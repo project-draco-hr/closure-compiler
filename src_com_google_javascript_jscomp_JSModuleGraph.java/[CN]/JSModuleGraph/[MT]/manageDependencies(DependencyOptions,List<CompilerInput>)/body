@@ -1,21 +1,6 @@
 {
   SortedDependencies<CompilerInput> sorter=new SortedDependencies<CompilerInput>(inputs);
-  Set<CompilerInput> entryPointInputs=Sets.newLinkedHashSet();
-  if (depOptions.shouldPruneDependencies()) {
-    if (!depOptions.shouldDropMoochers()) {
-      entryPointInputs.addAll(sorter.getInputsWithoutProvides());
-    }
-    for (    String entryPoint : depOptions.getEntryPoints()) {
-      entryPointInputs.add(sorter.getInputProviding(entryPoint));
-    }
-    CompilerInput baseJs=sorter.maybeGetInputProviding("goog");
-    if (baseJs != null) {
-      entryPointInputs.add(baseJs);
-    }
-  }
- else {
-    entryPointInputs.addAll(inputs);
-  }
+  Iterable<CompilerInput> entryPointInputs=createEntryPointInputs(depOptions,inputs,sorter);
   List<CompilerInput> absoluteOrder=sorter.getDependenciesOf(inputs,depOptions.shouldSortDependencies());
   ListMultimap<JSModule,CompilerInput> entryPointInputsPerModule=LinkedListMultimap.create();
   for (  CompilerInput input : entryPointInputs) {

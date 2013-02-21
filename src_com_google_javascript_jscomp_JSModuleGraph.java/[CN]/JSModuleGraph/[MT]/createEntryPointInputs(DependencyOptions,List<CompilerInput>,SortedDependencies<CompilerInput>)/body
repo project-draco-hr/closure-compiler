@@ -1,0 +1,38 @@
+{
+  Set<CompilerInput> entryPointInputs=Sets.newLinkedHashSet();
+  Map<String,JSModule> modulesByName=getModulesByName();
+  if (depOptions.shouldPruneDependencies()) {
+    if (!depOptions.shouldDropMoochers()) {
+      entryPointInputs.addAll(sorter.getInputsWithoutProvides());
+    }
+    for (    String entryPoint : depOptions.getEntryPoints()) {
+      String inputName=entryPoint;
+      int splitPoint=entryPoint.indexOf(':');
+      CompilerInput entryPointInput=null;
+      if (splitPoint != -1) {
+        String moduleName=entryPoint.substring(0,splitPoint);
+        inputName=entryPoint.substring(Math.min(splitPoint + 1,entryPoint.length() - 1));
+        JSModule module=modulesByName.get(moduleName);
+        if (module == null) {
+          throw new MissingModuleException(moduleName);
+        }
+ else {
+          entryPointInput=sorter.getInputProviding(inputName);
+          entryPointInput.overrideModule(module);
+        }
+      }
+ else {
+        entryPointInput=sorter.getInputProviding(inputName);
+      }
+      entryPointInputs.add(entryPointInput);
+    }
+    CompilerInput baseJs=sorter.maybeGetInputProviding("goog");
+    if (baseJs != null) {
+      entryPointInputs.add(baseJs);
+    }
+  }
+ else {
+    entryPointInputs.addAll(inputs);
+  }
+  return entryPointInputs;
+}
