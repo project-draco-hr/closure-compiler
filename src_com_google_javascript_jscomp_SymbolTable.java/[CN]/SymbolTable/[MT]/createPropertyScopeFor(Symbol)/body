@@ -18,10 +18,12 @@
   ObjectType instanceType=type;
   Iterable<String> propNames=type.getOwnPropertyNames();
   if (instanceType.isFunctionPrototypeType()) {
-    instanceType=instanceType.getOwnerFunction().getInstanceType();
-    Set<String> set=Sets.newHashSet(propNames);
-    Iterables.addAll(set,instanceType.getOwnPropertyNames());
-    propNames=set;
+    if (instanceType.getOwnerFunction().hasInstanceType()) {
+      instanceType=instanceType.getOwnerFunction().getInstanceType();
+      Set<String> set=Sets.newHashSet(propNames);
+      Iterables.addAll(set,instanceType.getOwnPropertyNames());
+      propNames=set;
+    }
   }
   s.setPropertyScope(new SymbolScope(null,parentPropertyScope,type,s));
   for (  String propName : propNames) {
