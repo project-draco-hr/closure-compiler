@@ -1,0 +1,20 @@
+{
+  if (summaryCopy != null) {
+    return;
+  }
+  summaryCopy=ImmutableMap.copyOf(summary);
+  for (  Entry<String,Stats> entry : summary.entrySet()) {
+    Stats stats=entry.getValue();
+    runtime+=stats.runtime;
+    runs+=stats.runs;
+    changes+=stats.changes;
+    if (!stats.isOneTime) {
+      loopRuns+=stats.runs;
+      loopChanges+=stats.changes;
+    }
+    diff+=stats.diff;
+    gzDiff+=stats.gzDiff;
+  }
+  Preconditions.checkState(!trackSize || initCodeSize == diff + codeSize);
+  Preconditions.checkState(!trackGzSize || initGzCodeSize == gzDiff + gzCodeSize);
+}

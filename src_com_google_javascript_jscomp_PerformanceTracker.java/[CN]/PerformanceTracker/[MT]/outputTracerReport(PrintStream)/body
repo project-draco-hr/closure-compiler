@@ -2,13 +2,7 @@
   JvmMetrics.maybeWriteJvmMetrics(pstr,"verbose:pretty:all");
   OutputStreamWriter output=new OutputStreamWriter(pstr);
   try {
-    int runtime=0;
-    int runs=0;
-    int changes=0;
-    int loopRuns=0;
-    int loopChanges=0;
-    int diff=0;
-    int gzDiff=0;
+    calcTotalStats();
     ArrayList<Entry<String,Stats>> a=new ArrayList<Entry<String,Stats>>();
     for (    Entry<String,Stats> entry : summary.entrySet()) {
       a.add(entry);
@@ -18,20 +12,9 @@
     for (    Entry<String,Stats> entry : a) {
       String key=entry.getKey();
       Stats stats=entry.getValue();
-      runtime+=stats.runtime;
-      runs+=stats.runs;
-      changes+=stats.changes;
-      if (!stats.isOneTime) {
-        loopRuns+=stats.runs;
-        loopChanges+=stats.changes;
-      }
-      diff+=stats.diff;
-      gzDiff+=stats.gzDiff;
       output.write(key + "," + String.valueOf(stats.runtime)+ ","+ String.valueOf(stats.runs)+ ","+ String.valueOf(stats.changes)+ ","+ String.valueOf(stats.diff)+ ","+ String.valueOf(stats.gzDiff)+ "\n");
     }
     output.write("\nTOTAL:" + "\nRuntime(ms): " + String.valueOf(runtime) + "\n#Runs: "+ String.valueOf(runs)+ "\n#Changing runs: "+ String.valueOf(changes)+ "\n#Loopable runs: "+ String.valueOf(loopRuns)+ "\n#Changing loopable runs: "+ String.valueOf(loopChanges)+ "\nReduction(bytes): "+ String.valueOf(diff)+ "\nGzReduction(bytes): "+ String.valueOf(gzDiff)+ "\nSize(bytes): "+ String.valueOf(codeSize)+ "\nGzSize(bytes): "+ String.valueOf(gzCodeSize)+ "\n\n");
-    Preconditions.checkState(!trackSize || initCodeSize == diff + codeSize);
-    Preconditions.checkState(!trackGzSize || initGzCodeSize == gzDiff + gzCodeSize);
     output.write("Log:\n" + "pass,runtime,runs,changingRuns,reduction,gzReduction,size,gzSize\n");
     for (    Stats stats : log) {
       output.write(stats.pass + "," + String.valueOf(stats.runtime)+ ","+ String.valueOf(stats.runs)+ ","+ String.valueOf(stats.changes)+ ","+ String.valueOf(stats.diff)+ ","+ String.valueOf(stats.gzDiff)+ ","+ String.valueOf(stats.size)+ ","+ String.valueOf(stats.gzSize)+ "\n");
