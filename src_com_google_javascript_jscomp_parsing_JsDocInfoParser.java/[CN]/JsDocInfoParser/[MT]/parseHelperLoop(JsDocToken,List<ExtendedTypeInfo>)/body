@@ -1,0 +1,41 @@
+{
+  while (true) {
+switch (token) {
+case ANNOTATION:
+      if (state == State.SEARCHING_ANNOTATION) {
+        state=State.SEARCHING_NEWLINE;
+        token=parseAnnotation(token,extendedTypes);
+      }
+ else {
+        token=next();
+      }
+    break;
+case EOC:
+  if (hasParsedFileOverviewDocInfo()) {
+    fileOverviewJSDocInfo=retrieveAndResetParsedJSDocInfo();
+  }
+checkExtendedTypes(extendedTypes);
+return true;
+case EOF:
+jsdocBuilder.build(null);
+parser.addParserWarning("msg.unexpected.eof",stream.getLineno(),stream.getCharno());
+checkExtendedTypes(extendedTypes);
+return false;
+case EOL:
+if (state == State.SEARCHING_NEWLINE) {
+state=State.SEARCHING_ANNOTATION;
+}
+token=next();
+break;
+default :
+if (token == JsDocToken.STAR && state == State.SEARCHING_ANNOTATION) {
+token=next();
+}
+ else {
+state=State.SEARCHING_NEWLINE;
+token=eatTokensUntilEOL();
+}
+break;
+}
+}
+}
