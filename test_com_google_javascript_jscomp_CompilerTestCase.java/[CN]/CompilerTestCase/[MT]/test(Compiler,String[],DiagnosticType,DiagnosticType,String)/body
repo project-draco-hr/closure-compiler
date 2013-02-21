@@ -3,6 +3,9 @@
   compiler.addChangeHandler(recentChange);
   Node root=compiler.parseInputs();
   assertTrue("Unexpected parse error(s): " + Joiner.on("\n").join(compiler.getErrors()),root != null);
+  if (!expectParseWarningsThisTest) {
+    assertTrue("Unexpected parse warnings(s): " + Joiner.on("\n").join(compiler.getWarnings()),compiler.getWarnings().length == 0);
+  }
   if (astValidationEnabled) {
     (new AstValidator()).validateRoot(root);
   }
