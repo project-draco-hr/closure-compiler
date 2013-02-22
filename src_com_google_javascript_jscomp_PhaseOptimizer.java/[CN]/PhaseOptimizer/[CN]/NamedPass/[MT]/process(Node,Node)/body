@@ -1,6 +1,25 @@
 {
   logger.fine(name);
-  tracer=newTracer();
+  if (tracker != null) {
+    tracker.recordPassStart(name,factory.isOneTimePass());
+  }
+  tracer=new Tracer("JSCompiler");
   factory.create(compiler).process(externs,root);
-  endPass(externs,root);
+  try {
+    if (progressRange == null) {
+      compiler.setProgress(-1,name);
+    }
+ else {
+      progress+=progressStep;
+      compiler.setProgress(progress,name);
+    }
+    if (tracker != null) {
+      tracker.recordPassStop(name,tracer.stop());
+    }
+    maybePrintAstHashcodes(name,root);
+    maybeSanityCheck(externs,root);
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("Sanity check failed for " + name,e);
+  }
 }
