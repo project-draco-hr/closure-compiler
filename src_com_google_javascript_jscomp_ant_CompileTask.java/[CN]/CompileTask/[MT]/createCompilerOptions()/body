@@ -23,5 +23,15 @@
     }
     options.setWarningLevel(group,level);
   }
+  if (!Strings.isNullOrEmpty(sourceMapFormat)) {
+    options.sourceMapFormat=Format.valueOf(sourceMapFormat);
+  }
+  if (sourceMapOutputFile != null) {
+    File parentFile=sourceMapOutputFile.getParentFile();
+    if (parentFile.mkdirs()) {
+      log("Created missing parent directory " + parentFile,Project.MSG_DEBUG);
+    }
+    options.sourceMapOutputPath=parentFile.getAbsolutePath();
+  }
   return options;
 }

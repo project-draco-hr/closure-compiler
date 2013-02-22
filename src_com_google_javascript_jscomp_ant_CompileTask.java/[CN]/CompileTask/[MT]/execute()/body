@@ -11,7 +11,13 @@
     log("Compiling " + sources.size() + " file(s) with "+ externs.size()+ " extern(s)");
     Result result=compiler.compile(externs,sources,options);
     if (result.success) {
-      writeResult(compiler.toSource());
+      StringBuilder source=new StringBuilder(compiler.toSource());
+      if (result.sourceMap != null) {
+        flushSourceMap(result.sourceMap);
+        source.append(System.getProperty("line.separator"));
+        source.append("//@ sourceMappingURL=" + sourceMapOutputFile.getName());
+      }
+      writeResult(source.toString());
     }
  else {
       throw new BuildException("Compilation failed.");
