@@ -78,7 +78,7 @@
     if (thenOp.getType() == elseOp.getType()) {
       if (NodeUtil.isAssignmentOp(thenOp)) {
         Node lhs=thenOp.getFirstChild();
-        if (areNodesEqualForInlining(lhs,elseOp.getFirstChild()) && !mayEffectMutableState(lhs)) {
+        if (areNodesEqualForInlining(lhs,elseOp.getFirstChild()) && !mayEffectMutableState(lhs) && (!mayHaveSideEffects(cond) || (thenOp.isAssign() && thenOp.getFirstChild().isName()))) {
           n.removeChild(cond);
           Node assignName=thenOp.removeFirstChild();
           Node thenExpr=thenOp.removeFirstChild();
