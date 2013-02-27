@@ -1,12 +1,20 @@
 {
   FunctionType templatizedCtor=registry.createConstructorType("TestingType",null,null,UNKNOWN_TYPE,ImmutableList.of("A","B"));
   JSType templatizedInstance=registry.createTemplatizedType(templatizedCtor.getInstanceType(),ImmutableList.of(NUMBER_TYPE));
+  TemplateTypeMap ctrTypeMap=templatizedCtor.getTemplateTypeMap();
+  TemplateType keyA=ctrTypeMap.getTemplateTypeKeyByName("A");
+  assertNotNull(keyA);
+  TemplateType keyB=ctrTypeMap.getTemplateTypeKeyByName("B");
+  assertNotNull(keyB);
+  TemplateType keyC=ctrTypeMap.getTemplateTypeKeyByName("C");
+  assertNull(keyC);
+  TemplateType unknownKey=registry.createTemplateType("C");
   TemplateTypeMap templateTypeMap=templatizedInstance.getTemplateTypeMap();
-  assertTrue(templateTypeMap.hasTemplateKey("A"));
-  assertTrue(templateTypeMap.hasTemplateKey("B"));
-  assertFalse(templateTypeMap.hasTemplateKey("C"));
-  assertEquals(NUMBER_TYPE,templateTypeMap.getTemplateType("A"));
-  assertEquals(UNKNOWN_TYPE,templateTypeMap.getTemplateType("B"));
-  assertEquals(UNKNOWN_TYPE,templateTypeMap.getTemplateType("C"));
+  assertTrue(templateTypeMap.hasTemplateKey(keyA));
+  assertTrue(templateTypeMap.hasTemplateKey(keyB));
+  assertFalse(templateTypeMap.hasTemplateKey(unknownKey));
+  assertEquals(NUMBER_TYPE,templateTypeMap.getTemplateType(keyA));
+  assertEquals(UNKNOWN_TYPE,templateTypeMap.getTemplateType(keyB));
+  assertEquals(UNKNOWN_TYPE,templateTypeMap.getTemplateType(unknownKey));
   assertEquals("TestingType.<number,?>",templatizedInstance.toString());
 }

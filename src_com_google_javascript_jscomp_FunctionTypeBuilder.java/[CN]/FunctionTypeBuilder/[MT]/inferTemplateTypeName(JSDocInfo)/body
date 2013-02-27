@@ -1,7 +1,14 @@
 {
-  if (info != null) {
-    templateTypeNames=info.getTemplateTypeNames();
-    typeRegistry.setTemplateTypeNames(templateTypeNames);
+  if (info != null && !info.getTemplateTypeNames().isEmpty()) {
+    ImmutableList.Builder<TemplateType> builder=ImmutableList.builder();
+    for (    String key : info.getTemplateTypeNames()) {
+      builder.add(typeRegistry.createTemplateType(key));
+    }
+    templateTypeNames=builder.build();
   }
+ else {
+    templateTypeNames=ImmutableList.of();
+  }
+  typeRegistry.setTemplateTypeNames(templateTypeNames);
   return this;
 }
