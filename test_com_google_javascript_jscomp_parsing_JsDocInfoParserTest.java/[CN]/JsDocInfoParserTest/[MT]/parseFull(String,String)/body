@@ -7,10 +7,12 @@
   Parser p=new Parser(environment,testErrorReporter);
   AstRoot script=p.parse(code,null,0);
   Config config=new Config(extraAnnotations,extraSuppressions,true,LanguageMode.ECMASCRIPT3,false);
+  List<JSDocInfo> jsdocs=Lists.newArrayList();
   for (  Comment comment : script.getComments()) {
     JsDocInfoParser jsdocParser=new JsDocInfoParser(new JsDocTokenStream(comment.getValue().substring(3),comment.getLineno()),comment,null,config,testErrorReporter);
     jsdocParser.parse();
-    jsdocParser.retrieveAndResetParsedJSDocInfo();
+    jsdocs.add(jsdocParser.retrieveAndResetParsedJSDocInfo());
   }
   assertTrue("some expected warnings were not reported",testErrorReporter.hasEncounteredAllWarnings());
+  return jsdocs;
 }
