@@ -2,7 +2,26 @@
   JSType jsType=null;
   if (info != null) {
     if (info.hasType()) {
+      ImmutableList<TemplateType> ownerTypeKeys=ImmutableList.of();
+      Node ownerNode=NodeUtil.getBestLValueOwner(node);
+      String ownerName=NodeUtil.getBestLValueName(ownerNode);
+      ObjectType ownerType=null;
+      if (ownerName != null) {
+        Var ownerVar=scope.getVar(ownerName);
+        if (ownerVar != null) {
+          ownerType=getPrototypeOwnerType(ObjectType.cast(ownerVar.getType()));
+          if (ownerType != null) {
+            ownerTypeKeys=ownerType.getTemplateTypeMap().getTemplateKeys();
+          }
+        }
+      }
+      if (!ownerTypeKeys.isEmpty()) {
+        typeRegistry.setTemplateTypeNames(ownerTypeKeys);
+      }
       jsType=info.getType().evaluate(scope,typeRegistry);
+      if (!ownerTypeKeys.isEmpty()) {
+        typeRegistry.clearTemplateTypeNames();
+      }
     }
  else     if (FunctionTypeBuilder.isFunctionTypeDeclaration(info)) {
       String fnName=node.getQualifiedName();
