@@ -64,7 +64,7 @@ if (current.getType() == Token.THIS || current.getType() == Token.NEW) {
 Node contextNode=current.getFirstChild();
 thisType=ObjectType.cast(createFromTypeNodesInternal(contextNode,sourceName,scope).restrictByNotNullOrUndefined());
 if (thisType == null) {
-reporter.warning(ScriptRuntime.getMessage0(current.getType() == Token.THIS ? "msg.jsdoc.function.thisnotobject" : "msg.jsdoc.function.newnotobject"),sourceName,contextNode.getLineno(),contextNode.getCharno());
+reporter.warning(SimpleErrorReporter.getMessage0(current.getType() == Token.THIS ? "msg.jsdoc.function.thisnotobject" : "msg.jsdoc.function.newnotobject"),sourceName,contextNode.getLineno(),contextNode.getCharno());
 }
 isConstructor=current.getType() == Token.NEW;
 current=current.getNext();
@@ -85,7 +85,7 @@ JSType type=createFromTypeNodesInternal(arg,sourceName,scope);
 if (arg.getType() == Token.EQUALS) {
 boolean addSuccess=paramBuilder.addOptionalParams(type);
 if (!addSuccess) {
-reporter.warning(ScriptRuntime.getMessage0("msg.jsdoc.function.varargs"),sourceName,arg.getLineno(),arg.getCharno());
+reporter.warning(SimpleErrorReporter.getMessage0("msg.jsdoc.function.varargs"),sourceName,arg.getLineno(),arg.getCharno());
 }
 }
  else {
