@@ -4,7 +4,15 @@
     return;
   }
   member.getFirstChild().setJSType(thisType);
+  JSType thisObjectType=thisType.toObjectType();
+  if (thisObjectType != null) {
+    ImmutableList<TemplateType> keys=thisObjectType.getTemplateTypeMap().getTemplateKeys();
+    typeRegistry.setTemplateTypeNames(keys);
+  }
   JSType jsType=getDeclaredType(info,member,value);
+  if (thisObjectType != null) {
+    typeRegistry.clearTemplateTypeNames();
+  }
   Node name=member.getLastChild();
   if (jsType != null && (name.isName() || name.isString()) && thisType.toObjectType() != null) {
     thisType.toObjectType().defineDeclaredProperty(name.getString(),jsType,member);

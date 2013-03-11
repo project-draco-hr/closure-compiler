@@ -2,11 +2,6 @@
   Preconditions.checkState(!n.isFunction() || type.isFunctionType() || type.isUnknownType());
   JSDocInfo info=n.getJSDocInfo();
   if (info != null) {
-    if (info.hasType()) {
-      JSType infoType=info.getType().evaluate(t.getScope(),typeRegistry);
-      validator.expectCanCast(t,n,infoType,type);
-      type=infoType;
-    }
     if (info.isImplicitCast() && !inExterns) {
       String propName=n.isGetProp() ? n.getLastChild().getString() : "(missing)";
       compiler.report(t.makeError(n,ILLEGAL_IMPLICIT_CAST,propName));

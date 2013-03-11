@@ -19,6 +19,14 @@
       propertyType=foundType;
     }
   }
+  if (propertyType != null && objType != null) {
+    JSType restrictedObjType=objType.restrictByNotNullOrUndefined();
+    if (restrictedObjType.isTemplatizedType() && propertyType.hasAnyTemplateTypes()) {
+      TemplateTypeMap typeMap=restrictedObjType.getTemplateTypeMap();
+      TemplateTypeMapReplacer replacer=new TemplateTypeMapReplacer(registry,typeMap);
+      propertyType=propertyType.visit(replacer);
+    }
+  }
   if ((propertyType == null || propertyType.isUnknownType()) && qualifiedName != null) {
     ObjectType regType=ObjectType.cast(registry.getType(qualifiedName));
     if (regType != null) {

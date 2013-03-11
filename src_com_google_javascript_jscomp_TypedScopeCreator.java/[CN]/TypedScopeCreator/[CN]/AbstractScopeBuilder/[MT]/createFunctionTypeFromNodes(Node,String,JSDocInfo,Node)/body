@@ -44,7 +44,8 @@
       if (ownerType != null && propName != null) {
         overriddenType=findOverriddenFunction(ownerType,propName);
       }
-      FunctionTypeBuilder builder=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setContents(getFunctionAnalysisResults(fnRoot)).inferFromOverriddenFunction(overriddenType,parametersNode).inferTemplateTypeName(info).inferReturnType(info).inferInheritance(info);
+      ObjectType prototypeOwner=getPrototypeOwnerType(ownerType);
+      FunctionTypeBuilder builder=new FunctionTypeBuilder(name,compiler,errorRoot,sourceName,scope).setContents(getFunctionAnalysisResults(fnRoot)).inferFromOverriddenFunction(overriddenType,parametersNode).inferTemplateTypeName(info,prototypeOwner).inferReturnType(info).inferInheritance(info);
       boolean searchedForThisType=false;
       if (ownerType != null && ownerType.isFunctionPrototypeType() && ownerType.getOwnerFunction().hasInstanceType()) {
         builder.inferThisType(info,ownerType.getOwnerFunction().getInstanceType());
