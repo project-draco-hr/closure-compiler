@@ -47,12 +47,14 @@
       targetVal=objectToExtend.detachFromParent();
     }
     fncBlock.addChildToBack(IR.returnNode(targetVal).srcref(targetVal));
-    Node fnc=IR.function(IR.name("").srcref(n),IR.paramList().srcref(n),fncBlock);
-    n.replaceChild(callTarget,fnc);
-    n.putBooleanProp(Node.FREE_CALL,true);
-    while (fnc.getNext() != null) {
-      n.removeChildAfter(fnc);
+    Node fnc=IR.function(IR.name("").srcref(n),IR.paramList().srcref(n),fncBlock).srcref(n);
+    Node newCallTarget=IR.getprop(fnc,IR.string("call").srcref(n)).srcref(n);
+    n.replaceChild(callTarget,newCallTarget);
+    n.putBooleanProp(Node.FREE_CALL,false);
+    while (newCallTarget.getNext() != null) {
+      n.removeChildAfter(newCallTarget);
     }
+    n.addChildToBack(IR.thisNode().srcref(n));
   }
   compiler.reportCodeChange();
 }
