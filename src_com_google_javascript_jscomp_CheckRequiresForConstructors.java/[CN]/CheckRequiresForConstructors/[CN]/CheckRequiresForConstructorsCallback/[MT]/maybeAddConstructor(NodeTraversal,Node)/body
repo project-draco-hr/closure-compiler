@@ -1,0 +1,18 @@
+{
+  JSDocInfo info=(JSDocInfo)n.getProp(Node.JSDOC_INFO_PROP);
+  if (info != null) {
+    String ctorName=n.getFirstChild().getQualifiedName();
+    if (info.isConstructor()) {
+      constructors.add(ctorName);
+    }
+ else {
+      JSTypeExpression typeExpr=info.getType();
+      if (typeExpr != null) {
+        JSType type=typeExpr.evaluate(t.getScope(),compiler.getTypeRegistry());
+        if (type.isConstructor()) {
+          constructors.add(ctorName);
+        }
+      }
+    }
+  }
+}
