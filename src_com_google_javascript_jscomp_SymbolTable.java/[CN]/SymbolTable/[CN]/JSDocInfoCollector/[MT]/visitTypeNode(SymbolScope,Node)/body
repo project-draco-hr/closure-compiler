@@ -1,13 +1,11 @@
 {
   if (n.isString()) {
-    Symbol symbol=scope.getSlot(n.getString());
-    if (symbol == null) {
-      JSType type=typeRegistry.getType(n.getString());
-      JSType autobox=type == null ? null : type.autoboxesTo();
-      symbol=autobox == null ? null : getSymbolForTypeHelper(autobox,true);
-    }
+    Symbol symbol=lookupPossiblyDottedName(scope,n.getString());
     if (symbol != null) {
       symbol.defineReferenceAt(n);
+    }
+ else {
+      logger.warning("Could not find symbol for type: " + n.getString());
     }
   }
   for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
