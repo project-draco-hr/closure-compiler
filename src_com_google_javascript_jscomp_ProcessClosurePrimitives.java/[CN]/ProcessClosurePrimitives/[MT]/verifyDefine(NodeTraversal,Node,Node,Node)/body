@@ -1,0 +1,23 @@
+{
+  Node arg=args;
+  if (!verifyNotNull(t,methodName,arg) || !verifyOfType(t,methodName,arg,Token.STRING)) {
+    return false;
+  }
+  arg=arg.getNext();
+  if (!verifyNotNull(t,methodName,arg) || !verifyIsLast(t,methodName,arg)) {
+    return false;
+  }
+  String name=args.getString();
+  for (  String part : name.split("\\.")) {
+    if (!NodeUtil.isValidQualifiedName(part)) {
+      compiler.report(t.makeError(args,INVALID_DEFINE_NAME_ERROR,name));
+      return false;
+    }
+  }
+  JSDocInfo info=expr.getFirstChild().getJSDocInfo();
+  if (info == null || !info.isDefine()) {
+    compiler.report(t.makeError(expr,MISSING_DEFINE_ANNOTATION));
+    return false;
+  }
+  return true;
+}
