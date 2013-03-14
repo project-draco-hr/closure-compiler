@@ -11,13 +11,8 @@
     }
     Node dependenciesArray=IR.arraylit(dependencies.toArray(new Node[dependencies.size()]));
     Node statement=IR.exprResult(IR.assign(IR.getelem(NodeUtil.newQualifiedNameNode(convention,name),IR.string(INJECT_PROPERTY_NAME)),dependenciesArray));
-    Node insertionPoint=entry.getTarget();
-    Node next=insertionPoint.getNext();
-    while (next != null && NodeUtil.isExprCall(next) && convention.getClassesDefinedByCall(next.getFirstChild()) != null) {
-      insertionPoint=next;
-      next=insertionPoint.getNext();
-    }
-    insertionPoint.getParent().addChildAfter(statement,insertionPoint);
+    Node target=entry.getTarget();
+    target.getParent().addChildAfter(statement,target);
     codeChanged=true;
   }
   if (codeChanged) {
