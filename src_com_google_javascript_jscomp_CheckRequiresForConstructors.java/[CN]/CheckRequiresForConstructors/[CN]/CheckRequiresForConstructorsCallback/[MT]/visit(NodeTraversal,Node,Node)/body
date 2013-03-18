@@ -1,37 +1,12 @@
 {
-  JSDocInfo info;
 switch (n.getType()) {
 case Token.ASSIGN:
-    info=(JSDocInfo)n.getProp(Node.JSDOC_INFO_PROP);
-  if (info != null && info.isConstructor()) {
-    String qualifiedName=n.getFirstChild().getQualifiedName();
-    constructors.add(qualifiedName);
-  }
-break;
+case Token.VAR:
+    maybeAddConstructor(t,n);
+  break;
 case Token.FUNCTION:
-if (NodeUtil.isFunctionExpression(n)) {
-if (parent.isName()) {
-  String functionName=parent.getString();
-  info=(JSDocInfo)parent.getProp(Node.JSDOC_INFO_PROP);
-  if (info != null && info.isConstructor()) {
-    constructors.add(functionName);
-  }
- else {
-    Node gramps=parent.getParent();
-    Preconditions.checkState(gramps != null && gramps.isVar());
-    info=(JSDocInfo)gramps.getProp(Node.JSDOC_INFO_PROP);
-    if (info != null && info.isConstructor()) {
-      constructors.add(functionName);
-    }
-  }
-}
-}
- else {
-info=(JSDocInfo)n.getProp(Node.JSDOC_INFO_PROP);
-if (info != null && info.isConstructor()) {
-  String functionName=n.getFirstChild().getString();
-  constructors.add(functionName);
-}
+if (NodeUtil.isStatement(n)) {
+  maybeAddConstructor(t,n);
 }
 break;
 case Token.CALL:
