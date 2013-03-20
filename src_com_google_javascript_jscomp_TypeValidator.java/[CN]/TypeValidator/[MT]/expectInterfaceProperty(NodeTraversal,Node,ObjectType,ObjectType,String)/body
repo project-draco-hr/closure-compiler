@@ -9,8 +9,13 @@
     Node propNode=propSlot.getDeclaration() == null ? null : propSlot.getDeclaration().getNode();
     propNode=propNode == null ? n : propNode;
     JSType found=propSlot.getType();
-    JSType required=implementedInterface.getImplicitPrototype().getPropertyType(prop);
     found=found.restrictByNotNullOrUndefined();
+    JSType required=implementedInterface.getImplicitPrototype().getPropertyType(prop);
+    TemplateTypeMap typeMap=implementedInterface.getTemplateTypeMap();
+    if (!typeMap.isEmpty()) {
+      TemplateTypeMapReplacer replacer=new TemplateTypeMapReplacer(typeRegistry,typeMap);
+      required=required.visit(replacer);
+    }
     required=required.restrictByNotNullOrUndefined();
     if (!found.isSubtype(required)) {
       FunctionType constructor=implementedInterface.toObjectType().getConstructor();

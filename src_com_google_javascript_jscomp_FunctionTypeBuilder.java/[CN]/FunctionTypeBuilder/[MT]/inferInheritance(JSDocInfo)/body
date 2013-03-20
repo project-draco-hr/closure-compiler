@@ -10,6 +10,20 @@
  else     if (makesDicts && !isConstructor) {
       reportWarning(CONSTRUCTOR_REQUIRED,"@dict",formatFnName());
     }
+    ImmutableList<String> typeParameters=info.getClassTemplateTypeNames();
+    if (!typeParameters.isEmpty()) {
+      if (isConstructor || isInterface) {
+        ImmutableList.Builder<TemplateType> builder=ImmutableList.builder();
+        for (        String typeParameter : typeParameters) {
+          builder.add(typeRegistry.createTemplateType(typeParameter));
+        }
+        classTemplateTypeNames=builder.build();
+        typeRegistry.setTemplateTypeNames(classTemplateTypeNames);
+      }
+ else {
+        reportWarning(CLASS_TEMPLATE_WITHOUT_CONSTRUCTOR,formatFnName());
+      }
+    }
     if (info.hasBaseType()) {
       if (isConstructor) {
         JSType maybeBaseType=info.getBaseType().evaluate(scope,typeRegistry);
@@ -45,15 +59,6 @@
         if (maybeInterfaceType != null && maybeInterfaceType.setValidator(new ExtendedTypeValidator())) {
           extendedInterfaces.add((ObjectType)maybeInterfaceType);
         }
-      }
-    }
-    ImmutableList<String> typeParameters=info.getClassTemplateTypeNames();
-    if (!typeParameters.isEmpty()) {
-      if (isConstructor || isInterface) {
-        this.classTypeParameterNames=typeParameters;
-      }
- else {
-        reportWarning(CLASS_TEMPLATE_WITHOUT_CONSTRUCTOR,formatFnName());
       }
     }
   }

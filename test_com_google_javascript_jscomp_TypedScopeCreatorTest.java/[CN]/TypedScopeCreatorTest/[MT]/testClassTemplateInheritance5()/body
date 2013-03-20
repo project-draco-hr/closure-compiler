@@ -1,0 +1,6 @@
+{
+  testSame("/**\n" + " * @constructor\n" + " * @classTemplate T\n"+ " */\n"+ "function C() {};\n"+ ""+ "/** @return {T} */\n"+ "C.prototype.method1 = function() {}\n"+ ""+ "/**\n"+ " * @constructor\n"+ " * @classTemplate T, U\n"+ " * @extends {C.<U>}"+ " */\n"+ "function D() {};\n"+ ""+ "/** @return {T} */\n"+ "D.prototype.method2 = function() {}\n"+ ""+ "/** @type {D.<string, boolean>} */ var x = new D();\n"+ "/** @type {C.<boolean>} */ var y = x;\n"+ "/** @type {C} */ var z = y;\n"+ "var result1 = x.method2();\n"+ "var result2 = y.method1();\n"+ "var result3 = z.method1();\n");
+  assertEquals("string",findNameType("result1",globalScope).toString());
+  assertEquals("boolean",findNameType("result2",globalScope).toString());
+  assertEquals("T",findNameType("result3",globalScope).toString());
+}
