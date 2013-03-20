@@ -1,14 +1,14 @@
 {
-  File flagFileInput=new File(flags.flag_file);
+  File flagFileInput=new File(flags.flagFile);
   List<String> argsInFile=tokenizeKeepingQuotedStrings(Files.readLines(flagFileInput,Charset.defaultCharset()));
-  flags.flag_file="";
+  flags.flagFile="";
   List<String> processedFileArgs=processArgs(argsInFile.toArray(new String[]{}));
   CmdLineParser parserFileArgs=new CmdLineParser(flags);
   List<GuardLevel> previous=Lists.newArrayList(Flags.guardLevels);
   Flags.guardLevels.clear();
   parserFileArgs.parseArgument(processedFileArgs.toArray(new String[]{}));
   Flags.guardLevels.addAll(previous);
-  if (!flags.flag_file.equals("")) {
+  if (!flags.flagFile.equals("")) {
     err.println("ERROR - Arguments in the file cannot contain " + "--flagfile option.");
     isConfigValid=false;
   }

@@ -5,7 +5,7 @@
   isConfigValid=true;
   try {
     parser.parseArgument(processedArgs.toArray(new String[]{}));
-    if (!flags.flag_file.equals("")) {
+    if (!flags.flagFile.equals("")) {
       processFlagFile(err);
     }
   }
@@ -14,38 +14,38 @@
     isConfigValid=false;
   }
 catch (  IOException ioErr) {
-    err.println("ERROR - " + flags.flag_file + " read error.");
+    err.println("ERROR - " + flags.flagFile + " read error.");
     isConfigValid=false;
   }
   if (flags.version) {
     err.println("Closure Compiler (http://code.google.com/closure/compiler)\n" + "Version: " + Compiler.getReleaseVersion() + "\n"+ "Built on: "+ Compiler.getReleaseDate());
     err.flush();
   }
-  if (flags.process_common_js_modules) {
-    flags.process_closure_primitives=true;
-    flags.manage_closure_dependencies=true;
-    if (flags.common_js_entry_module == null) {
+  if (flags.processCommonJsModules) {
+    flags.processClosurePrimitives=true;
+    flags.manageClosureDependencies=true;
+    if (flags.commonJsEntryModule == null) {
       err.println("Please specify --common_js_entry_module.");
       err.flush();
       isConfigValid=false;
     }
-    flags.closure_entry_point=Lists.newArrayList(ProcessCommonJSModules.toModuleName(flags.common_js_entry_module));
+    flags.closureEntryPoint=Lists.newArrayList(ProcessCommonJSModules.toModuleName(flags.commonJsEntryModule));
   }
-  if (!isConfigValid || flags.display_help) {
+  if (!isConfigValid || flags.displayHelp) {
     isConfigValid=false;
     parser.printUsage(err);
   }
  else {
     CodingConvention conv;
-    if (flags.third_party) {
+    if (flags.thirdParty) {
       conv=CodingConventions.getDefault();
     }
- else     if (flags.process_jquery_primitives) {
+ else     if (flags.processJqueryPrimitives) {
       conv=new JqueryCodingConvention();
     }
  else {
       conv=new ClosureCodingConvention();
     }
-    getCommandLineConfig().setPrintTree(flags.print_tree).setPrintAst(flags.print_ast).setPrintPassGraph(flags.print_pass_graph).setJscompDevMode(flags.jscomp_dev_mode).setLoggingLevel(flags.logging_level).setExterns(flags.externs).setJs(flags.getJsFiles()).setJsOutputFile(flags.js_output_file).setModule(flags.module).setVariableMapInputFile(flags.variable_map_input_file).setPropertyMapInputFile(flags.property_map_input_file).setVariableMapOutputFile(flags.variable_map_output_file).setCreateNameMapFiles(flags.create_name_map_files).setPropertyMapOutputFile(flags.property_map_output_file).setCodingConvention(conv).setSummaryDetailLevel(flags.summary_detail_level).setOutputWrapper(flags.output_wrapper).setModuleWrapper(flags.module_wrapper).setModuleOutputPathPrefix(flags.module_output_path_prefix).setCreateSourceMap(flags.create_source_map).setSourceMapFormat(flags.source_map_format).setWarningGuardSpec(Flags.getWarningGuardSpec()).setDefine(flags.define).setCharset(flags.charset).setManageClosureDependencies(flags.manage_closure_dependencies).setOnlyClosureDependencies(flags.only_closure_dependencies).setClosureEntryPoints(flags.closure_entry_point).setOutputManifest(ImmutableList.of(flags.output_manifest)).setOutputModuleDependencies(flags.output_module_dependencies).setAcceptConstKeyword(flags.accept_const_keyword).setLanguageIn(flags.language_in).setProcessCommonJSModules(flags.process_common_js_modules).setCommonJSModulePathPrefix(flags.common_js_path_prefix).setTransformAMDToCJSModules(flags.transform_amd_modules).setWarningsWhitelistFile(flags.warnings_whitelist_file);
+    getCommandLineConfig().setPrintTree(flags.printTree).setPrintAst(flags.printAst).setPrintPassGraph(flags.printPassGraph).setJscompDevMode(flags.jscompDevMode).setLoggingLevel(flags.loggingLevel).setExterns(flags.externs).setJs(flags.getJsFiles()).setJsOutputFile(flags.jsOutputFile).setModule(flags.module).setVariableMapInputFile(flags.variableMapInputFile).setPropertyMapInputFile(flags.propertyMapInputFile).setVariableMapOutputFile(flags.variableMapOutputFile).setCreateNameMapFiles(flags.createNameMapFiles).setPropertyMapOutputFile(flags.propertyMapOutputFile).setCodingConvention(conv).setSummaryDetailLevel(flags.summaryDetailLevel).setOutputWrapper(flags.outputWrapper).setModuleWrapper(flags.moduleWrapper).setModuleOutputPathPrefix(flags.moduleOutputPathPrefix).setCreateSourceMap(flags.createSourceMap).setSourceMapFormat(flags.sourceMapFormat).setWarningGuardSpec(Flags.getWarningGuardSpec()).setDefine(flags.define).setCharset(flags.charset).setManageClosureDependencies(flags.manageClosureDependencies).setOnlyClosureDependencies(flags.onlyClosureDependencies).setClosureEntryPoints(flags.closureEntryPoint).setOutputManifest(ImmutableList.of(flags.outputManifest)).setOutputModuleDependencies(flags.outputModuleDependencies).setAcceptConstKeyword(flags.acceptConstKeyword).setLanguageIn(flags.languageIn).setProcessCommonJSModules(flags.processCommonJsModules).setCommonJSModulePathPrefix(flags.commonJsPathPrefix).setTransformAMDToCJSModules(flags.transformAmdModules).setWarningsWhitelistFile(flags.warningsWhitelistFile);
   }
 }

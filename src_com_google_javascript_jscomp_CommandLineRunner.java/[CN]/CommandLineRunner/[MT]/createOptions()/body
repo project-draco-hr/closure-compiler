@@ -1,31 +1,31 @@
 {
   CompilerOptions options=new CompilerOptions();
-  if (flags.process_jquery_primitives) {
+  if (flags.processJqueryPrimitives) {
     options.setCodingConvention(new JqueryCodingConvention());
   }
  else {
     options.setCodingConvention(new ClosureCodingConvention());
   }
-  options.setExtraAnnotationNames(flags.extra_annotation_name);
-  CompilationLevel level=flags.compilation_level;
+  options.setExtraAnnotationNames(flags.extraAnnotationName);
+  CompilationLevel level=flags.compilationLevel;
   level.setOptionsForCompilationLevel(options);
   if (flags.debug) {
     level.setDebugOptionsForCompilationLevel(options);
   }
-  if (flags.use_types_for_optimization) {
+  if (flags.useTypesForOptimization) {
     level.setTypeBasedOptimizationOptions(options);
   }
-  if (flags.generate_exports) {
-    options.setGenerateExports(flags.generate_exports);
+  if (flags.generateExports) {
+    options.setGenerateExports(flags.generateExports);
   }
-  WarningLevel wLevel=flags.warning_level;
+  WarningLevel wLevel=flags.warningLevel;
   wLevel.setOptionsForWarningLevel(options);
   for (  FormattingOption formattingOption : flags.formatting) {
     formattingOption.applyToOptions(options);
   }
-  options.closurePass=flags.process_closure_primitives;
-  options.jqueryPass=flags.process_jquery_primitives && CompilationLevel.ADVANCED_OPTIMIZATIONS == level;
-  options.angularPass=flags.angular_pass;
+  options.closurePass=flags.processClosurePrimitives;
+  options.jqueryPass=flags.processJqueryPrimitives && CompilationLevel.ADVANCED_OPTIMIZATIONS == level;
+  options.angularPass=flags.angularPass;
   if (!flags.translationsFile.isEmpty()) {
     try {
       options.messageBundle=new XtbMessageBundle(new FileInputStream(flags.translationsFile),flags.translationsProject);
