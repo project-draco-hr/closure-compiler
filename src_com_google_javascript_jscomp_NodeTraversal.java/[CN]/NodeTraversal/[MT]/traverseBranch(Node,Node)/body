@@ -5,19 +5,19 @@
     sourceName=getSourceName(n);
   }
   curNode=n;
-  if (!callback.shouldTraverse(this,n,parent))   return;
-switch (type) {
-case Token.FUNCTION:
+  if (!callback.shouldTraverse(this,n,parent)) {
+    return;
+  }
+  if (type == Token.FUNCTION) {
     traverseFunction(n,parent);
-  break;
-default :
-for (Node child=n.getFirstChild(); child != null; ) {
-  Node next=child.getNext();
-  traverseBranch(child,n);
-  child=next;
-}
-break;
-}
-curNode=n;
-callback.visit(this,n,parent);
+  }
+ else {
+    for (Node child=n.getFirstChild(); child != null; ) {
+      Node next=child.getNext();
+      traverseBranch(child,n);
+      child=next;
+    }
+  }
+  curNode=n;
+  callback.visit(this,n,parent);
 }

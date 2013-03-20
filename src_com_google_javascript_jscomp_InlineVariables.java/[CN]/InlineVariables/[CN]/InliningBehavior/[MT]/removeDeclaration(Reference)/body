@@ -1,10 +1,10 @@
 {
-  Node varNode=declaration.getParent();
-  Node grandparent=declaration.getGrandparent();
-  varNode.removeChild(declaration.getNode());
+  Node varNode=decl.getParent();
+  Node grandparent=decl.getGrandparent();
+  compiler.reportChangeToScope(compiler.getEnclosingScope(decl.getNode()));
+  varNode.removeChild(decl.getNode());
   if (!varNode.hasChildren()) {
     Preconditions.checkState(varNode.isVar());
     NodeUtil.removeChild(grandparent,varNode);
   }
-  compiler.reportCodeChange();
 }

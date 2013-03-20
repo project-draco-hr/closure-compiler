@@ -1,0 +1,18 @@
+{
+  Node currentNode=n, newNode;
+  boolean codeChanged=false;
+  do {
+    codeChanged=false;
+    for (    AbstractPeepholeOptimization optim : peepholeOptimizations) {
+      newNode=optim.optimizeSubtree(currentNode);
+      if (newNode != currentNode) {
+        codeChanged=true;
+        currentNode=newNode;
+      }
+      if (currentNode == null) {
+        return;
+      }
+    }
+  }
+ while (codeChanged);
+}

@@ -1,0 +1,17 @@
+{
+  final AbstractCompiler comp=compiler;
+  final FunctionCallback cb=callback;
+  final Node jsRoot=comp.getJsRoot();
+  if (comp.hasScopeChanged(jsRoot)) {
+    cb.visit(comp,jsRoot);
+  }
+  traverse(comp,jsRoot,new AbstractPreOrderCallback(){
+    @Override public final boolean shouldTraverse(    NodeTraversal t,    Node n,    Node p){
+      if (n.isFunction() && comp.hasScopeChanged(n)) {
+        cb.visit(comp,n);
+      }
+      return true;
+    }
+  }
+);
+}

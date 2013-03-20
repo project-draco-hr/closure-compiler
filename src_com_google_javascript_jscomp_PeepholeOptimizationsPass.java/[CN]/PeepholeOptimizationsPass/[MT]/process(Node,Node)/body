@@ -1,8 +1,19 @@
 {
-  PeepholeChangeHandler handler=new PeepholeChangeHandler();
   compiler.addChangeHandler(handler);
   beginTraversal();
-  traverse(root);
+  NodeTraversal.traverseChangedFunctions(compiler,new FunctionCallback(){
+    @Override public void visit(    AbstractCompiler compiler,    Node root){
+      if (root.isFunction()) {
+        root=root.getLastChild();
+      }
+      do {
+        handler.reset();
+        NodeTraversal.traverse(compiler,root,new PeepCallback());
+      }
+ while (retraverseOnChange && handler.hasCodeChanged());
+    }
+  }
+);
   endTraversal();
   compiler.removeChangeHandler(handler);
 }

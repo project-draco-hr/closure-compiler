@@ -1,3 +1,19 @@
 {
-  NodeTraversal.traverse(compiler,root,this);
+  NodeTraversal.traverseChangedFunctions(compiler,new FunctionCallback(){
+    @Override public void visit(    AbstractCompiler compiler,    Node root){
+      ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false,false);
+      cfa.process(null,root);
+      ControlFlowGraph<Node> cfg=cfa.getCfg();
+      new GraphReachability<Node,ControlFlowGraph.Branch>(cfg).compute(cfg.getEntry().getValue());
+      if (root.isFunction()) {
+        root=root.getLastChild();
+      }
+      do {
+        codeChanged=false;
+        NodeTraversal.traverse(compiler,root,new EliminationPass(cfg));
+      }
+ while (codeChanged);
+    }
+  }
+);
 }

@@ -2,16 +2,15 @@
   Node value=init.getAssignedValue();
   Preconditions.checkState(value != null);
   boolean isFunctionDeclaration=NodeUtil.isFunctionDeclaration(value);
-  inlineValue(v,reference,value.detachFromParent());
-  if (declaration != init) {
+  compiler.reportChangeToScope(compiler.getEnclosingScope(decl.getNode()));
+  compiler.reportChangeToScope(compiler.getEnclosingScope(ref.getNode()));
+  inlineValue(v,ref,value.detachFromParent());
+  if (decl != init) {
     Node expressRoot=init.getGrandparent();
     Preconditions.checkState(expressRoot.isExprResult());
     NodeUtil.removeChild(expressRoot.getParent(),expressRoot);
   }
   if (!isFunctionDeclaration) {
-    removeDeclaration(declaration);
-  }
- else {
-    compiler.reportCodeChange();
+    removeDeclaration(decl);
   }
 }

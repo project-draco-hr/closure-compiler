@@ -1,13 +1,19 @@
 {
-  Preconditions.checkState(!loopMutex,"Nested loops are forbidden");
-  loopMutex=true;
+  Preconditions.checkState(!inLoop,"Nested loops are forbidden");
+  inLoop=true;
   if (randomizeLoops) {
     randomizePasses();
   }
  else {
     optimizePasses();
   }
-  compiler.addChangeHandler(recentChange);
+  scopeHandler=new ScopedChangeHandler();
+  compiler.addChangeHandler(scopeHandler);
+  currentScope=root;
+  lastRuns=new HashMap<NamedPass,Integer>();
+  for (  NamedPass pass : myPasses) {
+    lastRuns.put(pass,START_TIME);
+  }
   Set<NamedPass> madeChanges=new HashSet<NamedPass>();
   Set<NamedPass> runInPrevIter=new HashSet<NamedPass>();
   State s=State.RUN_PASSES_NOT_RUN_IN_PREV_ITER;
@@ -20,14 +26,16 @@
       }
       lastIterMadeChanges=false;
       for (      NamedPass pass : myPasses) {
-        recentChange.reset();
         if ((s == State.RUN_PASSES_NOT_RUN_IN_PREV_ITER && !runInPrevIter.contains(pass)) || (s == State.RUN_PASSES_THAT_CHANGED_STH_IN_PREV_ITER && madeChanges.contains(pass))) {
+          timestamp++;
+          currentPass=pass;
           pass.process(externs,root);
           runInPrevIter.add(pass);
+          lastRuns.put(pass,timestamp);
           if (hasHaltingErrors()) {
             return;
           }
- else           if (recentChange.hasCodeChanged()) {
+ else           if (scopeHandler.hasCodeChangedSinceLastCall()) {
             madeChanges.add(pass);
             lastIterMadeChanges=true;
           }
@@ -53,7 +61,7 @@
     }
   }
   finally {
-    loopMutex=false;
-    compiler.removeChangeHandler(recentChange);
+    inLoop=false;
+    compiler.removeChangeHandler(scopeHandler);
   }
 }
