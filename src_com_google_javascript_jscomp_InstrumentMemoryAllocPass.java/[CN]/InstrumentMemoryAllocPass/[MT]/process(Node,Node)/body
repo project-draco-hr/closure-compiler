@@ -1,0 +1,10 @@
+{
+  if (rootNode.hasChildren()) {
+    NodeTraversal.traverse(compiler,rootNode,new Traversal());
+    NodeTraversal.traverse(compiler,rootNode,new PrepareAst.PrepareAnnotations());
+    Node firstScript=rootNode.getFirstChild();
+    Preconditions.checkState(firstScript.isScript());
+    compiler.getNodeForCodeInsertion(null).addChildrenToFront(getInstrumentAllocationCode().removeChildren());
+    compiler.reportCodeChange();
+  }
+}

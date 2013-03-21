@@ -1,0 +1,6 @@
+{
+  if (n.isNew() || n.getType() == Token.ARRAYLIT || n.getType() == Token.OBJECTLIT || NodeUtil.isFunctionExpression(n)) {
+    Node instrumentAllocation=IR.call(IR.name("__alloc"),n.cloneTree(),IR.string(n.getSourceFileName() + ":" + n.getLineno()),IR.number(newSiteId++),getTypeString(n));
+    parent.replaceChild(n,instrumentAllocation);
+  }
+}
