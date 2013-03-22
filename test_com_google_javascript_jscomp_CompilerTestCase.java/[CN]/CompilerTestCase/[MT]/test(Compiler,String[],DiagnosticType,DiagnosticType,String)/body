@@ -14,7 +14,7 @@
   Node rootClone=root.cloneTree();
   Node externsRootClone=rootClone.getFirstChild();
   Node mainRootClone=rootClone.getLastChild();
-  final Map<Node,Node> nodeMap=findCorrespondingNodes(mainRoot,mainRootClone);
+  Map<Node,Node> mtoc=NodeUtil.mapMainToClone(mainRoot,mainRootClone);
   int numRepetitions=getNumRepetitions();
   ErrorManager[] errorManagers=new ErrorManager[numRepetitions];
   int aggregateWarningCount=0;
@@ -107,18 +107,7 @@
  else {
       assertTrue("compiler.reportCodeChange() should have been called",hasCodeChanged);
     }
-    if (mainRoot.getChangeTime() != 0) {
-      assertFalse(mainRoot.isEquivalentToShallow(nodeMap.get(mainRoot)));
-    }
-    NodeTraversal.traverse(compiler,mainRoot,new AbstractPreOrderCallback(){
-      @Override public final boolean shouldTraverse(      NodeTraversal t,      Node n,      Node p){
-        if (n.isFunction() && n.getChangeTime() != 0 && nodeMap.containsKey(n)) {
-          assertFalse(n.isEquivalentToShallow(nodeMap.get(n)));
-        }
-        return true;
-      }
-    }
-);
+    NodeUtil.verifyScopeChanges(mtoc,mainRoot,false);
     if (expected != null) {
       if (compareAsTree) {
         String explanation=expectedRoot.checkTreeEquals(mainRoot);

@@ -1,0 +1,25 @@
+{
+  final Map<Node,Node> mtoc=map;
+  final boolean checkUnchanged=verifyUnchangedNodes;
+  Node clone=mtoc.get(main);
+  if (main.getChangeTime() > clone.getChangeTime()) {
+    Preconditions.checkState(!main.isEquivalentToShallow(clone));
+  }
+ else   if (checkUnchanged) {
+    Preconditions.checkState(main.isEquivalentToShallow(clone));
+  }
+  visitPreOrder(main,new Visitor(){
+    @Override public void visit(    Node n){
+      if (n.isFunction() && mtoc.containsKey(n)) {
+        Node clone=mtoc.get(n);
+        if (n.getChangeTime() > clone.getChangeTime()) {
+          Preconditions.checkState(!n.isEquivalentToShallow(clone));
+        }
+ else         if (checkUnchanged) {
+          Preconditions.checkState(n.isEquivalentToShallow(clone));
+        }
+      }
+    }
+  }
+,Predicates.<Node>alwaysTrue());
+}
