@@ -18,7 +18,7 @@ if (outEdges.size() == 1 && (n.getNext() == null || n.getNext().isFunction())) {
   Preconditions.checkState(outEdges.get(0).getValue() == Branch.UNCOND);
   Node fallThrough=computeFollowing(n);
   Node nextCfgNode=outEdges.get(0).getDestination().getValue();
-  if (nextCfgNode == fallThrough) {
+  if (nextCfgNode == fallThrough && !inFinally(n.getParent(),n)) {
     removeNode(n);
   }
 }
