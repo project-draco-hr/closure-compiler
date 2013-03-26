@@ -1,0 +1,18 @@
+{
+  String rename=null;
+  Map<String,String> idGeneratorMap=idGeneratorMaps.get(callName);
+  String instanceId=getIdForGeneratorNode(nameGenerator.getRenameStrategy() == RenameStrategy.CONSISTENT,id);
+  if (nameGenerator.getRenameStrategy() == RenameStrategy.CONSISTENT) {
+    Map<String,String> entry=consistNameMap.get(callName);
+    rename=entry.get(instanceId);
+    if (rename == null) {
+      rename=nameGenerator.getName(instanceId,name);
+      entry.put(instanceId,rename);
+    }
+  }
+ else {
+    rename=nameGenerator.getName(instanceId,name);
+  }
+  idGeneratorMap.put(rename,instanceId);
+  return rename;
+}
