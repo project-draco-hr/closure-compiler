@@ -1,4 +1,12 @@
 {
-  lastPass=new ReplaceIdGenerators(compiler,new ImmutableSet.Builder<String>().add("goog.events.getUniqueId").add("goog.place.getUniqueId").build(),generatePseudoNames,previousMappings);
+  RenamingMap xidTestMap=new RenamingMap(){
+    private final ImmutableMap<String,String> map=ImmutableMap.of("foo",":foo:","bar",":bar:");
+    @Override public String get(    String value){
+      String replacement=map.get(value);
+      return replacement != null ? replacement : "unknown:" + value;
+    }
+  }
+;
+  lastPass=new ReplaceIdGenerators(compiler,new ImmutableMap.Builder<String,RenamingMap>().put("goog.events.getUniqueId",ReplaceIdGenerators.UNIQUE).put("goog.place.getUniqueId",ReplaceIdGenerators.UNIQUE).put("xid",xidTestMap).build(),generatePseudoNames,previousMappings);
   return lastPass;
 }

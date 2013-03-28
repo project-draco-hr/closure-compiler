@@ -1,0 +1,23 @@
+{
+  this.compiler=compiler;
+  this.generatePseudoNames=generatePseudoNames;
+  nameGenerators=Maps.newLinkedHashMap();
+  idGeneratorMaps=Maps.newLinkedHashMap();
+  consistNameMap=Maps.newLinkedHashMap();
+  Map<String,BiMap<String,String>> previousMap;
+  previousMap=parsePreviousResults(previousMapSerialized);
+  this.previousMap=previousMap;
+  if (idGens != null) {
+    for (    Entry<String,RenamingMap> gen : idGens.entrySet()) {
+      String name=gen.getKey();
+      RenamingMap map=gen.getValue();
+      if (map == ReplaceIdGenerators.UNIQUE) {
+        nameGenerators.put(name,createNameSupplier(RenameStrategy.INCONSISTENT,previousMap.get(name)));
+      }
+ else {
+        nameGenerators.put(name,createNameSupplier(RenameStrategy.MAPPED,map));
+      }
+      idGeneratorMaps.put(name,Maps.<String,String>newLinkedHashMap());
+    }
+  }
+}
