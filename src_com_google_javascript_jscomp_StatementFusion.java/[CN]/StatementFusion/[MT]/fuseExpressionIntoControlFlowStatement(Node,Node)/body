@@ -1,0 +1,21 @@
+{
+  Preconditions.checkArgument(before.isExprResult(),"before must be expression result");
+switch (control.getType()) {
+case Token.IF:
+case Token.RETURN:
+case Token.THROW:
+case Token.SWITCH:
+case Token.EXPR_RESULT:
+    before.getParent().removeChild(before);
+  fuseExpresssonIntoFirstChild(before.removeFirstChild(),control);
+return;
+case Token.FOR:
+before.getParent().removeChild(before);
+if (NodeUtil.isForIn(control)) {
+fuseExpresssonIntoSecondChild(before.removeFirstChild(),control);
+}
+return;
+default :
+throw new IllegalStateException("Statement fusion missing.");
+}
+}

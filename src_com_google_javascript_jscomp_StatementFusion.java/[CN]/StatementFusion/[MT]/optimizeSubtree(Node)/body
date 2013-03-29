@@ -1,6 +1,9 @@
 {
   if (!n.getParent().isFunction() && canFuseIntoOneStatement(n)) {
-    fuseIntoOneStatement(n);
+    Node start=n.getFirstChild();
+    Node end=n.getChildBefore(n.getLastChild());
+    Node result=fuseIntoOneStatement(n,start,end);
+    fuseExpressionIntoControlFlowStatement(result,n.getLastChild());
     reportCodeChange();
   }
   return n;
