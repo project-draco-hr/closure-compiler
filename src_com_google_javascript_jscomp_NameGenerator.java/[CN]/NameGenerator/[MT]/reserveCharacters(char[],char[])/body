@@ -1,10 +1,19 @@
 {
   if (reservedCharacters == null || reservedCharacters.length == 0) {
-    return chars;
+    CharPriority[] result=new CharPriority[chars.length];
+    for (int i=0; i < chars.length; i++) {
+      result[i]=priorityLookupMap.get(chars[i]);
+    }
+    return result;
   }
   Set<Character> charSet=Sets.newLinkedHashSet(Chars.asList(chars));
   for (  char reservedCharacter : reservedCharacters) {
     charSet.remove(reservedCharacter);
   }
-  return Chars.toArray(charSet);
+  CharPriority[] result=new CharPriority[charSet.size()];
+  int index=0;
+  for (  char c : charSet) {
+    result[index++]=priorityLookupMap.get(c);
+  }
+  return result;
 }

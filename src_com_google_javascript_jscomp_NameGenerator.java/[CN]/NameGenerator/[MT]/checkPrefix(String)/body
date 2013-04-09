@@ -1,11 +1,19 @@
 {
   if (prefix.length() > 0) {
     if (!contains(firstChars,prefix.charAt(0))) {
-      throw new IllegalArgumentException("prefix must start with one of: " + Arrays.toString(firstChars));
+      char[] chars=new char[firstChars.length];
+      for (int i=0; i < chars.length; i++) {
+        chars[i]=firstChars[i].name;
+      }
+      throw new IllegalArgumentException("prefix must start with one of: " + Arrays.toString(chars));
     }
     for (int pos=1; pos < prefix.length(); ++pos) {
+      char[] chars=new char[nonFirstChars.length];
+      for (int i=0; i < chars.length; i++) {
+        chars[i]=nonFirstChars[i].name;
+      }
       if (!contains(nonFirstChars,prefix.charAt(pos))) {
-        throw new IllegalArgumentException("prefix has invalid characters, " + "must be one of: " + Arrays.toString(nonFirstChars));
+        throw new IllegalArgumentException("prefix has invalid characters, " + "must be one of: " + Arrays.toString(chars));
       }
     }
   }

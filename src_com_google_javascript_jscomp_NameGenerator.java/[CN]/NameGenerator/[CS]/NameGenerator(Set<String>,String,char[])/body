@@ -1,6 +1,12 @@
 {
   this.reservedNames=reservedNames;
   this.prefix=prefix;
+  this.priorityLookupMap=Maps.newHashMapWithExpectedSize(NONFIRST_CHAR.length);
+  int order=0;
+  for (  char c : NONFIRST_CHAR) {
+    priorityLookupMap.put(c,new CharPriority(c,order));
+    order++;
+  }
   this.firstChars=reserveCharacters(FIRST_CHAR,reservedCharacters);
   this.nonFirstChars=reserveCharacters(NONFIRST_CHAR,reservedCharacters);
   checkPrefix(prefix);
