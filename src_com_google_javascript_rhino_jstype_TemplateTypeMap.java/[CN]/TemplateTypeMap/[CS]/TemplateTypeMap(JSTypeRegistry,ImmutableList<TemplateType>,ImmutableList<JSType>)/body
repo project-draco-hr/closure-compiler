@@ -5,4 +5,10 @@
   this.templateKeys=templateKeys;
   int nKeys=templateKeys.size();
   this.templateValues=templateValues.size() > nKeys ? templateValues.subList(0,nKeys) : templateValues;
+  TemplateTypeMapReplacer replacer=new TemplateTypeMapReplacer(registry,this);
+  ImmutableList.Builder<JSType> builder=ImmutableList.builder();
+  for (  JSType templateValue : this.templateValues) {
+    builder.add(templateValue.visit(replacer));
+  }
+  this.resolvedTemplateValues=builder.build();
 }

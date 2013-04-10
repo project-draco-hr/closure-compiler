@@ -35,9 +35,20 @@
     if (info.getImplementedInterfaceCount() > 0) {
       if (isConstructor) {
         implementedInterfaces=Lists.newArrayList();
+        Set<JSType> baseInterfaces=new HashSet<JSType>();
         for (        JSTypeExpression t : info.getImplementedInterfaces()) {
           JSType maybeInterType=t.evaluate(scope,typeRegistry);
           if (maybeInterType != null && maybeInterType.setValidator(new ImplementedTypeValidator())) {
+            JSType baseInterface=maybeInterType;
+            if (baseInterface.toMaybeTemplatizedType() != null) {
+              baseInterface=baseInterface.toMaybeTemplatizedType().getReferencedType();
+            }
+            if (baseInterfaces.contains(baseInterface)) {
+              reportWarning(SAME_INTERFACE_MULTIPLE_IMPLEMENTS,baseInterface.toString());
+            }
+ else {
+              baseInterfaces.add(baseInterface);
+            }
             implementedInterfaces.add((ObjectType)maybeInterType);
           }
         }

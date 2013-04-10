@@ -1,12 +1,36 @@
 {
-  int thisNumKeys=templateKeys.size();
-  int thatNumKeys=that.getTemplateKeys().size();
-  for (int i=0; i < Math.min(thisNumKeys,thatNumKeys); i++) {
-    JSType thisTemplateType=getTemplateType(templateKeys.get(i));
-    JSType thatTemplateType=that.getTemplateType(that.getTemplateKeys().get(i));
-    if (!thisTemplateType.checkEquivalenceHelper(thatTemplateType,eqMethod)) {
+  ImmutableList<TemplateType> thisKeys=getTemplateKeys();
+  ImmutableList<TemplateType> thatKeys=that.getTemplateKeys();
+  EquivalenceMatch[] thatMatches=new EquivalenceMatch[thatKeys.size()];
+  Arrays.fill(thatMatches,EquivalenceMatch.NO_KEY_MATCH);
+  for (int i=0; i < thisKeys.size(); i++) {
+    TemplateType thisKey=thisKeys.get(i);
+    JSType thisType=getResolvedTemplateType(thisKey);
+    EquivalenceMatch thisMatch=EquivalenceMatch.NO_KEY_MATCH;
+    for (int j=0; j < thatKeys.size(); j++) {
+      TemplateType thatKey=thatKeys.get(j);
+      JSType thatType=that.getResolvedTemplateType(thatKey);
+      if (thisKey == thatKey) {
+        EquivalenceMatch newMatchType=EquivalenceMatch.VALUE_MISMATCH;
+        if (thisType.checkEquivalenceHelper(thatType,eqMethod)) {
+          newMatchType=EquivalenceMatch.VALUE_MATCH;
+        }
+        if (thisMatch != EquivalenceMatch.VALUE_MATCH) {
+          thisMatch=newMatchType;
+        }
+        if (thatMatches[j] != EquivalenceMatch.VALUE_MATCH) {
+          thatMatches[j]=newMatchType;
+        }
+      }
+    }
+    if (failedEquivalenceCheck(thisMatch,eqMethod)) {
       return false;
     }
   }
-  return thisNumKeys == thatNumKeys || eqMethod == EquivalenceMethod.INVARIANT;
+  for (int i=0; i < thatMatches.length; i++) {
+    if (failedEquivalenceCheck(thatMatches[i],eqMethod)) {
+      return false;
+    }
+  }
+  return true;
 }
