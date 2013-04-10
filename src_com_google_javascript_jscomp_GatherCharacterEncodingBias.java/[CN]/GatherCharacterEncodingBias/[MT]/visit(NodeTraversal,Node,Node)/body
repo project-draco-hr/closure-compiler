@@ -1,8 +1,16 @@
 {
 switch (n.getType()) {
-case Token.FUNCTION:
-    nameGenerator.favors("function");
+case Token.TRUE:
+case Token.FALSE:
+    return;
+case Token.NAME:
+case Token.LABEL_NAME:
   return;
+case Token.FUNCTION:
+if (!NodeUtil.isGetOrSetKey(n.getParent())) {
+  nameGenerator.favors("function");
+}
+return;
 case Token.IF:
 nameGenerator.favors("if");
 if (n.getFirstChild().getNext().getNext() != null) {
@@ -84,6 +92,15 @@ nameGenerator.favors("this");
 return;
 case Token.NULL:
 nameGenerator.favors("null");
+return;
+case Token.DEBUGGER:
+nameGenerator.favors("debugger");
+return;
+case Token.GETTER_DEF:
+nameGenerator.favors("get");
+return;
+case Token.SETTER_DEF:
+nameGenerator.favors("set");
 return;
 case Token.NUMBER:
 return;
