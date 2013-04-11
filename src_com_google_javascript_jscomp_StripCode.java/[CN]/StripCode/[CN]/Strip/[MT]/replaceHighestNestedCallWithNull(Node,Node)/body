@@ -11,8 +11,12 @@
       replaceWithEmpty(ancestor,ancParent);
       break;
     }
-    int type=ancestor.getType();
-    if (type != Token.GETPROP && type != Token.GETELEM && type != Token.CALL) {
+    if (ancestor.isAssign()) {
+      Node ancParent=ancestor.getParent();
+      ancParent.replaceChild(ancestor,ancestor.getLastChild().detachFromParent());
+      break;
+    }
+    if (!NodeUtil.isGet(ancestor) && !ancestor.isCall()) {
       replaceWithNull(ancestorChild,ancestor);
       break;
     }
