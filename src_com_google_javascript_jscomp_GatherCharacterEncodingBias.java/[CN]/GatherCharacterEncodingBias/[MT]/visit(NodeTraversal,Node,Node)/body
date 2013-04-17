@@ -8,6 +8,9 @@ case Token.LABEL_NAME:
 case Token.NAME:
 visitName(t,n);
 return;
+case Token.GETPROP:
+visitGetProp(n);
+return;
 case Token.FUNCTION:
 if (!NodeUtil.isGetOrSetKey(n.getParent())) {
 nameGenerator.favors("function");
@@ -29,7 +32,9 @@ case Token.VAR:
 nameGenerator.favors("var");
 return;
 case Token.STRING:
+if (!parent.isGetProp()) {
 nameGenerator.favors(n.getString());
+}
 return;
 case Token.STRING_KEY:
 nameGenerator.favors(n.getString());
@@ -99,10 +104,10 @@ case Token.DEBUGGER:
 nameGenerator.favors("debugger");
 return;
 case Token.GETTER_DEF:
-nameGenerator.favors("get");
+visitGetterSetterDef(n,"get");
 return;
 case Token.SETTER_DEF:
-nameGenerator.favors("set");
+visitGetterSetterDef(n,"set");
 return;
 case Token.NUMBER:
 return;
