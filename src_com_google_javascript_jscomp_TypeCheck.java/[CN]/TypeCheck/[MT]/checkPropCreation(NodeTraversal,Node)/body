@@ -11,12 +11,15 @@
     if (obj.isThis() && getJSType(s.getRootNode()).isConstructor()) {
       return;
     }
-    Node assgnStm=lvalue.getParent().getParent();
+    Node assgnExp=lvalue.getParent();
+    Node assgnStm=assgnExp.getParent();
     if (objType instanceof ObjectType && s.isGlobal() && NodeUtil.isPrototypePropertyDeclaration(assgnStm)) {
       ObjectType instance=objType.toObjectType().getOwnerFunction().getInstanceType();
       String file=lvalue.getSourceFileName();
       Node ctor=instance.getConstructor().getSource();
       if (ctor != null && ctor.getSourceFileName().equals(file)) {
+        JSType rvalueType=assgnExp.getLastChild().getJSType();
+        instance.defineInferredProperty(pname,rvalueType,lvalue);
         return;
       }
     }
