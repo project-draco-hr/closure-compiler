@@ -1,0 +1,27 @@
+{
+  if (!NodeUtil.isStatementBlock(n)) {
+    return n;
+  }
+  Node cur=n.getFirstChild();
+  while (cur != null) {
+    if (!cur.isExprResult()) {
+      cur=cur.getNext();
+      continue;
+    }
+    Node next=cur.getNext();
+    while (next != null && next.isExprResult()) {
+      next=next.getNext();
+    }
+    if (cur.getNext() != next) {
+      cur=fuseIntoOneStatement(n,cur,next);
+      reportCodeChange();
+    }
+    if (cur.isExprResult() && next != null && isFusableControlStatement(next)) {
+      fuseExpressionIntoControlFlowStatement(cur,next);
+      reportCodeChange();
+      next=next.getNext();
+    }
+    cur=next;
+  }
+  return n;
+}

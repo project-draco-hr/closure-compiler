@@ -11,16 +11,5 @@
       return false;
     }
   }
-switch (last.getType()) {
-case Token.IF:
-case Token.THROW:
-case Token.SWITCH:
-case Token.EXPR_RESULT:
-    return true;
-case Token.RETURN:
-  return last.hasChildren();
-case Token.FOR:
-return NodeUtil.isForIn(last) && !mayHaveSideEffects(last.getFirstChild());
-}
-return false;
+  return isFusableControlStatement(last);
 }
