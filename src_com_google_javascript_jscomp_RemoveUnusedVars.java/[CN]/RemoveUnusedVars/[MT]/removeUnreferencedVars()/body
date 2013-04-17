@@ -2,8 +2,8 @@
   for (Iterator<Var> it=maybeUnreferenced.iterator(); it.hasNext(); ) {
     Var var=it.next();
     for (    Node exprCallNode : classDefiningCalls.get(var)) {
+      compiler.reportChangeToEnclosingScope(exprCallNode);
       NodeUtil.removeChild(exprCallNode.getParent(),exprCallNode);
-      compiler.reportCodeChange();
     }
     removeAllAssigns(var);
     compiler.addToDebugLog("Unreferenced var: " + var.name);
@@ -15,25 +15,25 @@
     }
  else     if (NodeUtil.isFunctionExpression(toRemove)) {
       if (!preserveFunctionExpressionNames) {
+        compiler.reportChangeToEnclosingScope(toRemove);
         toRemove.getFirstChild().setString("");
-        compiler.reportCodeChange();
       }
     }
  else     if (parent != null && parent.isFor() && parent.getChildCount() < 4) {
     }
  else     if (toRemove.isVar() && nameNode.hasChildren() && NodeUtil.mayHaveSideEffects(nameNode.getFirstChild(),compiler)) {
       if (toRemove.getChildCount() == 1) {
+        compiler.reportChangeToEnclosingScope(toRemove);
         parent.replaceChild(toRemove,IR.exprResult(nameNode.removeFirstChild()));
-        compiler.reportCodeChange();
       }
     }
  else     if (toRemove.isVar() && toRemove.getChildCount() > 1) {
+      compiler.reportChangeToEnclosingScope(toRemove);
       toRemove.removeChild(nameNode);
-      compiler.reportCodeChange();
     }
  else     if (parent != null) {
+      compiler.reportChangeToEnclosingScope(toRemove);
       NodeUtil.removeChild(parent,toRemove);
-      compiler.reportCodeChange();
     }
   }
 }

@@ -2,7 +2,6 @@
   Node value=init.getAssignedValue();
   Preconditions.checkState(value != null);
   boolean isFunctionDeclaration=NodeUtil.isFunctionDeclaration(value);
-  compiler.reportChangeToEnclosingScope(decl.getNode());
   compiler.reportChangeToEnclosingScope(ref.getNode());
   inlineValue(v,ref,value.detachFromParent());
   if (decl != init) {
@@ -11,6 +10,7 @@
     NodeUtil.removeChild(expressRoot.getParent(),expressRoot);
   }
   if (!isFunctionDeclaration) {
+    compiler.reportChangeToEnclosingScope(decl.getNode());
     removeDeclaration(decl);
   }
 }

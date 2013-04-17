@@ -6,15 +6,16 @@
       if (NodeUtil.isAssignmentOp(parent)) {
         Node assign=parent;
         Preconditions.checkState(assign != null && NodeUtil.isAssignmentOp(assign) && assign.getFirstChild() == n);
+        compiler.reportChangeToEnclosingScope(assign);
         assign.getParent().replaceChild(assign,assign.getLastChild().detachFromParent());
       }
  else       if (parent.isInc() || parent.isDec()) {
+        compiler.reportChangeToEnclosingScope(parent);
         parent.getParent().replaceChild(parent,IR.number(0));
       }
  else {
         throw new IllegalStateException("unexpected: " + parent);
       }
-      compiler.reportCodeChange();
     }
   }
 }
