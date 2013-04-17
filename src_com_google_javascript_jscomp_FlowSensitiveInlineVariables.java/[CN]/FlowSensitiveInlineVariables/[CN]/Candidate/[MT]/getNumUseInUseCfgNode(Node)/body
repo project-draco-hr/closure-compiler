@@ -1,11 +1,25 @@
 {
+  numUsesWithinCfgNode=0;
   AbstractCfgNodeTraversalCallback gatherCb=new AbstractCfgNodeTraversalCallback(){
     @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
-      if (n.isName() && n.getString().equals(varName) && !(parent.isAssign() && (parent.getFirstChild() == n))) {
-        numUseWithinUseCfgNode++;
+      if (n.isName() && n.getString().equals(varName)) {
+        if (parent.isAssign() && (parent.getFirstChild() == n) && isAssignChain(parent,cfgNode)) {
+          return;
+        }
+ else {
+          numUsesWithinCfgNode++;
+        }
       }
+    }
+    private boolean isAssignChain(    Node child,    Node ancestor){
+      for (Node n=child; n != ancestor; n=n.getParent()) {
+        if (!n.isAssign()) {
+          return false;
+        }
+      }
+      return true;
     }
   }
 ;
-  NodeTraversal.traverse(compiler,n,gatherCb);
+  NodeTraversal.traverse(compiler,cfgNode,gatherCb);
 }
