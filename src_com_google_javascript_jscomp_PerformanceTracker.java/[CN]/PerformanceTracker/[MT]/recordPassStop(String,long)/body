@@ -4,11 +4,11 @@
     throw new RuntimeException(passName + " is not running.");
   }
   if (passName.equals(Compiler.PARSING_PASS_NAME) && trackSize) {
-    CodeSizeEstimatePrinter printer=new CodeSizeEstimatePrinter();
-    CodeGenerator.forCostEstimation(printer).add(jsRoot);
-    initCodeSize=codeSize=printer.calcSize();
+    CodeSizeEstimatePrinter estimatePrinter=new CodeSizeEstimatePrinter();
+    CodeGenerator.forCostEstimation(estimatePrinter).add(jsRoot);
+    initCodeSize=codeSize=estimatePrinter.calcSize();
     if (this.trackGzSize) {
-      initGzCodeSize=gzCodeSize=printer.calcZippedSize();
+      initGzCodeSize=gzCodeSize=estimatePrinter.calcZippedSize();
     }
   }
   log.add(logStats);
@@ -27,16 +27,16 @@
   }
   if (codeChange.hasCodeChanged() && trackSize) {
     int newSize=0;
-    CodeSizeEstimatePrinter printer=new CodeSizeEstimatePrinter();
-    CodeGenerator.forCostEstimation(printer).add(jsRoot);
+    CodeSizeEstimatePrinter estimatePrinter=new CodeSizeEstimatePrinter();
+    CodeGenerator.forCostEstimation(estimatePrinter).add(jsRoot);
     if (trackSize) {
-      newSize=printer.calcSize();
+      newSize=estimatePrinter.calcSize();
       logStats.diff=codeSize - newSize;
       summaryStats.diff+=logStats.diff;
       codeSize=summaryStats.size=logStats.size=newSize;
     }
     if (trackGzSize) {
-      newSize=printer.calcZippedSize();
+      newSize=estimatePrinter.calcZippedSize();
       logStats.gzDiff=gzCodeSize - newSize;
       summaryStats.gzDiff+=logStats.gzDiff;
       gzCodeSize=summaryStats.gzSize=logStats.gzSize=newSize;
