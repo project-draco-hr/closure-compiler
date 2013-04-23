@@ -8,7 +8,14 @@ case Token.EXPR_RESULT:
 case Token.RETURN:
   return n.hasChildren();
 case Token.FOR:
-return NodeUtil.isForIn(n) && !mayHaveSideEffects(n.getFirstChild());
+if (NodeUtil.isForIn(n)) {
+  return !mayHaveSideEffects(n.getFirstChild());
+}
+ else {
+  return !n.getFirstChild().isVar();
+}
+case Token.LABEL:
+return isFusableControlStatement(n.getLastChild());
 }
 return false;
 }
