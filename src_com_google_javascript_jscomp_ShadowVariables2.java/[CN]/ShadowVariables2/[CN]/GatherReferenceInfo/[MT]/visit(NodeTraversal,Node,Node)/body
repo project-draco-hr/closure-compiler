@@ -1,0 +1,24 @@
+{
+  if (!NodeUtil.isReferenceName(n)) {
+    return;
+  }
+  if (t.inGlobalScope()) {
+    return;
+  }
+  Var var=t.getScope().getVar(n.getString());
+  if (var == null) {
+    return;
+  }
+  if (var.getScope().isGlobal()) {
+    return;
+  }
+  if (var.getScope() != t.getScope()) {
+    for (Scope s=t.getScope(); s != var.getScope() && s.isLocal(); s=s.getParent()) {
+      scopeUpRefMap.put(s.getRootNode(),var.name);
+    }
+  }
+  if (var.getScope() == t.getScope()) {
+    scopeUpRefMap.put(t.getScopeRoot(),var.name);
+  }
+  varToNameUsage.put(var,n);
+}

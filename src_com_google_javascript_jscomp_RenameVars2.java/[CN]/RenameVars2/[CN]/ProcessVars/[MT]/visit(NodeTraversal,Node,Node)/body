@@ -1,0 +1,47 @@
+{
+  if (!n.isName()) {
+    return;
+  }
+  String name=n.getString();
+  if (name.length() == 0) {
+    return;
+  }
+  Scope.Var var=t.getScope().getVar(name);
+  boolean local=(var != null) && var.isLocal() && (!var.scope.getParent().isGlobal() || !var.isBleedingFunction());
+  if (!local && localRenamingOnly) {
+    reservedNames.add(name);
+    return;
+  }
+  if (preserveFunctionExpressionNames && var != null && NodeUtil.isFunctionExpression(var.getParentNode())) {
+    reservedNames.add(name);
+    return;
+  }
+  if (!okToRenameVar(name,local)) {
+    if (local) {
+      String newName=MakeDeclaredNamesUnique.ContextualRenameInverter.getOrginalName(name);
+      if (!newName.equals(name)) {
+        n.setString(newName);
+      }
+    }
+    return;
+  }
+  if (isExternsPass_) {
+    if (!local) {
+      externNames.add(name);
+    }
+    return;
+  }
+  if (pseudoNameMap != null) {
+    recordPseudoName(n);
+  }
+  if (local) {
+    String tempName=LOCAL_VAR_PREFIX + getLocalVarIndex(var);
+    incCount(tempName);
+    localNameNodes.add(n);
+    n.setString(tempName);
+  }
+ else   if (var != null) {
+    incCount(name);
+    globalNameNodes.add(n);
+  }
+}

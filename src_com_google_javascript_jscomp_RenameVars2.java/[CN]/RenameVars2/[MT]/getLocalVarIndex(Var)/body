@@ -1,0 +1,20 @@
+{
+  int num=v.index;
+  Scope s=v.scope.getParent();
+  if (s == null) {
+    throw new IllegalArgumentException("Var is not local");
+  }
+  boolean isBleedingIntoScope=s.getParent() != null && localBleedingFunctions.contains(v);
+  while (s.getParent() != null) {
+    if (isBleedingIntoScope) {
+      num+=localBleedingFunctionsPerScope.get(s).indexOf(v) + 1;
+      isBleedingIntoScope=false;
+    }
+ else {
+      num+=localBleedingFunctionsPerScope.get(s).size();
+    }
+    num+=s.getVarCount();
+    s=s.getParent();
+  }
+  return num;
+}

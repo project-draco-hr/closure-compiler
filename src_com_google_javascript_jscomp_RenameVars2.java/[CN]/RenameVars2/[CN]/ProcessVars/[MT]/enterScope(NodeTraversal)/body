@@ -1,0 +1,13 @@
+{
+  if (t.inGlobalScope()) {
+    return;
+  }
+  Iterator<Var> it=t.getScope().getVars();
+  while (it.hasNext()) {
+    Var current=it.next();
+    if (current.isBleedingFunction()) {
+      localBleedingFunctions.add(current);
+      localBleedingFunctionsPerScope.put(t.getScope().getParent(),current);
+    }
+  }
+}
