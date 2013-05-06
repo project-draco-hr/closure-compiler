@@ -13,7 +13,7 @@
         return n;
       }
       if (cond.isNot()) {
-        if (isLowerPrecedenceInExpression(cond,OR_PRECEDENCE) && isLowerPrecedenceInExpression(expr.getFirstChild(),OR_PRECEDENCE)) {
+        if (isLowerPrecedence(cond.getFirstChild(),OR_PRECEDENCE) && isLowerPrecedence(expr.getFirstChild(),OR_PRECEDENCE)) {
           return n;
         }
         Node or=IR.or(cond.removeFirstChild(),expr.removeFirstChild()).srcref(n);
@@ -22,7 +22,7 @@
         reportCodeChange();
         return newExpr;
       }
-      if (isLowerPrecedenceInExpression(cond,AND_PRECEDENCE) && isLowerPrecedenceInExpression(expr.getFirstChild(),AND_PRECEDENCE)) {
+      if (isLowerPrecedence(cond,AND_PRECEDENCE) && isLowerPrecedence(expr.getFirstChild(),AND_PRECEDENCE)) {
         return n;
       }
       n.removeChild(cond);
@@ -39,7 +39,7 @@
           Node innerCond=innerIf.getFirstChild();
           Node innerThenBranch=innerCond.getNext();
           Node innerElseBranch=innerThenBranch.getNext();
-          if (innerElseBranch == null && !(isLowerPrecedenceInExpression(cond,AND_PRECEDENCE) && isLowerPrecedenceInExpression(innerCond,AND_PRECEDENCE))) {
+          if (innerElseBranch == null && !(isLowerPrecedence(cond,AND_PRECEDENCE) && isLowerPrecedence(innerCond,AND_PRECEDENCE))) {
             n.detachChildren();
             n.addChildToBack(IR.and(cond,innerCond.detachFromParent()).srcref(cond));
             n.addChildrenToBack(innerThenBranch.detachFromParent());
