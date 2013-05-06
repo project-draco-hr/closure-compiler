@@ -1,0 +1,24 @@
+{
+switch (n.getType()) {
+case Token.NOT:
+{
+      MinimizedCondition subtree=fromConditionNode(n.getFirstChild());
+      ImmutableSet<Node> positiveAsts=ImmutableSet.of(negate(subtree.positive.cloneTree()),subtree.negative.cloneTree());
+      ImmutableSet<Node> negativeAsts=ImmutableSet.of(negate(subtree.negative),subtree.positive);
+      return new MinimizedCondition(Collections.min(positiveAsts,AST_LENGTH_COMPARATOR),Collections.min(negativeAsts,AST_LENGTH_COMPARATOR));
+    }
+case Token.AND:
+case Token.OR:
+{
+    int opType=n.getType();
+    int complementType=opType == Token.AND ? Token.OR : Token.AND;
+    MinimizedCondition leftSubtree=fromConditionNode(n.getFirstChild());
+    MinimizedCondition rightSubtree=fromConditionNode(n.getLastChild());
+    ImmutableSet<Node> positiveAsts=ImmutableSet.of(new Node(opType,leftSubtree.positive.cloneTree(),rightSubtree.positive.cloneTree()).srcref(n),negate(new Node(complementType,leftSubtree.negative.cloneTree(),rightSubtree.negative.cloneTree()).srcref(n)));
+    ImmutableSet<Node> negativeAsts=ImmutableSet.of(negate(new Node(opType,leftSubtree.positive,rightSubtree.positive).srcref(n)),new Node(complementType,leftSubtree.negative,rightSubtree.negative).srcref(n));
+    return new MinimizedCondition(Collections.min(positiveAsts,AST_LENGTH_COMPARATOR),Collections.min(negativeAsts,AST_LENGTH_COMPARATOR));
+  }
+default :
+return new MinimizedCondition(n.cloneTree(),negate(n.cloneTree()));
+}
+}

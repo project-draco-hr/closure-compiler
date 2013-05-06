@@ -21,25 +21,25 @@ case Token.THROW:
     return tryReplaceExitWithBreak(node);
   }
 case Token.NOT:
-tryMinimizeCondition(node.getFirstChild());
+tryMinimizeCondition(node.getFirstChild(),true);
 return tryMinimizeNot(node);
 case Token.IF:
-tryMinimizeCondition(node.getFirstChild());
+tryMinimizeCondition(node.getFirstChild(),false);
 return tryMinimizeIf(node);
 case Token.EXPR_RESULT:
-tryMinimizeCondition(node.getFirstChild());
+tryMinimizeCondition(node.getFirstChild(),true);
 return node;
 case Token.HOOK:
-tryMinimizeCondition(node.getFirstChild());
-return node;
+tryMinimizeCondition(node.getFirstChild(),false);
+return tryMinimizeHook(node);
 case Token.WHILE:
 case Token.DO:
-tryMinimizeCondition(NodeUtil.getConditionExpression(node));
+tryMinimizeCondition(NodeUtil.getConditionExpression(node),true);
 return node;
 case Token.FOR:
 if (!NodeUtil.isForIn(node)) {
 tryJoinForCondition(node);
-tryMinimizeCondition(NodeUtil.getConditionExpression(node));
+tryMinimizeCondition(NodeUtil.getConditionExpression(node),true);
 }
 return node;
 case Token.TRUE:
