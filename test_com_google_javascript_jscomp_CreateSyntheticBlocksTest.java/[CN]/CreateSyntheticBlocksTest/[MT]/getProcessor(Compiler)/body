@@ -3,7 +3,7 @@
     @Override public void process(    Node externs,    Node js){
       new CreateSyntheticBlocks(compiler,START_MARKER,END_MARKER).process(externs,js);
       NodeTraversal.traverse(compiler,js,new MinimizeExitPoints(compiler));
-      new PeepholeOptimizationsPass(compiler,new PeepholeRemoveDeadCode(),new PeepholeSubstituteAlternateSyntax(true),new PeepholeFoldConstants(true)).process(externs,js);
+      new PeepholeOptimizationsPass(compiler,new PeepholeRemoveDeadCode(),new PeepholeMinimizeConditions(true),new PeepholeFoldConstants(true)).process(externs,js);
       new MinimizeExitPoints(compiler).process(externs,js);
       new Denormalize(compiler).process(externs,js);
     }

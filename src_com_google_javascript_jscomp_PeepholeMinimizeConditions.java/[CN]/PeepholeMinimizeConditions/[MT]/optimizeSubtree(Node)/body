@@ -1,0 +1,50 @@
+{
+switch (node.getType()) {
+case Token.RETURN:
+{
+      Node result=tryRemoveRedundantExit(node);
+      if (result != node) {
+        return result;
+      }
+      result=tryReplaceExitWithBreak(node);
+      if (result != node) {
+        return result;
+      }
+      return tryReduceReturn(node);
+    }
+case Token.THROW:
+{
+    Node result=tryRemoveRedundantExit(node);
+    if (result != node) {
+      return result;
+    }
+    return tryReplaceExitWithBreak(node);
+  }
+case Token.NOT:
+tryMinimizeCondition(node.getFirstChild(),true);
+return tryMinimizeNot(node);
+case Token.IF:
+tryMinimizeCondition(node.getFirstChild(),false);
+return tryMinimizeIf(node);
+case Token.EXPR_RESULT:
+tryMinimizeCondition(node.getFirstChild(),true);
+return node;
+case Token.HOOK:
+tryMinimizeCondition(node.getFirstChild(),false);
+return tryMinimizeHook(node);
+case Token.WHILE:
+case Token.DO:
+tryMinimizeCondition(NodeUtil.getConditionExpression(node),true);
+return node;
+case Token.FOR:
+if (!NodeUtil.isForIn(node)) {
+tryJoinForCondition(node);
+tryMinimizeCondition(NodeUtil.getConditionExpression(node),true);
+}
+return node;
+case Token.BLOCK:
+return tryReplaceIf(node);
+default :
+return node;
+}
+}
