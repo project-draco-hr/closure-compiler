@@ -1,5 +1,14 @@
 {
   Node paramList=NodeUtil.getFunctionParameters(exportedFunction).cloneTree();
+  Node param=paramList.getFirstChild();
+  while (param != null && param.isName()) {
+    System.err.println(param);
+    String originalName=(String)param.getProp(Node.ORIGINALNAME_PROP);
+    if (originalName != null) {
+      param.setString(originalName);
+    }
+    param=param.getNext();
+  }
   Node externFunction=IR.function(IR.name(""),paramList,IR.block());
   checkForFunctionsWithUnknownTypes(exportedFunction);
   externFunction.setJSType(exportedFunction.getJSType());
