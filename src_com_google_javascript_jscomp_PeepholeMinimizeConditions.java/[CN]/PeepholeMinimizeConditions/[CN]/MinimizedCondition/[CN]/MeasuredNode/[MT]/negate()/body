@@ -1,11 +1,14 @@
 {
-  Preconditions.checkArgument(node.getParent() == null);
   int complementOperator;
 switch (node.getType()) {
 default :
-    return new Node(Token.NOT,node).srcref(node);
+    node=new Node(Token.NOT,node).srcref(node);
+  length+=estimateCostOneLevel(node);
+return this;
 case Token.NOT:
-  return node.removeFirstChild();
+length-=estimateCostOneLevel(node);
+node=node.removeFirstChild();
+return this;
 case Token.EQ:
 complementOperator=Token.NE;
 break;
@@ -20,5 +23,5 @@ complementOperator=Token.SHEQ;
 break;
 }
 node.setType(complementOperator);
-return node;
+return this;
 }
