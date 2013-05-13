@@ -6,8 +6,8 @@ case Token.AND:
 {
       Node left=n.getFirstChild();
       Node right=n.getLastChild();
-      left=tryMinimizeConditionOld(left);
-      right=tryMinimizeConditionOld(right);
+      left=performConditionSubstitutions(left);
+      right=performConditionSubstitutions(right);
       TernaryValue rightVal=NodeUtil.getPureBooleanValue(right);
       if (NodeUtil.getPureBooleanValue(right) != TernaryValue.UNKNOWN) {
         int type=n.getType();
@@ -33,8 +33,8 @@ case Token.HOOK:
     Node condition=n.getFirstChild();
     Node trueNode=n.getFirstChild().getNext();
     Node falseNode=n.getLastChild();
-    trueNode=tryMinimizeConditionOld(trueNode);
-    falseNode=tryMinimizeConditionOld(falseNode);
+    trueNode=performConditionSubstitutions(trueNode);
+    falseNode=performConditionSubstitutions(falseNode);
     Node replacement=null;
     TernaryValue trueNodeVal=NodeUtil.getPureBooleanValue(trueNode);
     TernaryValue falseNodeVal=NodeUtil.getPureBooleanValue(falseNode);
