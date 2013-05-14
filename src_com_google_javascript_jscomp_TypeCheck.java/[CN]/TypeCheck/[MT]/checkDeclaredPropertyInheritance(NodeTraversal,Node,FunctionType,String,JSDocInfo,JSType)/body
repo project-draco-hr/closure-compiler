@@ -39,6 +39,10 @@
   }
   if (superClassHasDeclaredProperty) {
     JSType superClassPropType=superClass.getInstanceType().getPropertyType(propertyName);
+    TemplateTypeMap ctorTypeMap=ctorType.getTypeOfThis().getTemplateTypeMap();
+    if (!ctorTypeMap.isEmpty()) {
+      superClassPropType=superClassPropType.visit(new TemplateTypeMapReplacer(typeRegistry,ctorTypeMap));
+    }
     if (!propertyType.isSubtype(superClassPropType)) {
       compiler.report(t.makeError(n,HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,propertyName,topInstanceType.toString(),superClassPropType.toString(),propertyType.toString()));
     }

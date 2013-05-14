@@ -1,15 +1,20 @@
 {
+  FunctionType result=null;
   JSType propType=ownerType.getPropertyType(propName);
   if (propType != null && propType.isFunctionType()) {
-    return propType.toMaybeFunctionType();
+    result=propType.toMaybeFunctionType();
   }
  else {
     for (    ObjectType iface : ownerType.getCtorImplementedInterfaces()) {
       propType=iface.getPropertyType(propName);
       if (propType != null && propType.isFunctionType()) {
-        return propType.toMaybeFunctionType();
+        result=propType.toMaybeFunctionType();
+        break;
       }
     }
   }
-  return null;
+  if (result != null && typeMap != null && !typeMap.isEmpty()) {
+    result=result.visit(new TemplateTypeMapReplacer(typeRegistry,typeMap)).toMaybeFunctionType();
+  }
+  return result;
 }
