@@ -3,8 +3,9 @@ switch (n.getType()) {
 case Token.NOT:
 {
       MinimizedCondition subtree=fromConditionNode(n.getFirstChild());
-      ImmutableSet<MeasuredNode> positiveAsts=ImmutableSet.of(subtree.positive.cloneTree().negate(),subtree.negative.cloneTree());
-      ImmutableSet<MeasuredNode> negativeAsts=ImmutableSet.of(subtree.negative.negate(),subtree.positive);
+      ImmutableSet<MeasuredNode> positiveAsts=ImmutableSet.of(subtree.positive.cloneTree().addNot(),subtree.negative.cloneTree());
+      subtree.positive.changed=true;
+      ImmutableSet<MeasuredNode> negativeAsts=ImmutableSet.of(subtree.negative.negate(),subtree.positive.change());
       return new MinimizedCondition(Collections.min(positiveAsts,AST_LENGTH_COMPARATOR),Collections.min(negativeAsts,AST_LENGTH_COMPARATOR));
     }
 case Token.AND:
@@ -19,8 +20,6 @@ case Token.OR:
     return new MinimizedCondition(Collections.min(positiveAsts,AST_LENGTH_COMPARATOR),Collections.min(negativeAsts,AST_LENGTH_COMPARATOR));
   }
 default :
-MeasuredNode pos=new MeasuredNode(n.cloneTree(),0);
-MeasuredNode neg=pos.cloneTree().negate();
-return new MinimizedCondition(pos,neg);
+return unoptimized(n);
 }
 }

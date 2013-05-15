@@ -1,0 +1,29 @@
+{
+  int complementOperator;
+switch (node.getType()) {
+default :
+    node=new Node(Token.NOT,node).srcref(node);
+  length+=estimateCostOneLevel(node);
+return this;
+case Token.NOT:
+length-=estimateCostOneLevel(node);
+node=node.removeFirstChild();
+this.changed=true;
+return this;
+case Token.EQ:
+complementOperator=Token.NE;
+break;
+case Token.NE:
+complementOperator=Token.EQ;
+break;
+case Token.SHEQ:
+complementOperator=Token.SHNE;
+break;
+case Token.SHNE:
+complementOperator=Token.SHEQ;
+break;
+}
+node.setType(complementOperator);
+this.changed=true;
+return this;
+}
