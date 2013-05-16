@@ -2,8 +2,25 @@
   Traversal traversal=new Traversal();
   NodeTraversal.traverse(compiler,root,traversal);
   if (!traversal.hasErrors()) {
-    for (    AliasUsage aliasUsage : traversal.getAliasUsages()) {
-      aliasUsage.applyAlias();
+    List<AliasUsage> aliasWorkQueue=Lists.newArrayList(traversal.getAliasUsages());
+    while (!aliasWorkQueue.isEmpty()) {
+      List<AliasUsage> newQueue=Lists.newArrayList();
+      for (      AliasUsage aliasUsage : aliasWorkQueue) {
+        if (aliasUsage.referencesOtherAlias()) {
+          newQueue.add(aliasUsage);
+        }
+ else {
+          aliasUsage.applyAlias();
+        }
+      }
+      if (newQueue.size() == aliasWorkQueue.size()) {
+        Var cycleVar=newQueue.get(0).aliasVar;
+        compiler.report(JSError.make(cycleVar.getNode(),GOOG_SCOPE_ALIAS_CYCLE,cycleVar.getName()));
+        break;
+      }
+ else {
+        aliasWorkQueue=newQueue;
+      }
     }
     for (    Node aliasDefinition : traversal.getAliasDefinitionsInOrder()) {
       if (aliasDefinition.getParent().isVar() && aliasDefinition.getParent().hasOneChild()) {
