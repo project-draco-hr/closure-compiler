@@ -3,8 +3,11 @@
     return;
   }
   String name=n.getString();
+  if (globalSymbolNamespace.equals(name) || SPECIAL_EXTERNS.contains(name)) {
+    return;
+  }
   Scope.Var var=t.getScope().getVar(name);
-  if (name.length() > 0 && (var == null || var.isExtern()) && !globalSymbolNamespace.equals(name) && !SPECIAL_EXTERNS.contains(name)) {
+  if (name.length() > 0 && (var == null || var.isExtern())) {
     parent.replaceChild(n,IR.getprop(IR.name(WINDOW),IR.string(name)).srcrefTree(n));
     compiler.reportCodeChange();
   }

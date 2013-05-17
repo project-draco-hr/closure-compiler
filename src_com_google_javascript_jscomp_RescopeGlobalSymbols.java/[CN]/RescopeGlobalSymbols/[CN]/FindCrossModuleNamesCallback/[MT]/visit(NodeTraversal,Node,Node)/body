@@ -1,0 +1,22 @@
+{
+  if (n.isName()) {
+    String name=n.getString();
+    if ("".equals(name) || crossModuleNames.contains(name)) {
+      return;
+    }
+    Scope s=t.getScope();
+    Scope.Var v=s.getVar(name);
+    if (v == null || !v.isGlobal()) {
+      return;
+    }
+    CompilerInput input=v.getInput();
+    if (input == null) {
+      crossModuleNames.add(name);
+      return;
+    }
+    JSModule module=input.getModule();
+    if (module != t.getModule()) {
+      crossModuleNames.add(name);
+    }
+  }
+}

@@ -1,9 +1,5 @@
 {
-  test("for (var i = 0; i < 1000; i++);","for (_.i = 0; _.i < 1000; _.i++);");
-  test("for (var i = 0, c = 2; i < 1000; i++);","for (_.i = 0, _.c = 2; _.i < 1000; _.i++);");
-  test("for (var i = 0, c = 2, d = 3; i < 1000; i++);","for (_.i = 0, _.c = 2, _.d = 3; _.i < 1000; _.i++);");
-  test("for (var i = 0, c = 2, d = 3, e = 4; i < 1000; i++);","for (_.i = 0, _.c = 2, _.d = 3, _.e = 4; _.i < 1000; _.i++);");
-  test("for (var i = 0; i < 1000;)i++;","for (_.i = 0; _.i < 1000;)_.i++;");
-  test("for (var i = 0,b; i < 1000;)i++;b++","for (_.i = 0,_.b; _.i < 1000;)_.i++;_.b++");
-  test("var o={};for (var i in o)i++;","_.o={};for (_.i in _.o)_.i++;");
+  RescopeGlobalSymbols.assumeCrossModuleNames=false;
+  test(createModules("for (var i = 0, c = 2; i < 1000; i++);","c"),new String[]{"var i;for (i = 0, _.c = 2; i < 1000; i++);","_.c"});
+  test(createModules("for (var i = 0, c = 2; i < 1000; i++);","i"),new String[]{"var c;for (_.i = 0, c = 2; _.i < 1000; _.i++);","_.i"});
 }

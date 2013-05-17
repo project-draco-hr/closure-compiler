@@ -4,10 +4,17 @@
   }
   List<Node> commas=new ArrayList<Node>();
   List<Node> interestingChildren=new ArrayList<Node>();
+  boolean allName=true;
   for (  Node c : n.children()) {
+    if (!c.isName()) {
+      allName=false;
+    }
     if (c.isAssign() || parent.isFor()) {
       interestingChildren.add(c);
     }
+  }
+  if (allName) {
+    return;
   }
   for (  Node c : interestingChildren) {
     if (parent.isFor() && parent.getFirstChild() == n) {

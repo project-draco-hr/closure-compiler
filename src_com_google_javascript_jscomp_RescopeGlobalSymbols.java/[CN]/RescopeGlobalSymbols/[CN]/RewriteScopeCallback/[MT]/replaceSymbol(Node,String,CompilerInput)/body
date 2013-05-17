@@ -1,0 +1,32 @@
+{
+  Node parent=node.getParent();
+  boolean isCrossModule=isCrossModuleName(name);
+  if (!isCrossModule) {
+    if (!parent.isVar()) {
+      return;
+    }
+    boolean hasCrossModuleChildren=false;
+    for (    Node c : parent.children()) {
+      if (!c.isName() || isCrossModuleName(c.getString())) {
+        hasCrossModuleChildren=true;
+        break;
+      }
+    }
+    if (!hasCrossModuleChildren) {
+      return;
+    }
+  }
+  Node replacement=isCrossModule ? IR.getprop(IR.name(globalSymbolNamespace).srcref(node),IR.string(name).srcref(node)) : IR.name(name).srcref(node);
+  replacement.srcref(node);
+  if (node.hasChildren()) {
+    Node assign=IR.assign(replacement,node.removeFirstChild());
+    parent.replaceChild(node,assign);
+  }
+ else   if (isCrossModule) {
+    parent.replaceChild(node,replacement);
+  }
+  if (!isCrossModule && parent.isVar()) {
+    input.getAstRoot(compiler).addChildToFront(IR.var(IR.name(name).srcref(node)).srcref(node));
+  }
+  compiler.reportCodeChange();
+}
