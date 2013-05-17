@@ -1,25 +1,11 @@
 {
-  if (useNameReferenceGraph) {
-    NameReferenceGraph referenceGraph=(NameReferenceGraph)provider;
-    for (    Function function : getAllFunctions()) {
-      if (!function.isMain()) {
-        String functionName=function.getName();
-        if (functionName != null) {
-          Name symbol=referenceGraph.getSymbol(functionName);
-          updateFunctionForName(function,symbol);
-        }
-      }
-    }
-  }
- else {
-    SimpleDefinitionFinder finder=(SimpleDefinitionFinder)provider;
-    for (    DefinitionSite definitionSite : finder.getDefinitionSites()) {
-      Definition definition=definitionSite.definition;
-      Function function=lookupFunctionForDefinition(definition);
-      if (function != null) {
-        for (        UseSite useSite : finder.getUseSites(definition)) {
-          updateFunctionForUse(function,useSite.node);
-        }
+  SimpleDefinitionFinder finder=(SimpleDefinitionFinder)provider;
+  for (  DefinitionSite definitionSite : finder.getDefinitionSites()) {
+    Definition definition=definitionSite.definition;
+    Function function=lookupFunctionForDefinition(definition);
+    if (function != null) {
+      for (      UseSite useSite : finder.getUseSites(definition)) {
+        updateFunctionForUse(function,useSite.node);
       }
     }
   }
