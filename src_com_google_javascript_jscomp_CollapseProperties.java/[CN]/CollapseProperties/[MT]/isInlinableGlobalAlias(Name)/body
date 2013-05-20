@@ -1,0 +1,23 @@
+{
+  if (name.inExterns || name.globalSets != 1 || name.localSets != 0 || !name.canCollapse()) {
+    return false;
+  }
+  for (  Ref ref : name.getRefs()) {
+switch (ref.type) {
+case SET_FROM_GLOBAL:
+      continue;
+case SET_FROM_LOCAL:
+    throw new IllegalStateException();
+case ALIASING_GET:
+case DIRECT_GET:
+  continue;
+case PROTOTYPE_GET:
+case CALL_GET:
+case DELETE_PROP:
+return false;
+default :
+throw new IllegalStateException();
+}
+}
+return true;
+}

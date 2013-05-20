@@ -1,0 +1,38 @@
+{
+  int deferredCount=0;
+  Deque<Name> workList=new ArrayDeque<Name>(namespace.getNameForest());
+  Set<Node> newNodes=Sets.newHashSet();
+  while (!workList.isEmpty()) {
+    Name name=workList.pop();
+    boolean inlinedGlobalAliasToCurrentName=false;
+    if (name.type == Name.Type.GET || name.type == Name.Type.SET) {
+      continue;
+    }
+    if (!name.inExterns && name.globalSets == 1 && name.localSets == 0 && name.aliasingGets > 0) {
+      List<Ref> refs=Lists.newArrayList(name.getRefs());
+      for (      Ref ref : refs) {
+        if (ref.type == Type.ALIASING_GET && ref.scope.isLocal()) {
+          if (inlineAliasIfPossible(ref,namespace)) {
+            name.removeRef(ref);
+          }
+        }
+ else         if (ref.type == Type.ALIASING_GET && ref.scope.isGlobal() && ref.getTwin() == null) {
+          if (inlineGlobalAliasIfPossible(ref,namespace,newNodes)) {
+            name.removeRef(ref);
+            inlinedGlobalAliasToCurrentName=true;
+          }
+        }
+      }
+    }
+    if (!inlinedGlobalAliasToCurrentName && (name.type == Name.Type.OBJECTLIT || name.type == Name.Type.FUNCTION) && name.aliasingGets == 0 && name.props != null) {
+      workList.addAll(name.props);
+    }
+    if (inlinedGlobalAliasToCurrentName) {
+      deferredCount++;
+    }
+  }
+  if (!newNodes.isEmpty()) {
+    namespace.scanNewNodes(newNodes);
+  }
+  return deferredCount > 0;
+}
