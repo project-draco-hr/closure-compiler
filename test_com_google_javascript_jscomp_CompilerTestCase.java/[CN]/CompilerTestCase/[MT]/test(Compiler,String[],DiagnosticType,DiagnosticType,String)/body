@@ -29,7 +29,7 @@
         new ProcessClosurePrimitives(compiler,null,CheckLevel.ERROR).process(null,mainRoot);
         hasCodeChanged=hasCodeChanged || recentChange.hasCodeChanged();
       }
-      if (typeCheckEnabled && i == 0) {
+      if (!runTypeCheckAfterProcessing && typeCheckEnabled && i == 0) {
         TypeCheck check=createTypeCheck(compiler,typeCheckLevel);
         check.processForTesting(externsRoot,mainRoot);
       }
@@ -47,6 +47,10 @@
       }
       if (checkLineNumbers) {
         (new LineNumberCheck(compiler)).process(externsRoot,mainRoot);
+      }
+      if (runTypeCheckAfterProcessing && typeCheckEnabled && i == 0) {
+        TypeCheck check=createTypeCheck(compiler,typeCheckLevel);
+        check.processForTesting(externsRoot,mainRoot);
       }
       hasCodeChanged=hasCodeChanged || recentChange.hasCodeChanged();
       aggregateWarningCount+=errorManagers[i].getWarningCount();
