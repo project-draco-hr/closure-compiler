@@ -8,4 +8,12 @@
   this.reportMissingOverride=reportMissingOverride;
   this.reportUnknownTypes=((Compiler)compiler).getOptions().enables(DiagnosticGroups.REPORT_UNKNOWN_TYPES);
   this.inferJSDocInfo=new InferJSDocInfo(compiler);
+  ClassLoader classLoader=TypeCheck.class.getClassLoader();
+  try {
+    Class<?> c=classLoader.loadClass("com.google.common.string.EditDistance");
+    editDistance=c.getDeclaredMethod("getEditDistance",String.class,String.class,boolean.class);
+  }
+ catch (  Exception ignored) {
+    editDistance=null;
+  }
 }
