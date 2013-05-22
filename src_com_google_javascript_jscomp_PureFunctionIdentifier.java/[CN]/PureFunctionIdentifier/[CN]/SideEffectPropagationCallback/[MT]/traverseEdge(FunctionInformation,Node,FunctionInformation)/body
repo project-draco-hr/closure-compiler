@@ -9,6 +9,10 @@
     caller.setFunctionThrows();
     changed=true;
   }
+  if (!caller.mutatesGlobalState() && callee.mutatesArguments() && !NodeUtil.allArgsUnescapedLocal(callSite)) {
+    caller.setTaintsGlobalState();
+    changed=true;
+  }
   if (callee.mutatesThis()) {
     if (!callSite.isNew()) {
       boolean isCallOrApply=isCallOrApply(callSite);

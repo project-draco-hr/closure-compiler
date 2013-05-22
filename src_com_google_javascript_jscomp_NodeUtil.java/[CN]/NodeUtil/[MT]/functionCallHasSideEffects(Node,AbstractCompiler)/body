@@ -5,6 +5,9 @@
   if (callNode.isNoSideEffectsCall()) {
     return false;
   }
+  if (callNode.isOnlyModifiesArgumentsCall() && allArgsUnescapedLocal(callNode)) {
+    return false;
+  }
   Node nameNode=callNode.getFirstChild();
   if (nameNode.isName()) {
     String name=nameNode.getString();

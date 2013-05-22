@@ -9,6 +9,11 @@
   }
   for (Iterator<Var> i=t.getScope().getVars(); i.hasNext(); ) {
     Var v=i.next();
+    boolean param=v.getParentNode().isParamList();
+    if (param && !sideEffectInfo.blacklisted.contains(v) && sideEffectInfo.taintedLocals.contains(v)) {
+      sideEffectInfo.setTaintsArguments();
+      continue;
+    }
     boolean localVar=false;
     if (v.getParentNode().isVar()) {
       sideEffectInfo.knownLocals.add(v.getName());

@@ -1,6 +1,6 @@
 {
-  String source="/** @constructor */ function F() {}" + "var x = new F();" + "/** @this {F} */"+ "function g() { this.bar = function() { alert(3); }; }"+ "g.call(x);"+ "x.bar();";
-  String expected="var x = new function() {};" + "/** @this {F} */" + "(function () { this.bar = function() { alert(3); }; }).call(x);"+ "x.bar();";
+  String source="var Foo = {};" + "var addFuncProp = function(o) {" + "  o.f = function() {}"+ "};"+ "addFuncProp(Foo);"+ "alert(Foo.f());";
+  String expected="alert(void 0);";
   CompilerOptions options=createCompilerOptions();
   CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
   options.setRenamingPolicy(VariableRenamingPolicy.OFF,PropertyRenamingPolicy.OFF);
