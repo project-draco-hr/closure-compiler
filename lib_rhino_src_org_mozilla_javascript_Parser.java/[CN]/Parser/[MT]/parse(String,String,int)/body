@@ -6,7 +6,9 @@
   }
   this.ts=new TokenStream(this,null,sourceString,lineno);
   try {
-    return parse();
+    AstRoot r=parse();
+    new AttachJsDocs().attachComments(r,jsdocs);
+    return r;
   }
  catch (  IOException iox) {
     throw new IllegalStateException();

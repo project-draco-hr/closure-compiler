@@ -6,7 +6,9 @@
   try {
     this.sourceURI=sourceURI;
     ts=new TokenStream(this,sourceReader,null,lineno);
-    return parse();
+    AstRoot r=parse();
+    new AttachJsDocs().attachComments(r,jsdocs);
+    return r;
   }
   finally {
     parseFinished=true;

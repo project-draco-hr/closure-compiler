@@ -1,10 +1,11 @@
 {
   if (scannedComments == null) {
     scannedComments=new ArrayList<Comment>();
+    jsdocs=new ArrayList<Comment>();
   }
   Comment commentNode=new Comment(ts.tokenBeg,ts.getTokenLength(),ts.commentType,comment);
   if (ts.commentType == Token.CommentType.JSDOC && compilerEnv.isRecordingLocalJsDocComments()) {
-    currentJsDocComment=commentNode;
+    jsdocs.add(commentNode);
   }
   commentNode.setLineno(lineno);
   scannedComments.add(commentNode);

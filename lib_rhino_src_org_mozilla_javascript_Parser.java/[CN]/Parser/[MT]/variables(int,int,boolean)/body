@@ -3,10 +3,6 @@
   VariableDeclaration pn=new VariableDeclaration(pos);
   pn.setType(declType);
   pn.setLineno(ts.lineno);
-  Comment varjsdocNode=getAndResetJsDoc();
-  if (varjsdocNode != null) {
-    pn.setJsDocNode(varjsdocNode);
-  }
   for (; ; ) {
     AstNode destructuring=null;
     Name name=null;
@@ -31,7 +27,6 @@
       defineSymbol(declType,ts.getString(),inForInit);
     }
     int lineno=ts.lineno;
-    Comment jsdocNode=getAndResetJsDoc();
     AstNode init=null;
     if (matchToken(Token.ASSIGN)) {
       init=assignExpr();
@@ -49,7 +44,6 @@
     }
     vi.setInitializer(init);
     vi.setType(declType);
-    vi.setJsDocNode(jsdocNode);
     vi.setLineno(lineno);
     pn.addVariable(vi);
     if (!matchToken(Token.COMMA))     break;

@@ -2,22 +2,14 @@
   boolean wasInForInit=inForInit;
   inForInit=false;
   try {
-    Comment jsdocNode=getAndResetJsDoc();
     int lineno=ts.lineno;
     int begin=ts.tokenBeg;
     AstNode e=expr();
     if (peekToken() == Token.FOR) {
       return generatorExpression(e,begin);
     }
-    ParenthesizedExpression pn=new ParenthesizedExpression(e);
-    if (jsdocNode == null) {
-      jsdocNode=getAndResetJsDoc();
-    }
-    if (jsdocNode != null) {
-      pn.setJsDocNode(jsdocNode);
-    }
     mustMatchToken(Token.RP,"msg.no.paren");
-    pn.setLength(ts.tokenEnd - pn.getPosition());
+    ParenthesizedExpression pn=new ParenthesizedExpression(begin,ts.tokenEnd - begin,e);
     pn.setLineno(lineno);
     return pn;
   }

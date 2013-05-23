@@ -8,12 +8,10 @@
     getterNames=new HashSet<String>();
     setterNames=new HashSet<String>();
   }
-  Comment objJsdocNode=getAndResetJsDoc();
   commaLoop:   for (; ; ) {
     String propertyName=null;
     int entryKind=PROP_ENTRY;
     int tt=peekToken();
-    Comment jsdocNode=getAndResetJsDoc();
 switch (tt) {
 case Token.NAME:
       Name name=createNameNode();
@@ -32,12 +30,10 @@ propertyName=null;
  else {
 propertyName=ts.getString();
 ObjectProperty objectProp=getterSetterProperty(ppos,pname,isGet);
-pname.setJsDocNode(jsdocNode);
 elems.add(objectProp);
 }
 }
  else {
-name.setJsDocNode(jsdocNode);
 elems.add(plainProperty(name,tt));
 }
 break;
@@ -51,7 +47,6 @@ propertyName=null;
 }
  else {
 propertyName=ts.getString();
-pname.setJsDocNode(jsdocNode);
 elems.add(plainProperty(pname,tt));
 }
 break;
@@ -79,7 +74,6 @@ setterNames.add(propertyName);
 break;
 }
 }
-getAndResetJsDoc();
 if (matchToken(Token.COMMA)) {
 afterComma=ts.tokenEnd;
 }
@@ -89,9 +83,6 @@ break commaLoop;
 }
 mustMatchToken(Token.RC,"msg.no.brace.prop");
 ObjectLiteral pn=new ObjectLiteral(pos,ts.tokenEnd - pos);
-if (objJsdocNode != null) {
-pn.setJsDocNode(objJsdocNode);
-}
 pn.setElements(elems);
 pn.setLineno(lineno);
 return pn;
