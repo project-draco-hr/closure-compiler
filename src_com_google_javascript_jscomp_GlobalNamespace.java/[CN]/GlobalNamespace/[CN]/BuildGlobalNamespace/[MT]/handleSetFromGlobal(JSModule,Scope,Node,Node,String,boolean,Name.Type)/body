@@ -1,0 +1,17 @@
+{
+  if (maybeHandlePrototypePrefix(module,scope,n,parent,name)) {
+    return;
+  }
+  Name nameObj=getOrCreateName(name);
+  nameObj.type=type;
+  Ref set=new Ref(module,scope,n,nameObj,Ref.Type.SET_FROM_GLOBAL,currentPreOrderIndex++);
+  nameObj.addRef(set);
+  if (isNestedAssign(parent)) {
+    Ref get=new Ref(module,scope,n,nameObj,Ref.Type.ALIASING_GET,currentPreOrderIndex++);
+    nameObj.addRef(get);
+    Ref.markTwins(set,get);
+  }
+ else   if (isTypeDeclaration(n,parent)) {
+    nameObj.setDeclaredType();
+  }
+}

@@ -1,0 +1,40 @@
+{
+  if (maybeHandlePrototypePrefix(module,scope,n,parent,name)) {
+    return;
+  }
+  Ref.Type type=Ref.Type.DIRECT_GET;
+  if (parent != null) {
+switch (parent.getType()) {
+case Token.IF:
+case Token.TYPEOF:
+case Token.VOID:
+case Token.NOT:
+case Token.BITNOT:
+case Token.POS:
+case Token.NEG:
+      break;
+case Token.CALL:
+    type=n == parent.getFirstChild() ? Ref.Type.CALL_GET : Ref.Type.ALIASING_GET;
+  break;
+case Token.NEW:
+type=n == parent.getFirstChild() ? Ref.Type.DIRECT_GET : Ref.Type.ALIASING_GET;
+break;
+case Token.OR:
+case Token.AND:
+type=determineGetTypeForHookOrBooleanExpr(module,scope,parent,name);
+break;
+case Token.HOOK:
+if (n != parent.getFirstChild()) {
+type=determineGetTypeForHookOrBooleanExpr(module,scope,parent,name);
+}
+break;
+case Token.DELPROP:
+type=Ref.Type.DELETE_PROP;
+break;
+default :
+type=Ref.Type.ALIASING_GET;
+break;
+}
+}
+handleGet(module,scope,n,parent,name,type);
+}

@@ -1,0 +1,35 @@
+{
+  Node aliasParent=alias.node.getParent();
+  if (aliasParent.isAssign() && NodeUtil.isExecutedExactlyOnce(aliasParent)) {
+    String target=aliasParent.getFirstChild().getQualifiedName();
+    if (target != null) {
+      Name name=namespace.getSlot(target);
+      if (name != null && isInlinableGlobalAlias(name)) {
+        List<AstChange> newNodes=Lists.newArrayList();
+        List<Ref> refs=Lists.newArrayList(name.getRefs());
+        for (        Ref ref : refs) {
+switch (ref.type) {
+case SET_FROM_GLOBAL:
+            continue;
+case DIRECT_GET:
+case ALIASING_GET:
+          Node newNode=alias.node.cloneTree();
+        Node node=ref.node;
+      node.getParent().replaceChild(node,newNode);
+    newNodes.add(new AstChange(ref.module,ref.scope,newNode));
+  name.removeRef(ref);
+break;
+default :
+throw new IllegalStateException();
+}
+}
+rewriteAliasProps(name,alias.node,0,newNodes);
+aliasParent.replaceChild(alias.node,IR.nullNode());
+compiler.reportCodeChange();
+namespace.scanNewNodes(newNodes);
+return true;
+}
+}
+}
+return false;
+}

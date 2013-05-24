@@ -6,18 +6,18 @@
     ReferenceCollectingCallback collector=new ReferenceCollectingCallback(compiler,ReferenceCollectingCallback.DO_NOTHING_BEHAVIOR,Predicates.<Var>equalTo(aliasVar));
     (new NodeTraversal(compiler,collector)).traverseAtScope(scope);
     ReferenceCollection aliasRefs=collector.getReferences(aliasVar);
+    List<AstChange> newNodes=Lists.newArrayList();
     if (aliasRefs.isWellDefined() && aliasRefs.firstReferenceIsAssigningDeclaration() && aliasRefs.isAssignedOnceInLifetime()) {
       int size=aliasRefs.references.size();
-      Set<Node> newNodes=Sets.newHashSetWithExpectedSize(size - 1);
       for (int i=1; i < size; i++) {
         ReferenceCollectingCallback.Reference aliasRef=aliasRefs.references.get(i);
         Node newNode=alias.node.cloneTree();
         aliasRef.getParent().replaceChild(aliasRef.getNode(),newNode);
-        newNodes.add(newNode);
+        newNodes.add(new AstChange(getRefModule(aliasRef),aliasRef.getScope(),newNode));
       }
       aliasParent.replaceChild(alias.node,IR.nullNode());
       compiler.reportCodeChange();
-      namespace.scanNewNodes(alias.scope,newNodes);
+      namespace.scanNewNodes(newNodes);
       return true;
     }
   }
