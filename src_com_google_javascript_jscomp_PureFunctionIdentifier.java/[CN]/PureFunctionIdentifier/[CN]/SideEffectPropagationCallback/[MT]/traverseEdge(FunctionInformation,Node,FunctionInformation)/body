@@ -11,8 +11,9 @@
   }
   if (callee.mutatesThis()) {
     if (!callSite.isNew()) {
-      Node objectNode=getCallThisObject(callSite);
-      if (objectNode != null && objectNode.isName() && !isCallOrApply(callSite)) {
+      boolean isCallOrApply=isCallOrApply(callSite);
+      Node objectNode=isCallOrApply ? callSite.getFirstChild().getNext() : callSite.getFirstChild().getFirstChild();
+      if (objectNode != null && objectNode.isName() && !isCallOrApply) {
         if (!caller.mutatesGlobalState()) {
           caller.setTaintsGlobalState();
           changed=true;
@@ -24,7 +25,7 @@
           changed=true;
         }
       }
- else       if (objectNode != null && NodeUtil.evaluatesToLocalValue(objectNode) && !isCallOrApply(callSite)) {
+ else       if (objectNode != null && NodeUtil.evaluatesToLocalValue(objectNode) && !isCallOrApply) {
       }
  else       if (!caller.mutatesGlobalState()) {
         caller.setTaintsGlobalState();

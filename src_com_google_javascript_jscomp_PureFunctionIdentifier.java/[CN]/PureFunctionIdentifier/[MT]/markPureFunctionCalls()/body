@@ -21,7 +21,12 @@
         }
         if (!callNode.isNew()) {
           if (functionInfo.taintsThis) {
-            flags.setMutatesThis();
+            if (isCallOrApply(callNode)) {
+              flags.setMutatesArguments();
+            }
+ else {
+              flags.setMutatesThis();
+            }
           }
         }
         if (functionInfo.taintsReturn) {
