@@ -1,0 +1,24 @@
+{
+  Node functionCalled=n.getFirstChild();
+  if (functionCalled == null || !functionCalled.isQualifiedName()) {
+    return;
+  }
+  String functionCalledName=functionCalled.getQualifiedName();
+  JSType typeOfThis=getTypeOfThisForScope(t);
+  if (typeOfThis == null) {
+    return;
+  }
+  if (functionCalledName.equals("goog.events.unlisten")) {
+    if (inDisposalScope()) {
+      eventfulTypes.add(typeOfThis);
+    }
+    isGoogEventsUnlisten(n);
+  }
+  if (inDisposalScope() && functionCalledName.equals("goog.events.removeAll")) {
+    eventfulTypes.add(typeOfThis);
+  }
+  JSType disposedType=maybeReturnDisposedType(n,inDisposalScope());
+  if (!collectorFilterType(disposedType)) {
+    addEventize(getTypeOfThisForScope(t),disposedType);
+  }
+}

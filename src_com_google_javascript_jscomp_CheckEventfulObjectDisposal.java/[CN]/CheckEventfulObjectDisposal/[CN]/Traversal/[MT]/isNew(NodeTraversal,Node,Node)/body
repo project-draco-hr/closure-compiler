@@ -1,0 +1,41 @@
+{
+  if (!createsEventfulObject(n)) {
+    return;
+  }
+  String key;
+  Node propertyNode;
+  if (parent.isAssign()) {
+    propertyNode=parent.getFirstChild();
+  }
+ else {
+    propertyNode=parent;
+  }
+  if (propertyNode.isName() && checkingPolicy != DisposalCheckingPolicy.AGGRESSIVE) {
+    return;
+  }
+  key=generateKey(t,propertyNode,false);
+  if (key == null) {
+    return;
+  }
+  EventfulObjectState e;
+  if (eventfulObjectMap.containsKey(key)) {
+    e=eventfulObjectMap.get(key);
+  }
+ else {
+    e=new EventfulObjectState();
+    e.seen=SeenType.ALLOCATED;
+    eventfulObjectMap.put(key,e);
+  }
+  e.allocationSite=propertyNode;
+  if (propertyNode.isName()) {
+    Node globalVarNode=localEventfulObjectAssign(t,propertyNode);
+    if (globalVarNode != null) {
+      key=generateKey(t,globalVarNode,false);
+      if (key == null) {
+        e.seen=SeenType.POSSIBLY_DISPOSED;
+        return;
+      }
+      eventfulObjectMap.put(key,e);
+    }
+  }
+}

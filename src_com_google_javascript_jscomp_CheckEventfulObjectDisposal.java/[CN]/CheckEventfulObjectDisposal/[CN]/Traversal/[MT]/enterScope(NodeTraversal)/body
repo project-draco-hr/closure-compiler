@@ -1,0 +1,8 @@
+{
+  ControlFlowGraph<Node> cfg=t.getControlFlowGraph();
+  LiveVariablesAnalysis liveness=new LiveVariablesAnalysis(cfg,t.getScope(),compiler);
+  liveness.analyze();
+  for (  Var v : liveness.getEscapedLocals()) {
+    eventfulObjectDisposed(t,v.getNode());
+  }
+}

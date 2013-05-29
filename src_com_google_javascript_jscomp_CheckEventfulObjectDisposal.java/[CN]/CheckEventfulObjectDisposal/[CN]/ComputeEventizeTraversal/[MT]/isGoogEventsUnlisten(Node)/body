@@ -1,0 +1,19 @@
+{
+  Preconditions.checkArgument(n.getChildCount() > 3);
+  Node listener=n.getChildAtIndex(3);
+  Node objectWithListener=n.getChildAtIndex(1);
+  if (!objectWithListener.isQualifiedName()) {
+    return;
+  }
+  if (listener.isFunction()) {
+    compiler.report(JSError.make(n.getSourceFileName(),n,UNLISTEN_WITH_ANONBOUND));
+  }
+ else   if (listener.isCall()) {
+    if (!listener.getFirstChild().isQualifiedName()) {
+      compiler.report(JSError.make(n.getSourceFileName(),n,UNLISTEN_WITH_ANONBOUND));
+    }
+ else     if (listener.getFirstChild().getQualifiedName().equals("goog.bind")) {
+      compiler.report(JSError.make(n.getSourceFileName(),n,UNLISTEN_WITH_ANONBOUND));
+    }
+  }
+}

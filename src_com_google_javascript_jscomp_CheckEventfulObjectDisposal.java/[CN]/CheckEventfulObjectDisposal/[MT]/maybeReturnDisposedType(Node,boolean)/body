@@ -1,0 +1,24 @@
+{
+  Node first=n.getFirstChild();
+  if (first == null || !first.isQualifiedName()) {
+    return null;
+  }
+  String property=first.getQualifiedName();
+  if (property.endsWith(".registerDisposable")) {
+    Node base=first.getFirstChild();
+    JSType baseType=base.getJSType();
+    if (baseType == null || !isPossiblySubtype(baseType,googDisposableType)) {
+      return null;
+    }
+    return n.getLastChild().getJSType();
+  }
+  if (checkDispose) {
+    if (property.equals("goog.dispose")) {
+      return n.getLastChild().getJSType();
+    }
+    if (property.endsWith(".dispose")) {
+      return n.getFirstChild().getFirstChild().getJSType();
+    }
+  }
+  return null;
+}

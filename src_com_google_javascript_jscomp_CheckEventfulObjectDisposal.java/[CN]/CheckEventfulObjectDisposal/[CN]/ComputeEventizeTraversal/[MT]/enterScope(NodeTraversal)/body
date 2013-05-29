@@ -1,0 +1,40 @@
+{
+  Node n=t.getScopeRoot();
+  boolean isConstructor=false;
+  boolean isInDisposal=false;
+  String functionName=null;
+  if (n.isFunction()) {
+    functionName=NodeUtil.getFunctionName(n);
+    if (functionName != null) {
+      JSDocInfo jsDocInfo=NodeUtil.getBestJSDocInfo(n);
+      if (jsDocInfo != null) {
+        if (jsDocInfo.isConstructor()) {
+          isConstructor=true;
+          if (t.getScope() != null && t.getScope().getTypeOfThis() != null) {
+            ObjectType objectType=ObjectType.cast(t.getScope().getTypeOfThis().dereference());
+            while (objectType != null) {
+              objectType=objectType.getImplicitPrototype();
+              if (objectType == null) {
+                break;
+              }
+              if (objectType.getDisplayName().endsWith("prototype")) {
+                continue;
+              }
+              addEventize(compiler.getTypeRegistry().getType(functionName),objectType);
+              break;
+            }
+          }
+        }
+      }
+      if (functionName.endsWith(".disposeInternal")) {
+        isInDisposal=true;
+      }
+    }
+    isConstructorStack.push(isConstructor);
+    isDisposalStack.push(isInDisposal);
+  }
+ else {
+    isConstructorStack.push(inConstructorScope());
+    isDisposalStack.push(inDisposalScope());
+  }
+}

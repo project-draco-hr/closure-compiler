@@ -1,0 +1,40 @@
+{
+  Node assignedTo=n.getFirstChild();
+  JSType assignedToType=assignedTo.getJSType();
+  if (assignedToType == null || assignedToType.isEmptyType()) {
+    return;
+  }
+  if (n.getFirstChild().isGetProp()) {
+    boolean isTrackedAssign=false;
+    for (    JSType disposalType : eventfulTypes) {
+      if (assignedToType.isSubtype(disposalType)) {
+        isTrackedAssign=true;
+        break;
+      }
+    }
+    if (!isTrackedAssign) {
+      return;
+    }
+    JSDocInfo di=n.getJSDocInfo();
+    ObjectType objectType=ObjectType.cast(dereference(n.getFirstChild().getFirstChild().getJSType()));
+    String propertyName=n.getFirstChild().getLastChild().getString();
+    boolean fieldIsPrivate=((di != null) && (di.getVisibility() == Visibility.PRIVATE));
+    while (objectType != null) {
+      di=null;
+      objectType=objectType.getImplicitPrototype();
+      if (objectType == null) {
+        break;
+      }
+      if (objectType.getDisplayName().endsWith("prototype")) {
+        continue;
+      }
+      di=objectType.getOwnPropertyJSDocInfo(propertyName);
+      if (di != null) {
+        if (fieldIsPrivate || di.getVisibility() == Visibility.PRIVATE) {
+          compiler.report(t.makeError(n,OVERWRITE_PRIVATE_EVENTFUL_OBJECT));
+          break;
+        }
+      }
+    }
+  }
+}

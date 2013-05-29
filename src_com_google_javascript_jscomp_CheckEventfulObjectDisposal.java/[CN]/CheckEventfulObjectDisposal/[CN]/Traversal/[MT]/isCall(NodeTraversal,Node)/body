@@ -1,0 +1,21 @@
+{
+  Node variableNode=maybeGetValueNodeFromCall(n);
+  if (variableNode == null) {
+    return;
+  }
+  boolean isTrackedRemoval=false;
+  JSType vnType=variableNode.getJSType();
+  for (  JSType type : eventfulTypes) {
+    if (isPossiblySubtype(vnType,type)) {
+      isTrackedRemoval=true;
+    }
+  }
+  if (!isTrackedRemoval) {
+    return;
+  }
+  String key=generateKey(t,variableNode,false);
+  if (key == null) {
+    return;
+  }
+  eventfulObjectDisposed(t,variableNode);
+}

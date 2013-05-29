@@ -1,0 +1,39 @@
+{
+  Node parent;
+  if (!t.getScope().isGlobal()) {
+    parent=NodeUtil.getFunctionBody(t.getScopeRoot());
+  }
+ else {
+    parent=t.getScopeRoot().getFirstChild();
+  }
+  for (  Node sibling : parent.children()) {
+    if (sibling.isExprResult()) {
+      Node assign=sibling.getFirstChild();
+      if (assign.isAssign()) {
+        if (propertyNode.getQualifiedName().equals(assign.getLastChild().getQualifiedName())) {
+          if (!assign.getFirstChild().isName()) {
+            return assign.getFirstChild();
+          }
+        }
+      }
+    }
+  }
+  String key=generateKey(t,propertyNode,false);
+  if (key == null) {
+    return null;
+  }
+  EventfulObjectState e;
+  if (eventfulObjectMap.containsKey(key)) {
+    e=eventfulObjectMap.get(key);
+    if (e.seen == SeenType.ALLOCATED) {
+      e.seen=SeenType.ALLOCATED_LOCALLY;
+    }
+  }
+ else {
+    e=new EventfulObjectState();
+    e.seen=SeenType.ALLOCATED_LOCALLY;
+    eventfulObjectMap.put(key,e);
+  }
+  e.allocationSite=propertyNode;
+  return null;
+}

@@ -1,0 +1,21 @@
+{
+  Node variableNode=n.getFirstChild();
+  if (variableNode == null) {
+    return;
+  }
+  JSType type=variableNode.getJSType();
+  if (type == null || type.isEmptyType()) {
+    return;
+  }
+  boolean isTrackedReturn=false;
+  for (  JSType disposalType : eventfulTypes) {
+    if (type.isSubtype(disposalType)) {
+      isTrackedReturn=true;
+      break;
+    }
+  }
+  if (!isTrackedReturn) {
+    return;
+  }
+  eventfulObjectDisposed(t,variableNode);
+}

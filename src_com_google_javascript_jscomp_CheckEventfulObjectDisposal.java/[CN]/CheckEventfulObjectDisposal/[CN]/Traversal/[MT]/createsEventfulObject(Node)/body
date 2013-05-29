@@ -1,0 +1,15 @@
+{
+  Node first=n.getFirstChild();
+  JSType type=n.getJSType();
+  if (first == null || !first.isQualifiedName() || type.isEmptyType() || type.isUnknownType()) {
+    return false;
+  }
+  boolean isOfTypeNeedingDisposal=false;
+  for (  JSType disposableType : eventfulTypes) {
+    if (type.isSubtype(disposableType)) {
+      isOfTypeNeedingDisposal=true;
+      break;
+    }
+  }
+  return isOfTypeNeedingDisposal;
+}

@@ -1,0 +1,60 @@
+{
+  if (n == null) {
+    return null;
+  }
+  String key;
+  Node scopeNode=t.getScopeRoot();
+  if (n.isName()) {
+    if (noLocalVariables) {
+      return null;
+    }
+    key=n.getQualifiedName();
+    if (scopeNode.isFunction()) {
+      JSType parentScopeType=t.getScope().getParentScope().getTypeOfThis();
+      if (!parentScopeType.isGlobalThisType()) {
+        key=parentScopeType.toString() + "~" + key;
+      }
+      key=NodeUtil.getFunctionName(scopeNode) + "=" + key;
+    }
+  }
+ else {
+    if (!n.isQualifiedName()) {
+      return null;
+    }
+    key=n.getQualifiedName();
+    Node base=getBase(n);
+    if (base != null && base.isThis()) {
+      if (base.getJSType().isUnknownType()) {
+        key=t.getScope().getParentScope().getTypeOfThis().toString() + "~" + key;
+      }
+ else {
+        if (n.getFirstChild() == null) {
+          key=base.getJSType().toString() + "=" + key;
+        }
+ else {
+          ObjectType objectType=ObjectType.cast(dereference(n.getFirstChild().getJSType()));
+          if (objectType == null) {
+            return null;
+          }
+          ObjectType hObjT=objectType;
+          String propertyName=n.getLastChild().getString();
+          while (objectType != null) {
+            hObjT=objectType;
+            objectType=objectType.getImplicitPrototype();
+            if (objectType == null) {
+              break;
+            }
+            if (objectType.getDisplayName().endsWith("prototype")) {
+              continue;
+            }
+            if (!objectType.getPropertyNames().contains(propertyName)) {
+              break;
+            }
+          }
+          key=hObjT.toString() + "=" + key;
+        }
+      }
+    }
+  }
+  return key;
+}

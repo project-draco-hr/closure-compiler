@@ -1,0 +1,19 @@
+{
+  if (thisType == null) {
+    return false;
+  }
+  JSType type=thisType;
+  if (type.isUnionType()) {
+    for (    JSType alternate : type.toMaybeUnionType().getAlternates()) {
+      if (alternate.isSubtype(thatType)) {
+        return true;
+      }
+    }
+  }
+ else {
+    if (type.isSubtype(thatType)) {
+      return true;
+    }
+  }
+  return false;
+}

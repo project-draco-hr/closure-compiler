@@ -1,0 +1,25 @@
+{
+  Preconditions.checkArgument(checkingPolicy != DisposalCheckingPolicy.OFF);
+  googDisposableType=compiler.getTypeRegistry().getType(DISPOSABLE_TYPE_NAME);
+  googEventsEventHandlerType=compiler.getTypeRegistry().getType(EVENT_HANDLER_TYPE_NAME);
+  if (googEventsEventHandlerType == null || googDisposableType == null) {
+    return;
+  }
+  eventfulTypes=new HashSet<JSType>();
+  eventfulTypes.add(googEventsEventHandlerType);
+  if (checkingPolicy == DisposalCheckingPolicy.AGGRESSIVE) {
+    NodeTraversal.traverse(compiler,root,new ComputeEventizeTraversal());
+    computeEventful();
+  }
+  eventfulObjectMap=new HashMap<String,EventfulObjectState>();
+  NodeTraversal.traverse(compiler,root,new Traversal());
+  for (  EventfulObjectState e : eventfulObjectMap.values()) {
+    Node n=e.allocationSite;
+    if (e.seen == SeenType.ALLOCATED) {
+      compiler.report(JSError.make(n.getSourceFileName(),n,EVENTFUL_OBJECT_NOT_DISPOSED));
+    }
+ else     if (e.seen == SeenType.ALLOCATED_LOCALLY) {
+      compiler.report(JSError.make(n.getSourceFileName(),n,EVENTFUL_OBJECT_PURELY_LOCAL));
+    }
+  }
+}

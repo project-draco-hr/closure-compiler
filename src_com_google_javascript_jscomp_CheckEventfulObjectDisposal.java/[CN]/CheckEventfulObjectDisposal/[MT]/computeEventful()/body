@@ -1,0 +1,46 @@
+{
+  String[] order=new String[eventizes.size()];
+  int white=0, gray=1, black=2;
+  int last=eventizes.size() - 1;
+  Map<String,Integer> color=new HashMap<String,Integer>();
+  Stack<String> dfsStack=new Stack<String>();
+  for (  String r : eventizes.keySet()) {
+    color.put(r,white);
+    for (    String s : eventizes.get(r)) {
+      color.put(s,white);
+    }
+  }
+  int indx=0;
+  for (  String s : eventizes.keySet()) {
+    dfsStack.push(s);
+    while (dfsStack.size() > 0) {
+      String top=dfsStack.pop();
+      if (!color.containsKey(top)) {
+        continue;
+      }
+      if (color.get(top) == white) {
+        color.put(top,gray);
+        dfsStack.push(top);
+        if (eventizes.containsKey(top)) {
+          for (          String v : eventizes.get(top)) {
+            if (color.get(v) == white) {
+              dfsStack.push(v);
+            }
+          }
+        }
+      }
+ else       if (color.get(top) == gray && eventizes.containsKey(top)) {
+        order[last - indx]=top;
+        ++indx;
+        color.put(top,black);
+      }
+    }
+  }
+  for (  String s : order) {
+    if (eventfulTypes.contains(typeRegistry.getType(s))) {
+      for (      String v : eventizes.get(s)) {
+        eventfulTypes.add(typeRegistry.getType(v));
+      }
+    }
+  }
+}

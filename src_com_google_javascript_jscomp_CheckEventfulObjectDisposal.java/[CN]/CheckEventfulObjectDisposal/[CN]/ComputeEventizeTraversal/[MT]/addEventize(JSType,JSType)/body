@@ -1,0 +1,17 @@
+{
+  if (collectorFilterType(thisType) || collectorFilterType(thatType) || thisType.isEquivalentTo(thatType)) {
+    return;
+  }
+  String className=thisType.getDisplayName();
+  if (thatType.isUnionType()) {
+    UnionType ut=thatType.toMaybeUnionType();
+    for (    JSType type : ut.getAlternates()) {
+      if (type.isObject()) {
+        addEventizeClass(className,type);
+      }
+    }
+  }
+ else {
+    addEventizeClass(className,thatType);
+  }
+}
