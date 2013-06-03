@@ -1,27 +1,16 @@
 {
 switch (node.getType()) {
+case Token.THROW:
 case Token.RETURN:
 {
       Node result=tryRemoveRedundantExit(node);
       if (result != node) {
         return result;
       }
-      result=tryReplaceExitWithBreak(node);
-      if (result != node) {
-        return result;
-      }
-      return tryReduceReturn(node);
+      return tryReplaceExitWithBreak(node);
     }
-case Token.THROW:
-{
-    Node result=tryRemoveRedundantExit(node);
-    if (result != node) {
-      return result;
-    }
-    return tryReplaceExitWithBreak(node);
-  }
 case Token.NOT:
-tryMinimizeCondition(node.getFirstChild());
+  tryMinimizeCondition(node.getFirstChild());
 return tryMinimizeNot(node);
 case Token.IF:
 performConditionSubstitutions(node.getFirstChild());
