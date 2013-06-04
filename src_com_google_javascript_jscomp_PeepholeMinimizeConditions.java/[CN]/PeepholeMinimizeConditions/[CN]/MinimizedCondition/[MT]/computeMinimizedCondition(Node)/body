@@ -1,0 +1,48 @@
+{
+  Preconditions.checkArgument(n.getParent() == null);
+switch (n.getType()) {
+case Token.NOT:
+{
+      MinimizedCondition subtree=computeMinimizedCondition(n.getFirstChild().detachFromParent());
+      ImmutableList<MeasuredNode> positiveAsts=ImmutableList.of(subtree.positive.cloneTree().addNot(),subtree.negative.cloneTree());
+      ImmutableList<MeasuredNode> negativeAsts=ImmutableList.of(subtree.negative.negate(),subtree.positive);
+      return new MinimizedCondition(Collections.min(positiveAsts,AST_LENGTH_COMPARATOR),Collections.min(negativeAsts,AST_LENGTH_COMPARATOR));
+    }
+case Token.AND:
+case Token.OR:
+{
+    int opType=n.getType();
+    int complementType=opType == Token.AND ? Token.OR : Token.AND;
+    MinimizedCondition leftSubtree=computeMinimizedCondition(n.getFirstChild().detachFromParent());
+    MinimizedCondition rightSubtree=computeMinimizedCondition(n.getLastChild().detachFromParent());
+    ImmutableList<MeasuredNode> positiveAsts=ImmutableList.of(MeasuredNode.addNode(new Node(opType).srcref(n),leftSubtree.positive.cloneTree(),rightSubtree.positive.cloneTree()),MeasuredNode.addNode(new Node(complementType).srcref(n),leftSubtree.negative.cloneTree(),rightSubtree.negative.cloneTree()).negate());
+    ImmutableList<MeasuredNode> negativeAsts=ImmutableList.of(MeasuredNode.addNode(new Node(opType).srcref(n),leftSubtree.positive,rightSubtree.positive).negate(),MeasuredNode.addNode(new Node(complementType).srcref(n),leftSubtree.negative,rightSubtree.negative));
+    return new MinimizedCondition(Collections.min(positiveAsts,AST_LENGTH_COMPARATOR),Collections.min(negativeAsts,AST_LENGTH_COMPARATOR));
+  }
+case Token.HOOK:
+{
+  Node cond=n.getFirstChild();
+  Node thenNode=cond.getNext();
+  Node elseNode=thenNode.getNext();
+  MinimizedCondition thenSubtree=computeMinimizedCondition(thenNode.detachFromParent());
+  MinimizedCondition elseSubtree=computeMinimizedCondition(elseNode.detachFromParent());
+  MeasuredNode posTree=MeasuredNode.addNode(new Node(Token.HOOK,cond.cloneTree()).srcref(n),thenSubtree.positive,elseSubtree.positive);
+  MeasuredNode negTree=MeasuredNode.addNode(new Node(Token.HOOK,cond.cloneTree()).srcref(n),thenSubtree.negative,elseSubtree.negative);
+  return new MinimizedCondition(posTree,negTree);
+}
+case Token.COMMA:
+{
+Node lhs=n.getFirstChild();
+MinimizedCondition rhsSubtree=computeMinimizedCondition(lhs.getNext().detachFromParent());
+MeasuredNode posTree=MeasuredNode.addNode(new Node(Token.COMMA,lhs.cloneTree()).srcref(n),rhsSubtree.positive);
+MeasuredNode negTree=MeasuredNode.addNode(new Node(Token.COMMA,lhs.cloneTree()).srcref(n),rhsSubtree.negative);
+return new MinimizedCondition(posTree,negTree);
+}
+default :
+{
+MeasuredNode pos=new MeasuredNode(n,0,false);
+MeasuredNode neg=pos.cloneTree().negate();
+return new MinimizedCondition(pos,neg);
+}
+}
+}

@@ -1,8 +1,10 @@
 {
   n=performConditionSubstitutions(n);
   if (aggressiveMinimization) {
+    Node placeholder=IR.script();
+    n.getParent().replaceChild(n,placeholder);
     MinimizedCondition minCond=MinimizedCondition.fromConditionNode(n);
-    return maybeReplaceNode(n,minCond.getShorterRepresentation(true));
+    return replaceNode(placeholder,minCond.getShorterRepresentation(true));
   }
  else {
     return n;

@@ -1,12 +1,14 @@
 {
   Node inputNode=parseExpr(input);
-  MinimizedCondition result=PeepholeMinimizeConditions.MinimizedCondition.fromConditionNode(inputNode);
+  MinimizedCondition result=PeepholeMinimizeConditions.MinimizedCondition.fromConditionNode(inputNode.detachFromParent());
   Node positiveNode=parseExpr(positive);
   Node negativeNode=parseExpr(negative);
-  if (!result.getNode().isEquivalentTo(positiveNode)) {
-    fail("Not equal:\n" + result.getNode().toStringTree() + "and:\n"+ positiveNode.toStringTree());
+  Node positiveResult=result.getShorterRepresentation(true).node;
+  Node negativeResult=result.getShorterRepresentation(false).node;
+  if (!positiveResult.isEquivalentTo(positiveNode)) {
+    fail("Not equal:\n" + positiveResult.toStringTree() + "and:\n"+ positiveNode.toStringTree());
   }
-  if (!result.getNegatedNode().isEquivalentTo(negativeNode)) {
-    fail("Not equal:\n" + result.getNegatedNode().toStringTree() + "and:\n"+ negativeNode.toStringTree());
+  if (!negativeResult.isEquivalentTo(negativeNode)) {
+    fail("Not equal:\n" + negativeResult.toStringTree() + "and:\n"+ negativeNode.toStringTree());
   }
 }

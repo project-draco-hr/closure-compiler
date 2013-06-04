@@ -1,13 +1,15 @@
 {
   Node originalCond=node.getFirstChild();
+  Node placeholder=IR.script();
+  node.replaceChild(originalCond,placeholder);
   MinimizedCondition minCond=(aggressiveMinimization) ? MinimizedCondition.fromConditionNode(originalCond) : MinimizedCondition.unoptimized(originalCond);
   MinimizedCondition.MeasuredNode mNode=minCond.getShorterRepresentation(false);
   if (mNode.node.isNot()) {
-    node.replaceChild(originalCond,mNode.node.removeFirstChild());
+    node.replaceChild(placeholder,mNode.node.removeFirstChild());
     reportCodeChange();
   }
  else {
-    maybeReplaceNode(originalCond,mNode);
+    replaceNode(placeholder,mNode);
   }
   return node;
 }

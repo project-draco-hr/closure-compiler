@@ -6,6 +6,8 @@
   }
   Node thenBranch=originalCond.getNext();
   Node elseBranch=thenBranch.getNext();
+  Node placeholder=IR.script().srcref(originalCond);
+  n.replaceChild(originalCond,placeholder);
   MinimizedCondition.MeasuredNode unnegatedCond;
   MinimizedCondition.MeasuredNode shortCond;
   if (aggressiveMinimization) {
@@ -17,10 +19,12 @@
     unnegatedCond=new MinimizedCondition.MeasuredNode(originalCond,0,false);
     shortCond=unnegatedCond;
   }
+  originalCond=null;
   if (elseBranch == null) {
     if (isFoldableExpressBlock(thenBranch)) {
       Node expr=getBlockExpression(thenBranch);
       if (!late && isPropertyAssignmentInExpression(expr)) {
+        replaceNode(placeholder,unnegatedCond);
         return n;
       }
       if (shortCond.node.isNot()) {
@@ -31,10 +35,10 @@
         return newExpr;
       }
       if (isLowerPrecedence(shortCond.node,AND_PRECEDENCE) && isLowerPrecedence(expr.getFirstChild(),AND_PRECEDENCE)) {
-        maybeReplaceNode(originalCond,shortCond);
+        replaceNode(placeholder,shortCond);
         return n;
       }
-      n.removeChild(originalCond);
+      n.removeChild(placeholder);
       Node and=IR.and(shortCond.node,expr.removeFirstChild()).srcref(n);
       Node newExpr=NodeUtil.newExpr(and);
       parent.replaceChild(n,newExpr);
@@ -50,7 +54,7 @@
           Node innerElseBranch=innerThenBranch.getNext();
           if (innerElseBranch == null && !(isLowerPrecedence(unnegatedCond.node,AND_PRECEDENCE) && isLowerPrecedence(innerCond,AND_PRECEDENCE))) {
             n.detachChildren();
-            n.addChildToBack(IR.and(unnegatedCond.node,innerCond.detachFromParent()).srcref(originalCond));
+            n.addChildToBack(IR.and(unnegatedCond.node,innerCond.detachFromParent()).srcref(placeholder));
             n.addChildrenToBack(innerThenBranch.detachFromParent());
             reportCodeChange();
             return n;
@@ -58,12 +62,12 @@
         }
       }
     }
-    maybeReplaceNode(originalCond,unnegatedCond);
+    replaceNode(placeholder,unnegatedCond);
     return n;
   }
   tryRemoveRepeatedStatements(n);
   if (shortCond.node.isNot() && !consumesDanglingElse(elseBranch)) {
-    n.replaceChild(originalCond,shortCond.node.removeFirstChild());
+    n.replaceChild(placeholder,shortCond.node.removeFirstChild());
     n.removeChild(thenBranch);
     n.addChildToBack(thenBranch);
     reportCodeChange();
@@ -72,7 +76,7 @@
   if (isReturnExpressBlock(thenBranch) && isReturnExpressBlock(elseBranch)) {
     Node thenExpr=getBlockReturnExpression(thenBranch);
     Node elseExpr=getBlockReturnExpression(elseBranch);
-    n.removeChild(originalCond);
+    n.removeChild(placeholder);
     thenExpr.detachFromParent();
     elseExpr.detachFromParent();
     Node returnNode=IR.returnNode(IR.hook(shortCond.node,thenExpr,elseExpr).srcref(n));
@@ -88,8 +92,8 @@
     if (thenOp.getType() == elseOp.getType()) {
       if (NodeUtil.isAssignmentOp(thenOp)) {
         Node lhs=thenOp.getFirstChild();
-        if (areNodesEqualForInlining(lhs,elseOp.getFirstChild()) && !mayEffectMutableState(lhs) && (!mayHaveSideEffects(originalCond) || (thenOp.isAssign() && thenOp.getFirstChild().isName()))) {
-          n.removeChild(originalCond);
+        if (areNodesEqualForInlining(lhs,elseOp.getFirstChild()) && !mayEffectMutableState(lhs) && (!mayHaveSideEffects(unnegatedCond.node) || (thenOp.isAssign() && thenOp.getFirstChild().isName()))) {
+          n.removeChild(placeholder);
           Node assignName=thenOp.removeFirstChild();
           Node thenExpr=thenOp.removeFirstChild();
           Node elseExpr=elseOp.getLastChild();
@@ -103,7 +107,7 @@
         }
       }
     }
-    n.removeChild(originalCond);
+    n.removeChild(placeholder);
     thenOp.detachFromParent();
     elseOp.detachFromParent();
     Node expr=IR.exprResult(IR.hook(shortCond.node,thenOp,elseOp).srcref(n));
@@ -121,7 +125,7 @@
     if (name1.hasChildren() && maybeName2.isName() && name1.getString().equals(maybeName2.getString())) {
       Node thenExpr=name1.removeChildren();
       Node elseExpr=elseAssign.getLastChild().detachFromParent();
-      originalCond.detachFromParent();
+      placeholder.detachFromParent();
       Node hookNode=IR.hook(shortCond.node,thenExpr,elseExpr).srcref(n);
       var.detachFromParent();
       name1.addChildrenToBack(hookNode);
@@ -138,7 +142,7 @@
     if (name2.hasChildren() && maybeName1.isName() && maybeName1.getString().equals(name2.getString())) {
       Node thenExpr=thenAssign.getLastChild().detachFromParent();
       Node elseExpr=name2.removeChildren();
-      originalCond.detachFromParent();
+      placeholder.detachFromParent();
       Node hookNode=IR.hook(shortCond.node,thenExpr,elseExpr).srcref(n);
       var.detachFromParent();
       name2.addChildrenToBack(hookNode);
@@ -147,6 +151,6 @@
       return var;
     }
   }
-  maybeReplaceNode(originalCond,unnegatedCond);
+  replaceNode(placeholder,unnegatedCond);
   return n;
 }
