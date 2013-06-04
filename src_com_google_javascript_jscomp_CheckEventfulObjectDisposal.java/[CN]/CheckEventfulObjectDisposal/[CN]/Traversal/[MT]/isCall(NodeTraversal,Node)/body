@@ -1,21 +1,21 @@
 {
-  Node variableNode=maybeGetValueNodeFromCall(n);
-  if (variableNode == null) {
-    return;
-  }
-  boolean isTrackedRemoval=false;
-  JSType vnType=variableNode.getJSType();
-  for (  JSType type : eventfulTypes) {
-    if (isPossiblySubtype(vnType,type)) {
-      isTrackedRemoval=true;
+  List<Node> variableNodes=maybeGetValueNodesFromCall(n);
+  for (  Node variableNode : variableNodes) {
+    Preconditions.checkState(variableNode != null);
+    boolean isTrackedRemoval=false;
+    JSType vnType=variableNode.getJSType();
+    for (    JSType type : eventfulTypes) {
+      if (isPossiblySubtype(vnType,type)) {
+        isTrackedRemoval=true;
+      }
     }
+    if (!isTrackedRemoval) {
+      continue;
+    }
+    String key=generateKey(t,variableNode,false);
+    if (key == null) {
+      continue;
+    }
+    eventfulObjectDisposed(t,variableNode);
   }
-  if (!isTrackedRemoval) {
-    return;
-  }
-  String key=generateKey(t,variableNode,false);
-  if (key == null) {
-    return;
-  }
-  eventfulObjectDisposed(t,variableNode);
 }

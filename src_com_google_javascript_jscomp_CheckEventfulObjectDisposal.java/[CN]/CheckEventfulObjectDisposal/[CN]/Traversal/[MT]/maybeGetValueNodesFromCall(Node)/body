@@ -1,29 +1,34 @@
 {
+  List<Node> ret=Lists.newArrayList();
   Node first=n.getFirstChild();
   if (first == null || !first.isQualifiedName()) {
-    return null;
+    return ret;
   }
   String property=first.getQualifiedName();
   if (property.endsWith(".registerDisposable")) {
     Node base=first.getFirstChild();
     JSType baseType=base.getJSType();
-    if (baseType == null || !isPossiblySubtype(baseType,googDisposableType)) {
-      return null;
+    if (baseType != null && isPossiblySubtype(baseType,googDisposableType)) {
+      ret.add(n.getLastChild());
     }
-    return n.getLastChild();
   }
   if (property.equals("goog.dispose")) {
-    return n.getLastChild();
+    ret.add(n.getLastChild());
+  }
+  if (property.equals("goog.disposeAll")) {
+    for (Node t=first.getNext(); t != null; t=t.getNext()) {
+      ret.add(t);
+    }
   }
   Node calledOn=n.getFirstChild().getFirstChild();
   if (property.endsWith(".dispose")) {
-    return calledOn;
+    ret.add(calledOn);
   }
   if (property.endsWith(".removeAll")) {
     if (calledOn != null) {
       JSType calledOnType=calledOn.getJSType();
       if (calledOnType != null && !calledOnType.isEmptyType() && !calledOnType.isUnknownType() && isPossiblySubtype(calledOnType,googEventsEventHandlerType)) {
-        return calledOn;
+        ret.add(calledOn);
       }
     }
   }
@@ -31,11 +36,13 @@
   if (possiblyArray != null) {
     JSType possiblyArrayType=possiblyArray.getJSType();
     if (possiblyArrayType != null && possiblyArrayType.isArrayType()) {
-      return n.getLastChild();
+      ret.add(n.getLastChild());
     }
   }
   if (property.endsWith(".push") || property.contains(".add")) {
-    return n.getLastChild();
+    for (Node t=first.getNext(); t != null; t=t.getNext()) {
+      ret.add(t);
+    }
   }
-  return null;
+  return ret;
 }
