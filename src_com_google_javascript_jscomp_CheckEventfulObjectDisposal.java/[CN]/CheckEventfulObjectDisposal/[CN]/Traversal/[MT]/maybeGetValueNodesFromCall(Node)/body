@@ -12,12 +12,30 @@
       ret.add(n.getLastChild());
     }
   }
-  if (property.equals("goog.dispose")) {
-    ret.add(n.getLastChild());
-  }
-  if (property.equals("goog.disposeAll")) {
-    for (Node t=first.getNext(); t != null; t=t.getNext()) {
-      ret.add(t);
+  for (  String disposeMethod : disposeMethods.keySet()) {
+    if (property.matches(disposeMethod)) {
+      int[] disposeArguments=disposeMethods.get(disposeMethod);
+      if (disposeArguments == disposeAll) {
+        for (Node t=first.getNext(); t != null; t=t.getNext()) {
+          ret.add(t);
+        }
+      }
+ else {
+        Node t=first.getNext();
+        int tsArgument=0;
+        for (        int index : disposeArguments) {
+          if (tsArgument > disposeArguments[index]) {
+            t=first.getNext();
+            tsArgument=0;
+          }
+          for (; tsArgument < disposeArguments[index] && t != null; ++tsArgument) {
+            t=t.getNext();
+          }
+          if (tsArgument == disposeArguments[index] && t != null) {
+            ret.add(t);
+          }
+        }
+      }
     }
   }
   Node calledOn=n.getFirstChild().getFirstChild();
@@ -37,11 +55,6 @@
     JSType possiblyArrayType=possiblyArray.getJSType();
     if (possiblyArrayType != null && possiblyArrayType.isArrayType()) {
       ret.add(n.getLastChild());
-    }
-  }
-  if (property.endsWith(".push") || property.contains(".add")) {
-    for (Node t=first.getNext(); t != null; t=t.getNext()) {
-      ret.add(t);
     }
   }
   return ret;
