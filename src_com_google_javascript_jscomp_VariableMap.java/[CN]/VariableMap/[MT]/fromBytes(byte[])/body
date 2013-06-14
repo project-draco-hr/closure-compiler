@@ -1,11 +1,5 @@
 {
-  Iterable<String> lines;
-  try {
-    lines=CharStreams.readLines(CharStreams.newReaderSupplier(ByteStreams.newInputStreamSupplier(bytes),Charsets.UTF_8));
-  }
- catch (  IOException e) {
-    throw new RuntimeException(e);
-  }
+  Iterable<String> lines=LINE_SPLITTER.split(new String(bytes,Charsets.UTF_8));
   ImmutableMap.Builder<String,String> map=ImmutableMap.builder();
   for (  String line : lines) {
     int pos=findIndexOfChar(line,SEPARATOR);
