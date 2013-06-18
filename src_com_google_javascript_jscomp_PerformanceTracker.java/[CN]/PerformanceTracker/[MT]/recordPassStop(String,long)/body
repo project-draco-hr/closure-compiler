@@ -1,8 +1,7 @@
 {
+  Preconditions.checkState(summaryCopy == null);
   Stats logStats=currentPass.pop();
-  if (!passName.equals(logStats.pass)) {
-    throw new RuntimeException(passName + " is not running.");
-  }
+  Preconditions.checkState(passName.equals(logStats.pass));
   if (passName.equals(Compiler.PARSING_PASS_NAME) && trackSize) {
     CodeSizeEstimatePrinter estimatePrinter=new CodeSizeEstimatePrinter();
     CodeGenerator.forCostEstimation(estimatePrinter).add(jsRoot);
@@ -17,9 +16,9 @@
     summaryStats=new Stats(passName,logStats.isOneTime);
     summary.put(passName,summaryStats);
   }
-  logStats.runtime=result;
+  logStats.runtime=runtime;
   logStats.runs=1;
-  summaryStats.runtime+=result;
+  summaryStats.runtime+=runtime;
   summaryStats.runs+=1;
   if (codeChange.hasCodeChanged()) {
     logStats.changes=1;

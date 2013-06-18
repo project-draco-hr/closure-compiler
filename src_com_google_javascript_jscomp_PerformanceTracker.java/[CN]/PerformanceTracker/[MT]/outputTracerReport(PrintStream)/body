@@ -3,26 +3,31 @@
   OutputStreamWriter output=new OutputStreamWriter(pstr);
   try {
     calcTotalStats();
-    ArrayList<Entry<String,Stats>> a=new ArrayList<Entry<String,Stats>>();
+    ArrayList<Entry<String,Stats>> statEntries=Lists.newArrayList();
     for (    Entry<String,Stats> entry : summary.entrySet()) {
-      a.add(entry);
+      statEntries.add(entry);
     }
-    Collections.sort(a,new CmpEntries());
+    Collections.sort(statEntries,new Comparator<Entry<String,Stats>>(){
+      @Override public int compare(      Entry<String,Stats> e1,      Entry<String,Stats> e2){
+        return (int)(e1.getValue().runtime - e2.getValue().runtime);
+      }
+    }
+);
     output.write("Summary:\n" + "pass,runtime,runs,changingRuns,reduction,gzReduction\n");
-    for (    Entry<String,Stats> entry : a) {
+    for (    Entry<String,Stats> entry : statEntries) {
       String key=entry.getKey();
       Stats stats=entry.getValue();
-      output.write(key + "," + String.valueOf(stats.runtime)+ ","+ String.valueOf(stats.runs)+ ","+ String.valueOf(stats.changes)+ ","+ String.valueOf(stats.diff)+ ","+ String.valueOf(stats.gzDiff)+ "\n");
+      output.write(String.format("%s,%d,%d,%d,%d,%d\n",key,stats.runtime,stats.runs,stats.changes,stats.diff,stats.gzDiff));
     }
     output.write("\nTOTAL:" + "\nRuntime(ms): " + String.valueOf(runtime) + "\n#Runs: "+ String.valueOf(runs)+ "\n#Changing runs: "+ String.valueOf(changes)+ "\n#Loopable runs: "+ String.valueOf(loopRuns)+ "\n#Changing loopable runs: "+ String.valueOf(loopChanges)+ "\nEstimated Reduction(bytes): "+ String.valueOf(diff)+ "\nEstimated GzReduction(bytes): "+ String.valueOf(gzDiff)+ "\nEstimated Size(bytes): "+ String.valueOf(codeSize)+ "\nEstimated GzSize(bytes): "+ String.valueOf(gzCodeSize)+ "\n\n");
     output.write("Log:\n" + "pass,runtime,runs,changingRuns,reduction,gzReduction,size,gzSize\n");
     for (    Stats stats : log) {
-      output.write(stats.pass + "," + String.valueOf(stats.runtime)+ ","+ String.valueOf(stats.runs)+ ","+ String.valueOf(stats.changes)+ ","+ String.valueOf(stats.diff)+ ","+ String.valueOf(stats.gzDiff)+ ","+ String.valueOf(stats.size)+ ","+ String.valueOf(stats.gzSize)+ "\n");
+      output.write(String.format("%s,%d,%d,%d,%d,%d,%d,%d\n",stats.pass,stats.runtime,stats.runs,stats.changes,stats.diff,stats.gzDiff,stats.size,stats.gzSize));
     }
     output.write("\n");
     output.close();
   }
  catch (  IOException e) {
-    e.printStackTrace();
+    throw new RuntimeException("Failed to write statistics to output.",e);
   }
 }

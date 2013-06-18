@@ -9,9 +9,9 @@
   for (  NamedPass pass : myPasses) {
     lastRuns.put(pass,START_TIME);
   }
-  Set<NamedPass> madeChanges=new HashSet<NamedPass>();
-  Set<NamedPass> runInPrevIter=new HashSet<NamedPass>();
-  State s=State.RUN_PASSES_NOT_RUN_IN_PREV_ITER;
+  Set<NamedPass> madeChanges=Sets.newHashSet();
+  Set<NamedPass> runInPrevIter=Sets.newHashSet();
+  State state=State.RUN_PASSES_NOT_RUN_IN_PREV_ITER;
   boolean lastIterMadeChanges;
   int count=0;
   try {
@@ -21,7 +21,7 @@
       }
       lastIterMadeChanges=false;
       for (      NamedPass pass : myPasses) {
-        if ((s == State.RUN_PASSES_NOT_RUN_IN_PREV_ITER && !runInPrevIter.contains(pass)) || (s == State.RUN_PASSES_THAT_CHANGED_STH_IN_PREV_ITER && madeChanges.contains(pass))) {
+        if ((state == State.RUN_PASSES_NOT_RUN_IN_PREV_ITER && !runInPrevIter.contains(pass)) || (state == State.RUN_PASSES_THAT_CHANGED_STH_IN_PREV_ITER && madeChanges.contains(pass))) {
           timestamp++;
           currentPass=pass;
           pass.process(externs,root);
@@ -42,16 +42,18 @@
           runInPrevIter.remove(pass);
         }
       }
-      if (s == State.RUN_PASSES_NOT_RUN_IN_PREV_ITER) {
+      if (state == State.RUN_PASSES_NOT_RUN_IN_PREV_ITER) {
         if (lastIterMadeChanges) {
-          s=State.RUN_PASSES_THAT_CHANGED_STH_IN_PREV_ITER;
+          state=State.RUN_PASSES_THAT_CHANGED_STH_IN_PREV_ITER;
         }
  else {
           return;
         }
       }
- else       if (!lastIterMadeChanges) {
-        s=State.RUN_PASSES_NOT_RUN_IN_PREV_ITER;
+ else {
+        if (!lastIterMadeChanges) {
+          state=State.RUN_PASSES_NOT_RUN_IN_PREV_ITER;
+        }
       }
     }
   }
