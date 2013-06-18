@@ -8,14 +8,14 @@
       }
     }
  else {
-      overloadCache=new LinkedList<ResolvedOverload>();
+      overloadCache=new CopyOnWriteArrayList<ResolvedOverload>();
     }
     int index=findFunction(cx,methods,args);
     if (overloadCache.size() < methods.length * 2) {
 synchronized (overloadCache) {
         ResolvedOverload ovl=new ResolvedOverload(args,index);
         if (!overloadCache.contains(ovl)) {
-          overloadCache.addFirst(ovl);
+          overloadCache.add(0,ovl);
         }
       }
     }
