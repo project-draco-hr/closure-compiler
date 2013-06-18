@@ -18,9 +18,7 @@
  else       if (!qVar.isTypeInferred()) {
         return;
       }
-      if (qVar.getScope() == scope) {
-        scope.undeclare(qVar);
-      }
+      qVar.getScope().undeclare(qVar);
     }
   }
   if (valueType == null) {
@@ -41,9 +39,10 @@
     defineSlot(n,parent,valueType,inferred);
   }
  else   if (rhsValue != null && rhsValue.isTrue()) {
-    FunctionType ownerType=JSType.toMaybeFunctionType(getObjectSlot(ownerName));
-    if (ownerType != null) {
-      JSType ownerTypeOfThis=ownerType.getTypeOfThis();
+    ObjectType ownerType=getObjectSlot(ownerName);
+    FunctionType ownerFnType=JSType.toMaybeFunctionType(ownerType);
+    if (ownerFnType != null) {
+      JSType ownerTypeOfThis=ownerFnType.getTypeOfThis();
       String delegateName=codingConvention.getDelegateSuperclassName();
       JSType delegateType=delegateName == null ? null : typeRegistry.getType(delegateName);
       if (delegateType != null && ownerTypeOfThis.isSubtype(delegateType)) {
