@@ -1,15 +1,13 @@
 {
-  Node originalCond=node.getFirstChild();
-  Node placeholder=IR.script();
-  node.replaceChild(originalCond,placeholder);
-  MinimizedCondition minCond=(aggressiveMinimization) ? MinimizedCondition.fromConditionNode(originalCond) : MinimizedCondition.unoptimized(originalCond);
-  MinimizedCondition.MeasuredNode mNode=minCond.getShorterRepresentation(false);
-  if (mNode.node.isNot()) {
-    node.replaceChild(placeholder,mNode.node.removeFirstChild());
+  MinimizedCondition minCond=(aggressiveMinimization) ? MinimizedCondition.fromConditionNode(n.getFirstChild()) : MinimizedCondition.unoptimized(n.getFirstChild());
+  MinimizedCondition.MeasuredNode mNode=minCond.getMinimized(MinimizationStyle.ALLOW_LEADING_NOT);
+  Node placeholder=minCond.getPlaceholder();
+  if (mNode.getNode().isNot()) {
+    n.replaceChild(placeholder,mNode.getNode().removeFirstChild());
     reportCodeChange();
   }
  else {
     replaceNode(placeholder,mNode);
   }
-  return node;
+  return n;
 }

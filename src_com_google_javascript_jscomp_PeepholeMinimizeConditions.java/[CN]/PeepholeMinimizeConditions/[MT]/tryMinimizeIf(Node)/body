@@ -6,20 +6,13 @@
   }
   Node thenBranch=originalCond.getNext();
   Node elseBranch=thenBranch.getNext();
-  Node placeholder=IR.script().srcref(originalCond);
-  n.replaceChild(originalCond,placeholder);
+  MinimizedCondition minCond=(aggressiveMinimization) ? MinimizedCondition.fromConditionNode(originalCond) : MinimizedCondition.unoptimized(originalCond);
+  originalCond=null;
+  Node placeholder=minCond.getPlaceholder();
   MinimizedCondition.MeasuredNode unnegatedCond;
   MinimizedCondition.MeasuredNode shortCond;
-  if (aggressiveMinimization) {
-    MinimizedCondition minCond=MinimizedCondition.fromConditionNode(originalCond);
-    unnegatedCond=minCond.getShorterRepresentation(true);
-    shortCond=minCond.getShorterRepresentation(false);
-  }
- else {
-    unnegatedCond=new MinimizedCondition.MeasuredNode(originalCond,0,false);
-    shortCond=unnegatedCond;
-  }
-  originalCond=null;
+  unnegatedCond=minCond.getMinimized(MinimizationStyle.PREFER_UNNEGATED);
+  shortCond=minCond.getMinimized(MinimizationStyle.ALLOW_LEADING_NOT);
   if (elseBranch == null) {
     if (isFoldableExpressBlock(thenBranch)) {
       Node expr=getBlockExpression(thenBranch);
@@ -27,19 +20,19 @@
         replaceNode(placeholder,unnegatedCond);
         return n;
       }
-      if (shortCond.node.isNot()) {
-        Node or=IR.or(shortCond.node.removeFirstChild(),expr.removeFirstChild()).srcref(n);
+      if (shortCond.getNode().isNot()) {
+        Node or=IR.or(shortCond.getNode().removeFirstChild(),expr.removeFirstChild()).srcref(n);
         Node newExpr=NodeUtil.newExpr(or);
         parent.replaceChild(n,newExpr);
         reportCodeChange();
         return newExpr;
       }
-      if (isLowerPrecedence(shortCond.node,AND_PRECEDENCE) && isLowerPrecedence(expr.getFirstChild(),AND_PRECEDENCE)) {
+      if (isLowerPrecedence(shortCond.getNode(),AND_PRECEDENCE) && isLowerPrecedence(expr.getFirstChild(),AND_PRECEDENCE)) {
         replaceNode(placeholder,shortCond);
         return n;
       }
       n.removeChild(placeholder);
-      Node and=IR.and(shortCond.node,expr.removeFirstChild()).srcref(n);
+      Node and=IR.and(shortCond.getNode(),expr.removeFirstChild()).srcref(n);
       Node newExpr=NodeUtil.newExpr(and);
       parent.replaceChild(n,newExpr);
       reportCodeChange();
@@ -52,9 +45,9 @@
           Node innerCond=innerIf.getFirstChild();
           Node innerThenBranch=innerCond.getNext();
           Node innerElseBranch=innerThenBranch.getNext();
-          if (innerElseBranch == null && !(isLowerPrecedence(unnegatedCond.node,AND_PRECEDENCE) && isLowerPrecedence(innerCond,AND_PRECEDENCE))) {
+          if (innerElseBranch == null && !(isLowerPrecedence(unnegatedCond.getNode(),AND_PRECEDENCE) && isLowerPrecedence(innerCond,AND_PRECEDENCE))) {
             n.detachChildren();
-            n.addChildToBack(IR.and(unnegatedCond.node,innerCond.detachFromParent()).srcref(placeholder));
+            n.addChildToBack(IR.and(unnegatedCond.getNode(),innerCond.detachFromParent()).srcref(placeholder));
             n.addChildrenToBack(innerThenBranch.detachFromParent());
             reportCodeChange();
             return n;
@@ -66,8 +59,8 @@
     return n;
   }
   tryRemoveRepeatedStatements(n);
-  if (shortCond.node.isNot() && !consumesDanglingElse(elseBranch)) {
-    n.replaceChild(placeholder,shortCond.node.removeFirstChild());
+  if (shortCond.getNode().isNot() && !consumesDanglingElse(elseBranch)) {
+    n.replaceChild(placeholder,shortCond.getNode().removeFirstChild());
     n.removeChild(thenBranch);
     n.addChildToBack(thenBranch);
     reportCodeChange();
@@ -79,7 +72,7 @@
     n.removeChild(placeholder);
     thenExpr.detachFromParent();
     elseExpr.detachFromParent();
-    Node returnNode=IR.returnNode(IR.hook(shortCond.node,thenExpr,elseExpr).srcref(n));
+    Node returnNode=IR.returnNode(IR.hook(shortCond.getNode(),thenExpr,elseExpr).srcref(n));
     parent.replaceChild(n,returnNode);
     reportCodeChange();
     return returnNode;
@@ -92,13 +85,13 @@
     if (thenOp.getType() == elseOp.getType()) {
       if (NodeUtil.isAssignmentOp(thenOp)) {
         Node lhs=thenOp.getFirstChild();
-        if (areNodesEqualForInlining(lhs,elseOp.getFirstChild()) && !mayEffectMutableState(lhs) && (!mayHaveSideEffects(unnegatedCond.node) || (thenOp.isAssign() && thenOp.getFirstChild().isName()))) {
+        if (areNodesEqualForInlining(lhs,elseOp.getFirstChild()) && !mayEffectMutableState(lhs) && (!mayHaveSideEffects(unnegatedCond.getNode()) || (thenOp.isAssign() && thenOp.getFirstChild().isName()))) {
           n.removeChild(placeholder);
           Node assignName=thenOp.removeFirstChild();
           Node thenExpr=thenOp.removeFirstChild();
           Node elseExpr=elseOp.getLastChild();
           elseOp.removeChild(elseExpr);
-          Node hookNode=IR.hook(shortCond.node,thenExpr,elseExpr).srcref(n);
+          Node hookNode=IR.hook(shortCond.getNode(),thenExpr,elseExpr).srcref(n);
           Node assign=new Node(thenOp.getType(),assignName,hookNode).srcref(thenOp);
           Node expr=NodeUtil.newExpr(assign);
           parent.replaceChild(n,expr);
@@ -110,7 +103,7 @@
     n.removeChild(placeholder);
     thenOp.detachFromParent();
     elseOp.detachFromParent();
-    Node expr=IR.exprResult(IR.hook(shortCond.node,thenOp,elseOp).srcref(n));
+    Node expr=IR.exprResult(IR.hook(shortCond.getNode(),thenOp,elseOp).srcref(n));
     parent.replaceChild(n,expr);
     reportCodeChange();
     return expr;
@@ -126,7 +119,7 @@
       Node thenExpr=name1.removeChildren();
       Node elseExpr=elseAssign.getLastChild().detachFromParent();
       placeholder.detachFromParent();
-      Node hookNode=IR.hook(shortCond.node,thenExpr,elseExpr).srcref(n);
+      Node hookNode=IR.hook(shortCond.getNode(),thenExpr,elseExpr).srcref(n);
       var.detachFromParent();
       name1.addChildrenToBack(hookNode);
       parent.replaceChild(n,var);
@@ -143,7 +136,7 @@
       Node thenExpr=thenAssign.getLastChild().detachFromParent();
       Node elseExpr=name2.removeChildren();
       placeholder.detachFromParent();
-      Node hookNode=IR.hook(shortCond.node,thenExpr,elseExpr).srcref(n);
+      Node hookNode=IR.hook(shortCond.getNode(),thenExpr,elseExpr).srcref(n);
       var.detachFromParent();
       name2.addChildrenToBack(hookNode);
       parent.replaceChild(n,var);

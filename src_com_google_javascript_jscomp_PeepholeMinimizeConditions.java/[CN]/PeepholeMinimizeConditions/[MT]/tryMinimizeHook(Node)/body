@@ -1,12 +1,10 @@
 {
-  Node originalCond=n.getFirstChild();
-  Node placeholder=IR.script();
-  n.replaceChild(originalCond,placeholder);
-  MinimizedCondition minCond=(aggressiveMinimization) ? MinimizedCondition.fromConditionNode(originalCond) : MinimizedCondition.unoptimized(originalCond);
-  MinimizedCondition.MeasuredNode mNode=minCond.getShorterRepresentation(false);
-  if (mNode.node.isNot()) {
+  MinimizedCondition minCond=(aggressiveMinimization) ? MinimizedCondition.fromConditionNode(n.getFirstChild()) : MinimizedCondition.unoptimized(n.getFirstChild());
+  MinimizedCondition.MeasuredNode mNode=minCond.getMinimized(MinimizationStyle.ALLOW_LEADING_NOT);
+  Node placeholder=minCond.getPlaceholder();
+  if (mNode.getNode().isNot()) {
     Node thenBranch=n.getFirstChild().getNext();
-    n.replaceChild(placeholder,mNode.node.removeFirstChild());
+    n.replaceChild(placeholder,mNode.getNode().removeFirstChild());
     n.removeChild(thenBranch);
     n.addChildToBack(thenBranch);
     reportCodeChange();

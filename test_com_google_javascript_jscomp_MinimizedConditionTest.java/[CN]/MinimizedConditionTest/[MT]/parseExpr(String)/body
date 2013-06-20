@@ -1,0 +1,13 @@
+{
+  Compiler compiler=new Compiler();
+  List<SourceFile> input=Lists.newArrayList(SourceFile.fromCode("code",code));
+  List<SourceFile> externs=Lists.newArrayList();
+  compiler.init(externs,input,new CompilerOptions());
+  Node root=compiler.parseInputs();
+  assertTrue("Unexpected parse error(s): " + Joiner.on("\n").join(compiler.getErrors()),root != null);
+  Node externsRoot=root.getFirstChild();
+  Node mainRoot=externsRoot.getNext();
+  Node script=mainRoot.getFirstChild();
+  Node exprResult=script.getFirstChild();
+  return exprResult.getFirstChild();
+}
