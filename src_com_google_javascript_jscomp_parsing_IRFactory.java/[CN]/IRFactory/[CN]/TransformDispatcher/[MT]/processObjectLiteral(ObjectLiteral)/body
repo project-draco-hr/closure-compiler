@@ -14,8 +14,13 @@
         continue;
       }
     }
-    Node key=transformAsString(el.getLeft());
+    AstNode rawKey=el.getLeft();
+    Node key=transformAsString(rawKey);
     key.setType(Token.STRING_KEY);
+    if (rawKey instanceof Name && !isAllowedProp(key.getString())) {
+      key.putBooleanProp(Node.QUOTED_PROP,true);
+      errorReporter.warning(INVALID_ES3_PROP_NAME,sourceName,key.getLineno(),"",key.getCharno());
+    }
     Node value=transform(el.getRight());
     if (el.isGetter()) {
       key.setType(Token.GETTER_DEF);

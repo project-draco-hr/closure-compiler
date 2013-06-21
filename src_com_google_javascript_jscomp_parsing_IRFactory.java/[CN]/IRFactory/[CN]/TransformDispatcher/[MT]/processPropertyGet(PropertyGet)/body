@@ -1,6 +1,13 @@
 {
   Node leftChild=transform(getNode.getTarget());
-  Node newNode=newNode(Token.GETPROP,leftChild,transformAsString(getNode.getProperty()));
+  AstNode nodeProp=getNode.getProperty();
+  Node rightChild=transformAsString(nodeProp);
+  int nodeType=Token.GETPROP;
+  if (nodeProp instanceof Name && !isAllowedProp(((Name)nodeProp).getIdentifier())) {
+    nodeType=Token.GETELEM;
+    errorReporter.warning(INVALID_ES3_PROP_NAME,sourceName,rightChild.getLineno(),"",rightChild.getCharno());
+  }
+  Node newNode=newNode(nodeType,leftChild,rightChild);
   newNode.setLineno(leftChild.getLineno());
   newNode.setCharno(leftChild.getCharno());
   maybeSetLengthFrom(newNode,getNode);

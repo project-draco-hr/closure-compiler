@@ -1,0 +1,9 @@
+{
+  reportEs3Props=false;
+  assertNoWarningOrError("var x = y.function;");
+  reportEs3Props=true;
+  String message="Keywords and reserved words are not allowed as unquoted property " + "names in older versions of JavaScript. " + "If you are targeting newer versions of JavaScript, "+ "set the appropriate language_in option.";
+  JSError error=assertWarning("var x = y.function;",RhinoErrorReporter.INVALID_ES3_PROP_NAME,message);
+  assertEquals(1,error.getLineNumber());
+  assertEquals(10,error.getCharno());
+}
