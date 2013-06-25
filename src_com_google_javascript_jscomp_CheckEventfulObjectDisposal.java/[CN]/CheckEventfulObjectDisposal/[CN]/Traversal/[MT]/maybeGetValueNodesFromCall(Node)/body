@@ -14,28 +14,28 @@
   }
   for (  String disposeMethod : disposeMethods.keySet()) {
     if (property.matches(disposeMethod)) {
-      int[] disposeArguments=disposeMethods.get(disposeMethod);
-      if (disposeArguments == disposeAll) {
-        for (Node t=first.getNext(); t != null; t=t.getNext()) {
+      List<Integer> disposeArguments=disposeMethods.get(disposeMethod);
+      Node t=first.getNext();
+      int tsArgument=0;
+      for (      Integer disposeArgument : disposeArguments) {
+        if (disposeArgument == DISPOSE_ALL) {
+          for (Node tt=first.getNext(); tt != null; tt=tt.getNext()) {
+            ret.add(tt);
+          }
+          break;
+        }
+        if (tsArgument > disposeArgument) {
+          t=first.getNext();
+          tsArgument=0;
+        }
+        for (; tsArgument < disposeArgument && t != null; ++tsArgument) {
+          t=t.getNext();
+        }
+        if (tsArgument == disposeArgument && t != null) {
           ret.add(t);
         }
       }
- else {
-        Node t=first.getNext();
-        int tsArgument=0;
-        for (        int index : disposeArguments) {
-          if (tsArgument > disposeArguments[index]) {
-            t=first.getNext();
-            tsArgument=0;
-          }
-          for (; tsArgument < disposeArguments[index] && t != null; ++tsArgument) {
-            t=t.getNext();
-          }
-          if (tsArgument == disposeArguments[index] && t != null) {
-            ret.add(t);
-          }
-        }
-      }
+      return ret;
     }
   }
   Node calledOn=n.getFirstChild().getFirstChild();

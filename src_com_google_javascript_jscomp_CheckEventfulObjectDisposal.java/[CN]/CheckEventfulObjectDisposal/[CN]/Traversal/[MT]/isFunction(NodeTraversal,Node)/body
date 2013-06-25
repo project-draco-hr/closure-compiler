@@ -1,0 +1,30 @@
+{
+  Preconditions.checkArgument(n.isFunction());
+  JSDocInfo jsDocInfo=NodeUtil.getFunctionJSDocInfo(n);
+  if (jsDocInfo != null && jsDocInfo.isDisposes()) {
+    JSType type=n.getJSType();
+    if (type == null || type.isUnknownType()) {
+      return;
+    }
+    FunctionType funType=type.toMaybeFunctionType();
+    Node paramNode=NodeUtil.getFunctionParameters(n).getFirstChild();
+    List<Integer> positionalDisposedParameters=Lists.newArrayList();
+    if (jsDocInfo.disposesOf("*")) {
+      positionalDisposedParameters.add(DISPOSE_ALL);
+    }
+ else {
+      int index=0;
+      for (      Node p : funType.getParameters()) {
+        if (paramNode == null) {
+          break;
+        }
+        if (jsDocInfo.disposesOf(paramNode.getString())) {
+          positionalDisposedParameters.add(index);
+        }
+        paramNode=paramNode.getNext();
+        index++;
+      }
+    }
+    addDisposeCall(NodeUtil.getFunctionName(n),positionalDisposedParameters);
+  }
+}
