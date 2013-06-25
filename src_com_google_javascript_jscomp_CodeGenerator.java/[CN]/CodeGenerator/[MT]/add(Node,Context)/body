@@ -294,8 +294,15 @@ addExpr(first,NodeUtil.precedence(type),context);
 if (needsParens) {
 add(")");
 }
+if (this.languageMode == LanguageMode.ECMASCRIPT3 && TokenStream.isKeyword(last.getString())) {
+add("[");
+add(last);
+add("]");
+}
+ else {
 add(".");
 addIdentifier(last.getString());
+}
 break;
 }
 case Token.GETELEM:
@@ -457,7 +464,7 @@ add(c);
  else {
 Preconditions.checkState(c.isStringKey());
 String key=c.getString();
-if (!c.isQuotedString() && !TokenStream.isKeyword(key) && TokenStream.isJSIdentifier(key)&& NodeUtil.isLatin(key)) {
+if (!c.isQuotedString() && !(languageMode == LanguageMode.ECMASCRIPT3 && TokenStream.isKeyword(key)) && TokenStream.isJSIdentifier(key)&& NodeUtil.isLatin(key)) {
 add(key);
 }
  else {
