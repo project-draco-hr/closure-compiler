@@ -2,6 +2,9 @@
   FunctionType subCtor=subObject.getConstructor();
   ObjectType implicitProto=subObject.getImplicitPrototype();
   ObjectType declaredSuper=implicitProto == null ? null : implicitProto.getImplicitPrototype();
+  if (declaredSuper != null && declaredSuper.isTemplatizedType()) {
+    declaredSuper=declaredSuper.toMaybeTemplatizedType().getReferencedType();
+  }
   if (declaredSuper != null && !(superObject instanceof UnknownType) && !declaredSuper.isEquivalentTo(superObject)) {
     if (declaredSuper.isEquivalentTo(getNativeType(OBJECT_TYPE))) {
       registerMismatch(superObject,declaredSuper,report(t.makeError(n,MISSING_EXTENDS_TAG_WARNING,subObject.toString())));
