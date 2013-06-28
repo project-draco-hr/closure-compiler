@@ -1,13 +1,18 @@
 {
-  if (typesIndexedByProperty.containsKey(propertyName)) {
-    for (    JSType alt : typesIndexedByProperty.get(propertyName).getAlternates()) {
-      JSType greatestSubtype=alt.getGreatestSubtype(type);
-      if (!greatestSubtype.isEmptyType()) {
-        RecordType maybeRecordType=greatestSubtype.toMaybeRecordType();
-        if (maybeRecordType != null && maybeRecordType.isSynthetic()) {
-          continue;
+  if (type.isStruct()) {
+    return type.hasProperty(propertyName);
+  }
+ else {
+    if (typesIndexedByProperty.containsKey(propertyName)) {
+      for (      JSType alt : typesIndexedByProperty.get(propertyName).getAlternates()) {
+        JSType greatestSubtype=alt.getGreatestSubtype(type);
+        if (!greatestSubtype.isEmptyType()) {
+          RecordType maybeRecordType=greatestSubtype.toMaybeRecordType();
+          if (maybeRecordType != null && maybeRecordType.isSynthetic()) {
+            continue;
+          }
+          return true;
         }
-        return true;
       }
     }
   }
