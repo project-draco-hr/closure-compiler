@@ -1,0 +1,26 @@
+{
+  if (node.isScript()) {
+    String fileName=getFileName(traversal);
+    if (instrumentationData.get(fileName) != null) {
+      node.addChildToFront(newHeaderNode(traversal));
+    }
+    return;
+  }
+  if (reach == CoverageReach.CONDITIONAL && parent != null && parent.isScript()) {
+    return;
+  }
+  if (node.isFunction() || node.isWith() || node.isCase()|| node.isDefaultCase()|| node.isCatch()) {
+    Node codeBlock=node.getLastChild();
+    codeBlock.addChildToFront(newInstrumentationNode(traversal,node.getLineno()));
+    return;
+  }
+  if (node.isTry()) {
+    Node firstChild=node.getFirstChild();
+    firstChild.addChildToFront(newInstrumentationNode(traversal,node.getLineno()));
+    return;
+  }
+  if (parent != null && NodeUtil.isStatementBlock(parent)) {
+    parent.addChildBefore(newInstrumentationNode(traversal,node.getLineno()),node);
+    return;
+  }
+}

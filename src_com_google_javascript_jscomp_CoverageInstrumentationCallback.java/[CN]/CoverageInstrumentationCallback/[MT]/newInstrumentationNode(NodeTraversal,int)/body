@@ -1,0 +1,15 @@
+{
+  String fileName=getFileName(traversal);
+  String arrayName=createArrayName(traversal);
+  Node nameNode=IR.name(arrayName);
+  Node numNode=IR.number(lineNumber - 1);
+  Node getElemNode=IR.getelem(nameNode,numNode);
+  Node trueNode=IR.trueNode();
+  Node assignNode=IR.assign(getElemNode,trueNode);
+  Node exprNode=IR.exprResult(assignNode);
+  if (!instrumentationData.containsKey(fileName)) {
+    instrumentationData.put(fileName,new FileInstrumentationData(fileName,arrayName));
+  }
+  instrumentationData.get(fileName).setLineAsInstrumented(lineNumber);
+  return exprNode;
+}

@@ -1,0 +1,7 @@
+{
+  String fileName=getFileName(traversal);
+  String arrayName=createArrayName(traversal);
+  FileInstrumentationData data=instrumentationData.get(fileName);
+  Preconditions.checkNotNull(data);
+  return IR.block(newArrayDeclarationNode(traversal),IR.exprResult(IR.call(IR.getprop(IR.name("JSCompiler_lcov_executedLines"),IR.string("push")),IR.name(arrayName))),IR.exprResult(IR.call(IR.getprop(IR.name("JSCompiler_lcov_instrumentedLines"),IR.string("push")),IR.string(data.getInstrumentedLinesAsHexString()))),IR.exprResult(IR.call(IR.getprop(IR.name("JSCompiler_lcov_fileNames"),IR.string("push")),IR.string(fileName))));
+}
