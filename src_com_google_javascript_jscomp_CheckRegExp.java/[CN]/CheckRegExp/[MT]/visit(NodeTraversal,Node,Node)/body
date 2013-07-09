@@ -4,7 +4,7 @@
     if (name.equals("RegExp") && t.getScope().getVar(name) == null) {
       int parentType=parent.getType();
       boolean first=(n == parent.getFirstChild());
-      if (!((parentType == Token.NEW && first) || (parentType == Token.CALL && first) || (parentType == Token.INSTANCEOF && !first))) {
+      if (!((parentType == Token.NEW && first) || (parentType == Token.CALL && first) || (parentType == Token.INSTANCEOF && !first)|| parentType == Token.EQ || parentType == Token.NE || parentType == Token.SHEQ || parentType == Token.SHNE || parentType == Token.CASE || (parentType == Token.GETPROP && first && !REGEXP_PROPERTY_BLACKLIST.contains(parent.getLastChild().getString())))) {
         t.report(n,REGEXP_REFERENCE);
         globalRegExpPropertiesUsed=true;
       }
