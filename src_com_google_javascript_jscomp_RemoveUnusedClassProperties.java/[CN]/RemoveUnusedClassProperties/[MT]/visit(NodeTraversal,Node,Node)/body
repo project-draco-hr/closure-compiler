@@ -3,13 +3,11 @@ switch (n.getType()) {
 case Token.GETPROP:
 {
       String propName=n.getLastChild().getString();
-      if (inExterns || isPinningPropertyUse(n)) {
+      if (inExterns || isPinningPropertyUse(n) || !n.getFirstChild().isThis()) {
         used.add(propName);
       }
  else {
-        if (n.getFirstChild().isThis()) {
-          candidates.add(n);
-        }
+        candidates.add(n);
       }
       break;
     }
