@@ -3,7 +3,7 @@ switch (n.getType()) {
 case Token.GETPROP:
 {
       String propName=n.getLastChild().getString();
-      if (inExterns || isPinningPropertyUse(n) || !isKnownClassProperty(n)) {
+      if (inExterns || isPinningPropertyUse(n) || !n.getFirstChild().isThis()) {
         used.add(propName);
       }
  else {
@@ -11,20 +11,13 @@ case Token.GETPROP:
       }
       break;
     }
-case Token.OBJECTLIT:
-{
-    for (    Node c : n.children()) {
-      used.add(c.getString());
-    }
-    break;
-  }
 case Token.CALL:
-Node target=n.getFirstChild();
+  Node target=n.getFirstChild();
 if (n.hasMoreThanOneChild() && target.isName() && target.getString().equals(NodeUtil.JSC_PROPERTY_NAME_FN)) {
-Node propName=target.getNext();
-if (propName.isString()) {
-  used.add(propName.getString());
-}
+  Node propName=target.getNext();
+  if (propName.isString()) {
+    used.add(propName.getString());
+  }
 }
 break;
 }
