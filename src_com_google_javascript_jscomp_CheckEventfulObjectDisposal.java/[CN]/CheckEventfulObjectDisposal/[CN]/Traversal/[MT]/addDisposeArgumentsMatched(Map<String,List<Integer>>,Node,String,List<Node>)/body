@@ -1,0 +1,34 @@
+{
+  for (  String disposeMethod : map.keySet()) {
+    if (property.endsWith(disposeMethod)) {
+      List<Integer> disposeArguments=map.get(disposeMethod);
+      Node t=n.getNext();
+      int tsArgument=0;
+      for (      Integer disposeArgument : disposeArguments) {
+switch (disposeArgument) {
+case DISPOSE_ALL:
+          for (Node tt=n.getNext(); tt != null; tt=tt.getNext()) {
+            foundDisposeCalls.add(tt);
+          }
+        break;
+case DISPOSE_SELF:
+      Node calledOn=n.getFirstChild();
+    foundDisposeCalls.add(calledOn);
+  break;
+default :
+if (tsArgument > disposeArgument) {
+  t=n.getNext();
+  tsArgument=0;
+}
+for (; tsArgument < disposeArgument && t != null; ++tsArgument) {
+t=t.getNext();
+}
+if (tsArgument == disposeArgument && t != null) {
+foundDisposeCalls.add(t);
+}
+break;
+}
+}
+}
+}
+}

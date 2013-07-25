@@ -5,56 +5,14 @@
     return ret;
   }
   String property=first.getQualifiedName();
-  if (property.endsWith(".registerDisposable")) {
-    Node base=first.getFirstChild();
-    JSType baseType=base.getJSType();
-    if (baseType != null && isPossiblySubtype(baseType,googDisposableType)) {
-      ret.add(n.getLastChild());
-    }
+  Node base=first.getFirstChild();
+  JSType baseType=null;
+  if (base != null) {
+    baseType=base.getJSType();
   }
-  for (  String disposeMethod : disposeMethods.keySet()) {
-    if (property.matches(disposeMethod)) {
-      List<Integer> disposeArguments=disposeMethods.get(disposeMethod);
-      Node t=first.getNext();
-      int tsArgument=0;
-      for (      Integer disposeArgument : disposeArguments) {
-        if (disposeArgument == DISPOSE_ALL) {
-          for (Node tt=first.getNext(); tt != null; tt=tt.getNext()) {
-            ret.add(tt);
-          }
-          break;
-        }
-        if (tsArgument > disposeArgument) {
-          t=first.getNext();
-          tsArgument=0;
-        }
-        for (; tsArgument < disposeArgument && t != null; ++tsArgument) {
-          t=t.getNext();
-        }
-        if (tsArgument == disposeArgument && t != null) {
-          ret.add(t);
-        }
-      }
-      return ret;
-    }
-  }
-  Node calledOn=n.getFirstChild().getFirstChild();
-  if (property.endsWith(".dispose")) {
-    ret.add(calledOn);
-  }
-  if (property.endsWith(".removeAll")) {
-    if (calledOn != null) {
-      JSType calledOnType=calledOn.getJSType();
-      if (calledOnType != null && !calledOnType.isEmptyType() && !calledOnType.isUnknownType() && isPossiblySubtype(calledOnType,googEventsEventHandlerType)) {
-        ret.add(calledOn);
-      }
-    }
-  }
-  Node possiblyArray=first.getFirstChild();
-  if (possiblyArray != null) {
-    JSType possiblyArrayType=possiblyArray.getJSType();
-    if (possiblyArrayType != null && possiblyArrayType.isArrayType()) {
-      ret.add(n.getLastChild());
+  for (  JSType key : disposeCalls.keySet()) {
+    if (key == null || (baseType != null && isPossiblySubtype(baseType,key))) {
+      addDisposeArgumentsMatched(disposeCalls.get(key),first,property,ret);
     }
   }
   return ret;

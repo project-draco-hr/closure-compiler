@@ -1,8 +1,8 @@
 {
   Preconditions.checkArgument(checkingPolicy != DisposalCheckingPolicy.OFF);
-  googDisposableType=compiler.getTypeRegistry().getType(DISPOSABLE_TYPE_NAME);
+  googDisposableInterfaceType=compiler.getTypeRegistry().getType(DISPOSABLE_INTERFACE_TYPE_NAME);
   googEventsEventHandlerType=compiler.getTypeRegistry().getType(EVENT_HANDLER_TYPE_NAME);
-  if (googEventsEventHandlerType == null || googDisposableType == null) {
+  if (googEventsEventHandlerType == null || googDisposableInterfaceType == null) {
     return;
   }
   eventfulTypes=new HashSet<JSType>();
@@ -18,7 +18,7 @@
     if (e.seen == SeenType.ALLOCATED) {
       compiler.report(JSError.make(n.getSourceFileName(),n,EVENTFUL_OBJECT_NOT_DISPOSED));
     }
- else     if (e.seen == SeenType.ALLOCATED_LOCALLY) {
+ else     if (e.seen == SeenType.ALLOCATED_LOCALLY && checkingPolicy == DisposalCheckingPolicy.AGGRESSIVE) {
       compiler.report(JSError.make(n.getSourceFileName(),n,EVENTFUL_OBJECT_PURELY_LOCAL));
     }
   }

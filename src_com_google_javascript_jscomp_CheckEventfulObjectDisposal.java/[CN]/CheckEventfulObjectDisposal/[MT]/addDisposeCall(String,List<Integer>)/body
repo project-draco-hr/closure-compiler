@@ -1,3 +1,24 @@
 {
-  this.disposeMethods.put(pattern,argumentsThatAreDisposed);
+  String potentiallyTypeName, propertyName;
+  JSType objectType=null;
+  int lastPeriod=functionOrMethodName.lastIndexOf('.');
+  if (lastPeriod >= 0) {
+    potentiallyTypeName=functionOrMethodName.substring(0,lastPeriod);
+    propertyName=functionOrMethodName.substring(lastPeriod);
+    objectType=compiler.getTypeRegistry().getType(potentiallyTypeName);
+  }
+ else {
+    propertyName=functionOrMethodName;
+  }
+  Map<String,List<Integer>> map=this.disposeCalls.get(objectType);
+  if (map == null) {
+    map=Maps.newHashMap();
+    this.disposeCalls.put(objectType,map);
+  }
+  if (objectType == null) {
+    map.put(functionOrMethodName,argumentsThatAreDisposed);
+  }
+ else {
+    map.put(propertyName,argumentsThatAreDisposed);
+  }
 }
