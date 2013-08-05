@@ -1,5 +1,12 @@
 {
-  Node node=transform(initializerNode.getTarget());
+  Node node;
+  Comment comment=initializerNode.getTarget().getJsDocNode();
+  if (comment != null && !comment.getValue().contains("@")) {
+    node=transformNodeWithInlineJsDoc(initializerNode.getTarget());
+  }
+ else {
+    node=transform(initializerNode.getTarget());
+  }
   if (initializerNode.getInitializer() != null) {
     Node initalizer=transform(initializerNode.getInitializer());
     node.addChildToBack(initalizer);
