@@ -3,17 +3,12 @@
     double result;
     double lval=left.getDouble();
     double rval=right.getDouble();
-    if (!(lval >= Integer.MIN_VALUE && lval <= Integer.MAX_VALUE)) {
+    if (lval < Integer.MIN_VALUE) {
       report(BITWISE_OPERAND_OUT_OF_RANGE,left);
       return n;
     }
     if (!(rval >= 0 && rval < 32)) {
       report(SHIFT_AMOUNT_OUT_OF_BOUNDS,right);
-      return n;
-    }
-    int lvalInt=(int)lval;
-    if (lvalInt != lval) {
-      report(FRACTIONAL_BITWISE_OPERAND,left);
       return n;
     }
     int rvalInt=(int)rval;
@@ -23,14 +18,35 @@
     }
 switch (n.getType()) {
 case Token.LSH:
-      result=lvalInt << rvalInt;
-    break;
 case Token.RSH:
+      if (lval > Integer.MAX_VALUE) {
+        report(BITWISE_OPERAND_OUT_OF_RANGE,left);
+        return n;
+      }
+    int lvalInt=(int)lval;
+  if (lvalInt != lval) {
+    report(FRACTIONAL_BITWISE_OPERAND,left);
+    return n;
+  }
+if (n.getType() == Token.LSH) {
+  result=lvalInt << rvalInt;
+}
+ else {
   result=lvalInt >> rvalInt;
+}
 break;
 case Token.URSH:
-long lvalLong=lvalInt & 0xffffffffL;
-result=lvalLong >>> rvalInt;
+long maxUint32=0xffffffffL;
+if (lval > maxUint32) {
+report(BITWISE_OPERAND_OUT_OF_RANGE,left);
+return n;
+}
+long lvalLong=(long)lval;
+if (lvalLong != lval) {
+report(FRACTIONAL_BITWISE_OPERAND,left);
+return n;
+}
+result=(lvalLong & maxUint32) >>> rvalInt;
 break;
 default :
 throw new AssertionError("Unknown shift operator: " + Token.name(n.getType()));
