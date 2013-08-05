@@ -15,7 +15,15 @@ case Token.POS:
 case Token.NEG:
       break;
 case Token.CALL:
-    type=n == parent.getFirstChild() ? Ref.Type.CALL_GET : Ref.Type.ALIASING_GET;
+    if (n == parent.getFirstChild()) {
+      type=Ref.Type.CALL_GET;
+    }
+ else     if (isClassDefiningCall(parent)) {
+      type=Ref.Type.DIRECT_GET;
+    }
+ else {
+      type=Ref.Type.ALIASING_GET;
+    }
   break;
 case Token.NEW:
 type=n == parent.getFirstChild() ? Ref.Type.DIRECT_GET : Ref.Type.ALIASING_GET;
