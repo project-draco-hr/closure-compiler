@@ -7,29 +7,54 @@ switch (n.getType()) {
 case Token.FUNCTION:
       if (parent.isScript()) {
         export=NodeUtil.getFunctionName(n);
-        context=new GenerateNodeContext(n,parent,n);
+        context=new GenerateNodeContext(n,Mode.EXPORT);
       }
     break;
 case Token.ASSIGN:
   Node grandparent=parent.getParent();
-if (grandparent != null && grandparent.isScript() && parent.isExprResult() && !n.getLastChild().isAssign()) {
-  export=n.getFirstChild().getQualifiedName();
-  context=new GenerateNodeContext(n,grandparent,parent);
+if (parent.isExprResult() && !n.getLastChild().isAssign()) {
+  if (grandparent != null && grandparent.isScript() && n.getFirstChild().isQualifiedName()) {
+    export=n.getFirstChild().getQualifiedName();
+    context=new GenerateNodeContext(n,Mode.EXPORT);
+  }
+ else   if (allowLocalExports && n.getFirstChild().isGetProp()) {
+    Node target=n.getFirstChild();
+    export=target.getLastChild().getString();
+    context=new GenerateNodeContext(n,Mode.EXTERN);
+  }
 }
 break;
 case Token.VAR:
 if (parent.isScript()) {
 if (n.getFirstChild().hasChildren() && !n.getFirstChild().getFirstChild().isAssign()) {
 export=n.getFirstChild().getString();
-context=new GenerateNodeContext(n,parent,n);
+context=new GenerateNodeContext(n,Mode.EXPORT);
 }
 }
+break;
+case Token.GETPROP:
+if (allowLocalExports && parent.isExprResult()) {
+export=n.getLastChild().getString();
+context=new GenerateNodeContext(n,Mode.EXTERN);
+}
+break;
+case Token.STRING_KEY:
+if (allowLocalExports) {
+export=n.getString();
+context=new GenerateNodeContext(n,Mode.EXTERN);
+}
+break;
 }
 if (export != null) {
 exports.put(export,context);
 }
  else {
+if (allowLocalExports) {
+compiler.report(t.makeError(n,EXPORT_ANNOTATION_NOT_ALLOWED));
+}
+ else {
 compiler.report(t.makeError(n,NON_GLOBAL_ERROR));
+}
 }
 }
 }

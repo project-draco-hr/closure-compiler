@@ -1,0 +1,19 @@
+{
+  CodingConvention convention=compiler.getCodingConvention();
+  Node n=context.getNode();
+  Node exprRoot=n;
+  while (!NodeUtil.isStatementBlock(exprRoot.getParent())) {
+    exprRoot=exprRoot.getParent();
+  }
+  while (true) {
+    Node next=exprRoot.getNext();
+    if (next != null && NodeUtil.isExprCall(next) && convention.getClassesDefinedByCall(next.getFirstChild()) != null) {
+      exprRoot=next;
+    }
+ else {
+      break;
+    }
+  }
+  Node block=exprRoot.getParent();
+  block.addChildAfter(stmt,exprRoot);
+}

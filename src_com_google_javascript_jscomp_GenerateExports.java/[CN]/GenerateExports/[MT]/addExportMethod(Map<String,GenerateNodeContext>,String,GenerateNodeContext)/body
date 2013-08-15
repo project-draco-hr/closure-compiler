@@ -1,0 +1,32 @@
+{
+  CodingConvention convention=compiler.getCodingConvention();
+  String parent=null;
+  String grandparent=null;
+  Node node=context.getNode().getFirstChild();
+  if (node.isGetProp()) {
+    Node parentNode=node.getFirstChild();
+    parent=parentNode.getQualifiedName();
+    if (parentNode.isGetProp() && parentNode.getLastChild().getString().equals(PROTOTYPE_PROPERTY)) {
+      grandparent=parentNode.getFirstChild().getQualifiedName();
+    }
+  }
+  boolean useExportSymbol=true;
+  if (grandparent != null && exports.containsKey(grandparent)) {
+    useExportSymbol=false;
+  }
+ else   if (parent != null && exports.containsKey(parent)) {
+    useExportSymbol=false;
+  }
+  Node call;
+  if (useExportSymbol) {
+    call=IR.call(NodeUtil.newQualifiedNameNode(convention,exportSymbolFunction,context.getNode(),export),IR.string(export),NodeUtil.newQualifiedNameNode(convention,export,context.getNode(),export));
+  }
+ else {
+    String property=getPropertyName(node);
+    call=IR.call(NodeUtil.newQualifiedNameNode(convention,exportPropertyFunction,context.getNode(),exportPropertyFunction),NodeUtil.newQualifiedNameNode(convention,parent,context.getNode(),exportPropertyFunction),IR.string(property),NodeUtil.newQualifiedNameNode(convention,export,context.getNode(),exportPropertyFunction));
+  }
+  Node expression=IR.exprResult(call);
+  annotate(expression);
+  addStatement(context,expression);
+  compiler.reportCodeChange();
+}
