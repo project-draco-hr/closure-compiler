@@ -3,12 +3,22 @@
   Node obj=getprop.getFirstChild();
   JSType nodeType=getJSType(obj);
   ObjectType objectType=ObjectType.cast(nodeType.restrictByNotNullOrUndefined());
+  boolean propCreationInConstructor=obj.isThis() && getJSType(syntacticScope.getRootNode()).isConstructor();
   if (objectType == null) {
     registry.registerPropertyOnType(propName,nodeType);
   }
  else {
     if (nodeType.isStruct() && !objectType.hasProperty(propName)) {
-      if (!(obj.isThis() && getJSType(syntacticScope.getRootNode()).isConstructor())) {
+      boolean staticPropCreation=false;
+      Node maybeAssignStm=getprop.getParent().getParent();
+      if (syntacticScope.isGlobal() && NodeUtil.isPrototypePropertyDeclaration(maybeAssignStm)) {
+        String propCreationFilename=maybeAssignStm.getSourceFileName();
+        Node ctor=objectType.getOwnerFunction().getSource();
+        if (ctor != null && ctor.getSourceFileName().equals(propCreationFilename)) {
+          staticPropCreation=true;
+        }
+      }
+      if (!propCreationInConstructor && !staticPropCreation) {
         return;
       }
     }
@@ -24,7 +34,7 @@
           objectType.defineInferredProperty(propName,rightType,getprop);
         }
       }
- else       if (obj.isThis() && getJSType(syntacticScope.getRootNode()).isConstructor()) {
+ else       if (propCreationInConstructor) {
         objectType.defineInferredProperty(propName,rightType,getprop);
       }
  else {
