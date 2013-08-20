@@ -1,17 +1,14 @@
 {
-  if (!sanityCheck) {
-    return new CompilerPass(){
-      @Override public void process(      Node externs,      Node root){
-        if (testSetupPass != null) {
-          testSetupPass.process(externs,root);
-        }
-        new VarCheck(compiler,false).process(externs,root);
-        if (!compiler.hasErrors()) {
-          new VarCheck(compiler,true).process(externs,root);
-        }
+  return new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      new VarCheck(compiler,sanityCheck).process(externs,root);
+      if (sanityCheck == false && !compiler.hasErrors()) {
+        new VarCheck(compiler,true).process(externs,root);
+      }
+      if (declarationCheck) {
+        new VariableTestCheck(compiler).process(externs,root);
       }
     }
-;
   }
-  return new VarCheck(compiler,sanityCheck);
+;
 }
