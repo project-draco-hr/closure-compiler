@@ -11,12 +11,7 @@
     Preconditions.checkState(childCount == 2,"Bad binary operator \"%s\": expected 2 arguments but got %s",opstr,childCount);
     int p=NodeUtil.precedence(type);
     Context rhsContext=getContextForNoInOperator(context);
-    if (last.getType() == type && NodeUtil.isAssociative(type)) {
-      addExpr(first,p,context);
-      cc.addOp(opstr,true);
-      addExpr(last,p,rhsContext);
-    }
- else     if (NodeUtil.isAssignmentOp(n) && NodeUtil.isAssignmentOp(last)) {
+    if (NodeUtil.isAssignmentOp(n) && NodeUtil.isAssignmentOp(last)) {
       addExpr(first,p,context);
       cc.addOp(opstr,true);
       addExpr(last,p,rhsContext);
