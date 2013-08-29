@@ -1,4 +1,12 @@
 {
-  SubclassRelationship classes=compiler.getCodingConvention().getClassesDefinedByCall(callNode);
-  return classes != null;
+  CodingConvention convention=compiler.getCodingConvention();
+  SubclassRelationship classes=convention.getClassesDefinedByCall(callNode);
+  if (classes != null) {
+    return true;
+  }
+  String className=convention.getSingletonGetterClassName(callNode);
+  if (className != null) {
+    return true;
+  }
+  return false;
 }
