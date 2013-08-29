@@ -1,5 +1,7 @@
 {
   Preconditions.checkState(scriptRoot.isScript());
-  NodeTraversal t=new NodeTraversal(compiler,this);
-  t.traverseWithScope(scriptRoot,SyntacticScopeCreator.generateUntypedTopScope(compiler));
+  ScopeCreator scopeCreator=createScopeCreator();
+  NodeTraversal t=new NodeTraversal(compiler,this,scopeCreator);
+  Scope topScope=scopeCreator.createScope(compiler.getRoot(),null);
+  t.traverseWithScope(scriptRoot,topScope);
 }

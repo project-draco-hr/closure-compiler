@@ -1,8 +1,11 @@
 {
+  ScopeCreator scopeCreator=createScopeCreator();
   if (!sanityCheck) {
-    NodeTraversal.traverse(compiler,externs,new NameRefInExternsCheck());
+    NodeTraversal traversal=new NodeTraversal(compiler,new NameRefInExternsCheck(),scopeCreator);
+    traversal.traverse(externs);
   }
-  NodeTraversal.traverseRoots(compiler,Lists.newArrayList(externs,root),this);
+  NodeTraversal t=new NodeTraversal(compiler,this,scopeCreator);
+  t.traverseRoots(Lists.newArrayList(externs,root));
   for (  String varName : varsToDeclareInExterns) {
     createSynthesizedExternVar(varName);
   }

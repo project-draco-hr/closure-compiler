@@ -1,0 +1,17 @@
+{
+  Node parent=n.getParent();
+  if (s.isGlobal()) {
+    Scope.Var origVar=s.getVar(name);
+    Node origParent=origVar.getParentNode();
+    if (origParent.isCatch() && parent.isCatch()) {
+      return;
+    }
+    boolean allowDupe=hasDuplicateDeclarationSuppression(n,origVar);
+    if (!allowDupe) {
+      compiler.report(JSError.make(NodeUtil.getSourceName(n),n,VAR_MULTIPLY_DECLARED_ERROR,name,(origVar.input != null ? origVar.input.getName() : "??")));
+    }
+  }
+ else   if (name.equals(ARGUMENTS) && !NodeUtil.isVarDeclaration(n)) {
+    compiler.report(JSError.make(NodeUtil.getSourceName(n),n,VAR_ARGUMENTS_SHADOWED_ERROR));
+  }
+}

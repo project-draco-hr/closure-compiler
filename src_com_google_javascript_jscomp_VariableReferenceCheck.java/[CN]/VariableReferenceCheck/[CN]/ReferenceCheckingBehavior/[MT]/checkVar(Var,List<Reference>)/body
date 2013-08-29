@@ -20,7 +20,7 @@
     }
     BasicBlock basicBlock=reference.getBasicBlock();
     boolean isDeclaration=reference.isDeclaration();
-    boolean allowDupe=SyntacticScopeCreator.hasDuplicateDeclarationSuppression(reference.getNode(),v);
+    boolean allowDupe=VarCheck.hasDuplicateDeclarationSuppression(reference.getNode(),v);
     if (isDeclaration && !allowDupe) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
         if (declaredBlock.provablyExecutesBefore(basicBlock)) {
@@ -42,7 +42,7 @@
     if (!isDeclaration && !isDeclaredInScope) {
       if (!reference.getNode().isFromExterns()) {
         Node grandparent=reference.getGrandparent();
-        if (grandparent.isName() && grandparent.getString() == v.name) {
+        if (grandparent.isName() && grandparent.getString().equals(v.name)) {
           continue;
         }
         if (reference.getScope() == v.scope) {
