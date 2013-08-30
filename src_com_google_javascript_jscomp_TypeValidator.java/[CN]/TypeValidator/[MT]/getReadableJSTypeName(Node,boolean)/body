@@ -1,4 +1,14 @@
 {
+  JSType type=getJSType(n);
+  if (dereference) {
+    ObjectType dereferenced=type.dereference();
+    if (dereferenced != null) {
+      type=dereferenced;
+    }
+  }
+  if (type.isFunctionPrototypeType() || (type.toObjectType() != null && type.toObjectType().getConstructor() != null)) {
+    return type.toString();
+  }
   if (n.isGetProp()) {
     ObjectType objectType=getJSType(n.getFirstChild()).dereference();
     if (objectType != null) {
@@ -16,18 +26,8 @@
       }
     }
   }
-  JSType type=getJSType(n);
-  if (dereference) {
-    ObjectType dereferenced=type.dereference();
-    if (dereferenced != null) {
-      type=dereferenced;
-    }
-  }
   String qualifiedName=n.getQualifiedName();
-  if (type.isFunctionPrototypeType() || (type.toObjectType() != null && type.toObjectType().getConstructor() != null)) {
-    return type.toString();
-  }
- else   if (qualifiedName != null) {
+  if (qualifiedName != null) {
     return qualifiedName;
   }
  else   if (type.isFunctionType()) {
