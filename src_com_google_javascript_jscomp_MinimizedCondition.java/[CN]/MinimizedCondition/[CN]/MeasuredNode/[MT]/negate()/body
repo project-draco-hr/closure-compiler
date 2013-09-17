@@ -1,22 +1,19 @@
 {
   this.change();
-  int complementOperator;
 switch (node.getType()) {
-default :
-    return this.addNot();
 case Token.EQ:
-  complementOperator=Token.NE;
-break;
+    node.setType(Token.NE);
+  return this;
 case Token.NE:
-complementOperator=Token.EQ;
-break;
-case Token.SHEQ:
-complementOperator=Token.SHNE;
-break;
-case Token.SHNE:
-complementOperator=Token.SHEQ;
-break;
-}
-node.setType(complementOperator);
+node.setType(Token.EQ);
 return this;
+case Token.SHEQ:
+node.setType(Token.SHNE);
+return this;
+case Token.SHNE:
+node.setType(Token.SHEQ);
+return this;
+default :
+return this.addNot();
+}
 }
