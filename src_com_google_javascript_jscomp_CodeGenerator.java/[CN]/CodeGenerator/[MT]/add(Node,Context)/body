@@ -34,6 +34,7 @@ case Token.TRY:
         add(catchblock);
       }
       if (childCount == 3) {
+        cc.maybeInsertSpace();
         add("finally");
         add(last,Context.PRESERVE_BLOCK);
       }
@@ -41,7 +42,10 @@ case Token.TRY:
     }
 case Token.CATCH:
   Preconditions.checkState(childCount == 2);
-add("catch(");
+cc.maybeInsertSpace();
+add("catch");
+cc.maybeInsertSpace();
+add("(");
 add(first);
 add(")");
 add(last,Context.PRESERVE_BLOCK);
@@ -235,7 +239,9 @@ break;
 }
 case Token.FOR:
 if (childCount == 4) {
-add("for(");
+add("for");
+cc.maybeInsertSpace();
+add("(");
 if (first.isVar()) {
 add(first,Context.IN_FOR_INIT_CLAUSE);
 }
@@ -251,7 +257,9 @@ addNonEmptyStatement(last,getContextForNonEmptyExpression(context),false);
 }
  else {
 Preconditions.checkState(childCount == 3);
-add("for(");
+add("for");
+cc.maybeInsertSpace();
+add("(");
 add(first);
 add("in");
 add(first.getNext());
@@ -263,14 +271,19 @@ case Token.DO:
 Preconditions.checkState(childCount == 2);
 add("do");
 addNonEmptyStatement(first,Context.OTHER,false);
-add("while(");
+cc.maybeInsertSpace();
+add("while");
+cc.maybeInsertSpace();
+add("(");
 add(last);
 add(")");
 cc.endStatement();
 break;
 case Token.WHILE:
 Preconditions.checkState(childCount == 2);
-add("while(");
+add("while");
+cc.maybeInsertSpace();
+add("(");
 add(first);
 add(")");
 addNonEmptyStatement(last,getContextForNonEmptyExpression(context),false);
@@ -350,11 +363,14 @@ boolean ambiguousElseClause=context == Context.BEFORE_DANGLING_ELSE && !hasElse;
 if (ambiguousElseClause) {
 cc.beginBlock();
 }
-add("if(");
+add("if");
+cc.maybeInsertSpace();
+add("(");
 add(first);
 add(")");
 if (hasElse) {
 addNonEmptyStatement(first.getNext(),Context.BEFORE_DANGLING_ELSE,false);
+cc.maybeInsertSpace();
 add("else");
 addNonEmptyStatement(last,getContextForNonEmptyExpression(context),false);
 }
@@ -508,6 +524,9 @@ throw new Error("Unexpected token type. Should be LABEL_NAME.");
 }
 add(first);
 add(":");
+if (!last.isBlock()) {
+cc.maybeInsertSpace();
+}
 addNonEmptyStatement(last,getContextForNonEmptyExpression(context),true);
 break;
 case Token.CAST:
