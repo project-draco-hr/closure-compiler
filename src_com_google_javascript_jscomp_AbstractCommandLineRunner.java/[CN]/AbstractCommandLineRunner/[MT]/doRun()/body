@@ -10,10 +10,6 @@
   List<String> outputFileNames=Lists.newArrayList();
   if (writeOutputToFile) {
     outputFileNames.add(config.jsOutputFile);
-    jsOutput=fileNameToLegacyOutputWriter(config.jsOutputFile);
-  }
- else   if (jsOutput instanceof OutputStream) {
-    jsOutput=streamToLegacyOutputWriter((OutputStream)jsOutput);
   }
   List<String> jsFiles=config.js;
   List<String> moduleSpecs=config.module;
@@ -57,9 +53,5 @@
       return 1;
     }
   }
-  int errCode=processResults(result,modules,options);
-  if (jsOutput instanceof Flushable) {
-    ((Flushable)jsOutput).flush();
-  }
-  return errCode;
+  return processResults(result,modules,options);
 }

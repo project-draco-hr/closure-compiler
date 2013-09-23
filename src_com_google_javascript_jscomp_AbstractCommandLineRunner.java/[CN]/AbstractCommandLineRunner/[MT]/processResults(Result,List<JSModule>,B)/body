@@ -4,8 +4,10 @@
       return 1;
     }
  else {
+      Appendable jsOutput=createDefaultOutput();
       jsOutput.append(DotFormatter.toDot(compiler.getPassConfig().getPassGraph()));
       jsOutput.append('\n');
+      closeAppendable(jsOutput);
       return 0;
     }
   }
@@ -14,20 +16,24 @@
       return 1;
     }
  else {
+      Appendable jsOutput=createDefaultOutput();
       ControlFlowGraph<Node> cfg=compiler.computeCFG();
       DotFormatter.appendDot(compiler.getRoot().getLastChild(),cfg,jsOutput);
       jsOutput.append('\n');
+      closeAppendable(jsOutput);
       return 0;
     }
   }
   if (config.printTree) {
     if (compiler.getRoot() == null) {
-      jsOutput.append("Code contains errors; no tree was generated.\n");
+      compiler.report(JSError.make(NO_TREE_GENERATED_ERROR));
       return 1;
     }
  else {
+      Appendable jsOutput=createDefaultOutput();
       compiler.getRoot().appendStringTree(jsOutput);
       jsOutput.append("\n");
+      closeAppendable(jsOutput);
       return 0;
     }
   }
