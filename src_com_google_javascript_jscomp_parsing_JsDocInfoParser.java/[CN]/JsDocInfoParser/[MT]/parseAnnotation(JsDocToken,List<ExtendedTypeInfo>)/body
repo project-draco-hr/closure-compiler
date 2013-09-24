@@ -18,21 +18,45 @@ case NG_INJECT:
         jsdocBuilder.recordNgInject(true);
       }
     return eatTokensUntilEOL();
+case JAGGER_INJECT:
+  if (jsdocBuilder.isJaggerInjectRecorded()) {
+    parser.addParserWarning("msg.jsdoc.jaggerInject.extra",stream.getLineno(),stream.getCharno());
+  }
+ else {
+    jsdocBuilder.recordJaggerInject(true);
+  }
+return eatTokensUntilEOL();
+case JAGGER_MODULE:
+if (jsdocBuilder.isJaggerModuleRecorded()) {
+parser.addParserWarning("msg.jsdoc.jaggerModule.extra",stream.getLineno(),stream.getCharno());
+}
+ else {
+jsdocBuilder.recordJaggerModule(true);
+}
+return eatTokensUntilEOL();
+case JAGGER_PROVIDE:
+if (jsdocBuilder.isJaggerProvideRecorded()) {
+parser.addParserWarning("msg.jsdoc.jaggerProvide.extra",stream.getLineno(),stream.getCharno());
+}
+ else {
+jsdocBuilder.recordJaggerProvide(true);
+}
+return eatTokensUntilEOL();
 case AUTHOR:
-  if (jsdocBuilder.shouldParseDocumentation()) {
-    ExtractionInfo authorInfo=extractSingleLineBlock();
-    String author=authorInfo.string;
-    if (author.length() == 0) {
-      parser.addParserWarning("msg.jsdoc.authormissing",stream.getLineno(),stream.getCharno());
-    }
+if (jsdocBuilder.shouldParseDocumentation()) {
+ExtractionInfo authorInfo=extractSingleLineBlock();
+String author=authorInfo.string;
+if (author.length() == 0) {
+parser.addParserWarning("msg.jsdoc.authormissing",stream.getLineno(),stream.getCharno());
+}
  else {
-      jsdocBuilder.addAuthor(author);
-    }
-    token=authorInfo.token;
-  }
+jsdocBuilder.addAuthor(author);
+}
+token=authorInfo.token;
+}
  else {
-    token=eatTokensUntilEOL(token);
-  }
+token=eatTokensUntilEOL(token);
+}
 return token;
 case CONSISTENTIDGENERATOR:
 if (!jsdocBuilder.recordConsistentIdGenerator()) {
