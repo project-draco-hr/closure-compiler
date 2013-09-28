@@ -1,6 +1,6 @@
 {
+  int startErrorCount=compiler.getErrorManager().getErrorCount();
   try {
-    logger_.fine("Parsing: " + sourceFile.getName());
     ParserRunner.ParseResult result=ParserRunner.parse(sourceFile,sourceFile.getCode(),compiler.getParserConfig(),compiler.getDefaultErrorReporter(),logger_);
     root=result.ast;
     compiler.setOldParseTree(sourceFile.getName(),result.oldAst);
@@ -8,7 +8,7 @@
  catch (  IOException e) {
     compiler.report(JSError.make(AbstractCompiler.READ_ERROR,sourceFile.getName()));
   }
-  if (root == null || compiler.hasHaltingErrors()) {
+  if (root == null || (compiler.getErrorManager().getErrorCount() > startErrorCount && !compiler.isIdeMode())) {
     root=IR.script();
   }
  else {
