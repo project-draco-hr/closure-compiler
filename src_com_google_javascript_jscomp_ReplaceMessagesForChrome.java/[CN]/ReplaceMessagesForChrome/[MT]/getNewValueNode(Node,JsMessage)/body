@@ -3,13 +3,7 @@
   if (!message.placeholders().isEmpty()) {
     Node placeholderValues=origNode.getLastChild();
     checkNode(placeholderValues,Token.OBJECTLIT);
-    List<String> placeholderNames=Lists.newArrayList();
-    for (    CharSequence cs : message.parts()) {
-      if (cs instanceof PlaceholderReference) {
-        String placeholderName=((PlaceholderReference)cs).getName();
-        placeholderNames.add(placeholderName);
-      }
-    }
+    List<String> placeholderNames=Lists.newArrayList(message.placeholders());
     Collections.sort(placeholderNames);
     Node placeholderValueArray=IR.arraylit();
     for (    String name : placeholderNames) {
