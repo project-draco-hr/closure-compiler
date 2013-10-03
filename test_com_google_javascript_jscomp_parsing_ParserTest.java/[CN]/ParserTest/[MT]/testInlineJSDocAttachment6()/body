@@ -1,0 +1,7 @@
+{
+  Node fn=parse("function f(/** {attr: number} */ x) {}").getFirstChild();
+  assertTrue(fn.isFunction());
+  JSDocInfo info=fn.getFirstChild().getNext().getFirstChild().getJSDocInfo();
+  assertNotNull(info);
+  assertTypeEquals(createRecordTypeBuilder().addProperty("attr",NUMBER_TYPE,null).build(),info.getType());
+}
