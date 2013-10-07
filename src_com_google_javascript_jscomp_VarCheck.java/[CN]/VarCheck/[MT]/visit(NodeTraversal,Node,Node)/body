@@ -17,8 +17,9 @@
   if (var == null) {
     if (NodeUtil.isFunctionExpression(parent)) {
     }
- else     if (!(scope.isLocal() && ARGUMENTS.equals(varName))) {
-      if (!strictExternCheck || !t.getInput().isExtern()) {
+ else {
+      boolean isArguments=scope.isLocal() && ARGUMENTS.equals(varName);
+      if (!isArguments && !(strictExternCheck && t.getInput().isExtern())) {
         t.report(n,UNDEFINED_VAR_ERROR,varName);
       }
       if (sanityCheck) {
