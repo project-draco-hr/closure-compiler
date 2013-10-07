@@ -21,7 +21,7 @@
   }
   if (propertyType != null && objType != null) {
     JSType restrictedObjType=objType.restrictByNotNullOrUndefined();
-    if (restrictedObjType.isTemplatizedType() && propertyType.hasAnyTemplateTypes()) {
+    if (!restrictedObjType.getTemplateTypeMap().isEmpty() && propertyType.hasAnyTemplateTypes()) {
       TemplateTypeMap typeMap=restrictedObjType.getTemplateTypeMap();
       TemplateTypeMapReplacer replacer=new TemplateTypeMapReplacer(registry,typeMap);
       propertyType=propertyType.visit(replacer);
