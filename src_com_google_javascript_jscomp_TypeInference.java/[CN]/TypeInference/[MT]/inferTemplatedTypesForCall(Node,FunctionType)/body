@@ -1,8 +1,14 @@
 {
-  if (fnType.getTemplateTypeMap().getTemplateKeys().isEmpty()) {
+  final ImmutableList<TemplateType> keys=fnType.getTemplateTypeMap().getTemplateKeys();
+  if (keys.isEmpty()) {
     return false;
   }
-  Map<TemplateType,JSType> inferred=inferTemplateTypesFromParameters(fnType,n);
+  Map<TemplateType,JSType> inferred=Maps.filterKeys(inferTemplateTypesFromParameters(fnType,n),new Predicate<TemplateType>(){
+    @Override public boolean apply(    TemplateType key){
+      return keys.contains(key);
+    }
+  }
+);
   TemplateTypeReplacer replacer=new TemplateTypeReplacer(registry,inferred);
   Node callTarget=n.getFirstChild();
   FunctionType replacementFnType=fnType.visit(replacer).toMaybeFunctionType();
