@@ -17,7 +17,7 @@ case NG_INJECT:
  else {
         jsdocBuilder.recordNgInject(true);
       }
-    return eatTokensUntilEOL();
+    return eatUntilEOLIfNotAnnotation();
 case JAGGER_INJECT:
   if (jsdocBuilder.isJaggerInjectRecorded()) {
     parser.addParserWarning("msg.jsdoc.jaggerInject.extra",stream.getLineno(),stream.getCharno());
@@ -25,7 +25,7 @@ case JAGGER_INJECT:
  else {
     jsdocBuilder.recordJaggerInject(true);
   }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case JAGGER_MODULE:
 if (jsdocBuilder.isJaggerModuleRecorded()) {
 parser.addParserWarning("msg.jsdoc.jaggerModule.extra",stream.getLineno(),stream.getCharno());
@@ -33,7 +33,7 @@ parser.addParserWarning("msg.jsdoc.jaggerModule.extra",stream.getLineno(),stream
  else {
 jsdocBuilder.recordJaggerModule(true);
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case JAGGER_PROVIDE:
 if (jsdocBuilder.isJaggerProvideRecorded()) {
 parser.addParserWarning("msg.jsdoc.jaggerProvide.extra",stream.getLineno(),stream.getCharno());
@@ -41,7 +41,7 @@ parser.addParserWarning("msg.jsdoc.jaggerProvide.extra",stream.getLineno(),strea
  else {
 jsdocBuilder.recordJaggerProvide(true);
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case AUTHOR:
 if (jsdocBuilder.shouldParseDocumentation()) {
 ExtractionInfo authorInfo=extractSingleLineBlock();
@@ -55,24 +55,24 @@ jsdocBuilder.addAuthor(author);
 token=authorInfo.token;
 }
  else {
-token=eatTokensUntilEOL(token);
+token=eatUntilEOLIfNotAnnotation();
 }
 return token;
 case CONSISTENTIDGENERATOR:
 if (!jsdocBuilder.recordConsistentIdGenerator()) {
 parser.addParserWarning("msg.jsdoc.consistidgen",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case STRUCT:
 if (!jsdocBuilder.recordStruct()) {
 parser.addTypeWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case DICT:
 if (!jsdocBuilder.recordDict()) {
 parser.addTypeWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case CONSTRUCTOR:
 if (!jsdocBuilder.recordConstructor()) {
 if (jsdocBuilder.isInterfaceRecorded()) {
@@ -82,7 +82,7 @@ parser.addTypeWarning("msg.jsdoc.interface.constructor",stream.getLineno(),strea
 parser.addTypeWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
 }
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case DEPRECATED:
 if (!jsdocBuilder.recordDeprecated()) {
 parser.addParserWarning("msg.jsdoc.deprecated",stream.getLineno(),stream.getCharno());
@@ -103,11 +103,11 @@ parser.addTypeWarning("msg.jsdoc.interface.constructor",stream.getLineno(),strea
 parser.addTypeWarning("msg.jsdoc.incompat.type",stream.getLineno(),stream.getCharno());
 }
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case DESC:
 if (jsdocBuilder.isDescriptionRecorded()) {
 parser.addParserWarning("msg.jsdoc.desc.extra",stream.getLineno(),stream.getCharno());
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 }
  else {
 ExtractionInfo descriptionInfo=extractMultilineTextualBlock(token);
@@ -155,28 +155,28 @@ type=createJSTypeExpression(newStringNode("number"));
 if (!jsdocBuilder.recordEnumParameterType(type)) {
 parser.addTypeWarning("msg.jsdoc.incompat.type",lineno,charno);
 }
-token=eatTokensUntilEOL(token);
+token=eatUntilEOLIfNotAnnotation(token);
 return token;
 case EXPORT:
 if (!jsdocBuilder.recordExport()) {
 parser.addParserWarning("msg.jsdoc.export",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case EXPOSE:
 if (!jsdocBuilder.recordExpose()) {
 parser.addParserWarning("msg.jsdoc.expose",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case EXTERNS:
 if (!jsdocBuilder.recordExterns()) {
 parser.addParserWarning("msg.jsdoc.externs",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case JAVA_DISPATCH:
 if (!jsdocBuilder.recordJavaDispatch()) {
 parser.addParserWarning("msg.jsdoc.javadispatch",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case EXTENDS:
 case IMPLEMENTS:
 skipEOLs();
@@ -208,6 +208,9 @@ if (matchingRc) {
 if (token != JsDocToken.RC) {
 parser.addTypeWarning("msg.jsdoc.missing.rc",stream.getLineno(),stream.getCharno());
 }
+ else {
+token=next();
+}
 }
  else if (token != JsDocToken.EOL && token != JsDocToken.EOF && token != JsDocToken.EOC) {
 parser.addTypeWarning("msg.end.annotation.expected",stream.getLineno(),stream.getCharno());
@@ -216,13 +219,13 @@ parser.addTypeWarning("msg.end.annotation.expected",stream.getLineno(),stream.ge
  else {
 parser.addTypeWarning("msg.no.type.name",lineno,charno);
 }
-token=eatTokensUntilEOL(token);
+token=eatUntilEOLIfNotAnnotation(token);
 return token;
 case HIDDEN:
 if (!jsdocBuilder.recordHiddenness()) {
 parser.addParserWarning("msg.jsdoc.hidden",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case LENDS:
 skipEOLs();
 matchingRc=false;
@@ -242,7 +245,7 @@ parser.addTypeWarning("msg.jsdoc.lends.missing",stream.getLineno(),stream.getCha
 if (matchingRc && !match(JsDocToken.RC)) {
 parser.addTypeWarning("msg.jsdoc.missing.rc",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case MEANING:
 ExtractionInfo meaningInfo=extractMultilineTextualBlock(token);
 String meaning=meaningInfo.string;
@@ -255,26 +258,27 @@ case NO_ALIAS:
 if (!jsdocBuilder.recordNoAlias()) {
 parser.addParserWarning("msg.jsdoc.noalias",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case NO_COMPILE:
 if (!jsdocBuilder.recordNoCompile()) {
 parser.addParserWarning("msg.jsdoc.nocompile",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case NO_TYPE_CHECK:
 if (!jsdocBuilder.recordNoTypeCheck()) {
 parser.addParserWarning("msg.jsdoc.nocheck",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case NOT_IMPLEMENTED:
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case INHERIT_DOC:
 case OVERRIDE:
 if (!jsdocBuilder.recordOverride()) {
 parser.addTypeWarning("msg.jsdoc.override",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case THROWS:
+{
 skipEOLs();
 token=next();
 lineno=stream.getLineno();
@@ -283,12 +287,13 @@ type=null;
 if (token == JsDocToken.LC) {
 type=createJSTypeExpression(parseAndRecordTypeNode(token));
 if (type == null) {
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 }
 }
 token=current();
 jsdocBuilder.recordThrowType(type);
-if (jsdocBuilder.shouldParseDocumentation()) {
+boolean isAnnotationNext=lookAheadForAnnotation();
+if (jsdocBuilder.shouldParseDocumentation() && !isAnnotationNext) {
 ExtractionInfo descriptionInfo=extractMultilineTextualBlock(token);
 String description=descriptionInfo.string;
 if (description.length() > 0) {
@@ -297,9 +302,10 @@ jsdocBuilder.recordThrowDescription(type,description);
 token=descriptionInfo.token;
 }
  else {
-token=eatTokensUntilEOL(token);
+token=eatUntilEOLIfNotAnnotation();
 }
 return token;
+}
 case PARAM:
 skipEOLs();
 token=next();
@@ -309,7 +315,7 @@ type=null;
 if (token == JsDocToken.LC) {
 type=createJSTypeExpression(parseAndRecordParamTypeNode(token));
 if (type == null) {
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 }
 skipEOLs();
 token=next();
@@ -354,11 +360,11 @@ parser.addTypeWarning("msg.jsdoc.incompat.type",name,lineno,charno);
 }
 }
 if (name == null) {
-token=eatTokensUntilEOL(token);
+token=eatUntilEOLIfNotAnnotation(token);
 return token;
 }
 jsdocBuilder.markName(name,sourceFile,lineno,charno);
-if (jsdocBuilder.shouldParseDocumentation()) {
+if (jsdocBuilder.shouldParseDocumentation() && token != JsDocToken.ANNOTATION) {
 ExtractionInfo paramDescriptionInfo=extractMultilineTextualBlock(token);
 String paramDescription=paramDescriptionInfo.string;
 if (paramDescription.length() > 0) {
@@ -366,25 +372,25 @@ jsdocBuilder.recordParameterDescription(name,paramDescription);
 }
 token=paramDescriptionInfo.token;
 }
- else {
-token=eatTokensUntilEOL(token);
+ else if (token != JsDocToken.EOC && token != JsDocToken.EOF) {
+token=eatUntilEOLIfNotAnnotation();
 }
 return token;
 case PRESERVE_TRY:
 if (!jsdocBuilder.recordPreserveTry()) {
 parser.addParserWarning("msg.jsdoc.preservertry",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case NO_SHADOW:
 if (!jsdocBuilder.recordNoShadow()) {
 parser.addParserWarning("msg.jsdoc.noshadow",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case NO_SIDE_EFFECTS:
 if (!jsdocBuilder.recordNoSideEffects()) {
 parser.addParserWarning("msg.jsdoc.nosideeffects",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case MODIFIES:
 token=parseModifiesTag(next());
 return token;
@@ -392,7 +398,7 @@ case IMPLICIT_CAST:
 if (!jsdocBuilder.recordImplicitCast()) {
 parser.addTypeWarning("msg.jsdoc.implicitcast",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case SEE:
 if (jsdocBuilder.shouldParseDocumentation()) {
 ExtractionInfo referenceInfo=extractSingleLineBlock();
@@ -406,14 +412,14 @@ jsdocBuilder.addReference(reference);
 token=referenceInfo.token;
 }
  else {
-token=eatTokensUntilEOL(token);
+token=eatUntilEOLIfNotAnnotation();
 }
 return token;
 case STABLEIDGENERATOR:
 if (!jsdocBuilder.recordStableIdGenerator()) {
 parser.addParserWarning("msg.jsdoc.stableidgen",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case SUPPRESS:
 token=parseSuppressTag(next());
 return token;
@@ -437,7 +443,7 @@ case WIZACTION:
 if (!jsdocBuilder.recordWizaction()) {
 parser.addParserWarning("msg.jsdoc.wizaction",stream.getLineno(),stream.getCharno());
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 case DISPOSES:
 {
 ExtractionInfo templateInfo=extractSingleLineBlock();
@@ -476,7 +482,7 @@ case TYPEDEF:
 lineno=stream.getLineno();
 charno=stream.getCharno();
 Node typeNode=null;
-boolean hasType=lookAheadForTypeAnnotation();
+boolean hasType=lookAheadForType();
 boolean isAlternateTypeAnnotation=(annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC || annotation == Annotation.CONSTANT);
 boolean canSkipTypeAnnotation=(isAlternateTypeAnnotation || annotation == Annotation.RETURN);
 type=null;
@@ -530,7 +536,8 @@ if (!jsdocBuilder.recordReturnType(type)) {
 parser.addTypeWarning("msg.jsdoc.incompat.type",lineno,charno);
 break;
 }
-if (jsdocBuilder.shouldParseDocumentation()) {
+boolean isAnnotationNext=lookAheadForAnnotation();
+if (jsdocBuilder.shouldParseDocumentation() && !isAnnotationNext) {
 ExtractionInfo returnDescriptionInfo=extractMultilineTextualBlock(token);
 String returnDescription=returnDescriptionInfo.string;
 if (returnDescription.length() > 0) {
@@ -539,7 +546,7 @@ jsdocBuilder.recordReturnDescription(returnDescription);
 token=returnDescriptionInfo.token;
 }
  else {
-token=eatTokensUntilEOL(token);
+token=eatUntilEOLIfNotAnnotation();
 }
 return token;
 case THIS:
@@ -554,7 +561,7 @@ parser.addTypeWarning("msg.jsdoc.incompat.type",lineno,charno);
 break;
 }
 }
-return eatTokensUntilEOL();
+return eatUntilEOLIfNotAnnotation();
 }
 }
 return next();
