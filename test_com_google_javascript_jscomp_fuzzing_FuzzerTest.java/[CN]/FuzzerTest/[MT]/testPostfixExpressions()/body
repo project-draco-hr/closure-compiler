@@ -1,0 +1,12 @@
+{
+  int[] overriddenValues={0,1};
+  String[] postfixes={"++","--"};
+  for (int i=0; i < postfixes.length; i++) {
+    ControlledRandom random=new ControlledRandom();
+    random.addOverride(1,overriddenValues[i]);
+    Fuzzer fuzzer=new Fuzzer(random);
+    Node node=fuzzer.generateUnaryExpression(10);
+    String code=Fuzzer.getPrettyCode(node);
+    assertTrue(code.endsWith(postfixes[i]));
+  }
+}

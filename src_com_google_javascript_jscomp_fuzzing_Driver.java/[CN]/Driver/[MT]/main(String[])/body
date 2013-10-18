@@ -1,0 +1,19 @@
+{
+  int numberOfRuns=Integer.valueOf(args[0]);
+  int maxASTSize=Integer.valueOf(args[1]);
+  Driver driver=new Driver();
+  for (int i=0; i < numberOfRuns; i++) {
+    long seed=System.currentTimeMillis();
+    Random random=new Random(seed);
+    System.out.println("Seed: " + seed);
+    Fuzzer fuzzer=new Fuzzer(random);
+    Node root=new Node(Token.EXPR_RESULT,fuzzer.generateExpression(maxASTSize));
+    String code=Fuzzer.getPrettyCode(root);
+    System.out.print(code);
+    Compiler compiler=driver.compile(root);
+    Result result=compiler.getResult();
+    if (result.success) {
+      System.out.println("Success!\n");
+    }
+  }
+}

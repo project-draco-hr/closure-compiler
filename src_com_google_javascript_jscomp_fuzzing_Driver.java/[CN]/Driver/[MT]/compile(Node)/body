@@ -1,0 +1,12 @@
+{
+  Node script=new Node(Token.SCRIPT,root);
+  script.setSourceFileForTesting("fuzzedFile");
+  InputId inputId=new InputId("fuzzedInput");
+  script.setInputId(inputId);
+  CompilerInput input=new CompilerInput(new JsAst(script));
+  JSModule jsModule=new JSModule("fuzzedModule");
+  jsModule.add(input);
+  Compiler compiler=new Compiler();
+  compiler.compileModules(new ArrayList<SourceFile>(),Arrays.asList(jsModule),getOptions());
+  return compiler;
+}

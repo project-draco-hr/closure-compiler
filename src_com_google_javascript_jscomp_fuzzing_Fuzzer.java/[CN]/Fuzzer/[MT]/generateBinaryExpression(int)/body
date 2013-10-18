@@ -1,0 +1,15 @@
+{
+  Preconditions.checkArgument(budget >= 3);
+  int[] subBudgets=distribute(budget - 1,2);
+  List<Integer> operators=Arrays.asList(Token.MUL,Token.DIV,Token.MOD,Token.ADD,Token.SUB,Token.LSH,Token.RSH,Token.URSH,Token.LT,Token.GT,Token.LE,Token.GE,Token.INSTANCEOF,Token.IN,Token.EQ,Token.NE,Token.SHEQ,Token.SHNE,Token.BITAND,Token.BITXOR,Token.BITOR,Token.AND,Token.OR,Token.ASSIGN,Token.ASSIGN_MUL,Token.ASSIGN_DIV,Token.ASSIGN_MOD,Token.ASSIGN_ADD,Token.ASSIGN_SUB,Token.ASSIGN_LSH,Token.ASSIGN_RSH,Token.ASSIGN_URSH,Token.ASSIGN_BITAND,Token.ASSIGN_BITXOR,Token.ASSIGN_BITOR);
+  int index=random.nextInt(operators.size());
+  Node left, right;
+  if (index < operators.indexOf(Token.ASSIGN)) {
+    left=generateExpression(subBudgets[0]);
+  }
+ else {
+    left=generateAssignableExpression(subBudgets[0]);
+  }
+  right=generateExpression(subBudgets[1]);
+  return new Node(operators.get(index),left,right);
+}

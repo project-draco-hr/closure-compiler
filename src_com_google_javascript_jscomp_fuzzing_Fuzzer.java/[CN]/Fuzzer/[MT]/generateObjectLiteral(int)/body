@@ -1,0 +1,18 @@
+{
+  Preconditions.checkArgument(budget >= 1);
+  Node objectLit=new Node(Token.OBJECTLIT);
+  int remainingBudget=budget - 1;
+  int objectLength=remainingBudget < 2 ? 0 : random.nextInt(remainingBudget / 2 + 1);
+  if (objectLength == 0) {
+    return objectLit;
+  }
+  remainingBudget-=objectLength;
+  int[] propertyBudgets=distribute(remainingBudget,objectLength);
+  for (int i=0; i < objectLength; i++) {
+    Node key=generatePropertyName();
+    Node value=generateExpression(propertyBudgets[i]);
+    key.addChildrenToFront(value);
+    objectLit.addChildToBack(key);
+  }
+  return objectLit;
+}

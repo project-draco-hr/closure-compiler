@@ -1,0 +1,11 @@
+{
+  ControlledRandom random=new ControlledRandom();
+  int arraySize=9;
+  random.addOverride(1,arraySize);
+  Fuzzer fuzzer=new Fuzzer(random);
+  Node node=fuzzer.generateArrayLiteral(10);
+  String code=Fuzzer.getPrettyCode(node);
+  assertTrue(code.startsWith("["));
+  assertTrue(code.endsWith("]"));
+  assertEquals(arraySize,code.split(",").length);
+}

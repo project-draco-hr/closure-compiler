@@ -1,0 +1,18 @@
+{
+  Preconditions.checkArgument(budget >= 2);
+  int numArgs=random.nextInt(budget - 1);
+  int[] subBudgets=distribute(budget - 1,numArgs + 1);
+  Node target=generateCallableExpression(subBudgets[0]);
+  Node node;
+  if (isNew) {
+    node=new Node(Token.NEW,target);
+  }
+ else {
+    node=new Node(Token.CALL,target);
+  }
+  for (int i=0; i < numArgs; i++) {
+    Node arg=generateExpression(subBudgets[i + 1]);
+    node.addChildToBack(arg);
+  }
+  return node;
+}
