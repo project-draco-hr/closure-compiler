@@ -1,0 +1,20 @@
+{
+  TokenType token=peekType();
+switch (token) {
+case CONST:
+case LET:
+case VAR:
+    eat(token);
+  break;
+default :
+throw new RuntimeException("unreachable");
+}
+SourcePosition start=getTreeStartLocation();
+ImmutableList.Builder<VariableDeclarationTree> declarations=ImmutableList.<VariableDeclarationTree>builder();
+declarations.add(parseVariableDeclaration(false,token,expressionIn));
+while (peek(TokenType.COMMA)) {
+eat(TokenType.COMMA);
+declarations.add(parseVariableDeclaration(false,token,expressionIn));
+}
+return new VariableDeclarationListTree(getTreeLocation(start),token,declarations.build());
+}

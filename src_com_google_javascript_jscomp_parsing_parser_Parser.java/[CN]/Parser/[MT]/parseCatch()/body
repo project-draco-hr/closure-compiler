@@ -1,0 +1,11 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ParseTree catchBlock;
+  eat(TokenType.CATCH);
+  eat(TokenType.OPEN_PAREN);
+  IdentifierToken exceptionName=eatId();
+  eat(TokenType.CLOSE_PAREN);
+  BlockTree catchBody=parseBlock();
+  catchBlock=new CatchTree(getTreeLocation(start),exceptionName,catchBody);
+  return catchBlock;
+}

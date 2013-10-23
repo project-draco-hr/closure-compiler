@@ -1,0 +1,17 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.TRY);
+  ParseTree body=parseBlock();
+  ParseTree catchBlock=null;
+  if (peek(TokenType.CATCH)) {
+    catchBlock=parseCatch();
+  }
+  ParseTree finallyBlock=null;
+  if (peek(TokenType.FINALLY)) {
+    finallyBlock=parseFinallyBlock();
+  }
+  if (catchBlock == null && finallyBlock == null) {
+    reportError("'catch' or 'finally' expected.");
+  }
+  return new TryStatementTree(getTreeLocation(start),body,catchBlock,finallyBlock);
+}

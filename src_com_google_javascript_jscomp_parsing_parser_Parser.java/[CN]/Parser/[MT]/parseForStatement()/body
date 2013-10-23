@@ -1,0 +1,42 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.FOR);
+  eat(TokenType.OPEN_PAREN);
+  if (peekVariableDeclarationList()) {
+    VariableDeclarationListTree variables=parseVariableDeclarationListNoIn();
+    if (peek(TokenType.IN)) {
+      if (variables.declarations.size() > 1) {
+        reportError("for-in statement may not have more than one variable declaration");
+      }
+      if ((variables.declarationType == TokenType.LET || variables.declarationType == TokenType.CONST)) {
+        VariableDeclarationTree declaration=variables.declarations.get(0);
+        if (declaration.initializer != null) {
+          reportError("let/const in for-in statement may not have initializer");
+        }
+      }
+      return parseForInStatement(start,variables);
+    }
+ else     if (peek(TokenType.COLON)) {
+      if (variables.declarations.size() > 1) {
+        reportError("for-each statement may not have more than one variable declaration");
+      }
+      VariableDeclarationTree declaration=variables.declarations.get(0);
+      if (declaration.initializer != null) {
+        reportError("for-each statement may not have initializer");
+      }
+      return parseForEachStatement(start,variables);
+    }
+ else {
+      checkInitializers(variables);
+      return parseForStatement(start,variables);
+    }
+  }
+  if (peek(TokenType.SEMI_COLON)) {
+    return parseForStatement(start,null);
+  }
+  ParseTree initializer=parseExpressionNoIn();
+  if (peek(TokenType.IN)) {
+    return parseForInStatement(start,initializer);
+  }
+  return parseForStatement(start,initializer);
+}

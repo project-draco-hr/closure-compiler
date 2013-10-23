@@ -1,0 +1,12 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eatId();
+  IdentifierToken name=eatId();
+  eat(TokenType.OPEN_CURLY);
+  ImmutableList.Builder<ParseTree> result=ImmutableList.<ParseTree>builder();
+  while (peekModuleElement()) {
+    result.add(parseModuleElement());
+  }
+  eat(TokenType.CLOSE_CURLY);
+  return new ModuleDefinitionTree(getTreeLocation(start),name,result.build());
+}

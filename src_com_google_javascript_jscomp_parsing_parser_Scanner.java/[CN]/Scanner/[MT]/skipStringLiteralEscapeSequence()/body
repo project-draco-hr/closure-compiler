@@ -1,0 +1,30 @@
+{
+  nextChar();
+  if (isAtEnd()) {
+    reportError("Unterminated string literal escape sequence");
+    return false;
+  }
+  if (isLineTerminator(peekChar())) {
+    skipLineTerminator();
+    return true;
+  }
+switch (nextChar()) {
+case '\'':
+case '"':
+case '\\':
+case 'b':
+case 'f':
+case 'n':
+case 'r':
+case 't':
+case 'v':
+case '0':
+    return true;
+case 'x':
+  return skipHexDigit() && skipHexDigit();
+case 'u':
+return skipHexDigit() && skipHexDigit() && skipHexDigit()&& skipHexDigit();
+default :
+return true;
+}
+}

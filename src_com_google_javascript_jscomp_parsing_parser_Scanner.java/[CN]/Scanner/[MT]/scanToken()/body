@@ -1,0 +1,188 @@
+{
+  skipComments();
+  int beginToken=index;
+  if (isAtEnd()) {
+    return createToken(TokenType.END_OF_FILE,beginToken);
+  }
+  char ch=nextChar();
+switch (ch) {
+case '{':
+    return createToken(TokenType.OPEN_CURLY,beginToken);
+case '}':
+  return createToken(TokenType.CLOSE_CURLY,beginToken);
+case '(':
+return createToken(TokenType.OPEN_PAREN,beginToken);
+case ')':
+return createToken(TokenType.CLOSE_PAREN,beginToken);
+case '[':
+return createToken(TokenType.OPEN_SQUARE,beginToken);
+case ']':
+return createToken(TokenType.CLOSE_SQUARE,beginToken);
+case '.':
+if (isDecimalDigit(peekChar())) {
+return scanNumberPostPeriod(beginToken);
+}
+if (peek('.') && peekChar(1) == '.') {
+nextChar();
+nextChar();
+return createToken(TokenType.SPREAD,beginToken);
+}
+return createToken(TokenType.PERIOD,beginToken);
+case ';':
+return createToken(TokenType.SEMI_COLON,beginToken);
+case ',':
+return createToken(TokenType.COMMA,beginToken);
+case '~':
+return createToken(TokenType.TILDE,beginToken);
+case '?':
+return createToken(TokenType.QUESTION,beginToken);
+case ':':
+return createToken(TokenType.COLON,beginToken);
+case '<':
+switch (peekChar()) {
+case '<':
+nextChar();
+if (peek('=')) {
+nextChar();
+return createToken(TokenType.LEFT_SHIFT_EQUAL,beginToken);
+}
+return createToken(TokenType.LEFT_SHIFT,beginToken);
+case '=':
+nextChar();
+return createToken(TokenType.LESS_EQUAL,beginToken);
+default :
+return createToken(TokenType.OPEN_ANGLE,beginToken);
+}
+case '>':
+switch (peekChar()) {
+case '>':
+nextChar();
+switch (peekChar()) {
+case '=':
+nextChar();
+return createToken(TokenType.RIGHT_SHIFT_EQUAL,beginToken);
+case '>':
+nextChar();
+if (peek('=')) {
+nextChar();
+return createToken(TokenType.UNSIGNED_RIGHT_SHIFT_EQUAL,beginToken);
+}
+return createToken(TokenType.UNSIGNED_RIGHT_SHIFT,beginToken);
+default :
+return createToken(TokenType.RIGHT_SHIFT,beginToken);
+}
+case '=':
+nextChar();
+return createToken(TokenType.GREATER_EQUAL,beginToken);
+default :
+return createToken(TokenType.CLOSE_ANGLE,beginToken);
+}
+case '=':
+if (peek('=')) {
+nextChar();
+if (peek('=')) {
+nextChar();
+return createToken(TokenType.EQUAL_EQUAL_EQUAL,beginToken);
+}
+return createToken(TokenType.EQUAL_EQUAL,beginToken);
+}
+return createToken(TokenType.EQUAL,beginToken);
+case '!':
+if (peek('=')) {
+nextChar();
+if (peek('=')) {
+nextChar();
+return createToken(TokenType.NOT_EQUAL_EQUAL,beginToken);
+}
+return createToken(TokenType.NOT_EQUAL,beginToken);
+}
+return createToken(TokenType.BANG,beginToken);
+case '*':
+if (peek('=')) {
+nextChar();
+return createToken(TokenType.STAR_EQUAL,beginToken);
+}
+return createToken(TokenType.STAR,beginToken);
+case '%':
+if (peek('=')) {
+nextChar();
+return createToken(TokenType.PERCENT_EQUAL,beginToken);
+}
+return createToken(TokenType.PERCENT,beginToken);
+case '^':
+if (peek('=')) {
+nextChar();
+return createToken(TokenType.CARET_EQUAL,beginToken);
+}
+return createToken(TokenType.CARET,beginToken);
+case '/':
+if (peek('=')) {
+nextChar();
+return createToken(TokenType.SLASH_EQUAL,beginToken);
+}
+return createToken(TokenType.SLASH,beginToken);
+case '+':
+switch (peekChar()) {
+case '+':
+nextChar();
+return createToken(TokenType.PLUS_PLUS,beginToken);
+case '=':
+nextChar();
+return createToken(TokenType.PLUS_EQUAL,beginToken);
+default :
+return createToken(TokenType.PLUS,beginToken);
+}
+case '-':
+switch (peekChar()) {
+case '-':
+nextChar();
+return createToken(TokenType.MINUS_MINUS,beginToken);
+case '=':
+nextChar();
+return createToken(TokenType.MINUS_EQUAL,beginToken);
+default :
+return createToken(TokenType.MINUS,beginToken);
+}
+case '&':
+switch (peekChar()) {
+case '&':
+nextChar();
+return createToken(TokenType.AND,beginToken);
+case '=':
+nextChar();
+return createToken(TokenType.AMPERSAND_EQUAL,beginToken);
+default :
+return createToken(TokenType.AMPERSAND,beginToken);
+}
+case '|':
+switch (peekChar()) {
+case '|':
+nextChar();
+return createToken(TokenType.OR,beginToken);
+case '=':
+nextChar();
+return createToken(TokenType.BAR_EQUAL,beginToken);
+default :
+return createToken(TokenType.BAR,beginToken);
+}
+case '#':
+return createToken(TokenType.POUND,beginToken);
+case '0':
+return scanPostZero(beginToken);
+case '1':
+case '2':
+case '3':
+case '4':
+case '5':
+case '6':
+case '7':
+case '8':
+case '9':
+return scanPostDigit(beginToken);
+case '"':
+case '\'':
+return scanStringLiteral(beginToken,ch);
+default :
+return scanIdentifierOrKeyword(beginToken,ch);
+}
+}

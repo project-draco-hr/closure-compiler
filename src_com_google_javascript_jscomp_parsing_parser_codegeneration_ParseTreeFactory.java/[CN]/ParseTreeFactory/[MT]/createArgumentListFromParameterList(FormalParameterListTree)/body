@@ -1,0 +1,12 @@
+{
+  ImmutableList.Builder<ParseTree> builder=new ImmutableList.Builder<ParseTree>();
+  for (  ParseTree parameter : formalParameterList.parameters) {
+    if (parameter.isRestParameter()) {
+      builder.add(createSpreadExpression(createIdentifierExpression(parameter.asRestParameter().identifier)));
+    }
+ else {
+      builder.add(parameter);
+    }
+  }
+  return new ArgumentListTree(null,builder.build());
+}

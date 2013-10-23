@@ -1,0 +1,44 @@
+{
+switch (peekType()) {
+case OPEN_CURLY:
+    return parseBlock();
+case AWAIT:
+  return parseAsyncStatement();
+case CONST:
+case VAR:
+return parseVariableStatement();
+case SEMI_COLON:
+return parseEmptyStatement();
+case IF:
+return parseIfStatement();
+case DO:
+return parseDoWhileStatement();
+case WHILE:
+return parseWhileStatement();
+case FOR:
+return parseForStatement();
+case CONTINUE:
+return parseContinueStatement();
+case BREAK:
+return parseBreakStatement();
+case RETURN:
+return parseReturnStatement();
+case YIELD:
+return parseYieldStatement();
+case WITH:
+return parseWithStatement();
+case SWITCH:
+return parseSwitchStatement();
+case THROW:
+return parseThrowStatement();
+case TRY:
+return parseTryStatement();
+case DEBUGGER:
+return parseDebuggerStatement();
+default :
+if (peekLabelledStatement()) {
+return parseLabelledStatement();
+}
+return parseExpressionStatement();
+}
+}

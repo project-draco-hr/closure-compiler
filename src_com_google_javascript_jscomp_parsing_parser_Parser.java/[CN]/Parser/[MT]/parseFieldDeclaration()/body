@@ -1,0 +1,23 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  boolean isStatic=eatOpt(TokenType.STATIC) != null;
+  TokenType binding=peekType();
+  boolean isConst=false;
+switch (binding) {
+case CONST:
+    eat(TokenType.CONST);
+  isConst=true;
+break;
+case VAR:
+eat(TokenType.VAR);
+break;
+}
+ImmutableList.Builder<VariableDeclarationTree> declarations=ImmutableList.<VariableDeclarationTree>builder();
+declarations.add(parseVariableDeclaration(isStatic,binding,Expression.NORMAL));
+while (peek(TokenType.COMMA)) {
+eat(TokenType.COMMA);
+declarations.add(parseVariableDeclaration(isStatic,binding,Expression.NORMAL));
+}
+eat(TokenType.SEMI_COLON);
+return new FieldDeclarationTree(getTreeLocation(start),isStatic,isConst,declarations.build());
+}

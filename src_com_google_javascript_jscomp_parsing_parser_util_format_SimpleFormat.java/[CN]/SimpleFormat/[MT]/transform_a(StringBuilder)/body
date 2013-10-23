@@ -1,0 +1,33 @@
+{
+  if (arg instanceof Float) {
+    if (true) {
+      throw new RuntimeException("Float.toHexString is outside the GWT subset");
+    }
+  }
+ else   if (arg instanceof Double) {
+    throw new RuntimeException("Double.toHexString is outside the GWT subset");
+  }
+ else {
+    throw badArgumentType();
+  }
+  if (!formatToken.isPrecisionSet()) {
+    return;
+  }
+  int precision=formatToken.getPrecision();
+  precision=(0 == precision ? 1 : precision);
+  int indexOfFirstFractionalDigit=result.indexOf(".") + 1;
+  int indexOfP=result.indexOf("p");
+  int fractionalLength=indexOfP - indexOfFirstFractionalDigit;
+  if (fractionalLength == precision) {
+    return;
+  }
+  if (fractionalLength < precision) {
+    char zeros[]=new char[precision - fractionalLength];
+    for (int i=0; i < zeros.length; i++) {
+      zeros[i]='0';
+    }
+    result.insert(indexOfP,zeros);
+    return;
+  }
+  result.delete(indexOfFirstFractionalDigit + precision,indexOfP);
+}

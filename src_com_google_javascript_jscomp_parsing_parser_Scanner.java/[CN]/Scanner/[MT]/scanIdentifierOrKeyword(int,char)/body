@@ -1,0 +1,20 @@
+{
+  if (ch == '\\') {
+    throw new RuntimeException(SimpleFormat.format("Unicode escape sequence at line %d",getPosition().line));
+  }
+  if (!isIdentifierStart(ch)) {
+    reportError(getPosition(beginToken),"Character code '%d' is not a valid identifier start char",(int)ch);
+    return createToken(TokenType.ERROR,beginToken);
+  }
+  while (isIdentifierPart(peekChar())) {
+    nextChar();
+  }
+  if (ch == '\\') {
+    throw new RuntimeException(SimpleFormat.format("Unicode escape sequence at line %d",getPosition().line));
+  }
+  String value=this.source.contents.substring(beginToken,index);
+  if (Keywords.isKeyword(value)) {
+    return new Token(Keywords.getTokenType(value),getTokenRange(beginToken));
+  }
+  return new IdentifierToken(getTokenRange(beginToken),value);
+}

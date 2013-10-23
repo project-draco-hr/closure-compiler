@@ -1,0 +1,26 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ImmutableList.Builder<ParseTree> elements=ImmutableList.<ParseTree>builder();
+  eat(TokenType.OPEN_SQUARE);
+  while (peek(TokenType.COMMA) || peekPatternElement()) {
+    if (peek(TokenType.COMMA)) {
+      eat(TokenType.COMMA);
+      elements.add(NullTree.Instance);
+    }
+ else {
+      ParseTree element=parsePatternElement(kind,arraySubPatternFollowSet);
+      elements.add(element);
+      if (element.isSpreadPatternElement()) {
+        break;
+      }
+ else       if (peek(TokenType.COMMA)) {
+        eat(TokenType.COMMA);
+      }
+ else {
+        break;
+      }
+    }
+  }
+  eat(TokenType.CLOSE_SQUARE);
+  return new ArrayPatternTree(getTreeLocation(start),elements.build());
+}

@@ -1,0 +1,22 @@
+{
+  int precision=formatToken.getPrecision();
+  precision=(0 == precision ? 1 : precision);
+  formatToken.setPrecision(precision);
+  double d=((Number)arg).doubleValue();
+  if (d == 0.0) {
+    precision--;
+    formatToken.setPrecision(precision);
+    transform_f(result);
+    return;
+  }
+  boolean requireScientificRepresentation=true;
+  d=Math.abs(d);
+  if (Double.isInfinite(d)) {
+    precision=formatToken.getPrecision();
+    precision--;
+    formatToken.setPrecision(precision);
+    transform_e(result);
+    return;
+  }
+  transform_f(result);
+}

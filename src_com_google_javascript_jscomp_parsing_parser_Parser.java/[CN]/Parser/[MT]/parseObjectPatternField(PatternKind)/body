@@ -1,0 +1,13 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  IdentifierToken identifier=eatId();
+  ParseTree element=null;
+  if (peek(TokenType.COLON)) {
+    eat(TokenType.COLON);
+    element=parsePatternElement(kind,objectSubPatternFollowSet);
+    if (element.isSpreadPatternElement()) {
+      reportError("Rest can not be used in object patterns");
+    }
+  }
+  return new ObjectPatternFieldTree(getTreeLocation(start),identifier,element);
+}

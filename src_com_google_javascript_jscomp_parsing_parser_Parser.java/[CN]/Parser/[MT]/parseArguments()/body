@@ -1,0 +1,13 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ImmutableList.Builder<ParseTree> arguments=ImmutableList.<ParseTree>builder();
+  eat(TokenType.OPEN_PAREN);
+  while (peekAssignmentOrSpread()) {
+    arguments.add(parseAssignmentOrSpead());
+    if (!peek(TokenType.CLOSE_PAREN)) {
+      eat(TokenType.COMMA);
+    }
+  }
+  eat(TokenType.CLOSE_PAREN);
+  return new ArgumentListTree(getTreeLocation(start),arguments.build());
+}

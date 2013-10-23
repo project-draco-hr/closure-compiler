@@ -1,0 +1,10 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ParseTree left=parseEquality(expressionIn);
+  while (peek(TokenType.AMPERSAND)) {
+    Token operator=eat(TokenType.AMPERSAND);
+    ParseTree right=parseEquality(expressionIn);
+    left=new BinaryOperatorTree(getTreeLocation(start),left,operator,right);
+  }
+  return left;
+}

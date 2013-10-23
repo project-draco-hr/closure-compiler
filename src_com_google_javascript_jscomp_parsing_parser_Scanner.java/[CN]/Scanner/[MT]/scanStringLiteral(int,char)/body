@@ -1,0 +1,14 @@
+{
+  while (peekStringLiteralChar(terminator)) {
+    if (!skipStringLiteralChar()) {
+      return new LiteralToken(TokenType.STRING,getTokenString(beginIndex),getTokenRange(beginIndex));
+    }
+  }
+  if (peekChar() != terminator) {
+    reportError(getPosition(beginIndex),"Unterminated String Literal");
+  }
+ else {
+    nextChar();
+  }
+  return new LiteralToken(TokenType.STRING,getTokenString(beginIndex),getTokenRange(beginIndex));
+}

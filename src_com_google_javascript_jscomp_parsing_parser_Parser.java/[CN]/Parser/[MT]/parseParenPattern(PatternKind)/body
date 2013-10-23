@@ -1,0 +1,12 @@
+{
+  if (peek(TokenType.OPEN_PAREN)) {
+    SourcePosition start=getTreeStartLocation();
+    eat(TokenType.OPEN_PAREN);
+    ParseTree result=parseParenPattern(kind);
+    eat(TokenType.CLOSE_PAREN);
+    return new ParenExpressionTree(this.getTreeLocation(start),result);
+  }
+ else {
+    return parsePattern(kind);
+  }
+}

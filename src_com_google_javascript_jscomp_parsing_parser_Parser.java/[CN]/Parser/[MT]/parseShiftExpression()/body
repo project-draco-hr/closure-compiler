@@ -1,0 +1,10 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ParseTree left=parseAdditiveExpression();
+  while (peekShiftOperator()) {
+    Token operator=nextToken();
+    ParseTree right=parseAdditiveExpression();
+    left=new BinaryOperatorTree(getTreeLocation(start),left,operator,right);
+  }
+  return left;
+}

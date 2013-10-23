@@ -1,0 +1,15 @@
+{
+  eat(TokenType.SEMI_COLON);
+  ParseTree condition=null;
+  if (!peek(TokenType.SEMI_COLON)) {
+    condition=parseExpression();
+  }
+  eat(TokenType.SEMI_COLON);
+  ParseTree increment=null;
+  if (!peek(TokenType.CLOSE_PAREN)) {
+    increment=parseExpression();
+  }
+  eat(TokenType.CLOSE_PAREN);
+  ParseTree body=parseStatement();
+  return new ForStatementTree(getTreeLocation(start),initializer,condition,increment,body);
+}

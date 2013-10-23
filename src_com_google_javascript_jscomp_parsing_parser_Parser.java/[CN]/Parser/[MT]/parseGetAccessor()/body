@@ -1,0 +1,10 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  boolean isStatic=eatOpt(TokenType.STATIC) != null;
+  eatId();
+  Token propertyName=nextToken();
+  eat(TokenType.OPEN_PAREN);
+  eat(TokenType.CLOSE_PAREN);
+  BlockTree body=parseFunctionBody();
+  return new GetAccessorTree(getTreeLocation(start),propertyName,isStatic,body);
+}

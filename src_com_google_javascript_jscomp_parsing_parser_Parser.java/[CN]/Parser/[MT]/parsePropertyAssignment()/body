@@ -1,0 +1,19 @@
+{
+switch (peekType()) {
+case IDENTIFIER:
+    if (peekGetAccessor(false)) {
+      return parseGetAccessor();
+    }
+ else     if (peekSetAccessor(false)) {
+      return parseSetAccessor();
+    }
+ else {
+      return parsePropertyNameAssignment();
+    }
+case STRING:
+case NUMBER:
+  return parsePropertyNameAssignment();
+default :
+throw new RuntimeException("unreachable");
+}
+}

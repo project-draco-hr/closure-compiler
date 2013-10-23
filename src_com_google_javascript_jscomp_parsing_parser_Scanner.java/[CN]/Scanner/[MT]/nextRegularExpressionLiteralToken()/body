@@ -1,0 +1,17 @@
+{
+  clearTokenLookahead();
+  int beginToken=index;
+  nextChar();
+  if (!skipRegularExpressionBody()) {
+    return new LiteralToken(TokenType.REGULAR_EXPRESSION,getTokenString(beginToken),getTokenRange(beginToken));
+  }
+  if (peekChar() != '/') {
+    reportError("Expected '/' in regular expression literal");
+    return new LiteralToken(TokenType.REGULAR_EXPRESSION,getTokenString(beginToken),getTokenRange(beginToken));
+  }
+  nextChar();
+  while (isIdentifierPart(peekChar())) {
+    nextChar();
+  }
+  return new LiteralToken(TokenType.REGULAR_EXPRESSION,getTokenString(beginToken),getTokenRange(beginToken));
+}

@@ -1,0 +1,25 @@
+{
+  ImmutableList.Builder<ParseTree> result=ImmutableList.<ParseTree>builder();
+  boolean hasDefaultParameters=false;
+  while (peek(TokenType.IDENTIFIER) || peek(TokenType.SPREAD)) {
+    if (peek(TokenType.SPREAD)) {
+      SourcePosition start=getTreeStartLocation();
+      eat(TokenType.SPREAD);
+      result.add(new RestParameterTree(getTreeLocation(start),eatId()));
+      break;
+    }
+ else {
+      if (hasDefaultParameters || peek(1,TokenType.EQUAL)) {
+        result.add(parseDefaultParameter());
+        hasDefaultParameters=true;
+      }
+ else {
+        result.add(parseIdentifierExpression());
+      }
+    }
+    if (!peek(TokenType.CLOSE_PAREN)) {
+      eat(TokenType.COMMA);
+    }
+  }
+  return new FormalParameterListTree(null,result.build());
+}

@@ -1,0 +1,33 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.EXPORT);
+  ParseTree export;
+switch (peekType()) {
+case VAR:
+case CONST:
+    export=parseVariableStatement();
+  break;
+case FUNCTION:
+case POUND:
+export=parseFunctionDeclaration();
+break;
+case CLASS:
+export=parseClassDeclaration();
+break;
+case IDENTIFIER:
+if (peekModuleDefinition()) {
+export=parseModuleDefinition();
+}
+ else if (peekTraitDeclaration()) {
+export=parseTraitDeclaration();
+}
+ else {
+throw new RuntimeException("UNDONE: export ModuleLoad | ExportPath");
+}
+break;
+default :
+export=null;
+break;
+}
+return new ExportDeclarationTree(getTreeLocation(start),export);
+}

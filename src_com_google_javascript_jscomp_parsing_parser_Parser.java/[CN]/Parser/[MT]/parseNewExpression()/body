@@ -1,0 +1,15 @@
+{
+  if (peek(TokenType.NEW)) {
+    SourcePosition start=getTreeStartLocation();
+    eat(TokenType.NEW);
+    ParseTree operand=parseNewExpression();
+    ArgumentListTree arguments=null;
+    if (peek(TokenType.OPEN_PAREN)) {
+      arguments=parseArguments();
+    }
+    return new NewExpressionTree(getTreeLocation(start),operand,arguments);
+  }
+ else {
+    return parseMemberExpressionNoNew();
+  }
+}

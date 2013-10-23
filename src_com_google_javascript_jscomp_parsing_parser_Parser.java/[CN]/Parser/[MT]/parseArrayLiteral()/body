@@ -1,0 +1,23 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ImmutableList.Builder<ParseTree> elements=ImmutableList.<ParseTree>builder();
+  eat(TokenType.OPEN_SQUARE);
+  while (peek(TokenType.COMMA) || peek(TokenType.SPREAD) || peekAssignmentExpression()) {
+    if (peek(TokenType.COMMA)) {
+      elements.add(NullTree.Instance);
+    }
+ else {
+      if (peek(TokenType.SPREAD)) {
+        elements.add(parseSpreadExpression());
+      }
+ else {
+        elements.add(parseAssignmentExpression());
+      }
+    }
+    if (!peek(TokenType.CLOSE_SQUARE)) {
+      eat(TokenType.COMMA);
+    }
+  }
+  eat(TokenType.CLOSE_SQUARE);
+  return new ArrayLiteralExpressionTree(getTreeLocation(start),elements.build());
+}

@@ -1,0 +1,11 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.SWITCH);
+  eat(TokenType.OPEN_PAREN);
+  ParseTree expression=parseExpression();
+  eat(TokenType.CLOSE_PAREN);
+  eat(TokenType.OPEN_CURLY);
+  ImmutableList<ParseTree> caseClauses=parseCaseClauses();
+  eat(TokenType.CLOSE_CURLY);
+  return new SwitchStatementTree(getTreeLocation(start),expression,caseClauses);
+}

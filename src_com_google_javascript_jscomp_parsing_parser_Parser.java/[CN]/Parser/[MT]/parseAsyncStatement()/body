@@ -1,0 +1,12 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.AWAIT);
+  IdentifierToken identifier=null;
+  if (peek(TokenType.IDENTIFIER) && peek(1,TokenType.EQUAL)) {
+    identifier=eatId();
+    eat(TokenType.EQUAL);
+  }
+  ParseTree expression=parseExpression();
+  eatPossibleImplicitSemiColon();
+  return new AwaitStatementTree(getTreeLocation(start),identifier,expression);
+}

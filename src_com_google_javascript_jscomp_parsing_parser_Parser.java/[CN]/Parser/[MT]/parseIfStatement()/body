@@ -1,0 +1,14 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.IF);
+  eat(TokenType.OPEN_PAREN);
+  ParseTree condition=parseExpression();
+  eat(TokenType.CLOSE_PAREN);
+  ParseTree ifClause=parseStatement();
+  ParseTree elseClause=null;
+  if (peek(TokenType.ELSE)) {
+    eat(TokenType.ELSE);
+    elseClause=parseStatement();
+  }
+  return new IfStatementTree(getTreeLocation(start),condition,ifClause,elseClause);
+}

@@ -1,0 +1,29 @@
+{
+  boolean foundDefaultClause=false;
+  ImmutableList.Builder<ParseTree> result=ImmutableList.<ParseTree>builder();
+  while (true) {
+    SourcePosition start=getTreeStartLocation();
+switch (peekType()) {
+case CASE:
+      eat(TokenType.CASE);
+    ParseTree expression=parseExpression();
+  eat(TokenType.COLON);
+ImmutableList<ParseTree> statements=parseCaseStatementsOpt();
+result.add(new CaseClauseTree(getTreeLocation(start),expression,statements));
+break;
+case DEFAULT:
+if (foundDefaultClause) {
+reportError("Switch statements may have at most one default clause");
+}
+ else {
+foundDefaultClause=true;
+}
+eat(TokenType.DEFAULT);
+eat(TokenType.COLON);
+result.add(new DefaultClauseTree(getTreeLocation(start),parseCaseStatementsOpt()));
+break;
+default :
+return result.build();
+}
+}
+}

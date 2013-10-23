@@ -1,0 +1,12 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.IMPORT);
+  ImmutableList.Builder<ParseTree> result=ImmutableList.<ParseTree>builder();
+  result.add(parseImportPath());
+  while (peek(TokenType.COMMA)) {
+    eat(TokenType.COMMA);
+    result.add(parseImportPath());
+  }
+  eatPossibleImplicitSemiColon();
+  return new ImportDeclarationTree(getTreeLocation(start),result.build());
+}

@@ -1,0 +1,23 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ParseTree operand;
+  if (peekFunction()) {
+    operand=parseFunctionExpression();
+  }
+ else {
+    operand=parsePrimaryExpression();
+  }
+  while (peekMemberExpressionSuffix()) {
+    if (peek(TokenType.OPEN_SQUARE)) {
+      eat(TokenType.OPEN_SQUARE);
+      ParseTree member=parseExpression();
+      eat(TokenType.CLOSE_SQUARE);
+      operand=new MemberLookupExpressionTree(getTreeLocation(start),operand,member);
+    }
+ else {
+      eat(TokenType.PERIOD);
+      operand=new MemberExpressionTree(getTreeLocation(start),operand,eatId());
+    }
+  }
+  return operand;
+}

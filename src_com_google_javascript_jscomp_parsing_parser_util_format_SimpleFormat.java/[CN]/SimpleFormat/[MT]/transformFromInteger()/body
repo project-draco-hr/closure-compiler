@@ -1,0 +1,75 @@
+{
+  int startIndex=0;
+  StringBuilder result=new StringBuilder();
+  char currentConversionType=formatToken.getConversionType();
+  long value;
+  if (arg instanceof Long) {
+    value=((Long)arg).longValue();
+  }
+ else   if (arg instanceof Integer) {
+    value=((Integer)arg).longValue();
+  }
+ else   if (arg instanceof Short) {
+    value=((Short)arg).longValue();
+  }
+ else   if (arg instanceof Byte) {
+    value=((Byte)arg).longValue();
+  }
+ else {
+    throw badArgumentType();
+  }
+  if (formatToken.flagSharp) {
+    if (currentConversionType == 'o') {
+      result.append("0");
+      startIndex+=1;
+    }
+ else {
+      result.append("0x");
+      startIndex+=2;
+    }
+  }
+  if ('d' == currentConversionType) {
+    if (formatToken.flagComma) {
+      result.append(arg.toString());
+    }
+ else {
+      result.append(value);
+    }
+    if (value < 0) {
+      if (formatToken.flagParenthesis) {
+        return wrapParentheses(result);
+      }
+ else       if (formatToken.flagZero) {
+        startIndex++;
+      }
+    }
+ else {
+      if (formatToken.flagAdd) {
+        result.insert(0,'+');
+        startIndex+=1;
+      }
+ else       if (formatToken.flagSpace) {
+        result.insert(0,' ');
+        startIndex+=1;
+      }
+    }
+  }
+ else {
+    if (arg instanceof Byte) {
+      value&=0xffL;
+    }
+ else     if (arg instanceof Short) {
+      value&=0xffffL;
+    }
+ else     if (arg instanceof Integer) {
+      value&=0xffffffffL;
+    }
+    if ('o' == currentConversionType) {
+      result.append(Long.toOctalString(value));
+    }
+ else {
+      result.append(Long.toHexString(value));
+    }
+  }
+  return padding(result,startIndex);
+}
