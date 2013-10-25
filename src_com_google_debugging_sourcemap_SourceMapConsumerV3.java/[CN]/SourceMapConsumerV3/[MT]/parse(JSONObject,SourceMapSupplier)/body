@@ -17,6 +17,15 @@
     sources=getJavaStringArray(sourceMapRoot.getJSONArray("sources"));
     names=getJavaStringArray(sourceMapRoot.getJSONArray("names"));
     lines=Lists.newArrayListWithCapacity(lineCount);
+    if (sourceMapRoot.has("sourceRoot")) {
+      sourceRoot=sourceMapRoot.getString("sourceRoot");
+    }
+    for (    Object objkey : Lists.newArrayList(sourceMapRoot.keys())) {
+      String key=(String)objkey;
+      if (key.startsWith("x_")) {
+        extensions.put(key,sourceMapRoot.get(key));
+      }
+    }
     new MappingBuilder(lineMap).build();
   }
  catch (  JSONException ex) {

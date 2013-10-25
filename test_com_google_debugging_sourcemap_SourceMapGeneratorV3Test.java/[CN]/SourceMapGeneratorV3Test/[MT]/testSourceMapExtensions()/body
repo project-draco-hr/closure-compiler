@@ -1,0 +1,19 @@
+{
+  SourceMapGeneratorV3 mapper=new SourceMapGeneratorV3();
+  mapper.addExtension("google_foo",new JSONObject());
+  mapper.addExtension("google_test",new JSONObject("{\"number\" : 1}"));
+  mapper.addExtension("google_array",new JSONArray("[]"));
+  mapper.addExtension("google_int",new Integer(2));
+  mapper.addExtension("google_str","Some text");
+  mapper.removeExtension("google_foo");
+  StringBuilder out=new StringBuilder();
+  mapper.appendTo(out,"out.js");
+  assertTrue(mapper.hasExtension("google_test"));
+  JSONObject sourceMap=new JSONObject(out.toString());
+  assertFalse(sourceMap.has("x_google_foo"));
+  assertFalse(sourceMap.has("google_test"));
+  assertEquals(1,sourceMap.getJSONObject("x_google_test").getInt("number"));
+  assertEquals(0,sourceMap.getJSONArray("x_google_array").length());
+  assertEquals(2,sourceMap.getInt("x_google_int"));
+  assertEquals("Some text",sourceMap.getString("x_google_str"));
+}

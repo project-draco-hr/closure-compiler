@@ -4,6 +4,9 @@
   appendFirstField(out,"version","3");
   appendField(out,"file",escapeString(name));
   appendField(out,"lineCount",String.valueOf(maxLine + 1));
+  if (this.sourceRootPath != null && !this.sourceRootPath.isEmpty()) {
+    appendField(out,"sourceRoot",escapeString(this.sourceRootPath));
+  }
   appendFieldStart(out,"mappings");
   (new LineMapper(out)).appendLineMappings();
   appendFieldEnd(out);
@@ -17,5 +20,13 @@
   addSymbolNameMap(out);
   out.append("]");
   appendFieldEnd(out);
+  for (  String key : this.extensions.keySet()) {
+    Object objValue=this.extensions.get(key);
+    String value=new String(objValue.toString());
+    if (objValue instanceof String) {
+      value=JSONObject.quote(value);
+    }
+    appendField(out,"x_" + key,value);
+  }
   out.append("\n}\n");
 }

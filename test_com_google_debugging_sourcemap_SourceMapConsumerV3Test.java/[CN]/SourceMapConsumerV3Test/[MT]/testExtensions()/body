@@ -1,0 +1,10 @@
+{
+  String sourceMap="{\n" + "\"version\":3,\n" + "\"file\":\"testcode\",\n"+ "\"lineCount\":1,\n"+ "\"mappings\":\"AAAAA,QAASA,UAAS,EAAG;\",\n"+ "\"sources\":[\"testcode\"],\n"+ "\"names\":[\"__BASIC__\"],\n"+ "\"x_org_int\":2,\n"+ "\"x_org_array\":[]\n"+ "}\n";
+  SourceMapConsumerV3 consumer=new SourceMapConsumerV3();
+  consumer.parse(sourceMap);
+  Map<String,Object> exts=consumer.getExtensions();
+  assertEquals(2,exts.size());
+  assertFalse(exts.containsKey("org_int"));
+  assertEquals(new Integer(2),exts.get("x_org_int"));
+  assertEquals(0,((JSONArray)exts.get("x_org_array")).length());
+}
