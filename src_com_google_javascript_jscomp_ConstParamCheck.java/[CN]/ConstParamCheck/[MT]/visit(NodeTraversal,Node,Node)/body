@@ -1,0 +1,23 @@
+{
+  if (node.getType() == Token.CALL) {
+    Node name=node.getFirstChild();
+    Node argument=name.getNext();
+    if (argument == null) {
+      return;
+    }
+    if (name.isName()) {
+      Scope scope=traversal.getScope();
+      Scope.Var var=scope.getVar(name.getString());
+      if (var == null) {
+        return;
+      }
+      name=var.getInitialValue();
+      if (name == null) {
+        return;
+      }
+    }
+    if (CONST_FUNCTION_NAME.equals(name.getQualifiedName())) {
+      checkArgumentConstant(traversal,argument);
+    }
+  }
+}

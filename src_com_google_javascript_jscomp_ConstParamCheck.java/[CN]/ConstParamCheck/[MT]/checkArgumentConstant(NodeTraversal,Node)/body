@@ -1,0 +1,20 @@
+{
+  if (argument.isName()) {
+    String name=argument.getString();
+    Scope scope=traversal.getScope();
+    Scope.Var var=scope.getVar(name);
+    if (var == null || !var.isConst()) {
+      compiler.report(traversal.makeError(argument,CONST_NOT_STRING_LITERAL_ERROR,name));
+      return;
+    }
+    Node valueNode=var.getInitialValue();
+    if (!isStringLiteralValue(valueNode)) {
+      compiler.report(traversal.makeError(argument,CONST_NOT_ASSIGNED_STRING_LITERAL_ERROR,name));
+    }
+  }
+ else {
+    if (!isStringLiteralValue(argument)) {
+      compiler.report(traversal.makeError(argument,CONST_NOT_STRING_LITERAL_ERROR));
+    }
+  }
+}
