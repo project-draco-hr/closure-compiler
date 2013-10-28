@@ -1,0 +1,28 @@
+{
+  int remainingBudget;
+  if (anonymous) {
+    Preconditions.checkArgument(budget >= 3);
+    remainingBudget=budget - 3;
+  }
+ else {
+    Preconditions.checkArgument(budget >= 4);
+    remainingBudget=budget - 4;
+  }
+  functionNesting++;
+  Node paramList=new Node(Token.PARAM_LIST);
+  Node body=new Node(Token.BLOCK);
+  int numComponents=random.nextInt(remainingBudget + 1);
+  if (numComponents > 0) {
+    int[] componentBudgets=distribute(remainingBudget + 1,numComponents,1);
+    componentBudgets[0]--;
+    for (int i=0; i < componentBudgets[0]; i++) {
+      paramList.addChildToBack(generateIdentifier(1));
+    }
+    for (int i=1; i < numComponents; i++) {
+      body.addChildToBack(generateSourceElement(componentBudgets[i]));
+    }
+  }
+  Node function=new Node(Token.FUNCTION,generateIdentifier(1),paramList,body);
+  functionNesting--;
+  return function;
+}

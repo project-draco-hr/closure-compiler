@@ -1,0 +1,25 @@
+{
+  int[] subBudgets=new int[n];
+  for (int i=0; i < n; i++) {
+    subBudgets[i]=min;
+  }
+  budget-=n * min;
+  if (budget > 3 * n) {
+    double[] rands=new double[n];
+    double sum=0;
+    for (int i=0; i < n; i++) {
+      rands[i]=random.nextDouble();
+      sum+=rands[i];
+    }
+    for (int i=0; i < n; i++) {
+      double additionalBudget=budget / sum * rands[i];
+      subBudgets[i]+=additionalBudget;
+      budget-=additionalBudget;
+    }
+  }
+  while (budget > 0) {
+    subBudgets[random.nextInt(n)]++;
+    budget--;
+  }
+  return subBudgets;
+}

@@ -1,0 +1,33 @@
+{
+  Preconditions.checkArgument(budget >= 2);
+  switchNesting++;
+  int numCases=budget > 2 ? random.nextInt(budget - 2) : 0;
+  int[] componentBudgets=distribute(budget,numCases + 1,2);
+  Node switchStmt=new Node(Token.SWITCH,generateExpression(componentBudgets[0] - 1));
+  int defaultClauseIndex=-1;
+  if (numCases > 1) {
+    defaultClauseIndex=random.nextInt(numCases + 1);
+  }
+  for (int i=0; i < numCases; i++) {
+    Node clause, block;
+    int remainingBudget=componentBudgets[i + 1] - 1;
+    if (i == defaultClauseIndex) {
+      block=generateBlock(remainingBudget + 1);
+      clause=new Node(Token.DEFAULT);
+    }
+ else {
+      int exprBudget=remainingBudget / 3;
+      if (exprBudget == 0) {
+        exprBudget=1;
+      }
+      int blockBudget=remainingBudget - exprBudget + 1;
+      block=generateBlock(blockBudget);
+      clause=new Node(Token.CASE,generateExpression(exprBudget));
+    }
+    block.setIsSyntheticBlock(true);
+    clause.addChildrenToBack(block);
+    switchStmt.addChildToBack(clause);
+  }
+  switchNesting--;
+  return switchStmt;
+}

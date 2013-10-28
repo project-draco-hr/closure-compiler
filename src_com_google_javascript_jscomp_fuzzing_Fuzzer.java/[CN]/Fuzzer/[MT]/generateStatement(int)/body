@@ -1,0 +1,57 @@
+{
+  Map<Statement,Double> pmf=Maps.newHashMap();
+  for (  Statement stmt : Statement.values()) {
+    if (stmt.minBudget <= budget) {
+      if (stmt == Statement.RETURN && functionNesting == 0) {
+        continue;
+      }
+ else       if (stmt == Statement.BREAK && loopNesting == 0 && switchNesting == 0) {
+        continue;
+      }
+ else       if (stmt == Statement.CONTINUE && loopNesting == 0) {
+        continue;
+      }
+ else {
+        pmf.put(stmt,stmt.weight);
+      }
+    }
+  }
+  DiscreteDistribution<Statement> dd=new DiscreteDistribution<Statement>(random,pmf);
+  Statement stmt=dd.nextItem();
+switch (stmt) {
+case BLOCK:
+    return generateBlock(budget);
+case VAR:
+  return generateVariableStatement(budget);
+case EMPTY:
+return generateEmptyStatement(budget);
+case EXPR:
+return generateExpressionStatement(budget);
+case IF:
+return generateIfStatement(budget);
+case WHILE:
+return generateWhile(budget);
+case DO_WHILE:
+return generateDoWhile(budget);
+case FOR:
+return generateFor(budget);
+case FOR_IN:
+return generateForIn(budget);
+case CONTINUE:
+return generateContinue(budget);
+case BREAK:
+return generateBreak(budget);
+case RETURN:
+return generateReturn(budget);
+case SWITCH:
+return generateSwitch(budget);
+case LABEL:
+return generateLabelledStatement(budget);
+case THROW:
+return generateThrow(budget);
+case TRY:
+return generateTry(budget);
+default :
+throw new RuntimeException("Shouldn never reach this!");
+}
+}

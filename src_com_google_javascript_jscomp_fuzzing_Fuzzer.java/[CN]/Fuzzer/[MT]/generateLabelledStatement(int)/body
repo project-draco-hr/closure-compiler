@@ -1,0 +1,15 @@
+{
+  Preconditions.checkArgument(budget >= 3);
+  String labelName;
+  do {
+    labelName=StringGenerator.getString(random);
+  }
+ while (currentLabels.search(labelName) != -1);
+  Node name=Node.newString(Token.LABEL_NAME,labelName);
+  Node node=new Node(Token.LABEL,name);
+  currentLabels.push(labelName);
+  Node statement=generateStatement(budget - 2);
+  node.addChildToBack(statement);
+  currentLabels.pop();
+  return node;
+}

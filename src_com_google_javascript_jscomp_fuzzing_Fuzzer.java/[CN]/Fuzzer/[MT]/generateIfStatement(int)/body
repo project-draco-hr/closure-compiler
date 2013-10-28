@@ -1,0 +1,19 @@
+{
+  Preconditions.checkArgument(budget >= 3);
+  int numComponents;
+  if (budget == 3) {
+    numComponents=2;
+  }
+ else {
+    numComponents=random.nextInt(2) == 0 ? 2 : 3;
+  }
+  int size=1;
+  int[] componentBudgets=distribute(budget - size,numComponents,1);
+  Node condition=generateExpression(componentBudgets[0]);
+  Node node=new Node(Token.IF,condition);
+  node.addChildToBack(generateBlock(componentBudgets[1]));
+  if (numComponents == 3) {
+    node.addChildToBack(generateBlock(componentBudgets[2]));
+  }
+  return node;
+}
