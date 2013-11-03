@@ -16,11 +16,14 @@
     }
     return;
   }
-  if (parent.isInstanceOf() && parent.getLastChild() == n && n.isQualifiedName()) {
+  boolean isInstanceOfCheck=parent.isInstanceOf() && parent.getLastChild() == n;
+  if (isInstanceOfCheck) {
     JsName checkedClass=getName(nameInfo.name,true);
-    refNodes.add(new InstanceOfCheckNode(checkedClass,n));
-    checkedClass.hasInstanceOfReference=true;
-    return;
+    if (checkedClass.hasSetterReference && !nameInfo.isExternallyReferenceable && n.isQualifiedName()) {
+      refNodes.add(new InstanceOfCheckNode(checkedClass,n));
+      checkedClass.hasInstanceOfReference=true;
+      return;
+    }
   }
   List<NameInformation> referers=getDependencyScope(n);
   if (referers.isEmpty()) {
