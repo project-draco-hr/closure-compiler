@@ -1,18 +1,24 @@
 {
   int remainingBudget;
   Node name;
-  if (anonymous) {
+  if (isExpression) {
     Preconditions.checkArgument(budget >= 3);
-    name=Node.newString(Token.NAME,"");
-    remainingBudget=budget - 3;
+    symbolTable.addScope();
+    if (budget >= 4 && random.nextInt(2) == 0) {
+      name=generateIdentifier(1,false);
+      remainingBudget=budget - 4;
+    }
+ else {
+      name=Node.newString(Token.NAME,"");
+      remainingBudget=budget - 3;
+    }
   }
  else {
     Preconditions.checkArgument(budget >= 4);
     name=generateIdentifier(1,false);
     remainingBudget=budget - 4;
+    symbolTable.addScope();
   }
-  functionNesting++;
-  symbolTable.addScope();
   Node paramList=new Node(Token.PARAM_LIST);
   Node body=new Node(Token.BLOCK);
   int numComponents=random.nextInt(remainingBudget + 1);
@@ -27,7 +33,6 @@
     }
   }
   symbolTable.removeScope();
-  functionNesting--;
   Node function=new Node(Token.FUNCTION,name,paramList,body);
   return function;
 }
