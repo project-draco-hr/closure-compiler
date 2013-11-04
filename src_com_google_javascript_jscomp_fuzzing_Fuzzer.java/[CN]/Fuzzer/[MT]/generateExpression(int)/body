@@ -6,6 +6,9 @@
       if (expr == Expression.FUNCTION_CALL && symbolTable.getSize() == 0 && budget < 4) {
         continue;
       }
+ else       if (expr == Expression.IDENTIFIER && symbolTable.getSize() == 0) {
+        continue;
+      }
  else {
         pmf.put(expr,expr.weight);
       }
@@ -14,10 +17,14 @@
   DiscreteDistribution<Expression> dd=new DiscreteDistribution<Expression>(random,pmf);
   Expression expr=dd.nextItem();
 switch (expr) {
+case THIS:
+    return generateThis(budget);
+case IDENTIFIER:
+  return generateIdentifier(budget,true);
 case LITERAL:
-    return generateLiteral(budget);
+return generateLiteral(budget);
 case FUNCTION_CALL:
-  return generateFunctionCall(budget);
+return generateFunctionCall(budget);
 case UNARY_EXPR:
 return generateUnaryExpression(budget);
 case BINARY_EXPR:
