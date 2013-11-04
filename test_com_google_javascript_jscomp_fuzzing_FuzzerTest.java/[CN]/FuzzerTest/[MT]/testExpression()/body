@@ -1,0 +1,15 @@
+{
+  Random random=new Random();
+  Fuzzer fuzzer=spy(new Fuzzer(random));
+  int budget=1;
+  fuzzer.generateExpression(budget);
+  verify(fuzzer).generateLiteral(budget);
+  verify(fuzzer,never()).generateFunctionCall(budget);
+  verify(fuzzer,never()).generateUnaryExpression(budget);
+  budget=2;
+  fuzzer.generateExpression(budget);
+  verify(fuzzer,never()).generateBinaryExpression(budget);
+  verify(fuzzer,never()).generateFunctionExpression(budget);
+  budget=3;
+  verify(fuzzer,never()).generateTernaryExpression(budget);
+}

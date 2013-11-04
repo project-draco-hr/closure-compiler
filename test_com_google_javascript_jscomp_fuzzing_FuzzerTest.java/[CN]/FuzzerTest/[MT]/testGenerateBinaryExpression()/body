@@ -1,0 +1,13 @@
+{
+  int budget=50;
+  String[] operators={"*","/","%","+","-","<<",">>",">>>","<",">","<=",">=","instanceof","in","==","!=","===","!==","&","^","|","&&","||","=","*=","/=","%=","+=","-=","<<=",">>=",">>>=","&=","^=","|="};
+  for (int i=0; i < operators.length; i++) {
+    Random random=spy(new Random());
+    doReturn(i).when(random).nextInt(operators.length);
+    Fuzzer fuzzer=spy(new Fuzzer(random));
+    doReturn(new int[]{budget / 2,budget / 2}).when(fuzzer).distribute(budget - 1,2,1);
+    Node node=fuzzer.generateBinaryExpression(budget);
+    String code=Fuzzer.getPrettyCode(node);
+    assertNotSame(-1,code.indexOf(" " + operators[i] + " "));
+  }
+}

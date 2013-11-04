@@ -1,0 +1,15 @@
+{
+  Random random=new Random(System.currentTimeMillis());
+  Fuzzer fuzzer=spy(new Fuzzer(random));
+  int budget=0;
+  fuzzer.generateLiteral(budget);
+  verify(fuzzer,never()).generateNullLiteral(budget);
+  verify(fuzzer,never()).generateBooleanLiteral(budget);
+  verify(fuzzer,never()).generateNumericLiteral(budget);
+  verify(fuzzer,never()).generateStringLiteral(budget);
+  verify(fuzzer,never()).generateArrayLiteral(budget);
+  verify(fuzzer,never()).generateObjectLiteral(budget);
+  budget=1;
+  fuzzer.generateLiteral(budget);
+  verify(fuzzer,never()).generateRegularExpressionLiteral(budget);
+}
