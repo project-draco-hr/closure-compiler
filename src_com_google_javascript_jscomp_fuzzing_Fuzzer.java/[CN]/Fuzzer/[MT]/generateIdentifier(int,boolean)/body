@@ -1,0 +1,16 @@
+{
+  Preconditions.checkArgument(!getExistingOne || symbolTable.getSize() > 0);
+  Preconditions.checkArgument(budget >= 1);
+  if (getExistingOne) {
+    return Node.newString(Token.NAME,symbolTable.getRandomSymbol());
+  }
+ else {
+    String identifier;
+    do {
+      identifier=StringGenerator.getString(random);
+    }
+ while (symbolTable.containsInCurrentScope(identifier));
+    symbolTable.addSymbol(identifier);
+    return Node.newString(Token.NAME,identifier);
+  }
+}

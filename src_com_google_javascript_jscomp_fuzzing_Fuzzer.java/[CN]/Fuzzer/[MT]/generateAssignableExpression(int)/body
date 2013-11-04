@@ -1,15 +1,23 @@
 {
+  Preconditions.checkArgument(budget >= 3 || symbolTable.getSize() > 0);
   if (budget < 3) {
-    return generateIdentifier(budget);
+    return generateIdentifier(budget,true);
   }
  else {
-switch (random.nextInt(3)) {
+    int rand;
+    if (symbolTable.getSize() > 0) {
+      rand=random.nextInt(3);
+    }
+ else {
+      rand=random.nextInt(2);
+    }
+switch (rand) {
 case 0:
-      return generateIdentifier(budget);
+      return generateGetProp(budget);
 case 1:
-    return generateGetProp(budget);
+    return generateGetElem(budget);
 case 2:
-  return generateGetElem(budget);
+  return generateIdentifier(budget,true);
 default :
 return null;
 }

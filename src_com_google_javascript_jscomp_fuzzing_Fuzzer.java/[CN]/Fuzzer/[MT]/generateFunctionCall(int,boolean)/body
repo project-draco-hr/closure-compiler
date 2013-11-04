@@ -1,8 +1,15 @@
 {
-  Preconditions.checkArgument(budget >= 2);
-  int numArgs=random.nextInt(budget - 1);
-  int[] subBudgets=distribute(budget - 1,numArgs + 1,1);
-  Node target=generateCallableExpression(subBudgets[0]);
+  Preconditions.checkArgument((budget >= 2 && symbolTable.getSize() > 0) || budget >= 4);
+  int remainingBudget;
+  if (symbolTable.getSize() == 0) {
+    remainingBudget=budget - 3;
+  }
+ else {
+    remainingBudget=budget - 1;
+  }
+  int numArgs=random.nextInt(remainingBudget);
+  int[] subBudgets=distribute(remainingBudget,numArgs + 1,1);
+  Node target=generateCallableExpression(subBudgets[0] + budget - 1 - remainingBudget);
   Node node;
   if (isNew) {
     node=new Node(Token.NEW,target);

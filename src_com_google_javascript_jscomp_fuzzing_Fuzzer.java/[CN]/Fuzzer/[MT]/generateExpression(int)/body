@@ -1,34 +1,31 @@
 {
-  int rand;
   Preconditions.checkArgument(budget >= 1);
-  if (budget < 2) {
-    rand=0;
-  }
- else   if (budget < 3) {
-    rand=random.nextInt(4);
-  }
- else   if (budget < 4) {
-    rand=random.nextInt(6);
-  }
+  Map<Expression,Double> pmf=Maps.newHashMap();
+  for (  Expression expr : Expression.values()) {
+    if (expr.minBudget <= budget) {
+      if (expr == Expression.FUNCTION_CALL && symbolTable.getSize() == 0 && budget < 4) {
+        continue;
+      }
  else {
-    rand=random.nextInt(7);
+        pmf.put(expr,expr.weight);
+      }
+    }
   }
-switch (rand) {
-case 0:
+  DiscreteDistribution<Expression> dd=new DiscreteDistribution<Expression>(random,pmf);
+  Expression expr=dd.nextItem();
+switch (expr) {
+case LITERAL:
     return generateLiteral(budget);
-case 1:
-  return generateCallableExpression(budget);
-case 2:
-return generateFunctionCall(budget);
-case 3:
+case FUNCTION_CALL:
+  return generateFunctionCall(budget);
+case UNARY_EXPR:
 return generateUnaryExpression(budget);
-case 4:
+case BINARY_EXPR:
 return generateBinaryExpression(budget);
-case 5:
+case FUNCTION_EXPR:
 return generateFunctionExpression(budget);
-case 6:
+case TERNARY_EXPR:
 return generateTernaryExpression(budget);
-default :
-return null;
 }
+return null;
 }

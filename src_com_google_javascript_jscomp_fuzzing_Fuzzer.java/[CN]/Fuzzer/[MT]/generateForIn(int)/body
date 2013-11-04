@@ -3,7 +3,12 @@
   loopNesting++;
   int[] componentBudgets=distribute(budget,3,1);
   Node iterator;
-  iterator=random.nextInt(2) == 0 ? generateAssignableExpression(componentBudgets[0]) : generateVariableStatement(componentBudgets[0]);
+  if (componentBudgets[0] < 3 && symbolTable.getSize() == 0) {
+    iterator=generateVariableStatement(componentBudgets[0]);
+  }
+ else {
+    iterator=random.nextInt(2) == 0 ? generateAssignableExpression(componentBudgets[0]) : generateVariableStatement(componentBudgets[0]);
+  }
   Node expr=generateExpression(componentBudgets[1]);
   Node block=generateBlock(componentBudgets[2]);
   loopNesting--;
