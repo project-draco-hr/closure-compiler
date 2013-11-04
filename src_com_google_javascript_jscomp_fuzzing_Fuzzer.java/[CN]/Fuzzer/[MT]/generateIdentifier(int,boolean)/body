@@ -2,14 +2,16 @@
   Preconditions.checkArgument(!getExistingOne || symbolTable.getSize() > 0);
   Preconditions.checkArgument(budget >= 1);
   if (getExistingOne) {
-    return Node.newString(Token.NAME,symbolTable.getRandomSymbol());
+    return Node.newString(Token.NAME,symbolTable.getRandomSymbol(false));
   }
  else {
     String identifier;
-    do {
-      identifier=StringGenerator.getString(random);
+    if (symbolTable.hasNonLocals() && random.nextInt(10) < 1) {
+      identifier=symbolTable.getRandomSymbol(true);
     }
- while (symbolTable.containsInCurrentScope(identifier));
+ else {
+      identifier="x_" + nextNumber();
+    }
     symbolTable.addSymbol(identifier);
     return Node.newString(Token.NAME,identifier);
   }
