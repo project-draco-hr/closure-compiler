@@ -3,13 +3,14 @@
     return Collections.emptyMap();
   }
   Map<TemplateType,JSType> resolvedTypes=Maps.newIdentityHashMap();
+  Set<JSType> seenTypes=Sets.newIdentityHashSet();
   Node callTarget=call.getFirstChild();
   if (NodeUtil.isGet(callTarget)) {
     Node obj=callTarget.getFirstChild();
-    maybeResolveTemplatedType(fnType.getTypeOfThis(),getJSType(obj),resolvedTypes);
+    maybeResolveTemplatedType(fnType.getTypeOfThis(),getJSType(obj),resolvedTypes,seenTypes);
   }
   if (call.hasMoreThanOneChild()) {
-    maybeResolveTemplateTypeFromNodes(fnType.getParameters(),call.getChildAtIndex(1).siblings(),resolvedTypes);
+    maybeResolveTemplateTypeFromNodes(fnType.getParameters(),call.getChildAtIndex(1).siblings(),resolvedTypes,seenTypes);
   }
   return resolvedTypes;
 }

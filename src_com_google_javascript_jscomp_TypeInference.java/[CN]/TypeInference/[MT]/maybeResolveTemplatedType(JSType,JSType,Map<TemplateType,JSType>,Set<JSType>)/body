@@ -1,0 +1,47 @@
+{
+  if (paramType.isTemplateType()) {
+    resolvedTemplateType(resolvedTypes,paramType.toMaybeTemplateType(),argType);
+  }
+ else   if (paramType.isUnionType()) {
+    UnionType unionType=paramType.toMaybeUnionType();
+    for (    JSType alernative : unionType.getAlternates()) {
+      maybeResolveTemplatedType(alernative,argType,resolvedTypes,seenTypes);
+    }
+  }
+ else   if (paramType.isFunctionType()) {
+    FunctionType paramFunctionType=paramType.toMaybeFunctionType();
+    FunctionType argFunctionType=argType.restrictByNotNullOrUndefined().collapseUnion().toMaybeFunctionType();
+    if (argFunctionType != null && argFunctionType.isSubtype(paramType)) {
+      maybeResolveTemplatedType(paramFunctionType.getTypeOfThis(),argFunctionType.getTypeOfThis(),resolvedTypes,seenTypes);
+      maybeResolveTemplatedType(paramFunctionType.getReturnType(),argFunctionType.getReturnType(),resolvedTypes,seenTypes);
+      maybeResolveTemplateTypeFromNodes(paramFunctionType.getParameters(),argFunctionType.getParameters(),resolvedTypes,seenTypes);
+    }
+  }
+ else   if (paramType.isRecordType() && !paramType.isNominalType()) {
+    if (!seenTypes.contains(paramType)) {
+      seenTypes.add(paramType);
+      ObjectType paramRecordType=paramType.toObjectType();
+      ObjectType argObjectType=argType.restrictByNotNullOrUndefined().toObjectType();
+      if (argObjectType != null && !argObjectType.isUnknownType() && !argObjectType.isEmptyType()) {
+        Set<String> names=paramRecordType.getPropertyNames();
+        for (        String name : names) {
+          if (paramRecordType.hasOwnProperty(name) && argObjectType.hasProperty(name)) {
+            maybeResolveTemplatedType(paramRecordType.getPropertyType(name),argObjectType.getPropertyType(name),resolvedTypes,seenTypes);
+          }
+        }
+      }
+      seenTypes.remove(paramType);
+    }
+  }
+ else   if (paramType.isTemplatizedType()) {
+    ObjectType referencedParamType=paramType.toMaybeTemplatizedType().getReferencedType();
+    JSType argObjectType=argType.restrictByNotNullOrUndefined().collapseUnion();
+    if (argObjectType.isSubtype(referencedParamType)) {
+      TemplateTypeMap paramTypeMap=paramType.getTemplateTypeMap();
+      TemplateTypeMap argTypeMap=argObjectType.getTemplateTypeMap();
+      for (      TemplateType key : paramTypeMap.getTemplateKeys()) {
+        maybeResolveTemplatedType(paramTypeMap.getTemplateType(key),argTypeMap.getTemplateType(key),resolvedTypes,seenTypes);
+      }
+    }
+  }
+}
