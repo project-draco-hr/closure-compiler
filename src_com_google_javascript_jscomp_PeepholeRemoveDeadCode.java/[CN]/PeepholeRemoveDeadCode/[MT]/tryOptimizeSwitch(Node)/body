@@ -35,7 +35,7 @@
           block=cur.getLastChild();
           lastStm=block.getLastChild();
           cur=cur.getNext();
-          if (lastStm != null && lastStm.isBreak()) {
+          if (lastStm != null && lastStm.isBreak() && !lastStm.hasChildren()) {
             block.removeChild(lastStm);
             reportCodeChange();
             break;
@@ -48,8 +48,9 @@
         cur=cond.getNext();
         if (cur != null && cur.getNext() == null) {
           block=cur.getLastChild();
-          if (!(NodeUtil.containsType(block,Token.BREAK,NodeUtil.MATCH_NOT_FUNCTION))) {
+          if (!(NodeUtil.has(block,MATCH_UNNAMED_BREAK,NodeUtil.MATCH_NOT_FUNCTION))) {
             cur.removeChild(block);
+            block.setIsSyntheticBlock(false);
             n.getParent().replaceChild(n,block);
             reportCodeChange();
             return block;
