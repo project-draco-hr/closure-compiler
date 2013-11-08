@@ -1,0 +1,27 @@
+{
+  Node tmp=IR.block();
+  for (  Map.Entry<Node,InstanceofInfo> entry : instanceofNodes.entrySet()) {
+    Node n=entry.getKey();
+    InstanceofInfo info=entry.getValue();
+    if (!info.namedInfo.allowMove || !info.mustBeGuardedByTypeof()) {
+      continue;
+    }
+    Node parent=n.getParent();
+    if (parent.isAnd() && parent.getLastChild() == n && parent.getFirstChild().isNE()) {
+      Node ne=parent.getFirstChild();
+      if (ne.getFirstChild().isString() && "undefined".equals(ne.getFirstChild().getString()) && ne.getLastChild().isTypeOf()) {
+        Node ref=ne.getLastChild().getFirstChild();
+        if (ref.isEquivalentTo(n.getLastChild())) {
+          continue;
+        }
+      }
+    }
+    Node reference=n.getLastChild().cloneNode();
+    Preconditions.checkState(reference.isName());
+    n.getParent().replaceChild(n,tmp);
+    Node and=IR.and(new Node(Token.NE,IR.string("undefined"),new Node(Token.TYPEOF,reference)),n);
+    and.useSourceInfoIfMissingFromForTree(n);
+    tmp.getParent().replaceChild(tmp,and);
+    compiler.reportCodeChange();
+  }
+}
