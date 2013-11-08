@@ -1,5 +1,6 @@
 {
-  Map<Statement,Double> pmf=Maps.newHashMap();
+  ArrayList<Statement> statements=Lists.newArrayList();
+  ArrayList<Double> weights=Lists.newArrayList();
   for (  Statement stmt : Statement.values()) {
     if (stmt.minBudget <= budget) {
       if (stmt == Statement.RETURN && symbolTable.getNumScopes() < 2) {
@@ -12,11 +13,12 @@
         continue;
       }
  else {
-        pmf.put(stmt,stmt.weight);
+        statements.add(stmt);
+        weights.add(stmt.weight);
       }
     }
   }
-  DiscreteDistribution<Statement> dd=new DiscreteDistribution<Statement>(random,pmf);
+  DiscreteDistribution<Statement> dd=new DiscreteDistribution<Statement>(random,statements,weights);
   Statement stmt=dd.nextItem();
 switch (stmt) {
 case BLOCK:

@@ -1,14 +1,15 @@
 {
-  HashMap<List<String>,Double> pmf=new HashMap<List<String>,Double>();
+  ArrayList<List<String>> scopes=new ArrayList<List<String>>(storage);
+  ArrayList<Double> weights=Lists.newArrayListWithCapacity(getNumScopes());
   int i;
   for (i=0; i < storage.size() - 1; i++) {
-    List<String> scope=storage.get(i);
-    pmf.put(scope,Double.valueOf(scope.size()));
+    List<String> s=storage.get(i);
+    weights.add(Double.valueOf(s.size()));
   }
   if (!excludeLocal) {
-    List<String> scope=storage.get(i);
-    pmf.put(scope,Double.valueOf(scope.size()));
+    List<String> s=storage.get(i);
+    weights.add(Double.valueOf(s.size()));
   }
-  DiscreteDistribution<List<String>> distribution=new DiscreteDistribution<List<String>>(random,pmf);
+  DiscreteDistribution<List<String>> distribution=new DiscreteDistribution<List<String>>(random,scopes,weights);
   return distribution.nextItem();
 }

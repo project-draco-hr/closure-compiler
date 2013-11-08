@@ -1,6 +1,7 @@
 {
   Preconditions.checkArgument(budget >= 1);
-  Map<Expression,Double> pmf=Maps.newHashMap();
+  ArrayList<Expression> expressions=Lists.newArrayList();
+  ArrayList<Double> weights=Lists.newArrayList();
   for (  Expression expr : Expression.values()) {
     if (expr.minBudget <= budget) {
       if (expr == Expression.FUNCTION_CALL && symbolTable.getSize() == 0 && budget < 4) {
@@ -10,11 +11,12 @@
         continue;
       }
  else {
-        pmf.put(expr,expr.weight);
+        expressions.add(expr);
+        weights.add(expr.weight);
       }
     }
   }
-  DiscreteDistribution<Expression> dd=new DiscreteDistribution<Expression>(random,pmf);
+  DiscreteDistribution<Expression> dd=new DiscreteDistribution<Expression>(random,expressions,weights);
   Expression expr=dd.nextItem();
 switch (expr) {
 case THIS:
