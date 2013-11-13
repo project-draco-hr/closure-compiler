@@ -1,0 +1,15 @@
+{
+  setStartingPosition(line,column);
+  SourceMapConsumerV3 section=new SourceMapConsumerV3();
+  section.parse(mapSectionContents);
+  section.visitMappings(new ConsumerEntryVisitor());
+  for (  Entry<String,Object> entry : section.getExtensions().entrySet()) {
+    String extensionKey=entry.getKey();
+    if (extensions.containsKey(extensionKey)) {
+      extensions.put(extensionKey,mergeAction.merge(extensionKey,extensions.get(extensionKey),entry.getValue()));
+    }
+ else {
+      extensions.put(extensionKey,entry.getValue());
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  SourceMapGeneratorV3 mapper=new SourceMapGeneratorV3();
+  mapper.mergeMapSection(0,0,"{\n" + "\"version\":3,\n" + "\"file\":\"testcode\",\n"+ "\"lineCount\":1,\n"+ "\"mappings\":\"AAAAA,QAASA,UAAS,EAAG;\",\n"+ "\"sources\":[\"testcode\"],\n"+ "\"names\":[\"__BASIC__\"],\n"+ "\"x_company_foo\":2\n"+ "}\n");
+  assertFalse(mapper.hasExtension("x_company_foo"));
+  mapper.addExtension("x_company_baz",new Integer(2));
+  mapper.mergeMapSection(0,0,"{\n" + "\"version\":3,\n" + "\"file\":\"testcode2\",\n"+ "\"lineCount\":0,\n"+ "\"mappings\":\"\",\n"+ "\"sources\":[\"testcode2\"],\n"+ "\"names\":[],\n"+ "\"x_company_baz\":3,\n"+ "\"x_company_bar\":false\n"+ "}\n",new ExtensionMergeAction(){
+    @Override public Object merge(    String extensionKey,    Object currentValue,    Object newValue){
+      return (Integer)currentValue + (Integer)newValue;
+    }
+  }
+);
+  assertEquals(5,mapper.getExtension("x_company_baz"));
+  assertEquals(false,mapper.getExtension("x_company_bar"));
+}
