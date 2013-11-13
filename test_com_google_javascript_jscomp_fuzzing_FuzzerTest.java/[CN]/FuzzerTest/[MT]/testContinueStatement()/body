@@ -2,7 +2,8 @@
   ControlledRandom random=new ControlledRandom();
   random.addOverride(1,0);
   Fuzzer fuzzer=new Fuzzer(random);
-  fuzzer.currentLabels.push("testLabel");
+  Scope scope=fuzzer.scopeManager.localScope();
+  scope.labels.push("testLabel");
   Node breakStmt=fuzzer.generateContinue(10);
   String code=Fuzzer.getPrettyCode(breakStmt);
   assertEquals("continue testLabel;",code.trim());

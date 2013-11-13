@@ -4,10 +4,10 @@
   ArrayList<Double> weights=Lists.newArrayList();
   for (  Expression expr : Expression.values()) {
     if (expr.minBudget <= budget) {
-      if (expr == Expression.FUNCTION_CALL && symbolTable.getSize() == 0 && budget < 4) {
+      if (expr == Expression.FUNCTION_CALL && scopeManager.getSize() == 0 && budget < 4) {
         continue;
       }
- else       if (expr == Expression.IDENTIFIER && symbolTable.getSize() == 0) {
+ else       if (expr == Expression.IDENTIFIER && scopeManager.getSize() == 0) {
         continue;
       }
  else {
@@ -22,7 +22,7 @@ switch (expr) {
 case THIS:
     return generateThis(budget);
 case IDENTIFIER:
-  return generateIdentifier(budget,true);
+  return getExistingIdentifier(budget);
 case LITERAL:
 return generateLiteral(budget);
 case FUNCTION_CALL:

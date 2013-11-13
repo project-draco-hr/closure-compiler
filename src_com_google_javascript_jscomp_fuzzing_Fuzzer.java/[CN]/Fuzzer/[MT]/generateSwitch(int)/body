@@ -1,6 +1,6 @@
 {
   Preconditions.checkArgument(budget >= 2);
-  switchNesting++;
+  scopeManager.localScope().switchNesting++;
   int numCases=budget > 2 ? random.nextInt(budget - 2) : 0;
   int[] componentBudgets=distribute(budget,numCases + 1,2);
   Node switchStmt=new Node(Token.SWITCH,generateExpression(componentBudgets[0] - 1));
@@ -28,6 +28,6 @@
     clause.addChildrenToBack(block);
     switchStmt.addChildToBack(clause);
   }
-  switchNesting--;
+  scopeManager.localScope().switchNesting--;
   return switchStmt;
 }

@@ -1,9 +1,9 @@
 {
   Preconditions.checkArgument(budget >= 4);
-  loopNesting++;
+  scopeManager.localScope().loopNesting++;
   int[] componentBudgets=distribute(budget,3,1);
   Node iterator;
-  if (componentBudgets[0] < 3 && symbolTable.getSize() == 0) {
+  if (componentBudgets[0] < 3 && scopeManager.getSize() == 0) {
     iterator=generateVariableStatement(componentBudgets[0]);
   }
  else {
@@ -11,6 +11,6 @@
   }
   Node expr=generateExpression(componentBudgets[1]);
   Node block=generateBlock(componentBudgets[2]);
-  loopNesting--;
+  scopeManager.localScope().loopNesting--;
   return new Node(Token.FOR,iterator,expr,block);
 }

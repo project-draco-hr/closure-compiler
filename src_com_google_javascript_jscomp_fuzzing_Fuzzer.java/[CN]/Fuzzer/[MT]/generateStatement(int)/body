@@ -1,15 +1,16 @@
 {
   ArrayList<Statement> statements=Lists.newArrayList();
   ArrayList<Double> weights=Lists.newArrayList();
+  Scope scope=scopeManager.localScope();
   for (  Statement stmt : Statement.values()) {
     if (stmt.minBudget <= budget) {
-      if (stmt == Statement.RETURN && symbolTable.getNumScopes() < 2) {
+      if (stmt == Statement.RETURN && scopeManager.getNumScopes() < 2) {
         continue;
       }
- else       if (stmt == Statement.BREAK && loopNesting == 0 && switchNesting == 0) {
+ else       if (stmt == Statement.BREAK && scope.loopNesting == 0 && scope.switchNesting == 0) {
         continue;
       }
- else       if (stmt == Statement.CONTINUE && loopNesting == 0) {
+ else       if (stmt == Statement.CONTINUE && scope.loopNesting == 0) {
         continue;
       }
  else {

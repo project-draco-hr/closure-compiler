@@ -2,8 +2,9 @@
   Preconditions.checkArgument(budget >= 3);
   int[] componentBudgets=distribute(budget - 1,2,1);
   Node expr=generateExpression(componentBudgets[0]);
-  loopNesting++;
+  Scope scope=scopeManager.localScope();
+  scope.loopNesting++;
   Node stmt=generateBlock(componentBudgets[1]);
-  loopNesting--;
+  scope.loopNesting--;
   return new Node(Token.WHILE,expr,stmt);
 }

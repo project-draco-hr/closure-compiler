@@ -1,0 +1,17 @@
+{
+  ArrayList<Scope> scopes=new ArrayList<Scope>(getNumScopes());
+  ArrayList<Double> weights=Lists.newArrayListWithCapacity(getNumScopes());
+  int i;
+  for (i=0; i < scopeStack.size() - 1; i++) {
+    Scope s=scopeStack.get(i);
+    scopes.add(s);
+    weights.add(Double.valueOf(s.symbols.size()));
+  }
+  if (!excludeLocal) {
+    Scope s=scopeStack.get(i);
+    scopes.add(s);
+    weights.add(Double.valueOf(s.symbols.size()));
+  }
+  DiscreteDistribution<Scope> distribution=new DiscreteDistribution<Scope>(random,scopes,weights);
+  return distribution.nextItem();
+}

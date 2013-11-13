@@ -3,9 +3,9 @@
   Node name;
   if (isExpression) {
     Preconditions.checkArgument(budget >= 3);
-    symbolTable.addScope();
+    scopeManager.addScope();
     if (budget >= 4 && random.nextInt(2) == 0) {
-      name=generateIdentifier(1,false);
+      name=generateIdentifier(1);
       remainingBudget=budget - 4;
     }
  else {
@@ -15,9 +15,9 @@
   }
  else {
     Preconditions.checkArgument(budget >= 4);
-    name=generateIdentifier(1,false);
+    name=generateIdentifier(1);
     remainingBudget=budget - 4;
-    symbolTable.addScope();
+    scopeManager.addScope();
   }
   Node paramList=new Node(Token.PARAM_LIST);
   Node body=new Node(Token.BLOCK);
@@ -26,13 +26,13 @@
     int[] componentBudgets=distribute(remainingBudget + 1,numComponents,1);
     componentBudgets[0]--;
     for (int i=0; i < componentBudgets[0]; i++) {
-      paramList.addChildToBack(generateIdentifier(1,false));
+      paramList.addChildToBack(generateIdentifier(1));
     }
     for (int i=1; i < numComponents; i++) {
       body.addChildToBack(generateSourceElement(componentBudgets[i]));
     }
   }
-  symbolTable.removeScope();
+  scopeManager.removeScope();
   Node function=new Node(Token.FUNCTION,name,paramList,body);
   return function;
 }
