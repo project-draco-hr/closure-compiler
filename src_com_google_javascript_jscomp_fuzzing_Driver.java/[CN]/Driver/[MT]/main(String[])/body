@@ -3,23 +3,62 @@
   CmdLineParser parser=new CmdLineParser(driver);
   try {
     parser.parseArgument(args);
-    for (int i=0; i < driver.numberOfRuns; i++) {
-      long seed=System.currentTimeMillis();
-      Random random=new Random(seed);
-      System.out.println("Seed: " + seed);
-      Fuzzer fuzzer=new Fuzzer(random);
-      Node[] nodes=fuzzer.generateProgram(driver.maxASTSize);
-      Node script=Fuzzer.buildScript(nodes);
-      String code=Fuzzer.getPrettyCode(script);
-      System.out.println(code.trim());
-      Result result=driver.compile(script);
-      if (result.success) {
-        System.out.println("Success! [" + i + " of "+ driver.numberOfRuns+ "]\n");
-      }
-    }
   }
  catch (  CmdLineException e) {
     System.err.println(e.getMessage());
     parser.printUsage(System.err);
+    System.exit(1);
   }
+  Logger logger=Logger.getLogger(Driver.class.getName());
+  logger.setLevel(driver.level.getLevel());
+  if (driver.seed != -1) {
+    driver.numberOfRuns=1;
+  }
+  for (int i=0; i < driver.numberOfRuns; i++) {
+    logger.info("Running fuzzer [" + i + " of "+ driver.numberOfRuns+ "]");
+    long seed;
+    if (driver.seed == -1) {
+      seed=System.currentTimeMillis();
+    }
+ else {
+      seed=driver.seed;
+    }
+    Random random=new Random(seed);
+    Fuzzer fuzzer=new Fuzzer(random);
+    Node[] nodes=null;
+    try {
+      nodes=fuzzer.generateProgram(driver.maxASTSize);
+    }
+ catch (    Exception e) {
+      logger.log(Level.SEVERE,"Fuzzer error!\nSeed: " + seed,e);
+    }
+    Node script=Fuzzer.buildScript(nodes);
+    try {
+      Result result=driver.compile(script);
+      if (result.success && result.warnings.length == 0) {
+        logger.info("Compilation Succeeded!\n");
+        StringBuffer sb=new StringBuffer("Seed: ");
+        sb.append(seed);
+        sb.append("\nJavaScript: ");
+        sb.append(Fuzzer.getPrettyCode(script));
+        logger.info(sb.toString());
+      }
+ else {
+        StringBuffer sb=new StringBuffer("Compilation Failed!\nSeed: ");
+        sb.append(seed);
+        sb.append("\nJavaScript: ");
+        sb.append(Fuzzer.getPrettyCode(script));
+        logger.warning(sb.toString());
+      }
+    }
+ catch (    Exception e) {
+      StringBuffer sb=new StringBuffer("Compiler error!\nSeed: ");
+      sb.append(seed);
+      sb.append("\nJavaScript: ");
+      sb.append(Fuzzer.getPrettyCode(script));
+      logger.log(Level.SEVERE,sb.toString(),e);
+    }
+  }
+  System.out.println("Done!");
+  System.exit(0);
 }

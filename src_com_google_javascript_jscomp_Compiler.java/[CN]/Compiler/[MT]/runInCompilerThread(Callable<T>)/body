@@ -29,12 +29,21 @@
         }
       }
 ;
-      result=compilerExecutor.submit(bootCompilerThread).get();
+      Future<T> future=compilerExecutor.submit(bootCompilerThread);
+      if (timeout > 0) {
+        result=future.get(timeout,TimeUnit.SECONDS);
+      }
+ else {
+        result=future.get();
+      }
     }
  catch (    InterruptedException e) {
       throw Throwables.propagate(e);
     }
 catch (    ExecutionException e) {
+      throw Throwables.propagate(e);
+    }
+catch (    TimeoutException e) {
       throw Throwables.propagate(e);
     }
   }
