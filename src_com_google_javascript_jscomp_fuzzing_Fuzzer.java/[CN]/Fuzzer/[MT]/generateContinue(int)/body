@@ -1,10 +1,9 @@
 {
   Preconditions.checkArgument(budget >= 1);
   Node node=new Node(Token.CONTINUE);
-  ArrayList<String> currentLabels=scopeManager.localScope().labels;
-  int index=random.nextInt(currentLabels.size() + 1);
-  if (index < currentLabels.size()) {
-    node.addChildToBack(Node.newString(Token.LABEL_NAME,currentLabels.get(index)));
+  Scope localScope=scopeManager.localScope();
+  if (localScope.loopLabels.size() > 0 && random.nextInt(2) == 0) {
+    node.addChildToBack(Node.newString(Token.LABEL_NAME,localScope.randomLabelForContinue(random)));
   }
   return node;
 }

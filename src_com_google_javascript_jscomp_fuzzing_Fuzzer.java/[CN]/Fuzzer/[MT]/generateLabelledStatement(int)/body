@@ -1,16 +1,23 @@
 {
   Preconditions.checkArgument(budget >= 3);
-  String labelName;
-  ArrayList<String> currentLabels=scopeManager.localScope().labels;
-  do {
-    labelName="x_" + nextNumber();
-  }
- while (currentLabels.indexOf(labelName) != -1);
+  String labelName="x_" + nextNumber();
   Node name=Node.newString(Token.LABEL_NAME,labelName);
   Node node=new Node(Token.LABEL,name);
-  currentLabels.add(labelName);
-  Node statement=generateStatement(budget - 2);
-  node.addChildToBack(statement);
-  currentLabels.remove(currentLabels.size() - 1);
-  return node;
+  Statement stmtType=decideStatementTypeToGenerate(budget - 2);
+  Scope localScope=scopeManager.localScope();
+  ArrayList<String> currentLabels;
+switch (stmtType) {
+case FOR:
+case FOR_IN:
+case WHILE:
+case DO_WHILE:
+    currentLabels=localScope.loopLabels;
+  break;
+default :
+currentLabels=localScope.otherLabels;
+}
+currentLabels.add(labelName);
+node.addChildToBack(generateStatementForType(stmtType,budget - 2));
+currentLabels.remove(labelName);
+return node;
 }

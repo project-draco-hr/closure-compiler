@@ -1,0 +1,24 @@
+{
+  ArrayList<Statement> statements=Lists.newArrayList();
+  ArrayList<Double> weights=Lists.newArrayList();
+  Scope scope=scopeManager.localScope();
+  for (  Statement stmt : Statement.values()) {
+    if (stmt.minBudget <= budget) {
+      if (stmt == Statement.RETURN && scopeManager.getNumScopes() < 2) {
+        continue;
+      }
+ else       if (stmt == Statement.BREAK && scope.loopNesting == 0 && scope.switchNesting == 0) {
+        continue;
+      }
+ else       if (stmt == Statement.CONTINUE && scope.loopNesting == 0) {
+        continue;
+      }
+ else {
+        statements.add(stmt);
+        weights.add(stmt.weight);
+      }
+    }
+  }
+  DiscreteDistribution<Statement> dd=new DiscreteDistribution<Statement>(random,statements,weights);
+  return dd.nextItem();
+}
