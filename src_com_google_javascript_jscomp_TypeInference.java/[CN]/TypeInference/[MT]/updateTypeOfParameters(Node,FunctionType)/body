@@ -9,7 +9,19 @@
     Node iArgument=n.getChildAtIndex(i + 1);
     JSType iArgumentType=getJSType(iArgument);
     inferPropertyTypesToMatchConstraint(iArgumentType,iParameterType);
-    FunctionType restrictedParameter=iParameterType.restrictByNotNullOrUndefined().toMaybeFunctionType();
+    FunctionType restrictedParameter=null;
+    if (iParameterType.isUnionType()) {
+      UnionType union=iParameterType.toMaybeUnionType();
+      for (      JSType alternative : union.getAlternates()) {
+        if (alternative.isFunctionType()) {
+          restrictedParameter=alternative.toMaybeFunctionType();
+          break;
+        }
+      }
+    }
+ else {
+      restrictedParameter=iParameterType.toMaybeFunctionType();
+    }
     if (restrictedParameter != null && iArgument.isFunction() && iArgumentType.isFunctionType()) {
       FunctionType argFnType=iArgumentType.toMaybeFunctionType();
       boolean declared=iArgument.getJSDocInfo() != null;
