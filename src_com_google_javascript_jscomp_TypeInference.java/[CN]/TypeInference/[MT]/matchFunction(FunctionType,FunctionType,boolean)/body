@@ -1,0 +1,14 @@
+{
+  if (declared) {
+    if (currentType.getTypeOfThis().isUnknownType() && !expectedType.getTypeOfThis().isUnknownType()) {
+      FunctionType replacement=new FunctionBuilder(registry).copyFromOtherFunction(currentType).withTypeOfThis(expectedType.getTypeOfThis()).build();
+      return replacement;
+    }
+  }
+ else {
+    if (currentType.getMaxArguments() <= expectedType.getMaxArguments()) {
+      return expectedType;
+    }
+  }
+  return currentType;
+}

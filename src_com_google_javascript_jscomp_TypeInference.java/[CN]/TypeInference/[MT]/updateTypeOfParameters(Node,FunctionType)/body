@@ -9,11 +9,11 @@
     Node iArgument=n.getChildAtIndex(i + 1);
     JSType iArgumentType=getJSType(iArgument);
     inferPropertyTypesToMatchConstraint(iArgumentType,iParameterType);
-    JSType restrictedParameter=iParameterType.restrictByNotNullOrUndefined().toMaybeFunctionType();
-    if (restrictedParameter != null) {
-      if (iArgument.isFunction() && iArgumentType.isFunctionType() && iArgument.getJSDocInfo() == null) {
-        iArgument.setJSType(restrictedParameter);
-      }
+    FunctionType restrictedParameter=iParameterType.restrictByNotNullOrUndefined().toMaybeFunctionType();
+    if (restrictedParameter != null && iArgument.isFunction() && iArgumentType.isFunctionType()) {
+      FunctionType argFnType=iArgumentType.toMaybeFunctionType();
+      boolean declared=iArgument.getJSDocInfo() != null;
+      iArgument.setJSType(matchFunction(restrictedParameter,argFnType,declared));
     }
     i++;
   }
