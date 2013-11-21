@@ -11,10 +11,11 @@
       return n;
     }
   }
-  n.detachChildren();
   Node branchToKeep=condValue.toBoolean(true) ? thenBody : elseBody;
   Node replacement;
-  if (mayHaveSideEffects(cond)) {
+  boolean condHasSideEffects=mayHaveSideEffects(cond);
+  n.detachChildren();
+  if (condHasSideEffects) {
     replacement=IR.comma(cond,branchToKeep).srcref(n);
   }
  else {
