@@ -1,0 +1,4 @@
+{
+  compiler.getOptions().setWarningLevel(DiagnosticGroups.UNNECESSARY_CASTS,CheckLevel.WARNING);
+  testClosureTypes("var goog = {};\n" + "goog.addDependency = function(a,b,c){};\n" + "goog.addDependency('a.js', ['A'], []);\n"+ "/** @constructor @struct */ function B() {}\n"+ "/**\n"+ " * @constructor\n"+ " * @template T\n"+ " */\n"+ "function C() { this.t; }\n"+ "/**\n"+ " * @param {!C.<T>} c\n"+ " * @return {T}\n"+ " * @template T\n"+ " */\n"+ "function getT(c) { return c.t; }\n"+ "/** @type {!C.<!A>} */\n"+ "var c = new C();\n"+ "var b = /** @type {!B} */ (getT(c));\n"+ "var a = /** @type {!A} */ (new B());\n",null);
+}
