@@ -39,7 +39,9 @@
         if (docInfo.isConstructor() && isValidPrivateConstructorAccess(parent)) {
           return;
         }
-        compiler.report(t.makeError(getprop,BAD_PRIVATE_PROPERTY_ACCESS,propertyName,validator.getReadableJSTypeName(getprop.getFirstChild(),true)));
+        JSType accessedType=getprop.getFirstChild().getJSType();
+        String readableTypeName=ownerType.equals(accessedType) ? validator.getReadableJSTypeName(getprop.getFirstChild(),true) : ownerType.toString();
+        compiler.report(t.makeError(getprop,BAD_PRIVATE_PROPERTY_ACCESS,propertyName,readableTypeName));
       }
  else       if (visibility == Visibility.PROTECTED) {
         if (currentClass == null || !currentClass.isSubtype(ownerType)) {
