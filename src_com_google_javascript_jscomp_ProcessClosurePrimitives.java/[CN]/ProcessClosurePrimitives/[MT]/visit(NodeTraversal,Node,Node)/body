@@ -34,16 +34,11 @@ if (left.isGetProp()) {
         }
       }
     }
+ else     if ("forwardDeclare".equals(methodName)) {
+      processForwardDeclare(t,n,parent);
+    }
  else     if ("addDependency".equals(methodName)) {
-      CodingConvention convention=compiler.getCodingConvention();
-      List<String> typeDecls=convention.identifyTypeDeclarationCall(n);
-      if (typeDecls != null) {
-        for (        String typeDecl : typeDecls) {
-          compiler.getTypeRegistry().forwardDeclareType(typeDecl);
-        }
-      }
-      parent.replaceChild(n,IR.number(0));
-      compiler.reportCodeChange();
+      processAddDependency(n,parent);
     }
  else     if ("setCssNameMapping".equals(methodName)) {
       processSetCssNameMapping(t,n,parent);

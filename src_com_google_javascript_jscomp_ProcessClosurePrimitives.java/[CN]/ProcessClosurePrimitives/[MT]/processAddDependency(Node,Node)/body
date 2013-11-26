@@ -1,0 +1,11 @@
+{
+  CodingConvention convention=compiler.getCodingConvention();
+  List<String> typeDecls=convention.identifyTypeDeclarationCall(n);
+  if (typeDecls != null) {
+    for (    String typeDecl : typeDecls) {
+      compiler.getTypeRegistry().forwardDeclareType(typeDecl);
+    }
+  }
+  parent.replaceChild(n,IR.number(0));
+  compiler.reportCodeChange();
+}

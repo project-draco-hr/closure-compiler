@@ -1,0 +1,15 @@
+{
+  CodingConvention convention=compiler.getCodingConvention();
+  String typeDeclaration=null;
+  try {
+    typeDeclaration=Iterables.getOnlyElement(convention.identifyTypeDeclarationCall(n));
+  }
+ catch (  NullPointerException|NoSuchElementException|IllegalArgumentException e) {
+    compiler.report(t.makeError(n,INVALID_FORWARD_DECLARE,"A single type could not identified for the goog.forwardDeclare " + "statement"));
+  }
+  if (typeDeclaration != null) {
+    compiler.getTypeRegistry().forwardDeclareType(typeDeclaration);
+    parent.detachFromParent();
+    compiler.reportCodeChange();
+  }
+}
