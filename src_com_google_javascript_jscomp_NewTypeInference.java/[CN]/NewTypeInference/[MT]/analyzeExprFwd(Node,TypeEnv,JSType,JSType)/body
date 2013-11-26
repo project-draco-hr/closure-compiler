@@ -73,8 +73,8 @@ EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,specializedType);
 return EnvTypePair.join(rhsPair,shortCircuitPair);
 }
  else {
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP);
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP);
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
 return rhsPair;
 }
 }
@@ -93,7 +93,7 @@ return new EnvTypePair(pair.env,JSType.NUMBER);
 }
 case Token.TYPEOF:
 {
-EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv,JSType.TOP);
+EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 pair.type=JSType.STRING;
 return pair;
 }
@@ -102,7 +102,7 @@ case Token.INSTANCEOF:
 Node obj=expr.getFirstChild();
 Node ctor=expr.getLastChild();
 EnvTypePair objPair, ctorPair;
-objPair=analyzeExprFwd(obj,inEnv,JSType.TOP);
+objPair=analyzeExprFwd(obj,inEnv);
 JSType objType=objPair.type;
 if (!objType.equals(JSType.TOP) && !objType.equals(JSType.UNKNOWN) && !objType.hasNonScalar()) {
 warnings.add(JSError.make(obj,INVALID_OPERAND_TYPE,"instanceof","an object or a union type that includes an object",objPair.type.toString()));
@@ -207,8 +207,8 @@ case Token.SHNE:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP);
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP);
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
 if ((exprKind == Token.SHEQ && specializedType.isTrue()) || (exprKind == Token.SHNE && specializedType.isFalse())) {
 JSType meetType=JSType.meet(lhsPair.type,rhsPair.type);
 lhsPair=analyzeExprFwd(lhs,rhsPair.env,JSType.TOP,meetType);
@@ -236,8 +236,8 @@ case Token.GE:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP);
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP);
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
 if (lhsPair.type.isScalar() && rhsPair.type.isUnknown()) {
 rhsPair=analyzeExprFwd(rhs,lhsPair.env,lhsPair.type);
 }
@@ -348,7 +348,7 @@ dc.updateArgTypes(argTypes);
 return new EnvTypePair(tmpEnv,retType);
 }
 case Token.COMMA:
-return analyzeExprFwd(expr.getLastChild(),analyzeExprFwd(expr.getFirstChild(),inEnv,JSType.TOP).env,requiredType,specializedType);
+return analyzeExprFwd(expr.getLastChild(),analyzeExprFwd(expr.getFirstChild(),inEnv).env,requiredType,specializedType);
 case Token.NOT:
 {
 EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv,JSType.TOP,specializedType.negate());
@@ -362,7 +362,10 @@ Node index=expr.getLastChild();
 if (index.isString()) {
 return analyzePropAccessFwd(receiver,index.getString(),inEnv,requiredType,specializedType);
 }
-return new EnvTypePair(inEnv,requiredType);
+EnvTypePair pair=analyzeExprFwd(index,inEnv);
+pair=analyzeExprFwd(receiver,pair.env,JSType.TOP_OBJECT);
+pair.type=requiredType;
+return pair;
 }
 case Token.EQ:
 case Token.NE:

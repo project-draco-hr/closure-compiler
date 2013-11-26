@@ -60,14 +60,14 @@ case Token.NEG:
 return analyzeExprBwd(expr.getFirstChild(),outEnv,JSType.NUMBER);
 case Token.TYPEOF:
 {
-EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv,JSType.TOP);
+EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=JSType.STRING;
 return pair;
 }
 case Token.INSTANCEOF:
 {
 TypeEnv env=analyzeExprBwd(expr.getLastChild(),outEnv,JSType.topFunction()).env;
-EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),env,JSType.TOP);
+EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),env);
 pair.type=JSType.BOOLEAN;
 return pair;
 }
@@ -102,8 +102,8 @@ case Token.SHNE:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-TypeEnv rhsEnv=analyzeExprBwd(rhs,outEnv,JSType.TOP).env;
-return analyzeExprBwd(lhs,rhsEnv,JSType.TOP);
+TypeEnv rhsEnv=analyzeExprBwd(rhs,outEnv).env;
+return analyzeExprBwd(lhs,rhsEnv);
 }
 case Token.LT:
 case Token.GT:
@@ -112,8 +112,8 @@ case Token.GE:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv,JSType.TOP);
-EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env,JSType.TOP);
+EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv);
+EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env);
 JSType meetType=JSType.meet(lhsPair.type,rhsPair.type);
 if (meetType.isBottom()) {
 return new EnvTypePair(lhsPair.env,JSType.BOOLEAN);
@@ -153,11 +153,7 @@ return new EnvTypePair(lvalue.env,JSType.NUMBER);
 case Token.GETPROP:
 {
 Preconditions.checkState(!NodeUtil.isLValue(expr));
-Node obj=expr.getFirstChild();
-String pname=expr.getLastChild().getString();
-EnvTypePair pair=analyzeExprBwd(obj,outEnv,JSType.TOP_OBJECT.withProperty(pname,requiredType));
-JSType objType=pair.type;
-return new EnvTypePair(pair.env,objType.mayHaveProp(pname) ? objType.getProp(pname) : requiredType);
+return analyzePropAccessBwd(expr.getFirstChild(),expr.getLastChild().getString(),outEnv,requiredType);
 }
 case Token.HOOK:
 {
@@ -166,7 +162,7 @@ Node thenBranch=cond.getNext();
 Node elseBranch=thenBranch.getNext();
 EnvTypePair thenPair=analyzeExprBwd(thenBranch,outEnv,requiredType);
 EnvTypePair elsePair=analyzeExprBwd(elseBranch,outEnv,requiredType);
-return analyzeExprBwd(cond,TypeEnv.join(thenPair.env,elsePair.env),JSType.TOP);
+return analyzeExprBwd(cond,TypeEnv.join(thenPair.env,elsePair.env));
 }
 case Token.CALL:
 case Token.NEW:
@@ -220,16 +216,27 @@ return new EnvTypePair(tmpEnv,funType.getReturnType());
 case Token.COMMA:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getLastChild(),outEnv,requiredType);
-pair.env=analyzeExprBwd(expr.getFirstChild(),pair.env,JSType.TOP).env;
+pair.env=analyzeExprBwd(expr.getFirstChild(),pair.env).env;
 return pair;
 }
 case Token.NOT:
 {
-EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv,JSType.TOP);
+EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=pair.type.negate();
 return pair;
 }
 case Token.GETELEM:
+{
+Node receiver=expr.getFirstChild();
+Node index=expr.getLastChild();
+if (index.isString()) {
+return analyzePropAccessBwd(receiver,index.getString(),outEnv,requiredType);
+}
+EnvTypePair pair=analyzeExprBwd(receiver,outEnv,JSType.TOP_OBJECT);
+pair=analyzeExprBwd(index,pair.env);
+pair.type=requiredType;
+return pair;
+}
 case Token.EQ:
 case Token.NE:
 case Token.ARRAYLIT:
