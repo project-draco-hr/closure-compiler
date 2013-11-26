@@ -2,16 +2,20 @@
   Preconditions.checkArgument(fn.isFunction());
   Scope fnScope=computeFnDeclaredType(fn,currentScope);
   scopes.addFirst(fnScope);
-  String fnName=getFunInternalName(fn);
-  if (TypeUtils.isIdentifier(fnName)) {
-    if (currentScope.isDefinedLocally(fnName)) {
-      warnings.add(JSError.make(fn,VariableReferenceCheck.REDECLARED_VARIABLE,fnName));
-    }
+  String fnName=NodeUtil.getFunctionName(fn);
+  String internalName=getFunInternalName(fn);
+  if (currentScope.isDefinedLocally(fnName)) {
+    warnings.add(JSError.make(fn,VariableReferenceCheck.REDECLARED_VARIABLE,fnName));
+  }
  else {
+    currentScope.putLocalFunDef(internalName,fnScope);
+    if (fnName != null && !TypeUtils.isIdentifier(fnName)) {
       currentScope.putLocalFunDef(fnName,fnScope);
     }
   }
-  undeclaredVars.removeAll(fnName);
+  if (fnName != null && TypeUtils.isIdentifier(fnName)) {
+    undeclaredVars.removeAll(fnName);
+  }
   scopeWorkset.add(fnScope);
   return fnScope;
 }

@@ -42,5 +42,10 @@
       builder.addClass(nominalType);
     }
   }
+  if (NodeUtil.isPrototypeMethod(fn)) {
+    Node lhsNode=fn.getParent().getFirstChild();
+    String className=NodeUtil.getPrototypeClassName(lhsNode).getQualifiedName();
+    builder.addReceiverType(parentScope.getScope(className).getDeclaredType().getClassType());
+  }
   return new Scope(fn,parentScope,formals,builder.buildDeclaration());
 }
