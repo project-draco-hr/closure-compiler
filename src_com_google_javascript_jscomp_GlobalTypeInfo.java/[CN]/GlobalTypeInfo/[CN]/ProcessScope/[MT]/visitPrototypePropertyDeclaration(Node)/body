@@ -1,0 +1,44 @@
+{
+  Node expr=exprResult.getFirstChild();
+  Node getPropNode, initializer;
+  if (expr.isAssign()) {
+    getPropNode=expr.getFirstChild();
+    initializer=expr.getLastChild();
+  }
+ else {
+    getPropNode=expr;
+    initializer=null;
+  }
+  Node ctorNameNode=NodeUtil.getPrototypeClassName(getPropNode);
+  String ctorName=ctorNameNode.getQualifiedName();
+  if (currentScope.isLocalFunDef(ctorName)) {
+    Scope ctorScope=currentScope.getScope(ctorName);
+    NominalType classType=ctorScope.getDeclaredType().getClassType();
+    if (classType == null) {
+      return;
+    }
+    String pname=NodeUtil.getPrototypePropertyName(getPropNode);
+    JSType propDeclType;
+    Scope methodScope=null;
+    if (initializer != null && initializer.isFunction()) {
+      methodScope=visitFunctionDef(initializer);
+      propDeclType=JSType.fromFunctionType(methodScope.getDeclaredType().toFunctionType());
+    }
+ else {
+      propDeclType=getTypeDeclarationFromJsdoc(expr,currentScope);
+    }
+    propertyDefs.put(classType,pname,new PropertyDef(exprResult,methodScope));
+    if (propDeclType != null) {
+      if (mayWarnAboutExistingProp(classType,pname,propDeclType,expr)) {
+        return;
+      }
+      classType.addProtoProperty(pname,propDeclType);
+    }
+ else {
+      classType.addUndeclaredProtoProperty(pname);
+    }
+  }
+ else {
+    warnings.add(JSError.make(expr,CTOR_IN_DIFFERENT_SCOPE));
+  }
+}

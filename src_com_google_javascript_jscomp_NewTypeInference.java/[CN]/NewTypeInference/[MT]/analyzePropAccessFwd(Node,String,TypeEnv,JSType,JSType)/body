@@ -1,0 +1,25 @@
+{
+  Node propAccessNode=receiver.getParent();
+  EnvTypePair pair=analyzeExprFwd(receiver,inEnv,JSType.TOP_OBJECT.withProperty(pname,requiredType));
+  JSType objType=pair.type;
+  if (!objType.isSubtypeOf(JSType.TOP_OBJECT)) {
+    warnings.add(JSError.make(receiver,PROPERTY_ACCESS_ON_NONOBJECT,pname,objType.toString()));
+    return new EnvTypePair(pair.env,requiredType);
+  }
+  JSType resultType=objType.getProp(pname);
+  if (!specializedType.isBoolean()) {
+    if (!objType.mayHaveProp(pname)) {
+      warnings.add(JSError.make(propAccessNode,TypeCheck.INEXISTENT_PROPERTY,pname,objType.toString()));
+      resultType=JSType.UNKNOWN;
+    }
+ else     if (!objType.hasProp(pname)) {
+      warnings.add(JSError.make(propAccessNode,NewTypeInference.POSSIBLY_INEXISTENT_PROPERTY,pname,objType.toString()));
+    }
+  }
+ else   if (receiver.isName() && specializedType.equals(JSType.TRUE_TYPE)) {
+    String objName=receiver.getQualifiedName();
+    objType=objType.withPropertyRequired(pname);
+    pair.env=envPutType(pair.env,objName,objType);
+  }
+  return new EnvTypePair(pair.env,resultType);
+}

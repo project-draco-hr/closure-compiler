@@ -1,0 +1,16 @@
+{
+  Preconditions.checkArgument(!isTopFunction());
+  checkValid();
+  int numReqFormals=requiredFormals.size();
+  if (argpos < numReqFormals) {
+    Preconditions.checkState(null != requiredFormals.get(argpos));
+    return requiredFormals.get(argpos);
+  }
+ else   if (argpos < numReqFormals + optionalFormals.size()) {
+    Preconditions.checkState(null != optionalFormals.get(argpos - numReqFormals));
+    return optionalFormals.get(argpos - numReqFormals);
+  }
+ else {
+    return restFormals;
+  }
+}

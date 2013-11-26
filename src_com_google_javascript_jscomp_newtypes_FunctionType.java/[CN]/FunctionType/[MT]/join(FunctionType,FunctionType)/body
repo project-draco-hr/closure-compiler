@@ -1,0 +1,33 @@
+{
+  if (f1 == null) {
+    return f2;
+  }
+ else   if (f2 == null || f2.isBottomFunction() || f1.equals(f2)) {
+    return f1;
+  }
+ else   if (f1.isBottomFunction()) {
+    return f2;
+  }
+ else   if (f1.isTopFunction() || f2.isTopFunction()) {
+    return TOP_FUNCTION;
+  }
+  if (f1.isLoose() || f2.isLoose()) {
+    return FunctionType.looseJoin(f1,f2);
+  }
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  int maxRequiredArity=Math.max(f1.requiredFormals.size(),f2.requiredFormals.size());
+  for (int i=0; i < maxRequiredArity; i++) {
+    JSType reqFormal=nullAcceptingMeet(f1.getFormalType(i),f2.getFormalType(i));
+    builder.addReqFormal(reqFormal);
+  }
+  int maxTotalArity=Math.max(f1.requiredFormals.size() + f1.optionalFormals.size(),f2.requiredFormals.size() + f2.optionalFormals.size());
+  for (int i=maxRequiredArity; i < maxTotalArity; i++) {
+    JSType optFormal=nullAcceptingMeet(f1.getFormalType(i),f2.getFormalType(i));
+    builder.addOptFormal(optFormal);
+  }
+  if (f1.restFormals != null && f2.restFormals != null) {
+    builder.addRestFormals(nullAcceptingMeet(f1.restFormals,f2.restFormals));
+  }
+  builder.addRetType(JSType.join(f1.returnType,f2.returnType));
+  return builder.buildFunction();
+}

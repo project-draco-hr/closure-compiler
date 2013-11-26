@@ -1,0 +1,21 @@
+{
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  int i=0;
+  for (  JSType formal : requiredFormals) {
+    builder.addReqFormal(formal != null ? formal : superType.getFormalType(i));
+    i++;
+  }
+  for (  JSType formal : optionalFormals) {
+    builder.addOptFormal(formal != null ? formal : superType.getFormalType(i));
+    i++;
+  }
+  if (restFormals != null) {
+    builder.addRestFormals(restFormals);
+  }
+ else   if (superType.hasRestFormals()) {
+    builder.addRestFormals(superType.restFormals);
+  }
+  builder.addRetType(returnType != null ? returnType : superType.returnType);
+  builder.addClass(klass);
+  return builder.buildDeclaration();
+}

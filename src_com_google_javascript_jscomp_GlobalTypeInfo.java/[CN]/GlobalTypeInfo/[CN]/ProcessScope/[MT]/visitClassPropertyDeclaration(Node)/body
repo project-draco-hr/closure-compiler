@@ -1,0 +1,13 @@
+{
+  NominalType thisType=currentScope.getConstructorType().getClassType();
+  String pname=getPropNode.getLastChild().getString();
+  JSType declaredType=getTypeDeclarationFromJsdoc(getPropNode.getParent(),currentScope);
+  if (declaredType != null) {
+    mayWarnAboutExistingProp(thisType,pname,declaredType,getPropNode);
+    thisType.addClassProperty(pname,declaredType);
+  }
+ else {
+    thisType.addUndeclaredClassProperty(pname);
+  }
+  propertyDefs.put(thisType,pname,new PropertyDef(getPropNode.getParent().getParent(),null));
+}

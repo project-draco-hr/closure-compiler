@@ -1,0 +1,14 @@
+{
+  String fnName=NodeUtil.getFunctionName(fn);
+  if (fnName == null || !TypeUtils.isIdentifier(fnName)) {
+    fnName="%anon_fun" + funCounter;
+    funCounter++;
+    anonFunNames.put(fn,fnName);
+  }
+  JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
+  if (fnDoc != null && (fnDoc.isConstructor() || fnDoc.isInterface())) {
+    NominalType klass=new NominalType(fnName,fnDoc.isInterface());
+    nominaltypesByNode.put(fn,klass);
+    parentScope.addClassType(fnName,klass);
+  }
+}

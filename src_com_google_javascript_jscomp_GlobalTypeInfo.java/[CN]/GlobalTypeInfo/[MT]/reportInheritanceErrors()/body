@@ -1,0 +1,62 @@
+{
+  Deque<Node> workset=Lists.newLinkedList(nominaltypesByNode.keySet());
+  workset_loop:   while (!workset.isEmpty()) {
+    Node funNode=workset.removeFirst();
+    NominalType nominalType=nominaltypesByNode.get(funNode);
+    NominalType superClass=nominalType.getSuperClass();
+    if (superClass != null && !superClass.isFinalized()) {
+      workset.addLast(funNode);
+      continue workset_loop;
+    }
+    for (    NominalType superInterf : nominalType.getInterfaces()) {
+      if (!superInterf.isFinalized()) {
+        workset.addLast(funNode);
+        continue workset_loop;
+      }
+    }
+    if (superClass != null) {
+      for (      String pname : superClass.getAllPropsOfClass()) {
+        PropertyDef propDef=propertyDefs.get(nominalType,pname);
+        if (propDef != null && propDef.methodScope != null) {
+          DeclaredFunctionType propDeclType=propDef.methodScope.getDeclaredType();
+          PropertyDef inheritedPropDef=propertyDefs.get(superClass,pname);
+          propDeclType=propDeclType.withTypeInfoFromSuper(inheritedPropDef.methodScope.getDeclaredType());
+          propDef.methodScope.setDeclaredType(propDeclType);
+          nominalType.addProtoProperty(pname,JSType.fromFunctionType(propDeclType.toFunctionType()));
+        }
+        JSType inheritedPropType=superClass.getPropDeclaredType(pname);
+        JSType localPropType=nominalType.getPropDeclaredType(pname);
+        if (!localPropType.isSubtypeOf(inheritedPropType)) {
+          warnings.add(JSError.make(propertyDefs.get(nominalType,pname).defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
+        }
+      }
+    }
+    for (    NominalType superInterf : nominalType.getInterfaces()) {
+      for (      String pname : superInterf.getAllPropsOfInterface()) {
+        PropertyDef inheritedPropDef=propertyDefs.get(superInterf,pname);
+        JSType inheritedPropType=superInterf.getPropDeclaredType(pname);
+        if (!nominalType.mayHaveProp(pname)) {
+          warnings.add(JSError.make(inheritedPropDef.defSite,TypeValidator.INTERFACE_METHOD_NOT_IMPLEMENTED,pname,superInterf.toString(),nominalType.toString()));
+          continue;
+        }
+        PropertyDef propDef=propertyDefs.get(nominalType,pname);
+        JSType localPropType=nominalType.getPropDeclaredType(pname);
+        if (localPropType != null && !localPropType.isSubtypeOf(inheritedPropType)) {
+          warnings.add(JSError.make(propDef.defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
+        }
+ else         if (nominalType.isClass()) {
+          if (localPropType == null) {
+            nominalType.addProtoProperty(pname,inheritedPropType);
+          }
+ else           if (propDef.methodScope != null) {
+            DeclaredFunctionType propDeclType=propDef.methodScope.getDeclaredType();
+            propDeclType=propDeclType.withTypeInfoFromSuper(inheritedPropDef.methodScope.getDeclaredType());
+            propDef.methodScope.setDeclaredType(propDeclType);
+            nominalType.addProtoProperty(pname,JSType.fromFunctionType(propDeclType.toFunctionType()));
+          }
+        }
+      }
+    }
+    nominalType.finalizeNominalType();
+  }
+}

@@ -1,0 +1,29 @@
+{
+  if (objs1 == null) {
+    return objs2;
+  }
+ else   if (objs2 == null) {
+    return objs1;
+  }
+  Set<ObjectType> newObjs=Sets.newHashSet(objs1);
+  for (  ObjectType obj2 : objs2) {
+    boolean addedObj2=false;
+    for (    ObjectType obj1 : objs1) {
+      NominalType klass1=obj1.klass;
+      NominalType klass2=obj2.klass;
+      if (areRelatedClasses(klass1,klass2)) {
+        if (klass2 == null && klass1 != null && !obj1.isSubtypeOf(obj2) || klass1 == null && klass2 != null && !obj2.isSubtypeOf(obj1)) {
+          break;
+        }
+        newObjs.remove(obj1);
+        newObjs.add(join(obj1,obj2));
+        addedObj2=true;
+        break;
+      }
+    }
+    if (!addedObj2) {
+      newObjs.add(obj2);
+    }
+  }
+  return ImmutableSet.copyOf(newObjs);
+}

@@ -1,0 +1,11 @@
+{
+  if (cfg.getOutEdges(n).size() == 0) {
+    return new TypeEnv();
+  }
+  TypeEnv outEnv=null;
+  for (  DiGraphEdge<Node,ControlFlowGraph.Branch> de : cfg.getOutEdges(n)) {
+    TypeEnv env=envs.get(de);
+    outEnv=(outEnv == null) ? env : TypeEnv.join(outEnv,env);
+  }
+  return outEnv == null ? new TypeEnv() : outEnv;
+}

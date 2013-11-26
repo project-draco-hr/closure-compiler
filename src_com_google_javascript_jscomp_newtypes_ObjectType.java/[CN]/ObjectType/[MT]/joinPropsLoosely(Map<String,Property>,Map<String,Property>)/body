@@ -1,0 +1,18 @@
+{
+  Map<String,Property> newProps=Maps.newHashMap();
+  for (  String pname : props1.keySet()) {
+    if (!props2.containsKey(pname)) {
+      newProps.put(pname,props1.get(pname).withRequired());
+    }
+  }
+  for (  String pname : props2.keySet()) {
+    Property prop2=props2.get(pname);
+    if (props1.containsKey(pname)) {
+      newProps.put(pname,Property.join(props1.get(pname),prop2).withRequired());
+    }
+ else {
+      newProps.put(pname,prop2.withRequired());
+    }
+  }
+  return newProps;
+}

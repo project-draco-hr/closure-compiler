@@ -1,0 +1,17 @@
+{
+  if (other.equals(NULL) || other.equals(UNDEFINED)) {
+    return new JSType(type & ~other.type,location,objs);
+  }
+  if (objs == null) {
+    return this;
+  }
+  Preconditions.checkState((other.type & ~NON_SCALAR_MASK) == 0 && other.objs.size() == 1);
+  ObjectType objToRemove=Iterables.getOnlyElement(other.objs);
+  ImmutableSet.Builder<ObjectType> newObjs=ImmutableSet.builder();
+  for (  ObjectType obj : objs) {
+    if (!Objects.equal(obj.getClassType(),objToRemove.getClassType())) {
+      newObjs.add(obj);
+    }
+  }
+  return new JSType(type,location,newObjs.build());
+}

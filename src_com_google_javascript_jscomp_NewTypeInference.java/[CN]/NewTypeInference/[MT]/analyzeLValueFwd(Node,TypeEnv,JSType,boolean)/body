@@ -1,0 +1,37 @@
+{
+switch (expr.getType()) {
+case Token.THIS:
+case Token.NAME:
+{
+      String varName=expr.getQualifiedName();
+      JSType varType=envGetType(inEnv,varName);
+      return new LValueResult(inEnv,varType,currentScope.getDeclaredTypeOf(varName),varType.hasNonScalar() ? varName : null);
+    }
+case Token.NEW:
+{
+    EnvTypePair pair=analyzeExprFwd(expr,inEnv,type);
+    return new LValueResult(pair.env,pair.type,null,null);
+  }
+case Token.GETPROP:
+{
+  Node obj=expr.getFirstChild();
+  String pname=expr.getLastChild().getString();
+  LValueResult lvalue=analyzeLValueFwd(obj,inEnv,JSType.TOP_OBJECT.withProperty(pname,type),true);
+  if (!lvalue.type.isSubtypeOf(JSType.TOP_OBJECT)) {
+    warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,pname,lvalue.type.toString()));
+    return new LValueResult(lvalue.env,type,null,null);
+  }
+  if (isRecursiveCall && !lvalue.type.isUnknown() && lvalue.type.isSubtypeOf(JSType.TOP_OBJECT)&& !lvalue.type.mayHaveProp(pname)) {
+    warnings.add(JSError.make(obj,TypeCheck.INEXISTENT_PROPERTY,pname,lvalue.type.toString()));
+    return new LValueResult(lvalue.env,type,null,null);
+  }
+  return new LValueResult(lvalue.env,lvalue.type.getProp(pname),lvalue.type.getDeclaredProp(pname),lvalue.ptr == null ? null : lvalue.ptr + "." + pname);
+}
+case Token.OBJECTLIT:
+{
+EnvTypePair etPair=analyzeExprFwd(expr,inEnv,type);
+return new LValueResult(etPair.env,etPair.type,null,null);
+}
+}
+throw new RuntimeException("analyzeLValueFwd: unknown lhs expression @ node " + expr);
+}

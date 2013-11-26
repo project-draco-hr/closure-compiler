@@ -1,0 +1,47 @@
+{
+switch (expr.getType()) {
+case Token.THIS:
+case Token.NAME:
+{
+      EnvTypePair pair=analyzeExprBwd(expr,outEnv,type);
+      String name=expr.getQualifiedName();
+      JSType declType=currentScope.getDeclaredTypeOf(name);
+      if (doSlicing) {
+        pair.env=envPutType(pair.env,name,declType != null ? declType : JSType.UNKNOWN);
+      }
+      return new LValueResult(pair.env,pair.type,declType,pair.type.hasNonScalar() ? name : null);
+    }
+case Token.NEW:
+{
+    EnvTypePair pair=analyzeExprBwd(expr,outEnv,type);
+    return new LValueResult(pair.env,pair.type,null,null);
+  }
+case Token.GETPROP:
+{
+  Node obj=expr.getFirstChild();
+  String pname=expr.getLastChild().getString();
+  LValueResult lvalue=analyzeLValueBwd(obj,outEnv,JSType.TOP_OBJECT.withProperty(pname,type),false);
+  if (lvalue.ptr != null) {
+    lvalue.ptr+="." + pname;
+    if (doSlicing) {
+      String objName=TypeUtils.getQnameRoot(lvalue.ptr);
+      String props=TypeUtils.getPropPath(lvalue.ptr);
+      JSType objType=envGetType(lvalue.env,objName);
+      JSType propDeclType=lvalue.type.getDeclaredProp(pname);
+      JSType slicedObjType=propDeclType == null ? objType.withoutProperty(props) : objType.withProperty(props,propDeclType);
+      lvalue.env=envPutType(lvalue.env,objName,slicedObjType);
+    }
+  }
+  if (lvalue.type.mayHaveProp(pname)) {
+    lvalue.type=lvalue.type.getProp(pname);
+  }
+  return lvalue;
+}
+case Token.OBJECTLIT:
+{
+EnvTypePair etPair=analyzeExprBwd(expr,outEnv,type);
+return new LValueResult(etPair.env,etPair.type,null,null);
+}
+}
+throw new RuntimeException("analyzeLValueBwd: unknown lhs expression @ node " + expr);
+}

@@ -1,0 +1,23 @@
+{
+  if (isTopFunction()) {
+    return "TOP_FUNCTION" + (isLoose ? " (loose)" : "");
+  }
+  List<String> formals=Lists.newLinkedList();
+  if (klass != null) {
+    formals.add("new:" + klass.name);
+  }
+  for (  JSType formal : requiredFormals) {
+    formals.add(formal.toString());
+  }
+  for (  JSType formal : optionalFormals) {
+    formals.add(formal.toString() + "=");
+  }
+  if (restFormals != null) {
+    formals.add("..." + restFormals.toString());
+  }
+  String result="function (" + Joiner.on(", ").join(formals) + ")";
+  if (returnType != null) {
+    result+=": " + returnType.toString();
+  }
+  return result + (isLoose ? " (loose)" : "") + (outerVarPreconditions.isEmpty() ? "" : "\tFV:" + outerVarPreconditions);
+}

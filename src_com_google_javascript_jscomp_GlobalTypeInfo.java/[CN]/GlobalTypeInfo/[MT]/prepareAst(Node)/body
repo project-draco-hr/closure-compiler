@@ -1,0 +1,20 @@
+{
+  Preconditions.checkArgument(root.isSyntheticBlock());
+  Scope rootScope=new Scope(root,null,new ArrayList<String>(),null);
+  scopes.addFirst(rootScope);
+  scopeWorkset.addFirst(rootScope);
+  while (!scopeWorkset.isEmpty()) {
+    Scope s=scopeWorkset.removeFirst();
+    Node scopeBody=s.getBody();
+    new NodeTraversal(compiler,new CollectNamedTypes(s)).traverse(scopeBody);
+    ProcessScope ps=new ProcessScope(s);
+    new NodeTraversal(compiler,ps).traverse(scopeBody);
+    ps.finishProcessingScope();
+  }
+  reportInheritanceErrors();
+  nominaltypesByNode=null;
+  propertyDefs=null;
+  for (  String warningText : typeParser.getWarnings()) {
+    warnings.add(JSError.make(root,RhinoErrorReporter.BAD_JSDOC_ANNOTATION,warningText));
+  }
+}

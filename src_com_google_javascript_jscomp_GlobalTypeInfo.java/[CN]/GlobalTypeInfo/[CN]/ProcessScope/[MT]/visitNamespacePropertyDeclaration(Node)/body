@@ -1,0 +1,14 @@
+{
+  Node lvalue=assignNode.getFirstChild();
+  String qname=lvalue.getQualifiedName();
+  String leftmost=TypeUtils.getQnameRoot(qname);
+  JSType declType=getTypeDeclarationFromJsdoc(assignNode,currentScope);
+  JSType newType=currentScope.getDeclaredTypeOf(leftmost);
+  if (declType == null) {
+    newType=newType.withProperty(TypeUtils.getPropPath(qname),JSType.UNKNOWN);
+  }
+ else {
+    newType=newType.withDeclaredProperty(TypeUtils.getPropPath(qname),declType);
+  }
+  currentScope.updateTypeOfLocal(leftmost,newType);
+}

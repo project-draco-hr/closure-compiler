@@ -1,0 +1,18 @@
+{
+  NominalType parentClass=new NominalType("Parent",false);
+  NominalType child1Class=new NominalType("Child1",false);
+  NominalType child2Class=new NominalType("Child2",false);
+  child1Class.addSuperClass(parentClass);
+  child2Class.addSuperClass(parentClass);
+  ObjectType foo=ObjectType.fromClass(new NominalType("Foo",false));
+  ObjectType parent=ObjectType.fromClass(parentClass);
+  ObjectType child1=ObjectType.fromClass(child1Class);
+  ObjectType child2=ObjectType.fromClass(child2Class);
+  ObjectType parentWithP=parent.withProperty("p",NUMBER);
+  ObjectType parentWithOptP=ObjectType.join(parent,parentWithP);
+  assertEquals(ImmutableSet.of(parentWithOptP),ObjectType.joinSets(ImmutableSet.of(parentWithP),ImmutableSet.of(child1)));
+  assertTrue(ObjectType.isUnionSubtype(ImmutableSet.of(foo,child1),ImmutableSet.of(foo,parent)));
+  assertFalse(ObjectType.isUnionSubtype(ImmutableSet.of(foo,parent),ImmutableSet.of(foo,child1)));
+  assertTrue(ObjectType.isUnionSubtype(ImmutableSet.of(child1,child2),ImmutableSet.of(parent)));
+  assertFalse(ObjectType.isUnionSubtype(ImmutableSet.of(parent),ImmutableSet.of(child1,child2)));
+}

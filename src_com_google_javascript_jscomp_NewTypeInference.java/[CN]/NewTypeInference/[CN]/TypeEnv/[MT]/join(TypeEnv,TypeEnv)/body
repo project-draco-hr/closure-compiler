@@ -1,0 +1,12 @@
+{
+  TypeEnv newEnv=new TypeEnv();
+  for (  String n : e1.typeMap.keySet()) {
+    JSType otherType=e2.getType(n);
+    newEnv.typeMap.put(n,otherType == null ? e1.getType(n) : JSType.join(otherType,e1.getType(n)));
+  }
+  for (  String n : e2.typeMap.keySet()) {
+    JSType otherType=e1.getType(n);
+    newEnv.typeMap.put(n,otherType == null ? e2.getType(n) : JSType.join(otherType,e2.getType(n)));
+  }
+  return newEnv;
+}

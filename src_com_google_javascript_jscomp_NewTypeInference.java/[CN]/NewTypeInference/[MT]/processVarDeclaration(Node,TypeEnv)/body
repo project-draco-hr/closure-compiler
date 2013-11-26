@@ -1,0 +1,23 @@
+{
+  String varName=nameNode.getQualifiedName();
+  if (currentScope.isLocalFunDef(varName)) {
+    return inEnv;
+  }
+  Node rhs=nameNode.getFirstChild();
+  TypeEnv outEnv=inEnv;
+  JSType rhsType;
+  JSType declType=currentScope.getDeclaredTypeOf(varName);
+  if (rhs == null) {
+    rhsType=JSType.UNDEFINED;
+  }
+ else {
+    EnvTypePair pair=analyzeExprFwd(rhs,inEnv,declType != null ? declType : JSType.TOP);
+    outEnv=pair.env;
+    rhsType=pair.type;
+  }
+  if (!NodeUtil.isNamespaceDecl(nameNode) && declType != null && rhs != null && !rhsType.isSubtypeOf(declType)) {
+    warnings.add(JSError.make(rhs,MISTYPED_ASSIGN_RHS,declType.toString(),rhsType.toString()));
+    rhsType=declType;
+  }
+  return envPutType(outEnv,varName,rhsType);
+}

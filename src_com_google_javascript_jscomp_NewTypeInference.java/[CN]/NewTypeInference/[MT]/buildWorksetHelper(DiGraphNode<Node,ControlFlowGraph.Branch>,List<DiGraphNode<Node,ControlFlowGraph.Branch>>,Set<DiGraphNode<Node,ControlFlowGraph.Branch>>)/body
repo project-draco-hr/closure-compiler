@@ -1,0 +1,38 @@
+{
+  if (seen.contains(dn) || dn == cfg.getImplicitReturn()) {
+    return;
+  }
+switch (dn.getValue().getType()) {
+case Token.DO:
+case Token.WHILE:
+case Token.FOR:
+    seen.add(dn);
+  workset.add(dn);
+for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : cfg.getOutEdges(dn.getValue())) {
+  if (outEdge.getValue() == ControlFlowGraph.Branch.ON_TRUE) {
+    buildWorksetHelper(outEdge.getDestination(),workset,seen);
+  }
+}
+workset.add(dn);
+for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : cfg.getOutEdges(dn.getValue())) {
+if (outEdge.getValue() == ControlFlowGraph.Branch.ON_FALSE) {
+buildWorksetHelper(outEdge.getDestination(),workset,seen);
+}
+}
+break;
+default :
+for (DiGraphEdge<Node,ControlFlowGraph.Branch> inEdge : cfg.getInEdges(dn.getValue())) {
+if (!seen.contains(inEdge.getSource()) && !inEdge.getSource().getValue().isDo()) {
+return;
+}
+}
+seen.add(dn);
+if (cfg.getEntry() != dn) {
+workset.add(dn);
+}
+for (DiGraphNode<Node,ControlFlowGraph.Branch> succ : cfg.getDirectedSuccNodes(dn)) {
+buildWorksetHelper(succ,workset,seen);
+}
+break;
+}
+}

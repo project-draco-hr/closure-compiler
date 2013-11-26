@@ -1,0 +1,31 @@
+{
+  TypeEnv env=new TypeEnv();
+  Set<String> varNames=currentScope.getOuterVars();
+  varNames.addAll(currentScope.getFormals());
+  varNames.addAll(currentScope.getLocals());
+  if (currentScope.isConstructor() || currentScope.isPrototypeMethod()) {
+    varNames.add("this");
+  }
+  for (  String varName : varNames) {
+    JSType declType=currentScope.getDeclaredTypeOf(varName);
+    if (declType == null) {
+      env=envPutType(env,varName,JSType.UNKNOWN);
+    }
+ else {
+      env=envPutType(env,varName,declType);
+    }
+  }
+  for (  String fnName : currentScope.getLocalFunDefs()) {
+    JSType summaryType=summaries.get(currentScope.getScope(fnName));
+    FunctionType fnType=summaryType.getFunType();
+    if (fnType.isConstructor()) {
+      summaryType=fnType.createConstructorObject();
+    }
+ else {
+      summaryType=summaryType.withProperty("prototype",JSType.TOP_OBJECT);
+    }
+    System.out.println("fun name: " + fnName + " type "+ summaryType);
+    env=envPutType(env,fnName,summaryType);
+  }
+  initEdgeEnvs(env);
+}

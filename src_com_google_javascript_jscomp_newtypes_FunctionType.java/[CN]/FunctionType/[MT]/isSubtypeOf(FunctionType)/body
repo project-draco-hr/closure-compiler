@@ -1,0 +1,29 @@
+{
+  if (other.isTopFunction()) {
+    return true;
+  }
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  for (int i=0; i < other.requiredFormals.size(); i++) {
+    JSType formalType=other.getFormalType(i);
+    builder.addReqFormal(formalType.isUnknown() ? JSType.BOTTOM : formalType);
+  }
+  for (int i=0; i < other.optionalFormals.size(); i++) {
+    JSType formalType=other.getFormalType(i);
+    builder.addOptFormal(formalType.isUnknown() ? JSType.BOTTOM : formalType);
+  }
+  if (other.restFormals != null) {
+    JSType formalType=other.restFormals;
+    builder.addOptFormal(formalType.isUnknown() ? JSType.BOTTOM : formalType);
+  }
+  if (this.getReturnType().isUnknown()) {
+    builder.addRetType(JSType.UNKNOWN);
+  }
+ else {
+    builder.addRetType(other.getReturnType());
+  }
+  if (other.isLoose()) {
+    builder.addLoose();
+  }
+  FunctionType newOther=builder.buildFunction();
+  return newOther.equals(join(this,newOther));
+}

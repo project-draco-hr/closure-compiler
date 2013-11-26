@@ -1,0 +1,9 @@
+{
+  Preconditions.checkArgument(cfg.getInEdges(n).size() > 0);
+  TypeEnv inEnv=null;
+  for (  DiGraphEdge<Node,ControlFlowGraph.Branch> de : cfg.getInEdges(n)) {
+    TypeEnv env=envs.get(de);
+    inEnv=(inEnv == null) ? env : TypeEnv.join(inEnv,env);
+  }
+  return inEnv == null ? new TypeEnv() : inEnv;
+}

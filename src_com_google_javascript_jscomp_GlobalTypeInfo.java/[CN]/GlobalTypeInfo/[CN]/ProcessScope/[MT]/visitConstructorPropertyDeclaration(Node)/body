@@ -1,0 +1,19 @@
+{
+  Node getPropNode=assignNode.getFirstChild();
+  String ctorName=getPropNode.getFirstChild().getQualifiedName();
+  Preconditions.checkState(currentScope.isLocalFunDef(ctorName));
+  Scope ctorScope=currentScope.getScope(ctorName);
+  NominalType classType=ctorScope.getDeclaredType().getClassType();
+  String pname=getPropNode.getLastChild().getString();
+  JSType propDeclType=getTypeDeclarationFromJsdoc(assignNode,currentScope);
+  if (propDeclType != null) {
+    if (classType.mayHaveCtorProp(pname) && classType.getCtorPropDeclaredType(pname) != null) {
+      warnings.add(JSError.make(assignNode,DUPLICATE_PROPERTY_JSDOC,pname,classType.toString()));
+      return;
+    }
+    classType.addCtorProperty(pname,propDeclType);
+  }
+ else {
+    classType.addUndeclaredCtorProperty(pname);
+  }
+}

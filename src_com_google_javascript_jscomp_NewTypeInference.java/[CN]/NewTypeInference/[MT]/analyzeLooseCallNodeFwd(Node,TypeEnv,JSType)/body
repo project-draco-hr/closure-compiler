@@ -1,0 +1,15 @@
+{
+  Preconditions.checkArgument(callNode.isCall());
+  Node callee=callNode.getFirstChild();
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  TypeEnv tmpEnv=inEnv;
+  for (Node arg=callee.getNext(); arg != null; arg=arg.getNext()) {
+    EnvTypePair pair=analyzeExprFwd(arg,tmpEnv,JSType.TOP);
+    tmpEnv=pair.env;
+    builder.addReqFormal(pair.type);
+  }
+  JSType looseRetType=retType.isTop() ? JSType.BOTTOM : retType;
+  JSType looseFunctionType=builder.addRetType(looseRetType).addLoose().buildType();
+  EnvTypePair calleePair=analyzeExprFwd(callee,tmpEnv,JSType.topFunction(),looseFunctionType);
+  return new EnvTypePair(calleePair.env,retType.isTop() ? JSType.UNKNOWN : retType);
+}

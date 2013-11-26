@@ -1,0 +1,74 @@
+{
+switch (n.getType()) {
+case Token.FUNCTION:
+    Node grandparent=parent.getParent();
+  if (grandparent == null || (!grandparent.isVar() && !NodeUtil.isPrototypePropertyDeclaration(grandparent))) {
+    visitFunctionDef(n);
+  }
+break;
+case Token.NAME:
+{
+String name=n.getQualifiedName();
+if (name == null || "undefined".equals(name) || parent.isFunction()) {
+  return;
+}
+if (parent.isVar()) {
+  if (currentScope.isDefinedLocally(name)) {
+    warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,name));
+  }
+ else {
+    for (    Node useBeforeDeclNode : undeclaredVars.get(name)) {
+      warnings.add(JSError.make(useBeforeDeclNode,VariableReferenceCheck.UNDECLARED_REFERENCE,name));
+    }
+    undeclaredVars.removeAll(name);
+    Node initializer=n.getFirstChild();
+    if (initializer != null && initializer.isFunction()) {
+      visitFunctionDef(initializer);
+    }
+ else     if (initializer != null && NodeUtil.isNamespaceDecl(n)) {
+      currentScope.addNamespace(name);
+    }
+ else {
+      currentScope.addLocal(name,getVarTypeFromAnnotation(n));
+    }
+  }
+}
+ else if (currentScope.isOuterVarEarly(name)) {
+  currentScope.addOuterVar(name);
+}
+ else if (!currentScope.isDefinedLocally(name)) {
+  undeclaredVars.put(name,n);
+}
+break;
+}
+case Token.GETPROP:
+if (NodeUtil.isPrototypeProperty(n) && parent.isExprResult()) {
+visitPrototypePropertyDeclaration(parent);
+}
+break;
+case Token.ASSIGN:
+{
+Node lvalue=n.getFirstChild();
+if (!lvalue.isGetProp()) {
+return;
+}
+if (lvalue.getFirstChild().isThis() && (currentScope.isConstructor() || currentScope.isPrototypeMethod())) {
+visitClassPropertyDeclaration(lvalue);
+return;
+}
+if (NodeUtil.isPrototypePropertyDeclaration(parent)) {
+visitPrototypePropertyDeclaration(parent);
+return;
+}
+String receiverObjName=lvalue.getFirstChild().getQualifiedName();
+if (currentScope.isLocalFunDef(receiverObjName) && currentScope.getScope(receiverObjName).getDeclaredType().getClassType() != null) {
+visitConstructorPropertyDeclaration(n);
+return;
+}
+if (receiverObjName != null && currentScope.isNamespace(receiverObjName)) {
+visitNamespacePropertyDeclaration(n);
+}
+break;
+}
+}
+}

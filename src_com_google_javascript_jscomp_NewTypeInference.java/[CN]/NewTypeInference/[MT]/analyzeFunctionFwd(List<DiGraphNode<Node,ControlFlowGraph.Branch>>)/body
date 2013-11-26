@@ -1,0 +1,92 @@
+{
+  for (  DiGraphNode<Node,ControlFlowGraph.Branch> dn : workset) {
+    Node n=dn.getValue();
+    Preconditions.checkState(n != null,"Implicit return should not be in workset.");
+    TypeEnv inEnv=getInEnv(n);
+    TypeEnv outEnv=null;
+    System.out.println("\tFWD Statment: " + n);
+    System.out.println("\t\tinEnv: " + inEnv);
+    boolean conditional=false;
+switch (n.getType()) {
+case Token.FUNCTION:
+case Token.BLOCK:
+case Token.EMPTY:
+case Token.SCRIPT:
+      outEnv=inEnv;
+    break;
+case Token.EXPR_RESULT:
+  System.out.println("\tsemi " + Token.name(n.getFirstChild().getType()));
+outEnv=analyzeExprFwd(n.getFirstChild(),inEnv,JSType.TOP).env;
+break;
+case Token.RETURN:
+{
+Node retExp=n.getFirstChild();
+JSType declRetType=currentScope.getDeclaredType().getReturnType();
+declRetType=declRetType == null ? JSType.UNKNOWN : declRetType;
+JSType actualRetType;
+if (retExp == null) {
+actualRetType=JSType.UNDEFINED;
+outEnv=envPutType(inEnv,RETVAL_ID,actualRetType);
+}
+ else {
+EnvTypePair retPair=analyzeExprFwd(retExp,inEnv,declRetType);
+actualRetType=retPair.type;
+outEnv=envPutType(retPair.env,RETVAL_ID,actualRetType);
+}
+if (!actualRetType.isSubtypeOf(declRetType)) {
+warnings.add(JSError.make(n,RETURN_NONDECLARED_TYPE,declRetType.toString(),actualRetType.toString()));
+}
+break;
+}
+case Token.DO:
+case Token.IF:
+case Token.FOR:
+case Token.WHILE:
+{
+conditional=true;
+Node cond=NodeUtil.getConditionExpression(n);
+for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : cfg.getOutEdges(n)) {
+JSType specializedType;
+switch (outEdge.getValue()) {
+case ON_TRUE:
+specializedType=JSType.TRUE_TYPE;
+break;
+case ON_FALSE:
+specializedType=JSType.FALSE_TYPE;
+break;
+default :
+throw new RuntimeException("A condition with an edge that is neither true nor false?");
+}
+envs.put(outEdge,analyzeExprFwd(cond,inEnv,JSType.TOP,specializedType).env);
+}
+break;
+}
+case Token.VAR:
+outEnv=inEnv;
+for (Node nameNode=n.getFirstChild(); nameNode != null; nameNode=nameNode.getNext()) {
+outEnv=processVarDeclaration(nameNode,outEnv);
+}
+break;
+case Token.TRY:
+case Token.CATCH:
+case Token.THROW:
+case Token.BREAK:
+case Token.CONTINUE:
+case Token.SWITCH:
+outEnv=inEnv;
+break;
+default :
+if (NodeUtil.isStatement(n)) {
+throw new RuntimeException("Unhandled statement type: " + Token.name(n.getType()));
+}
+ else {
+outEnv=analyzeExprFwd(n,inEnv,JSType.TOP).env;
+break;
+}
+}
+if (!conditional) {
+System.out.println("\t\toutEnv: " + outEnv);
+setOutEnv(n,outEnv);
+}
+}
+}

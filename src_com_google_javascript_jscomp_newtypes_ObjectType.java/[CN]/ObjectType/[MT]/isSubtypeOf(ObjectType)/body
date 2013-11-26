@@ -1,0 +1,29 @@
+{
+  if (this.isLoose || obj2.isLoose) {
+    return this.isLooseSubtypeOf(obj2);
+  }
+  for (  String pname : obj2.props.keySet()) {
+    Property prop2=obj2.props.get(pname);
+    Property prop1=this.getLeftmostProp(pname);
+    if (prop2.isOptional()) {
+      if (prop1 != null && !prop1.getType().isSubtypeOf(prop2.getType())) {
+        return false;
+      }
+    }
+ else {
+      if (prop1 == null || prop1.isOptional() || !prop1.getType().isSubtypeOf(prop2.getType())) {
+        return false;
+      }
+    }
+  }
+  if ((this.klass == null && obj2.klass != null) || this.klass != null && obj2.klass != null && !this.klass.isSubclassOf(obj2.klass)) {
+    return false;
+  }
+  if (obj2.fn == null) {
+    return true;
+  }
+ else   if (this.fn == null) {
+    return false;
+  }
+  return this.fn.isSubtypeOf(obj2.fn);
+}

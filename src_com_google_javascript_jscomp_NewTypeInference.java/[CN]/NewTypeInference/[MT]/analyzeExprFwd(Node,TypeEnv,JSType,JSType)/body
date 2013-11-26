@@ -1,0 +1,375 @@
+{
+  Preconditions.checkArgument(requiredType != null && !requiredType.isBottom());
+  int exprKind=expr.getType();
+switch (exprKind) {
+case Token.FUNCTION:
+{
+      String fnName=symbolTable.getFunInternalName(expr);
+      return new EnvTypePair(inEnv,envGetType(inEnv,fnName));
+    }
+case Token.FALSE:
+case Token.NULL:
+case Token.NUMBER:
+case Token.STRING:
+case Token.TRUE:
+  return new EnvTypePair(inEnv,scalarValueToType(exprKind));
+case Token.OBJECTLIT:
+{
+  JSType result=JSType.TOP_OBJECT;
+  TypeEnv env=inEnv;
+  for (  Node key : expr.children()) {
+    String pname=NodeUtil.getObjectLitKeyName(key);
+    JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.TOP;
+    JSType specPtype=specializedType.mayHaveProp(pname) ? specializedType.getProp(pname) : JSType.TOP;
+    EnvTypePair pair=analyzeExprFwd(key.getLastChild(),env,reqPtype,specPtype);
+    result=result.withProperty(pname,pair.type);
+    env=pair.env;
+  }
+  return new EnvTypePair(env,result);
+}
+case Token.THIS:
+{
+Preconditions.checkState(currentScope.isConstructor() || currentScope.isPrototypeMethod());
+JSType thisType=currentScope.getConstructorType().toFunctionType().getReturnType();
+return new EnvTypePair(inEnv,thisType);
+}
+case Token.NAME:
+{
+String varName=expr.getQualifiedName();
+if (varName.equals("undefined")) {
+return new EnvTypePair(inEnv,JSType.UNDEFINED);
+}
+if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)) {
+JSType inferredType=envGetType(inEnv,varName);
+System.out.println(varName + "'s inferredType: " + inferredType+ " requiredType:  "+ requiredType);
+if (!inferredType.isSubtypeOf(requiredType)) {
+  return new EnvTypePair(inEnv,inferredType);
+}
+JSType preciseType=inferredType.specialize(specializedType);
+System.out.println(varName + "'s preciseType: " + preciseType);
+if (currentScope.isUndeclaredFormal(varName) && requiredType.hasNonScalar()) {
+  preciseType=preciseType.withLoose();
+}
+return EnvTypePair.addBinding(inEnv,varName,preciseType);
+}
+System.out.println("Found global variable " + varName);
+return new EnvTypePair(inEnv,JSType.UNKNOWN);
+}
+case Token.AND:
+case Token.OR:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+if ((specializedType.isTrue() && exprKind == Token.AND) || (specializedType.isFalse() && exprKind == Token.OR)) {
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,specializedType);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,specializedType);
+return rhsPair;
+}
+ else if ((specializedType.isFalse() && exprKind == Token.AND) || (specializedType.isTrue() && exprKind == Token.OR)) {
+EnvTypePair shortCircuitPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,specializedType);
+JSType negatedType=specializedType.isTrue() ? JSType.FALSE_TYPE : JSType.TRUE_TYPE;
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,negatedType);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,specializedType);
+return EnvTypePair.join(rhsPair,shortCircuitPair);
+}
+ else {
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP);
+return rhsPair;
+}
+}
+case Token.INC:
+case Token.DEC:
+case Token.BITNOT:
+case Token.POS:
+case Token.NEG:
+{
+Node child=expr.getFirstChild();
+EnvTypePair pair=analyzeExprFwd(child,inEnv,JSType.NUMBER);
+if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
+warnings.add(JSError.make(child,INVALID_OPERAND_TYPE,Token.name(expr.getType()),JSType.NUMBER.toString(),pair.type.toString()));
+}
+return new EnvTypePair(pair.env,JSType.NUMBER);
+}
+case Token.TYPEOF:
+{
+EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv,JSType.TOP);
+pair.type=JSType.STRING;
+return pair;
+}
+case Token.INSTANCEOF:
+{
+Node obj=expr.getFirstChild();
+Node ctor=expr.getLastChild();
+EnvTypePair objPair, ctorPair;
+objPair=analyzeExprFwd(obj,inEnv,JSType.TOP);
+JSType objType=objPair.type;
+if (!objType.equals(JSType.TOP) && !objType.equals(JSType.UNKNOWN) && !objType.hasNonScalar()) {
+warnings.add(JSError.make(obj,INVALID_OPERAND_TYPE,"instanceof","an object or a union type that includes an object",objPair.type.toString()));
+}
+ctorPair=analyzeExprFwd(ctor,objPair.env,JSType.topFunction());
+JSType ctorType=ctorPair.type;
+FunctionType ctorFunType=ctorType.getFunType();
+if (!ctorType.isSubtypeOf(JSType.topFunction()) || !ctorFunType.isConstructor()) {
+warnings.add(JSError.make(ctor,INVALID_OPERAND_TYPE,"instanceof","a constructor function",ctorType.toString()));
+}
+if (ctorFunType == null || !ctorFunType.isConstructor() || (!specializedType.isTrue() && !specializedType.isFalse())) {
+ctorPair.type=JSType.BOOLEAN;
+return ctorPair;
+}
+JSType instanceType=ctorFunType.getTypeOfThis();
+objPair=analyzeExprFwd(obj,inEnv,JSType.TOP,specializedType.isTrue() ? objPair.type.specialize(instanceType) : objPair.type.removeType(instanceType));
+ctorPair=analyzeExprFwd(ctor,objPair.env,JSType.topFunction());
+ctorPair.type=JSType.BOOLEAN;
+return ctorPair;
+}
+case Token.ADD:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+JSType numOrString=JSType.join(JSType.NUMBER,JSType.STRING);
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,numOrString);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,numOrString);
+JSType lhsType=lhsPair.type;
+JSType rhsType=rhsPair.type;
+if (!lhsType.isSubtypeOf(numOrString)) {
+warnings.add(JSError.make(lhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),numOrString.toString(),lhsType.toString()));
+}
+if (!rhsType.isSubtypeOf(numOrString)) {
+warnings.add(JSError.make(rhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),numOrString.toString(),rhsType.toString()));
+}
+return new EnvTypePair(rhsPair.env,JSType.plus(lhsType,rhsType));
+}
+case Token.BITOR:
+case Token.BITAND:
+case Token.BITXOR:
+case Token.DIV:
+case Token.LSH:
+case Token.MOD:
+case Token.MUL:
+case Token.RSH:
+case Token.SUB:
+case Token.URSH:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.NUMBER);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.NUMBER);
+if (!lhsPair.type.isSubtypeOf(JSType.NUMBER)) {
+warnings.add(JSError.make(lhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),JSType.NUMBER.toString(),lhsPair.type.toString()));
+}
+if (!rhsPair.type.isSubtypeOf(JSType.NUMBER)) {
+warnings.add(JSError.make(rhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),JSType.NUMBER.toString(),rhsPair.type.toString()));
+}
+return new EnvTypePair(rhsPair.env,JSType.NUMBER);
+}
+case Token.ASSIGN:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+LValueResult lvalue=analyzeLValueFwd(lhs,inEnv,requiredType);
+JSType declType=lvalue.declType;
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lvalue.env,requiredType,specializedType);
+JSType rhsType=rhsPair.type;
+if (declType != null && !rhsType.isSubtypeOf(declType)) {
+warnings.add(JSError.make(expr,MISTYPED_ASSIGN_RHS,declType.toString(),rhsType.toString()));
+rhsType=declType;
+}
+return new EnvTypePair(updateLvalueTypeInEnv(rhsPair.env,lhs,lvalue.ptr,rhsType),rhsType);
+}
+case Token.ASSIGN_BITOR:
+case Token.ASSIGN_BITXOR:
+case Token.ASSIGN_BITAND:
+case Token.ASSIGN_LSH:
+case Token.ASSIGN_RSH:
+case Token.ASSIGN_URSH:
+case Token.ASSIGN_SUB:
+case Token.ASSIGN_MUL:
+case Token.ASSIGN_DIV:
+case Token.ASSIGN_MOD:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+String opname=Token.name(expr.getType());
+LValueResult lvalue=analyzeLValueFwd(lhs,inEnv,JSType.NUMBER);
+JSType lhsType=lvalue.type;
+if (lhsType != null && !lhsType.isSubtypeOf(JSType.NUMBER)) {
+warnings.add(JSError.make(lhs,INVALID_OPERAND_TYPE,opname,JSType.NUMBER.toString(),lhsType.toString()));
+}
+EnvTypePair pair=analyzeExprFwd(rhs,lvalue.env,JSType.NUMBER);
+if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
+warnings.add(JSError.make(rhs,INVALID_OPERAND_TYPE,opname,JSType.NUMBER.toString(),pair.type.toString()));
+}
+return new EnvTypePair(updateLvalueTypeInEnv(pair.env,lhs,lvalue.ptr,JSType.NUMBER),JSType.NUMBER);
+}
+case Token.SHEQ:
+case Token.SHNE:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP);
+if ((exprKind == Token.SHEQ && specializedType.isTrue()) || (exprKind == Token.SHNE && specializedType.isFalse())) {
+JSType meetType=JSType.meet(lhsPair.type,rhsPair.type);
+lhsPair=analyzeExprFwd(lhs,rhsPair.env,JSType.TOP,meetType);
+rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,meetType);
+}
+ else if ((exprKind == Token.SHEQ && specializedType.isFalse()) || (exprKind == Token.SHNE && specializedType.isTrue())) {
+JSType lhsType=lhsPair.type;
+JSType rhsType=rhsPair.type;
+if (lhsType.equals(JSType.NULL) || lhsType.equals(JSType.UNDEFINED)) {
+rhsType=rhsType.removeType(lhsType);
+}
+ else if (rhsType.equals(JSType.NULL) || rhsType.equals(JSType.UNDEFINED)) {
+lhsType=lhsType.removeType(rhsType);
+}
+lhsPair=analyzeExprFwd(lhs,rhsPair.env,JSType.TOP,lhsType);
+rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,rhsType);
+}
+rhsPair.type=JSType.BOOLEAN;
+return rhsPair;
+}
+case Token.LT:
+case Token.GT:
+case Token.LE:
+case Token.GE:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP);
+if (lhsPair.type.isScalar() && rhsPair.type.isUnknown()) {
+rhsPair=analyzeExprFwd(rhs,lhsPair.env,lhsPair.type);
+}
+ else if (lhsPair.type.isUnknown() && rhsPair.type.isScalar()) {
+lhsPair=analyzeExprFwd(lhs,inEnv,rhsPair.type);
+rhsPair=analyzeExprFwd(rhs,lhsPair.env,rhsPair.type);
+}
+ else if (lhs.isQualifiedName() && lhsPair.type.isUnknown() && rhs.isQualifiedName()&& rhsPair.type.isUnknown()) {
+TypeEnv env=envPutType(rhsPair.env,lhs.getQualifiedName(),JSType.TOP_SCALAR);
+env=envPutType(rhsPair.env,rhs.getQualifiedName(),JSType.TOP_SCALAR);
+return new EnvTypePair(env,JSType.BOOLEAN);
+}
+JSType lhsType=lhsPair.type;
+JSType rhsType=rhsPair.type;
+if (!lhsType.isSubtypeOf(JSType.TOP_SCALAR) || !rhsType.isSubtypeOf(JSType.TOP_SCALAR) || !JSType.areCompatibleScalarTypes(lhsType,rhsType)) {
+warnings.add(JSError.make(expr,INVALID_OPERAND_TYPE,Token.name(exprKind),"matching scalar types",lhsType.toString() + ", " + rhsType.toString()));
+}
+return new EnvTypePair(rhsPair.env,JSType.BOOLEAN);
+}
+case Token.GETPROP:
+Preconditions.checkState(!NodeUtil.isLValue(expr));
+return analyzePropAccessFwd(expr.getFirstChild(),expr.getLastChild().getString(),inEnv,requiredType,specializedType);
+case Token.HOOK:
+{
+Node cond=expr.getFirstChild();
+Node thenBranch=cond.getNext();
+Node elseBranch=thenBranch.getNext();
+TypeEnv trueEnv=analyzeExprFwd(cond,inEnv,JSType.TOP,JSType.TRUE_TYPE).env;
+TypeEnv falseEnv=analyzeExprFwd(cond,inEnv,JSType.TOP,JSType.FALSE_TYPE).env;
+EnvTypePair thenPair=analyzeExprFwd(thenBranch,trueEnv,requiredType,specializedType);
+EnvTypePair elsePair=analyzeExprFwd(elseBranch,falseEnv,requiredType,specializedType);
+return EnvTypePair.join(thenPair,elsePair);
+}
+case Token.CALL:
+case Token.NEW:
+{
+Node callee=expr.getFirstChild();
+EnvTypePair calleePair=analyzeExprFwd(callee,inEnv,JSType.topFunction());
+JSType calleeType=calleePair.type;
+if (!calleeType.isSubtypeOf(JSType.topFunction())) {
+warnings.add(JSError.make(expr,TypeCheck.NOT_CALLABLE,calleeType.toString()));
+}
+FunctionType funType=calleeType.getFunType();
+if (funType == null || funType.isTopFunction()) {
+return new EnvTypePair(inEnv,requiredType);
+}
+ else if (funType.isLoose()) {
+return analyzeLooseCallNodeFwd(expr,inEnv,requiredType);
+}
+ else if (expr.isCall() && funType.isConstructor()) {
+warnings.add(JSError.make(expr,TypeCheck.CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
+return new EnvTypePair(inEnv,requiredType);
+}
+ else if (expr.isNew() && !funType.isConstructor()) {
+warnings.add(JSError.make(expr,TypeCheck.NOT_A_CONSTRUCTOR,funType.toString()));
+return new EnvTypePair(inEnv,requiredType);
+}
+int maxArity=funType.getMaxArity();
+int minArity=funType.getMinArity();
+int numArgs=expr.getChildCount() - 1;
+if (numArgs < minArity || numArgs > maxArity) {
+warnings.add(JSError.make(expr,TypeCheck.WRONG_ARGUMENT_COUNT,"",Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
+}
+List<JSType> argTypes=Lists.newArrayList();
+TypeEnv tmpEnv=inEnv;
+for (int i=0; i < numArgs; i++) {
+JSType formalType=(i < maxArity) ? funType.getFormalType(i) : JSType.TOP;
+if (formalType.isBottom()) {
+warnings.add(JSError.make(expr,CALL_FUNCTION_WITH_BOTTOM_FORMAL,Integer.toString(i)));
+formalType=JSType.TOP;
+}
+Node arg=expr.getChildAtIndex(i + 1);
+EnvTypePair pair=analyzeExprFwd(arg,tmpEnv,formalType);
+if (!pair.type.isSubtypeOf(formalType)) {
+warnings.add(JSError.make(arg,INVALID_ARGUMENT_TYPE,Integer.toString(i + 1),"",formalType.toString(),pair.type.toString()));
+pair.type=JSType.UNKNOWN;
+}
+if (i < maxArity) {
+Preconditions.checkState(!pair.type.equals(JSType.topFunction()));
+argTypes.add(pair.type);
+}
+tmpEnv=pair.env;
+}
+JSType retType=funType.getReturnType();
+if (callee.isName()) {
+String calleeName=callee.getQualifiedName();
+if (currentScope.isKnownFunction(calleeName)) {
+if (currentScope.isLocalFunDef(calleeName)) {
+collectTypesForFreeVarsFwd(callee,tmpEnv);
+}
+ else {
+JSType expectedRetType=requiredType;
+System.out.println("Updating deferred check with ret: " + expectedRetType + " and args: "+ argTypes);
+DeferredCheck dc;
+if (expr.isCall()) {
+dc=deferredChecks.get(expr);
+dc.updateReturn(expectedRetType);
+}
+ else {
+dc=new DeferredCheck(expr,currentScope,currentScope.getScope(calleeName));
+dc.updateReturn(JSType.TOP);
+deferredChecks.put(expr,dc);
+}
+dc.updateArgTypes(argTypes);
+}
+}
+}
+return new EnvTypePair(tmpEnv,retType);
+}
+case Token.COMMA:
+return analyzeExprFwd(expr.getLastChild(),analyzeExprFwd(expr.getFirstChild(),inEnv,JSType.TOP).env,requiredType,specializedType);
+case Token.NOT:
+{
+EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv,JSType.TOP,specializedType.negate());
+pair.type=pair.type.negate();
+return pair;
+}
+case Token.GETELEM:
+{
+Node receiver=expr.getFirstChild();
+Node index=expr.getLastChild();
+if (index.isString()) {
+return analyzePropAccessFwd(receiver,index.getString(),inEnv,requiredType,specializedType);
+}
+return new EnvTypePair(inEnv,requiredType);
+}
+case Token.EQ:
+case Token.NE:
+case Token.ARRAYLIT:
+case Token.ASSIGN_ADD:
+return new EnvTypePair(inEnv,requiredType);
+default :
+throw new RuntimeException("Unhandled expression type: " + Token.name(expr.getType()));
+}
+}

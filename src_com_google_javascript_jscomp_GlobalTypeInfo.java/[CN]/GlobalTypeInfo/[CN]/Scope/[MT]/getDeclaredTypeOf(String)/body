@@ -1,0 +1,25 @@
+{
+  if ("this".equals(name)) {
+    return getConstructorType().toFunctionType().getReturnType();
+  }
+  int formalIndex=formals.indexOf(name);
+  if (formalIndex != -1) {
+    JSType formalType=declaredType.getFormalType(formalIndex);
+    if (formalType != null && formalType.isBottom()) {
+      return null;
+    }
+    return formalType;
+  }
+  JSType localType=locals.get(name);
+  if (localType != null) {
+    return localType;
+  }
+  Scope s=localFunDefs.get(name);
+  if (s != null) {
+    return JSType.fromFunctionType(s.getDeclaredType().toFunctionType());
+  }
+  if (parent != null) {
+    return parent.getDeclaredTypeOf(name);
+  }
+  return null;
+}

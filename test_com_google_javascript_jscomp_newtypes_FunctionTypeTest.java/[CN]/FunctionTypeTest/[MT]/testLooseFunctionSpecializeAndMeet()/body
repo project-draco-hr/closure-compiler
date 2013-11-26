@@ -1,0 +1,11 @@
+{
+  assertEquals(parse("function((number|string))").withLoose(),parse("function(number)").withLoose().specialize(parse("function(string)")));
+  assertEquals(parse("function(number)"),parse("function(number)").specialize(parse("function(string)").withLoose()));
+  assertEquals(parse("function((number|string))").withLoose(),FunctionType.meet(parse("function(number)").withLoose(),parse("function(string)").withLoose()));
+  assertEquals(parse("function((number|string))").withLoose(),FunctionType.meet(parse("function(number)"),parse("function(string)").withLoose()));
+  assertEquals(parse("function((number|string))").withLoose(),FunctionType.meet(parse("function(number)").withLoose(),parse("function(string)")));
+  assertEquals(parse("function ((number|string)): (number|string)").withLoose(),FunctionType.meet(parse("function (number): number").withLoose(),parse("function (string): string").withLoose()));
+  assertEquals(parse("function((number|string)=, string=)").withLoose(),FunctionType.meet(parse("function(number, string)").withLoose(),parse("function(string=)").withLoose()));
+  assertEquals(parse("function((number|string)=)").withLoose(),FunctionType.meet(parse("function(number, ...[string])"),parse("function(string=)").withLoose()));
+  assertEquals(parse("function((number|string)=)").withLoose(),FunctionType.meet(parse("function(...[number])"),parse("function(string=)").withLoose()));
+}

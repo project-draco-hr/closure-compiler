@@ -1,0 +1,61 @@
+{
+  TypeEnv entryEnv=getInitTypeEnv();
+  TypeEnv exitEnv=getFinalTypeEnv();
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  Multimap<String,String> taints=exitEnv.getTaints();
+  JSType formalType;
+  int formalIndex=0;
+  DeclaredFunctionType declType=fn.getDeclaredType();
+  int reqArity=declType.getRequiredArity();
+  int optArity=declType.getOptionalArity();
+  for (  String formal : fn.getFormals()) {
+    formalType=fn.getDeclaredTypeOf(formal);
+    if (formalType != null) {
+      if (formalIndex < reqArity) {
+        builder.addReqFormal(formalType);
+      }
+ else       if (formalIndex < optArity) {
+        builder.addOptFormal(formalType);
+      }
+    }
+ else {
+      formalType=envGetType(entryEnv,formal);
+      if (!formalType.hasNonScalar() || formalType.getFunType() != null) {
+        for (        String taintedVarName : taints.get(formal)) {
+          JSType taintType=envGetType(exitEnv,taintedVarName);
+          formalType=JSType.meet(taintType,formalType);
+        }
+      }
+      builder.addReqFormal(formalType.withLocation(null));
+    }
+    formalIndex++;
+  }
+  if (declType.hasRestFormals()) {
+    builder.addRestFormals(declType.getFormalType(formalIndex));
+  }
+  for (  String outer : fn.getOuterVars()) {
+    System.out.println("Free var " + outer + " going in summary");
+    JSType outerType=envGetType(entryEnv,outer);
+    for (    String taintedVarName : taints.get(outer)) {
+      JSType taintType=envGetType(exitEnv,taintedVarName);
+      outerType=JSType.meet(taintType,outerType);
+    }
+    builder.addOuterVarPrecondition(outer,outerType.withLocation(null));
+  }
+  builder.addClass(declType.getClassType());
+  JSType declRetType=declType.getReturnType();
+  JSType actualRetType=envGetType(exitEnv,RETVAL_ID);
+  if (declRetType == null) {
+    builder.addRetType(actualRetType.withLocation(null));
+  }
+ else {
+    builder.addRetType(declRetType);
+    if (!JSType.UNDEFINED.isSubtypeOf(declRetType) && hasPathWithNoReturn(cfg)) {
+      warnings.add(JSError.make(fn.getRoot(),CheckMissingReturn.MISSING_RETURN_STATEMENT,declRetType.toString()));
+    }
+  }
+  JSType summary=builder.buildType();
+  System.out.println("Function summary for " + fn.getReadableName());
+  System.out.println("\t" + summary);
+  summaries.put(fn,summary);
+}

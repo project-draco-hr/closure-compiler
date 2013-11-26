@@ -1,0 +1,11 @@
+{
+  Scope calleeScope=currentScope.getScope(callee.getQualifiedName());
+  for (  String freeVar : calleeScope.getOuterVars()) {
+    FunctionType summary=summaries.get(calleeScope).getFunType();
+    JSType outerType=envGetType(env,freeVar);
+    JSType innerType=summary.getOuterVarPrecondition(freeVar);
+    if (outerType != null && JSType.meet(outerType,innerType).isBottom()) {
+      warnings.add(JSError.make(callee,CROSS_SCOPE_GOTCHA,freeVar,outerType.toString(),innerType.toString()));
+    }
+  }
+}

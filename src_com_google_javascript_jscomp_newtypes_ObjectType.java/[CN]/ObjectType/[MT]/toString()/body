@@ -1,0 +1,13 @@
+{
+  if (props.isEmpty() && fn != null) {
+    return fn.toString();
+  }
+  SortedSet<String> propStrings=Sets.newTreeSet();
+  for (  String pname : props.keySet()) {
+    propStrings.add(pname + " : " + props.get(pname).toString());
+  }
+  String result=klass == null ? "" : klass.name;
+  result+=(klass != null && propStrings.isEmpty()) ? "" : "{" + Joiner.on(", ").join(propStrings) + "}";
+  result+=(isLoose ? " (loose)" : "");
+  return result;
+}

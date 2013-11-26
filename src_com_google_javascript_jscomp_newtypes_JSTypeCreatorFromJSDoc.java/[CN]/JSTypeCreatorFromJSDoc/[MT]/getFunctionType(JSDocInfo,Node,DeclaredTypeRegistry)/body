@@ -1,0 +1,18 @@
+{
+  try {
+    if (jsdoc != null && jsdoc.getType() != null) {
+      Node jsdocNode=jsdoc.getType().getRootNode();
+      if (jsdocNode.getType() == Token.FUNCTION) {
+        return getFunTypeFromAtTypeJsdoc(jsdoc,funNode,registry);
+      }
+ else {
+        warn("The function is annotated with a non-function jsdoc. " + "Ignoring jsdoc.",funNode);
+      }
+    }
+    return getFunTypeFromTypicalFunctionJsdoc(jsdoc,funNode,registry,false);
+  }
+ catch (  IllegalStateException e) {
+    warn("Wrong parameter order: required parameters are first, " + "then optional, then varargs. Ignoring jsdoc.",funNode);
+    return getFunTypeFromTypicalFunctionJsdoc(null,funNode,registry,true);
+  }
+}
