@@ -7,7 +7,7 @@
     return new EnvTypePair(pair.env,requiredType);
   }
   JSType resultType=objType.getProp(pname);
-  if (!specializedType.isBoolean()) {
+  if (!specializedType.isTruthy() && !specializedType.isFalsy()) {
     if (!objType.mayHaveProp(pname)) {
       warnings.add(JSError.make(propAccessNode,TypeCheck.INEXISTENT_PROPERTY,pname,objType.toString()));
       resultType=JSType.UNKNOWN;
@@ -16,7 +16,7 @@
       warnings.add(JSError.make(propAccessNode,NewTypeInference.POSSIBLY_INEXISTENT_PROPERTY,pname,objType.toString()));
     }
   }
- else   if (receiver.isName() && specializedType.equals(JSType.TRUE_TYPE)) {
+ else   if (receiver.isName() && specializedType.isTruthy()) {
     String objName=receiver.getQualifiedName();
     objType=objType.withPropertyRequired(pname);
     pair.env=envPutType(pair.env,objName,objType);

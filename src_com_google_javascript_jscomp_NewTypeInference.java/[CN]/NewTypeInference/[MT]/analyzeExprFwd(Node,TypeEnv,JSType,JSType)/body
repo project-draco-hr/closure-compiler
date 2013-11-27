@@ -60,14 +60,14 @@ case Token.OR:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-if ((specializedType.isTrue() && exprKind == Token.AND) || (specializedType.isFalse() && exprKind == Token.OR)) {
+if ((specializedType.isTruthy() && exprKind == Token.AND) || (specializedType.isFalsy() && exprKind == Token.OR)) {
 EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,specializedType);
 EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,specializedType);
 return rhsPair;
 }
- else if ((specializedType.isFalse() && exprKind == Token.AND) || (specializedType.isTrue() && exprKind == Token.OR)) {
+ else if ((specializedType.isFalsy() && exprKind == Token.AND) || (specializedType.isTruthy() && exprKind == Token.OR)) {
 EnvTypePair shortCircuitPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,specializedType);
-JSType negatedType=specializedType.isTrue() ? JSType.FALSE_TYPE : JSType.TRUE_TYPE;
+JSType negatedType=specializedType.isTruthy() ? JSType.FALSY : JSType.TRUTHY;
 EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,negatedType);
 EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,specializedType);
 return EnvTypePair.join(rhsPair,shortCircuitPair);
@@ -113,12 +113,12 @@ FunctionType ctorFunType=ctorType.getFunType();
 if (!ctorType.isSubtypeOf(JSType.topFunction()) || !ctorFunType.isConstructor()) {
 warnings.add(JSError.make(ctor,INVALID_OPERAND_TYPE,"instanceof","a constructor function",ctorType.toString()));
 }
-if (ctorFunType == null || !ctorFunType.isConstructor() || (!specializedType.isTrue() && !specializedType.isFalse())) {
+if (ctorFunType == null || !ctorFunType.isConstructor() || (!specializedType.isTruthy() && !specializedType.isFalsy())) {
 ctorPair.type=JSType.BOOLEAN;
 return ctorPair;
 }
 JSType instanceType=ctorFunType.getTypeOfThis();
-objPair=analyzeExprFwd(obj,inEnv,JSType.TOP,specializedType.isTrue() ? objPair.type.specialize(instanceType) : objPair.type.removeType(instanceType));
+objPair=analyzeExprFwd(obj,inEnv,JSType.TOP,specializedType.isTruthy() ? objPair.type.specialize(instanceType) : objPair.type.removeType(instanceType));
 ctorPair=analyzeExprFwd(ctor,objPair.env,JSType.topFunction());
 ctorPair.type=JSType.BOOLEAN;
 return ctorPair;
@@ -209,12 +209,12 @@ Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
 EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
-if ((exprKind == Token.SHEQ && specializedType.isTrue()) || (exprKind == Token.SHNE && specializedType.isFalse())) {
+if ((exprKind == Token.SHEQ && specializedType.isTruthy()) || (exprKind == Token.SHNE && specializedType.isFalsy())) {
 JSType meetType=JSType.meet(lhsPair.type,rhsPair.type);
 lhsPair=analyzeExprFwd(lhs,rhsPair.env,JSType.TOP,meetType);
 rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,meetType);
 }
- else if ((exprKind == Token.SHEQ && specializedType.isFalse()) || (exprKind == Token.SHNE && specializedType.isTrue())) {
+ else if ((exprKind == Token.SHEQ && specializedType.isFalsy()) || (exprKind == Token.SHNE && specializedType.isTruthy())) {
 JSType lhsType=lhsPair.type;
 JSType rhsType=rhsPair.type;
 if (lhsType.equals(JSType.NULL) || lhsType.equals(JSType.UNDEFINED)) {
@@ -352,7 +352,7 @@ return analyzeExprFwd(expr.getLastChild(),analyzeExprFwd(expr.getFirstChild(),in
 case Token.NOT:
 {
 EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv,JSType.TOP,specializedType.negate());
-pair.type=pair.type.negate();
+pair.type=pair.type.negate().toBoolean();
 return pair;
 }
 case Token.GETELEM:
