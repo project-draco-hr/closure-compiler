@@ -1,0 +1,18 @@
+{
+  LValueResult lvalue=analyzeLValueBwd(obj,outEnv,JSType.TOP_OBJECT.withProperty(pname,type),false);
+  if (lvalue.ptr != null) {
+    lvalue.ptr+="." + pname;
+    if (doSlicing) {
+      String objName=TypeUtils.getQnameRoot(lvalue.ptr);
+      String props=TypeUtils.getPropPath(lvalue.ptr);
+      JSType objType=envGetType(lvalue.env,objName);
+      JSType propDeclType=lvalue.type.getDeclaredProp(pname);
+      JSType slicedObjType=propDeclType == null ? objType.withoutProperty(props) : objType.withProperty(props,propDeclType);
+      lvalue.env=envPutType(lvalue.env,objName,slicedObjType);
+    }
+  }
+  if (lvalue.type.mayHaveProp(pname)) {
+    lvalue.type=lvalue.type.getProp(pname);
+  }
+  return lvalue;
+}

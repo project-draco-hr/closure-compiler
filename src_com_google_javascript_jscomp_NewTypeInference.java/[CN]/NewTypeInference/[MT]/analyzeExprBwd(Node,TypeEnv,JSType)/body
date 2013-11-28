@@ -95,7 +95,18 @@ Node rhs=expr.getLastChild();
 JSType numOrString=JSType.join(JSType.NUMBER,JSType.STRING);
 EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv,numOrString);
 EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env,numOrString);
-return new EnvTypePair(lhsPair.env,JSType.plus(lhsPair.type,rhsPair.type));
+lhsPair.type=JSType.plus(lhsPair.type,rhsPair.type);
+return lhsPair;
+}
+case Token.OR:
+case Token.AND:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv);
+EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env);
+lhsPair.type=JSType.join(rhsPair.type,lhsPair.type);
+return lhsPair;
 }
 case Token.SHEQ:
 case Token.SHNE:
@@ -152,7 +163,7 @@ return new EnvTypePair(lvalue.env,JSType.NUMBER);
 }
 case Token.GETPROP:
 {
-Preconditions.checkState(!NodeUtil.isLValue(expr));
+Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()));
 return analyzePropAccessBwd(expr.getFirstChild(),expr.getLastChild().getString(),outEnv,requiredType);
 }
 case Token.HOOK:

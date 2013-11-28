@@ -1,6 +1,9 @@
 {
   for (  DiGraphNode<Node,ControlFlowGraph.Branch> dn : workset) {
     Node n=dn.getValue();
+    if (n.isThrow()) {
+      continue;
+    }
     TypeEnv outEnv=getOutEnv(n);
     TypeEnv inEnv;
     System.out.println("\tBWD Statment: " + n);
@@ -38,9 +41,24 @@ case Token.VAR:
   }
   break;
 }
-default :
+case Token.BLOCK:
+case Token.EMPTY:
 inEnv=outEnv;
 break;
+case Token.FOR:
+case Token.WHILE:
+case Token.DO:
+case Token.IF:
+inEnv=outEnv;
+break;
+default :
+if (NodeUtil.isStatement(n)) {
+throw new RuntimeException("Unhandled statement type: " + Token.name(n.getType()));
+}
+ else {
+inEnv=analyzeExprBwd(n,outEnv).env;
+break;
+}
 }
 System.out.println("\t\tinEnv: " + inEnv);
 setInEnv(n,inEnv);
