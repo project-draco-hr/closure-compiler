@@ -1,7 +1,7 @@
 {
-  ControlledRandom random=new ControlledRandom();
-  Fuzzer fuzzer=new Fuzzer(random);
-  Node node=fuzzer.generateFunctionCall(10,true);
-  String code=Fuzzer.getPrettyCode(node);
+  FunctionCallFuzzer fuzzer=new FunctionCallFuzzer(random,scopeManager,config,snGenerator);
+  leaveOneSubtype(fuzzer.getOwnConfig(),"constructorCall");
+  Node node=fuzzer.generate(10);
+  String code=FunctionCallFuzzer.getPrettyCode(node);
   assertTrue(code.startsWith("new "));
 }

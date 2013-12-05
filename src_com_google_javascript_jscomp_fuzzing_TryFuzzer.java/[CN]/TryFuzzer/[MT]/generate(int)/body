@@ -1,0 +1,13 @@
+{
+  AbstractFuzzer[] fuzzers={new BlockFuzzer(random,scopeManager,config,snGenerator),new CatchFuzzer(random,scopeManager,config,snGenerator),new FinallyFuzzer(random,scopeManager,config,snGenerator)};
+  Node[] components=distribute(budget - 1,fuzzers);
+  if (components[2] == null) {
+    if (!components[1].hasChildren()) {
+      components[2]=new Node(Token.BLOCK);
+    }
+ else {
+      components=Arrays.copyOf(components,2);
+    }
+  }
+  return new Node(Token.TRY,components);
+}

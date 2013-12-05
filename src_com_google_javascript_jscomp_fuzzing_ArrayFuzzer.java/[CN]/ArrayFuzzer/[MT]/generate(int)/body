@@ -1,0 +1,16 @@
+{
+  Node node=new Node(Token.ARRAYLIT);
+  if (budget < 1) {
+    budget=1;
+  }
+  int arraySize=generateLength(budget - 1);
+  if (arraySize > 0) {
+    AbstractFuzzer[] fuzzers=new AbstractFuzzer[arraySize];
+    Arrays.fill(fuzzers,new ExpressionFuzzer(random,scopeManager,config,snGenerator));
+    Node[] elements=distribute(budget - 1,fuzzers);
+    for (int i=0; i < arraySize; i++) {
+      node.addChildToBack(elements[i]);
+    }
+  }
+  return node;
+}

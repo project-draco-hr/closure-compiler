@@ -1,11 +1,10 @@
 {
-  ControlledRandom random=new ControlledRandom();
-  int arraySize=9;
-  random.addOverride(1,arraySize);
-  Fuzzer fuzzer=new Fuzzer(random);
-  Node node=fuzzer.generateArrayLiteral(10);
-  String code=Fuzzer.getPrettyCode(node);
+  ArrayFuzzer fuzzer=new ArrayFuzzer(random,scopeManager,config,snGenerator);
+  int budget=10;
+  Node node=fuzzer.generate(budget);
+  String code=ArrayFuzzer.getPrettyCode(node);
   assertTrue(code.startsWith("["));
   assertTrue(code.endsWith("]"));
-  assertEquals(arraySize,code.split(",").length);
+  JSONObject config=fuzzer.config;
+  assertTrue("\nGenerated code: \n" + code,code.split(",").length < (int)(config.optJSONObject("array").optDouble("maxLength") * (budget - 1)));
 }

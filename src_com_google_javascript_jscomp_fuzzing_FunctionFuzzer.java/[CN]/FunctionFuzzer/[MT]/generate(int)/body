@@ -1,0 +1,33 @@
+{
+  int paramBodyBudget;
+  Node name;
+  if (isExpression) {
+    Preconditions.checkArgument(budget >= 3);
+    scopeManager.addFunctionScope();
+    if (budget >= 4 && random.nextInt(2) == 0) {
+      name=getIdFuzzer().generate(1);
+      paramBodyBudget=budget - 3;
+    }
+ else {
+      name=Node.newString(Token.NAME,"");
+      paramBodyBudget=budget - 2;
+    }
+  }
+ else {
+    Preconditions.checkArgument(budget >= 4);
+    name=getIdFuzzer().generate(1);
+    paramBodyBudget=budget - 3;
+    scopeManager.addFunctionScope();
+  }
+  int numComponents=generateLength(paramBodyBudget - 1) + 1;
+  AbstractFuzzer[] fuzzers=new AbstractFuzzer[numComponents];
+  Arrays.fill(fuzzers,new SourceElementFuzzer(random,scopeManager,config,snGenerator));
+  fuzzers[0]=new ParamListFuzzer(random,scopeManager,config,snGenerator);
+  Node[] components=distribute(paramBodyBudget,fuzzers);
+  Node body=new Node(Token.BLOCK);
+  for (int i=1; i < numComponents; i++) {
+    body.addChildToBack(components[i]);
+  }
+  scopeManager.removeScope();
+  return new Node(Token.FUNCTION,name,components[0],body);
+}

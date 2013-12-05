@@ -1,0 +1,17 @@
+{
+  int numElements=generateLength(budget - 1);
+  Node script;
+  if (numElements > 0) {
+    SourceElementFuzzer[] fuzzers=new SourceElementFuzzer[numElements];
+    Arrays.fill(fuzzers,new SourceElementFuzzer(random,scopeManager,config,snGenerator));
+    Node[] elements=distribute(budget - 1,fuzzers);
+    script=new Node(Token.SCRIPT,elements);
+  }
+ else {
+    script=new Node(Token.SCRIPT);
+  }
+  InputId inputId=new InputId("fuzzedInput");
+  script.setInputId(inputId);
+  script.setSourceFileForTesting(inputId.getIdName());
+  return script;
+}

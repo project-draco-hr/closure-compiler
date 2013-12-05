@@ -1,12 +1,12 @@
 {
-  int[] overriddenValues={0,1,2,3,4,5,6,7,8};
   String[] prefixes={"void","typeof","+","-","~","!","++","--","delete"};
+  String[] types={"void","typeof","pos","neg","bitNot","not","inc","dec","delProp"};
   for (int i=0; i < prefixes.length; i++) {
-    ControlledRandom random=new ControlledRandom();
-    random.addOverride(1,overriddenValues[i]);
-    Fuzzer fuzzer=new Fuzzer(random);
-    Node node=fuzzer.generateUnaryExpression(10);
-    String code=Fuzzer.getPrettyCode(node).trim();
+    setUp();
+    UnaryExprFuzzer fuzzer=new UnaryExprFuzzer(random,scopeManager,config,snGenerator);
+    leaveOneSubtype(fuzzer.getOwnConfig(),types[i]);
+    Node node=fuzzer.generate(10);
+    String code=UnaryExprFuzzer.getPrettyCode(node);
     assertTrue(code.startsWith(prefixes[i]));
   }
 }

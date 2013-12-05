@@ -1,0 +1,25 @@
+{
+  Preconditions.checkNotNull(getCandidates(),"Candidate fuzzers need to be initialized before being used.");
+  JSONObject weightConfig=getOwnConfig().optJSONObject("weights");
+  ArrayList<AbstractFuzzer> validFuzzers=Lists.newArrayList();
+  ArrayList<Double> weights=Lists.newArrayList();
+  int stepSize=2;
+  budget-=stepSize;
+  do {
+    budget+=stepSize;
+    for (    AbstractFuzzer fuzzer : getCandidates()) {
+      if (fuzzer.isEnough(budget)) {
+        validFuzzers.add(fuzzer);
+        try {
+          weights.add(weightConfig.getDouble(fuzzer.getConfigName()));
+        }
+ catch (        JSONException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+ while (validFuzzers.size() == 0);
+  DiscreteDistribution<AbstractFuzzer> dd=new DiscreteDistribution<>(random,validFuzzers,weights);
+  return dd.nextItem();
+}

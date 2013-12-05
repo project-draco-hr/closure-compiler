@@ -1,0 +1,15 @@
+{
+  int numComponents;
+  if (budget <= 3) {
+    numComponents=2;
+  }
+ else {
+    numComponents=random.nextDouble() < getOwnConfig().optDouble("hasElse") ? 3 : 2;
+  }
+  AbstractFuzzer[] fuzzers=new AbstractFuzzer[numComponents];
+  BlockFuzzer blockFuzzer=new BlockFuzzer(random,scopeManager,config,snGenerator);
+  Arrays.fill(fuzzers,blockFuzzer);
+  fuzzers[0]=new ExpressionFuzzer(random,scopeManager,config,snGenerator);
+  Node[] components=distribute(budget - 1,fuzzers);
+  return new Node(Token.IF,components);
+}

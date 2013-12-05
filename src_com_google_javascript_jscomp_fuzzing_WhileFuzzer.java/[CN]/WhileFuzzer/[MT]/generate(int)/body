@@ -1,0 +1,8 @@
+{
+  AbstractFuzzer[] fuzzers={new ExpressionFuzzer(random,scopeManager,config,snGenerator),new BlockFuzzer(random,scopeManager,config,snGenerator)};
+  Scope scope=scopeManager.localScope();
+  scope.loopNesting++;
+  Node[] components=distribute(budget - 1,fuzzers);
+  scope.loopNesting--;
+  return new Node(Token.WHILE,components);
+}

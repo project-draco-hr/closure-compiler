@@ -14,7 +14,7 @@
   if (driver.seed != -1) {
     driver.numberOfRuns=1;
   }
-  for (int i=0; i < driver.numberOfRuns; i++) {
+  for (int i=0; driver.forever() || i < driver.numberOfRuns; i++) {
     logger.info("Running fuzzer [" + i + " of "+ driver.numberOfRuns+ "]");
     long seed;
     if (driver.seed == -1) {
@@ -24,16 +24,21 @@
       seed=driver.seed;
     }
     Random random=new Random(seed);
-    Fuzzer fuzzer=new Fuzzer(random);
-    Node[] nodes=null;
+    ScriptFuzzer fuzzer=new ScriptFuzzer(random,driver.getConfig());
+    Node script=null;
     try {
-      nodes=fuzzer.generateProgram(driver.maxASTSize);
+      script=fuzzer.generate(driver.maxASTSize);
     }
  catch (    Exception e) {
       logger.log(Level.SEVERE,"Fuzzer error!\nSeed: " + seed,e);
+      if (driver.forever()) {
+        break;
+      }
+ else {
+        continue;
+      }
     }
-    Node script=Fuzzer.buildScript(nodes);
-    String code=Fuzzer.getPrettyCode(script);
+    String code=ScriptFuzzer.getPrettyCode(script);
     try {
       Result result=driver.compile(script);
       if (result.success && result.warnings.length == 0) {
@@ -47,9 +52,10 @@
  else {
         StringBuffer sb=new StringBuffer("Compilation Failed!\nSeed: ");
         sb.append(seed);
-        sb.append("\nJavaScript: ");
-        sb.append(code);
         logger.warning(sb.toString());
+        sb=new StringBuffer("JavaScript: ");
+        sb.append(code);
+        logger.info(sb.toString());
       }
     }
  catch (    Exception e) {
@@ -58,8 +64,10 @@
       sb.append("\nJavaScript: ");
       sb.append(code);
       logger.log(Level.SEVERE,sb.toString(),e);
+      if (driver.forever()) {
+        break;
+      }
     }
   }
-  System.out.println("Done!");
   System.exit(0);
 }

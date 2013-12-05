@@ -1,0 +1,18 @@
+{
+  String labelName="x_" + snGenerator.getNextNumber();
+  Node name=Node.newString(Token.LABEL_NAME,labelName);
+  StatementFuzzer stmtFuzzer=new StatementFuzzer(random,scopeManager,config,snGenerator);
+  AbstractFuzzer selectedFuzzer=stmtFuzzer.selectFuzzer(budget - 2);
+  Scope localScope=scopeManager.localScope();
+  ArrayList<String> currentLabels;
+  if (selectedFuzzer instanceof ForFuzzer || selectedFuzzer instanceof ForInFuzzer || selectedFuzzer instanceof WhileFuzzer|| selectedFuzzer instanceof DoWhileFuzzer) {
+    currentLabels=localScope.loopLabels;
+  }
+ else {
+    currentLabels=localScope.otherLabels;
+  }
+  currentLabels.add(labelName);
+  Node node=new Node(Token.LABEL,name,selectedFuzzer.generate(budget - 2));
+  currentLabels.remove(labelName);
+  return node;
+}

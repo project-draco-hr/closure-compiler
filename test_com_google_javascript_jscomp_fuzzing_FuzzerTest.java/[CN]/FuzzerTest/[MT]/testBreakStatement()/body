@@ -1,10 +1,9 @@
 {
-  ControlledRandom random=new ControlledRandom();
-  random.addOverride(1,0);
-  Fuzzer fuzzer=new Fuzzer(random);
+  BreakFuzzer fuzzer=new BreakFuzzer(random,scopeManager,config);
+  fuzzer.getOwnConfig().put("toLabel",1);
   Scope scope=fuzzer.scopeManager.localScope();
   scope.otherLabels.add("testLabel");
-  Node breakStmt=fuzzer.generateBreak(10);
-  String code=Fuzzer.getPrettyCode(breakStmt);
+  Node breakStmt=fuzzer.generate(10);
+  String code=BreakFuzzer.getPrettyCode(breakStmt);
   assertEquals("break testLabel;",code.trim());
 }

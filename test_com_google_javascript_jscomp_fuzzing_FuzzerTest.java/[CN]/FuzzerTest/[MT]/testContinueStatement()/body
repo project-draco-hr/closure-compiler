@@ -1,10 +1,9 @@
 {
-  ControlledRandom random=new ControlledRandom();
-  random.addOverride(1,0);
-  Fuzzer fuzzer=new Fuzzer(random);
+  ContinueFuzzer fuzzer=new ContinueFuzzer(random,scopeManager,config);
+  fuzzer.getOwnConfig().put("toLabel",1);
   Scope scope=fuzzer.scopeManager.localScope();
   scope.loopLabels.add("testLabel");
-  Node breakStmt=fuzzer.generateContinue(10);
-  String code=Fuzzer.getPrettyCode(breakStmt);
+  Node continueStmt=fuzzer.generate(10);
+  String code=ContinueFuzzer.getPrettyCode(continueStmt);
   assertEquals("continue testLabel;",code.trim());
 }
