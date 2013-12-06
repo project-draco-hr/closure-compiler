@@ -1,0 +1,43 @@
+{
+  if (seed != -1) {
+    numberOfRuns=1;
+  }
+  for (int i=0; forever() || i < numberOfRuns; i++) {
+    getLogger().info("Running fuzzer [" + i + " of "+ numberOfRuns+ "]");
+    Node script=fuzz();
+    if (script == null) {
+      if (forever()) {
+        break;
+      }
+    }
+    String code1=ScriptFuzzer.getPrettyCode(script);
+    StringBuffer sb=new StringBuffer("Seed: ").append(seed);
+    sb.append("\nJavaScript: ").append(code1);
+    String debugInfo=sb.toString();
+    try {
+      Result result=compile(script);
+      if (result.success && result.warnings.length == 0) {
+        getLogger().info("Compilation Succeeded!");
+        getLogger().info(debugInfo);
+      }
+ else {
+        getLogger().warning("Compilation Failed!");
+        getLogger().info(debugInfo);
+      }
+    }
+ catch (    Exception e) {
+      getLogger().log(Level.SEVERE,"Compiler error!\n",e);
+      getLogger().warning(debugInfo);
+      if (forever()) {
+        break;
+      }
+    }
+    String code2=ScriptFuzzer.getPrettyCode(script);
+    getLogger().info("Compiled Code: " + code2);
+    if (execute) {
+      if (!executeJS(code1,code2) && forever()) {
+        break;
+      }
+    }
+  }
+}

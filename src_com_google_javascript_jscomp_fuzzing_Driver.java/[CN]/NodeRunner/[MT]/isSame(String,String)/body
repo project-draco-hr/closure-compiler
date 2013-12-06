@@ -1,0 +1,23 @@
+{
+  if (error1 == null && error2 == null) {
+    return true;
+  }
+ else   if (error1 == null || error2 == null) {
+    return false;
+  }
+ else {
+    if (error1.equals(error2)) {
+      return true;
+    }
+    String lineSeparator=System.getProperty("line.separator");
+    String[] lines1=error1.trim().split(lineSeparator);
+    String[] lines2=error2.trim().split(lineSeparator);
+    if (lines1.length == lines2.length && lines1[1].trim().startsWith("throw") && lines2[1].trim().startsWith("throw")) {
+      return true;
+    }
+    if (error1.contains("TypeError: number is not a function") && error2.contains("TypeError: number is not a function")) {
+      return true;
+    }
+  }
+  return false;
+}

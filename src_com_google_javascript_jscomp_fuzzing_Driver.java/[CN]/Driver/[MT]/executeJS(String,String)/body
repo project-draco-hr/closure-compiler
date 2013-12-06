@@ -1,0 +1,46 @@
+{
+  ExecutorService executor=Executors.newCachedThreadPool();
+  NodeRunner node1=new NodeRunner(js1);
+  NodeRunner node2=new NodeRunner(js2);
+  String error1=null, error2=null;
+  try {
+    List<Future<String>> futures=executor.invokeAll(Lists.newArrayList(node1,node2),maxASTSize,TimeUnit.MILLISECONDS);
+    Future<String> future1=futures.get(0);
+    if (!future1.isCancelled()) {
+      error1=future1.get();
+    }
+    Future<String> future2=futures.get(1);
+    if (!future2.isCancelled()) {
+      error2=future2.get();
+    }
+  }
+ catch (  InterruptedException e) {
+    getLogger().log(Level.INFO,"Timeout in executing JavaScript",e);
+  }
+catch (  ExecutionException e) {
+    getLogger().log(Level.SEVERE,"Error in executing JavaScript",e);
+  }
+ finally {
+    node1.process.destroy();
+    node2.process.destroy();
+  }
+  if (error1 == null && error2 == null) {
+    getLogger().info("Infinite loop!");
+    return true;
+  }
+ else   if (NodeRunner.isSame(error1,error2)) {
+    if (error1.length() > 0) {
+      getLogger().warning("JavaScript runtime error: " + error1);
+    }
+    return true;
+  }
+ else {
+    StringBuilder sb=new StringBuilder("Different runtime errors!\nSeed: ").append(seed);
+    sb.append("\nError1:").append(error1);
+    sb.append("\nJavaScript1: \n").append(js1);
+    sb.append("\nError2:").append(error2);
+    sb.append("\nJavaScript2: \n").append(js2);
+    getLogger().severe(sb.toString());
+    return false;
+  }
+}
