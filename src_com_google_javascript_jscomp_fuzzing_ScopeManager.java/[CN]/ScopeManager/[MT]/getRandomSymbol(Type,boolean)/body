@@ -1,0 +1,37 @@
+{
+  if (excludeLocal) {
+    Preconditions.checkArgument(getNumScopes() > 1);
+  }
+ else {
+    Preconditions.checkArgument(getNumScopes() > 0);
+  }
+  List<Symbol> symbols=new ArrayList<>();
+  ArrayList<Scope> scopes=new ArrayList<Scope>(scopeStack);
+  int i;
+  if (excludeLocal) {
+    i=1;
+  }
+ else {
+    i=0;
+  }
+  while (i < scopes.size()) {
+    Scope scope=scopes.get(i);
+    for (    Symbol s : scope.symbols) {
+      if (type == null || s.type == type) {
+        symbols.add(s);
+      }
+    }
+    i++;
+  }
+  int numCandidates=symbols.size();
+  if (numCandidates == 0) {
+    return null;
+  }
+  Symbol sym=symbols.get(random.nextInt(numCandidates));
+  if (excludeLocal && localSymbols().indexOf(sym) != -1) {
+    return null;
+  }
+ else {
+    return sym;
+  }
+}
