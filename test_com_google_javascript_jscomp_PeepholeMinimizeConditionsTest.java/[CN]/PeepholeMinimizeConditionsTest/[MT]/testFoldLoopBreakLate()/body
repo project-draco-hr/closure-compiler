@@ -6,6 +6,7 @@
   fold("for(;a;) if (b) break","for(;a && !b;);");
   fold("for(;a;) { if (b) break; if (c) break; }","for(;(a && !b);) if (c) break;");
   fold("for(;(a && !b);) if (c) break;","for(;(a && !b) && !c;);");
+  fold("for(;;) { if (foo) { break; var x; } } x;","var x; for(;!foo;) {} x;");
   enableNormalize(true);
   fold("while(true) if (a) break","for(;1&&!a;);");
 }
