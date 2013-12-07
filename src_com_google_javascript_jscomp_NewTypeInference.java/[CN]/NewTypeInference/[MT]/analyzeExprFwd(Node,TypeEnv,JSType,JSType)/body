@@ -29,7 +29,10 @@ case Token.OBJECTLIT:
 }
 case Token.THIS:
 {
-Preconditions.checkState(currentScope.isConstructor() || currentScope.isPrototypeMethod());
+if (!currentScope.hasThis()) {
+  warnings.add(JSError.make(expr,CheckGlobalThis.GLOBAL_THIS));
+  return new EnvTypePair(inEnv,JSType.UNKNOWN);
+}
 JSType thisType=currentScope.getDeclaredTypeOf("this");
 return new EnvTypePair(inEnv,thisType);
 }

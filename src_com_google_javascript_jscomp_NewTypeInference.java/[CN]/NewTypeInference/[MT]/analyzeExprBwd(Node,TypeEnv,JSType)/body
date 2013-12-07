@@ -28,7 +28,9 @@ case Token.OBJECTLIT:
 }
 case Token.THIS:
 {
-Preconditions.checkState(currentScope.isConstructor() || currentScope.isPrototypeMethod());
+if (!currentScope.hasThis()) {
+  return new EnvTypePair(outEnv,JSType.UNKNOWN);
+}
 JSType thisType=currentScope.getDeclaredTypeOf("this");
 return new EnvTypePair(outEnv,thisType);
 }

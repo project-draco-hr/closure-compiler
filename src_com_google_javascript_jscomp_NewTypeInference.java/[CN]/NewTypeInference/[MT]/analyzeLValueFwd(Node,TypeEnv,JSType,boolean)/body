@@ -1,29 +1,38 @@
 {
 switch (expr.getType()) {
 case Token.THIS:
+{
+      if (currentScope.hasThis()) {
+        return new LValueResult(inEnv,envGetType(inEnv,"this"),currentScope.getDeclaredTypeOf("this"),"this");
+      }
+ else {
+        warnings.add(JSError.make(expr,CheckGlobalThis.GLOBAL_THIS));
+        return new LValueResult(inEnv,JSType.UNKNOWN,null,null);
+      }
+    }
 case Token.NAME:
 {
-      String varName=expr.getQualifiedName();
-      JSType varType=envGetType(inEnv,varName);
-      return new LValueResult(inEnv,varType,currentScope.getDeclaredTypeOf(varName),varType.hasNonScalar() ? varName : null);
-    }
+    String varName=expr.getQualifiedName();
+    JSType varType=envGetType(inEnv,varName);
+    return new LValueResult(inEnv,varType,currentScope.getDeclaredTypeOf(varName),varType.hasNonScalar() ? varName : null);
+  }
 case Token.NEW:
 {
-    EnvTypePair pair=analyzeExprFwd(expr,inEnv,type);
-    return new LValueResult(pair.env,pair.type,null,null);
-  }
+  EnvTypePair pair=analyzeExprFwd(expr,inEnv,type);
+  return new LValueResult(pair.env,pair.type,null,null);
+}
 case Token.GETPROP:
 {
-  Node obj=expr.getFirstChild();
-  String pname=expr.getLastChild().getString();
-  return analyzePropLValFwd(obj,pname,inEnv,type,isRecursiveCall);
+Node obj=expr.getFirstChild();
+String pname=expr.getLastChild().getString();
+return analyzePropLValFwd(obj,pname,inEnv,type,isRecursiveCall);
 }
 case Token.GETELEM:
 {
 if (expr.getLastChild().isString()) {
-  Node obj=expr.getFirstChild();
-  String pname=expr.getLastChild().getString();
-  return analyzePropLValFwd(obj,pname,inEnv,type,isRecursiveCall);
+Node obj=expr.getFirstChild();
+String pname=expr.getLastChild().getString();
+return analyzePropLValFwd(obj,pname,inEnv,type,isRecursiveCall);
 }
 return new LValueResult(inEnv,type,null,null);
 }

@@ -1,6 +1,9 @@
 {
   if ("this".equals(name)) {
-    return JSType.fromObjectType(ObjectType.fromClass(getThisType()));
+    if (!hasThis()) {
+      return null;
+    }
+    return JSType.fromObjectType(ObjectType.fromClass(getDeclaredType().getThisType()));
   }
   int formalIndex=formals.indexOf(name);
   if (formalIndex != -1) {

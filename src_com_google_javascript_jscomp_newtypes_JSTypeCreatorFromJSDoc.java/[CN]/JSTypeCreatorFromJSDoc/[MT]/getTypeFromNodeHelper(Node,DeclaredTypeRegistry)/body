@@ -70,6 +70,10 @@ case Token.FUNCTION:
 {
 FunctionTypeBuilder builder=new FunctionTypeBuilder();
 Node child=n.getFirstChild();
+if (child.getType() == Token.THIS) {
+builder.addReceiverType(getClassType(child.getFirstChild(),registry));
+child=child.getNext();
+}
 if (child.getType() == Token.PARAM_LIST) {
 for (Node arg=child.getFirstChild(); arg != null; arg=arg.getNext()) {
 try {

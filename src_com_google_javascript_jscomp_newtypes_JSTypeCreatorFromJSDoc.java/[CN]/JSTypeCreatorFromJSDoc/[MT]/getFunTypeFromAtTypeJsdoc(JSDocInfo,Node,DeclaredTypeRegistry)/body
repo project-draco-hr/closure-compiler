@@ -5,6 +5,10 @@
   Node paramType;
   boolean warnedForMissingTypes=false;
   boolean warnedForInlineJsdoc=false;
+  if (childJsdoc.getType() == Token.THIS) {
+    builder.addReceiverType(getClassType(childJsdoc.getFirstChild(),registry));
+    childJsdoc=childJsdoc.getNext();
+  }
   if (childJsdoc.getType() == Token.PARAM_LIST) {
     paramType=childJsdoc.getFirstChild();
     childJsdoc=childJsdoc.getNext();
