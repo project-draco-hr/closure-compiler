@@ -1,10 +1,12 @@
 {
-  File file=new File(configFileName);
-  try {
-    return new JSONObject(Files.toString(file,StandardCharsets.UTF_8));
+  if (config == null) {
+    File file=new File(configFileName);
+    try {
+      config=new JSONObject(Files.toString(file,StandardCharsets.UTF_8));
+    }
+ catch (    JSONException|IOException e) {
+      e.printStackTrace();
+    }
   }
- catch (  JSONException|IOException e) {
-    e.printStackTrace();
-    return null;
-  }
+  return config;
 }

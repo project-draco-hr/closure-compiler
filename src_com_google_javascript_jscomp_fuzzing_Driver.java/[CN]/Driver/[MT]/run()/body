@@ -16,18 +16,24 @@
     String debugInfo=sb.toString();
     try {
       Result result=compile(script);
-      if (result.success && result.warnings.length == 0) {
-        getLogger().info("Compilation Succeeded!");
-        getLogger().info(debugInfo);
+      if (result.success) {
+        if (result.warnings.length == 0) {
+          getLogger().info(debugInfo);
+        }
+ else {
+          getLogger().warning(debugInfo);
+        }
       }
  else {
-        getLogger().warning("Compilation Failed!");
-        getLogger().info(debugInfo);
+        getLogger().severe(debugInfo);
+        if (forever()) {
+          break;
+        }
       }
     }
  catch (    Exception e) {
-      getLogger().log(Level.SEVERE,"Compiler error!\n",e);
-      getLogger().warning(debugInfo);
+      getLogger().log(Level.SEVERE,"Compiler Crashed!",e);
+      getLogger().severe(debugInfo);
       if (forever()) {
         break;
       }
