@@ -165,7 +165,7 @@ return new EnvTypePair(lvalue.env,JSType.NUMBER);
 }
 case Token.GETPROP:
 {
-Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()));
+Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()) || !NodeUtil.isLValue(expr));
 return analyzePropAccessBwd(expr.getFirstChild(),expr.getLastChild().getString(),outEnv,requiredType);
 }
 case Token.HOOK:
@@ -248,6 +248,12 @@ return analyzePropAccessBwd(receiver,index.getString(),outEnv,requiredType);
 EnvTypePair pair=analyzeExprBwd(receiver,outEnv,JSType.TOP_OBJECT);
 pair=analyzeExprBwd(index,pair.env);
 pair.type=requiredType;
+return pair;
+}
+case Token.VOID:
+{
+EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
+pair.type=JSType.UNDEFINED;
 return pair;
 }
 case Token.EQ:

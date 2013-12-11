@@ -261,7 +261,7 @@ warnings.add(JSError.make(expr,INVALID_OPERAND_TYPE,Token.name(exprKind),"matchi
 return new EnvTypePair(rhsPair.env,JSType.BOOLEAN);
 }
 case Token.GETPROP:
-Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()));
+Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()) || !NodeUtil.isLValue(expr));
 return analyzePropAccessFwd(expr.getFirstChild(),expr.getLastChild().getString(),inEnv,requiredType,specializedType);
 case Token.HOOK:
 {
@@ -368,6 +368,12 @@ return analyzePropAccessFwd(receiver,index.getString(),inEnv,requiredType,specia
 EnvTypePair pair=analyzeExprFwd(index,inEnv);
 pair=analyzeExprFwd(receiver,pair.env,JSType.TOP_OBJECT);
 pair.type=requiredType;
+return pair;
+}
+case Token.VOID:
+{
+EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
+pair.type=JSType.UNDEFINED;
 return pair;
 }
 case Token.EQ:

@@ -17,15 +17,26 @@
     if (superClass != null) {
       for (      String pname : superClass.getAllPropsOfClass()) {
         PropertyDef propDef=propertyDefs.get(nominalType,pname);
-        if (propDef != null && propDef.methodScope != null) {
-          DeclaredFunctionType propDeclType=propDef.methodScope.getDeclaredType();
-          PropertyDef inheritedPropDef=propertyDefs.get(superClass,pname);
-          propDeclType=propDeclType.withTypeInfoFromSuper(inheritedPropDef.methodScope.getDeclaredType());
-          propDef.methodScope.setDeclaredType(propDeclType);
+        PropertyDef inheritedPropDef=propertyDefs.get(superClass,pname);
+        if (inheritedPropDef != null && inheritedPropDef.methodScope != null) {
+          DeclaredFunctionType propDeclType;
+          if (propDef == null || propDef.methodScope == null) {
+            propDeclType=inheritedPropDef.methodScope.getDeclaredType();
+          }
+ else {
+            DeclaredFunctionType funDeclType=propDef.methodScope.getDeclaredType();
+            DeclaredFunctionType inheritedFunDeclType=inheritedPropDef.methodScope.getDeclaredType();
+            propDeclType=funDeclType.withTypeInfoFromSuper(inheritedFunDeclType);
+            propDef.methodScope.setDeclaredType(propDeclType);
+          }
           nominalType.addProtoProperty(pname,JSType.fromFunctionType(propDeclType.toFunctionType()));
         }
         JSType inheritedPropType=superClass.getPropDeclaredType(pname);
+        if (inheritedPropType == null) {
+          continue;
+        }
         JSType localPropType=nominalType.getPropDeclaredType(pname);
+        System.out.println("nominalType: " + nominalType + "."+ pname+ " inheritedPropType: "+ inheritedPropType+ " localPropType: "+ localPropType);
         if (!localPropType.isSubtypeOf(inheritedPropType)) {
           warnings.add(JSError.make(propertyDefs.get(nominalType,pname).defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
         }
