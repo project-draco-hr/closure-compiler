@@ -1,14 +1,14 @@
 {
-  int numCases=budget > 2 ? random.nextInt(budget - 2) : 0;
+  int numCases=budget > 2 ? context.random.nextInt(budget - 2) : 0;
   AbstractFuzzer[] fuzzers=new AbstractFuzzer[numCases + 1];
-  CaseFuzzer caseFuzzer=new CaseFuzzer(random,scopeManager,config,snGenerator,Token.CASE);
+  CaseFuzzer caseFuzzer=new CaseFuzzer(context,Token.CASE);
   Arrays.fill(fuzzers,caseFuzzer);
-  fuzzers[0]=new ExpressionFuzzer(random,scopeManager,config,snGenerator);
+  fuzzers[0]=new ExpressionFuzzer(context);
   if (numCases > 0) {
-    int defaultClauseIndex=random.nextInt(numCases);
-    fuzzers[defaultClauseIndex + 1]=new CaseFuzzer(random,scopeManager,config,snGenerator,Token.DEFAULT);
+    int defaultClauseIndex=context.random.nextInt(numCases);
+    fuzzers[defaultClauseIndex + 1]=new CaseFuzzer(context,Token.DEFAULT);
   }
-  Scope localScope=scopeManager.localScope();
+  Scope localScope=context.scopeManager.localScope();
   localScope.switchNesting++;
   Node[] components=distribute(budget - 1,fuzzers);
   localScope.switchNesting--;

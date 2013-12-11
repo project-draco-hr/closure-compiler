@@ -1,10 +1,11 @@
 {
   int paramBodyBudget;
   Node name;
+  ScopeManager scopeManager=context.scopeManager;
   if (isExpression) {
     Preconditions.checkArgument(budget >= 3);
     scopeManager.addScope();
-    if (budget >= 4 && random.nextInt(2) == 0) {
+    if (budget >= 4 && context.random.nextInt(2) == 0) {
       name=getIdFuzzer().generate(1);
       paramBodyBudget=budget - 3;
     }
@@ -19,15 +20,15 @@
     paramBodyBudget=budget - 3;
     scopeManager.addScope();
   }
-  int numParams=random.nextInt(getOwnConfig().optInt("maxParams") + 1);
+  int numParams=context.random.nextInt(getOwnConfig().optInt("maxParams") + 1);
   int bodyBudget=paramBodyBudget - numParams - 1;
-  Node params=new ParamListFuzzer(random,scopeManager,config,snGenerator).generate(numParams);
+  Node params=new ParamListFuzzer(context).generate(numParams);
   int numStmts=generateLength(bodyBudget);
   if (numStmts < 1) {
     numStmts=1;
   }
   AbstractFuzzer[] fuzzers=new AbstractFuzzer[numStmts];
-  Arrays.fill(fuzzers,new SourceElementFuzzer(random,scopeManager,config,snGenerator));
+  Arrays.fill(fuzzers,new SourceElementFuzzer(context));
   Node[] components=distribute(paramBodyBudget,fuzzers);
   Node body=new Node(Token.BLOCK);
   for (int i=0; i < numStmts; i++) {

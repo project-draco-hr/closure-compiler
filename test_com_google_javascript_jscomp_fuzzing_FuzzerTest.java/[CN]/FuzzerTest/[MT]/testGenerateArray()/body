@@ -1,10 +1,10 @@
 {
-  ArrayFuzzer fuzzer=new ArrayFuzzer(random,scopeManager,config,snGenerator);
+  ArrayFuzzer fuzzer=new ArrayFuzzer(context);
   int budget=10;
   Node node=fuzzer.generate(budget);
   String code=ArrayFuzzer.getPrettyCode(node);
   assertTrue(code.startsWith("["));
   assertTrue(code.endsWith("]"));
-  JSONObject config=fuzzer.config;
-  assertTrue("\nGenerated code: \n" + code,code.split(",").length < (int)(config.optJSONObject("array").optDouble("maxLength") * (budget - 1)));
+  JSONObject config=fuzzer.getOwnConfig();
+  assertTrue("\nGenerated code: \n" + code,code.split(",").length < (int)(config.optDouble("maxLength") * (budget - 1)));
 }

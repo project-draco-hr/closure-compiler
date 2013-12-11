@@ -10,15 +10,15 @@
   }
   remainingBudget-=objectLength;
   ExpressionFuzzer[] fuzzers=new ExpressionFuzzer[objectLength];
-  Arrays.fill(fuzzers,new ExpressionFuzzer(random,scopeManager,config,snGenerator));
+  Arrays.fill(fuzzers,new ExpressionFuzzer(context));
   Node[] values=distribute(remainingBudget,fuzzers);
   for (int i=0; i < objectLength; i++) {
     String name;
-    if (random.nextInt(2) == 0) {
-      name=snGenerator.getPropertyName();
+    if (context.random.nextInt(2) == 0) {
+      name=context.snGenerator.getPropertyName();
     }
  else {
-      name=String.valueOf(snGenerator.getRandomNumber());
+      name=String.valueOf(context.snGenerator.getRandomNumber());
     }
     Node key=Node.newString(Token.STRING_KEY,name);
     key.addChildrenToFront(values[i]);

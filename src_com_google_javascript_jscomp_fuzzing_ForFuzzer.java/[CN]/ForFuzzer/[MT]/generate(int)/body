@@ -1,13 +1,13 @@
 {
   int totalHeaderBudget=(int)((budget - 1) * getOwnConfig().optDouble("headBudget"));
   int bodyBudget=budget - 1 - totalHeaderBudget;
-  ExpressionFuzzer exprFuzzer=new ExpressionFuzzer(random,scopeManager,config,snGenerator);
-  AbstractFuzzer[] fuzzers={new ForInitializerFuzzer(random,scopeManager,config,snGenerator),exprFuzzer,exprFuzzer};
+  ExpressionFuzzer exprFuzzer=new ExpressionFuzzer(context);
+  AbstractFuzzer[] fuzzers={new ForInitializerFuzzer(context),exprFuzzer,exprFuzzer};
   Node[] headers=distribute(totalHeaderBudget,fuzzers);
   Node node=new Node(Token.FOR,headers);
-  scopeManager.localScope().loopNesting++;
-  Node body=new BlockFuzzer(random,scopeManager,config,snGenerator).generate(bodyBudget);
-  scopeManager.localScope().loopNesting--;
+  context.scopeManager.localScope().loopNesting++;
+  Node body=new BlockFuzzer(context).generate(bodyBudget);
+  context.scopeManager.localScope().loopNesting--;
   node.addChildToBack(body);
   return node;
 }

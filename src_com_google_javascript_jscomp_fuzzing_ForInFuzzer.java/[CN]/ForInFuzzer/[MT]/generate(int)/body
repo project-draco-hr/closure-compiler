@@ -1,7 +1,8 @@
 {
-  scopeManager.localScope().loopNesting++;
-  AbstractFuzzer[] fuzzers={new ForInItemFuzzer(random,scopeManager,config,snGenerator),new ExpressionFuzzer(random,scopeManager,config,snGenerator),new BlockFuzzer(random,scopeManager,config,snGenerator)};
+  Scope localScope=context.scopeManager.localScope();
+  localScope.loopNesting++;
+  AbstractFuzzer[] fuzzers={new ForInItemFuzzer(context),new ExpressionFuzzer(context),new BlockFuzzer(context)};
   Node[] components=distribute(budget - 1,fuzzers);
-  scopeManager.localScope().loopNesting--;
+  localScope.loopNesting--;
   return new Node(Token.FOR,components);
 }

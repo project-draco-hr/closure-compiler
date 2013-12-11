@@ -1,8 +1,8 @@
 {
   Preconditions.checkArgument(budget >= 3);
-  AbstractFuzzer[] fuzzers={new BlockFuzzer(random,scopeManager,config,snGenerator),new ExpressionFuzzer(random,scopeManager,config,snGenerator)};
-  scopeManager.localScope().loopNesting++;
+  AbstractFuzzer[] fuzzers={new BlockFuzzer(context),new ExpressionFuzzer(context)};
+  context.scopeManager.localScope().loopNesting++;
   Node[] components=distribute(budget,fuzzers);
-  scopeManager.localScope().loopNesting--;
+  context.scopeManager.localScope().loopNesting--;
   return new Node(Token.DO,components);
 }

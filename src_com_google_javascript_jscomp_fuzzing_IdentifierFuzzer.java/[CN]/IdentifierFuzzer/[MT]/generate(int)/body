@@ -1,13 +1,14 @@
 {
   String name=null;
-  if (scopeManager.hasNonLocals() && random.nextDouble() < config.optJSONObject("identifier").optDouble("shadow")) {
-    Symbol symbol=scopeManager.getRandomSymbol(true);
+  ScopeManager scopeManager=context.scopeManager;
+  if (scopeManager.hasNonLocals() && context.random.nextDouble() < getOwnConfig().optDouble("shadow")) {
+    Symbol symbol=scopeManager.getRandomSymbol(ScopeManager.EXCLUDE_EXTERNS | ScopeManager.EXCLUDE_LOCALS);
     if (symbol != null) {
       name=symbol.name;
     }
   }
   if (name == null) {
-    name="x_" + snGenerator.getNextNumber();
+    name="x_" + context.snGenerator.getNextNumber();
   }
   scopeManager.addSymbol(new Symbol(name));
   return Node.newString(Token.NAME,name);

@@ -1,10 +1,10 @@
 {
-  ScriptFuzzer fuzzer=new ScriptFuzzer(random,config);
+  ScriptFuzzer fuzzer=new ScriptFuzzer(context);
   Node nodes=fuzzer.generate(100);
   String code1=ScriptFuzzer.getPrettyCode(nodes);
   setUp();
-  random=new Random(123);
-  fuzzer=new ScriptFuzzer(random,config);
+  context=new FuzzingContext(new Random(123),TestConfig.getConfig(),true);
+  fuzzer=new ScriptFuzzer(context);
   nodes=fuzzer.generate(100);
   String code2=ScriptFuzzer.getPrettyCode(nodes);
   assertEquals(code1,code2);

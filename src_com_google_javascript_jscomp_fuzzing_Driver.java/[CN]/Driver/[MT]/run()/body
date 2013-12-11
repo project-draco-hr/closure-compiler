@@ -2,30 +2,32 @@
   if (seed != -1) {
     numberOfRuns=1;
   }
+  long currentSeed;
   for (int i=0; forever() || i < numberOfRuns; i++) {
+    currentSeed=seed == -1 ? System.currentTimeMillis() : seed;
     getLogger().info("Running fuzzer [" + i + " of "+ numberOfRuns+ "]");
-    Node script=fuzz();
+    Random random=currentSeed == -1 ? new Random(currentSeed) : new Random(currentSeed);
+    Node script=fuzz(random);
     if (script == null) {
       if (forever()) {
         break;
       }
     }
     String code1=ScriptFuzzer.getPrettyCode(script);
-    StringBuffer sb=new StringBuffer("Seed: ").append(seed);
-    sb.append("\nJavaScript: ").append(code1);
-    String debugInfo=sb.toString();
+    StringBuffer debugInfo=new StringBuffer("Seed: ").append(currentSeed);
+    debugInfo.append("\nJavaScript: ").append(code1);
     try {
       Result result=compile(script);
       if (result.success) {
         if (result.warnings.length == 0) {
-          getLogger().info(debugInfo);
+          getLogger().info(debugInfo.toString());
         }
  else {
-          getLogger().warning(debugInfo);
+          getLogger().warning(debugInfo.toString());
         }
       }
  else {
-        getLogger().severe(debugInfo);
+        getLogger().severe(debugInfo.toString());
         if (forever()) {
           break;
         }
@@ -33,16 +35,19 @@
     }
  catch (    Exception e) {
       getLogger().log(Level.SEVERE,"Compiler Crashed!",e);
-      getLogger().severe(debugInfo);
+      getLogger().severe(debugInfo.toString());
       if (forever()) {
         break;
       }
     }
     String code2=ScriptFuzzer.getPrettyCode(script);
-    getLogger().info("Compiled Code: " + code2);
+    debugInfo.append("Compiled Code: " + code2);
     if (execute) {
-      if (!executeJS(code1,code2) && forever()) {
-        break;
+      if (!executeJS(code1,code2)) {
+        getLogger().severe(debugInfo.toString());
+        if (forever()) {
+          break;
+        }
       }
     }
   }
