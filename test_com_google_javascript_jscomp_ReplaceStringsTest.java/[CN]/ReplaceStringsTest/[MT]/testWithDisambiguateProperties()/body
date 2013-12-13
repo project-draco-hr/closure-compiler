@@ -1,0 +1,8 @@
+{
+  runDisambiguateProperties=true;
+  functionsToInspect.add("A.prototype.f(?)");
+  functionsToInspect.add("C.prototype.f(?)");
+  String js="/** @constructor */function A() {}\n" + "/** @param {string} p\n" + "  * @return {string} */\n"+ "A.prototype.f = function(p) {return 'a' + p;};\n"+ "/** @constructor */function B() {}\n"+ "/** @param {string} p\n"+ "  * @return {string} */\n"+ "B.prototype.f = function(p) {return p + 'b';};\n"+ "/** @constructor */function C() {}\n"+ "/** @param {string} p\n"+ "  * @return {string} */\n"+ "C.prototype.f = function(p) {return 'c' + p + 'c';};\n"+ "/** @type {A|B} */var ab = 1 ? new B : new A;\n"+ "/** @type {string} */var n = ab.f('not replaced');\n"+ "(new A).f('replaced with a');"+ "(new C).f('replaced with b');";
+  String output="function A() {}\n" + "A.prototype.A_prototype$f = function(p) { return'a'+p; };\n" + "function B() {}\n"+ "B.prototype.A_prototype$f = function(p) { return p+'b'; };\n"+ "function C() {}\n"+ "C.prototype.C_prototype$f = function(p) { return'c'+p+'c'; };\n"+ "var ab = 1 ? new B : new A;\n"+ "var n = ab.A_prototype$f('not replaced');\n"+ "(new A).A_prototype$f('a');"+ "(new C).C_prototype$f('b');";
+  testDebugStrings(js,output,new String[]{"a","replaced with a","b","replaced with b"});
+}

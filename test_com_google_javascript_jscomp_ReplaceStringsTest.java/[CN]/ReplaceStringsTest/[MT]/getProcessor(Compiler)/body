@@ -1,9 +1,15 @@
 {
-  List<String> names=Lists.newArrayList("Error(?)","goog.debug.Trace.startTracer(*)","goog.debug.Logger.getLogger(?)","goog.debug.Logger.prototype.info(?)","goog.log.getLogger(?)","goog.log.info(,?)");
-  pass=new ReplaceStrings(compiler,"`",names,reserved,previous);
+  pass=new ReplaceStrings(compiler,"`",functionsToInspect,reserved,previous);
   return new CompilerPass(){
     @Override public void process(    Node externs,    Node js){
+      Map<String,CheckLevel> propertiesToErrorFor=Maps.<String,CheckLevel>newHashMap();
+      propertiesToErrorFor.put("foobar",CheckLevel.ERROR);
       new CollapseProperties(compiler,true,true).process(externs,js);
+      if (runDisambiguateProperties) {
+        SourceInformationAnnotator sia=new SourceInformationAnnotator("test",false);
+        NodeTraversal.traverse(compiler,js,sia);
+        DisambiguateProperties.forJSTypeSystem(compiler,propertiesToErrorFor).process(externs,js);
+      }
       pass.process(externs,js);
     }
   }
