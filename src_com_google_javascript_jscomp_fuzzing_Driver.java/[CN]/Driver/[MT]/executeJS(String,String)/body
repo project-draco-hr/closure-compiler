@@ -2,16 +2,16 @@
   ExecutorService executor=Executors.newCachedThreadPool();
   NodeRunner node1=new NodeRunner(js1);
   NodeRunner node2=new NodeRunner(js2);
-  String error1=null, error2=null;
+  String[] output1=null, output2=null;
   try {
-    List<Future<String>> futures=executor.invokeAll(Lists.newArrayList(node1,node2),maxASTSize,TimeUnit.MILLISECONDS);
-    Future<String> future1=futures.get(0);
+    List<Future<String[]>> futures=executor.invokeAll(Lists.newArrayList(node1,node2),maxASTSize,TimeUnit.MILLISECONDS);
+    Future<String[]> future1=futures.get(0);
     if (!future1.isCancelled()) {
-      error1=future1.get();
+      output1=future1.get();
     }
-    Future<String> future2=futures.get(1);
+    Future<String[]> future2=futures.get(1);
     if (!future2.isCancelled()) {
-      error2=future2.get();
+      output2=future2.get();
     }
   }
  catch (  InterruptedException e) {
@@ -24,25 +24,43 @@ catch (  ExecutionException e) {
     node1.process.destroy();
     node2.process.destroy();
   }
-  if (error1 == null && error2 == null) {
+  if (output1 == null && output2 == null) {
     getLogger().info("Infinite loop!");
     return true;
   }
- else   if (NodeRunner.isSame(error1,error2)) {
-    if (error1.length() > 0) {
-      getLogger().warning("JavaScript runtime error: " + error1);
+ else   if (NodeRunner.isSame(output1,output2)) {
+    boolean hasError=false;
+    if (output1 != null && output1[1].length() > 0) {
+      getLogger().warning("First JavaScript has a runtime error: " + output1[1]);
+      hasError=true;
     }
-    if (getLogger().getLevel().intValue() > Level.WARNING.intValue()) {
-      return true;
+    if (output2 != null && output2[1].length() > 0) {
+      getLogger().warning("Second JavaScript has a runtime error: " + output2[1]);
+      hasError=true;
+    }
+    if (hasError && getLogger().getLevel().intValue() < Level.WARNING.intValue()) {
+      return false;
     }
  else {
-      return false;
+      return true;
     }
   }
  else {
-    StringBuilder sb=new StringBuilder("Different runtime errors!");
-    sb.append("\nError1:").append(error1);
-    sb.append("\nError2:").append(error2);
+    StringBuilder sb=new StringBuilder("Different outputs!");
+    sb.append("\nOutput 1:");
+    if (output1 != null) {
+      sb.append(output1[0]).append(output1[1]);
+    }
+ else {
+      sb.append("null");
+    }
+    sb.append("\nOutput 2:");
+    if (output2 != null) {
+      sb.append(output2[0]).append(output2[1]);
+    }
+ else {
+      sb.append("null");
+    }
     getLogger().severe(sb.toString());
     return false;
   }

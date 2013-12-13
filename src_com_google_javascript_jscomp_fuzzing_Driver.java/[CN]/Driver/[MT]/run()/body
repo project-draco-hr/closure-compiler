@@ -3,13 +3,13 @@
     numberOfRuns=1;
   }
   long currentSeed;
-  for (int i=0; forever() || i < numberOfRuns; i++) {
+  for (int i=0; numberOfRuns == -1 || i < numberOfRuns; i++) {
     currentSeed=seed == -1 ? System.currentTimeMillis() : seed;
     getLogger().info("Running fuzzer [" + i + " of "+ numberOfRuns+ "]");
     Random random=currentSeed == -1 ? new Random(currentSeed) : new Random(currentSeed);
     Node script=fuzz(random);
     if (script == null) {
-      if (forever()) {
+      if (stopOnError) {
         break;
       }
     }
@@ -28,7 +28,7 @@
       }
  else {
         getLogger().severe(debugInfo.toString());
-        if (forever()) {
+        if (stopOnError) {
           break;
         }
       }
@@ -36,7 +36,7 @@
  catch (    Exception e) {
       getLogger().log(Level.SEVERE,"Compiler Crashed!",e);
       getLogger().severe(debugInfo.toString());
-      if (forever()) {
+      if (stopOnError) {
         break;
       }
     }
@@ -45,7 +45,7 @@
     if (execute) {
       if (!executeJS(code1,code2)) {
         getLogger().severe(debugInfo.toString());
-        if (forever()) {
+        if (stopOnError) {
           break;
         }
       }
