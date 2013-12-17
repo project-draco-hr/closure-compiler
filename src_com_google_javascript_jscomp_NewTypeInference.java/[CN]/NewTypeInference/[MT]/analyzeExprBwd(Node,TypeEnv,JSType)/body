@@ -86,9 +86,10 @@ case Token.URSH:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv,JSType.NUMBER);
-EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env,JSType.NUMBER);
-return new EnvTypePair(lhsPair.env,JSType.NUMBER);
+TypeEnv rhsEnv=analyzeExprBwd(rhs,outEnv,JSType.NUMBER).env;
+EnvTypePair pair=analyzeExprBwd(lhs,rhsEnv,JSType.NUMBER);
+pair.type=JSType.NUMBER;
+return pair;
 }
 case Token.ADD:
 {
@@ -112,11 +113,15 @@ return lhsPair;
 }
 case Token.SHEQ:
 case Token.SHNE:
+case Token.EQ:
+case Token.NE:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 TypeEnv rhsEnv=analyzeExprBwd(rhs,outEnv).env;
-return analyzeExprBwd(lhs,rhsEnv);
+EnvTypePair pair=analyzeExprBwd(lhs,rhsEnv);
+pair.type=JSType.BOOLEAN;
+return pair;
 }
 case Token.LT:
 case Token.GT:
@@ -129,11 +134,13 @@ EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv);
 EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env);
 JSType meetType=JSType.meet(lhsPair.type,rhsPair.type);
 if (meetType.isBottom()) {
-return new EnvTypePair(lhsPair.env,JSType.BOOLEAN);
+lhsPair.type=JSType.BOOLEAN;
+return lhsPair;
 }
 rhsPair=analyzeExprBwd(rhs,outEnv,meetType);
 lhsPair=analyzeExprBwd(lhs,rhsPair.env,meetType);
-return new EnvTypePair(lhsPair.env,JSType.BOOLEAN);
+lhsPair.type=JSType.BOOLEAN;
+return lhsPair;
 }
 case Token.ASSIGN:
 {
@@ -217,7 +224,7 @@ JSType expectedRetType=JSType.TOP;
 if (s.getDeclaredType().getReturnType() == null) {
 expectedRetType=requiredType;
 }
-System.out.println("Putting deferred check of function: " + calleeName + " with ret: "+ expectedRetType);
+println("Putting deferred check of function: " + calleeName + " with ret: "+ expectedRetType);
 DeferredCheck dc=new DeferredCheck(expr,currentScope,s);
 dc.updateReturn(expectedRetType);
 deferredChecks.put(expr,dc);
@@ -256,8 +263,6 @@ EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=JSType.UNDEFINED;
 return pair;
 }
-case Token.EQ:
-case Token.NE:
 case Token.ARRAYLIT:
 case Token.ASSIGN_ADD:
 return new EnvTypePair(outEnv,requiredType);

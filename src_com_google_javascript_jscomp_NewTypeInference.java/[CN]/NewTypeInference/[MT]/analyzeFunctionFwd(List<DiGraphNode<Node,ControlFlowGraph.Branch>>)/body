@@ -4,8 +4,8 @@
     Preconditions.checkState(n != null,"Implicit return should not be in workset.");
     TypeEnv inEnv=getInEnv(n);
     TypeEnv outEnv=null;
-    System.out.println("\tFWD Statment: " + n);
-    System.out.println("\t\tinEnv: " + inEnv);
+    println("\tFWD Statment: " + n);
+    println("\t\tinEnv: " + inEnv);
     boolean conditional=false;
 switch (n.getType()) {
 case Token.FUNCTION:
@@ -15,7 +15,7 @@ case Token.SCRIPT:
       outEnv=inEnv;
     break;
 case Token.EXPR_RESULT:
-  System.out.println("\tsemi " + Token.name(n.getFirstChild().getType()));
+  println("\tsemi " + Token.name(n.getFirstChild().getType()));
 outEnv=analyzeExprFwd(n.getFirstChild(),inEnv,JSType.TOP).env;
 break;
 case Token.RETURN:
@@ -85,7 +85,7 @@ break;
 }
 }
 if (!conditional) {
-System.out.println("\t\toutEnv: " + outEnv);
+println("\t\toutEnv: " + outEnv);
 setOutEnv(n,outEnv);
 }
 }

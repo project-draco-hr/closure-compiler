@@ -44,18 +44,18 @@ return new EnvTypePair(inEnv,JSType.UNDEFINED);
 }
 if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)) {
 JSType inferredType=envGetType(inEnv,varName);
-System.out.println(varName + "'s inferredType: " + inferredType+ " requiredType:  "+ requiredType);
+println(varName + "'s inferredType: " + inferredType+ " requiredType:  "+ requiredType);
 if (!inferredType.isSubtypeOf(requiredType)) {
   return new EnvTypePair(inEnv,inferredType);
 }
 JSType preciseType=inferredType.specialize(specializedType);
-System.out.println(varName + "'s preciseType: " + preciseType);
+println(varName + "'s preciseType: " + preciseType);
 if (currentScope.isUndeclaredFormal(varName) && requiredType.hasNonScalar()) {
   preciseType=preciseType.withLoose();
 }
 return EnvTypePair.addBinding(inEnv,varName,preciseType);
 }
-System.out.println("Found global variable " + varName);
+println("Found global variable " + varName);
 return new EnvTypePair(inEnv,JSType.UNKNOWN);
 }
 case Token.AND:
@@ -92,7 +92,8 @@ EnvTypePair pair=analyzeExprFwd(child,inEnv,JSType.NUMBER);
 if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
 warnings.add(JSError.make(child,INVALID_OPERAND_TYPE,Token.name(expr.getType()),JSType.NUMBER.toString(),pair.type.toString()));
 }
-return new EnvTypePair(pair.env,JSType.NUMBER);
+pair.type=JSType.NUMBER;
+return pair;
 }
 case Token.TYPEOF:
 {
@@ -164,7 +165,8 @@ warnings.add(JSError.make(lhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),JS
 if (!rhsPair.type.isSubtypeOf(JSType.NUMBER)) {
 warnings.add(JSError.make(rhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),JSType.NUMBER.toString(),rhsPair.type.toString()));
 }
-return new EnvTypePair(rhsPair.env,JSType.NUMBER);
+rhsPair.type=JSType.NUMBER;
+return rhsPair;
 }
 case Token.ASSIGN:
 {
@@ -232,6 +234,9 @@ rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,rhsType);
 rhsPair.type=JSType.BOOLEAN;
 return rhsPair;
 }
+case Token.EQ:
+case Token.NE:
+return analyzeNonStrictComparisonFwd(expr,inEnv,requiredType,specializedType);
 case Token.LT:
 case Token.GT:
 case Token.LE:
@@ -258,7 +263,8 @@ JSType rhsType=rhsPair.type;
 if (!lhsType.isSubtypeOf(JSType.TOP_SCALAR) || !rhsType.isSubtypeOf(JSType.TOP_SCALAR) || !JSType.areCompatibleScalarTypes(lhsType,rhsType)) {
 warnings.add(JSError.make(expr,INVALID_OPERAND_TYPE,Token.name(exprKind),"matching scalar types",lhsType.toString() + ", " + rhsType.toString()));
 }
-return new EnvTypePair(rhsPair.env,JSType.BOOLEAN);
+rhsPair.type=JSType.BOOLEAN;
+return rhsPair;
 }
 case Token.GETPROP:
 Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()) || !NodeUtil.isLValue(expr));
@@ -333,7 +339,7 @@ collectTypesForFreeVarsFwd(callee,tmpEnv);
 }
  else {
 JSType expectedRetType=requiredType;
-System.out.println("Updating deferred check with ret: " + expectedRetType + " and args: "+ argTypes);
+println("Updating deferred check with ret: " + expectedRetType + " and args: "+ argTypes);
 DeferredCheck dc;
 if (expr.isCall()) {
 dc=deferredChecks.get(expr);
@@ -376,8 +382,6 @@ EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 pair.type=JSType.UNDEFINED;
 return pair;
 }
-case Token.EQ:
-case Token.NE:
 case Token.ARRAYLIT:
 case Token.ASSIGN_ADD:
 return new EnvTypePair(inEnv,requiredType);

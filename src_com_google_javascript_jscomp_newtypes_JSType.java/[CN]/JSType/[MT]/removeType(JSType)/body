@@ -1,4 +1,10 @@
 {
+  if ((isTop() || isUnknown()) && other.equals(NULL)) {
+    return TOP_MINUS_NULL;
+  }
+  if ((isTop() || isUnknown()) && other.equals(UNDEFINED)) {
+    return TOP_MINUS_UNDEF;
+  }
   if (other.equals(NULL) || other.equals(UNDEFINED)) {
     return new JSType(type & ~other.type,location,objs);
   }
@@ -6,10 +12,10 @@
     return this;
   }
   Preconditions.checkState((other.type & ~NON_SCALAR_MASK) == 0 && other.objs.size() == 1);
-  ObjectType objToRemove=Iterables.getOnlyElement(other.objs);
+  NominalType otherKlass=Iterables.getOnlyElement(other.objs).getClassType();
   ImmutableSet.Builder<ObjectType> newObjs=ImmutableSet.builder();
   for (  ObjectType obj : objs) {
-    if (!Objects.equal(obj.getClassType(),objToRemove.getClassType())) {
+    if (!Objects.equal(obj.getClassType(),otherKlass)) {
       newObjs.add(obj);
     }
   }

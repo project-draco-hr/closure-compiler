@@ -1,0 +1,40 @@
+{
+  int tokenType=expr.getType();
+  Node lhs=expr.getFirstChild();
+  Node rhs=expr.getLastChild();
+  EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
+  EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
+  JSType lhsType=lhsPair.type;
+  JSType rhsType=rhsPair.type;
+  if (tokenType == Token.EQ && specializedType.isTruthy() || tokenType == Token.NE && specializedType.isFalsy()) {
+    if (lhsType.isNullOrUndef()) {
+      rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,JSType.NULL_OR_UNDEF);
+    }
+ else     if (rhsType.isNullOrUndef()) {
+      lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,JSType.NULL_OR_UNDEF);
+      rhsPair=analyzeExprFwd(rhs,lhsPair.env);
+    }
+ else     if (!JSType.NULL_OR_UNDEF.isSubtypeOf(lhsType)) {
+      rhsType=rhsType.removeType(JSType.NULL).removeType(JSType.UNDEFINED);
+      rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,rhsType);
+    }
+ else     if (!JSType.NULL_OR_UNDEF.isSubtypeOf(rhsType)) {
+      lhsType=lhsType.removeType(JSType.NULL).removeType(JSType.UNDEFINED);
+      lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,lhsType);
+      rhsPair=analyzeExprFwd(rhs,lhsPair.env);
+    }
+  }
+ else   if (tokenType == Token.EQ && specializedType.isFalsy() || tokenType == Token.NE && specializedType.isTruthy()) {
+    if (lhsType.isNullOrUndef()) {
+      rhsType=rhsType.removeType(JSType.NULL).removeType(JSType.UNDEFINED);
+      rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,rhsType);
+    }
+ else     if (rhsType.isNullOrUndef()) {
+      lhsType=lhsType.removeType(JSType.NULL).removeType(JSType.UNDEFINED);
+      lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,lhsType);
+      rhsPair=analyzeExprFwd(rhs,lhsPair.env);
+    }
+  }
+  rhsPair.type=JSType.BOOLEAN;
+  return rhsPair;
+}
