@@ -1,0 +1,10 @@
+{
+  Collection<String> vars=Collections2.transform(Lists.newArrayList(scopeManager.localScope().symbols),new Function<Symbol,String>(){
+    @Override public String apply(    Symbol s){
+      return s.name;
+    }
+  }
+);
+  String setUpCode="function toString(value) {\n" + "    if (value instanceof Array) {\n" + "        var string = \"\";\n"+ "        for (var i in value) {\n"+ "            string += toString(value[i]);\n"+ "        }\n"+ "        return string;\n"+ "    } else if (value instanceof Function) {\n"+ "        return value.length;\n"+ "    } else {\n"+ "        return value;\n"+ "    }\n"+ "}\n"+ "\n"+ "process.on('uncaughtException', function(e) {\n"+ "    console.log(\"Errors: \");\n"+ "    if (e instanceof Error) {\n"+ "        console.log(e.name);\n"+ "    } else {\n"+ "        console.log(typeof(e));\n"+ "    }\n"+ "});\n"+ "\n"+ "process.on(\"exit\", function(e) {\n"+ "    console.log(\"Variables:\");\n"+ "    var allvars = " + vars + ";\n"+ "    console.log(toString(allvars));\n"+ "});";
+  return setUpCode;
+}

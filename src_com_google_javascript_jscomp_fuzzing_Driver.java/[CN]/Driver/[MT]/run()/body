@@ -7,7 +7,8 @@
     currentSeed=seed == -1 ? System.currentTimeMillis() : seed;
     getLogger().info("Running fuzzer [" + i + " of "+ numberOfRuns+ "]");
     Random random=currentSeed == -1 ? new Random(currentSeed) : new Random(currentSeed);
-    Node script=fuzz(random);
+    FuzzingContext context=new FuzzingContext(random,getConfig(),execute);
+    Node script=fuzz(context);
     if (script == null) {
       if (stopOnError) {
         break;
@@ -42,13 +43,15 @@
     }
     String code2=ScriptFuzzer.getPrettyCode(script);
     debugInfo.append("\nCompiled Code: " + code2);
+    String setUpCode=getSetupCode(context.scopeManager);
     if (execute) {
-      if (!executeJS(code1,code2)) {
+      if (!executeJS(setUpCode + code1,setUpCode + code2)) {
         getLogger().severe(debugInfo.toString());
         if (stopOnError) {
           break;
         }
       }
     }
+    getLogger().info(debugInfo.toString());
   }
 }
