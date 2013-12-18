@@ -1,0 +1,26 @@
+{
+  ImmutableList<TemplateType> thisKeys=thisMap.getTemplateKeys();
+  ImmutableList<TemplateType> thatKeys=thatMap.getTemplateKeys();
+  for (int i=0; i < thisKeys.size(); i++) {
+    TemplateType thisKey=thisKeys.get(i);
+    JSType thisType=thisMap.getResolvedTemplateType(thisKey);
+    EquivalenceMatch thisMatch=EquivalenceMatch.NO_KEY_MATCH;
+    for (int j=0; j < thatKeys.size(); j++) {
+      TemplateType thatKey=thatKeys.get(j);
+      JSType thatType=thatMap.getResolvedTemplateType(thatKey);
+      if (thisKey == thatKey) {
+        EquivalenceMatch newMatchType=EquivalenceMatch.VALUE_MISMATCH;
+        if (thisType.checkEquivalenceHelper(thatType,eqMethod)) {
+          newMatchType=EquivalenceMatch.VALUE_MATCH;
+        }
+        if (thisMatch != EquivalenceMatch.VALUE_MATCH) {
+          thisMatch=newMatchType;
+        }
+      }
+    }
+    if (failedEquivalenceCheck(thisMatch,eqMethod)) {
+      return false;
+    }
+  }
+  return true;
+}

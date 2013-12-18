@@ -1,36 +1,3 @@
 {
-  ImmutableList<TemplateType> thisKeys=getTemplateKeys();
-  ImmutableList<TemplateType> thatKeys=that.getTemplateKeys();
-  EquivalenceMatch[] thatMatches=new EquivalenceMatch[thatKeys.size()];
-  Arrays.fill(thatMatches,EquivalenceMatch.NO_KEY_MATCH);
-  for (int i=0; i < thisKeys.size(); i++) {
-    TemplateType thisKey=thisKeys.get(i);
-    JSType thisType=getResolvedTemplateType(thisKey);
-    EquivalenceMatch thisMatch=EquivalenceMatch.NO_KEY_MATCH;
-    for (int j=0; j < thatKeys.size(); j++) {
-      TemplateType thatKey=thatKeys.get(j);
-      JSType thatType=that.getResolvedTemplateType(thatKey);
-      if (thisKey == thatKey) {
-        EquivalenceMatch newMatchType=EquivalenceMatch.VALUE_MISMATCH;
-        if (thisType.checkEquivalenceHelper(thatType,eqMethod)) {
-          newMatchType=EquivalenceMatch.VALUE_MATCH;
-        }
-        if (thisMatch != EquivalenceMatch.VALUE_MATCH) {
-          thisMatch=newMatchType;
-        }
-        if (thatMatches[j] != EquivalenceMatch.VALUE_MATCH) {
-          thatMatches[j]=newMatchType;
-        }
-      }
-    }
-    if (failedEquivalenceCheck(thisMatch,eqMethod)) {
-      return false;
-    }
-  }
-  for (int i=0; i < thatMatches.length; i++) {
-    if (failedEquivalenceCheck(thatMatches[i],eqMethod)) {
-      return false;
-    }
-  }
-  return true;
+  return checkEquivalenceHelper(eqMethod,this,that) && checkEquivalenceHelper(eqMethod,that,this);
 }
