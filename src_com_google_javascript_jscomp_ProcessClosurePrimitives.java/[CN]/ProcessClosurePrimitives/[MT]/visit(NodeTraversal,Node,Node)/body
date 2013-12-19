@@ -22,6 +22,9 @@ if (left.isGetProp()) {
  else     if ("provide".equals(methodName)) {
       processProvideCall(t,n,parent);
     }
+ else     if ("inherits".equals(methodName)) {
+      processInheritsCall(t,n);
+    }
  else     if ("exportSymbol".equals(methodName)) {
       Node arg=left.getNext();
       if (arg.isString()) {
@@ -44,6 +47,9 @@ if (left.isGetProp()) {
       processSetCssNameMapping(t,n,parent);
     }
   }
+ else   if (left.getLastChild().getString().equals("base")) {
+    maybeProcessClassBaseCall(t,n);
+  }
 }
 break;
 case Token.ASSIGN:
@@ -64,7 +70,7 @@ compiler.report(t.makeError(n,FUNCTION_NAMESPACE_ERROR,name));
 break;
 case Token.GETPROP:
 if (n.getFirstChild().isName() && !parent.isCall() && !parent.isAssign()&& "goog.base".equals(n.getQualifiedName())) {
-reportBadBaseClassUse(t,n,"May only be called directly.");
+reportBadGoogBaseUse(t,n,"May only be called directly.");
 }
 break;
 }

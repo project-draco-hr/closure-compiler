@@ -2,12 +2,12 @@
   Node callee=n.getFirstChild();
   Node thisArg=callee.getNext();
   if (thisArg == null || !thisArg.isThis()) {
-    reportBadBaseClassUse(t,n,"First argument must be 'this'.");
+    reportBadGoogBaseUse(t,n,"First argument must be 'this'.");
     return;
   }
   Node enclosingFnNameNode=getEnclosingDeclNameNode(t);
   if (enclosingFnNameNode == null) {
-    reportBadBaseClassUse(t,n,"Could not find enclosing method.");
+    reportBadGoogBaseUse(t,n,"Could not find enclosing method.");
     return;
   }
   String enclosingQname=enclosingFnNameNode.getQualifiedName();
@@ -22,7 +22,7 @@
       }
     }
     if (baseClassNode == null) {
-      reportBadBaseClassUse(t,n,"Could not find goog.inherits for base class");
+      reportBadGoogBaseUse(t,n,"Could not find goog.inherits for base class");
       return;
     }
     n.replaceChild(callee,NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),String.format("%s.call",baseClassNode.getQualifiedName()),callee,"goog.base"));
@@ -31,13 +31,13 @@
  else {
     Node methodNameNode=thisArg.getNext();
     if (methodNameNode == null || !methodNameNode.isString()) {
-      reportBadBaseClassUse(t,n,"Second argument must name a method.");
+      reportBadGoogBaseUse(t,n,"Second argument must name a method.");
       return;
     }
     String methodName=methodNameNode.getString();
     String ending=".prototype." + methodName;
     if (enclosingQname == null || !enclosingQname.endsWith(ending)) {
-      reportBadBaseClassUse(t,n,"Enclosing method does not match " + methodName);
+      reportBadGoogBaseUse(t,n,"Enclosing method does not match " + methodName);
       return;
     }
     Node className=enclosingFnNameNode.getFirstChild().getFirstChild();

@@ -1,0 +1,84 @@
+{
+  Node callTarget=n.getFirstChild();
+  Node baseContainerNode=callTarget.getFirstChild();
+  if (!baseContainerNode.isUnscopedQualifiedName()) {
+    return;
+  }
+  String baseContainer=callTarget.getFirstChild().getQualifiedName();
+  Node enclosingFnNameNode=getEnclosingDeclNameNode(t);
+  if (enclosingFnNameNode == null || !enclosingFnNameNode.isUnscopedQualifiedName()) {
+    if (knownClosureSubclasses.contains(baseContainer)) {
+      reportBadBaseMethodUse(t,n,baseContainer,"Could not find enclosing method.");
+    }
+    return;
+  }
+  String enclosingQname=enclosingFnNameNode.getQualifiedName();
+  if (enclosingQname.indexOf(".prototype.") == -1) {
+    if (!enclosingQname.equals(baseContainer)) {
+      if (knownClosureSubclasses.contains(baseContainer)) {
+        reportBadBaseMethodUse(t,n,baseContainer,"Must be used within " + baseContainer + " methods");
+      }
+      return;
+    }
+    Node enclosingParent=enclosingFnNameNode.getParent();
+    Node maybeInheritsExpr=(enclosingParent.isAssign() ? enclosingParent.getParent() : enclosingParent).getNext();
+    while (maybeInheritsExpr.isEmpty()) {
+      maybeInheritsExpr=maybeInheritsExpr.getNext();
+    }
+    Node baseClassNode=null;
+    if (maybeInheritsExpr != null && maybeInheritsExpr.isExprResult() && maybeInheritsExpr.getFirstChild().isCall()) {
+      Node callNode=maybeInheritsExpr.getFirstChild();
+      if ("goog.inherits".equals(callNode.getFirstChild().getQualifiedName()) && callNode.getLastChild().isQualifiedName()) {
+        baseClassNode=callNode.getLastChild();
+      }
+    }
+    if (baseClassNode == null) {
+      return;
+    }
+    Node callee=n.getFirstChild();
+    Node thisArg=callee.getNext();
+    if (thisArg == null || !thisArg.isThis()) {
+      reportBadBaseMethodUse(t,n,baseContainer,"First argument must be 'this'.");
+      return;
+    }
+    Node methodNameNode=thisArg.getNext();
+    if (methodNameNode == null || !methodNameNode.isString() || !methodNameNode.getString().equals("constructor")) {
+      reportBadBaseMethodUse(t,n,baseContainer,"Second argument must be 'constructor'.");
+      return;
+    }
+    n.replaceChild(callee,NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),String.format("%s.call",baseClassNode.getQualifiedName()),callee,enclosingQname + ".base"));
+    n.removeChild(methodNameNode);
+    compiler.reportCodeChange();
+  }
+ else {
+    if (!knownClosureSubclasses.contains(baseContainer)) {
+      return;
+    }
+    String enclosingClass=enclosingFnNameNode.getFirstChild().getFirstChild().getQualifiedName();
+    if (!enclosingClass.equals(baseContainer)) {
+      reportBadBaseMethodUse(t,n,baseContainer,"Must be used within " + baseContainer + " methods");
+      return;
+    }
+    Node callee=n.getFirstChild();
+    Node thisArg=callee.getNext();
+    if (thisArg == null || !thisArg.isThis()) {
+      reportBadBaseMethodUse(t,n,baseContainer,"First argument must be 'this'.");
+      return;
+    }
+    Node methodNameNode=thisArg.getNext();
+    if (methodNameNode == null || !methodNameNode.isString()) {
+      reportBadBaseMethodUse(t,n,baseContainer,"Second argument must name a method.");
+      return;
+    }
+    String methodName=methodNameNode.getString();
+    String ending=".prototype." + methodName;
+    if (enclosingQname == null || !enclosingQname.endsWith(ending)) {
+      reportBadBaseMethodUse(t,n,baseContainer,"Enclosing method does not match " + methodName);
+      return;
+    }
+    Node className=enclosingFnNameNode.getFirstChild().getFirstChild();
+    n.replaceChild(callee,NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),String.format("%s.superClass_.%s.call",className.getQualifiedName(),methodName),callee,enclosingQname + ".base"));
+    n.removeChild(methodNameNode);
+    compiler.reportCodeChange();
+  }
+}
