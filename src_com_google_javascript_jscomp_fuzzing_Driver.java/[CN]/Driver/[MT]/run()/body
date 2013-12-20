@@ -8,10 +8,17 @@
     getLogger().info("Running fuzzer [" + i + " of "+ numberOfRuns+ "]");
     Random random=currentSeed == -1 ? new Random(currentSeed) : new Random(currentSeed);
     FuzzingContext context=new FuzzingContext(random,getConfig(),execute);
-    Node script=fuzz(context);
-    if (script == null) {
+    Node script=null;
+    try {
+      script=fuzz(context);
+    }
+ catch (    RuntimeException e) {
+      getLogger().log(Level.SEVERE,"Fuzzer error: ",e);
       if (stopOnError) {
         break;
+      }
+ else {
+        continue;
       }
     }
     String code1=ScriptFuzzer.getPrettyCode(script);
