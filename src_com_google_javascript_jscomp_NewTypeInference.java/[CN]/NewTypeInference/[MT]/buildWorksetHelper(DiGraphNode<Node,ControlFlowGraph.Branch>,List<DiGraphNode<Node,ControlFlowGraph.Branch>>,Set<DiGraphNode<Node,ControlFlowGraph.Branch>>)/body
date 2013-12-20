@@ -2,19 +2,21 @@
   if (seen.contains(dn) || dn == cfg.getImplicitReturn()) {
     return;
   }
-switch (dn.getValue().getType()) {
+  Node currentNode=dn.getValue();
+switch (currentNode.getType()) {
 case Token.DO:
 case Token.WHILE:
 case Token.FOR:
-    seen.add(dn);
-  workset.add(dn);
-for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : cfg.getOutEdges(dn.getValue())) {
-  if (outEdge.getValue() == ControlFlowGraph.Branch.ON_TRUE) {
-    buildWorksetHelper(outEdge.getDestination(),workset,seen);
-  }
+    List<DiGraphEdge<Node,ControlFlowGraph.Branch>> outEdges=cfg.getOutEdges(dn.getValue());
+  seen.add(dn);
+workset.add(dn);
+for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : outEdges) {
+if (outEdge.getValue() == ControlFlowGraph.Branch.ON_TRUE) {
+  buildWorksetHelper(outEdge.getDestination(),workset,seen);
+}
 }
 workset.add(dn);
-for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : cfg.getOutEdges(dn.getValue())) {
+for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : outEdges) {
 if (outEdge.getValue() == ControlFlowGraph.Branch.ON_FALSE) {
 buildWorksetHelper(outEdge.getDestination(),workset,seen);
 }

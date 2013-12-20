@@ -6,8 +6,8 @@
     }
     TypeEnv outEnv=getOutEnv(n);
     TypeEnv inEnv;
-    println("\tBWD Statment: " + n);
-    println("\t\toutEnv: " + outEnv);
+    println("\tBWD Statment: ",n);
+    println("\t\toutEnv: ",outEnv);
 switch (n.getType()) {
 case Token.EXPR_RESULT:
       inEnv=analyzeExprBwd(n.getFirstChild(),outEnv,JSType.TOP).env;
@@ -42,17 +42,23 @@ case Token.VAR:
   break;
 }
 case Token.BLOCK:
+case Token.BREAK:
+case Token.CONTINUE:
 case Token.EMPTY:
 case Token.SCRIPT:
 inEnv=outEnv;
 break;
-case Token.FOR:
-case Token.WHILE:
 case Token.DO:
+case Token.FOR:
 case Token.IF:
+case Token.WHILE:
+inEnv=analyzeExprBwd(getConditionExpression(n),outEnv).env;
+break;
 case Token.TRY:
 case Token.CATCH:
-case Token.BREAK:
+case Token.SWITCH:
+case Token.CASE:
+case Token.DEFAULT_CASE:
 inEnv=outEnv;
 break;
 default :
@@ -64,7 +70,7 @@ inEnv=analyzeExprBwd(n,outEnv).env;
 break;
 }
 }
-println("\t\tinEnv: " + inEnv);
+println("\t\tinEnv: ",inEnv);
 setInEnv(n,inEnv);
 }
 }

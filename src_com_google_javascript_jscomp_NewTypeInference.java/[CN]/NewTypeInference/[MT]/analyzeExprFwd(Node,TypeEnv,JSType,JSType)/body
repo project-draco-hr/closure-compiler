@@ -2,36 +2,38 @@
   Preconditions.checkArgument(requiredType != null && !requiredType.isBottom());
   int exprKind=expr.getType();
 switch (exprKind) {
+case Token.EMPTY:
+    return new EnvTypePair(inEnv,JSType.UNKNOWN);
 case Token.FUNCTION:
 {
-      String fnName=symbolTable.getFunInternalName(expr);
-      return new EnvTypePair(inEnv,envGetType(inEnv,fnName));
-    }
+    String fnName=symbolTable.getFunInternalName(expr);
+    return new EnvTypePair(inEnv,envGetType(inEnv,fnName));
+  }
 case Token.FALSE:
 case Token.NULL:
 case Token.NUMBER:
 case Token.STRING:
 case Token.TRUE:
-  return new EnvTypePair(inEnv,scalarValueToType(exprKind));
+return new EnvTypePair(inEnv,scalarValueToType(exprKind));
 case Token.OBJECTLIT:
 {
-  JSType result=JSType.TOP_OBJECT;
-  TypeEnv env=inEnv;
-  for (  Node key : expr.children()) {
-    String pname=NodeUtil.getObjectLitKeyName(key);
-    JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.TOP;
-    JSType specPtype=specializedType.mayHaveProp(pname) ? specializedType.getProp(pname) : JSType.TOP;
-    EnvTypePair pair=analyzeExprFwd(key.getLastChild(),env,reqPtype,specPtype);
-    result=result.withProperty(pname,pair.type);
-    env=pair.env;
-  }
-  return new EnvTypePair(env,result);
+JSType result=JSType.TOP_OBJECT;
+TypeEnv env=inEnv;
+for (Node key : expr.children()) {
+  String pname=NodeUtil.getObjectLitKeyName(key);
+  JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.TOP;
+  JSType specPtype=specializedType.mayHaveProp(pname) ? specializedType.getProp(pname) : JSType.TOP;
+  EnvTypePair pair=analyzeExprFwd(key.getLastChild(),env,reqPtype,specPtype);
+  result=result.withProperty(pname,pair.type);
+  env=pair.env;
+}
+return new EnvTypePair(env,result);
 }
 case Token.THIS:
 {
 if (!currentScope.hasThis()) {
-  warnings.add(JSError.make(expr,CheckGlobalThis.GLOBAL_THIS));
-  return new EnvTypePair(inEnv,JSType.UNKNOWN);
+warnings.add(JSError.make(expr,CheckGlobalThis.GLOBAL_THIS));
+return new EnvTypePair(inEnv,JSType.UNKNOWN);
 }
 JSType thisType=currentScope.getDeclaredTypeOf("this");
 return new EnvTypePair(inEnv,thisType);
@@ -44,18 +46,18 @@ return new EnvTypePair(inEnv,JSType.UNDEFINED);
 }
 if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)) {
 JSType inferredType=envGetType(inEnv,varName);
-println(varName + "'s inferredType: " + inferredType+ " requiredType:  "+ requiredType);
+println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType);
 if (!inferredType.isSubtypeOf(requiredType)) {
-  return new EnvTypePair(inEnv,inferredType);
+return new EnvTypePair(inEnv,inferredType);
 }
 JSType preciseType=inferredType.specialize(specializedType);
-println(varName + "'s preciseType: " + preciseType);
+println(varName,"'s preciseType: ",preciseType);
 if (currentScope.isUndeclaredFormal(varName) && requiredType.hasNonScalar()) {
-  preciseType=preciseType.withLoose();
+preciseType=preciseType.withLoose();
 }
 return EnvTypePair.addBinding(inEnv,varName,preciseType);
 }
-println("Found global variable " + varName);
+println("Found global variable ",varName);
 return new EnvTypePair(inEnv,JSType.UNKNOWN);
 }
 case Token.AND:
@@ -253,7 +255,7 @@ rhsPair=analyzeExprFwd(rhs,lhsPair.env,lhsPair.type);
 lhsPair=analyzeExprFwd(lhs,inEnv,rhsPair.type);
 rhsPair=analyzeExprFwd(rhs,lhsPair.env,rhsPair.type);
 }
- else if (lhs.isQualifiedName() && lhsPair.type.isUnknown() && rhs.isQualifiedName()&& rhsPair.type.isUnknown()) {
+ else if (lhs.isVar() && lhsPair.type.isUnknown() && rhs.isVar()&& rhsPair.type.isUnknown()) {
 TypeEnv env=envPutType(rhsPair.env,lhs.getQualifiedName(),JSType.TOP_SCALAR);
 env=envPutType(rhsPair.env,rhs.getQualifiedName(),JSType.TOP_SCALAR);
 return new EnvTypePair(env,JSType.BOOLEAN);
@@ -339,7 +341,7 @@ collectTypesForFreeVarsFwd(callee,tmpEnv);
 }
  else {
 JSType expectedRetType=requiredType;
-println("Updating deferred check with ret: " + expectedRetType + " and args: "+ argTypes);
+println("Updating deferred check with ret: ",expectedRetType," and args: ",argTypes);
 DeferredCheck dc;
 if (expr.isCall()) {
 dc=deferredChecks.get(expr);
@@ -382,8 +384,12 @@ EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 pair.type=JSType.UNDEFINED;
 return pair;
 }
+case Token.VAR:
 case Token.ARRAYLIT:
 case Token.ASSIGN_ADD:
+case Token.IN:
+case Token.DELPROP:
+case Token.REGEXP:
 return new EnvTypePair(inEnv,requiredType);
 default :
 throw new RuntimeException("Unhandled expression type: " + Token.name(expr.getType()));

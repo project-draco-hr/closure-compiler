@@ -4,18 +4,20 @@
     Preconditions.checkState(n != null,"Implicit return should not be in workset.");
     TypeEnv inEnv=getInEnv(n);
     TypeEnv outEnv=null;
-    println("\tFWD Statment: " + n);
-    println("\t\tinEnv: " + inEnv);
+    println("\tFWD Statment: ",n);
+    println("\t\tinEnv: ",inEnv);
     boolean conditional=false;
 switch (n.getType()) {
-case Token.FUNCTION:
 case Token.BLOCK:
+case Token.BREAK:
+case Token.CONTINUE:
+case Token.FUNCTION:
 case Token.EMPTY:
 case Token.SCRIPT:
       outEnv=inEnv;
     break;
 case Token.EXPR_RESULT:
-  println("\tsemi " + Token.name(n.getFirstChild().getType()));
+  println("\tsemi ",Token.name(n.getFirstChild().getType()));
 outEnv=analyzeExprFwd(n.getFirstChild(),inEnv,JSType.TOP).env;
 break;
 case Token.RETURN:
@@ -44,7 +46,7 @@ case Token.FOR:
 case Token.WHILE:
 {
 conditional=true;
-Node cond=NodeUtil.getConditionExpression(n);
+Node cond=getConditionExpression(n);
 for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : cfg.getOutEdges(n)) {
 JSType specializedType;
 switch (outEdge.getValue()) {
@@ -67,12 +69,14 @@ for (Node nameNode=n.getFirstChild(); nameNode != null; nameNode=nameNode.getNex
 outEnv=processVarDeclaration(nameNode,outEnv);
 }
 break;
+case Token.THROW:
+outEnv=analyzeExprFwd(n.getFirstChild(),inEnv).env;
+break;
 case Token.TRY:
 case Token.CATCH:
-case Token.THROW:
-case Token.BREAK:
-case Token.CONTINUE:
 case Token.SWITCH:
+case Token.CASE:
+case Token.DEFAULT_CASE:
 outEnv=inEnv;
 break;
 default :
@@ -85,7 +89,7 @@ break;
 }
 }
 if (!conditional) {
-println("\t\toutEnv: " + outEnv);
+println("\t\toutEnv: ",outEnv);
 setOutEnv(n,outEnv);
 }
 }
