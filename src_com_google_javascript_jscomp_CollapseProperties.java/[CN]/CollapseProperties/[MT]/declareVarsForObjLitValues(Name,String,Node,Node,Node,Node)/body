@@ -5,7 +5,7 @@
   for (Node key=objlit.getFirstChild(), nextKey; key != null; key=nextKey) {
     Node value=key.getFirstChild();
     nextKey=key.getNext();
-    if (key.isGetterDef() || key.isSetterDef()) {
+    if (!NodeUtil.isOptimizableObjectLitKey(key)) {
       continue;
     }
     boolean isJsIdentifier=!key.isNumber() && TokenStream.isJSIdentifier(key.getString());
