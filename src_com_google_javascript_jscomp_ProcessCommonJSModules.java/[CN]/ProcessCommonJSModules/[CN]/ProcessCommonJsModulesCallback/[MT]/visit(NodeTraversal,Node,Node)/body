@@ -7,6 +7,12 @@
     visitScript(t,n);
   }
   if (n.isGetProp() && "module.exports".equals(n.getQualifiedName())) {
-    visitModuleExports(n);
+    moduleExportRefs.add(n);
+  }
+  if (n.isName() && EXPORTS.equals(n.getString())) {
+    Var v=t.getScope().getVar(n.getString());
+    if (v == null || v.isGlobal()) {
+      exportRefs.add(n);
+    }
   }
 }
