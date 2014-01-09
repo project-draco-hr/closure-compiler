@@ -1,5 +1,13 @@
 {
-  String moduleName=toModuleName(require.getChildAtIndex(1).getString(),normalizeSourceName(t.getSourceName()));
+  String requireName=require.getChildAtIndex(1).getString();
+  String loadAddress=loader.locate(requireName,t.getInput());
+  try {
+    loader.load(loadAddress);
+  }
+ catch (  ES6ModuleLoader.LoadFailedException e) {
+    t.makeError(require,LOAD_ERROR,requireName);
+  }
+  String moduleName=toModuleName(loadAddress);
   Node moduleRef=IR.name(moduleName).srcref(require);
   parent.replaceChild(require,moduleRef);
   Node script=getCurrentScriptNode(parent);
