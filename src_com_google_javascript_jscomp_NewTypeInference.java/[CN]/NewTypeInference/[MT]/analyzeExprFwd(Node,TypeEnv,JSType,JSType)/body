@@ -48,7 +48,12 @@ if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || c
 JSType inferredType=envGetType(inEnv,varName);
 println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType);
 if (!inferredType.isSubtypeOf(requiredType)) {
-return new EnvTypePair(inEnv,inferredType);
+if (currentScope.getDeclaredTypeOf(varName) == null && inferredType.equals(JSType.NUM_OR_STR) && requiredType.isSubtypeOf(inferredType)) {
+  inferredType=requiredType;
+}
+ else {
+  return new EnvTypePair(inEnv,inferredType);
+}
 }
 JSType preciseType=inferredType.specialize(specializedType);
 println(varName,"'s preciseType: ",preciseType);
@@ -92,7 +97,7 @@ case Token.NEG:
 Node child=expr.getFirstChild();
 EnvTypePair pair=analyzeExprFwd(child,inEnv,JSType.NUMBER);
 if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
-warnings.add(JSError.make(child,INVALID_OPERAND_TYPE,Token.name(expr.getType()),JSType.NUMBER.toString(),pair.type.toString()));
+warnInvalidOperand(child,expr.getType(),JSType.NUMBER,pair.type);
 }
 pair.type=JSType.NUMBER;
 return pair;
@@ -111,13 +116,13 @@ EnvTypePair objPair, ctorPair;
 objPair=analyzeExprFwd(obj,inEnv);
 JSType objType=objPair.type;
 if (!objType.equals(JSType.TOP) && !objType.equals(JSType.UNKNOWN) && !objType.hasNonScalar()) {
-warnings.add(JSError.make(obj,INVALID_OPERAND_TYPE,"instanceof","an object or a union type that includes an object",objPair.type.toString()));
+warnInvalidOperand(obj,Token.INSTANCEOF,"an object or a union type that includes an object",objPair.type);
 }
 ctorPair=analyzeExprFwd(ctor,objPair.env,JSType.topFunction());
 JSType ctorType=ctorPair.type;
 FunctionType ctorFunType=ctorType.getFunType();
 if (!ctorType.isSubtypeOf(JSType.topFunction()) || !ctorFunType.isConstructor()) {
-warnings.add(JSError.make(ctor,INVALID_OPERAND_TYPE,"instanceof","a constructor function",ctorType.toString()));
+warnInvalidOperand(ctor,Token.INSTANCEOF,"a constructor function",ctorType);
 }
 if (ctorFunType == null || !ctorFunType.isConstructor() || (!specializedType.isTruthy() && !specializedType.isFalsy())) {
 ctorPair.type=JSType.BOOLEAN;
@@ -133,16 +138,15 @@ case Token.ADD:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-JSType numOrString=JSType.join(JSType.NUMBER,JSType.STRING);
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,numOrString);
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,numOrString);
+EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.NUM_OR_STR);
+EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.NUM_OR_STR);
 JSType lhsType=lhsPair.type;
 JSType rhsType=rhsPair.type;
-if (!lhsType.isSubtypeOf(numOrString)) {
-warnings.add(JSError.make(lhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),numOrString.toString(),lhsType.toString()));
+if (!lhsType.isSubtypeOf(JSType.NUM_OR_STR)) {
+warnInvalidOperand(lhs,expr.getType(),JSType.NUM_OR_STR,lhsType);
 }
-if (!rhsType.isSubtypeOf(numOrString)) {
-warnings.add(JSError.make(rhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),numOrString.toString(),rhsType.toString()));
+if (!rhsType.isSubtypeOf(JSType.NUM_OR_STR)) {
+warnInvalidOperand(rhs,expr.getType(),JSType.NUM_OR_STR,rhsType);
 }
 return new EnvTypePair(rhsPair.env,JSType.plus(lhsType,rhsType));
 }
@@ -162,10 +166,10 @@ Node rhs=expr.getLastChild();
 EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.NUMBER);
 EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.NUMBER);
 if (!lhsPair.type.isSubtypeOf(JSType.NUMBER)) {
-warnings.add(JSError.make(lhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),JSType.NUMBER.toString(),lhsPair.type.toString()));
+warnInvalidOperand(lhs,expr.getType(),JSType.NUMBER,lhsPair.type);
 }
 if (!rhsPair.type.isSubtypeOf(JSType.NUMBER)) {
-warnings.add(JSError.make(rhs,INVALID_OPERAND_TYPE,Token.name(expr.getType()),JSType.NUMBER.toString(),rhsPair.type.toString()));
+warnInvalidOperand(rhs,expr.getType(),JSType.NUMBER,rhsPair.type);
 }
 rhsPair.type=JSType.NUMBER;
 return rhsPair;
@@ -184,6 +188,23 @@ rhsType=declType;
 }
 return new EnvTypePair(updateLvalueTypeInEnv(rhsPair.env,lhs,lvalue.ptr,rhsType),rhsType);
 }
+case Token.ASSIGN_ADD:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+JSType lhsReqType=specializeWithCorrection(requiredType,JSType.NUM_OR_STR);
+LValueResult lvalue=analyzeLValueFwd(lhs,inEnv,lhsReqType);
+JSType lhsType=lvalue.type;
+if (!lhsType.isSubtypeOf(JSType.NUM_OR_STR)) {
+warnInvalidOperand(lhs,Token.ASSIGN_ADD,JSType.NUM_OR_STR,lhsType);
+}
+JSType rhsReqType=lhsType.equals(JSType.NUMBER) ? JSType.NUMBER : JSType.NUM_OR_STR;
+EnvTypePair pair=analyzeExprFwd(rhs,lvalue.env,rhsReqType);
+if (!pair.type.isSubtypeOf(rhsReqType)) {
+warnInvalidOperand(rhs,Token.ASSIGN_ADD,rhsReqType,pair.type);
+}
+return pair;
+}
 case Token.ASSIGN_BITOR:
 case Token.ASSIGN_BITXOR:
 case Token.ASSIGN_BITAND:
@@ -197,15 +218,14 @@ case Token.ASSIGN_MOD:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-String opname=Token.name(expr.getType());
 LValueResult lvalue=analyzeLValueFwd(lhs,inEnv,JSType.NUMBER);
 JSType lhsType=lvalue.type;
-if (lhsType != null && !lhsType.isSubtypeOf(JSType.NUMBER)) {
-warnings.add(JSError.make(lhs,INVALID_OPERAND_TYPE,opname,JSType.NUMBER.toString(),lhsType.toString()));
+if (!lhsType.isSubtypeOf(JSType.NUMBER)) {
+warnInvalidOperand(lhs,expr.getType(),JSType.NUMBER,lhsType);
 }
 EnvTypePair pair=analyzeExprFwd(rhs,lvalue.env,JSType.NUMBER);
 if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
-warnings.add(JSError.make(rhs,INVALID_OPERAND_TYPE,opname,JSType.NUMBER.toString(),pair.type.toString()));
+warnInvalidOperand(rhs,expr.getType(),JSType.NUMBER,pair.type);
 }
 return new EnvTypePair(updateLvalueTypeInEnv(pair.env,lhs,lvalue.ptr,JSType.NUMBER),JSType.NUMBER);
 }
@@ -263,7 +283,7 @@ return new EnvTypePair(env,JSType.BOOLEAN);
 JSType lhsType=lhsPair.type;
 JSType rhsType=rhsPair.type;
 if (!lhsType.isSubtypeOf(JSType.TOP_SCALAR) || !rhsType.isSubtypeOf(JSType.TOP_SCALAR) || !JSType.areCompatibleScalarTypes(lhsType,rhsType)) {
-warnings.add(JSError.make(expr,INVALID_OPERAND_TYPE,Token.name(exprKind),"matching scalar types",lhsType.toString() + ", " + rhsType.toString()));
+warnInvalidOperand(expr,exprKind,"matching scalar types",lhsType.toString() + ", " + rhsType.toString());
 }
 rhsPair.type=JSType.BOOLEAN;
 return rhsPair;
@@ -384,13 +404,62 @@ EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 pair.type=JSType.UNDEFINED;
 return pair;
 }
-case Token.VAR:
-case Token.ARRAYLIT:
-case Token.ASSIGN_ADD:
 case Token.IN:
+{
+Node lhs=expr.getFirstChild();
+Node rhs=expr.getLastChild();
+EnvTypePair pair;
+pair=analyzeExprFwd(lhs,inEnv,JSType.NUM_OR_STR);
+if (!pair.type.isSubtypeOf(JSType.NUM_OR_STR)) {
+warnInvalidOperand(lhs,Token.IN,JSType.NUM_OR_STR,pair.type);
+}
+pair=analyzeExprFwd(rhs,pair.env,JSType.TOP_OBJECT);
+if (!pair.type.isSubtypeOf(JSType.TOP_OBJECT)) {
+warnInvalidOperand(rhs,Token.IN,"Object",pair.type);
+pair.type=JSType.BOOLEAN;
+return pair;
+}
+JSType resultType=JSType.BOOLEAN;
+if (lhs.isString()) {
+String pname=lhs.getString();
+if (specializedType.isTruthy()) {
+pair=analyzeExprFwd(rhs,inEnv,JSType.TOP_OBJECT,JSType.TOP_OBJECT.withPropertyRequired(pname));
+resultType=JSType.TRUE_TYPE;
+}
+ else if (specializedType.isFalsy()) {
+pair=analyzeExprFwd(rhs,inEnv,JSType.TOP_OBJECT);
+pair=analyzeExprFwd(rhs,inEnv,JSType.TOP_OBJECT,pair.type.withoutProperty(pname));
+resultType=JSType.FALSE_TYPE;
+}
+}
+pair.type=resultType;
+return pair;
+}
 case Token.DELPROP:
+{
+EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
+pair.type=JSType.BOOLEAN;
+return pair;
+}
+case Token.VAR:
+{
+Node vdecl=expr.getFirstChild();
+String name=vdecl.getQualifiedName();
+Node rhs=vdecl.getFirstChild();
+TypeEnv env=inEnv;
+if (rhs != null) {
+env=analyzeExprFwd(rhs,inEnv).env;
+}
+return new EnvTypePair(envPutType(env,name,JSType.STRING),JSType.STRING);
+}
 case Token.REGEXP:
-return new EnvTypePair(inEnv,requiredType);
+return new EnvTypePair(inEnv,regexpType);
+case Token.ARRAYLIT:
+TypeEnv env=inEnv;
+for (Node arrayElm=expr.getFirstChild(); arrayElm != null; arrayElm=arrayElm.getNext()) {
+env=analyzeExprFwd(arrayElm,env).env;
+}
+return new EnvTypePair(env,arrayType);
 default :
 throw new RuntimeException("Unhandled expression type: " + Token.name(expr.getType()));
 }

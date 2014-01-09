@@ -1,0 +1,16 @@
+{
+  for (  DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : cfg.getOutEdges(stm)) {
+    JSType specializedType;
+switch (outEdge.getValue()) {
+case ON_TRUE:
+      specializedType=JSType.TRUTHY;
+    break;
+case ON_FALSE:
+  specializedType=JSType.FALSY;
+break;
+default :
+throw new RuntimeException("A condition with an edge that is neither true nor false?");
+}
+envs.put(outEdge,analyzeExprFwd(cond,inEnv,JSType.TOP,specializedType).env);
+}
+}

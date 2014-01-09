@@ -1,12 +1,12 @@
 {
   Preconditions.checkArgument(externs.isSyntheticBlock());
   Preconditions.checkArgument(root.isSyntheticBlock());
-  Scope rootScope=new Scope(root,null,new ArrayList<String>(),null);
-  scopes.addFirst(rootScope);
-  CollectNamedTypes rootCnt=new CollectNamedTypes(rootScope);
+  globalScope=new Scope(root,null,new ArrayList<String>(),null);
+  scopes.addFirst(globalScope);
+  CollectNamedTypes rootCnt=new CollectNamedTypes(globalScope);
   new NodeTraversal(compiler,rootCnt).traverse(externs);
   new NodeTraversal(compiler,rootCnt).traverse(root);
-  ProcessScope rootPs=new ProcessScope(rootScope);
+  ProcessScope rootPs=new ProcessScope(globalScope);
   new NodeTraversal(compiler,rootPs).traverse(externs);
   new NodeTraversal(compiler,rootPs).traverse(root);
   rootPs.finishProcessingScope();

@@ -6,7 +6,7 @@
   }
   JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
   if (fnDoc != null && (fnDoc.isConstructor() || fnDoc.isInterface())) {
-    NominalType klass=new NominalType(qname,fnDoc.isInterface());
+    NominalType klass=fnDoc.isInterface() ? NominalType.makeInterface(qname) : NominalType.makeClass(qname);
     nominaltypesByNode.put(fn,klass);
     parentScope.addClassType(qname,klass);
   }

@@ -10,10 +10,13 @@
 switch (n.getType()) {
 case Token.BLOCK:
 case Token.BREAK:
+case Token.CATCH:
 case Token.CONTINUE:
-case Token.FUNCTION:
+case Token.DEFAULT_CASE:
 case Token.EMPTY:
+case Token.FUNCTION:
 case Token.SCRIPT:
+case Token.TRY:
       outEnv=inEnv;
     break;
 case Token.EXPR_RESULT:
@@ -44,23 +47,15 @@ case Token.DO:
 case Token.IF:
 case Token.FOR:
 case Token.WHILE:
+conditional=true;
+analyzeConditionalStmFwd(n,getConditionExpression(n),inEnv);
+break;
+case Token.CASE:
 {
 conditional=true;
-Node cond=getConditionExpression(n);
-for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : cfg.getOutEdges(n)) {
-JSType specializedType;
-switch (outEdge.getValue()) {
-case ON_TRUE:
-specializedType=JSType.TRUTHY;
-break;
-case ON_FALSE:
-specializedType=JSType.FALSY;
-break;
-default :
-throw new RuntimeException("A condition with an edge that is neither true nor false?");
-}
-envs.put(outEdge,analyzeExprFwd(cond,inEnv,JSType.TOP,specializedType).env);
-}
+Node switchedExp=n.getParent().getFirstChild().cloneTree();
+Node syntheticSheq=IR.sheq(switchedExp,n.getFirstChild().cloneTree());
+analyzeConditionalStmFwd(n,syntheticSheq,inEnv);
 break;
 }
 case Token.VAR:
@@ -69,15 +64,9 @@ for (Node nameNode=n.getFirstChild(); nameNode != null; nameNode=nameNode.getNex
 outEnv=processVarDeclaration(nameNode,outEnv);
 }
 break;
+case Token.SWITCH:
 case Token.THROW:
 outEnv=analyzeExprFwd(n.getFirstChild(),inEnv).env;
-break;
-case Token.TRY:
-case Token.CATCH:
-case Token.SWITCH:
-case Token.CASE:
-case Token.DEFAULT_CASE:
-outEnv=inEnv;
 break;
 default :
 if (NodeUtil.isStatement(n)) {

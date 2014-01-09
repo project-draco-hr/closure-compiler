@@ -43,9 +43,12 @@ case Token.VAR:
 }
 case Token.BLOCK:
 case Token.BREAK:
+case Token.CATCH:
 case Token.CONTINUE:
+case Token.DEFAULT_CASE:
 case Token.EMPTY:
 case Token.SCRIPT:
+case Token.TRY:
 inEnv=outEnv;
 break;
 case Token.DO:
@@ -54,12 +57,9 @@ case Token.IF:
 case Token.WHILE:
 inEnv=analyzeExprBwd(getConditionExpression(n),outEnv).env;
 break;
-case Token.TRY:
-case Token.CATCH:
-case Token.SWITCH:
 case Token.CASE:
-case Token.DEFAULT_CASE:
-inEnv=outEnv;
+case Token.SWITCH:
+inEnv=analyzeExprBwd(n.getFirstChild(),outEnv).env;
 break;
 default :
 if (NodeUtil.isStatement(n)) {

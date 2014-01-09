@@ -1,25 +1,30 @@
 {
   Node propAccessNode=receiver.getParent();
-  EnvTypePair pair=analyzeExprFwd(receiver,inEnv,JSType.TOP_OBJECT.withProperty(pname,requiredType));
-  JSType objType=pair.type;
-  if (!objType.isSubtypeOf(JSType.TOP_OBJECT)) {
-    warnings.add(JSError.make(receiver,PROPERTY_ACCESS_ON_NONOBJECT,pname,objType.toString()));
+  EnvTypePair pair;
+  JSType objWithProp=JSType.TOP_OBJECT.withProperty(pname,requiredType);
+  JSType recvReqType, recvSpecType, recvType;
+  if (specializedType.isTruthy() || specializedType.isFalsy()) {
+    recvReqType=JSType.TOP;
+    recvSpecType=objWithProp;
+  }
+ else {
+    recvReqType=recvSpecType=objWithProp;
+  }
+  pair=analyzeExprFwd(receiver,inEnv,recvReqType,recvSpecType);
+  recvType=pair.type;
+  if ((specializedType.isTruthy() || specializedType.isFalsy()) ? JSType.BOTTOM.equals(JSType.meet(recvType,JSType.TOP_OBJECT)) : !recvType.isSubtypeOf(JSType.TOP_OBJECT)) {
+    warnings.add(JSError.make(receiver,PROPERTY_ACCESS_ON_NONOBJECT,pname,recvType.toString()));
     return new EnvTypePair(pair.env,requiredType);
   }
-  JSType resultType=objType.getProp(pname);
+  JSType resultType=recvType.getProp(pname);
   if (!specializedType.isTruthy() && !specializedType.isFalsy()) {
-    if (!objType.mayHaveProp(pname)) {
-      warnings.add(JSError.make(propAccessNode,TypeCheck.INEXISTENT_PROPERTY,pname,objType.toString()));
+    if (!recvType.mayHaveProp(pname)) {
+      warnings.add(JSError.make(propAccessNode,TypeCheck.INEXISTENT_PROPERTY,pname,recvType.toString()));
       resultType=JSType.UNKNOWN;
     }
- else     if (!objType.hasProp(pname)) {
-      warnings.add(JSError.make(propAccessNode,NewTypeInference.POSSIBLY_INEXISTENT_PROPERTY,pname,objType.toString()));
+ else     if (!recvType.hasProp(pname)) {
+      warnings.add(JSError.make(propAccessNode,NewTypeInference.POSSIBLY_INEXISTENT_PROPERTY,pname,recvType.toString()));
     }
-  }
- else   if (receiver.isName() && specializedType.isTruthy()) {
-    String objName=receiver.getQualifiedName();
-    objType=objType.withPropertyRequired(pname);
-    pair.env=envPutType(pair.env,objName,objType);
   }
   return new EnvTypePair(pair.env,resultType);
 }

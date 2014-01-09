@@ -1,6 +1,11 @@
 {
   jsRoot=root;
   symbolTable.prepareAst(externs,root);
+  Scope gs=symbolTable.getGlobalScope();
+  JSType arrayCtor=gs.getDeclaredTypeOf("Array");
+  arrayType=arrayCtor == null ? JSType.UNKNOWN : arrayCtor.getFunType().getReturnType();
+  JSType regexpCtor=gs.getDeclaredTypeOf("RegExp");
+  regexpType=regexpCtor == null ? JSType.UNKNOWN : regexpCtor.getFunType().getReturnType();
   for (  Scope scope : symbolTable.getScopes()) {
     analyzeFunction(scope);
   }

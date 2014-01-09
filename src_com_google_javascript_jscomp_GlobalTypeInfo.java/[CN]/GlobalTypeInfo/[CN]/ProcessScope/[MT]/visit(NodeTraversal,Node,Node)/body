@@ -12,7 +12,7 @@ String name=n.getQualifiedName();
 if (name == null || "undefined".equals(name) || parent.isFunction()) {
   return;
 }
-if (parent.isVar()) {
+if (parent.isVar() || parent.isCatch()) {
   if (currentScope.isDefinedLocally(name)) {
     warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,name));
   }
@@ -29,7 +29,7 @@ if (parent.isVar()) {
       currentScope.addNamespace(name);
     }
  else {
-      currentScope.addLocal(name,getVarTypeFromAnnotation(n));
+      currentScope.addLocal(name,parent.isVar() ? getVarTypeFromAnnotation(n) : JSType.UNKNOWN);
     }
   }
 }
