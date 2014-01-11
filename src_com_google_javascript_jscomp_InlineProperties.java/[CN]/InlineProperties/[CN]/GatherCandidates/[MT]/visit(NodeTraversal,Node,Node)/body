@@ -3,10 +3,7 @@
   String propName=null;
   if (n.isGetProp()) {
     propName=n.getLastChild().getString();
-    if (t.getInput().isExtern()) {
-      invalidatingPropRef=true;
-    }
- else     if (parent.isAssign()) {
+    if (parent.isAssign()) {
       invalidatingPropRef=!maybeCandidateDefinition(t,n,parent);
     }
  else     if (NodeUtil.isLValue(n)) {
@@ -21,12 +18,7 @@
   }
  else   if (n.isStringKey()) {
     propName=n.getString();
-    if (t.getInput().isExtern()) {
-      invalidatingPropRef=true;
-    }
- else {
-      invalidatingPropRef=true;
-    }
+    invalidatingPropRef=true;
   }
   if (invalidatingPropRef) {
     Preconditions.checkNotNull(propName);
