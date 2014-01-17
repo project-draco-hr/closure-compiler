@@ -39,6 +39,8 @@ context=new GenerateNodeContext(n,Mode.EXTERN);
 }
 break;
 case Token.STRING_KEY:
+case Token.GETTER_DEF:
+case Token.SETTER_DEF:
 if (allowLocalExports) {
 export=n.getString();
 context=new GenerateNodeContext(n,Mode.EXTERN);
@@ -49,11 +51,13 @@ if (export != null) {
 exports.put(export,context);
 }
  else {
+if (!n.isFunction() || !NodeUtil.isObjectLitKey(parent)) {
 if (allowLocalExports) {
 compiler.report(t.makeError(n,EXPORT_ANNOTATION_NOT_ALLOWED));
 }
  else {
 compiler.report(t.makeError(n,NON_GLOBAL_ERROR));
+}
 }
 }
 }
