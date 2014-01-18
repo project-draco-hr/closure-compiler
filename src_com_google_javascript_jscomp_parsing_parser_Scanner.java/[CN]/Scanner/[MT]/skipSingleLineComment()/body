@@ -1,5 +1,9 @@
 {
+  int startOffset=index;
   while (!isAtEnd() && !isLineTerminator(peekChar())) {
     nextChar();
   }
+  SourceRange range=getLineNumberTable().getSourceRange(startOffset,index);
+  String value=this.source.contents.substring(startOffset,index);
+  recordComment(Comment.Type.LINE,range,value);
 }

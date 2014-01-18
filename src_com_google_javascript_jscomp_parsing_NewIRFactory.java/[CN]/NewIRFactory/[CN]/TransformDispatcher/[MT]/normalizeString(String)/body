@@ -1,0 +1,60 @@
+{
+  StringBuilder result=new StringBuilder();
+  int start=1;
+  int cur=value.indexOf('\\');
+  if (cur == -1) {
+    return value;
+  }
+  while (cur != -1) {
+    if (cur - start > 0) {
+      result.append(value.substring(start,cur));
+    }
+    cur+=1;
+    char c=value.charAt(cur);
+switch (c) {
+case '\'':
+case '"':
+case '\\':
+      result.append(c);
+    break;
+case 'b':
+  result.append('\b');
+break;
+case 'f':
+result.append('\f');
+break;
+case 'n':
+result.append('\n');
+break;
+case 'r':
+result.append('\r');
+break;
+case 't':
+result.append('\t');
+break;
+case 'v':
+result.append('\u000B');
+break;
+case '\n':
+break;
+case '0':
+result.append('\0');
+break;
+case 'x':
+result.append((char)(hexdigit(value.charAt(cur + 1)) * 16 + hexdigit(value.charAt(cur + 2))));
+cur+=2;
+break;
+case 'u':
+result.append((char)(hexdigit(value.charAt(cur + 1)) * 16 * 16* 16 + hexdigit(value.charAt(cur + 2)) * 16 * 16 + hexdigit(value.charAt(cur + 3)) * 16 + hexdigit(value.charAt(cur + 4))));
+cur+=4;
+break;
+default :
+result.append(c);
+break;
+}
+start=cur + 1;
+cur=value.indexOf('\\',start);
+}
+result.append(value.substring(start,value.length() - 1));
+return result.toString();
+}

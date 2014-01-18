@@ -1,12 +1,19 @@
 {
+  int startOffset=index;
   nextChar();
   nextChar();
   while (!isAtEnd() && (peekChar() != '*' || peekChar(1) != '/')) {
     nextChar();
   }
-  if (isAtEnd()) {
+  if (!isAtEnd()) {
+    nextChar();
+    nextChar();
+    Comment.Type type=(index - startOffset > 4 && this.source.contents.charAt(startOffset + 2) == '*') ? Comment.Type.JSDOC : Comment.Type.BLOCK;
+    SourceRange range=getLineNumberTable().getSourceRange(startOffset,index);
+    String value=this.source.contents.substring(startOffset,index);
+    recordComment(type,range,value);
+  }
+ else {
     reportError("unterminated comment");
   }
-  nextChar();
-  nextChar();
 }
