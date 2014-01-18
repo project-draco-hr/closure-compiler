@@ -294,12 +294,8 @@ case Token.VAR:
 {
 Node vdecl=expr.getFirstChild();
 String name=vdecl.getQualifiedName();
-Node rhs=vdecl.getFirstChild();
-TypeEnv env=outEnv;
-if (rhs != null) {
-env=analyzeExprBwd(rhs,outEnv).env;
-}
-return new EnvTypePair(envPutType(env,name,JSType.UNKNOWN),JSType.UNKNOWN);
+Preconditions.checkState(!vdecl.hasChildren());
+return new EnvTypePair(envPutType(outEnv,name,JSType.UNKNOWN),JSType.UNKNOWN);
 }
 case Token.REGEXP:
 return new EnvTypePair(outEnv,regexpType);

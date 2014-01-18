@@ -275,7 +275,7 @@ rhsPair=analyzeExprFwd(rhs,lhsPair.env,lhsPair.type);
 lhsPair=analyzeExprFwd(lhs,inEnv,rhsPair.type);
 rhsPair=analyzeExprFwd(rhs,lhsPair.env,rhsPair.type);
 }
- else if (lhs.isVar() && lhsPair.type.isUnknown() && rhs.isVar()&& rhsPair.type.isUnknown()) {
+ else if (lhs.isName() && lhsPair.type.isUnknown() && rhs.isName()&& rhsPair.type.isUnknown()) {
 TypeEnv env=envPutType(rhsPair.env,lhs.getQualifiedName(),JSType.TOP_SCALAR);
 env=envPutType(rhsPair.env,rhs.getQualifiedName(),JSType.TOP_SCALAR);
 return new EnvTypePair(env,JSType.BOOLEAN);
@@ -445,12 +445,8 @@ case Token.VAR:
 {
 Node vdecl=expr.getFirstChild();
 String name=vdecl.getQualifiedName();
-Node rhs=vdecl.getFirstChild();
-TypeEnv env=inEnv;
-if (rhs != null) {
-env=analyzeExprFwd(rhs,inEnv).env;
-}
-return new EnvTypePair(envPutType(env,name,JSType.STRING),JSType.STRING);
+Preconditions.checkState(!vdecl.hasChildren());
+return new EnvTypePair(envPutType(inEnv,name,JSType.STRING),JSType.STRING);
 }
 case Token.REGEXP:
 return new EnvTypePair(inEnv,regexpType);
