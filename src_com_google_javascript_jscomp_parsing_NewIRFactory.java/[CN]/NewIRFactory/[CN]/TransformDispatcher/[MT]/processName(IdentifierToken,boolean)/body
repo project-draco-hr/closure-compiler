@@ -1,0 +1,14 @@
+{
+  Node node;
+  if (asString) {
+    node=newStringNode(Token.STRING,identifierToken.toString());
+  }
+ else {
+    if (identifierToken == null || isReservedKeyword(identifierToken.toString())) {
+      errorReporter.error("identifier is a reserved word",sourceName,identifierToken.location.start.line,"",0);
+    }
+    node=newStringNode(Token.NAME,identifierToken.toString());
+  }
+  setSourceInfo(node,identifierToken);
+  return node;
+}

@@ -1,0 +1,31 @@
+{
+  Context cx=Context.enter();
+  cx.setErrorReporter(errorReporter);
+  cx.setLanguageVersion(Context.VERSION_1_5);
+  CompilerEnvirons compilerEnv=new CompilerEnvirons();
+  compilerEnv.initFromContext(cx);
+  compilerEnv.setRecordingComments(true);
+  compilerEnv.setRecordingLocalJsDocComments(true);
+  compilerEnv.setWarnTrailingComma(config.languageMode == LanguageMode.ECMASCRIPT3);
+  compilerEnv.setReservedKeywordAsIdentifier(true);
+  compilerEnv.setAllowMemberExprAsFunctionName(false);
+  compilerEnv.setIdeMode(config.isIdeMode);
+  compilerEnv.setRecoverFromErrors(config.isIdeMode);
+  Parser p=new Parser(compilerEnv,errorReporter);
+  AstRoot astRoot=null;
+  try {
+    astRoot=p.parse(sourceString,sourceFile.getName(),1);
+  }
+ catch (  EvaluatorException e) {
+    logger.info("Error parsing " + sourceFile.getName() + ": "+ e.getMessage());
+  }
+ finally {
+    Context.exit();
+  }
+  Node root=null;
+  if (astRoot != null) {
+    root=IRFactory.transformTree(astRoot,sourceFile,sourceString,config,errorReporter);
+    root.setIsSyntheticBlock(true);
+  }
+  return new ParseResult(root,astRoot);
+}

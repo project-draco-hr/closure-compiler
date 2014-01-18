@@ -1,0 +1,20 @@
+{
+  Node node=newNode(Token.TRY,transformBlock(statementNode.body));
+  Node block=newNode(Token.BLOCK);
+  boolean lineSet=false;
+  ParseTree cc=statementNode.catchBlock;
+  if (lineSet == false) {
+    setSourceInfo(block,cc);
+    lineSet=true;
+  }
+  block.addChildToBack(transform(cc));
+  node.addChildToBack(block);
+  ParseTree finallyBlock=statementNode.finallyBlock;
+  if (finallyBlock != null) {
+    node.addChildToBack(transformBlock(finallyBlock));
+  }
+  if ((lineSet == false) && (finallyBlock != null)) {
+    setSourceInfo(block,finallyBlock);
+  }
+  return node;
+}

@@ -1,0 +1,19 @@
+{
+  Node ret;
+  if (token == null) {
+    return createMissingExpressionNode();
+  }
+ else   if (token.type == TokenType.IDENTIFIER) {
+    ret=processName(token.asIdentifier(),true);
+  }
+ else   if (token.type == TokenType.NUMBER) {
+    ret=transformNumberAsString(token.asLiteral());
+    ret.putBooleanProp(Node.QUOTED_PROP,true);
+  }
+ else {
+    ret=newStringNode(Token.STRING,token.asLiteral().toString());
+    ret.putBooleanProp(Node.QUOTED_PROP,true);
+  }
+  Preconditions.checkState(ret.isString());
+  return ret;
+}

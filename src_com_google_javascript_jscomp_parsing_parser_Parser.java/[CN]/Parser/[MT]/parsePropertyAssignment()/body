@@ -1,6 +1,6 @@
 {
-switch (peekType()) {
-case IDENTIFIER:
+  TokenType type=peekType();
+  if (type == TokenType.STRING || type == TokenType.NUMBER || type == TokenType.IDENTIFIER || Keywords.isKeyword(type)) {
     if (peekGetAccessor(false)) {
       return parseGetAccessor();
     }
@@ -10,10 +10,8 @@ case IDENTIFIER:
  else {
       return parsePropertyNameAssignment();
     }
-case STRING:
-case NUMBER:
-  return parsePropertyNameAssignment();
-default :
-throw new RuntimeException("unreachable");
-}
+  }
+ else {
+    throw new RuntimeException("unreachable");
+  }
 }

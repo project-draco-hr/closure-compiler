@@ -1,0 +1,15 @@
+{
+  Node node=newNode(Token.DEFAULT_CASE);
+  Node block=newNode(Token.BLOCK);
+  block.putBooleanProp(Node.SYNTHETIC_BLOCK_PROP,true);
+  block.setLineno(lineno(caseNode));
+  block.setCharno(charno(caseNode));
+  maybeSetLengthFrom(block,caseNode);
+  if (caseNode.statements != null) {
+    for (    ParseTree child : caseNode.statements) {
+      block.addChildToBack(transform(child));
+    }
+  }
+  node.addChildToBack(block);
+  return node;
+}

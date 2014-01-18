@@ -1,0 +1,9 @@
+{
+  Node functionNode=parse("var a = /** @param {number} index */5;" + "/** @return boolean */function f(index){}").getFirstChild().getNext();
+  assertEquals(Token.FUNCTION,functionNode.getType());
+  JSDocInfo info=functionNode.getJSDocInfo();
+  assertNotNull(info);
+  assertFalse(info.hasParameter("index"));
+  assertTrue(info.hasReturnType());
+  assertTypeEquals(UNKNOWN_TYPE,info.getReturnType());
+}

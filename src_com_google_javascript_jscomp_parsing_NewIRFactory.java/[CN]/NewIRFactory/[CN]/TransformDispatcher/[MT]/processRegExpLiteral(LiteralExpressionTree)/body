@@ -1,0 +1,19 @@
+{
+  LiteralToken token=literalTree.literalToken.asLiteral();
+  String rawRegex=token.value;
+  int lastSlash=rawRegex.lastIndexOf('/');
+  String value=rawRegex.substring(1,lastSlash);
+  String flags="";
+  if (lastSlash < rawRegex.length()) {
+    flags=rawRegex.substring(rawRegex.lastIndexOf('/'));
+  }
+  Node literalStringNode=newStringNode(value);
+  setSourceInfo(literalStringNode,token);
+  Node node=newNode(Token.REGEXP,literalStringNode);
+  if (!flags.isEmpty()) {
+    Node flagsNode=newStringNode(flags);
+    setSourceInfo(literalStringNode,token);
+    node.addChildToBack(flagsNode);
+  }
+  return node;
+}

@@ -1,0 +1,13 @@
+{
+  Token token=nextToken();
+  if (token.type == TokenType.IDENTIFIER) {
+    return (IdentifierToken)token;
+  }
+ else   if (Keywords.isKeyword(token.type)) {
+    return new IdentifierToken(token.location,Keywords.get(token.type).toString());
+  }
+ else {
+    reportExpectedError(token,TokenType.IDENTIFIER);
+  }
+  return null;
+}

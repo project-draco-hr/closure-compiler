@@ -1,0 +1,13 @@
+{
+  if (!config.acceptConstKeyword && decl.declarationType == TokenType.CONST) {
+    unsupportedLanguageFeature(decl,"const declarations");
+  }
+ else   if (decl.declarationType == TokenType.LET) {
+    unsupportedLanguageFeature(decl,"let declarations");
+  }
+  Node node=newNode(Token.VAR);
+  for (  VariableDeclarationTree child : decl.declarations) {
+    node.addChildToBack(transform(child));
+  }
+  return node;
+}

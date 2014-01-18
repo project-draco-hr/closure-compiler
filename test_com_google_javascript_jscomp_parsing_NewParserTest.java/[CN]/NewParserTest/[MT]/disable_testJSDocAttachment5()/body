@@ -1,0 +1,16 @@
+{
+  Node varNode=parse("var /** @type number */a, /** @define {number} */b = 5;").getFirstChild();
+  assertEquals(Token.VAR,varNode.getType());
+  assertNull(varNode.getJSDocInfo());
+  Node a=varNode.getFirstChild();
+  assertNotNull(a.getJSDocInfo());
+  JSDocInfo info=a.getJSDocInfo();
+  assertNotNull(info);
+  assertFalse(info.isDefine());
+  assertTypeEquals(NUMBER_TYPE,info.getType());
+  Node b=a.getNext();
+  info=b.getJSDocInfo();
+  assertNotNull(info);
+  assertTrue(info.isDefine());
+  assertTypeEquals(NUMBER_TYPE,info.getType());
+}

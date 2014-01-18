@@ -1,0 +1,53 @@
+{
+  Node node=newNode(Token.OBJECTLIT);
+  for (  ParseTree el : objTree.propertyNameAndValues) {
+    if (config.languageMode == LanguageMode.ECMASCRIPT3) {
+      if (el.type == ParseTreeType.GET_ACCESSOR) {
+        reportGetter(el);
+        continue;
+      }
+ else       if (el.type == ParseTreeType.SET_ACCESSOR) {
+        reportSetter(el);
+        continue;
+      }
+    }
+    Node key;
+    Node value;
+switch (el.type) {
+case PROPERTY_NAME_ASSIGNMENT:
+{
+        PropertyNameAssignmentTree prop=el.asPropertyNameAssignment();
+        key=transformAsString(prop.name);
+        key.setType(Token.STRING_KEY);
+        value=transform(prop.value);
+      }
+    break;
+case GET_ACCESSOR:
+{
+    GetAccessorTree prop=el.asGetAccessor();
+    key=transformAsString(prop.propertyName);
+    key.setType(Token.GETTER_DEF);
+    Node body=transform(prop.body);
+    value=IR.function(IR.name(""),IR.paramList(),body);
+  }
+break;
+case SET_ACCESSOR:
+{
+SetAccessorTree prop=el.asSetAccessor();
+key=transformAsString(prop.propertyName);
+key.setType(Token.SETTER_DEF);
+Node body=transform(prop.body);
+value=IR.function(IR.name(""),IR.paramList(safeProcessName(prop.parameter)),body);
+}
+break;
+default :
+throw new IllegalStateException("Unexpected node type: " + el.type);
+}
+if (!key.isQuotedString() && !isAllowedProp(key.getString())) {
+errorReporter.warning(INVALID_ES3_PROP_NAME,sourceName,key.getLineno(),"",key.getCharno());
+}
+key.addChildToFront(value);
+node.addChildToBack(key);
+}
+return node;
+}

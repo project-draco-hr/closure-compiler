@@ -1,0 +1,15 @@
+{
+  Comment comment=getJsDocNode(node);
+  if (comment != null) {
+    JsDocInfoParser jsDocParser=createJsDocInfoParser(comment,irNode);
+    parsedComments.add(comment);
+    if (!handlePossibleFileOverviewJsDoc(jsDocParser)) {
+      JSDocInfo info=jsDocParser.retrieveAndResetParsedJSDocInfo();
+      if (info != null) {
+        validateTypeAnnotations(info,node);
+      }
+      return info;
+    }
+  }
+  return null;
+}

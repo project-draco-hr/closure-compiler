@@ -2,12 +2,16 @@
   SourcePosition start=getTreeStartLocation();
   ImmutableList.Builder<ParseTree> result=ImmutableList.<ParseTree>builder();
   eat(TokenType.OPEN_CURLY);
+  Token commaToken=null;
   while (peekPropertyAssignment()) {
+    commaToken=null;
     result.add(parsePropertyAssignment());
-    if (eatOpt(TokenType.COMMA) == null) {
+    commaToken=eatOpt(TokenType.COMMA);
+    if (commaToken == null) {
       break;
     }
   }
   eat(TokenType.CLOSE_CURLY);
+  maybeReportTrailingComma(commaToken);
   return new ObjectLiteralExpressionTree(getTreeLocation(start),result.build());
 }

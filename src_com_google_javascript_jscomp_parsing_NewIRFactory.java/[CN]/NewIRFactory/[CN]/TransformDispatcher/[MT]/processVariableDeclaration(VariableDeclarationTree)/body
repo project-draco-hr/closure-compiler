@@ -1,0 +1,15 @@
+{
+  Node node;
+  Comment comment=getJsDocNode(decl.lvalue);
+  if (comment != null && !comment.value.contains("@")) {
+    node=transformNodeWithInlineJsDoc(decl.lvalue);
+  }
+ else {
+    node=transform(decl.lvalue);
+  }
+  if (decl.initializer != null) {
+    Node initalizer=transform(decl.initializer);
+    node.addChildToBack(initalizer);
+  }
+  return node;
+}

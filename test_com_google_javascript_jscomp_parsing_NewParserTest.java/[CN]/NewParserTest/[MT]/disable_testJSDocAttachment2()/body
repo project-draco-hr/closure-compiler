@@ -1,0 +1,13 @@
+{
+  Node varNode=parse("/** @type number */var a,b;").getFirstChild();
+  assertEquals(Token.VAR,varNode.getType());
+  JSDocInfo info=varNode.getJSDocInfo();
+  assertNotNull(info);
+  assertTypeEquals(NUMBER_TYPE,info.getType());
+  Node nameNode1=varNode.getFirstChild();
+  assertEquals(Token.NAME,nameNode1.getType());
+  assertNull(nameNode1.getJSDocInfo());
+  Node nameNode2=nameNode1.getNext();
+  assertEquals(Token.NAME,nameNode2.getType());
+  assertNull(nameNode2.getJSDocInfo());
+}

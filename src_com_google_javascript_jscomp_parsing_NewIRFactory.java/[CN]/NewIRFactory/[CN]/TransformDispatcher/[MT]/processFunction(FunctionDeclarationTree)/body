@@ -1,0 +1,32 @@
+{
+  IdentifierToken name=functionNode.name;
+  Boolean isUnnamedFunction=false;
+  Node newName;
+  if (name != null) {
+    newName=processName(name);
+  }
+ else {
+    isUnnamedFunction=true;
+    newName=newStringNode(Token.NAME,"");
+    newName.setLineno(lineno(functionNode));
+    newName.setCharno(charno(functionNode));
+    maybeSetLength(newName,0);
+  }
+  Node node=newNode(Token.FUNCTION);
+  node.addChildToBack(newName);
+  Node lp=newNode(Token.PARAM_LIST);
+  for (  ParseTree param : functionNode.formalParameterList.parameters) {
+    Node paramNode=transformNodeWithInlineJsDoc(param);
+    Preconditions.checkState(paramNode.isName());
+    lp.addChildToBack(paramNode);
+  }
+  node.addChildToBack(lp);
+  Node bodyNode=transform(functionNode.functionBody);
+  if (!bodyNode.isBlock()) {
+    Preconditions.checkState(config.isIdeMode);
+    bodyNode=IR.block();
+  }
+  parseDirectives(bodyNode);
+  node.addChildToBack(bodyNode);
+  return node;
+}
