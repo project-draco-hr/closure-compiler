@@ -1,0 +1,13 @@
+{
+  Node key=transformAsString(tree.propertyName);
+  key.setType(Token.GETTER_DEF);
+  Node body=transform(tree.body);
+  Node dummyName=IR.name("");
+  setSourceInfo(dummyName,tree.body);
+  Node paramList=IR.paramList();
+  setSourceInfo(paramList,tree.body);
+  Node value=IR.function(dummyName,paramList,body);
+  setSourceInfo(value,tree.body);
+  key.addChildToFront(value);
+  return key;
+}

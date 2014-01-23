@@ -1,13 +1,22 @@
 {
+  if (initializer == null) {
+    initializer=new NullTree(getTreeLocation(getTreeStartLocation()));
+  }
   eat(TokenType.SEMI_COLON);
   ParseTree condition=null;
   if (!peek(TokenType.SEMI_COLON)) {
     condition=parseExpression();
   }
+ else {
+    condition=new NullTree(getTreeLocation(getTreeStartLocation()));
+  }
   eat(TokenType.SEMI_COLON);
   ParseTree increment=null;
   if (!peek(TokenType.CLOSE_PAREN)) {
     increment=parseExpression();
+  }
+ else {
+    increment=new NullTree(getTreeLocation(getTreeStartLocation()));
   }
   eat(TokenType.CLOSE_PAREN);
   ParseTree body=parseStatement();

@@ -1,4 +1,6 @@
 {
+  SourcePosition listStart=getTreeStartLocation();
+  eat(TokenType.OPEN_PAREN);
   ImmutableList.Builder<ParseTree> result=ImmutableList.<ParseTree>builder();
   boolean hasDefaultParameters=false;
   while (peek(TokenType.IDENTIFIER) || peek(TokenType.SPREAD)) {
@@ -21,5 +23,6 @@
       eat(TokenType.COMMA);
     }
   }
-  return new FormalParameterListTree(null,result.build());
+  eat(TokenType.CLOSE_PAREN);
+  return new FormalParameterListTree(getTreeLocation(listStart),result.build());
 }

@@ -4,10 +4,14 @@
     node=newStringNode(Token.STRING,identifierToken.toString());
   }
  else {
+    JSDocInfo info=handleJsDoc(identifierToken);
     if (identifierToken == null || isReservedKeyword(identifierToken.toString())) {
       errorReporter.error("identifier is a reserved word",sourceName,identifierToken.location.start.line,"",0);
     }
     node=newStringNode(Token.NAME,identifierToken.toString());
+    if (info != null) {
+      attachJSDoc(info,node);
+    }
   }
   setSourceInfo(node,identifierToken);
   return node;

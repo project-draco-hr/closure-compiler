@@ -1,12 +1,17 @@
 {
   Node root=newNode(Token.COMMA);
+  SourcePosition start=tree.expressions.get(0).location.start;
+  SourcePosition end=tree.expressions.get(1).location.end;
+  setSourceInfo(root,start,end);
   for (  ParseTree expr : tree.expressions) {
     int count=root.getChildCount();
     if (count < 2) {
       root.addChildrenToBack(transform(expr));
     }
  else {
+      end=expr.location.end;
       root=newNode(Token.COMMA,root,transform(expr));
+      setSourceInfo(root,start,end);
     }
   }
   return root;

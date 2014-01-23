@@ -3,11 +3,13 @@
   Node block=newNode(Token.BLOCK);
   boolean lineSet=false;
   ParseTree cc=statementNode.catchBlock;
-  if (lineSet == false) {
-    setSourceInfo(block,cc);
-    lineSet=true;
+  if (cc != null) {
+    if (lineSet == false) {
+      setSourceInfo(block,cc);
+      lineSet=true;
+    }
+    block.addChildToBack(transform(cc));
   }
-  block.addChildToBack(transform(cc));
   node.addChildToBack(block);
   ParseTree finallyBlock=statementNode.finallyBlock;
   if (finallyBlock != null) {

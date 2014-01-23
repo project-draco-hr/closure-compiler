@@ -1,0 +1,32 @@
+{
+  this.sourceString=sourceString;
+  this.nextCommentIter=comments.iterator();
+  this.currentComment=nextCommentIter.hasNext() ? nextCommentIter.next() : null;
+  this.newlines=Lists.newArrayList();
+  this.sourceFile=sourceFile;
+  for (int charNo=0; true; charNo++) {
+    charNo=sourceString.indexOf('\n',charNo);
+    if (charNo == -1) {
+      break;
+    }
+    newlines.add(Integer.valueOf(charNo));
+  }
+  this.sourceName=sourceFile == null ? null : sourceFile.getName();
+  this.config=config;
+  this.errorReporter=errorReporter;
+  this.transformDispatcher=new TransformDispatcher();
+  this.templateNode=createTemplateNode();
+switch (config.languageMode) {
+case ECMASCRIPT3:
+    reservedKeywords=null;
+  break;
+case ECMASCRIPT5:
+reservedKeywords=ES5_RESERVED_KEYWORDS;
+break;
+case ECMASCRIPT5_STRICT:
+reservedKeywords=ES5_STRICT_RESERVED_KEYWORDS;
+break;
+default :
+throw new IllegalStateException("unknown language mode");
+}
+}

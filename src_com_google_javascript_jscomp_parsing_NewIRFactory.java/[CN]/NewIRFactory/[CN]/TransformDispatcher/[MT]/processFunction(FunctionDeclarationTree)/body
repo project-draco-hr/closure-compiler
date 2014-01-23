@@ -3,7 +3,7 @@
   Boolean isUnnamedFunction=false;
   Node newName;
   if (name != null) {
-    newName=processName(name);
+    newName=processNameWithInlineJSDoc(name);
   }
  else {
     isUnnamedFunction=true;
@@ -14,13 +14,7 @@
   }
   Node node=newNode(Token.FUNCTION);
   node.addChildToBack(newName);
-  Node lp=newNode(Token.PARAM_LIST);
-  for (  ParseTree param : functionNode.formalParameterList.parameters) {
-    Node paramNode=transformNodeWithInlineJsDoc(param);
-    Preconditions.checkState(paramNode.isName());
-    lp.addChildToBack(paramNode);
-  }
-  node.addChildToBack(lp);
+  node.addChildToBack(transform(functionNode.formalParameterList));
   Node bodyNode=transform(functionNode.functionBody);
   if (!bodyNode.isBlock()) {
     Preconditions.checkState(config.isIdeMode);

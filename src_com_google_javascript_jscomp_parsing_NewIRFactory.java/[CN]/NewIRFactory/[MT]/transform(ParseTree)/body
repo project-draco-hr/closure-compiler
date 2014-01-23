@@ -1,10 +1,11 @@
 {
-  Node irNode=justTransform(node);
-  JSDocInfo jsDocInfo=handleJsDoc(node,irNode);
-  if (jsDocInfo != null) {
-    irNode=maybeInjectCastNode(node,jsDocInfo,irNode);
-    irNode.setJSDocInfo(jsDocInfo);
+  JSDocInfo info=handleJsDoc(tree);
+  Node node=justTransform(tree);
+  if (info != null) {
+    validateTypeAnnotations(info,tree);
+    node=maybeInjectCastNode(tree,info,node);
+    attachJSDoc(info,node);
   }
-  setSourceInfo(irNode,node);
-  return irNode;
+  setSourceInfo(node,tree);
+  return node;
 }
