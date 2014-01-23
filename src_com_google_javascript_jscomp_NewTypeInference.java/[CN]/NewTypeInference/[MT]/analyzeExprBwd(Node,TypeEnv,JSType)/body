@@ -3,7 +3,7 @@
   int exprKind=expr.getType();
 switch (exprKind) {
 case Token.EMPTY:
-    return new EnvTypePair(outEnv,JSType.UNKNOWN);
+    return new EnvTypePair(outEnv,TypeConsts.UNKNOWN);
 case Token.FUNCTION:
 {
     String fnName=symbolTable.getFunInternalName(expr);
@@ -17,11 +17,11 @@ case Token.TRUE:
 return new EnvTypePair(outEnv,scalarValueToType(exprKind));
 case Token.OBJECTLIT:
 {
-JSType result=JSType.TOP_OBJECT;
+JSType result=TypeConsts.TOP_OBJECT;
 TypeEnv env=outEnv;
 for (Node key=expr.getLastChild(); key != null; key=expr.getChildBefore(key)) {
   String pname=NodeUtil.getObjectLitKeyName(key);
-  JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.TOP;
+  JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : TypeConsts.TOP;
   EnvTypePair pair=analyzeExprBwd(key.getLastChild(),env,reqPtype);
   result=result.withProperty(pname,pair.type);
   env=pair.env;
@@ -31,7 +31,7 @@ return new EnvTypePair(env,result);
 case Token.THIS:
 {
 if (!currentScope.hasThis()) {
-return new EnvTypePair(outEnv,JSType.UNKNOWN);
+return new EnvTypePair(outEnv,TypeConsts.UNKNOWN);
 }
 JSType thisType=currentScope.getDeclaredTypeOf("this");
 return new EnvTypePair(outEnv,thisType);
@@ -40,11 +40,11 @@ case Token.NAME:
 {
 String varName=expr.getQualifiedName();
 if (varName.equals("undefined")) {
-return new EnvTypePair(outEnv,JSType.UNDEFINED);
+return new EnvTypePair(outEnv,TypeConsts.UNDEFINED);
 }
 JSType inferredType=envGetType(outEnv,varName);
 if (inferredType == null) {
-inferredType=JSType.TOP;
+inferredType=TypeConsts.TOP;
 }
 JSType preciseType=inferredType.specialize(requiredType);
 if (currentScope.isUndeclaredFormal(varName) && requiredType.hasNonScalar()) {
@@ -61,18 +61,18 @@ case Token.DEC:
 case Token.BITNOT:
 case Token.POS:
 case Token.NEG:
-return analyzeExprBwd(expr.getFirstChild(),outEnv,JSType.NUMBER);
+return analyzeExprBwd(expr.getFirstChild(),outEnv,TypeConsts.NUMBER);
 case Token.TYPEOF:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
-pair.type=JSType.STRING;
+pair.type=TypeConsts.STRING;
 return pair;
 }
 case Token.INSTANCEOF:
 {
-TypeEnv env=analyzeExprBwd(expr.getLastChild(),outEnv,JSType.topFunction()).env;
+TypeEnv env=analyzeExprBwd(expr.getLastChild(),outEnv,TypeConsts.topFunction()).env;
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),env);
-pair.type=JSType.BOOLEAN;
+pair.type=TypeConsts.BOOLEAN;
 return pair;
 }
 case Token.BITOR:
@@ -88,17 +88,17 @@ case Token.URSH:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-TypeEnv rhsEnv=analyzeExprBwd(rhs,outEnv,JSType.NUMBER).env;
-EnvTypePair pair=analyzeExprBwd(lhs,rhsEnv,JSType.NUMBER);
-pair.type=JSType.NUMBER;
+TypeEnv rhsEnv=analyzeExprBwd(rhs,outEnv,TypeConsts.NUMBER).env;
+EnvTypePair pair=analyzeExprBwd(lhs,rhsEnv,TypeConsts.NUMBER);
+pair.type=TypeConsts.NUMBER;
 return pair;
 }
 case Token.ADD:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv,JSType.NUM_OR_STR);
-EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env,JSType.NUM_OR_STR);
+EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv,TypeConsts.NUM_OR_STR);
+EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env,TypeConsts.NUM_OR_STR);
 lhsPair.type=JSType.plus(lhsPair.type,rhsPair.type);
 return lhsPair;
 }
@@ -121,7 +121,7 @@ Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 TypeEnv rhsEnv=analyzeExprBwd(rhs,outEnv).env;
 EnvTypePair pair=analyzeExprBwd(lhs,rhsEnv);
-pair.type=JSType.BOOLEAN;
+pair.type=TypeConsts.BOOLEAN;
 return pair;
 }
 case Token.LT:
@@ -135,12 +135,12 @@ EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv);
 EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env);
 JSType meetType=JSType.meet(lhsPair.type,rhsPair.type);
 if (meetType.isBottom()) {
-lhsPair.type=JSType.BOOLEAN;
+lhsPair.type=TypeConsts.BOOLEAN;
 return lhsPair;
 }
 rhsPair=analyzeExprBwd(rhs,outEnv,meetType);
 lhsPair=analyzeExprBwd(lhs,rhsPair.env,meetType);
-lhsPair.type=JSType.BOOLEAN;
+lhsPair.type=TypeConsts.BOOLEAN;
 return lhsPair;
 }
 case Token.ASSIGN:
@@ -158,9 +158,9 @@ case Token.ASSIGN_ADD:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-JSType lhsReqType=specializeWithCorrection(requiredType,JSType.NUM_OR_STR);
+JSType lhsReqType=specializeWithCorrection(requiredType,TypeConsts.NUM_OR_STR);
 LValueResult lvalue=analyzeLValueBwd(lhs,outEnv,lhsReqType,false);
-JSType rhsReqType=lvalue.type.equals(JSType.NUMBER) ? JSType.NUMBER : JSType.NUM_OR_STR;
+JSType rhsReqType=lvalue.type.equals(TypeConsts.NUMBER) ? TypeConsts.NUMBER : TypeConsts.NUM_OR_STR;
 EnvTypePair pair=analyzeExprBwd(rhs,outEnv,rhsReqType);
 pair.env=analyzeLValueBwd(lhs,pair.env,lhsReqType,false).env;
 return pair;
@@ -178,9 +178,9 @@ case Token.ASSIGN_MOD:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-EnvTypePair pair=analyzeExprBwd(rhs,outEnv,JSType.NUMBER);
-LValueResult lvalue=analyzeLValueBwd(lhs,pair.env,JSType.NUMBER,false);
-return new EnvTypePair(lvalue.env,JSType.NUMBER);
+EnvTypePair pair=analyzeExprBwd(rhs,outEnv,TypeConsts.NUMBER);
+LValueResult lvalue=analyzeLValueBwd(lhs,pair.env,TypeConsts.NUMBER,false);
+return new EnvTypePair(lvalue.env,TypeConsts.NUMBER);
 }
 case Token.GETPROP:
 {
@@ -200,7 +200,7 @@ case Token.CALL:
 case Token.NEW:
 {
 Node callee=expr.getFirstChild();
-JSType calleeTypeGeneral=analyzeExprBwd(callee,outEnv,JSType.topFunction()).type;
+JSType calleeTypeGeneral=analyzeExprBwd(callee,outEnv,TypeConsts.topFunction()).type;
 FunctionType funType=calleeTypeGeneral.getFunType();
 if (funType == null) {
 return new EnvTypePair(outEnv,requiredType);
@@ -217,9 +217,9 @@ return new EnvTypePair(outEnv,requiredType);
 int arity=funType.getMaxArity();
 TypeEnv tmpEnv=outEnv;
 for (int i=expr.getChildCount() - 2; i >= 0; i--) {
-JSType formalType=i < arity ? funType.getFormalType(i) : JSType.TOP;
+JSType formalType=i < arity ? funType.getFormalType(i) : TypeConsts.TOP;
 if (formalType.isBottom()) {
-formalType=JSType.TOP;
+formalType=TypeConsts.TOP;
 }
 Node arg=expr.getChildAtIndex(i + 1);
 tmpEnv=analyzeExprBwd(arg,tmpEnv,formalType).env;
@@ -232,7 +232,7 @@ tmpEnv=collectTypesForFreeVarsBwd(callee,tmpEnv);
 }
  else if (expr.isCall()) {
 Scope s=currentScope.getScope(calleeName);
-JSType expectedRetType=JSType.TOP;
+JSType expectedRetType=TypeConsts.TOP;
 if (s.getDeclaredType().getReturnType() == null) {
 expectedRetType=requiredType;
 }
@@ -265,29 +265,29 @@ if (index.isString()) {
 return analyzePropAccessBwd(receiver,index.getString(),outEnv,requiredType);
 }
 EnvTypePair pair=analyzeExprBwd(index,outEnv);
-pair=analyzeExprBwd(receiver,pair.env,JSType.TOP_OBJECT);
+pair=analyzeExprBwd(receiver,pair.env,TypeConsts.TOP_OBJECT);
 pair.type=requiredType;
 return pair;
 }
 case Token.VOID:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
-pair.type=JSType.UNDEFINED;
+pair.type=TypeConsts.UNDEFINED;
 return pair;
 }
 case Token.IN:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-EnvTypePair pair=analyzeExprBwd(rhs,outEnv,JSType.TOP_OBJECT);
-pair=analyzeExprBwd(lhs,pair.env,JSType.NUM_OR_STR);
-pair.type=JSType.BOOLEAN;
+EnvTypePair pair=analyzeExprBwd(rhs,outEnv,TypeConsts.TOP_OBJECT);
+pair=analyzeExprBwd(lhs,pair.env,TypeConsts.NUM_OR_STR);
+pair.type=TypeConsts.BOOLEAN;
 return pair;
 }
 case Token.DELPROP:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
-pair.type=JSType.BOOLEAN;
+pair.type=TypeConsts.BOOLEAN;
 return pair;
 }
 case Token.VAR:
@@ -295,7 +295,7 @@ case Token.VAR:
 Node vdecl=expr.getFirstChild();
 String name=vdecl.getQualifiedName();
 Preconditions.checkState(!vdecl.hasChildren());
-return new EnvTypePair(envPutType(outEnv,name,JSType.UNKNOWN),JSType.UNKNOWN);
+return new EnvTypePair(envPutType(outEnv,name,TypeConsts.UNKNOWN),TypeConsts.UNKNOWN);
 }
 case Token.REGEXP:
 return new EnvTypePair(outEnv,regexpType);

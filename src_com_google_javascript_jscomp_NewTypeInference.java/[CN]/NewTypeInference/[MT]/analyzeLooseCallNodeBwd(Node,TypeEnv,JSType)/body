@@ -7,12 +7,12 @@
   for (int i=callNode.getChildCount() - 2; i >= 0; i--) {
     Node arg=callNode.getChildAtIndex(i + 1);
     tmpEnv=analyzeExprBwd(arg,tmpEnv).env;
-    builder.addReqFormal(JSType.BOTTOM);
+    builder.addReqFormal(TypeConsts.BOTTOM);
   }
-  JSType looseRetType=retType.isTop() ? JSType.BOTTOM : retType;
+  JSType looseRetType=retType.isTop() ? TypeConsts.BOTTOM : retType;
   JSType looseFunctionType=builder.addRetType(looseRetType).addLoose().buildType();
   looseFunctionType.getFunType().checkValid();
   println("loose function type is ",looseFunctionType);
   EnvTypePair calleePair=analyzeExprBwd(callee,tmpEnv,looseFunctionType);
-  return new EnvTypePair(calleePair.env,retType.isTop() ? JSType.UNKNOWN : retType);
+  return new EnvTypePair(calleePair.env,retType.isTop() ? TypeConsts.UNKNOWN : retType);
 }

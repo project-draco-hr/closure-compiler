@@ -17,25 +17,25 @@ case Token.LC:
       return JSType.fromObjectType(ObjectType.fromProperties(fields));
     }
 case Token.EMPTY:
-  return JSType.UNKNOWN;
+  return TypeConsts.UNKNOWN;
 case Token.VOID:
-return JSType.UNDEFINED;
+return TypeConsts.UNDEFINED;
 case Token.STRING:
 String typeName=n.getString();
 if (typeName.equals("boolean")) {
-return JSType.BOOLEAN;
+return TypeConsts.BOOLEAN;
 }
  else if (typeName.equals("null")) {
-return JSType.NULL;
+return TypeConsts.NULL;
 }
  else if (typeName.equals("number")) {
-return JSType.NUMBER;
+return TypeConsts.NUMBER;
 }
  else if (typeName.equals("string")) {
-return JSType.STRING;
+return TypeConsts.STRING;
 }
  else if (typeName.equals("undefined")) {
-return JSType.UNDEFINED;
+return TypeConsts.UNDEFINED;
 }
  else {
 JSType namedType=registry.getNominalTypeAsJstype(typeName);
@@ -46,7 +46,7 @@ throw new UnknownTypeException("Unhandled type: " + typeName);
 }
 case Token.PIPE:
 {
-JSType union=JSType.BOTTOM;
+JSType union=TypeConsts.BOTTOM;
 for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
 union=JSType.join(union,getTypeFromNodeHelper(child,registry));
 }
@@ -54,20 +54,20 @@ return union;
 }
 case Token.BANG:
 {
-return getTypeFromNodeHelper(n.getFirstChild(),registry).removeType(JSType.NULL);
+return getTypeFromNodeHelper(n.getFirstChild(),registry).removeType(TypeConsts.NULL);
 }
 case Token.QMARK:
 {
 Node child=n.getFirstChild();
 if (child == null) {
-return JSType.UNKNOWN;
+return TypeConsts.UNKNOWN;
 }
  else {
-return JSType.join(JSType.NULL,getTypeFromNodeHelper(child,registry));
+return JSType.join(TypeConsts.NULL,getTypeFromNodeHelper(child,registry));
 }
 }
 case Token.STAR:
-return JSType.TOP;
+return TypeConsts.TOP;
 case Token.FUNCTION:
 {
 FunctionTypeBuilder builder=new FunctionTypeBuilder();

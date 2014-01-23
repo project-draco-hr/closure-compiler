@@ -1,0 +1,16 @@
+{
+  UnionType other=(UnionType)otherJstype;
+  if (other.isTop() || other.isUnknown()) {
+    return this;
+  }
+ else   if (other.isTruthy()) {
+    return makeTruthy();
+  }
+ else   if (other.isFalsy()) {
+    return makeFalsy();
+  }
+ else   if (this.isTop() || this.isUnknown()) {
+    return other.withLocation(this.location);
+  }
+  return new UnionType(this.type & other.type,this.location,ObjectType.specializeSet(this.objs,other.objs));
+}

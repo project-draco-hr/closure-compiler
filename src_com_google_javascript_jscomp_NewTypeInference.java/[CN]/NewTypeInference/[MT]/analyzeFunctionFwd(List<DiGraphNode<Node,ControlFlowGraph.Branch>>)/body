@@ -21,16 +21,16 @@ case Token.TRY:
     break;
 case Token.EXPR_RESULT:
   println("\tsemi ",Token.name(n.getFirstChild().getType()));
-outEnv=analyzeExprFwd(n.getFirstChild(),inEnv,JSType.TOP).env;
+outEnv=analyzeExprFwd(n.getFirstChild(),inEnv,TypeConsts.TOP).env;
 break;
 case Token.RETURN:
 {
 Node retExp=n.getFirstChild();
 JSType declRetType=currentScope.getDeclaredType().getReturnType();
-declRetType=declRetType == null ? JSType.UNKNOWN : declRetType;
+declRetType=declRetType == null ? TypeConsts.UNKNOWN : declRetType;
 JSType actualRetType;
 if (retExp == null) {
-actualRetType=JSType.UNDEFINED;
+actualRetType=TypeConsts.UNDEFINED;
 outEnv=envPutType(inEnv,RETVAL_ID,actualRetType);
 }
  else {
@@ -73,7 +73,7 @@ if (NodeUtil.isStatement(n)) {
 throw new RuntimeException("Unhandled statement type: " + Token.name(n.getType()));
 }
  else {
-outEnv=analyzeExprFwd(n,inEnv,JSType.TOP).env;
+outEnv=analyzeExprFwd(n,inEnv,TypeConsts.TOP).env;
 break;
 }
 }

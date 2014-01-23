@@ -1,10 +1,10 @@
 {
   Node propAccessNode=receiver.getParent();
   EnvTypePair pair;
-  JSType objWithProp=JSType.TOP_OBJECT.withProperty(pname,requiredType);
+  JSType objWithProp=TypeConsts.TOP_OBJECT.withProperty(pname,requiredType);
   JSType recvReqType, recvSpecType, recvType;
   if (specializedType.isTruthy() || specializedType.isFalsy()) {
-    recvReqType=JSType.TOP;
+    recvReqType=TypeConsts.TOP;
     recvSpecType=objWithProp;
   }
  else {
@@ -12,8 +12,8 @@
   }
   pair=analyzeExprFwd(receiver,inEnv,recvReqType,recvSpecType);
   recvType=pair.type;
-  boolean isNotAnObject=JSType.BOTTOM.equals(JSType.meet(recvType,JSType.TOP_OBJECT));
-  boolean mayNotBeAnObject=!recvType.isSubtypeOf(JSType.TOP_OBJECT);
+  boolean isNotAnObject=TypeConsts.BOTTOM.equals(JSType.meet(recvType,TypeConsts.TOP_OBJECT));
+  boolean mayNotBeAnObject=!recvType.isSubtypeOf(TypeConsts.TOP_OBJECT);
   if (isNotAnObject || (!specializedType.isTruthy() && !specializedType.isFalsy() && mayNotBeAnObject)) {
     warnings.add(JSError.make(receiver,PROPERTY_ACCESS_ON_NONOBJECT,pname,recvType.toString()));
     return new EnvTypePair(pair.env,requiredType);
@@ -22,7 +22,7 @@
   if (!specializedType.isTruthy() && !specializedType.isFalsy()) {
     if (!recvType.mayHaveProp(pname)) {
       warnings.add(JSError.make(propAccessNode,TypeCheck.INEXISTENT_PROPERTY,pname,recvType.toString()));
-      resultType=JSType.UNKNOWN;
+      resultType=TypeConsts.UNKNOWN;
     }
  else     if (!recvType.hasProp(pname)) {
       warnings.add(JSError.make(propAccessNode,NewTypeInference.POSSIBLY_INEXISTENT_PROPERTY,pname,recvType.toString()));
