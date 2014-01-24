@@ -17,6 +17,7 @@
       Node grandparent=parent.getParent();
       Node value=v.getInitialValue() != null ? v.getInitialValue() : null;
       Node varNode=null;
+      JSDocInfo varDocInfo=v.getJSDocInfo();
       String name=n.getString();
       int nameCount=scopedAliasNames.count(name);
       scopedAliasNames.add(name);
@@ -35,8 +36,8 @@
         }
         varNode=parent;
       }
-      if (value != null || v.getJSDocInfo() != null) {
-        Node newDecl=NodeUtil.newQualifiedNameNodeDeclaration(compiler.getCodingConvention(),globalName,value,v.getJSDocInfo()).useSourceInfoIfMissingFromForTree(n);
+      if (value != null || varDocInfo != null) {
+        Node newDecl=NodeUtil.newQualifiedNameNodeDeclaration(compiler.getCodingConvention(),globalName,value,varDocInfo).useSourceInfoIfMissingFromForTree(n);
         NodeUtil.setDebugInformation(newDecl.getFirstChild().getFirstChild(),n,name);
         if (isHoisted) {
           grandparent.addChildToFront(newDecl);
