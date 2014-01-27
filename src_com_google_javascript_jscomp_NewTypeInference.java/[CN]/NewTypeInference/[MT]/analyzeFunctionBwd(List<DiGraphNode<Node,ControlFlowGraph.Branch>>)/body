@@ -10,7 +10,7 @@
     println("\t\toutEnv: ",outEnv);
 switch (n.getType()) {
 case Token.EXPR_RESULT:
-      inEnv=analyzeExprBwd(n.getFirstChild(),outEnv,TypeConsts.TOP).env;
+      inEnv=analyzeExprBwd(n.getFirstChild(),outEnv,JSType.TOP).env;
     break;
 case Token.RETURN:
 {
@@ -20,7 +20,7 @@ case Token.RETURN:
     }
  else {
       JSType declRetType=currentScope.getDeclaredType().getReturnType();
-      declRetType=declRetType == null ? TypeConsts.UNKNOWN : declRetType;
+      declRetType=declRetType == null ? JSType.UNKNOWN : declRetType;
       inEnv=analyzeExprBwd(retExp,outEnv,declRetType).env;
     }
     break;
@@ -32,11 +32,11 @@ case Token.VAR:
     String varName=nameNode.getQualifiedName();
     Node rhs=nameNode.getFirstChild();
     JSType declType=currentScope.getDeclaredTypeOf(varName);
-    inEnv=envPutType(outEnv,varName,TypeConsts.UNKNOWN);
+    inEnv=envPutType(outEnv,varName,JSType.UNKNOWN);
     if (rhs == null || currentScope.isLocalFunDef(varName)) {
       continue;
     }
-    JSType requiredType=(declType == null) ? TypeConsts.UNKNOWN : declType;
+    JSType requiredType=(declType == null) ? JSType.UNKNOWN : declType;
     inEnv=analyzeExprBwd(rhs,inEnv,JSType.meet(requiredType,envGetType(outEnv,varName))).env;
   }
   break;

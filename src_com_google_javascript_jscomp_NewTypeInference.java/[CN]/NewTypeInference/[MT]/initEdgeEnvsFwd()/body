@@ -23,10 +23,10 @@
       }
       entryEnv=envPutType(entryEnv,name,initType.withLocation(name));
     }
-    entryEnv=envPutType(entryEnv,RETVAL_ID,TypeConsts.UNDEFINED);
+    entryEnv=envPutType(entryEnv,RETVAL_ID,JSType.UNDEFINED);
   }
   for (  String local : currentScope.getLocals()) {
-    entryEnv=envPutType(entryEnv,local,TypeConsts.UNDEFINED);
+    entryEnv=envPutType(entryEnv,local,JSType.UNDEFINED);
   }
   for (  String fnName : currentScope.getLocalFunDefs()) {
     JSType summaryType=summaries.get(currentScope.getScope(fnName));
@@ -35,7 +35,7 @@
       summaryType=fnType.createConstructorObject();
     }
  else {
-      summaryType=summaryType.withProperty("prototype",TypeConsts.TOP_OBJECT);
+      summaryType=summaryType.withProperty("prototype",JSType.TOP_OBJECT);
     }
     entryEnv=envPutType(entryEnv,fnName,summaryType);
   }

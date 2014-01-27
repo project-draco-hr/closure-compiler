@@ -1,3 +1,9 @@
 {
-  return UnionType.join((UnionType)lhs,(UnionType)rhs);
+  if (lhs.isTop() || rhs.isTop()) {
+    return TOP;
+  }
+ else   if (lhs.isUnknown() || rhs.isUnknown()) {
+    return UNKNOWN;
+  }
+  return new JSType(lhs.type | rhs.type,Objects.equal(lhs.location,rhs.location) ? lhs.location : null,ObjectType.joinSets(lhs.objs,rhs.objs));
 }

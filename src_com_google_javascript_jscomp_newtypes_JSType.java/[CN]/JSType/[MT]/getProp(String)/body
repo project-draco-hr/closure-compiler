@@ -1,0 +1,16 @@
+{
+  if (isBottom() || isUnknown()) {
+    return UNKNOWN;
+  }
+  Preconditions.checkState(objs != null);
+  JSType ptype=BOTTOM;
+  for (  ObjectType o : objs) {
+    if (o.mayHaveProp(qName)) {
+      ptype=join(ptype,o.getProp(qName));
+    }
+  }
+  if (ptype.isBottom()) {
+    return null;
+  }
+  return ptype;
+}

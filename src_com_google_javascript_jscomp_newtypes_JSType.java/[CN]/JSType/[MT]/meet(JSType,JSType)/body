@@ -1,3 +1,15 @@
 {
-  return UnionType.meet((UnionType)lhs,(UnionType)rhs);
+  if (lhs.isTop()) {
+    return rhs;
+  }
+ else   if (rhs.isTop()) {
+    return lhs;
+  }
+ else   if (lhs.isUnknown()) {
+    return rhs;
+  }
+ else   if (rhs.isUnknown()) {
+    return lhs;
+  }
+  return new JSType(lhs.type & rhs.type,null,ObjectType.meetSets(lhs.objs,rhs.objs));
 }

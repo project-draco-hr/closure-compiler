@@ -8,33 +8,33 @@
   JSType rhsType=rhsPair.type;
   if (tokenType == Token.EQ && specializedType.isTruthy() || tokenType == Token.NE && specializedType.isFalsy()) {
     if (lhsType.isNullOrUndef()) {
-      rhsPair=analyzeExprFwd(rhs,lhsPair.env,TypeConsts.TOP,TypeConsts.NULL_OR_UNDEF);
+      rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,JSType.NULL_OR_UNDEF);
     }
  else     if (rhsType.isNullOrUndef()) {
-      lhsPair=analyzeExprFwd(lhs,inEnv,TypeConsts.TOP,TypeConsts.NULL_OR_UNDEF);
+      lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,JSType.NULL_OR_UNDEF);
       rhsPair=analyzeExprFwd(rhs,lhsPair.env);
     }
- else     if (!TypeConsts.NULL_OR_UNDEF.isSubtypeOf(lhsType)) {
-      rhsType=rhsType.removeType(TypeConsts.NULL).removeType(TypeConsts.UNDEFINED);
-      rhsPair=analyzeExprFwd(rhs,lhsPair.env,TypeConsts.TOP,rhsType);
+ else     if (!JSType.NULL_OR_UNDEF.isSubtypeOf(lhsType)) {
+      rhsType=rhsType.removeType(JSType.NULL).removeType(JSType.UNDEFINED);
+      rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,rhsType);
     }
- else     if (!TypeConsts.NULL_OR_UNDEF.isSubtypeOf(rhsType)) {
-      lhsType=lhsType.removeType(TypeConsts.NULL).removeType(TypeConsts.UNDEFINED);
-      lhsPair=analyzeExprFwd(lhs,inEnv,TypeConsts.TOP,lhsType);
+ else     if (!JSType.NULL_OR_UNDEF.isSubtypeOf(rhsType)) {
+      lhsType=lhsType.removeType(JSType.NULL).removeType(JSType.UNDEFINED);
+      lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,lhsType);
       rhsPair=analyzeExprFwd(rhs,lhsPair.env);
     }
   }
  else   if (tokenType == Token.EQ && specializedType.isFalsy() || tokenType == Token.NE && specializedType.isTruthy()) {
     if (lhsType.isNullOrUndef()) {
-      rhsType=rhsType.removeType(TypeConsts.NULL).removeType(TypeConsts.UNDEFINED);
-      rhsPair=analyzeExprFwd(rhs,lhsPair.env,TypeConsts.TOP,rhsType);
+      rhsType=rhsType.removeType(JSType.NULL).removeType(JSType.UNDEFINED);
+      rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.TOP,rhsType);
     }
  else     if (rhsType.isNullOrUndef()) {
-      lhsType=lhsType.removeType(TypeConsts.NULL).removeType(TypeConsts.UNDEFINED);
-      lhsPair=analyzeExprFwd(lhs,inEnv,TypeConsts.TOP,lhsType);
+      lhsType=lhsType.removeType(JSType.NULL).removeType(JSType.UNDEFINED);
+      lhsPair=analyzeExprFwd(lhs,inEnv,JSType.TOP,lhsType);
       rhsPair=analyzeExprFwd(rhs,lhsPair.env);
     }
   }
-  rhsPair.type=TypeConsts.BOOLEAN;
+  rhsPair.type=JSType.BOOLEAN;
   return rhsPair;
 }
