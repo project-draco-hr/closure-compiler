@@ -1,0 +1,33 @@
+{
+  JSDocInfo rValueInfo=rValue.getJSDocInfo();
+  if (rValue.isCast() && rValueInfo != null && rValueInfo.hasType()) {
+    return rValueInfo.getType().evaluate(scope,typeRegistry);
+  }
+  JSType type=rValue.getJSType();
+  if (type != null && !type.isUnknownType()) {
+    return type;
+  }
+  if (rValue.isQualifiedName()) {
+    String name=rValue.getQualifiedName();
+    Var slot=scope.getVar(name);
+    if (slot == null || slot.isTypeInferred()) {
+      return null;
+    }
+    type=slot.getType();
+    if (type != null && !type.isUnknownType()) {
+      return type;
+    }
+  }
+  if (rValue.isOr()) {
+    Node firstClause=rValue.getFirstChild();
+    Node secondClause=firstClause.getNext();
+    boolean namesMatch=firstClause.isName() && lValue.isName() && firstClause.getString().equals(lValue.getString());
+    if (namesMatch) {
+      type=secondClause.getJSType();
+      if (type != null && !type.isUnknownType()) {
+        return type;
+      }
+    }
+  }
+  return null;
+}
