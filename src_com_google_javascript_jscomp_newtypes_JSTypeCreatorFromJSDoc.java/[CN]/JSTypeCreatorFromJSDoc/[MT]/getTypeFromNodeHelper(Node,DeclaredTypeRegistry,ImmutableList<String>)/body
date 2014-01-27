@@ -1,0 +1,113 @@
+{
+  Preconditions.checkNotNull(n);
+switch (n.getType()) {
+case Token.LC:
+{
+      Map<String,JSType> fields=Maps.newHashMap();
+      for (Node fieldTypeNode=n.getFirstChild().getFirstChild(); fieldTypeNode != null; fieldTypeNode=fieldTypeNode.getNext()) {
+        Preconditions.checkState(fieldTypeNode.getType() == Token.COLON);
+        Node fieldNameNode=fieldTypeNode.getFirstChild();
+        String fieldName=fieldNameNode.getString();
+        if (fieldName.startsWith("'") || fieldName.startsWith("\"")) {
+          fieldName=fieldName.substring(1,fieldName.length() - 1);
+        }
+        JSType fieldType=getTypeFromNodeHelper(fieldTypeNode.getLastChild(),registry,typeParameters);
+        fields.put(fieldName,fieldType);
+      }
+      return JSType.fromObjectType(ObjectType.fromProperties(fields));
+    }
+case Token.EMPTY:
+  return JSType.UNKNOWN;
+case Token.VOID:
+return JSType.UNDEFINED;
+case Token.STRING:
+String typeName=n.getString();
+if (typeName.equals("boolean")) {
+return JSType.BOOLEAN;
+}
+ else if (typeName.equals("null")) {
+return JSType.NULL;
+}
+ else if (typeName.equals("number")) {
+return JSType.NUMBER;
+}
+ else if (typeName.equals("string")) {
+return JSType.STRING;
+}
+ else if (typeName.equals("undefined")) {
+return JSType.UNDEFINED;
+}
+ else if (typeParameters != null && typeParameters.contains(typeName)) {
+return JSType.fromTypeVar(typeName);
+}
+ else {
+JSType namedType=registry.getNominalTypeAsJstype(typeName);
+if (namedType != null) {
+return namedType;
+}
+throw new UnknownTypeException("Unhandled type: " + typeName);
+}
+case Token.PIPE:
+{
+JSType union=JSType.BOTTOM;
+for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+union=JSType.join(union,getTypeFromNodeHelper(child,registry,typeParameters));
+}
+return union;
+}
+case Token.BANG:
+{
+return getTypeFromNodeHelper(n.getFirstChild(),registry,typeParameters).removeType(JSType.NULL);
+}
+case Token.QMARK:
+{
+Node child=n.getFirstChild();
+if (child == null) {
+return JSType.UNKNOWN;
+}
+ else {
+return JSType.join(JSType.NULL,getTypeFromNodeHelper(child,registry,typeParameters));
+}
+}
+case Token.STAR:
+return JSType.TOP;
+case Token.FUNCTION:
+{
+FunctionTypeBuilder builder=new FunctionTypeBuilder();
+Node child=n.getFirstChild();
+if (child.getType() == Token.THIS) {
+builder.addReceiverType(getClassType(child.getFirstChild(),registry));
+child=child.getNext();
+}
+ else if (child.getType() == Token.NEW) {
+builder.addClass(getClassType(child.getFirstChild(),registry));
+child=child.getNext();
+}
+if (child.getType() == Token.PARAM_LIST) {
+for (Node arg=child.getFirstChild(); arg != null; arg=arg.getNext()) {
+try {
+switch (arg.getType()) {
+case Token.EQUALS:
+builder.addOptFormal(getTypeFromNodeHelper(arg.getFirstChild(),registry,typeParameters));
+break;
+case Token.ELLIPSIS:
+builder.addRestFormals(getTypeFromNodeHelper(arg.getFirstChild(),registry,typeParameters));
+break;
+default :
+builder.addReqFormal(getTypeFromNodeHelper(arg,registry,typeParameters));
+break;
+}
+}
+ catch (IllegalStateException e) {
+warn("Wrong parameter order: required parameters are first, " + "then optional, then varargs",n);
+}
+}
+child=child.getNext();
+}
+builder.addRetType(getTypeFromNodeHelper(child,registry,typeParameters));
+return builder.buildType();
+}
+default :
+throw new IllegalArgumentException("Unsupported type exp: " + Token.name(n.getType()) + " "+ n.toStringTree());
+}
+}

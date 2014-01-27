@@ -5,5 +5,6 @@
  else   if (lhs.isUnknown() || rhs.isUnknown()) {
     return UNKNOWN;
   }
-  return new JSType(lhs.type | rhs.type,Objects.equal(lhs.location,rhs.location) ? lhs.location : null,ObjectType.joinSets(lhs.objs,rhs.objs));
+  Preconditions.checkState(lhs.typeVar == null || rhs.typeVar == null);
+  return new JSType(lhs.type | rhs.type,Objects.equal(lhs.location,rhs.location) ? lhs.location : null,ObjectType.joinSets(lhs.objs,rhs.objs),lhs.typeVar != null ? lhs.typeVar : rhs.typeVar);
 }

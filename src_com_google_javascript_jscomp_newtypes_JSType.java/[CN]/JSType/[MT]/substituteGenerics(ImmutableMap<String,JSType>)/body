@@ -1,0 +1,15 @@
+{
+  ImmutableSet<ObjectType> newObjs=null;
+  if (objs != null) {
+    ImmutableSet.Builder<ObjectType> newObjsBuilder=ImmutableSet.builder();
+    for (    ObjectType obj : objs) {
+    }
+    newObjs=newObjsBuilder.build();
+  }
+  JSType current=new JSType(type & ~TYPEVAR_MASK,location,newObjs,null);
+  if ((type & TYPEVAR_MASK) != 0) {
+    JSType concrete=concreteTypes.get(typeVar);
+    current=JSType.join(current,concrete);
+  }
+  return current;
+}

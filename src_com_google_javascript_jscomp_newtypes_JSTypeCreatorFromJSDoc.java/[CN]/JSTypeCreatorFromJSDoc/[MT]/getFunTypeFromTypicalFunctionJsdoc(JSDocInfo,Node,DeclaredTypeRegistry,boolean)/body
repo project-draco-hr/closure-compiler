@@ -2,6 +2,7 @@
   Preconditions.checkArgument(!ignoreJsdoc || jsdoc == null);
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   Node params=funNode.getFirstChild().getNext();
+  ImmutableList<String> typeParameters=jsdoc == null ? null : jsdoc.getTemplateTypeNames();
   for (Node param=params.getFirstChild(); param != null; param=param.getNext()) {
     String pname=param.getQualifiedName();
     JSType inlineParamType=ignoreJsdoc ? null : getNodeTypeDeclaration(param.getJSDocInfo(),registry);
@@ -19,7 +20,7 @@
     }
     JSType fnParamType=null;
     if (jsdocNode != null) {
-      fnParamType=getTypeFromNode(jsdocNode,registry);
+      fnParamType=getTypeFromNode(jsdocNode,registry,typeParameters);
     }
     if (inlineParamType != null) {
       builder.addReqFormal(inlineParamType);
@@ -46,7 +47,7 @@
     }
   }
  else {
-    builder.addRetType(getTypeFromJSTypeExpression(retTypeExp,registry));
+    builder.addRetType(getTypeFromJSTypeExpression(retTypeExp,registry,typeParameters));
   }
   return builder;
 }
