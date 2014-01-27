@@ -1,7 +1,7 @@
 {
   NewIRFactory irFactory=new NewIRFactory(sourceString,sourceFile,config,errorReporter,tree.sourceComments);
-  Node irNode=irFactory.justTransform(tree);
-  irFactory.setSourceInfo(irNode,tree);
+  Node n=irFactory.justTransform(tree);
+  irFactory.setSourceInfo(n,tree);
   if (tree.sourceComments != null) {
     for (    Comment comment : tree.sourceComments) {
       if (comment.type == Comment.Type.JSDOC && !irFactory.parsedComments.contains(comment)) {
@@ -12,6 +12,7 @@
       }
     }
   }
-  irFactory.setFileOverviewJsDoc(irNode);
-  return irNode;
+  irFactory.setFileOverviewJsDoc(n);
+  irFactory.validateAllTypeAnnotations(n);
+  return n;
 }

@@ -1,7 +1,7 @@
 {
-  Node fn=parse("function f() { " + "  /** @type {string} */" + "  return;"+ "};").getFirstChild();
+  Node fn=parse("function f() { " + "  /** @type {string} */" + "  return;"+ "};",MISPLACED_TYPE_ANNOTATION).getFirstChild();
   assertEquals(Token.FUNCTION,fn.getType());
   Node ret=fn.getLastChild().getFirstChild();
   assertEquals(Token.RETURN,ret.getType());
-  assertNull(ret.getJSDocInfo());
+  assertNotNull(ret.getJSDocInfo());
 }

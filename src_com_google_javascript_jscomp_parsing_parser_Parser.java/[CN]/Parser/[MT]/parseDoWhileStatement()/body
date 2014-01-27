@@ -6,6 +6,8 @@
   eat(TokenType.OPEN_PAREN);
   ParseTree condition=parseExpression();
   eat(TokenType.CLOSE_PAREN);
-  eatPossibleImplicitSemiColon();
+  if (peek(TokenType.SEMI_COLON)) {
+    eat(TokenType.SEMI_COLON);
+  }
   return new DoWhileStatementTree(getTreeLocation(start),body,condition);
 }

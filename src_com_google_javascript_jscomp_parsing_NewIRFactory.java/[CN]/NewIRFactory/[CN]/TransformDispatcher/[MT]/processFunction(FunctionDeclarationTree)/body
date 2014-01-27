@@ -1,21 +1,23 @@
 {
-  IdentifierToken name=functionNode.name;
-  Boolean isUnnamedFunction=false;
+  IdentifierToken name=functionTree.name;
   Node newName;
   if (name != null) {
     newName=processNameWithInlineJSDoc(name);
   }
  else {
-    isUnnamedFunction=true;
+    if (!functionTree.isExpression) {
+      errorReporter.error("unnamed function statement",sourceName,lineno(functionTree),"",charno(functionTree));
+      return newNode(Token.EXPR_RESULT,Node.newNumber(0));
+    }
     newName=newStringNode(Token.NAME,"");
-    newName.setLineno(lineno(functionNode));
-    newName.setCharno(charno(functionNode));
+    newName.setLineno(lineno(functionTree));
+    newName.setCharno(charno(functionTree));
     maybeSetLength(newName,0);
   }
   Node node=newNode(Token.FUNCTION);
   node.addChildToBack(newName);
-  node.addChildToBack(transform(functionNode.formalParameterList));
-  Node bodyNode=transform(functionNode.functionBody);
+  node.addChildToBack(transform(functionTree.formalParameterList));
+  Node bodyNode=transform(functionTree.functionBody);
   if (!bodyNode.isBlock()) {
     Preconditions.checkState(config.isIdeMode);
     bodyNode=IR.block();

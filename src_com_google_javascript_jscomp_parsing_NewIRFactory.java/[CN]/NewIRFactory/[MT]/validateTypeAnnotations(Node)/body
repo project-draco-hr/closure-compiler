@@ -1,0 +1,48 @@
+{
+  JSDocInfo info=n.getJSDocInfo();
+  if (info != null && info.hasType()) {
+    boolean valid=false;
+switch (n.getType()) {
+case Token.CAST:
+      valid=true;
+    break;
+case Token.VAR:
+  valid=true;
+break;
+case Token.FUNCTION:
+valid=isFunctionDeclaration(n);
+break;
+case Token.NAME:
+Node parent=n.getParent();
+switch (parent.getType()) {
+case Token.STRING_KEY:
+case Token.GETTER_DEF:
+case Token.SETTER_DEF:
+case Token.CATCH:
+case Token.FUNCTION:
+case Token.VAR:
+case Token.LP:
+valid=true;
+break;
+}
+break;
+case Token.STRING_KEY:
+case Token.GETTER_DEF:
+case Token.SETTER_DEF:
+valid=true;
+break;
+case Token.ASSIGN:
+valid=n.getParent().isExprResult() && (n.getFirstChild().isGetProp() || n.getFirstChild().isGetElem());
+break;
+case Token.GETPROP:
+valid=n.getParent().isExprResult() && n.getQualifiedName() != null;
+break;
+case Token.CALL:
+valid=info.isDefine();
+break;
+}
+if (!valid) {
+errorReporter.warning(MISPLACED_TYPE_ANNOTATION,sourceName,n.getLineno(),"",n.getCharno());
+}
+}
+}
