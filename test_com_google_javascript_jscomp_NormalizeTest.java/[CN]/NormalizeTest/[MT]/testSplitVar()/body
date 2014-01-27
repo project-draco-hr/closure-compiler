@@ -9,9 +9,9 @@
   test("for(var a = 0, b = foo(1), c = 1; c < b; c++) foo(2)","var a = 0; var b = foo(1); var c = 1; for(; c < b; c++) foo(2)");
   test("for(;;) var b = foo(1), c = foo(2);","for(;;){var b = foo(1); var c = foo(2)}");
   test("for(;;){var b = foo(1), c = foo(2);}","for(;;){var b = foo(1); var c = foo(2)}");
-  test("try{var b = foo(1), c = foo(2);} finally foo(3);","try{var b = foo(1); var c = foo(2)} finally foo(3);");
-  test("try{var b = foo(1),c = foo(2);} finally;","try{var b = foo(1); var c = foo(2)} finally;");
-  test("try{foo(0);} finally var b = foo(1), c = foo(2);","try{foo(0);} finally {var b = foo(1); var c = foo(2)}");
+  test("try{var b = foo(1), c = foo(2);} finally { foo(3) }","try{var b = foo(1); var c = foo(2)} finally { foo(3); }");
+  test("try{var b = foo(1),c = foo(2);} finally {}","try{var b = foo(1); var c = foo(2)} finally {}");
+  test("try{foo(0);} finally { var b = foo(1), c = foo(2); }","try{foo(0);} finally {var b = foo(1); var c = foo(2)}");
   test("switch(a) {default: var b = foo(1), c = foo(2); break;}","switch(a) {default: var b = foo(1); var c = foo(2); break;}");
   test("do var a = foo(1), b; while(false);","do{var a = foo(1); var b} while(false);");
   test("a:var a,b,c;","a:{ var a;var b; var c; }");
