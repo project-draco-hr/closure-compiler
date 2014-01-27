@@ -1,0 +1,21 @@
+{
+  gatherPropertiesFromTypes=true;
+  assertExternProperties("foo.bar;","bar");
+  assertExternProperties("foo = {bar: null, 'baz': {foobar: null}};","bar","baz","foobar");
+  assertExternProperties("foo = {0: null};","0");
+  assertExternProperties("var foo;");
+  assertExternProperties("foo['bar'] = {};");
+  assertExternProperties("/** @type {{bar: string, baz: string}} */ var foo;","bar","baz");
+  assertExternProperties("/** @typedef {{bar: string, baz: string}} */ var FooType;","bar","baz");
+  assertExternProperties("/** @type {string|{bar: string}|{baz: string}} */ var foo;","bar","baz");
+  assertExternProperties("/** @type {function(string, {bar: string}): {baz: string}} */\n" + "var foo;","bar","baz");
+  assertExternProperties("/** @type {Array.<{bar: string, baz: string}>} */ var foo;","bar","baz");
+  assertExternProperties("/**\n" + " * @interface\n" + " * @template T\n"+ " */\n"+ "var Foo;\n"+ "/**\n"+ " * @constructor\n"+ " * @implements {Foo.<{bar: string, baz: string}>}\n"+ " */\n"+ "var Bar;","bar","baz");
+  assertExternProperties("/**\n" + " * @constructor\n" + " * @template T\n"+ " */\n"+ "var Foo = function() {};\n"+ "/**\n"+ " * @constructor\n"+ " * @extends {Foo.<{bar: string, baz: string}>}\n"+ " */\n"+ "var Bar = function() {};","bar","baz");
+  assertExternProperties("/** @enum {{bar: string, baz: (string|undefined)}} */\n" + "var FooEnum = {VALUE: {bar: ''}};","VALUE","bar","baz");
+  assertExternProperties("/** @type {{bar: string, baz: {foobar: string}}} */ var foo;","bar","baz","foobar");
+  assertExternProperties("/** @typedef {{a: D2}} */\n" + "var D1;\n" + "\n"+ "/** @typedef {{b: D1}} */\n"+ "var D2;","a","b");
+  assertExternProperties("/** @typedef {{a: function(D2)}} */\n" + "var D1;\n" + "\n"+ "/** @typedef {{b: D1}} */\n"+ "var D2;","a","b");
+  testSame("/** @type {NonExternType} */ var foo;","/** @typedef {{bar: string, baz: string}} */ var NonExternType;",null);
+  assertEquals(Sets.newHashSet(),getLastCompiler().getExternProperties());
+}

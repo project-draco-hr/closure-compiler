@@ -1,0 +1,21 @@
+{
+  for (  Node param : type.getParameters()) {
+    visitOnce(param.getJSType());
+  }
+  visitOnce(type.getReturnType());
+  if (type.isInterface()) {
+    for (    JSType extendedType : type.getExtendedInterfaces()) {
+      visitOnce(extendedType);
+    }
+  }
+  if (type.isConstructor()) {
+    for (    JSType implementedType : type.getOwnImplementedInterfaces()) {
+      visitOnce(implementedType);
+    }
+    JSType superClass=type.getPrototype().getImplicitPrototype();
+    if (superClass != null) {
+      visitOnce(superClass);
+    }
+  }
+  return externProperties;
+}
