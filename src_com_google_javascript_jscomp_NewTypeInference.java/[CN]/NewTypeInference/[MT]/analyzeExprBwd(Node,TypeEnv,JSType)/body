@@ -21,7 +21,7 @@ JSType result=JSType.TOP_OBJECT;
 TypeEnv env=outEnv;
 for (Node key=expr.getLastChild(); key != null; key=expr.getChildBefore(key)) {
   String pname=NodeUtil.getObjectLitKeyName(key);
-  JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.TOP;
+  JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.UNKNOWN;
   EnvTypePair pair=analyzeExprBwd(key.getLastChild(),env,reqPtype);
   result=result.withProperty(pname,pair.type);
   env=pair.env;
@@ -44,7 +44,7 @@ return new EnvTypePair(outEnv,JSType.UNDEFINED);
 }
 JSType inferredType=envGetType(outEnv,varName);
 if (inferredType == null) {
-inferredType=JSType.TOP;
+inferredType=JSType.UNKNOWN;
 }
 JSType preciseType=inferredType.specialize(requiredType);
 if (currentScope.isUndeclaredFormal(varName) && requiredType.hasNonScalar()) {
@@ -226,7 +226,7 @@ TypeEnv tmpEnv=outEnv;
 for (int i=expr.getChildCount() - 2; i >= 0; i--) {
 JSType formalType=funType.getFormalType(i);
 if (formalType.isBottom()) {
-formalType=JSType.TOP;
+formalType=JSType.UNKNOWN;
 }
 Node arg=expr.getChildAtIndex(i + 1);
 tmpEnv=analyzeExprBwd(arg,tmpEnv,formalType).env;
@@ -239,7 +239,7 @@ tmpEnv=collectTypesForFreeVarsBwd(callee,tmpEnv);
 }
  else if (expr.isCall()) {
 Scope s=currentScope.getScope(calleeName);
-JSType expectedRetType=JSType.TOP;
+JSType expectedRetType=JSType.UNKNOWN;
 if (s.getDeclaredType().getReturnType() == null) {
 expectedRetType=requiredType;
 }
