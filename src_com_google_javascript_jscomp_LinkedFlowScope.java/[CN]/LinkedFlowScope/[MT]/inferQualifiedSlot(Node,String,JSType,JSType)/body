@@ -1,9 +1,18 @@
 {
   Scope functionScope=getFunctionScope();
   if (functionScope.isLocal()) {
-    if (functionScope.getVar(symbol) == null && !functionScope.isBottom()) {
+    Var v=functionScope.getVar(symbol);
+    if (v == null && !functionScope.isBottom()) {
       functionScope.declare(symbol,node,bottomType,null);
     }
-    inferSlotType(symbol,inferredType);
+    if (v != null && !v.isTypeInferred()) {
+      JSType declaredType=v.getType();
+      if (declaredType != null && inferredType.isSubtype(declaredType) && !declaredType.isSubtype(inferredType)) {
+        inferSlotType(symbol,inferredType);
+      }
+    }
+ else {
+      inferSlotType(symbol,inferredType);
+    }
   }
 }
