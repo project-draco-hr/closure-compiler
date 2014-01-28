@@ -331,26 +331,30 @@ int minArity=funType.getMinArity();
 int numArgs=expr.getChildCount() - 1;
 if (numArgs < minArity || numArgs > maxArity) {
 warnings.add(JSError.make(expr,TypeCheck.WRONG_ARGUMENT_COUNT,"",Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
+return new EnvTypePair(inEnv,requiredType);
+}
+if (funType.isGeneric()) {
+Map<String,JSType> typeMap=calcTypeInstantiation(funType.getTypeParameters(),expr,funType,inEnv,true);
+funType=funType.instantiateGenerics(typeMap);
 }
 List<JSType> argTypes=Lists.newArrayList();
 TypeEnv tmpEnv=inEnv;
+Node arg=expr.getChildAtIndex(1);
 for (int i=0; i < numArgs; i++) {
-JSType formalType=(i < maxArity) ? funType.getFormalType(i) : JSType.TOP;
+JSType formalType=funType.getFormalType(i);
 if (formalType.isBottom()) {
 warnings.add(JSError.make(expr,CALL_FUNCTION_WITH_BOTTOM_FORMAL,Integer.toString(i)));
 formalType=JSType.TOP;
 }
-Node arg=expr.getChildAtIndex(i + 1);
 EnvTypePair pair=analyzeExprFwd(arg,tmpEnv,formalType);
 if (!pair.type.isSubtypeOf(formalType)) {
 warnings.add(JSError.make(arg,INVALID_ARGUMENT_TYPE,Integer.toString(i + 1),"",formalType.toString(),pair.type.toString()));
 pair.type=JSType.UNKNOWN;
 }
-if (i < maxArity) {
 Preconditions.checkState(!pair.type.equals(JSType.topFunction()));
 argTypes.add(pair.type);
-}
 tmpEnv=pair.env;
+arg=arg.getNext();
 }
 JSType retType=funType.getReturnType();
 if (callee.isName()) {

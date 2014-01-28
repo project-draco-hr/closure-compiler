@@ -11,5 +11,9 @@
  else   if (this.isTop() || this.isUnknown()) {
     return other.withLocation(this.location);
   }
-  return new JSType(this.type & other.type,this.location,ObjectType.specializeSet(this.objs,other.objs),typeVar);
+  String newTypevar=null;
+  if (typeVar != null && other.typeVar != null && typeVar.equals(other.typeVar)) {
+    newTypevar=typeVar;
+  }
+  return new JSType(this.type & other.type,this.location,ObjectType.specializeSet(this.objs,other.objs),newTypevar);
 }

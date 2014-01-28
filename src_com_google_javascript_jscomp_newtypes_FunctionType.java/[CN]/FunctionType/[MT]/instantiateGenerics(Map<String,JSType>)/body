@@ -1,15 +1,19 @@
 {
   Preconditions.checkState(klass == null);
-  ImmutableMap<String,JSType> concreteMapping=mapFromLists(typeParameters,concreteTypes);
+  for (  String typeParam : typeMap.keySet()) {
+    Preconditions.checkState(typeParameters.contains(typeParam));
+  }
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   for (  JSType reqFormal : requiredFormals) {
-    builder.addReqFormal(reqFormal.substituteGenerics(concreteMapping));
+    builder.addReqFormal(reqFormal.substituteGenerics(typeMap));
   }
   for (  JSType optFormal : optionalFormals) {
-    builder.addOptFormal(optFormal.substituteGenerics(concreteMapping));
+    builder.addOptFormal(optFormal.substituteGenerics(typeMap));
   }
-  builder.addRestFormals(restFormals.substituteGenerics(concreteMapping));
-  builder.addRetType(returnType.substituteGenerics(concreteMapping));
+  if (restFormals != null) {
+    builder.addRestFormals(restFormals.substituteGenerics(typeMap));
+  }
+  builder.addRetType(returnType.substituteGenerics(typeMap));
   if (isLoose) {
     builder.addLoose();
   }

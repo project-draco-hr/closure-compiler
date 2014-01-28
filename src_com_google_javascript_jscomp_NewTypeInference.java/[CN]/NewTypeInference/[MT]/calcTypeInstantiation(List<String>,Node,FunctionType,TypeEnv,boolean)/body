@@ -1,0 +1,45 @@
+{
+  HashMap<String,Set<JSType>> typeMultimap=Maps.newHashMap();
+  for (  String templateVar : templateVars) {
+    typeMultimap.put(templateVar,new HashSet<JSType>());
+  }
+  Node arg=callNode.getChildAtIndex(1);
+  int i=0;
+  while (arg != null) {
+    EnvTypePair pair=isFwd ? analyzeExprFwd(arg,typeEnv) : analyzeExprBwd(arg,typeEnv);
+    JSType unifTarget=funType.getFormalType(i);
+    JSType unifSource=pair.type;
+    HashMap<String,Set<JSType>> tmpMultimap=JSType.unify(templateVars,unifTarget,unifSource,typeMultimap);
+    if (tmpMultimap == null) {
+      warnings.add(JSError.make(arg,BAD_INSTANTIATION,unifTarget.toString(),unifSource.toString()));
+    }
+ else {
+      typeMultimap=tmpMultimap;
+    }
+    arg=arg.getNext();
+    typeEnv=pair.env;
+    i++;
+  }
+  HashMap<String,JSType> typeMap=Maps.newHashMap();
+  for (  String templateVar : templateVars) {
+    Set<JSType> types=typeMultimap.get(templateVar);
+    if (types.size() > 1) {
+      types.remove(JSType.UNKNOWN);
+    }
+    if (types.size() > 1) {
+      Set<String> typeStrings=Sets.newHashSet();
+      for (      JSType t : types) {
+        typeStrings.add(t.toString());
+      }
+      warnings.add(JSError.make(callNode,CANNOT_INSTANTIATE_TYPE_VAR,templateVar,Joiner.on(", ").join(typeStrings)));
+      typeMap.put(templateVar,JSType.UNKNOWN);
+    }
+ else     if (types.size() == 1) {
+      typeMap.put(templateVar,Iterables.getOnlyElement(types));
+    }
+ else {
+      typeMap.put(templateVar,JSType.UNKNOWN);
+    }
+  }
+  return typeMap;
+}

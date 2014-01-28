@@ -2,7 +2,13 @@
   Preconditions.checkArgument(!ignoreJsdoc || jsdoc == null);
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   Node params=funNode.getFirstChild().getNext();
-  ImmutableList<String> typeParameters=jsdoc == null ? null : jsdoc.getTemplateTypeNames();
+  ImmutableList<String> typeParameters=null;
+  if (jsdoc != null) {
+    typeParameters=jsdoc.getTemplateTypeNames();
+    if (typeParameters.size() > 0) {
+      builder.addTypeParameters(typeParameters);
+    }
+  }
   for (Node param=params.getFirstChild(); param != null; param=param.getNext()) {
     String pname=param.getQualifiedName();
     JSType inlineParamType=ignoreJsdoc ? null : getNodeTypeDeclaration(param.getJSDocInfo(),registry);
