@@ -1,0 +1,16 @@
+{
+  ReferenceCollectingCallback collector=new ReferenceCollectingCallback(compiler,ReferenceCollectingCallback.DO_NOTHING_BEHAVIOR,new Predicate<Var>(){
+    @Override public boolean apply(    Var var){
+      return var.isGlobal() && !compiler.getCodingConvention().isExported(var.getName());
+    }
+  }
+);
+  NodeTraversal.traverse(compiler,root,collector);
+  for (  Var v : collector.getAllSymbols()) {
+    ReferenceCollection refCollection=collector.getReferences(v);
+    NamedInfo info=getNamedInfo(v);
+    for (    Reference ref : refCollection) {
+      processReference(collector,ref,info);
+    }
+  }
+}

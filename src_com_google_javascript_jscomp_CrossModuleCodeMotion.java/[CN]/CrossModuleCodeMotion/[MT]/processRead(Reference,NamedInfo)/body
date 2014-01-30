@@ -1,6 +1,7 @@
 {
+  String name=ref.getNode().getString();
   boolean recursive=false;
-  Node rootNode=t.getScope().getRootNode();
+  Node rootNode=ref.getScope().getRootNode();
   if (rootNode.isFunction()) {
     String scopeFuncName=rootNode.getFirstChild().getString();
     Node scopeFuncParent=rootNode.getParent();
@@ -11,7 +12,7 @@
       recursive=true;
     }
  else {
-      for (Scope s=t.getScope(); s.getParent() != null; s=s.getParent()) {
+      for (Scope s=ref.getScope(); s.getParent() != null; s=s.getParent()) {
         Node curRoot=s.getRootNode();
         if (curRoot.getParent().isAssign()) {
           Node owner=curRoot.getParent().getFirstChild();
@@ -27,6 +28,6 @@
     }
   }
   if (!recursive) {
-    info.addUsedModule(t.getModule());
+    info.addUsedModule(getModule(ref));
   }
 }

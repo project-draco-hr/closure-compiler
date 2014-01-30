@@ -1,0 +1,19 @@
+{
+  Node n=ref.getNode();
+  Node parent=n.getParent();
+  if (info.allowMove) {
+    if (maybeProcessDeclaration(collector,ref,info)) {
+      if (hasConditionalAncestor(parent.getParent())) {
+        info.allowMove=false;
+      }
+    }
+ else {
+      if (parentModuleCanSeeSymbolsDeclaredInChildren && parent.isInstanceOf() && parent.getLastChild() == n) {
+        instanceofNodes.put(parent,new InstanceofInfo(getModule(ref),info));
+      }
+ else {
+        processRead(ref,info);
+      }
+    }
+  }
+}

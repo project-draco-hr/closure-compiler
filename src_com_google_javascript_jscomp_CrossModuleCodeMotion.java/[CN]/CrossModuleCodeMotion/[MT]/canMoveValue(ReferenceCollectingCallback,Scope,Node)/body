@@ -9,11 +9,20 @@
  else   if (n.isArrayLit() || n.isObjectLit()) {
     boolean isObjectLit=n.isObjectLit();
     for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-      if (!canMoveValue(isObjectLit ? child.getFirstChild() : child)) {
+      if (!canMoveValue(collector,scope,isObjectLit ? child.getFirstChild() : child)) {
         return false;
       }
     }
     return true;
+  }
+ else   if (n.isName()) {
+    Var v=scope.getVar(n.getString());
+    if (v != null && v.isGlobal()) {
+      ReferenceCollection refCollection=collector.getReferences(v);
+      if (refCollection != null && refCollection.isWellDefined() && refCollection.isAssignedOnceInLifetime()) {
+        return true;
+      }
+    }
   }
   return false;
 }

@@ -1,14 +1,16 @@
 {
+  Node name=ref.getNode();
+  Node parent=name.getParent();
   Node gramps=parent.getParent();
 switch (parent.getType()) {
 case Token.VAR:
-    if (canMoveValue(name.getFirstChild())) {
-      return info.addDeclaration(new Declaration(t.getModule(),name));
+    if (canMoveValue(collector,ref.getScope(),name.getFirstChild())) {
+      return info.addDeclaration(new Declaration(getModule(ref),name));
     }
   return false;
 case Token.FUNCTION:
 if (NodeUtil.isFunctionDeclaration(parent)) {
-  return info.addDeclaration(new Declaration(t.getModule(),name));
+  return info.addDeclaration(new Declaration(getModule(ref),name));
 }
 return false;
 case Token.ASSIGN:
@@ -19,8 +21,8 @@ if (current.isGetProp()) {
 }
  else if (current.isAssign() && current.getFirstChild() == child) {
 Node currentParent=current.getParent();
-if (currentParent.isExprResult() && canMoveValue(current.getLastChild())) {
-return info.addDeclaration(new Declaration(t.getModule(),current));
+if (currentParent.isExprResult() && canMoveValue(collector,ref.getScope(),current.getLastChild())) {
+return info.addDeclaration(new Declaration(getModule(ref),current));
 }
 }
  else {
@@ -33,7 +35,7 @@ case Token.CALL:
 if (NodeUtil.isExprCall(gramps)) {
 SubclassRelationship relationship=compiler.getCodingConvention().getClassesDefinedByCall(parent);
 if (relationship != null && name.getString().equals(relationship.subclassName)) {
-return info.addDeclaration(new Declaration(t.getModule(),parent));
+return info.addDeclaration(new Declaration(getModule(ref),parent));
 }
 }
 return false;
