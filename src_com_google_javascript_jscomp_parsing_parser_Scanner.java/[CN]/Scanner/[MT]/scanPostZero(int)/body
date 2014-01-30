@@ -1,11 +1,27 @@
 {
 switch (peekChar()) {
+case 'b':
+case 'B':
+    nextChar();
+  if (!isBinaryDigit(peekChar())) {
+    reportError("Binary Integer Literal must contain at least one digit");
+  }
+skipBinaryDigits();
+return new LiteralToken(TokenType.NUMBER,getTokenString(beginToken),getTokenRange(beginToken));
+case 'o':
+case 'O':
+nextChar();
+if (!isOctalDigit(peekChar())) {
+reportError("Octal Integer Literal must contain at least one digit");
+}
+skipOctalDigits();
+return new LiteralToken(TokenType.NUMBER,getTokenString(beginToken),getTokenRange(beginToken));
 case 'x':
 case 'X':
-    nextChar();
-  if (!isHexDigit(peekChar())) {
-    reportError("Hex Integer Literal must contain at least one digit");
-  }
+nextChar();
+if (!isHexDigit(peekChar())) {
+reportError("Hex Integer Literal must contain at least one digit");
+}
 skipHexDigits();
 return new LiteralToken(TokenType.NUMBER,getTokenString(beginToken),getTokenRange(beginToken));
 case '.':

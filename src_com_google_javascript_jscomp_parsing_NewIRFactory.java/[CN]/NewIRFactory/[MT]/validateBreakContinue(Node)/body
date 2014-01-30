@@ -1,0 +1,42 @@
+{
+  if (n.isBreak() || n.isContinue()) {
+    Node labelName=n.getFirstChild();
+    if (labelName != null) {
+      Node parent=n.getParent();
+      while (!parent.isLabel() || !labelsMatch(parent,labelName)) {
+        if (parent.isFunction() || parent.isScript()) {
+          errorReporter.error(String.format(UNDEFINED_LABEL,labelName.getString()),sourceName,n.getLineno(),"",n.getCharno());
+          break;
+        }
+        parent=parent.getParent();
+      }
+      if (parent.isLabel() && labelsMatch(parent,labelName)) {
+        if (n.isContinue() && !isContinueTarget(parent.getLastChild())) {
+          errorReporter.error(String.format(UNEXPECTED_LABLED_CONTINUE,labelName.getString()),sourceName,n.getLineno(),"",n.getCharno());
+        }
+      }
+    }
+ else {
+      if (n.isContinue()) {
+        Node parent=n.getParent();
+        while (!isContinueTarget(parent)) {
+          if (parent.isFunction() || parent.isScript()) {
+            errorReporter.error(String.format(UNEXPECTED_CONTINUE),sourceName,n.getLineno(),"",n.getCharno());
+            break;
+          }
+          parent=parent.getParent();
+        }
+      }
+ else {
+        Node parent=n.getParent();
+        while (!isBreakTarget(parent)) {
+          if (parent.isFunction() || parent.isScript()) {
+            errorReporter.error(String.format(UNLABELED_BREAK),sourceName,n.getLineno(),"",n.getCharno());
+            break;
+          }
+          parent=parent.getParent();
+        }
+      }
+    }
+  }
+}

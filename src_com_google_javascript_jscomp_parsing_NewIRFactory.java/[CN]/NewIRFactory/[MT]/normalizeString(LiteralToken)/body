@@ -1,4 +1,5 @@
 {
+  String value=token.value;
   StringBuilder result=new StringBuilder();
   int start=1;
   int cur=value.indexOf('\\');
@@ -36,6 +37,9 @@ case 'v':
 result.append('\u000B');
 break;
 case '\n':
+if (!isEs5OrBetterMode()) {
+errorReporter.warning(STRING_CONTINUATION_WARNING,sourceName,lineno(token.location.start),"",charno(token.location.start));
+}
 break;
 case '0':
 result.append('\0');
