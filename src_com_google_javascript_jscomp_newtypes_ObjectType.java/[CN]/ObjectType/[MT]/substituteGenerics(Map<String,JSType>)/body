@@ -1,0 +1,12 @@
+{
+  Preconditions.checkState(klass == null);
+  ImmutableMap<String,Property> newProps=null;
+  if (props != null) {
+    ImmutableMap.Builder<String,Property> builder=ImmutableMap.builder();
+    for (    String p : props.keySet()) {
+      builder.put(p,props.get(p).substituteGenerics(concreteTypes));
+    }
+    newProps=builder.build();
+  }
+  return new ObjectType(null,newProps,fn == null ? null : fn.substituteGenerics(concreteTypes),isLoose);
+}

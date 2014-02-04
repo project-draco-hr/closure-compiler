@@ -333,9 +333,11 @@ if (numArgs < minArity || numArgs > maxArity) {
 warnings.add(JSError.make(expr,TypeCheck.WRONG_ARGUMENT_COUNT,"",Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
 return new EnvTypePair(inEnv,requiredType);
 }
+FunctionType origFunType=funType;
 if (funType.isGeneric()) {
-Map<String,JSType> typeMap=calcTypeInstantiation(funType.getTypeParameters(),expr,funType,inEnv,true);
+Map<String,JSType> typeMap=calcTypeInstantiationFwd(expr,funType,inEnv);
 funType=funType.instantiateGenerics(typeMap);
+println("Instantiated function type: " + funType);
 }
 List<JSType> argTypes=Lists.newArrayList();
 TypeEnv tmpEnv=inEnv;
@@ -363,7 +365,7 @@ if (currentScope.isKnownFunction(calleeName)) {
 if (currentScope.isLocalFunDef(calleeName)) {
 collectTypesForFreeVarsFwd(callee,tmpEnv);
 }
- else {
+ else if (!origFunType.isGeneric()) {
 JSType expectedRetType=requiredType;
 println("Updating deferred check with ret: ",expectedRetType," and args: ",argTypes);
 DeferredCheck dc;

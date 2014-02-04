@@ -1,0 +1,36 @@
+{
+  Preconditions.checkState(klass == null);
+  Preconditions.checkState(typeParameters == null);
+  Preconditions.checkState(outerVarPreconditions.isEmpty());
+  if (requiredFormals.size() != other.requiredFormals.size()) {
+    return false;
+  }
+  Iterator<JSType> thisReqFormals=requiredFormals.iterator();
+  Iterator<JSType> otherReqFormals=other.requiredFormals.iterator();
+  while (thisReqFormals.hasNext()) {
+    JSType reqFormal=thisReqFormals.next();
+    JSType otherReqFormal=otherReqFormals.next();
+    if (!reqFormal.unifyWith(otherReqFormal,templateVars,typeMultimap)) {
+      return false;
+    }
+  }
+  if (optionalFormals.size() != other.optionalFormals.size()) {
+    return false;
+  }
+  Iterator<JSType> thisOptFormals=optionalFormals.iterator();
+  Iterator<JSType> otherOptFormals=other.optionalFormals.iterator();
+  while (thisOptFormals.hasNext()) {
+    JSType optFormal=thisOptFormals.next();
+    JSType otherOptFormal=otherOptFormals.next();
+    if (!optFormal.unifyWith(otherOptFormal,templateVars,typeMultimap)) {
+      return false;
+    }
+  }
+  if (restFormals == null && other.restFormals != null || restFormals != null && other.restFormals == null) {
+    return false;
+  }
+  if (restFormals != null && !restFormals.unifyWith(other.restFormals,templateVars,typeMultimap)) {
+    return false;
+  }
+  return returnType.unifyWith(other.returnType,templateVars,typeMultimap);
+}

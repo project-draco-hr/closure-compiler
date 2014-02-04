@@ -11,9 +11,14 @@
  else   if (this.isTop() || this.isUnknown()) {
     return other.withLocation(this.location);
   }
-  String newTypevar=null;
-  if (typeVar != null && other.typeVar != null && typeVar.equals(other.typeVar)) {
-    newTypevar=typeVar;
+  int newMask=this.mask & other.mask;
+  String newTypevar;
+  if (Objects.equal(this.typeVar,other.typeVar)) {
+    newTypevar=this.typeVar;
   }
-  return new JSType(this.mask & other.mask,this.location,ObjectType.specializeSet(this.objs,other.objs),newTypevar);
+ else {
+    newTypevar=null;
+    newMask=newMask & ~TYPEVAR_MASK;
+  }
+  return new JSType(newMask,this.location,ObjectType.specializeSet(this.objs,other.objs),newTypevar);
 }

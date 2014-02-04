@@ -218,8 +218,9 @@ int numArgs=expr.getChildCount() - 1;
 if (numArgs < funType.getMinArity() || numArgs > funType.getMaxArity()) {
 return new EnvTypePair(outEnv,requiredType);
 }
+FunctionType origFunType=funType;
 if (funType.isGeneric()) {
-Map<String,JSType> typeMap=calcTypeInstantiation(funType.getTypeParameters(),expr,funType,outEnv,false);
+Map<String,JSType> typeMap=calcTypeInstantiationBwd(expr,funType,outEnv);
 funType=funType.instantiateGenerics(typeMap);
 }
 TypeEnv tmpEnv=outEnv;
@@ -237,7 +238,7 @@ if (currentScope.isKnownFunction(calleeName)) {
 if (currentScope.isLocalFunDef(calleeName)) {
 tmpEnv=collectTypesForFreeVarsBwd(callee,tmpEnv);
 }
- else if (expr.isCall()) {
+ else if (!origFunType.isGeneric() && expr.isCall()) {
 Scope s=currentScope.getScope(calleeName);
 JSType expectedRetType=JSType.UNKNOWN;
 if (s.getDeclaredType().getReturnType() == null) {

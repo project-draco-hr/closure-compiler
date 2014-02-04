@@ -4,15 +4,15 @@
   }
   ImmutableSet<ObjectType> newObjs=null;
   if (objs != null) {
-    ImmutableSet.Builder<ObjectType> newObjsBuilder=ImmutableSet.builder();
+    ImmutableSet.Builder<ObjectType> builder=ImmutableSet.builder();
     for (    ObjectType obj : objs) {
+      builder.add(obj.substituteGenerics(concreteTypes));
     }
-    newObjs=objs;
+    newObjs=builder.build();
   }
   JSType current=new JSType(mask & ~TYPEVAR_MASK,location,newObjs,null);
   if ((mask & TYPEVAR_MASK) != 0) {
-    JSType concrete=concreteTypes.get(typeVar);
-    current=JSType.join(current,concrete);
+    current=JSType.join(current,concreteTypes.containsKey(typeVar) ? concreteTypes.get(typeVar) : fromTypeVar(typeVar));
   }
   return current;
 }

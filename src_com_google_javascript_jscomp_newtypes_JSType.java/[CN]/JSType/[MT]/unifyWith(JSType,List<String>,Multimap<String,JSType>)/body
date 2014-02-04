@@ -13,9 +13,6 @@
     return false;
   }
  else   if (other.isUnknown()) {
-    for (    String var : templateVars) {
-      updateTypemap(typeMultimap,var,UNKNOWN);
-    }
     return true;
   }
   Set<ObjectType> ununified=ImmutableSet.of();
@@ -36,8 +33,15 @@
       }
     }
   }
-  String targetTypevar=this.typeVar;
-  if (targetTypevar != null && templateVars.contains(targetTypevar)) {
+  String thisTypevar=this.typeVar;
+  String otherTypevar=other.typeVar;
+  if (thisTypevar == null) {
+    return otherTypevar == null && mask == other.mask;
+  }
+ else   if (!templateVars.contains(thisTypevar)) {
+    return thisTypevar.equals(otherTypevar) && mask == other.mask;
+  }
+ else {
     int templateMask=0;
     if (!ununified.isEmpty()) {
       templateMask|=NON_SCALAR_MASK;
@@ -51,8 +55,8 @@
     if (templateMask == BOTTOM_MASK) {
       return false;
     }
-    JSType templateType=new JSType(promoteBoolean(templateMask),null,ImmutableSet.copyOf(ununified),other.typeVar);
+    JSType templateType=new JSType(promoteBoolean(templateMask),null,ImmutableSet.copyOf(ununified),otherTypevar);
     updateTypemap(typeMultimap,typeVar,templateType);
+    return true;
   }
-  return true;
 }

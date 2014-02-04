@@ -1,0 +1,14 @@
+{
+  if (declaredType != null && declaredType.isGeneric()) {
+    if (declaredType.getTypeParameters().contains(name)) {
+      return JSType.fromTypeVar(name);
+    }
+  }
+  if (localClassDefs != null) {
+    NominalType klass=localClassDefs.get(name);
+    if (klass != null) {
+      return JSType.join(JSType.NULL,JSType.fromObjectType(ObjectType.fromClass(klass)));
+    }
+  }
+  return parent == null ? null : parent.lookupTypeByName(name);
+}

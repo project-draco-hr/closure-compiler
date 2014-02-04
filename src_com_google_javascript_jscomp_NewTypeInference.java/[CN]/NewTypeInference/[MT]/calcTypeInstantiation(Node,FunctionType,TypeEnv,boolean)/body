@@ -1,4 +1,5 @@
 {
+  List<String> templateVars=funType.getTypeParameters();
   Multimap<String,JSType> typeMultimap=HashMultimap.create();
   Node arg=callNode.getChildAtIndex(1);
   int i=0;
@@ -7,7 +8,13 @@
     JSType unifTarget=funType.getFormalType(i);
     JSType unifSource=pair.type;
     if (!unifTarget.unifyWith(unifSource,templateVars,typeMultimap)) {
-      warnings.add(JSError.make(arg,BAD_INSTANTIATION,unifTarget.toString(),unifSource.toString()));
+      HashMap<String,JSType> tmpTypeMap=Maps.newHashMap();
+      for (      String templateVar : templateVars) {
+        tmpTypeMap.put(templateVar,JSType.UNKNOWN);
+      }
+      if (unifSource.isSubtypeOf(unifTarget.substituteGenerics(tmpTypeMap))) {
+        warnings.add(JSError.make(arg,FAILED_TO_UNIFY,unifTarget.toString(),unifSource.toString()));
+      }
     }
     arg=arg.getNext();
     typeEnv=pair.env;
@@ -18,7 +25,7 @@
     Collection<JSType> types=typeMultimap.get(templateVar);
     if (types.size() > 1) {
       if (isFwd) {
-        warnings.add(JSError.make(callNode,CANNOT_INSTANTIATE_TYPE_VAR,templateVar,types.toString()));
+        warnings.add(JSError.make(callNode,NOT_UNIQUE_INSTANTIATION,templateVar,types.toString()));
       }
       typeMap.put(templateVar,JSType.UNKNOWN);
     }

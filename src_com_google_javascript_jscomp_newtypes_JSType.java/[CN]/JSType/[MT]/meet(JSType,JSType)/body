@@ -11,6 +11,14 @@
  else   if (rhs.isUnknown()) {
     return lhs;
   }
-  String typeVar=lhs.typeVar != null && lhs.typeVar.equals(rhs.typeVar) ? lhs.typeVar : null;
-  return new JSType(lhs.mask & rhs.mask,null,ObjectType.meetSets(lhs.objs,rhs.objs),typeVar);
+  int newMask=lhs.mask & rhs.mask;
+  String newTypevar;
+  if (Objects.equal(lhs.typeVar,rhs.typeVar)) {
+    newTypevar=lhs.typeVar;
+  }
+ else {
+    newTypevar=null;
+    newMask=newMask & ~TYPEVAR_MASK;
+  }
+  return new JSType(newMask,null,ObjectType.meetSets(lhs.objs,rhs.objs),newTypevar);
 }

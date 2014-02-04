@@ -2,8 +2,10 @@
   if (klass != other.klass) {
     return false;
   }
-  if (fn != other.fn) {
-    throw new RuntimeException("Unification of functions not yet supported");
+  if (fn != null) {
+    if (other.fn == null || !fn.unifyWith(other.fn,templateVars,typeMultimap)) {
+      return false;
+    }
   }
   for (  String propName : this.props.keySet()) {
     Property thisProp=props.get(propName);
