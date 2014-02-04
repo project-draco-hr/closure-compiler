@@ -1,0 +1,16 @@
+{
+  if (klass != other.klass) {
+    return false;
+  }
+  if (fn != other.fn) {
+    throw new RuntimeException("Unification of functions not yet supported");
+  }
+  for (  String propName : this.props.keySet()) {
+    Property thisProp=props.get(propName);
+    Property otherProp=other.props.get(propName);
+    if (otherProp == null || !thisProp.unifyWith(otherProp,templateVars,typeMultimap)) {
+      return false;
+    }
+  }
+  return true;
+}

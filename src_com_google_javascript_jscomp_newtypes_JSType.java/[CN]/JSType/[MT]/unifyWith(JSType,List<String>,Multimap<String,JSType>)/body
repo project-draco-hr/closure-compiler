@@ -1,0 +1,58 @@
+{
+  if (this.isUnknown()) {
+    return true;
+  }
+ else   if (this.isTop()) {
+    return other.isTop();
+  }
+ else   if (this.mask == TYPEVAR_MASK && templateVars.contains(typeVar)) {
+    updateTypemap(typeMultimap,typeVar,new JSType(promoteBoolean(other.mask),null,other.objs,other.typeVar));
+    return true;
+  }
+ else   if (other.isTop()) {
+    return false;
+  }
+ else   if (other.isUnknown()) {
+    for (    String var : templateVars) {
+      updateTypemap(typeMultimap,var,UNKNOWN);
+    }
+    return true;
+  }
+  Set<ObjectType> ununified=ImmutableSet.of();
+  if (other.objs != null) {
+    ununified=Sets.newHashSet(other.objs);
+  }
+  if (this.objs != null) {
+    for (    ObjectType targetObj : this.objs) {
+      boolean hasUnified=false;
+      for (      ObjectType sourceObj : other.objs) {
+        if (targetObj.unifyWith(sourceObj,templateVars,typeMultimap)) {
+          ununified.remove(sourceObj);
+          hasUnified=true;
+        }
+      }
+      if (!hasUnified) {
+        return false;
+      }
+    }
+  }
+  String targetTypevar=this.typeVar;
+  if (targetTypevar != null && templateVars.contains(targetTypevar)) {
+    int templateMask=0;
+    if (!ununified.isEmpty()) {
+      templateMask|=NON_SCALAR_MASK;
+    }
+    if ((other.mask & TYPEVAR_MASK) != 0) {
+      templateMask|=TYPEVAR_MASK;
+    }
+    int thisScalarBits=this.mask & ~NON_SCALAR_MASK & ~TYPEVAR_MASK;
+    int otherScalarBits=other.mask & ~NON_SCALAR_MASK & ~TYPEVAR_MASK;
+    templateMask|=otherScalarBits & ~thisScalarBits;
+    if (templateMask == BOTTOM_MASK) {
+      return false;
+    }
+    JSType templateType=new JSType(promoteBoolean(templateMask),null,ImmutableSet.copyOf(ununified),other.typeVar);
+    updateTypemap(typeMultimap,typeVar,templateType);
+  }
+  return true;
+}

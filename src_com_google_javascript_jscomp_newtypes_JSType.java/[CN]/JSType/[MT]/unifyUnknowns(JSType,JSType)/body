@@ -1,0 +1,47 @@
+{
+  if (t1.isUnknown()) {
+    return t2;
+  }
+ else   if (t2.isUnknown()) {
+    return t1;
+  }
+ else   if (t1.isTop() && t2.isTop()) {
+    return TOP;
+  }
+ else   if (t1.isTop() || t2.isTop()) {
+    return null;
+  }
+  int t1Mask=promoteBoolean(t1.mask);
+  int t2Mask=promoteBoolean(t2.mask);
+  if (t1Mask != t2Mask || t1.typeVar != t2.typeVar) {
+    return null;
+  }
+  if ((t1Mask & NON_SCALAR_MASK) == 0) {
+    return t1;
+  }
+  if (t1.objs.size() != t2.objs.size()) {
+    return null;
+  }
+  Set<ObjectType> ununified=Sets.newHashSet(t2.objs);
+  Set<ObjectType> unifiedObjs=Sets.newHashSet();
+  for (  ObjectType objType1 : t1.objs) {
+    ObjectType unified=objType1;
+    boolean hasUnified=false;
+    for (    ObjectType objType2 : t2.objs) {
+      ObjectType tmp=ObjectType.unifyUnknowns(unified,objType2);
+      if (tmp != null) {
+        hasUnified=true;
+        ununified.remove(objType2);
+        unified=tmp;
+      }
+    }
+    if (!hasUnified) {
+      return null;
+    }
+    unifiedObjs.add(unified);
+  }
+  if (!ununified.isEmpty()) {
+    return null;
+  }
+  return new JSType(t1Mask,null,ImmutableSet.copyOf(unifiedObjs),t1.typeVar);
+}

@@ -1,0 +1,22 @@
+{
+  if (t1.klass != t2.klass) {
+    return null;
+  }
+  if (t1.fn != t2.fn) {
+    throw new RuntimeException("Unification of functions not yet supported");
+  }
+  Map<String,Property> newprops=Maps.newHashMap();
+  for (  String propName : t1.props.keySet()) {
+    Property prop1=t1.props.get(propName);
+    Property prop2=t2.props.get(propName);
+    if (prop2 == null) {
+      return null;
+    }
+    Property p=Property.unifyUnknowns(prop1,prop2);
+    if (p == null) {
+      return null;
+    }
+    newprops.put(propName,p);
+  }
+  return makeObjectType(t1.klass,newprops,t1.fn,t1.isLoose || t2.isLoose);
+}

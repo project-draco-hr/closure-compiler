@@ -1,0 +1,14 @@
+{
+  JSType unifiedDeclaredType=null;
+  if (p1.declaredType != null && p2.declaredType != null) {
+    unifiedDeclaredType=JSType.unifyUnknowns(p1.declaredType,p2.declaredType);
+    if (unifiedDeclaredType == null) {
+      return null;
+    }
+  }
+  JSType unifiedInferredType=JSType.unifyUnknowns(p1.inferredType,p2.inferredType);
+  if (unifiedInferredType == null) {
+    return null;
+  }
+  return new Property(unifiedInferredType,unifiedDeclaredType,p1.isOptional && p2.isOptional);
+}
