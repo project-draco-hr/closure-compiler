@@ -1,9 +1,11 @@
 {
   SourcePosition start=getTreeStartLocation();
+  boolean isDefault=false;
   eat(TokenType.EXPORT);
   ParseTree export;
 switch (peekType()) {
 case VAR:
+case LET:
 case CONST:
     export=parseVariableStatement();
   break;
@@ -13,17 +15,15 @@ break;
 case CLASS:
 export=parseClassDeclaration();
 break;
-case IDENTIFIER:
-if (peekModuleDefinition()) {
-export=parseModuleDefinition();
-}
- else {
-throw new RuntimeException("UNDONE: export ModuleLoad | ExportPath");
-}
+case DEFAULT:
+isDefault=true;
+export=parseExpression();
 break;
+case OPEN_CURLY:
+throw new RuntimeException("UNDONE: export ExportSpecifierSet");
 default :
 export=null;
 break;
 }
-return new ExportDeclarationTree(getTreeLocation(start),export);
+return new ExportDeclarationTree(getTreeLocation(start),isDefault,export);
 }

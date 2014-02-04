@@ -1,12 +1,25 @@
 {
   SourcePosition start=getTreeStartLocation();
   eat(TokenType.IMPORT);
-  ImmutableList.Builder<ParseTree> result=ImmutableList.<ParseTree>builder();
-  result.add(parseImportPath());
-  while (peek(TokenType.COMMA)) {
-    eat(TokenType.COMMA);
-    result.add(parseImportPath());
+  if (peek(TokenType.STRING)) {
+    LiteralToken moduleSpecifier=eat(TokenType.STRING).asLiteral();
+    eatPossibleImplicitSemiColon();
+    return new ImportDeclarationTree(getTreeLocation(start),null,null,moduleSpecifier);
   }
+  IdentifierToken defaultBindingIdentifier=null;
+  ImmutableList<ParseTree> identifierSet=null;
+  if (peekId()) {
+    defaultBindingIdentifier=eatId();
+    if (peek(TokenType.COMMA)) {
+      eat(TokenType.COMMA);
+      identifierSet=parseImportSpecifierSet();
+    }
+  }
+ else   if (peek(TokenType.OPEN_CURLY)) {
+    identifierSet=parseImportSpecifierSet();
+  }
+  eatPredefinedString(PredefinedName.FROM);
+  LiteralToken moduleSpecifier=eat(TokenType.STRING).asLiteral();
   eatPossibleImplicitSemiColon();
-  return new ImportDeclarationTree(getTreeLocation(start),result.build());
+  return new ImportDeclarationTree(getTreeLocation(start),defaultBindingIdentifier,identifierSet,moduleSpecifier);
 }
