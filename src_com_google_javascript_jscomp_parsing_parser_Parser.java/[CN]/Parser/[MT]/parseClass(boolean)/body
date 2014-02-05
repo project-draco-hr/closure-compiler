@@ -1,0 +1,17 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.CLASS);
+  IdentifierToken name=null;
+  if (!isExpression || peekId()) {
+    name=eatId();
+  }
+  ParseTree superClass=null;
+  if (peek(TokenType.EXTENDS)) {
+    eat(TokenType.EXTENDS);
+    superClass=parseExpression();
+  }
+  eat(TokenType.OPEN_CURLY);
+  ImmutableList<ParseTree> elements=parseClassElements();
+  eat(TokenType.CLOSE_CURLY);
+  return new ClassDeclarationTree(getTreeLocation(start),name,isExpression,superClass,elements);
+}

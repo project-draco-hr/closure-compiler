@@ -1,8 +1,8 @@
 {
   SourcePosition start=getTreeStartLocation();
   boolean isStatic=allowStatic && eatOpt(TokenType.STATIC) != null;
-  if (peekFunction()) {
-    nextToken();
-  }
-  return parseFunctionDeclarationTail(start,isStatic);
+  IdentifierToken name=eatId();
+  FormalParameterListTree formalParameterList=parseFormalParameterList();
+  BlockTree functionBody=parseFunctionBody();
+  return new FunctionDeclarationTree(getTreeLocation(start),name,isStatic,FunctionDeclarationTree.Kind.MEMBER,formalParameterList,functionBody);
 }

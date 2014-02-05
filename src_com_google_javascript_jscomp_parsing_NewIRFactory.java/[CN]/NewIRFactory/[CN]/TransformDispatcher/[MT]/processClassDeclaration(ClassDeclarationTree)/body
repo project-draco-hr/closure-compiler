@@ -1,0 +1,13 @@
+{
+  if (!isEs6Mode()) {
+    es6LanguageFeature(tree,"class");
+  }
+  Node name=transformOrEmpty(tree.name);
+  Node superClass=transformOrEmpty(tree.superClass);
+  Node body=newNode(Token.CLASS_MEMBERS);
+  setSourceInfo(body,tree);
+  for (  ParseTree child : tree.elements) {
+    body.addChildToBack(transform(child));
+  }
+  return new Node(Token.CLASS,name,superClass,body);
+}
