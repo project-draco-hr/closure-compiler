@@ -4,19 +4,23 @@
     if (version != 3) {
       throw new SourceMapParseException("Unknown version: " + version);
     }
-    String file=sourceMapRoot.getString("file");
-    if (file.isEmpty()) {
-      throw new SourceMapParseException("File entry is missing or empty");
+    if (sourceMapRoot.has("file") && sourceMapRoot.getString("file").isEmpty()) {
+      throw new SourceMapParseException("File entry is empty");
     }
     if (sourceMapRoot.has("sections")) {
       parseMetaMap(sourceMapRoot,sectionSupplier);
       return;
     }
-    lineCount=sourceMapRoot.getInt("lineCount");
+    lineCount=sourceMapRoot.has("lineCount") ? sourceMapRoot.getInt("lineCount") : -1;
     String lineMap=sourceMapRoot.getString("mappings");
     sources=getJavaStringArray(sourceMapRoot.getJSONArray("sources"));
     names=getJavaStringArray(sourceMapRoot.getJSONArray("names"));
-    lines=Lists.newArrayListWithCapacity(lineCount);
+    if (lineCount >= 0) {
+      lines=Lists.newArrayListWithCapacity(lineCount);
+    }
+ else {
+      lines=Lists.newArrayList();
+    }
     if (sourceMapRoot.has("sourceRoot")) {
       sourceRoot=sourceMapRoot.getString("sourceRoot");
     }
