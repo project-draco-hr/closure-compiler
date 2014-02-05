@@ -3,7 +3,7 @@ switch (n.getType()) {
 case Token.FUNCTION:
     Node grandparent=parent.getParent();
   if (grandparent == null || (!grandparent.isVar() && !NodeUtil.isPrototypePropertyDeclaration(grandparent))) {
-    visitFunctionDef(n);
+    visitFunctionDef(n,null);
   }
 break;
 case Token.NAME:
@@ -23,7 +23,7 @@ if (parent.isVar() || parent.isCatch()) {
     undeclaredVars.removeAll(name);
     Node initializer=n.getFirstChild();
     if (initializer != null && initializer.isFunction()) {
-      visitFunctionDef(initializer);
+      visitFunctionDef(initializer,null);
     }
  else     if (initializer != null && NodeUtil.isNamespaceDecl(n)) {
       currentScope.addNamespace(name);
@@ -61,7 +61,7 @@ visitPrototypePropertyDeclaration(parent);
 return;
 }
 String receiverObjName=lvalue.getFirstChild().getQualifiedName();
-if (currentScope.isLocalFunDef(receiverObjName) && currentScope.getScope(receiverObjName).getDeclaredType().getClassType() != null) {
+if (currentScope.isLocalFunDef(receiverObjName) && currentScope.getScope(receiverObjName).getDeclaredType().getNominalType() != null) {
 visitConstructorPropertyDeclaration(n);
 return;
 }

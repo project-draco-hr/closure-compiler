@@ -1,0 +1,59 @@
+{
+  Preconditions.checkArgument(!ignoreJsdoc || jsdoc == null);
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  Node params=funNode.getFirstChild().getNext();
+  ImmutableList<String> typeParameters=null;
+  if (jsdoc != null) {
+    typeParameters=jsdoc.getTemplateTypeNames();
+    if (typeParameters.size() > 0) {
+      builder.addTypeParameters(typeParameters);
+    }
+  }
+  for (Node param=params.getFirstChild(); param != null; param=param.getNext()) {
+    String pname=param.getQualifiedName();
+    JSType inlineParamType=ignoreJsdoc ? null : getNodeTypeDeclaration(param.getJSDocInfo(),ownerType,registry);
+    boolean isRequired=true, isRestFormals=false;
+    JSTypeExpression texp=jsdoc == null ? null : jsdoc.getParameterType(pname);
+    Node jsdocNode=texp == null ? null : texp.getRootNode();
+    if (jsdocNode != null && jsdocNode.getType() == Token.EQUALS) {
+      isRequired=false;
+      jsdocNode=jsdocNode.getFirstChild();
+    }
+ else     if (jsdocNode != null && jsdocNode.getType() == Token.ELLIPSIS) {
+      isRequired=false;
+      isRestFormals=true;
+      jsdocNode=jsdocNode.getFirstChild();
+    }
+    JSType fnParamType=null;
+    if (jsdocNode != null) {
+      fnParamType=getTypeFromNode(jsdocNode,ownerType,registry,typeParameters);
+    }
+    if (inlineParamType != null) {
+      builder.addReqFormal(inlineParamType);
+      if (fnParamType != null) {
+        warn("Found two JsDoc comments for formal parameter " + pname,param);
+      }
+    }
+ else     if (isRequired) {
+      builder.addReqFormal(fnParamType);
+    }
+ else     if (isRestFormals) {
+      builder.addRestFormals(fnParamType);
+    }
+ else {
+      builder.addOptFormal(fnParamType);
+    }
+  }
+  JSDocInfo inlineRetJsdoc=ignoreJsdoc ? null : funNode.getFirstChild().getJSDocInfo();
+  JSTypeExpression retTypeExp=jsdoc == null ? null : jsdoc.getReturnType();
+  if (inlineRetJsdoc != null) {
+    builder.addRetType(getNodeTypeDeclaration(inlineRetJsdoc,ownerType,registry));
+    if (retTypeExp != null) {
+      warn("Found two JsDoc comments for the return type",funNode);
+    }
+  }
+ else {
+    builder.addRetType(getTypeFromJSTypeExpression(retTypeExp,ownerType,registry,typeParameters));
+  }
+  return builder;
+}

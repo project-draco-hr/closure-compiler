@@ -6,8 +6,9 @@
   }
   JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
   if (fnDoc != null && (fnDoc.isConstructor() || fnDoc.isInterface())) {
-    NominalType klass=fnDoc.isInterface() ? NominalType.makeInterface(qname) : NominalType.makeClass(qname);
-    nominaltypesByNode.put(fn,klass);
-    parentScope.addClassType(qname,klass);
+    ImmutableList<String> templateVars=fnDoc.getTemplateTypeNames();
+    NominalType nominalType=fnDoc.isInterface() ? NominalType.makeInterface(qname,templateVars) : NominalType.makeClass(qname,templateVars);
+    nominaltypesByNode.put(fn,nominalType);
+    parentScope.addNominalType(qname,nominalType);
   }
 }

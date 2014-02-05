@@ -1,0 +1,14 @@
+{
+  Map<String,JSType> fields=Maps.newHashMap();
+  for (Node fieldTypeNode=n.getFirstChild().getFirstChild(); fieldTypeNode != null; fieldTypeNode=fieldTypeNode.getNext()) {
+    Preconditions.checkState(fieldTypeNode.getType() == Token.COLON);
+    Node fieldNameNode=fieldTypeNode.getFirstChild();
+    String fieldName=fieldNameNode.getString();
+    if (fieldName.startsWith("'") || fieldName.startsWith("\"")) {
+      fieldName=fieldName.substring(1,fieldName.length() - 1);
+    }
+    JSType fieldType=getTypeFromNodeHelper(fieldTypeNode.getLastChild(),ownerType,registry,typeParameters);
+    fields.put(fieldName,fieldType);
+  }
+  return JSType.fromObjectType(ObjectType.fromProperties(fields));
+}

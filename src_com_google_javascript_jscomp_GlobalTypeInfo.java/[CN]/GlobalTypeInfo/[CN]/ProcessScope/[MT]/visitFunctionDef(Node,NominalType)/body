@@ -1,0 +1,21 @@
+{
+  Preconditions.checkArgument(fn.isFunction());
+  Scope fnScope=computeFnDeclaredType(fn,ownerType,currentScope);
+  scopes.addFirst(fnScope);
+  String fnName=NodeUtil.getFunctionName(fn);
+  String internalName=getFunInternalName(fn);
+  if (currentScope.isDefinedLocally(fnName)) {
+    warnings.add(JSError.make(fn,VariableReferenceCheck.REDECLARED_VARIABLE,fnName));
+  }
+ else {
+    currentScope.addLocalFunDef(internalName,fnScope);
+    if (fnName != null && !TypeUtils.isIdentifier(fnName)) {
+      currentScope.addLocalFunDef(fnName,fnScope);
+    }
+  }
+  if (fnName != null && TypeUtils.isIdentifier(fnName)) {
+    undeclaredVars.removeAll(fnName);
+  }
+  scopeWorkset.add(fnScope);
+  return fnScope;
+}

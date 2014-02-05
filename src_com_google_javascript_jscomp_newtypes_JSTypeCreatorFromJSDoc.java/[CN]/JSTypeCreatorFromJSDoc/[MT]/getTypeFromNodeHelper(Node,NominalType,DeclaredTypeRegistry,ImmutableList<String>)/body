@@ -1,0 +1,41 @@
+{
+  Preconditions.checkNotNull(n);
+switch (n.getType()) {
+case Token.LC:
+    return getRecordTypeHelper(n,ownerType,registry,typeParameters);
+case Token.EMPTY:
+  return JSType.UNKNOWN;
+case Token.VOID:
+return JSType.UNDEFINED;
+case Token.STRING:
+return getNamedTypeHelper(n,ownerType,registry,typeParameters);
+case Token.PIPE:
+{
+JSType union=JSType.BOTTOM;
+for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+union=JSType.join(union,getTypeFromNodeHelper(child,ownerType,registry,typeParameters));
+}
+return union;
+}
+case Token.BANG:
+{
+return getTypeFromNodeHelper(n.getFirstChild(),ownerType,registry,typeParameters).removeType(JSType.NULL);
+}
+case Token.QMARK:
+{
+Node child=n.getFirstChild();
+if (child == null) {
+return JSType.UNKNOWN;
+}
+ else {
+return JSType.join(JSType.NULL,getTypeFromNodeHelper(child,ownerType,registry,typeParameters));
+}
+}
+case Token.STAR:
+return JSType.TOP;
+case Token.FUNCTION:
+return getFunTypeHelper(n,ownerType,registry,typeParameters);
+default :
+throw new IllegalArgumentException("Unsupported type exp: " + Token.name(n.getType()) + " "+ n.toStringTree());
+}
+}

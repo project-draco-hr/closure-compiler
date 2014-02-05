@@ -1,0 +1,29 @@
+{
+  String typeName=n.getString();
+  if (typeName.equals("boolean")) {
+    return JSType.BOOLEAN;
+  }
+ else   if (typeName.equals("null")) {
+    return JSType.NULL;
+  }
+ else   if (typeName.equals("number")) {
+    return JSType.NUMBER;
+  }
+ else   if (typeName.equals("string")) {
+    return JSType.STRING;
+  }
+ else   if (typeName.equals("undefined")) {
+    return JSType.UNDEFINED;
+  }
+ else   if (hasTypeVariable(typeParameters,ownerType,typeName)) {
+    return JSType.fromTypeVar(typeName);
+  }
+ else {
+    JSType namedType=registry.lookupTypeByName(typeName);
+    if (namedType != null) {
+      return namedType;
+    }
+    unknownTypeNames.put(n,typeName);
+    throw new UnknownTypeException("Unhandled type: " + typeName);
+  }
+}

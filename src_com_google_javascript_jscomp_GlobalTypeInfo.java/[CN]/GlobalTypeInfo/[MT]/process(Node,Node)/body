@@ -24,6 +24,10 @@
   for (  Scope s : scopes) {
     s.finalizeScope();
   }
+  Map<Node,String> unknownTypes=typeParser.getUnknownTypesMap();
+  for (  Node unknownTypeNode : unknownTypes.keySet()) {
+    warnings.add(JSError.make(unknownTypeNode,UNRECOGNIZED_TYPE_NAME,unknownTypes.get(unknownTypeNode)));
+  }
   for (  String warningText : typeParser.getWarnings()) {
     warnings.add(JSError.make(root,RhinoErrorReporter.BAD_JSDOC_ANNOTATION,warningText));
   }
