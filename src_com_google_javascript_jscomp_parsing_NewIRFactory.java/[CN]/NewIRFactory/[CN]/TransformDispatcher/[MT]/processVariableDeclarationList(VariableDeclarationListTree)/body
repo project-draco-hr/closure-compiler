@@ -1,13 +1,25 @@
 {
-  if (!config.acceptConstKeyword && decl.declarationType == TokenType.CONST) {
-    unsupportedLanguageFeature(decl,"const declarations");
-  }
- else   if (decl.declarationType == TokenType.LET) {
-    unsupportedLanguageFeature(decl,"let declarations");
-  }
-  Node node=newNode(Token.VAR);
-  for (  VariableDeclarationTree child : decl.declarations) {
-    node.addChildToBack(transformNodeWithInlineJsDoc(child,true));
-  }
-  return node;
+  int declType;
+switch (decl.declarationType) {
+case CONST:
+    if (!config.acceptConstKeyword) {
+      maybeWarnEs6Feature(decl,"const declarations");
+    }
+  declType=Token.CONST;
+break;
+case LET:
+maybeWarnEs6Feature(decl,"let declarations");
+declType=Token.LET;
+break;
+case VAR:
+declType=Token.VAR;
+break;
+default :
+throw new IllegalStateException();
+}
+Node node=newNode(declType);
+for (VariableDeclarationTree child : decl.declarations) {
+node.addChildToBack(transformNodeWithInlineJsDoc(child,true));
+}
+return node;
 }

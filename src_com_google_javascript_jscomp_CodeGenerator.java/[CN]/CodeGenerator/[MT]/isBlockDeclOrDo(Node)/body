@@ -1,0 +1,28 @@
+{
+  if (n.isLabel()) {
+    Node labeledStatement=n.getLastChild();
+    if (!labeledStatement.isBlock()) {
+      return isBlockDeclOrDo(labeledStatement);
+    }
+ else {
+      if (getNonEmptyChildCount(n,2) == 1) {
+        return isBlockDeclOrDo(getFirstNonEmptyChild(n));
+      }
+ else {
+        return false;
+      }
+    }
+  }
+ else {
+switch (n.getType()) {
+case Token.LET:
+case Token.CONST:
+case Token.FUNCTION:
+case Token.CLASS:
+case Token.DO:
+      return true;
+default :
+    return false;
+}
+}
+}
