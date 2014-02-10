@@ -168,6 +168,9 @@ if (funcNeedsParens) {
 add("(");
 }
 add("function");
+if (n.isGenerator()) {
+add("*");
+}
 add(first);
 add(first.getNext());
 add(last,Context.PRESERVE_BLOCK);
@@ -212,12 +215,17 @@ break;
 case Token.GETTER_DEF:
 case Token.SETTER_DEF:
 case Token.MEMBER_DEF:
+n.getParent().toStringTree();
 Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers());
 Preconditions.checkState(childCount == 1);
 Preconditions.checkState(first.isFunction());
 Preconditions.checkState(first.getFirstChild().getString().isEmpty());
 if (n.isStaticMember()) {
 add("static ");
+}
+if (n.isGenerator()) {
+Preconditions.checkState(type == Token.MEMBER_DEF);
+add("*");
 }
 switch (type) {
 case Token.GETTER_DEF:
@@ -434,6 +442,14 @@ break;
 case Token.SUPER:
 Preconditions.checkState(childCount == 0);
 add("super");
+break;
+case Token.YIELD:
+Preconditions.checkState(childCount == 1);
+add("yield");
+if (n.isYieldFor()) {
+add("*");
+}
+addExpr(first,NodeUtil.precedence(type),Context.OTHER);
 break;
 case Token.FALSE:
 Preconditions.checkState(childCount == 0);

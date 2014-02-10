@@ -1,8 +1,7 @@
 {
   SourcePosition start=getTreeStartLocation();
+  boolean isGenerator=eatOpt(TokenType.STAR) != null;
   nextToken();
   IdentifierToken name=eatIdOpt();
-  FormalParameterListTree formalParameterList=parseFormalParameterList();
-  BlockTree functionBody=parseFunctionBody();
-  return new FunctionDeclarationTree(getTreeLocation(start),name,false,FunctionDeclarationTree.Kind.EXPRESSION,formalParameterList,functionBody);
+  return parseFunctionTail(start,name,false,isGenerator,FunctionDeclarationTree.Kind.EXPRESSION);
 }

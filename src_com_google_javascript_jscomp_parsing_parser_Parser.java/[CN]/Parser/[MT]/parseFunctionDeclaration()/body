@@ -1,5 +1,7 @@
 {
   SourcePosition start=getTreeStartLocation();
   nextToken();
-  return parseFunctionDeclarationTail(start,false);
+  boolean isGenerator=eatOpt(TokenType.STAR) != null;
+  IdentifierToken name=eatId();
+  return parseFunctionTail(start,name,false,isGenerator,FunctionDeclarationTree.Kind.DECLARATION);
 }

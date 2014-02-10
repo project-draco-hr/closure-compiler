@@ -1,0 +1,13 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.YIELD);
+  boolean isYieldFor=false;
+  ParseTree expression=null;
+  if (!peekImplicitSemiColon()) {
+    isYieldFor=eatOpt(TokenType.STAR) != null;
+    if (peekAssignmentExpression()) {
+      expression=parseAssignment(expressionIn);
+    }
+  }
+  return new YieldExpressionTree(getTreeLocation(start),isYieldFor,expression);
+}

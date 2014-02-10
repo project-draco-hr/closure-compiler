@@ -1,6 +1,10 @@
 {
   boolean isMember=(functionTree.kind == FunctionDeclarationTree.Kind.MEMBER);
   boolean isExpression=(functionTree.kind == FunctionDeclarationTree.Kind.EXPRESSION);
+  boolean isGenerator=functionTree.isGenerator;
+  if (isGenerator && !isEs6Mode()) {
+    es6LanguageFeature(functionTree,"generators");
+  }
   IdentifierToken name=functionTree.name;
   Node newName;
   if (name != null) {
@@ -35,14 +39,17 @@
   }
   parseDirectives(bodyNode);
   node.addChildToBack(bodyNode);
+  Node result;
   if (functionTree.kind == FunctionDeclarationTree.Kind.MEMBER) {
     setSourceInfo(node,functionTree);
     Node member=newStringNode(Token.MEMBER_DEF,name.value);
     member.addChildToBack(node);
     member.setStaticMember(functionTree.isStatic);
-    return member;
+    result=member;
   }
  else {
-    return node;
+    result=node;
   }
+  result.setGenerator(isGenerator);
+  return result;
 }

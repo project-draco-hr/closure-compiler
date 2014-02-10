@@ -1,0 +1,13 @@
+{
+  mode=LanguageMode.ECMASCRIPT6_STRICT;
+  parse("function * f() { yield; }");
+  parse("function * f() { yield /a/b; }");
+  parseError("function * f() { 1 + yield; }","primary expression expected");
+  parseError("function * f() { 1 + yield 2; }","primary expression expected");
+  parseError("function * f() { yield 1 + yield 2; }","primary expression expected");
+  parseError("function * f() { yield(1) + yield(2); }","primary expression expected");
+  parse("function * f() { (yield 1) + (yield 2); }");
+  parse("function * f() { yield * yield; }");
+  parseError("function * f() { yield + yield; }","primary expression expected");
+  parse("function * f() { (yield) + (yield); }");
+}
