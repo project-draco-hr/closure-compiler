@@ -1,0 +1,11 @@
+{
+  if (peekId() && peekType(1) == TokenType.ARROW) {
+    return true;
+  }
+ else   if (peekType() == TokenType.OPEN_PAREN) {
+    Parser p=createLookaheadParser();
+    p.parseFormalParameterList();
+    return !p.errorReporter.hadError() && p.peek(TokenType.ARROW);
+  }
+  return false;
+}

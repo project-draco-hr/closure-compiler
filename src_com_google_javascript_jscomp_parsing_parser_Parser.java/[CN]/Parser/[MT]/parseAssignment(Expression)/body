@@ -2,6 +2,9 @@
   if (peek(TokenType.YIELD) && inGeneratorContext()) {
     return parseYield(expressionIn);
   }
+  if (peekArrowFunction()) {
+    return parseArrowFunction(expressionIn);
+  }
   SourcePosition start=getTreeStartLocation();
   ParseTree left=peekParenPatternAssignment() ? parseParenPattern() : parseConditional(expressionIn);
   if (peekAssignmentOperator()) {

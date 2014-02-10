@@ -1,9 +1,18 @@
 {
+  boolean isDeclaration=(functionTree.kind == FunctionDeclarationTree.Kind.DECLARATION);
   boolean isMember=(functionTree.kind == FunctionDeclarationTree.Kind.MEMBER);
-  boolean isExpression=(functionTree.kind == FunctionDeclarationTree.Kind.EXPRESSION);
+  boolean isArrow=(functionTree.kind == FunctionDeclarationTree.Kind.ARROW);
   boolean isGenerator=functionTree.isGenerator;
-  if (isGenerator && !isEs6Mode()) {
-    es6LanguageFeature(functionTree,"generators");
+  if (!isEs6Mode()) {
+    if (isGenerator) {
+      es6LanguageFeature(functionTree,"generators");
+    }
+    if (isMember) {
+      es6LanguageFeature(functionTree,"member declarations");
+    }
+    if (isArrow) {
+      es6LanguageFeature(functionTree,"short function syntax");
+    }
   }
   IdentifierToken name=functionTree.name;
   Node newName;
@@ -11,11 +20,13 @@
     newName=processNameWithInlineJSDoc(name);
   }
  else {
-    if (!isExpression) {
+    if (isDeclaration || isMember) {
       errorReporter.error("unnamed function statement",sourceName,lineno(functionTree),"",charno(functionTree));
-      return newNode(Token.EXPR_RESULT,Node.newNumber(0));
+      newName=createMissingNameNode();
     }
-    newName=newStringNode(Token.NAME,"");
+ else {
+      newName=newStringNode(Token.NAME,"");
+    }
     newName.setLineno(lineno(functionTree));
     newName.setCharno(charno(functionTree));
     maybeSetLength(newName,0);
@@ -33,7 +44,7 @@
   }
   node.addChildToBack(transform(functionTree.formalParameterList));
   Node bodyNode=transform(functionTree.functionBody);
-  if (!bodyNode.isBlock()) {
+  if (!isArrow && !bodyNode.isBlock()) {
     Preconditions.checkState(config.isIdeMode);
     bodyNode=IR.block();
   }
@@ -50,6 +61,7 @@
  else {
     result=node;
   }
-  result.setGenerator(isGenerator);
+  result.setIsGeneratorFunction(isGenerator);
+  result.setIsArrowFunction(isArrow);
   return result;
 }

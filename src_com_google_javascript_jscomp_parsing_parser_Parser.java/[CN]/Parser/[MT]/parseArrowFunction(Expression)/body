@@ -1,0 +1,23 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  inGeneratorContext.addLast(false);
+  FormalParameterListTree formalParameterList;
+  if (peekId()) {
+    ParseTree param=parseIdentifierExpression();
+    formalParameterList=new FormalParameterListTree(getTreeLocation(start),ImmutableList.<ParseTree>of(param));
+  }
+ else {
+    formalParameterList=parseFormalParameterList();
+  }
+  eat(TokenType.ARROW);
+  ParseTree functionBody;
+  if (peek(TokenType.OPEN_CURLY)) {
+    functionBody=parseFunctionBody();
+  }
+ else {
+    functionBody=parseAssignmentExpression();
+  }
+  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),null,false,false,FunctionDeclarationTree.Kind.ARROW,formalParameterList,functionBody);
+  inGeneratorContext.removeLast();
+  return declaration;
+}
