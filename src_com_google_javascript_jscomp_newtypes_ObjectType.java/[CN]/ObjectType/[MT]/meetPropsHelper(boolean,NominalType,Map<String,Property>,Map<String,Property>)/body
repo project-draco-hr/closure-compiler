@@ -2,17 +2,19 @@
   Map<String,Property> newProps=Maps.newHashMap();
   for (  String pname : props1.keySet()) {
     if (!props2.containsKey(pname)) {
-      newProps.put(pname,props1.get(pname));
+      mayPutProp(pname,props1.get(pname),newProps,resultNominalType);
     }
   }
   for (  String pname : props2.keySet()) {
     Property prop2=props2.get(pname);
+    Property newProp;
     if (props1.containsKey(pname)) {
-      newProps.put(pname,specializeProps1 ? props1.get(pname).specialize(prop2) : Property.meet(props1.get(pname),prop2));
+      newProp=specializeProps1 ? props1.get(pname).specialize(prop2) : Property.meet(props1.get(pname),prop2);
     }
  else {
-      newProps.put(pname,prop2);
+      newProp=prop2;
     }
+    mayPutProp(pname,newProp,newProps,resultNominalType);
   }
   return newProps;
 }
