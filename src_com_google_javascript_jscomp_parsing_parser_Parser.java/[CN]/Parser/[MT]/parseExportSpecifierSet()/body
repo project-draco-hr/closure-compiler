@@ -1,0 +1,13 @@
+{
+  ImmutableList.Builder<ParseTree> elements;
+  elements=ImmutableList.<ParseTree>builder();
+  eat(TokenType.OPEN_CURLY);
+  while (peekId()) {
+    elements.add(parseExportSpecifier());
+    if (!peek(TokenType.CLOSE_CURLY)) {
+      eat(TokenType.COMMA);
+    }
+  }
+  eat(TokenType.CLOSE_CURLY);
+  return elements.build();
+}

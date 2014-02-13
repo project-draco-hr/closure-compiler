@@ -1,14 +1,16 @@
 {
   SourcePosition start=getTreeStartLocation();
   boolean isDefault=false;
+  boolean isExportAll=false;
+  boolean isExportSpecifier=false;
   eat(TokenType.EXPORT);
-  ParseTree export;
+  ParseTree export=null;
+  ImmutableList<ParseTree> exportSpecifierList=null;
 switch (peekType()) {
-case VAR:
-case LET:
-case CONST:
-    export=parseVariableStatement();
-  break;
+case STAR:
+    isExportAll=true;
+  nextToken();
+break;
 case FUNCTION:
 export=parseFunctionDeclaration();
 break;
@@ -17,13 +19,25 @@ export=parseClassDeclaration();
 break;
 case DEFAULT:
 isDefault=true;
+nextToken();
 export=parseExpression();
 break;
 case OPEN_CURLY:
-throw new RuntimeException("UNDONE: export ExportSpecifierSet");
+isExportSpecifier=true;
+exportSpecifierList=parseExportSpecifierSet();
+break;
 default :
-export=null;
+case VAR:
+case LET:
+case CONST:
+export=parseVariableDeclarationList();
 break;
 }
-return new ExportDeclarationTree(getTreeLocation(start),isDefault,export);
+LiteralToken moduleSpecifier=null;
+if (isExportAll || (isExportSpecifier && peekPredefinedString(PredefinedName.FROM))) {
+eatPredefinedString(PredefinedName.FROM);
+moduleSpecifier=eat(TokenType.STRING).asLiteral();
+}
+eatPossibleImplicitSemiColon();
+return new ExportDeclarationTree(getTreeLocation(start),isDefault,isExportAll,export,exportSpecifierList,moduleSpecifier);
 }

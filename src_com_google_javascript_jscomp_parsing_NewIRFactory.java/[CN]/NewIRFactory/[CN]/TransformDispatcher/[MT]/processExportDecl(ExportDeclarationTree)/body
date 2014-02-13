@@ -1,0 +1,25 @@
+{
+  maybeWarnEs6Feature(tree,"modules");
+  Node decls=null;
+  if (tree.isExportAll) {
+    Preconditions.checkState(tree.declaration == null && tree.exportSpecifierList == null);
+  }
+ else   if (tree.declaration != null) {
+    Preconditions.checkState(tree.exportSpecifierList == null);
+    decls=transform(tree.declaration);
+  }
+ else {
+    decls=transformList(Token.EXPORT_SPECS,tree.exportSpecifierList);
+  }
+  if (decls == null) {
+    decls=newNode(Token.EMPTY);
+  }
+  Node export=newNode(Token.EXPORT,decls);
+  if (tree.from != null) {
+    Node from=processString(tree.from);
+    export.addChildToBack(from);
+  }
+  export.putBooleanProp(Node.EXPORT_ALL_FROM,tree.isExportAll);
+  export.putBooleanProp(Node.EXPORT_DEFAULT,tree.isDefault);
+  return export;
+}
