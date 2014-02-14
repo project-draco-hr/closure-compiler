@@ -1,13 +1,14 @@
 {
   String qname=NodeUtil.getFunctionName(fn);
   if (qname == null || !TypeUtils.isIdentifier(qname)) {
-    anonFunNames.put(fn,"%anon_fun" + funCounter);
-    funCounter++;
+    anonFunNames.put(fn,"%anon_fun" + freshId);
+    freshId++;
   }
   JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
   if (fnDoc != null && (fnDoc.isConstructor() || fnDoc.isInterface())) {
     ImmutableList<String> templateVars=fnDoc.getTemplateTypeNames();
-    NominalType nominalType=fnDoc.isInterface() ? NominalType.makeInterface(qname,templateVars) : NominalType.makeClass(qname,templateVars);
+    NominalType nominalType=fnDoc.isInterface() ? NominalType.makeInterface(qname,templateVars,freshId) : NominalType.makeClass(qname,templateVars,freshId);
+    freshId++;
     nominaltypesByNode.put(fn,nominalType);
     parentScope.addNominalType(qname,nominalType);
   }

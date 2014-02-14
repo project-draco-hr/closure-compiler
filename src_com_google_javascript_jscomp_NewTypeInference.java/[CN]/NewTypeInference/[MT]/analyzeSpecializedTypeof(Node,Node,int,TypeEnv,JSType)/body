@@ -1,0 +1,17 @@
+{
+  EnvTypePair pair;
+  Node typeofRand=typeof.getFirstChild();
+  JSType comparedType=getTypeFromString(typeString);
+  if (comparedType.isUnknown()) {
+    pair=analyzeExprFwd(typeofRand,inEnv);
+    pair=analyzeExprFwd(typeString,pair.env);
+  }
+ else   if ((specializedType.isTruthy() && (comparisonOp == Token.SHEQ || comparisonOp == Token.EQ)) || (specializedType.isFalsy() && (comparisonOp == Token.SHNE || comparisonOp == Token.NE))) {
+    pair=analyzeExprFwd(typeofRand,inEnv,JSType.UNKNOWN,comparedType);
+  }
+ else {
+    pair=analyzeExprFwd(typeofRand,inEnv,JSType.UNKNOWN,comparedType.negate());
+  }
+  pair.type=specializedType.toBoolean();
+  return pair;
+}

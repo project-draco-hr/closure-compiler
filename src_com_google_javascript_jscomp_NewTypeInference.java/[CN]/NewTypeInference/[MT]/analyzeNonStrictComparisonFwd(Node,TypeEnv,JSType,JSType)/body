@@ -2,6 +2,14 @@
   int tokenType=expr.getType();
   Node lhs=expr.getFirstChild();
   Node rhs=expr.getLastChild();
+  if ((specializedType.isTruthy() || specializedType.isFalsy()) && (lhs.isTypeOf() || rhs.isTypeOf())) {
+    if (lhs.isTypeOf()) {
+      return analyzeSpecializedTypeof(lhs,rhs,expr.getType(),inEnv,specializedType);
+    }
+ else {
+      return analyzeSpecializedTypeof(rhs,lhs,expr.getType(),inEnv,specializedType);
+    }
+  }
   EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
   EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
   JSType lhsType=lhsPair.type;

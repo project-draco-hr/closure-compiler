@@ -46,9 +46,9 @@ return new EnvTypePair(inEnv,JSType.UNDEFINED);
 }
 if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)) {
 JSType inferredType=envGetType(inEnv,varName);
-println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType);
+println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType," specializedType:  ",specializedType);
 if (!inferredType.isSubtypeOf(requiredType)) {
-if (currentScope.getDeclaredTypeOf(varName) == null && inferredType.equals(JSType.NUM_OR_STR) && requiredType.isSubtypeOf(inferredType)) {
+if (currentScope.getDeclaredTypeOf(varName) == null && requiredType.isSubtypeOf(inferredType)) {
   inferredType=requiredType;
 }
  else {
@@ -234,6 +234,14 @@ case Token.SHNE:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
+if ((specializedType.isTruthy() || specializedType.isFalsy()) && (lhs.isTypeOf() || rhs.isTypeOf())) {
+if (lhs.isTypeOf()) {
+return analyzeSpecializedTypeof(lhs,rhs,exprKind,inEnv,specializedType);
+}
+ else {
+return analyzeSpecializedTypeof(rhs,lhs,exprKind,inEnv,specializedType);
+}
+}
 EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
 EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
 if ((exprKind == Token.SHEQ && specializedType.isTruthy()) || (exprKind == Token.SHNE && specializedType.isFalsy())) {
@@ -268,10 +276,10 @@ Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
 EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
-if (lhsPair.type.isScalar() && rhsPair.type.isUnknown()) {
+if (lhsPair.type.isScalar() && !rhsPair.type.isScalar()) {
 rhsPair=analyzeExprFwd(rhs,lhsPair.env,lhsPair.type);
 }
- else if (lhsPair.type.isUnknown() && rhsPair.type.isScalar()) {
+ else if (rhsPair.type.isScalar()) {
 lhsPair=analyzeExprFwd(lhs,inEnv,rhsPair.type);
 rhsPair=analyzeExprFwd(rhs,lhsPair.env,rhsPair.type);
 }
