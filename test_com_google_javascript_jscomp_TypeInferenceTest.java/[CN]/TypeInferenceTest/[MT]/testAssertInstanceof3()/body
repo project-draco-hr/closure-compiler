@@ -1,7 +1,9 @@
 {
-  JSType startType=registry.getNativeType(UNKNOWN_TYPE);
+  JSType unknownType=registry.getNativeType(UNKNOWN_TYPE);
+  JSType startType=registry.getNativeType(STRING_TYPE);
   assuming("x",startType);
-  inFunction("out1 = x; goog.asserts.assertInstanceof(x, String); out2 = x;");
+  assuming("Foo",unknownType);
+  inFunction("out1 = x; goog.asserts.assertInstanceof(x, Foo); out2 = x;");
   verify("out1",startType);
   verify("out2",UNKNOWN_TYPE);
 }
