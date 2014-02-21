@@ -1,0 +1,53 @@
+{
+  Preconditions.checkArgument(fn.isFunction());
+  JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
+  ArrayList<String> formals=Lists.newArrayList();
+  for (Node param=NodeUtil.getFunctionParameters(fn).getFirstChild(); param != null; param=param.getNext()) {
+    formals.add(param.getQualifiedName());
+  }
+  FunctionTypeBuilder builder=typeParser.getFunctionType(fnDoc,fn,ownerType,parentScope);
+  String functionName=getFunInternalName(fn);
+  if (fnDoc != null) {
+    NominalType parentClass=null;
+    if (fnDoc.hasBaseType()) {
+      if (!fnDoc.isConstructor()) {
+        warnings.add(JSError.make(fn,EXTENDS_NOT_ON_CTOR_OR_INTERF,functionName));
+      }
+ else {
+        Node docNode=fnDoc.getBaseType().getRootNode();
+        if (typeParser.hasKnownType(docNode,ownerType,parentScope)) {
+          parentClass=typeParser.getNominalType(docNode,ownerType,parentScope);
+          if (parentClass == null) {
+            warnings.add(JSError.make(fn,EXTENDS_NON_OBJECT,functionName,docNode.toStringTree()));
+          }
+        }
+      }
+    }
+    RawNominalType rawNominalType=nominaltypesByNode.get(fn);
+    if (fnDoc.isConstructor()) {
+      if (parentClass != null) {
+        if (!rawNominalType.addSuperClass(parentClass)) {
+          warnings.add(JSError.make(fn,INHERITANCE_CYCLE,rawNominalType.toString()));
+        }
+      }
+      boolean noCycles=rawNominalType.addInterfaces(typeParser.getImplementedInterfaces(fnDoc,ownerType,parentScope));
+      Preconditions.checkState(noCycles);
+      builder.addNominalType(NominalType.fromRaw(rawNominalType));
+    }
+ else     if (fnDoc.isInterface()) {
+      if (!NodeUtil.isEmptyBlock(NodeUtil.getFunctionBody(fn))) {
+        warnings.add(JSError.make(fn,INTERFACE_WITH_A_BODY));
+      }
+      if (!rawNominalType.addInterfaces(typeParser.getExtendedInterfaces(fnDoc,ownerType,parentScope))) {
+        warnings.add(JSError.make(fn,INHERITANCE_CYCLE,rawNominalType.toString()));
+      }
+      builder.addNominalType(NominalType.fromRaw(rawNominalType));
+    }
+  }
+  if (NodeUtil.isPrototypeMethod(fn)) {
+    Node lhsNode=fn.getParent().getFirstChild();
+    String className=NodeUtil.getPrototypeClassName(lhsNode).getQualifiedName();
+    builder.addReceiverType(parentScope.getScope(className).getDeclaredType().getNominalType());
+  }
+  return new Scope(fn,parentScope,formals,builder.buildDeclaration());
+}

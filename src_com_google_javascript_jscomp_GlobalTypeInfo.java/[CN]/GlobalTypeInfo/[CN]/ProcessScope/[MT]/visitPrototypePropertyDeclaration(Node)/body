@@ -12,29 +12,29 @@
   Node ctorNameNode=NodeUtil.getPrototypeClassName(getPropNode);
   String ctorName=ctorNameNode.getQualifiedName();
   if (currentScope.isDefinedLocally(ctorName)) {
-    NominalType nominalType=currentScope.getLocalNominalType(ctorName);
-    if (nominalType == null) {
+    RawNominalType rawNominalType=currentScope.getLocalNominalType(ctorName);
+    if (rawNominalType == null) {
       return;
     }
     String pname=NodeUtil.getPrototypePropertyName(getPropNode);
     JSType propDeclType;
     Scope methodScope=null;
     if (initializer != null && initializer.isFunction()) {
-      methodScope=visitFunctionDef(initializer,nominalType);
+      methodScope=visitFunctionDef(initializer,rawNominalType);
       propDeclType=JSType.fromFunctionType(methodScope.getDeclaredType().toFunctionType());
     }
  else {
-      propDeclType=typeParser.getNodeTypeDeclaration(expr.getJSDocInfo(),nominalType,currentScope);
+      propDeclType=typeParser.getNodeTypeDeclaration(expr.getJSDocInfo(),rawNominalType,currentScope);
     }
-    propertyDefs.put(nominalType.getId(),pname,new PropertyDef(exprResult,methodScope));
+    propertyDefs.put(rawNominalType.getId(),pname,new PropertyDef(exprResult,methodScope));
     if (propDeclType != null) {
-      if (mayWarnAboutExistingProp(nominalType,pname,expr)) {
+      if (mayWarnAboutExistingProp(rawNominalType,pname,expr)) {
         return;
       }
-      nominalType.addProtoProperty(pname,propDeclType);
+      rawNominalType.addProtoProperty(pname,propDeclType);
     }
  else {
-      nominalType.addUndeclaredProtoProperty(pname);
+      rawNominalType.addUndeclaredProtoProperty(pname);
     }
   }
  else {

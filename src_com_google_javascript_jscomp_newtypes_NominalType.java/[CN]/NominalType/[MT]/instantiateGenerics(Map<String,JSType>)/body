@@ -1,19 +1,17 @@
 {
-  Preconditions.checkState(templateVars != null);
-  for (  String typeParam : typeMap.keySet()) {
-    Preconditions.checkState(templateVars.contains(typeParam));
+  ImmutableMap.Builder<String,JSType> builder=ImmutableMap.builder();
+  if (!typeMap.isEmpty()) {
+    Preconditions.checkState(typeMap.keySet().containsAll(newTypeMap.keySet()));
+    for (    String oldKey : typeMap.keySet()) {
+      builder.put(oldKey,typeMap.get(oldKey).substituteGenerics(newTypeMap));
+    }
   }
-  for (  String typeParam : templateVars) {
-    Preconditions.checkState(typeMap.containsKey(typeParam));
+ else {
+    for (    String newKey : newTypeMap.keySet()) {
+      if (!typeMap.containsKey(newKey)) {
+        builder.put(newKey,newTypeMap.get(newKey));
+      }
+    }
   }
-  NominalType result=new NominalType(this.name + genericSuffix(typeMap),null,id,this.isInterface);
-  Preconditions.checkState(superClass == null);
-  Preconditions.checkState(interfaces.isEmpty(),"Interfaces not supported: " + interfaces);
-  for (  String propName : this.classProps.keySet()) {
-    result.classProps.put(propName,this.classProps.get(propName).substituteGenerics(typeMap));
-  }
-  for (  String propName : this.protoProps.keySet()) {
-    result.protoProps.put(propName,this.protoProps.get(propName).substituteGenerics(typeMap));
-  }
-  return result.finalizeNominalType();
+  return new NominalType(builder.build(),this.rawType);
 }

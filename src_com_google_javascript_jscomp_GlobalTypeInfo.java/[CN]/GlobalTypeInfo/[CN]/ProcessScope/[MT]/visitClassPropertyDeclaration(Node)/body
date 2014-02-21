@@ -1,13 +1,14 @@
 {
   NominalType thisType=currentScope.getDeclaredType().getThisType();
+  RawNominalType rawNominalType=thisType.getRawNominalType();
   String pname=getPropNode.getLastChild().getString();
   JSType declaredType=getTypeDeclarationFromJsdoc(getPropNode.getParent(),currentScope);
   if (declaredType != null) {
-    mayWarnAboutExistingProp(thisType,pname,getPropNode);
-    thisType.addClassProperty(pname,declaredType);
+    mayWarnAboutExistingProp(rawNominalType,pname,getPropNode);
+    rawNominalType.addClassProperty(pname,declaredType);
   }
  else {
-    thisType.addUndeclaredClassProperty(pname);
+    rawNominalType.addUndeclaredClassProperty(pname);
   }
-  propertyDefs.put(thisType.getId(),pname,new PropertyDef(getPropNode.getParent().getParent(),null));
+  propertyDefs.put(rawNominalType.getId(),pname,new PropertyDef(getPropNode.getParent().getParent(),null));
 }

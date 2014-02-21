@@ -36,8 +36,18 @@ case Token.VAR:
     if (rhs == null || currentScope.isLocalFunDef(varName)) {
       continue;
     }
-    JSType requiredType=(declType == null) ? JSType.UNKNOWN : declType;
-    inEnv=analyzeExprBwd(rhs,inEnv,JSType.meet(requiredType,envGetType(outEnv,varName))).env;
+    JSType inferredType=envGetType(outEnv,varName);
+    JSType requiredType;
+    if (declType == null) {
+      requiredType=inferredType;
+    }
+ else {
+      requiredType=JSType.meet(declType,inferredType);
+      if (requiredType.isBottom()) {
+        requiredType=JSType.UNKNOWN;
+      }
+    }
+    inEnv=analyzeExprBwd(rhs,inEnv,requiredType).env;
   }
   break;
 }

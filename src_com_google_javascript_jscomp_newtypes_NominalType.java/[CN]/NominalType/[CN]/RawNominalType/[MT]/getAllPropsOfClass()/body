@@ -1,0 +1,12 @@
+{
+  Preconditions.checkState(!isInterface);
+  if (allProps == null) {
+    ImmutableSet.Builder<String> builder=ImmutableSet.builder();
+    if (superClass != null) {
+      Preconditions.checkState(superClass.typeMap.isEmpty());
+      builder.addAll(superClass.rawType.getAllPropsOfClass());
+    }
+    allProps=builder.addAll(classProps.keySet()).addAll(protoProps.keySet()).build();
+  }
+  return allProps;
+}

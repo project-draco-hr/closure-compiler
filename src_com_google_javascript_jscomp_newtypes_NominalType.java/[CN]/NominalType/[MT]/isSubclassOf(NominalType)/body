@@ -1,11 +1,18 @@
 {
-  if (other.equals(this)) {
+  if (rawType.equals(other.rawType)) {
+    for (    String typeVar : rawType.getTemplateVars()) {
+      Preconditions.checkState(typeMap.containsKey(typeVar));
+      Preconditions.checkState(other.typeMap.containsKey(typeVar));
+      if (!typeMap.get(typeVar).isSubtypeOf(other.typeMap.get(typeVar))) {
+        return false;
+      }
+    }
     return true;
   }
- else   if (superClass == null) {
+ else   if (rawType.superClass == null) {
     return false;
   }
  else {
-    return superClass.isSubclassOf(other);
+    return rawType.superClass.instantiateGenerics(typeMap).isSubclassOf(other);
   }
 }

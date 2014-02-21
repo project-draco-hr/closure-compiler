@@ -1,0 +1,17 @@
+{
+  Preconditions.checkState(isInterface);
+  Property p=protoProps.get(pname);
+  if (p != null) {
+    return p;
+  }
+  if (interfaces != null) {
+    for (    NominalType interf : interfaces) {
+      Preconditions.checkState(interf.typeMap.isEmpty());
+      p=interf.rawType.getPropFromInterface(pname);
+      if (p != null) {
+        return p;
+      }
+    }
+  }
+  return null;
+}
