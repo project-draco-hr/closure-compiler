@@ -1,15 +1,20 @@
 {
 switch (n.getType()) {
 case Token.NAME:
-    if (parent != null && parent.isVar() && n.hasChildren()) {
+    if (parent != null && parent.isVar()) {
       String name=n.getString();
       Scope.Var var=t.getScope().getVar(name);
       if (isConstant(var)) {
-        if (initializedConstants.contains(var)) {
-          reportError(t,n,name);
-        }
- else {
+        if (n.isFromExterns()) {
           initializedConstants.add(var);
+        }
+ else         if (n.hasChildren()) {
+          if (initializedConstants.contains(var)) {
+            reportError(t,n,name);
+          }
+ else {
+            initializedConstants.add(var);
+          }
         }
       }
     }
