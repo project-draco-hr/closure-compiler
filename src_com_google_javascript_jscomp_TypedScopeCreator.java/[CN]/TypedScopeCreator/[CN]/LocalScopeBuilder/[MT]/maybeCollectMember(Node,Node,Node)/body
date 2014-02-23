@@ -1,0 +1,11 @@
+{
+  JSDocInfo info=nodeWithJsDocInfo.getJSDocInfo();
+  if (info == null || !member.isGetProp() || !member.getFirstChild().isThis()) {
+    return;
+  }
+  JSType jsType=getDeclaredType(info,member,value);
+  Node name=member.getLastChild();
+  if (jsType != null) {
+    thisTypeForProperties.defineDeclaredProperty(name.getString(),jsType,member);
+  }
+}

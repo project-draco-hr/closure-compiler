@@ -1,0 +1,9 @@
+{
+  Node rootNode=scope.getRootNode();
+  if (rootNode.isFromExterns())   return null;
+  JSType type=rootNode.getJSType();
+  if (type == null || !type.isFunctionType())   return null;
+  FunctionType fnType=type.toMaybeFunctionType();
+  JSType fnThisType=fnType.getTypeOfThis();
+  return fnThisType.isUnknownType() ? null : fnThisType.toObjectType();
+}

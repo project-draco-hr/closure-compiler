@@ -19,16 +19,6 @@
     localScopeBuilder.build();
   }
   scopeBuilder.resolveStubDeclarations();
-  for (  Node functionNode : scopeBuilder.nonExternFunctions) {
-    JSType type=functionNode.getJSType();
-    if (type != null && type.isFunctionType()) {
-      FunctionType fnType=type.toMaybeFunctionType();
-      JSType fnThisType=fnType.getTypeOfThis();
-      if (!fnThisType.isUnknownType()) {
-        NodeTraversal.traverse(compiler,functionNode.getLastChild(),scopeBuilder.new CollectProperties(fnThisType));
-      }
-    }
-  }
   if (parent == null) {
     codingConvention.defineDelegateProxyPrototypeProperties(typeRegistry,newScope,delegateProxyPrototypes,delegateCallingConventions);
   }

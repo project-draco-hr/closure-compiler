@@ -6,5 +6,13 @@
     handleFunctionInputs(parent);
     return;
   }
+  if (thisTypeForProperties != null && n.getParent().isExprResult()) {
+    if (n.isAssign()) {
+      maybeCollectMember(n.getFirstChild(),n,n.getLastChild());
+    }
+ else     if (n.isGetProp()) {
+      maybeCollectMember(n,n,null);
+    }
+  }
   super.visit(t,n,parent);
 }
