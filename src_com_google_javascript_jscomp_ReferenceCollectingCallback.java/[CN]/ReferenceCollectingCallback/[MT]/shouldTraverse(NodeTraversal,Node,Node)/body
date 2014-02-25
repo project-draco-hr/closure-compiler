@@ -1,6 +1,16 @@
 {
+  if (NodeUtil.isHoistedFunctionDeclaration(n)) {
+    Node nameNode=n.getFirstChild();
+    Var functionVar=nodeTraversal.getScope().getVar(nameNode.getString());
+    if (functionVar != null) {
+      if (finishedFunctionTraverse.contains(functionVar)) {
+        return false;
+      }
+      startedFunctionTraverse.add(functionVar);
+    }
+  }
   if (isBlockBoundary(n,parent)) {
-    blockStack.push(new BasicBlock(blockStack.peek(),n));
+    blockStack.add(new BasicBlock(peek(blockStack),n));
   }
   return true;
 }

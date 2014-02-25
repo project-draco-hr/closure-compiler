@@ -1,0 +1,27 @@
+{
+  if (startedFunctionTraverse.contains(v)) {
+    return;
+  }
+  startedFunctionTraverse.add(v);
+  Node fnNode=v.getParentNode();
+  Preconditions.checkState(NodeUtil.isHoistedFunctionDeclaration(fnNode));
+  Scope containingScope=v.getScope();
+  List<BasicBlock> newBlockStack=null;
+  if (containingScope.isGlobal()) {
+    newBlockStack=Lists.newArrayList(blockStack.get(0));
+  }
+ else {
+    for (int i=0; i < blockStack.size(); i++) {
+      if (blockStack.get(i).root == containingScope.getRootNode()) {
+        newBlockStack=Lists.newArrayList(blockStack.subList(0,i + 1));
+      }
+    }
+  }
+  Preconditions.checkNotNull(newBlockStack);
+  List<BasicBlock> oldBlockStack=blockStack;
+  blockStack=newBlockStack;
+  NodeTraversal outOfBandTraversal=new NodeTraversal(compiler,this);
+  outOfBandTraversal.traverseFunctionOutOfBand(fnNode,containingScope);
+  blockStack=oldBlockStack;
+  finishedFunctionTraverse.add(v);
+}

@@ -4,7 +4,7 @@
     Scope scope=alias.scope;
     Var aliasVar=scope.getVar(aliasParent.getString());
     ReferenceCollectingCallback collector=new ReferenceCollectingCallback(compiler,ReferenceCollectingCallback.DO_NOTHING_BEHAVIOR,Predicates.<Var>equalTo(aliasVar));
-    (new NodeTraversal(compiler,collector)).traverseAtScope(scope);
+    collector.processScope(scope);
     ReferenceCollection aliasRefs=collector.getReferences(aliasVar);
     List<AstChange> newNodes=Lists.newArrayList();
     if (aliasRefs.isWellDefined() && aliasRefs.firstReferenceIsAssigningDeclaration() && aliasRefs.isAssignedOnceInLifetime()) {
