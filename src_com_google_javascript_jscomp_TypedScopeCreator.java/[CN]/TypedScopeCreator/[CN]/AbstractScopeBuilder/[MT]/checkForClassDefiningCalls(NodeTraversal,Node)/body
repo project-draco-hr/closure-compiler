@@ -1,11 +1,16 @@
 {
   SubclassRelationship relationship=codingConvention.getClassesDefinedByCall(n);
   if (relationship != null) {
-    ObjectType superClass=TypeValidator.getInstanceOfCtor(scope.getVar(relationship.superclassName));
-    ObjectType subClass=TypeValidator.getInstanceOfCtor(scope.getVar(relationship.subclassName));
-    if (superClass != null && subClass != null) {
-      FunctionType superCtor=superClass.getConstructor();
-      FunctionType subCtor=subClass.getConstructor();
+    FunctionType superCtor=getFunctionType(scope.getVar(relationship.superclassName));
+    FunctionType subCtor=getFunctionType(scope.getVar(relationship.subclassName));
+    if (superCtor != null && superCtor.isConstructor() && subCtor != null && subCtor.isConstructor()) {
+      ObjectType superClass=superCtor.getInstanceType();
+      ObjectType subClass=subCtor.getInstanceType();
+      superCtor=superClass.getConstructor();
+      subCtor=subClass.getConstructor();
+      if (relationship.type == SubclassType.INHERITS && !superClass.isEmptyType() && !subClass.isEmptyType()) {
+        validator.expectSuperType(t,n,superClass,subClass);
+      }
       if (superCtor != null && subCtor != null) {
         codingConvention.applySubclassRelationship(superCtor,subCtor,relationship.type);
       }

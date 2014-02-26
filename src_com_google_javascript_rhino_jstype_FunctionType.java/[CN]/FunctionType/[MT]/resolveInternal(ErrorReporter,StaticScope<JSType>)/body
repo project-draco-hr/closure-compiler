@@ -6,15 +6,10 @@
   }
   JSType maybeTypeOfThis=safeResolve(typeOfThis,t,scope);
   if (maybeTypeOfThis != null) {
-    if (maybeTypeOfThis.isNullType() || maybeTypeOfThis.isVoidType()) {
-      typeOfThis=maybeTypeOfThis;
-    }
- else {
-      maybeTypeOfThis=ObjectType.cast(maybeTypeOfThis.restrictByNotNullOrUndefined());
-      if (maybeTypeOfThis != null) {
-        typeOfThis=maybeTypeOfThis;
-      }
-    }
+    maybeTypeOfThis=maybeTypeOfThis.restrictByNotNullOrUndefined();
+  }
+  if (maybeTypeOfThis instanceof ObjectType) {
+    typeOfThis=maybeTypeOfThis;
   }
   boolean changed=false;
   ImmutableList.Builder<ObjectType> resolvedInterfaces=ImmutableList.builder();
