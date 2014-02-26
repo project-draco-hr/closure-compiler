@@ -1,8 +1,12 @@
 {
+  Preconditions.checkState(typeMap.isEmpty() || typeMap.keySet().containsAll(templateVars));
+  if (templateVars.isEmpty()) {
+    return "";
+  }
   List<String> names=Lists.newArrayList();
   for (  String templateVar : templateVars) {
-    names.add(typeMap.get(templateVar).toString());
+    JSType concrete=typeMap.get(templateVar);
+    names.add(concrete == null ? templateVar : concrete.toString());
   }
-  Preconditions.checkState(!names.isEmpty());
   return ".<" + Joiner.on(",").join(names) + ">";
 }

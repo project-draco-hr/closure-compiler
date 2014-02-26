@@ -15,7 +15,7 @@
  else   if (typeName.equals("undefined")) {
     return JSType.UNDEFINED;
   }
- else   if (hasTypeVariable(typeParameters,ownerType,typeName)) {
+ else   if (hasTypeVariable(outerTypeParameters,ownerType,typeName)) {
     return JSType.fromTypeVar(typeName);
   }
  else {
@@ -30,10 +30,16 @@
     Preconditions.checkState(n.getFirstChild().isBlock());
     ImmutableList.Builder<JSType> typeList=ImmutableList.builder();
     for (    Node child : n.getFirstChild().children()) {
-      JSType childType=getTypeFromNodeHelper(child,ownerType,registry,typeParameters);
+      JSType childType=getTypeFromNodeHelper(child,ownerType,registry,outerTypeParameters);
       typeList.add(childType);
     }
     NominalType uninstantiated=namedType.getNominalTypeIfUnique();
-    return JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated.instantiateGenerics(typeList.build())));
+    ImmutableList<JSType> typeArguments=typeList.build();
+    ImmutableList<String> typeParameters=uninstantiated.getRawNominalType().getTemplateVars();
+    if (typeArguments.size() != typeParameters.size()) {
+      warn("Invalid generics instantiation.\n" + "Expected " + typeParameters.size() + " type arguments, but "+ typeArguments.size()+ " were passed.",n);
+      return JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated));
+    }
+    return JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated.instantiateGenerics(typeArguments)));
   }
 }

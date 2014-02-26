@@ -4,20 +4,21 @@
     Node funNode=workset.removeFirst();
     RawNominalType rawNominalType=nominaltypesByNode.get(funNode);
     NominalType superClass=rawNominalType.getSuperClass();
-    if (superClass != null && !superClass.getRawNominalType().isFinalized()) {
+    if (superClass != null && !superClass.isFinalized()) {
       workset.addLast(funNode);
       continue workset_loop;
     }
     for (    NominalType superInterf : rawNominalType.getInterfaces()) {
-      if (!superInterf.getRawNominalType().isFinalized()) {
+      if (!superInterf.isFinalized()) {
         workset.addLast(funNode);
         continue workset_loop;
       }
     }
     if (superClass != null) {
-      for (      String pname : superClass.getRawNominalType().getAllPropsOfClass()) {
+      Preconditions.checkState(superClass.isFinalized());
+      for (      String pname : superClass.getAllPropsOfClass()) {
         PropertyDef propDef=propertyDefs.get(rawNominalType.getId(),pname);
-        PropertyDef inheritedPropDef=propertyDefs.get(superClass.getRawNominalType().getId(),pname);
+        PropertyDef inheritedPropDef=propertyDefs.get(superClass.getId(),pname);
         if (inheritedPropDef != null && inheritedPropDef.methodScope != null) {
           DeclaredFunctionType propDeclType;
           if (propDef == null || propDef.methodScope == null) {
@@ -37,13 +38,13 @@
         }
         JSType localPropType=rawNominalType.getPropDeclaredType(pname);
         if (!localPropType.isSubtypeOf(inheritedPropType)) {
-          warnings.add(JSError.make(propertyDefs.get(rawNominalType.getId(),pname).defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
+          warnings.add(JSError.make(propDef.defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
         }
       }
     }
     for (    NominalType superInterf : rawNominalType.getInterfaces()) {
-      for (      String pname : superInterf.getRawNominalType().getAllPropsOfInterface()) {
-        PropertyDef inheritedPropDef=propertyDefs.get(superInterf.getRawNominalType().getId(),pname);
+      for (      String pname : superInterf.getAllPropsOfInterface()) {
+        PropertyDef inheritedPropDef=propertyDefs.get(superInterf.getId(),pname);
         JSType inheritedPropType=superInterf.getPropDeclaredType(pname);
         if (!rawNominalType.mayHaveProp(pname)) {
           warnings.add(JSError.make(inheritedPropDef.defSite,TypeValidator.INTERFACE_METHOD_NOT_IMPLEMENTED,pname,superInterf.toString(),rawNominalType.toString()));
