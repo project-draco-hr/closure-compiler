@@ -5,7 +5,7 @@
  else   if (this.isTop()) {
     return other.isTop();
   }
- else   if (this.mask == TYPEVAR_MASK && templateVars.contains(typeVar)) {
+ else   if (this.mask == TYPEVAR_MASK && typeParameters.contains(typeVar)) {
     updateTypemap(typeMultimap,typeVar,new JSType(promoteBoolean(other.mask),null,other.objs,other.typeVar));
     return true;
   }
@@ -23,7 +23,7 @@
     for (    ObjectType targetObj : this.objs) {
       boolean hasUnified=false;
       for (      ObjectType sourceObj : other.objs) {
-        if (targetObj.unifyWith(sourceObj,templateVars,typeMultimap)) {
+        if (targetObj.unifyWith(sourceObj,typeParameters,typeMultimap)) {
           ununified.remove(sourceObj);
           hasUnified=true;
         }
@@ -38,7 +38,7 @@
   if (thisTypevar == null) {
     return otherTypevar == null && mask == other.mask;
   }
- else   if (!templateVars.contains(thisTypevar)) {
+ else   if (!typeParameters.contains(thisTypevar)) {
     return thisTypevar.equals(otherTypevar) && mask == other.mask;
   }
  else {

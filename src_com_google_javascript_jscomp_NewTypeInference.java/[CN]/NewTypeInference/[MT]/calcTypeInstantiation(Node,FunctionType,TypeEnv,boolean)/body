@@ -1,5 +1,5 @@
 {
-  List<String> templateVars=funType.getTypeParameters();
+  List<String> typeParameters=funType.getTypeParameters();
   Multimap<String,JSType> typeMultimap=HashMultimap.create();
   Node arg=callNode.getChildAtIndex(1);
   int i=0;
@@ -7,10 +7,10 @@
     EnvTypePair pair=isFwd ? analyzeExprFwd(arg,typeEnv) : analyzeExprBwd(arg,typeEnv);
     JSType unifTarget=funType.getFormalType(i);
     JSType unifSource=pair.type;
-    if (!unifTarget.unifyWith(unifSource,templateVars,typeMultimap)) {
+    if (!unifTarget.unifyWith(unifSource,typeParameters,typeMultimap)) {
       HashMap<String,JSType> tmpTypeMap=Maps.newHashMap();
-      for (      String templateVar : templateVars) {
-        tmpTypeMap.put(templateVar,JSType.UNKNOWN);
+      for (      String typeParam : typeParameters) {
+        tmpTypeMap.put(typeParam,JSType.UNKNOWN);
       }
       if (unifSource.isSubtypeOf(unifTarget.substituteGenerics(tmpTypeMap))) {
         warnings.add(JSError.make(arg,FAILED_TO_UNIFY,unifTarget.toString(),unifSource.toString()));
@@ -21,19 +21,19 @@
     i++;
   }
   HashMap<String,JSType> typeMap=Maps.newHashMap();
-  for (  String templateVar : templateVars) {
-    Collection<JSType> types=typeMultimap.get(templateVar);
+  for (  String typeParam : typeParameters) {
+    Collection<JSType> types=typeMultimap.get(typeParam);
     if (types.size() > 1) {
       if (isFwd) {
-        warnings.add(JSError.make(callNode,NOT_UNIQUE_INSTANTIATION,templateVar,types.toString()));
+        warnings.add(JSError.make(callNode,NOT_UNIQUE_INSTANTIATION,typeParam,types.toString()));
       }
-      typeMap.put(templateVar,JSType.UNKNOWN);
+      typeMap.put(typeParam,JSType.UNKNOWN);
     }
  else     if (types.size() == 1) {
-      typeMap.put(templateVar,Iterables.getOnlyElement(types));
+      typeMap.put(typeParam,Iterables.getOnlyElement(types));
     }
  else {
-      typeMap.put(templateVar,JSType.UNKNOWN);
+      typeMap.put(typeParam,JSType.UNKNOWN);
     }
   }
   return typeMap;

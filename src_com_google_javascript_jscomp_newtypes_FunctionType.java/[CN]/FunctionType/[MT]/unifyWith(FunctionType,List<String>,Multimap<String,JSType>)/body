@@ -1,6 +1,6 @@
 {
   Preconditions.checkState(this.nominalType == null);
-  Preconditions.checkState(this.templateVars == null);
+  Preconditions.checkState(this.typeParameters == null);
   Preconditions.checkState(this.outerVarPreconditions.isEmpty());
   if (requiredFormals.size() != other.requiredFormals.size()) {
     return false;
@@ -10,7 +10,7 @@
   while (thisReqFormals.hasNext()) {
     JSType reqFormal=thisReqFormals.next();
     JSType otherReqFormal=otherReqFormals.next();
-    if (!reqFormal.unifyWith(otherReqFormal,templateVars,typeMultimap)) {
+    if (!reqFormal.unifyWith(otherReqFormal,typeParameters,typeMultimap)) {
       return false;
     }
   }
@@ -22,15 +22,15 @@
   while (thisOptFormals.hasNext()) {
     JSType optFormal=thisOptFormals.next();
     JSType otherOptFormal=otherOptFormals.next();
-    if (!optFormal.unifyWith(otherOptFormal,templateVars,typeMultimap)) {
+    if (!optFormal.unifyWith(otherOptFormal,typeParameters,typeMultimap)) {
       return false;
     }
   }
   if (restFormals == null && other.restFormals != null || restFormals != null && other.restFormals == null) {
     return false;
   }
-  if (restFormals != null && !restFormals.unifyWith(other.restFormals,templateVars,typeMultimap)) {
+  if (restFormals != null && !restFormals.unifyWith(other.restFormals,typeParameters,typeMultimap)) {
     return false;
   }
-  return returnType.unifyWith(other.returnType,templateVars,typeMultimap);
+  return returnType.unifyWith(other.returnType,typeParameters,typeMultimap);
 }
