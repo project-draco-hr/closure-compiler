@@ -1,0 +1,11 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  CompilationLevel level=CompilationLevel.SIMPLE_OPTIMIZATIONS;
+  level.setOptionsForCompilationLevel(options);
+  WarningLevel warnings=WarningLevel.DEFAULT;
+  warnings.setOptionsForWarningLevel(options);
+  options.setDefineToNumberLiteral("FOO",3);
+  String code="" + "var CLOSURE_DEFINES = {\n" + "  'FOO': 1,\n"+ "  'FOO': 2\n"+ "};\n"+ "\n"+ "/** @define {number} */ var FOO = 0;\n"+ "";
+  String result="" + "var CLOSURE_DEFINES = {\n" + "  FOO: 1,\n"+ "  FOO: 2\n"+ "},"+ "FOO = 3"+ "";
+  test(options,code,result);
+}

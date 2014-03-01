@@ -1,0 +1,15 @@
+{
+  if (n.getParent().isVar() && n.hasOneChild() && n.getFirstChild().isObjectLit()) {
+    HashMap<String,Node> builder=new HashMap<>();
+    builder.putAll(compiler.getDefaultDefineValues());
+    for (    Node c : n.getFirstChild().children()) {
+      if (c.isStringKey() && isValidDefineValue(c.getFirstChild())) {
+        builder.put(c.getString(),c.getFirstChild().cloneTree());
+      }
+ else {
+        reportBadClosureCommonDefinesDefinition(t,c);
+      }
+    }
+    compiler.setDefaultDefineValues(ImmutableMap.copyOf(builder));
+  }
+}
