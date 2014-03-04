@@ -1,14 +1,9 @@
 {
   Preconditions.checkState(n.isNew());
-  if (isASTNormalized()) {
-    if (n.getFirstChild().isName()) {
-      String className=n.getFirstChild().getString();
-      if (STANDARD_OBJECT_CONSTRUCTORS.contains(className)) {
-        n.setType(Token.CALL);
-        n.putBooleanProp(Node.FREE_CALL,true);
-        reportCodeChange();
-      }
-    }
+  if (canFoldStandardConstructors(n)) {
+    n.setType(Token.CALL);
+    n.putBooleanProp(Node.FREE_CALL,true);
+    reportCodeChange();
   }
   return n;
 }

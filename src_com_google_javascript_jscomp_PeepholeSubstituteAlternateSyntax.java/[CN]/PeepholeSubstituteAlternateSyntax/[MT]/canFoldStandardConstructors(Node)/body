@@ -1,0 +1,14 @@
+{
+  if (isASTNormalized() && n.getFirstChild().isName()) {
+    String className=n.getFirstChild().getString();
+    if (STANDARD_OBJECT_CONSTRUCTORS.contains(className)) {
+      return true;
+    }
+    if ("RegExp".equals(className)) {
+      if (n.getChildAtIndex(1) == null || n.getChildAtIndex(1).isString()) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
