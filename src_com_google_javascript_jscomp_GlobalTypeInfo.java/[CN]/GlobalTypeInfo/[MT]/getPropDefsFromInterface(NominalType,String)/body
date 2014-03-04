@@ -1,0 +1,15 @@
+{
+  Preconditions.checkState(nominalType.isFinalized());
+  Preconditions.checkState(nominalType.isInterface());
+  if (nominalType.getPropDeclaredType(pname) == null) {
+    return ImmutableSet.of();
+  }
+ else   if (propertyDefs.get(nominalType.getId(),pname) != null) {
+    return ImmutableSet.of(propertyDefs.get(nominalType.getId(),pname));
+  }
+  ImmutableSet.Builder<PropertyDef> result=ImmutableSet.builder();
+  for (  NominalType interf : nominalType.getInstantiatedInterfaces()) {
+    result.addAll(getPropDefsFromInterface(interf,pname));
+  }
+  return result.build();
+}
