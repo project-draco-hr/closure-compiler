@@ -24,8 +24,20 @@
       unknownTypeNames.put(n,typeName);
       throw new UnknownTypeException("Unhandled type: " + typeName);
     }
-    if (!n.hasChildren()) {
+    if (namedType.isTypeVariable()) {
       return namedType;
+    }
+    NominalType uninstantiated=namedType.getNominalTypeIfUnique();
+    RawNominalType rawType=uninstantiated.getRawNominalType();
+    if (!rawType.isGeneric() && !n.hasChildren()) {
+      return namedType;
+    }
+    if (!n.hasChildren()) {
+      ImmutableList.Builder<JSType> typeList=ImmutableList.builder();
+      for (      String unused : rawType.getTypeParameters()) {
+        typeList.add(JSType.UNKNOWN);
+      }
+      return JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated.instantiateGenerics(typeList.build())));
     }
     Preconditions.checkState(n.getFirstChild().isBlock());
     ImmutableList.Builder<JSType> typeList=ImmutableList.builder();
@@ -33,9 +45,8 @@
       JSType childType=getTypeFromNodeHelper(child,ownerType,registry,outerTypeParameters);
       typeList.add(childType);
     }
-    NominalType uninstantiated=namedType.getNominalTypeIfUnique();
     ImmutableList<JSType> typeArguments=typeList.build();
-    ImmutableList<String> typeParameters=uninstantiated.getRawNominalType().getTypeParameters();
+    ImmutableList<String> typeParameters=rawType.getTypeParameters();
     if (typeArguments.size() != typeParameters.size()) {
       warn("Invalid generics instantiation.\n" + "Expected " + typeParameters.size() + " type arguments, but "+ typeArguments.size()+ " were passed.",n);
       return JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated));

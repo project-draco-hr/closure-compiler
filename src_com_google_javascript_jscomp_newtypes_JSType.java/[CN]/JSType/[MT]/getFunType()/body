@@ -2,6 +2,12 @@
   if (objs == null) {
     return null;
   }
-  Preconditions.checkState(objs.size() == 1);
-  return Iterables.getOnlyElement(objs).getFunType();
+  if (objs.size() == 1) {
+    return Iterables.getOnlyElement(objs).getFunType();
+  }
+  FunctionType result=FunctionType.TOP_FUNCTION;
+  for (  ObjectType obj : objs) {
+    result=FunctionType.meet(result,obj.getFunType());
+  }
+  return result;
 }
