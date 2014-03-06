@@ -12,6 +12,17 @@
     Result result=compiler.compile(externs,sources,options);
     if (result.success) {
       StringBuilder source=new StringBuilder(compiler.toSource());
+      if (this.outputWrapper != null) {
+        int pos=-1;
+        pos=this.outputWrapper.indexOf(CommandLineRunner.OUTPUT_MARKER);
+        if (pos > -1) {
+          String prefix=this.outputWrapper.substring(0,pos);
+          source.insert(0,prefix);
+          int suffixStart=pos + CommandLineRunner.OUTPUT_MARKER.length();
+          String suffix=this.outputWrapper.substring(suffixStart);
+          source.append(suffix);
+        }
+      }
       if (result.sourceMap != null) {
         flushSourceMap(result.sourceMap);
         source.append(System.getProperty("line.separator"));
