@@ -174,7 +174,9 @@
   if (options.anonymousFunctionNaming == AnonymousFunctionNamingPolicy.UNMAPPED) {
     passes.add(nameUnmappedAnonymousFunctions);
   }
-  passes.add(stripSideEffectProtection);
+  if (protectHiddenSideEffects) {
+    passes.add(stripSideEffectProtection);
+  }
   if (options.renamePrefixNamespace != null) {
     if (!GLOBAL_SYMBOL_NAMESPACE_PATTERN.matcher(options.renamePrefixNamespace).matches()) {
       throw new IllegalArgumentException("Illegal character in renamePrefixNamespace name: " + options.renamePrefixNamespace);
