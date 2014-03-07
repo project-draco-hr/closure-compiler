@@ -1,0 +1,33 @@
+{
+  JSType inheritedPropType=superType.getPropDeclaredType(pname);
+  if (inheritedPropType == null) {
+    return;
+  }
+  Collection<PropertyDef> inheritedPropDefs;
+  if (superType.isInterface()) {
+    inheritedPropDefs=getPropDefsFromInterface(superType,pname);
+  }
+ else {
+    inheritedPropDefs=ImmutableSet.of(getPropDefFromClass(superType,pname));
+  }
+  if (superType.isInterface() && current.isClass() && !current.mayHaveProp(pname)) {
+    warnings.add(JSError.make(inheritedPropDefs.iterator().next().defSite,TypeValidator.INTERFACE_METHOD_NOT_IMPLEMENTED,pname,superType.toString(),current.toString()));
+    return;
+  }
+  PropertyDef localPropDef=propertyDefs.get(current.getId(),pname);
+  JSType localPropType=localPropDef == null ? null : current.getPropDeclaredType(pname);
+  System.out.println("nominalType: " + current + "'s "+ pname+ " localPropType: "+ localPropType+ " with super: "+ superType+ " inheritedPropType: "+ inheritedPropType);
+  if (localPropType != null && !localPropType.isSubtypeOf(inheritedPropType)) {
+    warnings.add(JSError.make(localPropDef.defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
+  }
+ else {
+    if (localPropType == null) {
+      propTypesToProcess.put(pname,inheritedPropType);
+    }
+ else     if (localPropDef.methodScope != null) {
+      for (      PropertyDef inheritedPropDef : inheritedPropDefs) {
+        propMethodTypesToProcess.put(pname,inheritedPropDef.methodScope.getDeclaredType());
+      }
+    }
+  }
+}

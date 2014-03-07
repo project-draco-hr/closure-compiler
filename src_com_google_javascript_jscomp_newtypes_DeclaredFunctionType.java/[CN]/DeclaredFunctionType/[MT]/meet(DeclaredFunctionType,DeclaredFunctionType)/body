@@ -1,0 +1,19 @@
+{
+  if (f1.equals(f2)) {
+    return f1;
+  }
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  int minRequiredArity=Math.min(f1.requiredFormals.size(),f2.requiredFormals.size());
+  for (int i=0; i < minRequiredArity; i++) {
+    builder.addReqFormal(nullAcceptingJoin(f1.getFormalType(i),f2.getFormalType(i)));
+  }
+  int maxTotalArity=Math.max(f1.requiredFormals.size() + f1.optionalFormals.size(),f2.requiredFormals.size() + f2.optionalFormals.size());
+  for (int i=minRequiredArity; i < maxTotalArity; i++) {
+    builder.addOptFormal(nullAcceptingJoin(f1.getFormalType(i),f2.getFormalType(i)));
+  }
+  if (f1.restFormals != null || f2.restFormals != null) {
+    builder.addRestFormals(nullAcceptingJoin(f1.restFormals,f2.restFormals));
+  }
+  builder.addRetType(nullAcceptingMeet(f1.returnType,f2.returnType));
+  return builder.buildDeclaration();
+}

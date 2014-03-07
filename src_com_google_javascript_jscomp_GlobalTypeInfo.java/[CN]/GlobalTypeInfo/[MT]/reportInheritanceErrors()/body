@@ -19,64 +19,18 @@
         continue workset_loop;
       }
     }
+    Multimap<String,DeclaredFunctionType> propMethodTypesToProcess=HashMultimap.create();
+    Multimap<String,JSType> propTypesToProcess=HashMultimap.create();
     if (superClass != null) {
       Preconditions.checkState(superClass.isFinalized());
       for (      String pname : superClass.getAllPropsOfClass()) {
-        PropertyDef localPropDef=propertyDefs.get(rawNominalType.getId(),pname);
-        PropertyDef inheritedPropDef=getPropDefFromClass(superClass,pname);
-        JSType inheritedPropType=superClass.getPropDeclaredType(pname);
-        if (inheritedPropType == null) {
-          continue;
-        }
-        JSType localPropType=localPropDef == null ? null : rawNominalType.getPropDeclaredType(pname);
-        System.out.println("nominalType: " + rawNominalType + "'s "+ pname+ " localPropType: "+ localPropType+ " with superClass: "+ superClass+ " inheritedPropType: "+ inheritedPropType);
-        if (localPropType != null && !localPropType.isSubtypeOf(inheritedPropType)) {
-          warnings.add(JSError.make(localPropDef.defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
-        }
- else {
-          if (inheritedPropDef != null && inheritedPropDef.methodScope != null) {
-            DeclaredFunctionType propDeclType;
-            if (localPropDef == null || localPropDef.methodScope == null) {
-              propDeclType=inheritedPropDef.methodScope.getDeclaredType();
-            }
- else {
-              DeclaredFunctionType funDeclType=localPropDef.methodScope.getDeclaredType();
-              DeclaredFunctionType inheritedFunDeclType=inheritedPropDef.methodScope.getDeclaredType();
-              propDeclType=funDeclType.withTypeInfoFromSuper(inheritedFunDeclType);
-              localPropDef.methodScope.setDeclaredType(propDeclType);
-            }
-            rawNominalType.addProtoProperty(pname,JSType.fromFunctionType(propDeclType.toFunctionType()));
-          }
-        }
+        checkSuperProperty(rawNominalType,superClass,pname,propMethodTypesToProcess,propTypesToProcess);
       }
     }
-    Multimap<String,DeclaredFunctionType> propMethodTypesToProcess=HashMultimap.create();
-    Multimap<String,JSType> propTypesToProcess=HashMultimap.create();
     for (    NominalType superInterf : rawNominalType.getInterfaces()) {
       Preconditions.checkState(superInterf.isFinalized());
       for (      String pname : superInterf.getAllPropsOfInterface()) {
-        Collection<PropertyDef> inheritedPropDefs=getPropDefsFromInterface(superInterf,pname);
-        if (!rawNominalType.mayHaveProp(pname)) {
-          warnings.add(JSError.make(inheritedPropDefs.iterator().next().defSite,TypeValidator.INTERFACE_METHOD_NOT_IMPLEMENTED,pname,superInterf.toString(),rawNominalType.toString()));
-          continue;
-        }
-        PropertyDef localPropDef=propertyDefs.get(rawNominalType.getId(),pname);
-        JSType localPropType=localPropDef == null ? null : rawNominalType.getPropDeclaredType(pname);
-        JSType inheritedPropType=superInterf.getPropDeclaredType(pname);
-        System.out.println("nominalType: " + rawNominalType + "'s "+ pname+ " localPropType: "+ localPropType+ " with superInterf: "+ superInterf+ " inheritedPropType: "+ inheritedPropType);
-        if (localPropType != null && !localPropType.isSubtypeOf(inheritedPropType)) {
-          warnings.add(JSError.make(localPropDef.defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
-        }
- else {
-          if (localPropType == null) {
-            propTypesToProcess.put(pname,inheritedPropType);
-          }
- else           if (localPropDef.methodScope != null) {
-            for (            PropertyDef inheritedPropDef : inheritedPropDefs) {
-              propMethodTypesToProcess.put(pname,inheritedPropDef.methodScope.getDeclaredType());
-            }
-          }
-        }
+        checkSuperProperty(rawNominalType,superInterf,pname,propMethodTypesToProcess,propTypesToProcess);
       }
     }
     for (    String pname : propMethodTypesToProcess.keySet()) {
@@ -84,9 +38,8 @@
       Preconditions.checkState(!methodTypes.isEmpty());
       PropertyDef localPropDef=propertyDefs.get(rawNominalType.getId(),pname);
       DeclaredFunctionType propDeclType=localPropDef.methodScope.getDeclaredType();
-      for (      DeclaredFunctionType superMethodType : methodTypes) {
-        propDeclType=propDeclType.withTypeInfoFromSuper(superMethodType);
-      }
+      DeclaredFunctionType superMethodType=DeclaredFunctionType.meet(methodTypes);
+      propDeclType=propDeclType.withTypeInfoFromSuper(superMethodType);
       localPropDef.methodScope.setDeclaredType(propDeclType);
       propTypesToProcess.put(pname,JSType.fromFunctionType(propDeclType.toFunctionType()));
     }
