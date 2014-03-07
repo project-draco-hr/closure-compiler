@@ -11,9 +11,17 @@
     logger.info("Error parsing " + sourceFile.getName() + ": "+ e.getMessage());
   }
   Node root=null;
+  List<Comment> comments=ImmutableList.of();
   if (tree != null && (!es6ErrorReporter.hadError() || config.isIdeMode)) {
     root=NewIRFactory.transformTree(tree,sourceFile,sourceString,config,errorReporter);
     root.setIsSyntheticBlock(true);
+    if (config.isIdeMode) {
+      List<com.google.javascript.jscomp.parsing.parser.trees.Comment> parserComments=p.getComments();
+      comments=Lists.newArrayListWithCapacity(parserComments.size());
+      for (      com.google.javascript.jscomp.parsing.parser.trees.Comment c : parserComments) {
+        comments.add(new CommentWrapper(c));
+      }
+    }
   }
-  return new ParseResult(root,null);
+  return new ParseResult(root,comments);
 }

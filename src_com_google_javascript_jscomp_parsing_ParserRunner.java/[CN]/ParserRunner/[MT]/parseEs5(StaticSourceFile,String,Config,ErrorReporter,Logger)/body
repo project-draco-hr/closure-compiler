@@ -23,9 +23,21 @@
     Context.exit();
   }
   Node root=null;
+  final List<Comment> comments=Lists.newArrayList();
   if (astRoot != null) {
     root=IRFactory.transformTree(astRoot,sourceFile,sourceString,config,errorReporter);
     root.setIsSyntheticBlock(true);
+    if (config.isIdeMode) {
+      astRoot.visitAll(new NodeVisitor(){
+        @Override public boolean visit(        AstNode node){
+          if (node.getType() == Token.COMMENT) {
+            comments.add(new CommentWrapper((com.google.javascript.rhino.head.ast.Comment)node));
+          }
+          return true;
+        }
+      }
+);
+    }
   }
-  return new ParseResult(root,astRoot);
+  return new ParseResult(root,comments);
 }
