@@ -1,0 +1,35 @@
+{
+  Preconditions.checkArgument(n.isAnd() || n.isOr());
+  boolean nIsAnd=n.isAnd();
+  Node left=n.getFirstChild();
+  Node right=n.getLastChild();
+  BooleanOutcomePair leftOutcome=traverseWithinShortCircuitingBinOp(left,scope.createChildFlowScope());
+  JSType leftType=left.getJSType();
+  FlowScope rightScope=reverseInterpreter.getPreciserScopeKnowingConditionOutcome(left,leftOutcome.getOutcomeFlowScope(left.getType(),nIsAnd),nIsAnd);
+  BooleanOutcomePair rightOutcome=traverseWithinShortCircuitingBinOp(right,rightScope.createChildFlowScope());
+  JSType rightType=right.getJSType();
+  JSType type;
+  BooleanOutcomePair outcome;
+  if (leftType != null && rightType != null) {
+    leftType=leftType.getRestrictedTypeGivenToBooleanOutcome(!nIsAnd);
+    if (leftOutcome.toBooleanOutcomes == BooleanLiteralSet.get(!nIsAnd)) {
+      type=leftType;
+      outcome=leftOutcome;
+    }
+ else {
+      type=leftType.getLeastSupertype(rightType);
+      outcome=new BooleanOutcomePair(joinBooleanOutcomes(nIsAnd,leftOutcome.toBooleanOutcomes,rightOutcome.toBooleanOutcomes),joinBooleanOutcomes(nIsAnd,leftOutcome.booleanValues,rightOutcome.booleanValues),leftOutcome.getJoinedFlowScope(),rightOutcome.getJoinedFlowScope());
+    }
+    if (outcome.booleanValues == BooleanLiteralSet.EMPTY && getNativeType(BOOLEAN_TYPE).isSubtype(type)) {
+      if (type.isUnionType()) {
+        type=type.toMaybeUnionType().getRestrictedUnion(getNativeType(BOOLEAN_TYPE));
+      }
+    }
+  }
+ else {
+    type=null;
+    outcome=new BooleanOutcomePair(BooleanLiteralSet.BOTH,BooleanLiteralSet.BOTH,leftOutcome.getJoinedFlowScope(),rightOutcome.getJoinedFlowScope());
+  }
+  n.setJSType(type);
+  return outcome;
+}

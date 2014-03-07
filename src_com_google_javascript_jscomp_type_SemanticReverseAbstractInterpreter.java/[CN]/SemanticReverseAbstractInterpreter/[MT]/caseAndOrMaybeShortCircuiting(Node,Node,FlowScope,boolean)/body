@@ -1,11 +1,11 @@
 {
-  FlowScope leftScope=firstPreciserScopeKnowingConditionOutcome(left,blindScope,!condition);
+  FlowScope leftScope=firstPreciserScopeKnowingConditionOutcome(left,blindScope,!outcome);
   StaticSlot<JSType> leftVar=leftScope.findUniqueRefinedSlot(blindScope);
   if (leftVar == null) {
     return blindScope == leftScope ? blindScope : blindScope.createChildFlowScope();
   }
-  FlowScope rightScope=firstPreciserScopeKnowingConditionOutcome(left,blindScope,condition);
-  rightScope=firstPreciserScopeKnowingConditionOutcome(right,rightScope,!condition);
+  FlowScope rightScope=firstPreciserScopeKnowingConditionOutcome(left,blindScope,outcome);
+  rightScope=firstPreciserScopeKnowingConditionOutcome(right,rightScope,!outcome);
   StaticSlot<JSType> rightVar=rightScope.findUniqueRefinedSlot(blindScope);
   if (rightVar == null || !leftVar.getName().equals(rightVar.getName())) {
     return blindScope == rightScope ? blindScope : blindScope.createChildFlowScope();
