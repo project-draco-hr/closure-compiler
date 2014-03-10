@@ -1,0 +1,8 @@
+{
+  JSDocInfo info=NodeUtil.getBestJSDocInfo(n);
+  if (info == null || !info.getSuppressions().contains("const")) {
+    Node declNode=var.getNode();
+    String declaredPosition=declNode.getSourceFileName() + ":" + declNode.getLineno();
+    compiler.report(t.makeError(n,CONST_REASSIGNED_VALUE_ERROR,name,declaredPosition));
+  }
+}
