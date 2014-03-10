@@ -2,29 +2,33 @@
   if (token != JsDocToken.STRING) {
     return reportGenericTypeSyntaxWarning();
   }
-  String typeName=stream.getString();
-  int lineno=stream.getLineno();
-  int charno=stream.getCharno();
-  while (match(JsDocToken.EOL) && typeName.charAt(typeName.length() - 1) == '.') {
+  Node firstName=readTypeExpr();
+  Node localTypeName=null;
+  Node typeName=null;
+  if (match(JsDocToken.COLONCOLON)) {
+    next();
     skipEOLs();
+    typeName=newNode(Token.COLONCOLON);
+    typeName.addChildToBack(firstName);
     if (match(JsDocToken.STRING)) {
-      next();
-      typeName+=stream.getString();
+      localTypeName=readTypeExpr();
+      typeName.addChildToBack(localTypeName);
+    }
+ else {
+      return typeName;
     }
   }
-  Node typeNameNode=newStringNode(typeName,lineno,charno);
+ else {
+    typeName=localTypeName=firstName;
+  }
   if (match(JsDocToken.LT)) {
     next();
     skipEOLs();
-    Node memberType=parseTypeExpressionList(next());
-    if (memberType != null) {
-      typeNameNode.addChildToFront(memberType);
-      skipEOLs();
-      if (!match(JsDocToken.GT)) {
-        return reportTypeSyntaxWarning("msg.jsdoc.missing.gt");
-      }
-      next();
+    Node memberType=parseTypeApplication(next());
+    if (memberType == null) {
+      return null;
     }
+    localTypeName.addChildToFront(memberType);
   }
-  return typeNameNode;
+  return typeName;
 }
