@@ -1,0 +1,9 @@
+{
+  Node fn=methodScope.getRoot();
+  if (!NodeUtil.isPrototypeMethod(fn)) {
+    return false;
+  }
+  String typeName=TypeUtils.getQnameRoot(fn.getParent().getFirstChild().getQualifiedName());
+  JSType t=methodScope.getDeclaredTypeOf(typeName);
+  return t != null && t.isInterfaceDefinition();
+}
