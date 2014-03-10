@@ -7,6 +7,7 @@
     Node funNode=workset.removeFirst();
     RawNominalType rawNominalType=nominaltypesByNode.get(funNode);
     NominalType superClass=rawNominalType.getSuperClass();
+    Set<String> nonInheritedPropNames=rawNominalType.getAllOwnProps();
     if (superClass != null && !superClass.isFinalized()) {
       workset.addLast(funNode);
       iterations++;
@@ -24,12 +25,14 @@
     if (superClass != null) {
       Preconditions.checkState(superClass.isFinalized());
       for (      String pname : superClass.getAllPropsOfClass()) {
+        nonInheritedPropNames.remove(pname);
         checkSuperProperty(rawNominalType,superClass,pname,propMethodTypesToProcess,propTypesToProcess);
       }
     }
     for (    NominalType superInterf : rawNominalType.getInterfaces()) {
       Preconditions.checkState(superInterf.isFinalized());
       for (      String pname : superInterf.getAllPropsOfInterface()) {
+        nonInheritedPropNames.remove(pname);
         checkSuperProperty(rawNominalType,superInterf,pname,propMethodTypesToProcess,propTypesToProcess);
       }
     }
@@ -57,6 +60,13 @@
         }
       }
       rawNominalType.addProtoProperty(pname,resultType);
+    }
+    for (    String pname : nonInheritedPropNames) {
+      Node defSite=propertyDefs.get(rawNominalType.getId(),pname).defSite;
+      JSDocInfo jsdoc=defSite == null ? null : defSite.getJSDocInfo();
+      if (jsdoc != null && jsdoc.isOverride()) {
+        warnings.add(JSError.make(defSite,TypeCheck.UNKNOWN_OVERRIDE,pname,rawNominalType.getName()));
+      }
     }
     rawNominalType.finalizeNominalType();
   }
