@@ -1,12 +1,14 @@
 {
-  Preconditions.checkState(!other.isGeneric());
   if (other.isTopFunction()) {
     return true;
   }
   if (isTopFunction()) {
     return false;
   }
-  Preconditions.checkState(!this.isGeneric());
+  if (this.isGeneric()) {
+    return true;
+  }
+  Preconditions.checkState(!other.isGeneric());
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   int i=0;
   for (; i < other.requiredFormals.size(); i++) {

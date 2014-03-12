@@ -1,5 +1,14 @@
 {
-  Preconditions.checkState(typeParameters == null);
   Preconditions.checkState(outerVarPreconditions.isEmpty());
-  return applyInstantiation(concreteTypes);
+  Map<String,JSType> typeMap=concreteTypes;
+  if (typeParameters != null) {
+    ImmutableMap.Builder builder=ImmutableMap.builder();
+    for (    String typeParam : concreteTypes.keySet()) {
+      if (!typeParameters.contains(typeParam)) {
+        builder.put(typeParam,concreteTypes.get(typeParam));
+      }
+    }
+    typeMap=builder.build();
+  }
+  return applyInstantiation(true,typeMap);
 }

@@ -1,0 +1,31 @@
+{
+  if ((specializedType.isTruthy() || specializedType.isFalsy()) && (lhs.isTypeOf() || rhs.isTypeOf())) {
+    if (lhs.isTypeOf()) {
+      return analyzeSpecializedTypeof(lhs,rhs,comparisonOp,inEnv,specializedType);
+    }
+ else {
+      return analyzeSpecializedTypeof(rhs,lhs,comparisonOp,inEnv,specializedType);
+    }
+  }
+  EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
+  EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
+  if ((comparisonOp == Token.SHEQ && specializedType.isTruthy()) || (comparisonOp == Token.SHNE && specializedType.isFalsy())) {
+    JSType meetType=JSType.meet(lhsPair.type,rhsPair.type);
+    lhsPair=analyzeExprFwd(lhs,rhsPair.env,JSType.UNKNOWN,meetType);
+    rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.UNKNOWN,meetType);
+  }
+ else   if ((comparisonOp == Token.SHEQ && specializedType.isFalsy()) || (comparisonOp == Token.SHNE && specializedType.isTruthy())) {
+    JSType lhsType=lhsPair.type;
+    JSType rhsType=rhsPair.type;
+    if (lhsType.equals(JSType.NULL) || lhsType.equals(JSType.UNDEFINED)) {
+      rhsType=rhsType.removeType(lhsType);
+    }
+ else     if (rhsType.equals(JSType.NULL) || rhsType.equals(JSType.UNDEFINED)) {
+      lhsType=lhsType.removeType(rhsType);
+    }
+    lhsPair=analyzeExprFwd(lhs,rhsPair.env,JSType.UNKNOWN,lhsType);
+    rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.UNKNOWN,rhsType);
+  }
+  rhsPair.type=JSType.BOOLEAN;
+  return rhsPair;
+}
