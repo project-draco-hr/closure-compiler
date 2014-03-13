@@ -148,7 +148,7 @@ case Token.ASSIGN:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-LValueResult lvalue=analyzeLValueBwd(lhs,outEnv,requiredType,true);
+LValueResultBwd lvalue=analyzeLValueBwd(lhs,outEnv,requiredType,true);
 TypeEnv slicedEnv=lvalue.env;
 JSType rhsReqType=specializeWithCorrection(lvalue.type,requiredType);
 EnvTypePair pair=analyzeExprBwd(rhs,slicedEnv,rhsReqType);
@@ -160,7 +160,7 @@ case Token.ASSIGN_ADD:
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 JSType lhsReqType=specializeWithCorrection(requiredType,JSType.NUM_OR_STR);
-LValueResult lvalue=analyzeLValueBwd(lhs,outEnv,lhsReqType,false);
+LValueResultBwd lvalue=analyzeLValueBwd(lhs,outEnv,lhsReqType,false);
 JSType rhsReqType=lvalue.type.equals(JSType.NUMBER) ? JSType.NUMBER : JSType.NUM_OR_STR;
 EnvTypePair pair=analyzeExprBwd(rhs,outEnv,rhsReqType);
 pair.env=analyzeLValueBwd(lhs,pair.env,lhsReqType,false).env;
@@ -180,7 +180,7 @@ case Token.ASSIGN_MOD:
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 EnvTypePair pair=analyzeExprBwd(rhs,outEnv,JSType.NUMBER);
-LValueResult lvalue=analyzeLValueBwd(lhs,pair.env,JSType.NUMBER,false);
+LValueResultBwd lvalue=analyzeLValueBwd(lhs,pair.env,JSType.NUMBER,false);
 return new EnvTypePair(lvalue.env,JSType.NUMBER);
 }
 case Token.GETPROP:

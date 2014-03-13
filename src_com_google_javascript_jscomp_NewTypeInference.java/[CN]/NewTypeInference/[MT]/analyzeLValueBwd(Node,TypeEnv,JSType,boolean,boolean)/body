@@ -1,0 +1,36 @@
+{
+switch (expr.getType()) {
+case Token.THIS:
+case Token.NAME:
+{
+      EnvTypePair pair=analyzeExprBwd(expr,outEnv,type);
+      String name=expr.getQualifiedName();
+      JSType declType=currentScope.getDeclaredTypeOf(name);
+      if (doSlicing) {
+        pair.env=envPutType(pair.env,name,declType != null ? declType : JSType.UNKNOWN);
+      }
+      return new LValueResultBwd(pair.env,pair.type,pair.type.hasNonScalar() ? name : null);
+    }
+case Token.GETPROP:
+{
+    Node obj=expr.getFirstChild();
+    String pname=expr.getLastChild().getString();
+    return analyzePropLValBwd(obj,pname,outEnv,type,doSlicing);
+  }
+case Token.GETELEM:
+{
+  if (expr.getLastChild().isString()) {
+    Node obj=expr.getFirstChild();
+    String pname=expr.getLastChild().getString();
+    return analyzePropLValBwd(obj,pname,outEnv,type,doSlicing);
+  }
+  return new LValueResultBwd(outEnv,type,null);
+}
+default :
+{
+Preconditions.checkState(insideQualifiedName);
+EnvTypePair pair=analyzeExprBwd(expr,outEnv,type);
+return new LValueResultBwd(pair.env,pair.type,null);
+}
+}
+}

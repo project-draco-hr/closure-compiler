@@ -1,5 +1,5 @@
 {
-  LValueResult lvalue=analyzeLValueBwd(obj,outEnv,JSType.TOP_OBJECT.withProperty(pname,type),false);
+  LValueResultBwd lvalue=analyzeLValueBwd(obj,outEnv,JSType.TOP_OBJECT.withProperty(pname,type),false,true);
   if (lvalue.ptr != null) {
     lvalue.ptr+="." + pname;
     if (doSlicing) {
@@ -11,8 +11,6 @@
       lvalue.env=envPutType(lvalue.env,objName,slicedObjType);
     }
   }
-  if (lvalue.type.mayHaveProp(pname)) {
-    lvalue.type=lvalue.type.getProp(pname);
-  }
+  lvalue.type=lvalue.type.mayHaveProp(pname) ? lvalue.type.getProp(pname) : JSType.UNKNOWN;
   return lvalue;
 }

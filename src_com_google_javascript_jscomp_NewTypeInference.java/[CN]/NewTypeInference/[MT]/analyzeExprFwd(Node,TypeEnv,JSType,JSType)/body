@@ -179,7 +179,7 @@ case Token.ASSIGN:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-LValueResult lvalue=analyzeLValueFwd(lhs,inEnv,requiredType);
+LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,requiredType);
 JSType declType=lvalue.declType;
 EnvTypePair rhsPair=analyzeExprFwd(rhs,lvalue.env,requiredType,specializedType);
 JSType rhsType=rhsPair.type;
@@ -194,7 +194,7 @@ case Token.ASSIGN_ADD:
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 JSType lhsReqType=specializeWithCorrection(requiredType,JSType.NUM_OR_STR);
-LValueResult lvalue=analyzeLValueFwd(lhs,inEnv,lhsReqType);
+LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,lhsReqType);
 JSType lhsType=lvalue.type;
 if (!lhsType.isSubtypeOf(JSType.NUM_OR_STR)) {
 warnInvalidOperand(lhs,Token.ASSIGN_ADD,JSType.NUM_OR_STR,lhsType);
@@ -219,7 +219,7 @@ case Token.ASSIGN_MOD:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-LValueResult lvalue=analyzeLValueFwd(lhs,inEnv,JSType.NUMBER);
+LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,JSType.NUMBER);
 JSType lhsType=lvalue.type;
 if (!lhsType.isSubtypeOf(JSType.NUMBER)) {
 warnInvalidOperand(lhs,expr.getType(),JSType.NUMBER,lhsType);
