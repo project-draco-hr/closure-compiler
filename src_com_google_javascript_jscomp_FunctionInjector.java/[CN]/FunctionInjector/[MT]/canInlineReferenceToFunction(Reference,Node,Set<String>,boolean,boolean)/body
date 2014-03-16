@@ -1,0 +1,23 @@
+{
+  Node callNode=ref.callNode;
+  if (!isSupportedCallType(callNode)) {
+    return CanInlineResult.NO;
+  }
+  if (containsFunctions) {
+    if (!assumeMinimumCapture && !ref.scope.isGlobal()) {
+      return CanInlineResult.NO;
+    }
+ else     if (NodeUtil.isWithinLoop(callNode)) {
+      return CanInlineResult.NO;
+    }
+  }
+  if (referencesThis && !NodeUtil.isFunctionObjectCall(callNode)) {
+    return CanInlineResult.NO;
+  }
+  if (ref.mode == InliningMode.DIRECT) {
+    return canInlineReferenceDirectly(ref,fnNode,needAliases);
+  }
+ else {
+    return canInlineReferenceAsStatementBlock(ref,fnNode,needAliases);
+  }
+}

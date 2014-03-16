@@ -6,7 +6,8 @@
   final Set<String> unsafe=FunctionArgumentInjector.findModifiedParameters(fnNode);
   Method tester=new Method(){
     @Override public boolean call(    NodeTraversal t,    Node n,    Node parent){
-      CanInlineResult result=injector.canInlineReferenceToFunction(t,n,fnNode,unsafe,mode,NodeUtil.referencesThis(fnNode),NodeUtil.containsFunction(NodeUtil.getFunctionBody(fnNode)));
+      Reference ref=new Reference(n,t.getScope(),t.getModule(),mode);
+      CanInlineResult result=injector.canInlineReferenceToFunction(ref,fnNode,unsafe,NodeUtil.referencesThis(fnNode),NodeUtil.containsFunction(NodeUtil.getFunctionBody(fnNode)));
       assertEquals(expectedResult,result);
       return true;
     }

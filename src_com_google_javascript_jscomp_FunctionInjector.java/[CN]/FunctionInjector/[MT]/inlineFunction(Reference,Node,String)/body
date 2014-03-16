@@ -1,0 +1,51 @@
+{
+  Node callNode=ref.callNode;
+  Node parent=callNode.getParent();
+  Node grandParent=parent.getParent();
+  CallSiteType callSiteType=classifyCallSite(ref);
+  Preconditions.checkArgument(callSiteType != CallSiteType.UNSUPPORTED);
+  boolean isCallInLoop=NodeUtil.isWithinLoop(callNode);
+  String resultName=null;
+  boolean needsDefaultReturnResult=true;
+switch (callSiteType) {
+case SIMPLE_ASSIGNMENT:
+    resultName=parent.getFirstChild().getString();
+  removeConstantVarAnnotation(ref.scope,resultName);
+break;
+case VAR_DECL_SIMPLE_ASSIGNMENT:
+resultName=parent.getString();
+removeConstantVarAnnotation(ref.scope,resultName);
+break;
+case SIMPLE_CALL:
+resultName=null;
+needsDefaultReturnResult=false;
+break;
+case EXPRESSION:
+throw new IllegalStateException("Movable expressions must be moved before inlining.");
+case DECOMPOSABLE_EXPRESSION:
+throw new IllegalStateException("Decomposable expressions must be decomposed before inlining.");
+default :
+throw new IllegalStateException("Unexpected call site type.");
+}
+FunctionToBlockMutator mutator=new FunctionToBlockMutator(compiler,this.safeNameIdSupplier);
+Node newBlock=mutator.mutate(fnName,fnNode,callNode,resultName,needsDefaultReturnResult,isCallInLoop);
+Node greatGrandParent=grandParent.getParent();
+switch (callSiteType) {
+case VAR_DECL_SIMPLE_ASSIGNMENT:
+parent.removeChild(parent.getFirstChild());
+Preconditions.checkState(parent.getFirstChild() == null);
+greatGrandParent.addChildAfter(newBlock,grandParent);
+break;
+case SIMPLE_ASSIGNMENT:
+Preconditions.checkState(grandParent.isExprResult());
+greatGrandParent.replaceChild(grandParent,newBlock);
+break;
+case SIMPLE_CALL:
+Preconditions.checkState(parent.isExprResult());
+grandParent.replaceChild(parent,newBlock);
+break;
+default :
+throw new IllegalStateException("Unexpected call site type.");
+}
+return newBlock;
+}

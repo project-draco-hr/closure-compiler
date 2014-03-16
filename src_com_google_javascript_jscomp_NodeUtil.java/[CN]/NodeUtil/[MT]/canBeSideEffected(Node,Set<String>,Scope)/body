@@ -1,0 +1,21 @@
+{
+switch (n.getType()) {
+case Token.CALL:
+case Token.NEW:
+    return true;
+case Token.NAME:
+  return !isConstantVar(n,scope) && !knownConstants.contains(n.getString());
+case Token.GETPROP:
+case Token.GETELEM:
+return true;
+case Token.FUNCTION:
+Preconditions.checkState(isFunctionExpression(n));
+return false;
+}
+for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+if (canBeSideEffected(c,knownConstants,scope)) {
+return true;
+}
+}
+return false;
+}

@@ -5,10 +5,11 @@
       return false;
     }
   }
-  CanInlineResult result=injector.canInlineReferenceToFunction(t,callNode,fs.getFn().getFunctionNode(),fs.getNamesToAlias(),mode,fs.getReferencesThis(),fs.hasInnerFunctions());
+  Reference candidate=new Reference(callNode,t.getScope(),module,mode);
+  CanInlineResult result=injector.canInlineReferenceToFunction(candidate,fs.getFn().getFunctionNode(),fs.getNamesToAlias(),fs.getReferencesThis(),fs.hasInnerFunctions());
   if (result != CanInlineResult.NO) {
-    boolean decompose=(result == CanInlineResult.AFTER_PREPARATION);
-    fs.addReference(new Reference(callNode,module,mode,decompose));
+    candidate.setRequiresDecomposition(result == CanInlineResult.AFTER_PREPARATION);
+    fs.addReference(candidate);
     return true;
   }
   return false;
