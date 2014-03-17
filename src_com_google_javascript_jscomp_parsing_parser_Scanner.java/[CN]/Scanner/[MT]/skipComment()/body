@@ -1,13 +1,31 @@
 {
-  skipWhitespace();
-  if (!isAtEnd() && peek('/')) {
+  boolean isStartOfLine=skipWhitespace();
+  if (!isAtEnd()) {
+switch (peekChar(0)) {
+case '/':
 switch (peekChar(1)) {
 case '/':
-      skipSingleLineComment();
-    return true;
+        skipSingleLineComment();
+      return true;
 case '*':
-  skipMultiLineComment();
+    skipMultiLineComment();
+  return true;
+}
+break;
+case '<':
+if (peekChar(1) == '!' && peekChar(2) == '-' && peekChar(3) == '-') {
+reportHtmlCommentWarning();
+skipSingleLineComment();
 return true;
+}
+break;
+case '-':
+if (isStartOfLine && peekChar(1) == '-' && peekChar(2) == '>') {
+reportHtmlCommentWarning();
+skipSingleLineComment();
+return true;
+}
+break;
 }
 }
 return false;
