@@ -1,32 +1,34 @@
 {
   String typeName=n.getString();
-  if (typeName.equals("boolean")) {
+switch (typeName) {
+case "boolean":
     return JSType.BOOLEAN;
-  }
- else   if (typeName.equals("null")) {
-    return JSType.NULL;
-  }
- else   if (typeName.equals("number")) {
-    return JSType.NUMBER;
-  }
- else   if (typeName.equals("string")) {
-    return JSType.STRING;
-  }
- else   if (typeName.equals("undefined")) {
-    return JSType.UNDEFINED;
-  }
- else   if (hasTypeVariable(outerTypeParameters,ownerType,typeName)) {
-    return JSType.fromTypeVar(typeName);
-  }
+case "null":
+  return JSType.NULL;
+case "number":
+return JSType.NUMBER;
+case "string":
+return JSType.STRING;
+case "undefined":
+return JSType.UNDEFINED;
+case "Function":
+return JSType.qmarkFunction();
+default :
+{
+if (hasTypeVariable(outerTypeParameters,ownerType,typeName)) {
+return JSType.fromTypeVar(typeName);
+}
  else {
-    JSType namedType=registry.lookupTypeByName(typeName);
-    if (namedType == null) {
-      unknownTypeNames.put(n,typeName);
-      throw new UnknownTypeException("Unhandled type: " + typeName);
-    }
-    if (namedType.isTypeVariable()) {
-      return namedType;
-    }
-    return JSType.join(JSType.NULL,getNominalTypeHelper(namedType,n,ownerType,registry,outerTypeParameters));
-  }
+JSType namedType=registry.lookupTypeByName(typeName);
+if (namedType == null) {
+unknownTypeNames.put(n,typeName);
+throw new UnknownTypeException("Unhandled type: " + typeName);
+}
+if (namedType.isTypeVariable()) {
+return namedType;
+}
+return JSType.join(JSType.NULL,getNominalTypeHelper(namedType,n,ownerType,registry,outerTypeParameters));
+}
+}
+}
 }

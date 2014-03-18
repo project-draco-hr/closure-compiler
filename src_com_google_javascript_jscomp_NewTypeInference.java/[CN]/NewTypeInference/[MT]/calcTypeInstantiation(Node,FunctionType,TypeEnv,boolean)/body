@@ -20,21 +20,21 @@
     typeEnv=pair.env;
     i++;
   }
-  HashMap<String,JSType> typeMap=Maps.newHashMap();
+  ImmutableMap.Builder builder=ImmutableMap.builder();
   for (  String typeParam : typeParameters) {
     Collection<JSType> types=typeMultimap.get(typeParam);
     if (types.size() > 1) {
       if (isFwd) {
         warnings.add(JSError.make(callNode,NOT_UNIQUE_INSTANTIATION,typeParam,types.toString()));
       }
-      typeMap.put(typeParam,JSType.UNKNOWN);
+      builder.put(typeParam,JSType.UNKNOWN);
     }
  else     if (types.size() == 1) {
-      typeMap.put(typeParam,Iterables.getOnlyElement(types));
+      builder.put(typeParam,Iterables.getOnlyElement(types));
     }
  else {
-      typeMap.put(typeParam,JSType.UNKNOWN);
+      builder.put(typeParam,JSType.UNKNOWN);
     }
   }
-  return typeMap;
+  return builder.build();
 }

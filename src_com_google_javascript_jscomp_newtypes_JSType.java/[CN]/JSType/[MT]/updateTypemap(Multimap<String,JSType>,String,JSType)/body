@@ -1,10 +1,14 @@
 {
+  Set<JSType> typesToRemove=Sets.newHashSet();
   for (  JSType other : typeMultimap.get(typeParam)) {
     JSType unified=unifyUnknowns(type,other);
     if (unified != null) {
-      typeMultimap.remove(typeParam,other);
+      typesToRemove.add(other);
       type=unified;
     }
+  }
+  for (  JSType typeToRemove : typesToRemove) {
+    typeMultimap.remove(typeParam,typeToRemove);
   }
   typeMultimap.put(typeParam,type);
 }

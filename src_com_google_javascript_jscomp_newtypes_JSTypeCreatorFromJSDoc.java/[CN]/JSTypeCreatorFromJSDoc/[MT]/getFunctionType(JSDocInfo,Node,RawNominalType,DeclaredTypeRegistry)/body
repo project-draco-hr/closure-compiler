@@ -2,8 +2,12 @@
   try {
     if (jsdoc != null && jsdoc.getType() != null) {
       Node jsdocNode=jsdoc.getType().getRootNode();
-      if (jsdocNode.getType() == Token.FUNCTION) {
+      int tokenType=jsdocNode.getType();
+      if (tokenType == Token.FUNCTION) {
         return getFunTypeFromAtTypeJsdoc(jsdoc,funNode,ownerType,registry);
+      }
+ else       if (tokenType == Token.STRING && jsdocNode.getString().equals("Function")) {
+        return FunctionTypeBuilder.qmarkFunctionBuilder();
       }
  else {
         warn("The function is annotated with a non-function jsdoc. " + "Ignoring jsdoc.",funNode);
