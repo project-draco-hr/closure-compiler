@@ -1,7 +1,8 @@
 {
-  String code="function f() { return \n 3; }";
+  String code="function f() { return \n x(); }";
   CompilerOptions options=createCompilerOptions();
+  options.setWarningLevel(DiagnosticGroups.CHECK_USELESS_CODE,CheckLevel.OFF);
   testSame(options,code);
-  options.checkUnreachableCode=CheckLevel.ERROR;
+  options.setWarningLevel(DiagnosticGroups.CHECK_USELESS_CODE,CheckLevel.ERROR);
   test(options,code,CheckUnreachableCode.UNREACHABLE_CODE);
 }
