@@ -11,9 +11,13 @@
  else     if (!mayHaveSideEffects(left)) {
       result=right;
     }
+ else {
+      n.detachChildren();
+      result=IR.comma(left,right);
+    }
   }
   if (result != null) {
-    n.removeChild(result);
+    n.detachChildren();
     parent.replaceChild(n,result);
     reportCodeChange();
     return result;

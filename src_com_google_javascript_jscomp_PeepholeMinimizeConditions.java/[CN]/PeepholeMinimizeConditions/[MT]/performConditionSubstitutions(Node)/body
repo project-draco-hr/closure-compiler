@@ -19,6 +19,10 @@ case Token.AND:
  else         if (!mayHaveSideEffects(left)) {
           replacement=right;
         }
+ else {
+          n.detachChildren();
+          replacement=IR.comma(left,right);
+        }
         if (replacement != null) {
           n.detachChildren();
           parent.replaceChild(n,replacement);
