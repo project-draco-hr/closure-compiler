@@ -1,0 +1,20 @@
+{
+  Node target=n.getFirstChild();
+  Node prop=n.getLastChild();
+  if (prop.getString().equals("callee")) {
+    if (target.isName() && target.getString().equals("arguments")) {
+      t.report(n,ARGUMENTS_CALLEE_FORBIDDEN);
+    }
+  }
+ else   if (prop.getString().equals("caller")) {
+    if (target.isName() && target.getString().equals("arguments")) {
+      t.report(n,ARGUMENTS_CALLER_FORBIDDEN);
+    }
+ else     if (isFunctionType(target)) {
+      t.report(n,FUNCTION_CALLER_FORBIDDEN);
+    }
+  }
+ else   if (prop.getString().equals("arguments") && isFunctionType(target)) {
+    t.report(n,FUNCTION_ARGUMENTS_PROP_FORBIDDEN);
+  }
+}
