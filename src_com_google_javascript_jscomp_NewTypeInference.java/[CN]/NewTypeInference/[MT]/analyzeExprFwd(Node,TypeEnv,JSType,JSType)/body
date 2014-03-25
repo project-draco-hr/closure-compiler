@@ -290,25 +290,25 @@ warnings.add(JSError.make(expr,TypeCheck.NOT_CALLABLE,calleeType.toString()));
 }
 FunctionType funType=calleeType.getFunType();
 if (funType == null || funType.isTopFunction()) {
-return new EnvTypePair(inEnv,requiredType);
+return analyzeCallNodeArgumentsFwd(expr,inEnv);
 }
  else if (funType.isLoose()) {
 return analyzeLooseCallNodeFwd(expr,inEnv,requiredType);
 }
  else if (expr.isCall() && funType.isConstructor()) {
 warnings.add(JSError.make(expr,TypeCheck.CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
-return new EnvTypePair(inEnv,requiredType);
+return analyzeCallNodeArgumentsFwd(expr,inEnv);
 }
  else if (expr.isNew() && !funType.isConstructor()) {
 warnings.add(JSError.make(expr,TypeCheck.NOT_A_CONSTRUCTOR,funType.toString()));
-return new EnvTypePair(inEnv,requiredType);
+return analyzeCallNodeArgumentsFwd(expr,inEnv);
 }
 int maxArity=funType.getMaxArity();
 int minArity=funType.getMinArity();
 int numArgs=expr.getChildCount() - 1;
 if (numArgs < minArity || numArgs > maxArity) {
 warnings.add(JSError.make(expr,TypeCheck.WRONG_ARGUMENT_COUNT,"",Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
-return new EnvTypePair(inEnv,requiredType);
+return analyzeCallNodeArgumentsFwd(expr,inEnv);
 }
 FunctionType origFunType=funType;
 if (funType.isGeneric()) {
@@ -348,6 +348,7 @@ println("Updating deferred check with ret: ",expectedRetType," and args: ",argTy
 DeferredCheck dc;
 if (expr.isCall()) {
 dc=deferredChecks.get(expr);
+Preconditions.checkState(dc != null,"No deferred check created in backward direction for " + expr);
 dc.updateReturn(expectedRetType);
 }
  else {

@@ -1,0 +1,15 @@
+{
+  Preconditions.checkArgument(expr.isCall());
+  String calleeName=expr.getFirstChild().getQualifiedName();
+  if (currentScope.isKnownFunction(calleeName) && !currentScope.isLocalFunDef(calleeName)) {
+    Scope s=currentScope.getScope(calleeName);
+    JSType expectedRetType=JSType.UNKNOWN;
+    if (s.getDeclaredType().getReturnType() == null) {
+      expectedRetType=requiredType;
+    }
+    println("Putting deferred check of function: ",calleeName," with ret: ",expectedRetType);
+    DeferredCheck dc=new DeferredCheck(expr,currentScope,s);
+    dc.updateReturn(expectedRetType);
+    deferredChecks.put(expr,dc);
+  }
+}
