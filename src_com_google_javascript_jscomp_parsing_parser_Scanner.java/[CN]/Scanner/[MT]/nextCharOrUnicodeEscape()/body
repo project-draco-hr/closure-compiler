@@ -1,0 +1,16 @@
+{
+  char ch=nextChar();
+  if (ch == '\\') {
+    ch=nextChar();
+    if (ch == 'u') {
+      if (skipHexDigit() && skipHexDigit() && skipHexDigit()&& skipHexDigit()) {
+        String hexDigits=source.contents.substring(index - 4,index);
+        ch=(char)Integer.parseInt(hexDigits,0x10);
+      }
+    }
+ else {
+      reportError(getPosition(index),"Invalid escape sequence '\\%s'",ch);
+    }
+  }
+  return ch;
+}

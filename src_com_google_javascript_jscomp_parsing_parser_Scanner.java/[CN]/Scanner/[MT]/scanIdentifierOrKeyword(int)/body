@@ -1,0 +1,15 @@
+{
+  char ch=nextCharOrUnicodeEscape();
+  if (!isIdentifierStart(ch)) {
+    reportError(getPosition(beginToken),"Character '%c' (U+%04X) is not a valid identifier start char",ch,(int)ch);
+    return createToken(TokenType.ERROR,beginToken);
+  }
+  String value=ch + "";
+  while (isIdentifierPart(peekCharOrUnicodeEscape())) {
+    value+=nextCharOrUnicodeEscape();
+  }
+  if (Keywords.isKeyword(value)) {
+    return new Token(Keywords.getTokenType(value),getTokenRange(beginToken));
+  }
+  return new IdentifierToken(getTokenRange(beginToken),value);
+}
