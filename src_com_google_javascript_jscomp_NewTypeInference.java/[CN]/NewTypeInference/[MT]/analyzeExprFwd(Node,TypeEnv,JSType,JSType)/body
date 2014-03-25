@@ -326,7 +326,10 @@ warnings.add(JSError.make(expr,CALL_FUNCTION_WITH_BOTTOM_FORMAL,Integer.toString
 formalType=JSType.UNKNOWN;
 }
 EnvTypePair pair=analyzeExprFwd(arg,tmpEnv,formalType);
-if (!pair.type.isSubtypeOf(formalType)) {
+if (i >= minArity && pair.type.equals(JSType.UNDEFINED)) {
+pair.type=JSType.UNKNOWN;
+}
+ else if (!pair.type.isSubtypeOf(formalType)) {
 warnings.add(JSError.make(arg,INVALID_ARGUMENT_TYPE,Integer.toString(i + 1),"",formalType.toString(),pair.type.toString()));
 pair.type=JSType.UNKNOWN;
 }
