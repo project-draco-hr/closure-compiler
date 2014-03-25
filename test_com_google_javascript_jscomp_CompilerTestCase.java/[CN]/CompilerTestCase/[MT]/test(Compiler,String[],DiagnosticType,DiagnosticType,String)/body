@@ -113,7 +113,7 @@
     boolean externsChange=!externsRootClone.isEquivalentTo(externsRoot);
     if (externsChange && !allowExternsChanges) {
       String explanation=externsRootClone.checkTreeEquals(externsRoot);
-      fail("Unexpected changes to externs" + "\nExpected: " + compiler.toSource(externsRootClone) + "\nResult: "+ compiler.toSource(externsRoot)+ "\n"+ explanation);
+      fail("Unexpected changes to externs" + "\nExpected: " + compiler.toSource(externsRootClone) + "\nResult:   "+ compiler.toSource(externsRoot)+ "\n"+ explanation);
     }
     if (!codeChange && !externsChange) {
       assertFalse("compiler.reportCodeChange() was called " + "even though nothing changed",hasCodeChanged);
@@ -125,7 +125,7 @@
     if (expected != null) {
       if (compareAsTree) {
         String explanation=expectedRoot.checkTreeEquals(mainRoot);
-        assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult: "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
+        assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult:   "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
       }
  else       if (expected != null) {
         assertEquals(Joiner.on("").join(expected),compiler.toSource(mainRoot));
@@ -136,11 +136,11 @@
     Node normalizeCheckMainRootClone=normalizeCheckRootClone.getLastChild();
     new PrepareAst(compiler).process(normalizeCheckExternsRootClone,normalizeCheckMainRootClone);
     String explanation=normalizeCheckMainRootClone.checkTreeEquals(mainRoot);
-    assertNull("Node structure normalization invalidated.\nExpected: " + compiler.toSource(normalizeCheckMainRootClone) + "\nResult: "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
+    assertNull("Node structure normalization invalidated." + "\nExpected: " + compiler.toSource(normalizeCheckMainRootClone) + "\nResult:   "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
     if (normalizeEnabled) {
       new Normalize(compiler,true).process(normalizeCheckExternsRootClone,normalizeCheckMainRootClone);
       explanation=normalizeCheckMainRootClone.checkTreeEquals(mainRoot);
-      assertNull("Normalization invalidated.\nExpected: " + compiler.toSource(normalizeCheckMainRootClone) + "\nResult: "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
+      assertNull("Normalization invalidated." + "\nExpected: " + compiler.toSource(normalizeCheckMainRootClone) + "\nResult:   "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
     }
   }
  else {
