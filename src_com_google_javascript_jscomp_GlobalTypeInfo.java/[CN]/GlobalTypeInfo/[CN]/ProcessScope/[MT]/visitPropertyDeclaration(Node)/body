@@ -1,0 +1,17 @@
+{
+  if (isClassPropAccess(getProp,currentScope)) {
+    visitClassPropertyDeclaration(getProp);
+    return;
+  }
+  if (isPropDecl(getProp) && NodeUtil.isPrototypeProperty(getProp)) {
+    visitPrototypePropertyDeclaration(getProp);
+    return;
+  }
+  if (isPropDecl(getProp) && isStaticCtorProp(getProp,currentScope)) {
+    visitConstructorPropertyDeclaration(getProp);
+    return;
+  }
+  if (isPropDecl(getProp) && currentScope.isNamespace(getProp.getFirstChild().getQualifiedName())) {
+    visitNamespacePropertyDeclaration(getProp);
+  }
+}

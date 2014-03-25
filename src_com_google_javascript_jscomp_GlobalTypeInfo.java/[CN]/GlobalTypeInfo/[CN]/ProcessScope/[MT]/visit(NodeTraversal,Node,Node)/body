@@ -8,7 +8,7 @@ case Token.FUNCTION:
 break;
 case Token.NAME:
 {
-String name=n.getQualifiedName();
+String name=n.getString();
 if (name == null || "undefined".equals(name) || parent.isFunction()) {
   return;
 }
@@ -42,36 +42,20 @@ if (parent.isVar() || parent.isCatch()) {
 break;
 }
 case Token.GETPROP:
-if (NodeUtil.isPrototypeProperty(n) && parent.isExprResult()) {
-visitPrototypePropertyDeclaration(parent);
+if (parent.isExprResult()) {
+visitPropertyDeclaration(n);
 }
 break;
 case Token.ASSIGN:
 {
 Node lvalue=n.getFirstChild();
-if (!lvalue.isGetProp()) {
-return;
-}
-if (lvalue.getFirstChild().isThis() && (currentScope.isConstructor() || currentScope.isPrototypeMethod())) {
-visitClassPropertyDeclaration(lvalue);
-return;
-}
-if (NodeUtil.isPrototypePropertyDeclaration(parent)) {
-visitPrototypePropertyDeclaration(parent);
-return;
-}
-String receiverObjName=lvalue.getFirstChild().getQualifiedName();
-if (currentScope.isLocalFunDef(receiverObjName) && currentScope.getScope(receiverObjName).getDeclaredType().getNominalType() != null) {
-visitConstructorPropertyDeclaration(n);
-return;
-}
-if (receiverObjName != null && currentScope.isNamespace(receiverObjName)) {
-visitNamespacePropertyDeclaration(n);
+if (lvalue.isGetProp()) {
+visitPropertyDeclaration(lvalue);
 }
 break;
 }
 case Token.CAST:
-castTypes.put(n,getTypeDeclarationFromJsdoc(n,currentScope));
+castTypes.put(n,getTypeDeclarationFromJsdoc(n.getJSDocInfo(),currentScope));
 break;
 }
 }

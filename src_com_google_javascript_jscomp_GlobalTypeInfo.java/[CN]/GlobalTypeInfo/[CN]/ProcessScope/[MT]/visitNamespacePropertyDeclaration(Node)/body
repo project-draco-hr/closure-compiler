@@ -1,14 +1,17 @@
 {
-  Node lvalue=assignNode.getFirstChild();
-  String qname=lvalue.getQualifiedName();
-  String leftmost=TypeUtils.getQnameRoot(qname);
-  JSType declType=getTypeDeclarationFromJsdoc(assignNode,currentScope);
-  JSType newType=currentScope.getDeclaredTypeOf(leftmost);
-  if (declType == null) {
-    newType=newType.withProperty(TypeUtils.getPropPath(qname),JSType.UNKNOWN);
+  Preconditions.checkArgument(getProp.isGetProp());
+  String qname=getProp.getQualifiedName();
+  String leftmost=TypeUtils.getLeftmostName(qname);
+  String allButLeftmost=TypeUtils.getAllButLeftmost(qname);
+  JSType typeInJsdoc=getTypeDeclarationFromJsdoc(NodeUtil.getBestJSDocInfo(getProp),currentScope);
+  JSType currentType=currentScope.getDeclaredTypeOf(leftmost);
+  if (typeInJsdoc == null) {
+    currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,JSType.UNKNOWN));
+    return;
   }
- else {
-    newType=newType.withDeclaredProperty(TypeUtils.getPropPath(qname),declType);
+  if (currentType.mayHaveProp(allButLeftmost) && currentType.getDeclaredProp(allButLeftmost) != null) {
+    warnings.add(JSError.make(getProp,DUPLICATE_PROPERTY_JSDOC,allButLeftmost,currentType.toString()));
+    return;
   }
-  currentScope.updateTypeOfLocal(leftmost,newType);
+  currentScope.updateTypeOfLocal(leftmost,currentType.withDeclaredProperty(allButLeftmost,typeInJsdoc));
 }

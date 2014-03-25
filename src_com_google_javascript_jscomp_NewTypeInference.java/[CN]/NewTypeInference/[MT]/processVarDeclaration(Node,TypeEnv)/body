@@ -1,12 +1,15 @@
 {
   String varName=nameNode.getQualifiedName();
+  JSType declType=currentScope.getDeclaredTypeOf(varName);
   if (currentScope.isLocalFunDef(varName)) {
     return inEnv;
+  }
+  if (NodeUtil.isNamespaceDecl(nameNode)) {
+    return envPutType(inEnv,varName,declType);
   }
   Node rhs=nameNode.getFirstChild();
   TypeEnv outEnv=inEnv;
   JSType rhsType;
-  JSType declType=currentScope.getDeclaredTypeOf(varName);
   if (rhs == null) {
     rhsType=JSType.UNDEFINED;
   }
@@ -15,7 +18,7 @@
     outEnv=pair.env;
     rhsType=pair.type;
   }
-  if (!NodeUtil.isNamespaceDecl(nameNode) && declType != null && rhs != null) {
+  if (declType != null && rhs != null) {
     if (!rhsType.isSubtypeOf(declType)) {
       warnings.add(JSError.make(rhs,MISTYPED_ASSIGN_RHS,declType.toString(),rhsType.toString()));
       rhsType=declType;

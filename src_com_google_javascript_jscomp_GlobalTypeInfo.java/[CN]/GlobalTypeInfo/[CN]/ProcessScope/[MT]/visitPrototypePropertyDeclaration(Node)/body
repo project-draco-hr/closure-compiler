@@ -1,43 +1,35 @@
 {
-  Node expr=exprResult.getFirstChild();
-  Node getPropNode, initializer;
-  if (expr.isAssign()) {
-    getPropNode=expr.getFirstChild();
-    initializer=expr.getLastChild();
+  Preconditions.checkArgument(getProp.isGetProp());
+  Node parent=getProp.getParent();
+  Node initializer=parent.isAssign() ? parent.getLastChild() : null;
+  Node ctorNameNode=NodeUtil.getPrototypeClassName(getProp);
+  String ctorName=ctorNameNode.getQualifiedName();
+  if (!currentScope.isDefinedLocally(ctorName)) {
+    warnings.add(JSError.make(getProp,CTOR_IN_DIFFERENT_SCOPE));
+    return;
+  }
+  RawNominalType rawType=currentScope.getLocalNominalType(ctorName);
+  if (rawType == null) {
+    return;
+  }
+  String pname=NodeUtil.getPrototypePropertyName(getProp);
+  JSType propDeclType;
+  Scope methodScope=null;
+  if (initializer != null && initializer.isFunction()) {
+    methodScope=visitFunctionDef(initializer,rawType);
+    propDeclType=JSType.fromFunctionType(methodScope.getDeclaredType().toFunctionType());
   }
  else {
-    getPropNode=expr;
-    initializer=null;
+    propDeclType=typeParser.getNodeTypeDeclaration(NodeUtil.getBestJSDocInfo(getProp),rawType,currentScope);
   }
-  Node ctorNameNode=NodeUtil.getPrototypeClassName(getPropNode);
-  String ctorName=ctorNameNode.getQualifiedName();
-  if (currentScope.isDefinedLocally(ctorName)) {
-    RawNominalType rawNominalType=currentScope.getLocalNominalType(ctorName);
-    if (rawNominalType == null) {
+  propertyDefs.put(rawType.getId(),pname,new PropertyDef(getProp,methodScope));
+  if (propDeclType != null) {
+    if (mayWarnAboutExistingProp(rawType,pname,getProp)) {
       return;
     }
-    String pname=NodeUtil.getPrototypePropertyName(getPropNode);
-    JSType propDeclType;
-    Scope methodScope=null;
-    if (initializer != null && initializer.isFunction()) {
-      methodScope=visitFunctionDef(initializer,rawNominalType);
-      propDeclType=JSType.fromFunctionType(methodScope.getDeclaredType().toFunctionType());
-    }
- else {
-      propDeclType=typeParser.getNodeTypeDeclaration(expr.getJSDocInfo(),rawNominalType,currentScope);
-    }
-    propertyDefs.put(rawNominalType.getId(),pname,new PropertyDef(expr,methodScope));
-    if (propDeclType != null) {
-      if (mayWarnAboutExistingProp(rawNominalType,pname,expr)) {
-        return;
-      }
-      rawNominalType.addProtoProperty(pname,propDeclType);
-    }
- else {
-      rawNominalType.addUndeclaredProtoProperty(pname);
-    }
+    rawType.addProtoProperty(pname,propDeclType);
   }
  else {
-    warnings.add(JSError.make(expr,CTOR_IN_DIFFERENT_SCOPE));
+    rawType.addUndeclaredProtoProperty(pname);
   }
 }
