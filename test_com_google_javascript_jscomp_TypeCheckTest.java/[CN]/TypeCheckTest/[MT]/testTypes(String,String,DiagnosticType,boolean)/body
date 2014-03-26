@@ -1,0 +1,21 @@
+{
+  parseAndTypeCheck(externs,js);
+  JSError[] errors=compiler.getErrors();
+  if (diagnosticType != null && isError) {
+    assertTrue("expected an error",errors.length > 0);
+    assertEquals(diagnosticType,errors[0].getType());
+    errors=Arrays.asList(errors).subList(1,errors.length).toArray(new JSError[errors.length - 1]);
+  }
+  if (errors.length > 0) {
+    fail("unexpected error(s):\n" + Joiner.on("\n").join(errors));
+  }
+  JSError[] warnings=compiler.getWarnings();
+  if (diagnosticType != null && !isError) {
+    assertTrue("expected a warning",warnings.length > 0);
+    assertEquals(diagnosticType,warnings[0].getType());
+    warnings=Arrays.asList(warnings).subList(1,warnings.length).toArray(new JSError[warnings.length - 1]);
+  }
+  if (warnings.length > 0) {
+    fail("unexpected warnings(s):\n" + Joiner.on("\n").join(warnings));
+  }
+}

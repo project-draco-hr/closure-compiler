@@ -1,12 +1,17 @@
 {
   if (!objectType.isEmptyType() && reportMissingProperties && (!isPropertyTest(n) || objectType.isStruct())) {
     if (!typeRegistry.canPropertyBeDefined(objectType,propName)) {
-      SuggestionPair pair=getClosestPropertySuggestion(objectType,propName);
+      boolean lowConfidence=objectType.isUnknownType() || objectType.isEquivalentTo(getNativeType(OBJECT_TYPE));
+      SuggestionPair pair=null;
+      if (!lowConfidence) {
+        pair=getClosestPropertySuggestion(objectType,propName);
+      }
       if (pair != null && pair.distance * 4 < propName.length()) {
         report(t,n,INEXISTENT_PROPERTY_WITH_SUGGESTION,propName,validator.getReadableJSTypeName(n.getFirstChild(),true),pair.suggestion);
       }
  else {
-        report(t,n,INEXISTENT_PROPERTY,propName,validator.getReadableJSTypeName(n.getFirstChild(),true));
+        DiagnosticType reportType=lowConfidence ? POSSIBLE_INEXISTENT_PROPERTY : INEXISTENT_PROPERTY;
+        report(t,n,reportType,propName,validator.getReadableJSTypeName(n.getFirstChild(),true));
       }
     }
   }
