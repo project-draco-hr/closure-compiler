@@ -256,10 +256,16 @@ case Token.GETELEM:
 {
 Node receiver=expr.getFirstChild();
 Node index=expr.getLastChild();
+EnvTypePair pair=analyzeExprBwd(receiver,outEnv,JSType.TOP_OBJECT);
+if (isArrayType(pair.type)) {
+pair=analyzeExprBwd(index,pair.env,JSType.NUMBER);
+pair.type=requiredType;
+return pair;
+}
 if (index.isString()) {
 return analyzePropAccessBwd(receiver,index.getString(),outEnv,requiredType);
 }
-EnvTypePair pair=analyzeExprBwd(index,outEnv);
+pair=analyzeExprBwd(index,outEnv);
 pair=analyzeExprBwd(receiver,pair.env,JSType.TOP_OBJECT);
 pair.type=requiredType;
 return pair;

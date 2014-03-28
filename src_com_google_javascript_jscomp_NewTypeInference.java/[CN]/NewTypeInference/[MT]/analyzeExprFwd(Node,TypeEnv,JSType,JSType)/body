@@ -326,15 +326,16 @@ warnings.add(JSError.make(expr,CALL_FUNCTION_WITH_BOTTOM_FORMAL,Integer.toString
 formalType=JSType.UNKNOWN;
 }
 EnvTypePair pair=analyzeExprFwd(arg,tmpEnv,formalType);
+JSType argTypeForDeferredCheck=pair.type;
 if (i >= minArity && pair.type.equals(JSType.UNDEFINED)) {
-pair.type=JSType.UNKNOWN;
+argTypeForDeferredCheck=null;
 }
  else if (!pair.type.isSubtypeOf(formalType)) {
 warnings.add(JSError.make(arg,INVALID_ARGUMENT_TYPE,Integer.toString(i + 1),"",formalType.toString(),pair.type.toString()));
-pair.type=JSType.UNKNOWN;
+argTypeForDeferredCheck=null;
 }
 Preconditions.checkState(!pair.type.equals(JSType.topFunction()));
-argTypes.add(pair.type);
+argTypes.add(argTypeForDeferredCheck);
 tmpEnv=pair.env;
 arg=arg.getNext();
 }
@@ -355,8 +356,7 @@ Preconditions.checkState(dc != null,"No deferred check created in backward direc
 dc.updateReturn(expectedRetType);
 }
  else {
-dc=new DeferredCheck(expr,currentScope,currentScope.getScope(calleeName));
-dc.updateReturn(JSType.UNKNOWN);
+dc=new DeferredCheck(expr,null,currentScope,currentScope.getScope(calleeName));
 deferredChecks.put(expr,dc);
 }
 dc.updateArgTypes(argTypes);
@@ -377,11 +377,21 @@ case Token.GETELEM:
 {
 Node receiver=expr.getFirstChild();
 Node index=expr.getLastChild();
+EnvTypePair pair=analyzeExprFwd(receiver,inEnv,JSType.TOP_OBJECT);
+if (isArrayType(pair.type)) {
+pair=analyzeExprFwd(index,pair.env,JSType.NUMBER);
+if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
+warnings.add(JSError.make(index,NewTypeInference.NON_NUMERIC_ARRAY_INDEX,pair.type.toString()));
+}
+pair.type=requiredType;
+return pair;
+}
 if (index.isString()) {
 return analyzePropAccessFwd(receiver,index.getString(),inEnv,requiredType,specializedType);
 }
-EnvTypePair pair=analyzeExprFwd(index,inEnv);
+pair=analyzeExprFwd(index,inEnv);
 pair=analyzeExprFwd(receiver,pair.env,JSType.TOP_OBJECT);
+mayWarnAboutNonObject(receiver,"",pair.type,specializedType);
 pair.type=requiredType;
 return pair;
 }

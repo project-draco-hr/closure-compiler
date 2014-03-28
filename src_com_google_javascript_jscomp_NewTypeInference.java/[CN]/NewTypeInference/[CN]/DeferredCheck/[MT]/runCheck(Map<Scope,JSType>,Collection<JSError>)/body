@@ -1,7 +1,7 @@
 {
   FunctionType fnSummary=summaries.get(this.calleeScope).getFunType();
   println("Running deferred check of function: ",calleeScope.getReadableName()," with FunctionSummary of: ",fnSummary," and callsite ret: ",expectedRetType," args: ",argTypes);
-  if (!fnSummary.getReturnType().isSubtypeOf(this.expectedRetType)) {
+  if (this.expectedRetType != null && !fnSummary.getReturnType().isSubtypeOf(this.expectedRetType)) {
     warnings.add(JSError.make(this.callSite,INVALID_INFERRED_RETURN_TYPE,this.expectedRetType.toString(),fnSummary.getReturnType().toString()));
   }
   int i=0;
@@ -13,7 +13,7 @@
       String argName=argNode.getQualifiedName();
       argType=summaries.get(callerScope.getScope(argName));
     }
-    if (!argType.isSubtypeOf(formalType)) {
+    if (argType != null && !argType.isSubtypeOf(formalType)) {
       warnings.add(JSError.make(argNode,INVALID_ARGUMENT_TYPE,Integer.toString(i + 1),calleeScope.getReadableName(),formalType.toString(),argType.toString()));
     }
     i++;

@@ -3,13 +3,15 @@
   String calleeName=expr.getFirstChild().getQualifiedName();
   if (currentScope.isKnownFunction(calleeName) && !currentScope.isLocalFunDef(calleeName)) {
     Scope s=currentScope.getScope(calleeName);
-    JSType expectedRetType=JSType.UNKNOWN;
+    JSType expectedRetType;
     if (s.getDeclaredType().getReturnType() == null) {
       expectedRetType=requiredType;
     }
+ else {
+      expectedRetType=null;
+    }
     println("Putting deferred check of function: ",calleeName," with ret: ",expectedRetType);
-    DeferredCheck dc=new DeferredCheck(expr,currentScope,s);
-    dc.updateReturn(expectedRetType);
+    DeferredCheck dc=new DeferredCheck(expr,expectedRetType,currentScope,s);
     deferredChecks.put(expr,dc);
   }
 }

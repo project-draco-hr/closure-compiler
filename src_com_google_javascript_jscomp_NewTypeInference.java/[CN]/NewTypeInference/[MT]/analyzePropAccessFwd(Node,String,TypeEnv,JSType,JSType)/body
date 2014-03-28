@@ -13,10 +13,7 @@
   }
   pair=analyzeExprFwd(receiver,inEnv,recvReqType,recvSpecType);
   recvType=pair.type;
-  boolean isNotAnObject=JSType.BOTTOM.equals(JSType.meet(recvType,JSType.TOP_OBJECT));
-  boolean mayNotBeAnObject=!recvType.isSubtypeOf(JSType.TOP_OBJECT);
-  if (isNotAnObject || (!specializedType.isTruthy() && !specializedType.isFalsy() && mayNotBeAnObject)) {
-    warnings.add(JSError.make(receiver,PROPERTY_ACCESS_ON_NONOBJECT,pname,recvType.toString()));
+  if (mayWarnAboutNonObject(receiver,pname,recvType,specializedType)) {
     return new EnvTypePair(pair.env,requiredType);
   }
   JSType resultType=recvType.getProp(propQname);
