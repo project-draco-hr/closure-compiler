@@ -1,0 +1,10 @@
+{
+  JSType typeAfterFwd=typeAfterBwd;
+  if (!typeAfterBwd.hasNonScalar() || typeAfterBwd.getFunType() != null) {
+    for (    String taintedVarName : taints.get(formalName)) {
+      JSType taintType=envGetType(exitEnv,taintedVarName);
+      typeAfterFwd=JSType.meet(taintType,typeAfterFwd);
+    }
+  }
+  return typeAfterFwd;
+}

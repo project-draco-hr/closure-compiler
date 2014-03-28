@@ -49,7 +49,7 @@ JSType inferredType=envGetType(inEnv,varName);
 println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType," specializedType:  ",specializedType);
 if (!inferredType.isSubtypeOf(requiredType)) {
 if (currentScope.getDeclaredTypeOf(varName) == null && requiredType.isSubtypeOf(inferredType)) {
-  inferredType=requiredType;
+  inferredType=inferredType.specialize(requiredType);
 }
  else {
   return new EnvTypePair(inEnv,inferredType);

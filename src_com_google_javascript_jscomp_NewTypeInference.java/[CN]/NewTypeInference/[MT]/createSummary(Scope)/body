@@ -3,24 +3,32 @@
   TypeEnv exitEnv=getFinalTypeEnv();
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   Multimap<String,String> taints=exitEnv.getTaints();
-  JSType formalType;
-  int formalIndex=0;
   DeclaredFunctionType declType=fn.getDeclaredType();
   int reqArity=declType.getRequiredArity();
   int optArity=declType.getOptionalArity();
   if (declType.isGeneric()) {
     builder.addTypeParameters(declType.getTypeParameters());
   }
-  for (  String formal : fn.getFormals()) {
-    formalType=fn.getDeclaredTypeOf(formal);
+  List<String> formals=fn.getFormals();
+  for (int i=reqArity - 1; i >= 0; i--) {
+    JSType formalType=fn.getDeclaredType().getFormalType(i);
+    if (formalType != null) {
+      break;
+    }
+    String formalName=formals.get(i);
+    formalType=getFormalTypeAfterFwd(formalName,envGetType(entryEnv,formalName),exitEnv,taints);
+    if (formalType.isUnknown() || JSType.UNDEFINED.isSubtypeOf(formalType)) {
+      reqArity--;
+    }
+ else {
+      break;
+    }
+  }
+  int formalIndex=0;
+  for (  String formal : formals) {
+    JSType formalType=fn.getDeclaredTypeOf(formal);
     if (formalType == null) {
-      formalType=envGetType(entryEnv,formal);
-      if (!formalType.hasNonScalar() || formalType.getFunType() != null) {
-        for (        String taintedVarName : taints.get(formal)) {
-          JSType taintType=envGetType(exitEnv,taintedVarName);
-          formalType=JSType.meet(taintType,formalType);
-        }
-      }
+      formalType=getFormalTypeAfterFwd(formal,envGetType(entryEnv,formal),exitEnv,taints);
       formalType=formalType.withLocation(null);
     }
     if (formalIndex < reqArity) {
