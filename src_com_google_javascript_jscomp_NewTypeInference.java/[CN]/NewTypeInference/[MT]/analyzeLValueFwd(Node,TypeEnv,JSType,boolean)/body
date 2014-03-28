@@ -3,7 +3,7 @@ switch (expr.getType()) {
 case Token.THIS:
 {
       if (currentScope.hasThis()) {
-        return new LValueResultFwd(inEnv,envGetType(inEnv,"this"),currentScope.getDeclaredTypeOf("this"),"this");
+        return new LValueResultFwd(inEnv,envGetType(inEnv,"this"),currentScope.getDeclaredTypeOf("this"),new QualifiedName("this"));
       }
  else {
         warnings.add(JSError.make(expr,CheckGlobalThis.GLOBAL_THIS));
@@ -12,21 +12,21 @@ case Token.THIS:
     }
 case Token.NAME:
 {
-    String varName=expr.getQualifiedName();
+    String varName=expr.getString();
     JSType varType=envGetType(inEnv,varName);
-    return new LValueResultFwd(inEnv,varType,currentScope.getDeclaredTypeOf(varName),varType.hasNonScalar() ? varName : null);
+    return new LValueResultFwd(inEnv,varType,currentScope.getDeclaredTypeOf(varName),varType.hasNonScalar() ? new QualifiedName(varName) : null);
   }
 case Token.GETPROP:
 {
   Node obj=expr.getFirstChild();
-  String pname=expr.getLastChild().getString();
+  QualifiedName pname=new QualifiedName(expr.getLastChild().getString());
   return analyzePropLValFwd(obj,pname,inEnv,type,insideQualifiedName);
 }
 case Token.GETELEM:
 {
 if (expr.getLastChild().isString()) {
   Node obj=expr.getFirstChild();
-  String pname=expr.getLastChild().getString();
+  QualifiedName pname=new QualifiedName(expr.getLastChild().getString());
   return analyzePropLValFwd(obj,pname,inEnv,type,insideQualifiedName);
 }
 return new LValueResultFwd(inEnv,type,null,null);

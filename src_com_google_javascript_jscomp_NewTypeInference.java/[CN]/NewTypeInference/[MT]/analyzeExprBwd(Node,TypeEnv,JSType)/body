@@ -21,7 +21,7 @@ case Token.OBJECTLIT:
 JSType result=JSType.TOP_OBJECT;
 TypeEnv env=outEnv;
 for (Node key=expr.getLastChild(); key != null; key=expr.getChildBefore(key)) {
-  String pname=NodeUtil.getObjectLitKeyName(key);
+  QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(key));
   JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.UNKNOWN;
   EnvTypePair pair=analyzeExprBwd(key.getLastChild(),env,reqPtype);
   result=result.withProperty(pname,pair.type);

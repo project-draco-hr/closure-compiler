@@ -1,0 +1,13 @@
+{
+  if (lvalue.isName()) {
+    return envPutType(env,lvalue.getQualifiedName(),type);
+  }
+  Preconditions.checkState(lvalue.isGetProp() || lvalue.isGetElem());
+  if (qname != null) {
+    String objName=qname.getLeftmostName();
+    QualifiedName props=qname.getAllButLeftmost();
+    JSType objType=envGetType(env,objName);
+    env=envPutType(env,objName,objType.withProperty(props,type));
+  }
+  return env;
+}

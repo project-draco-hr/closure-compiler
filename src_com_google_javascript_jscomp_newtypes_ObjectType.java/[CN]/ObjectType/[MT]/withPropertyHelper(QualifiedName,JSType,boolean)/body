@@ -1,0 +1,23 @@
+{
+  Map<String,Property> newProps=Maps.newHashMap(this.props);
+  String objName=qname.getLeftmostName();
+  if (qname.isIdentifier()) {
+    if (type == null) {
+      newProps.remove(objName);
+    }
+ else {
+      newProps.put(objName,new Property(type,isDeclared ? type : null,false));
+    }
+  }
+ else {
+    QualifiedName objQname=new QualifiedName(objName);
+    QualifiedName innerProps=qname.getAllButLeftmost();
+    if (!this.props.containsKey(objName)) {
+      Preconditions.checkState(mayHaveProp(objQname));
+      newProps.put(objName,getLeftmostProp(objQname));
+    }
+    Property objProp=newProps.get(objName);
+    newProps.put(objName,new Property(objProp.getType().withProperty(innerProps,type),objProp.getDeclaredType(),objProp.isOptional()));
+  }
+  return ObjectType.makeObjectType(nominalType,newProps,fn,isLoose);
+}

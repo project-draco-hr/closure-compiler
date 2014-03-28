@@ -20,7 +20,7 @@ case Token.OBJECTLIT:
 JSType result=JSType.TOP_OBJECT;
 TypeEnv env=inEnv;
 for (Node key : expr.children()) {
-  String pname=NodeUtil.getObjectLitKeyName(key);
+  QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(key));
   JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.UNKNOWN;
   JSType specPtype=specializedType.mayHaveProp(pname) ? specializedType.getProp(pname) : JSType.UNKNOWN;
   EnvTypePair pair=analyzeExprFwd(key.getLastChild(),env,reqPtype,specPtype);
@@ -408,9 +408,9 @@ return pair;
 }
 JSType resultType=JSType.BOOLEAN;
 if (lhs.isString()) {
-String pname=lhs.getString();
+QualifiedName pname=new QualifiedName(lhs.getString());
 if (specializedType.isTruthy()) {
-pair=analyzeExprFwd(rhs,inEnv,JSType.TOP_OBJECT,JSType.TOP_OBJECT.withPropertyRequired(pname));
+pair=analyzeExprFwd(rhs,inEnv,JSType.TOP_OBJECT,JSType.TOP_OBJECT.withPropertyRequired(pname.getLeftmostName()));
 resultType=JSType.TRUE_TYPE;
 }
  else if (specializedType.isFalsy()) {

@@ -9,19 +9,19 @@ case Token.NAME:
       if (doSlicing) {
         pair.env=envPutType(pair.env,name,declType != null ? declType : JSType.UNKNOWN);
       }
-      return new LValueResultBwd(pair.env,pair.type,pair.type.hasNonScalar() ? name : null);
+      return new LValueResultBwd(pair.env,pair.type,pair.type.hasNonScalar() ? new QualifiedName(name) : null);
     }
 case Token.GETPROP:
 {
     Node obj=expr.getFirstChild();
-    String pname=expr.getLastChild().getString();
+    QualifiedName pname=new QualifiedName(expr.getLastChild().getString());
     return analyzePropLValBwd(obj,pname,outEnv,type,doSlicing);
   }
 case Token.GETELEM:
 {
   if (expr.getLastChild().isString()) {
     Node obj=expr.getFirstChild();
-    String pname=expr.getLastChild().getString();
+    QualifiedName pname=new QualifiedName(expr.getLastChild().getString());
     return analyzePropLValBwd(obj,pname,outEnv,type,doSlicing);
   }
   return new LValueResultBwd(outEnv,type,null);
