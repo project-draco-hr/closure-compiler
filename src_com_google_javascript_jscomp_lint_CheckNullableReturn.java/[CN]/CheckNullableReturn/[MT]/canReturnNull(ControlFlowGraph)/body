@@ -1,0 +1,11 @@
+{
+  DiGraph.DiGraphNode<Node,ControlFlowGraph.Branch> ir=graph.getImplicitReturn();
+  for (  DiGraph.DiGraphEdge<Node,ControlFlowGraph.Branch> inEdge : ir.getInEdges()) {
+    DiGraph.DiGraphNode<Node,ControlFlowGraph.Branch> graphNode=inEdge.getSource();
+    Node possibleReturnNode=graphNode.getValue();
+    if (possibleReturnNode.isReturn() && possibleReturnNode.getFirstChild() != null && possibleReturnNode.getFirstChild().getJSType().isNullable()) {
+      return true;
+    }
+  }
+  return false;
+}
