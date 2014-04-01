@@ -1,10 +1,15 @@
 {
   TypeEnv env=new TypeEnv();
   Set<String> varNames=currentScope.getOuterVars();
-  varNames.addAll(currentScope.getFormals());
   varNames.addAll(currentScope.getLocals());
-  if (currentScope.hasThis()) {
-    varNames.add("this");
+  if (currentScope.isFunction()) {
+    if (currentScope.getName() != null) {
+      varNames.add(currentScope.getName());
+    }
+    varNames.addAll(currentScope.getFormals());
+    if (currentScope.hasThis()) {
+      varNames.add("this");
+    }
   }
   for (  String varName : varNames) {
     JSType declType=currentScope.getDeclaredTypeOf(varName);

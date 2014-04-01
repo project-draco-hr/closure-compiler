@@ -13,7 +13,7 @@
   }
   pair=analyzeExprFwd(receiver,inEnv,recvReqType,recvSpecType);
   recvType=pair.type;
-  if (mayWarnAboutNonObject(receiver,pname,recvType,specializedType)) {
+  if (recvType.isUnknown() || mayWarnAboutNonObject(receiver,pname,recvType,specializedType)) {
     return new EnvTypePair(pair.env,requiredType);
   }
   JSType resultType=recvType.getProp(propQname);

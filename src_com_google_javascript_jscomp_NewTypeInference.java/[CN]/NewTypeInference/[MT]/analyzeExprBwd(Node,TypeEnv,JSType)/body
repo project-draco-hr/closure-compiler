@@ -20,10 +20,20 @@ case Token.OBJECTLIT:
 {
 JSType result=JSType.TOP_OBJECT;
 TypeEnv env=outEnv;
-for (Node key=expr.getLastChild(); key != null; key=expr.getChildBefore(key)) {
-  QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(key));
-  JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.UNKNOWN;
-  EnvTypePair pair=analyzeExprBwd(key.getLastChild(),env,reqPtype);
+for (Node prop=expr.getLastChild(); prop != null; prop=expr.getChildBefore(prop)) {
+  QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(prop));
+  JSType jsdocType=symbolTable.getPropDeclaredType(prop);
+  JSType reqPtype;
+  if (jsdocType != null) {
+    reqPtype=jsdocType;
+  }
+ else   if (requiredType.mayHaveProp(pname)) {
+    reqPtype=requiredType.getProp(pname);
+  }
+ else {
+    reqPtype=JSType.UNKNOWN;
+  }
+  EnvTypePair pair=analyzeExprBwd(prop.getFirstChild(),env,reqPtype);
   result=result.withProperty(pname,pair.type);
   env=pair.env;
 }

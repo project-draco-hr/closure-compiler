@@ -4,8 +4,13 @@
   scopes.addFirst(fnScope);
   String fnName=NodeUtil.getFunctionName(fn);
   String internalName=getFunInternalName(fn);
-  if (currentScope.isDefinedLocally(fnName)) {
-    warnings.add(JSError.make(fn,VariableReferenceCheck.REDECLARED_VARIABLE,fnName));
+  if (fnName != null && currentScope.isDefinedLocally(fnName)) {
+    if (!fnName.contains(".")) {
+      warnings.add(JSError.make(fn,VariableReferenceCheck.REDECLARED_VARIABLE,fnName));
+    }
+    if (internalName.startsWith(ANON_FUN_PREFIX)) {
+      currentScope.addLocalFunDef(internalName,currentScope.getScope(fnName));
+    }
   }
  else {
     currentScope.addLocalFunDef(internalName,fnScope);

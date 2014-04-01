@@ -36,7 +36,7 @@ if (parent.isVar() || parent.isCatch()) {
  else if (currentScope.isOuterVarEarly(name)) {
   currentScope.addOuterVar(name);
 }
- else if (!currentScope.isDefinedLocally(name)) {
+ else if (!name.equals(currentScope.getName()) && !currentScope.isDefinedLocally(name)) {
   undeclaredVars.put(name,n);
 }
 break;
@@ -57,5 +57,13 @@ break;
 case Token.CAST:
 castTypes.put(n,getTypeDeclarationFromJsdoc(n.getJSDocInfo(),currentScope));
 break;
+case Token.OBJECTLIT:
+{
+for (Node prop : n.children()) {
+if (prop.getJSDocInfo() != null) {
+declaredObjLitProps.put(prop,getTypeDeclarationFromJsdoc(prop.getJSDocInfo(),currentScope));
+}
+}
+}
 }
 }

@@ -1,5 +1,13 @@
 {
-  this.name=parent == null ? null : NodeUtil.getFunctionName(root);
+  if (parent == null) {
+    this.name=null;
+    this.readableName=null;
+  }
+ else {
+    String nameOnAst=root.getFirstChild().getString();
+    this.name=nameOnAst.equals("") ? null : nameOnAst;
+    this.readableName=NodeUtil.getFunctionName(root);
+  }
   this.root=root;
   this.parent=parent;
   this.formals=formals;

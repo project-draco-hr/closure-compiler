@@ -2,10 +2,6 @@
   Preconditions.checkArgument(fn.isFunction());
   JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
   ImmutableList<String> typeParameters=fnDoc == null ? null : fnDoc.getTemplateTypeNames();
-  ArrayList<String> formals=Lists.newArrayList();
-  for (Node param=NodeUtil.getFunctionParameters(fn).getFirstChild(); param != null; param=param.getNext()) {
-    formals.add(param.getString());
-  }
   FunctionTypeBuilder builder=typeParser.getFunctionType(fnDoc,fn,ownerType,parentScope);
   String functionName=getFunInternalName(fn);
   if (fnDoc != null) {
@@ -59,5 +55,17 @@
     String className=NodeUtil.getPrototypeClassName(lhsNode).getQualifiedName();
     builder.addReceiverType(parentScope.getScope(className).getDeclaredType().getNominalType());
   }
-  return new Scope(fn,parentScope,formals,builder.buildDeclaration());
+  DeclaredFunctionType declFunType=builder.buildDeclaration();
+  ArrayList<String> formals=Lists.newArrayList();
+  Node param=NodeUtil.getFunctionParameters(fn).getFirstChild();
+  int optionalArity=declFunType.getOptionalArity();
+  int formalIndex=0;
+  while (param != null) {
+    if (!typeParser.isRestArg(fnDoc,param.getString()) || formalIndex < optionalArity) {
+      formals.add(param.getString());
+    }
+    param=param.getNext();
+    formalIndex++;
+  }
+  return new Scope(fn,parentScope,formals,declFunType);
 }

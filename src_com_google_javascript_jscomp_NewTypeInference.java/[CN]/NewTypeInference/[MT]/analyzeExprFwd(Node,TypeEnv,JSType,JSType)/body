@@ -19,11 +19,30 @@ case Token.OBJECTLIT:
 {
 JSType result=JSType.TOP_OBJECT;
 TypeEnv env=inEnv;
-for (Node key : expr.children()) {
-  QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(key));
-  JSType reqPtype=requiredType.mayHaveProp(pname) ? requiredType.getProp(pname) : JSType.UNKNOWN;
-  JSType specPtype=specializedType.mayHaveProp(pname) ? specializedType.getProp(pname) : JSType.UNKNOWN;
-  EnvTypePair pair=analyzeExprFwd(key.getLastChild(),env,reqPtype,specPtype);
+for (Node prop : expr.children()) {
+  QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(prop));
+  JSType jsdocType=symbolTable.getPropDeclaredType(prop);
+  JSType reqPtype, specPtype;
+  if (jsdocType != null) {
+    reqPtype=specPtype=jsdocType;
+  }
+ else   if (requiredType.mayHaveProp(pname)) {
+    reqPtype=specPtype=requiredType.getProp(pname);
+    if (specializedType.mayHaveProp(pname)) {
+      specPtype=specializedType.getProp(pname);
+    }
+  }
+ else {
+    reqPtype=specPtype=JSType.UNKNOWN;
+  }
+  EnvTypePair pair=analyzeExprFwd(prop.getFirstChild(),env,reqPtype,specPtype);
+  if (jsdocType != null) {
+    result=result.withDeclaredProperty(pname,jsdocType);
+    if (!pair.type.isSubtypeOf(jsdocType)) {
+      warnings.add(JSError.make(prop,NewTypeInference.INVALID_OBJLIT_PROPERTY_TYPE,jsdocType.toString(),pair.type.toString()));
+      pair.type=jsdocType;
+    }
+  }
   result=result.withProperty(pname,pair.type);
   env=pair.env;
 }
@@ -44,7 +63,7 @@ String varName=expr.getQualifiedName();
 if (varName.equals("undefined")) {
 return new EnvTypePair(inEnv,JSType.UNDEFINED);
 }
-if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)) {
+if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)|| varName.equals(currentScope.getName())) {
 JSType inferredType=envGetType(inEnv,varName);
 println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType," specializedType:  ",specializedType);
 if (!inferredType.isSubtypeOf(requiredType)) {
