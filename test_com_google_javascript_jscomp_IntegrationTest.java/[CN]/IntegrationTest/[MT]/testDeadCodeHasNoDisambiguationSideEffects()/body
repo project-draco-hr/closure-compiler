@@ -1,0 +1,14 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.checkTypes=true;
+  options.disambiguateProperties=true;
+  options.removeDeadCode=true;
+  options.removeUnusedPrototypeProperties=true;
+  options.smartNameRemoval=true;
+  options.extraSmartNameRemoval=true;
+  options.foldConstants=true;
+  options.inlineVariables=true;
+  String code="/** @constructor */ function A() {} " + "A.prototype.always = function() { " + "  window.console.log('AA'); "+ "}; "+ "A.prototype.sometimes = function() { "+ "  window.console.log('SA'); "+ "}; "+ "/** @constructor */ function B() {} "+ "B.prototype.always = function() { "+ "  window.console.log('AB'); "+ "};"+ "B.prototype.sometimes = function() { "+ "  window.console.log('SB'); "+ "};"+ "/** @constructor @struct @template T */ function C() {} "+ "/** @param {!T} x */ C.prototype.touch = function(x) { "+ "  return x.sometimes(); "+ "}; "+ "window['main'] = function() { "+ "  var a = window['a'] = new A; "+ "  a.always(); "+ "  a.sometimes(); "+ "  var b = window['b'] = new B; "+ "  b.always(); "+ "};"+ "function notCalled() { "+ "  var something = {}; "+ "  something.always(); "+ "  var c = new C; "+ "  c.touch(something);"+ "}";
+  String expected="function A() {} " + "A.prototype.A_prototype$always = function() { " + "  window.console.log('AA'); "+ "}; "+ "A.prototype.A_prototype$sometimes = function(){ "+ "  window.console.log('SA'); "+ "}; "+ "function B() {} "+ "B.prototype.B_prototype$always=function(){ "+ "  window.console.log('AB'); "+ "};"+ "window['main'] = function() { "+ "  var a = window['a'] = new A; "+ "  a.A_prototype$always(); "+ "  a.A_prototype$sometimes(); "+ "  (window['b'] = new B).B_prototype$always(); "+ "}";
+  test(options,code,expected);
+}

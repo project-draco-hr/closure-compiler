@@ -28,6 +28,10 @@
     passes.add(inferConsts);
   }
   if (options.extraSmartNameRemoval && options.smartNameRemoval) {
+    if (options.foldConstants && (options.inlineVariables || options.inlineLocalVariables)) {
+      passes.add(earlyInlineVariables);
+      passes.add(earlyPeepholeOptimizations);
+    }
     passes.add(smartNamePass);
   }
   if (options.disambiguateProperties) {
