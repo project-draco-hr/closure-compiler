@@ -28,8 +28,14 @@
     Node baseClassNode=null;
     if (maybeInheritsExpr != null && maybeInheritsExpr.isExprResult() && maybeInheritsExpr.getFirstChild().isCall()) {
       Node callNode=maybeInheritsExpr.getFirstChild();
-      if ("goog.inherits".equals(callNode.getFirstChild().getQualifiedName()) && callNode.getLastChild().isQualifiedName()) {
-        baseClassNode=callNode.getLastChild();
+      if ("goog.inherits".equals(callNode.getFirstChild().getQualifiedName())) {
+        Node base=callNode.getLastChild();
+        while (base.isCast()) {
+          base=base.getFirstChild();
+        }
+        if (callNode.getLastChild().isQualifiedName()) {
+          baseClassNode=callNode.getLastChild();
+        }
       }
     }
     if (baseClassNode == null) {
@@ -52,6 +58,7 @@
   }
  else {
     if (!knownClosureSubclasses.contains(baseContainer)) {
+      reportBadBaseMethodUse(t,n,baseContainer,"Unknown class " + enclosingQname);
       return;
     }
     String enclosingClass=enclosingFnNameNode.getFirstChild().getFirstChild().getQualifiedName();
