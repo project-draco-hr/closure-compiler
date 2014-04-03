@@ -57,9 +57,13 @@ warnings.add(JSError.make(obj,FORIN_EXPECTS_OBJECT,objType.toString()));
  else if (objType.isStruct()) {
 warnings.add(JSError.make(obj,TypeCheck.IN_USED_WITH_STRUCT));
 }
+Node lhs=n.getFirstChild();
+LValueResultFwd lval=analyzeLValueFwd(lhs,inEnv,JSType.STRING);
+outEnv=updateLvalueTypeInEnv(lval.env,lhs,lval.ptr,JSType.STRING);
+break;
 }
 conditional=true;
-analyzeConditionalStmFwd(n,getConditionExpression(n),inEnv);
+analyzeConditionalStmFwd(n,NodeUtil.getConditionExpression(n),inEnv);
 break;
 case Token.CASE:
 {

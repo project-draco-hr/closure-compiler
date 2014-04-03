@@ -381,7 +381,7 @@ println("Updating deferred check with ret: ",expectedRetType," and args: ",argTy
 DeferredCheck dc;
 if (expr.isCall()) {
 dc=deferredChecks.get(expr);
-Preconditions.checkState(dc != null,"No deferred check created in backward direction for %s",expr);
+Preconditions.checkState(dc != null,"No deferred check" + " created in backward direction for %s",expr);
 dc.updateReturn(expectedRetType);
 }
  else {
@@ -473,23 +473,18 @@ EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 pair.type=JSType.BOOLEAN;
 return pair;
 }
-case Token.VAR:
-{
-Preconditions.checkState(NodeUtil.isForIn(expr.getParent()));
-Node vdecl=expr.getFirstChild();
-String name=vdecl.getString();
-Preconditions.checkState(!vdecl.hasChildren());
-return new EnvTypePair(envPutType(inEnv,name,JSType.STRING),JSType.STRING);
-}
 case Token.REGEXP:
 return new EnvTypePair(inEnv,regexpType);
 case Token.ARRAYLIT:
+{
 TypeEnv env=inEnv;
 for (Node arrayElm=expr.getFirstChild(); arrayElm != null; arrayElm=arrayElm.getNext()) {
 env=analyzeExprFwd(arrayElm,env).env;
 }
 return new EnvTypePair(env,arrayType);
+}
 case Token.CAST:
+{
 EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 JSType fromType=pair.type;
 JSType toType=symbolTable.getCastType(expr);
@@ -498,6 +493,7 @@ warnings.add(JSError.make(expr,TypeValidator.INVALID_CAST,fromType.toString(),to
 }
 pair.type=toType;
 return pair;
+}
 case Token.CASE:
 return analyzeStrictComparisonFwd(Token.SHEQ,expr.getParent().getFirstChild(),expr.getFirstChild(),inEnv,specializedType);
 default :

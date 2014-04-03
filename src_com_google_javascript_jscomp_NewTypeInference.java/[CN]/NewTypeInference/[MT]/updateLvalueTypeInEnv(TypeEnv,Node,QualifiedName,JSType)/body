@@ -1,6 +1,10 @@
 {
   if (lvalue.isName()) {
-    return envPutType(env,lvalue.getQualifiedName(),type);
+    return envPutType(env,lvalue.getString(),type);
+  }
+ else   if (lvalue.isVar()) {
+    Preconditions.checkState(NodeUtil.isForIn(lvalue.getParent()));
+    return envPutType(env,lvalue.getFirstChild().getString(),type);
   }
   Preconditions.checkState(lvalue.isGetProp() || lvalue.isGetElem());
   if (qname != null) {
