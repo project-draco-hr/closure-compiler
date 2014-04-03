@@ -17,9 +17,18 @@ case Token.TRUE:
 return new EnvTypePair(inEnv,scalarValueToType(exprKind));
 case Token.OBJECTLIT:
 {
-JSType result=JSType.TOP_OBJECT;
+JSDocInfo jsdoc=expr.getJSDocInfo();
+boolean isStruct=jsdoc != null && jsdoc.makesStructs();
+boolean isDict=jsdoc != null && jsdoc.makesDicts();
 TypeEnv env=inEnv;
+JSType result=pickReqObjType(expr);
 for (Node prop : expr.children()) {
+  if (isStruct && prop.isQuotedString()) {
+    warnings.add(JSError.make(prop,TypeCheck.ILLEGAL_OBJLIT_KEY,"struct"));
+  }
+ else   if (isDict && !prop.isQuotedString()) {
+    warnings.add(JSError.make(prop,TypeCheck.ILLEGAL_OBJLIT_KEY,"dict"));
+  }
   QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(prop));
   JSType jsdocType=symbolTable.getPropDeclaredType(prop);
   JSType reqPtype, specPtype;
@@ -67,7 +76,8 @@ if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || c
 JSType inferredType=envGetType(inEnv,varName);
 println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType," specializedType:  ",specializedType);
 if (!inferredType.isSubtypeOf(requiredType)) {
-if (currentScope.getDeclaredTypeOf(varName) == null && requiredType.isSubtypeOf(inferredType)) {
+JSType declType=currentScope.getDeclaredTypeOf(varName);
+if (tightenTypeAndDontWarn(declType,inferredType,requiredType)) {
   inferredType=inferredType.specialize(requiredType);
 }
  else {
@@ -396,21 +406,21 @@ case Token.GETELEM:
 {
 Node receiver=expr.getFirstChild();
 Node index=expr.getLastChild();
-EnvTypePair pair=analyzeExprFwd(receiver,inEnv,JSType.TOP_OBJECT);
-if (isArrayType(pair.type)) {
+JSType reqObjType=pickReqObjType(expr);
+EnvTypePair pair=analyzeExprFwd(receiver,inEnv,reqObjType);
+JSType recvType=pair.type;
+if (!mayWarnAboutNonObject(receiver,"",recvType,specializedType) && !mayWarnAboutStructPropAccess(receiver,recvType)) {
+if (isArrayType(recvType)) {
 pair=analyzeExprFwd(index,pair.env,JSType.NUMBER);
 if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
 warnings.add(JSError.make(index,NewTypeInference.NON_NUMERIC_ARRAY_INDEX,pair.type.toString()));
 }
-pair.type=requiredType;
-return pair;
 }
-if (index.isString()) {
+ else if (index.isString()) {
 return analyzePropAccessFwd(receiver,index.getString(),inEnv,requiredType,specializedType);
 }
-pair=analyzeExprFwd(index,inEnv);
-pair=analyzeExprFwd(receiver,pair.env,JSType.TOP_OBJECT);
-mayWarnAboutNonObject(receiver,"",pair.type,specializedType);
+}
+pair=analyzeExprFwd(index,pair.env);
 pair.type=requiredType;
 return pair;
 }
@@ -424,14 +434,20 @@ case Token.IN:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
+JSType reqObjType=pickReqObjType(expr);
 EnvTypePair pair;
 pair=analyzeExprFwd(lhs,inEnv,JSType.NUM_OR_STR);
 if (!pair.type.isSubtypeOf(JSType.NUM_OR_STR)) {
 warnInvalidOperand(lhs,Token.IN,JSType.NUM_OR_STR,pair.type);
 }
-pair=analyzeExprFwd(rhs,pair.env,JSType.TOP_OBJECT);
+pair=analyzeExprFwd(rhs,pair.env,reqObjType);
 if (!pair.type.isSubtypeOf(JSType.TOP_OBJECT)) {
 warnInvalidOperand(rhs,Token.IN,"Object",pair.type);
+pair.type=JSType.BOOLEAN;
+return pair;
+}
+if (pair.type.isStruct()) {
+warnings.add(JSError.make(rhs,TypeCheck.IN_USED_WITH_STRUCT));
 pair.type=JSType.BOOLEAN;
 return pair;
 }
@@ -439,12 +455,12 @@ JSType resultType=JSType.BOOLEAN;
 if (lhs.isString()) {
 QualifiedName pname=new QualifiedName(lhs.getString());
 if (specializedType.isTruthy()) {
-pair=analyzeExprFwd(rhs,inEnv,JSType.TOP_OBJECT,JSType.TOP_OBJECT.withPropertyRequired(pname.getLeftmostName()));
+pair=analyzeExprFwd(rhs,inEnv,reqObjType,reqObjType.withPropertyRequired(pname.getLeftmostName()));
 resultType=JSType.TRUE_TYPE;
 }
  else if (specializedType.isFalsy()) {
-pair=analyzeExprFwd(rhs,inEnv,JSType.TOP_OBJECT);
-pair=analyzeExprFwd(rhs,inEnv,JSType.TOP_OBJECT,pair.type.withoutProperty(pname));
+pair=analyzeExprFwd(rhs,inEnv,reqObjType);
+pair=analyzeExprFwd(rhs,inEnv,reqObjType,pair.type.withoutProperty(pname));
 resultType=JSType.FALSE_TYPE;
 }
 }
@@ -459,8 +475,9 @@ return pair;
 }
 case Token.VAR:
 {
+Preconditions.checkState(NodeUtil.isForIn(expr.getParent()));
 Node vdecl=expr.getFirstChild();
-String name=vdecl.getQualifiedName();
+String name=vdecl.getString();
 Preconditions.checkState(!vdecl.hasChildren());
 return new EnvTypePair(envPutType(inEnv,name,JSType.STRING),JSType.STRING);
 }

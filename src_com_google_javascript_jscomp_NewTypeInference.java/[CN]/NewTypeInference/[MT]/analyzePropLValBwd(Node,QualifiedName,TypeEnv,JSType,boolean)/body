@@ -1,6 +1,7 @@
 {
   Preconditions.checkArgument(pname.isIdentifier());
-  LValueResultBwd lvalue=analyzeLValueBwd(obj,outEnv,JSType.TOP_OBJECT.withProperty(pname,type),false,true);
+  JSType reqObjType=pickReqObjType(obj).withProperty(pname,type);
+  LValueResultBwd lvalue=analyzeLValueBwd(obj,outEnv,reqObjType,false,true);
   if (lvalue.ptr != null) {
     lvalue.ptr=QualifiedName.join(lvalue.ptr,pname);
     if (doSlicing) {

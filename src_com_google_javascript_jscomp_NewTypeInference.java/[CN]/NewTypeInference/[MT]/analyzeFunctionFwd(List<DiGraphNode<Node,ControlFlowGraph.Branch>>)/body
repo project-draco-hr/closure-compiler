@@ -47,6 +47,17 @@ case Token.DO:
 case Token.IF:
 case Token.FOR:
 case Token.WHILE:
+if (NodeUtil.isForIn(n)) {
+Node obj=n.getChildAtIndex(1);
+EnvTypePair pair=analyzeExprFwd(obj,inEnv,pickReqObjType(n));
+JSType objType=pair.type;
+if (!objType.isSubtypeOf(JSType.TOP_OBJECT)) {
+warnings.add(JSError.make(obj,FORIN_EXPECTS_OBJECT,objType.toString()));
+}
+ else if (objType.isStruct()) {
+warnings.add(JSError.make(obj,TypeCheck.IN_USED_WITH_STRUCT));
+}
+}
 conditional=true;
 analyzeConditionalStmFwd(n,getConditionExpression(n),inEnv);
 break;

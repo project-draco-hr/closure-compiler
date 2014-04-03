@@ -24,7 +24,8 @@ case Token.GETELEM:
     QualifiedName pname=new QualifiedName(expr.getLastChild().getString());
     return analyzePropLValBwd(obj,pname,outEnv,type,doSlicing);
   }
-  return new LValueResultBwd(outEnv,type,null);
+  EnvTypePair pair=analyzeExprBwd(expr,outEnv,type);
+  return new LValueResultBwd(pair.env,pair.type,null);
 }
 default :
 {

@@ -18,8 +18,9 @@ case Token.TRUE:
 return new EnvTypePair(outEnv,scalarValueToType(exprKind));
 case Token.OBJECTLIT:
 {
-JSType result=JSType.TOP_OBJECT;
+JSDocInfo jsdoc=expr.getJSDocInfo();
 TypeEnv env=outEnv;
+JSType result=pickReqObjType(expr);
 for (Node prop=expr.getLastChild(); prop != null; prop=expr.getChildBefore(prop)) {
   QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(prop));
   JSType jsdocType=symbolTable.getPropDeclaredType(prop);
@@ -266,7 +267,8 @@ case Token.GETELEM:
 {
 Node receiver=expr.getFirstChild();
 Node index=expr.getLastChild();
-EnvTypePair pair=analyzeExprBwd(receiver,outEnv,JSType.TOP_OBJECT);
+JSType reqObjType=pickReqObjType(expr);
+EnvTypePair pair=analyzeExprBwd(receiver,outEnv,reqObjType);
 if (isArrayType(pair.type)) {
 pair=analyzeExprBwd(index,pair.env,JSType.NUMBER);
 pair.type=requiredType;
@@ -276,7 +278,7 @@ if (index.isString()) {
 return analyzePropAccessBwd(receiver,index.getString(),outEnv,requiredType);
 }
 pair=analyzeExprBwd(index,outEnv);
-pair=analyzeExprBwd(receiver,pair.env,JSType.TOP_OBJECT);
+pair=analyzeExprBwd(receiver,pair.env,reqObjType);
 pair.type=requiredType;
 return pair;
 }
@@ -290,7 +292,7 @@ case Token.IN:
 {
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
-EnvTypePair pair=analyzeExprBwd(rhs,outEnv,JSType.TOP_OBJECT);
+EnvTypePair pair=analyzeExprBwd(rhs,outEnv,pickReqObjType(expr));
 pair=analyzeExprBwd(lhs,pair.env,JSType.NUM_OR_STR);
 pair.type=JSType.BOOLEAN;
 return pair;

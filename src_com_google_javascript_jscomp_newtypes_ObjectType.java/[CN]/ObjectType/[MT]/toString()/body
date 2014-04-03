@@ -6,7 +6,20 @@
   for (  String pname : props.keySet()) {
     propStrings.add(pname + " : " + props.get(pname).toString());
   }
-  String result=nominalType == null ? "" : nominalType.toString();
+  String result;
+  if (nominalType != null) {
+    result=nominalType.toString();
+    ;
+  }
+ else   if (isStruct()) {
+    result="struct";
+  }
+ else   if (isDict()) {
+    result="dict";
+  }
+ else {
+    result="";
+  }
   result+=(nominalType != null && propStrings.isEmpty()) ? "" : "{" + Joiner.on(", ").join(propStrings) + "}";
   result+=(isLoose ? " (loose)" : "");
   return result;

@@ -1,15 +1,23 @@
 {
   Preconditions.checkArgument(pname.isIdentifier());
-  LValueResultFwd lvalue=analyzeLValueFwd(obj,inEnv,JSType.TOP_OBJECT.withProperty(pname,type),true);
-  if (!lvalue.type.isSubtypeOf(JSType.TOP_OBJECT)) {
-    warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,pname.getLeftmostName(),lvalue.type.toString()));
+  JSType reqObjType=pickReqObjType(obj).withProperty(pname,type);
+  LValueResultFwd lvalue=analyzeLValueFwd(obj,inEnv,reqObjType,true);
+  JSType lvalueType=lvalue.type;
+  if (!lvalueType.isSubtypeOf(JSType.TOP_OBJECT)) {
+    warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,pname.getLeftmostName(),lvalueType.toString()));
     return new LValueResultFwd(lvalue.env,type,null,null);
   }
-  boolean warnForInexistentProp=insideQualifiedName || obj.getParent().getParent().getType() != Token.ASSIGN;
-  if (warnForInexistentProp && !lvalue.type.isUnknown() && !lvalue.type.mayHaveProp(pname)) {
-    warnings.add(JSError.make(obj,TypeCheck.INEXISTENT_PROPERTY,pname.getLeftmostName(),lvalue.type.toString()));
+  Node parent=obj.getParent();
+  boolean warnForInexistentProp=insideQualifiedName || parent.getParent().getType() != Token.ASSIGN;
+  if (warnForInexistentProp && !lvalueType.isUnknown() && !lvalueType.isDict()&& !lvalueType.mayHaveProp(pname)) {
+    warnings.add(JSError.make(obj,TypeCheck.INEXISTENT_PROPERTY,pname.getLeftmostName(),lvalueType.toString()));
     return new LValueResultFwd(lvalue.env,type,null,null);
   }
-  JSType lvalueType=lvalue.type.mayHaveProp(pname) ? lvalue.type.getProp(pname) : JSType.UNKNOWN;
-  return new LValueResultFwd(lvalue.env,lvalueType,lvalue.type.getDeclaredProp(pname),lvalue.ptr == null ? null : QualifiedName.join(lvalue.ptr,pname));
+  if (parent.isGetElem()) {
+    mayWarnAboutStructPropAccess(obj,lvalueType);
+  }
+ else   if (parent.isGetProp()) {
+    mayWarnAboutDictPropAccess(obj,lvalueType);
+  }
+  return new LValueResultFwd(lvalue.env,lvalueType.mayHaveProp(pname) ? lvalueType.getProp(pname) : JSType.UNKNOWN,lvalueType.getDeclaredProp(pname),lvalue.ptr == null ? null : QualifiedName.join(lvalue.ptr,pname));
 }
