@@ -1,9 +1,9 @@
 {
-  Map<String,Property> newProps=Maps.newHashMap(this.props);
+  PersistentMap<String,Property> newProps=this.props;
   String objName=qname.getLeftmostName();
   if (qname.isIdentifier()) {
     if (type == null) {
-      newProps.remove(objName);
+      newProps=newProps.without(objName);
     }
  else {
       JSType declType=getDeclaredProp(qname);
@@ -14,7 +14,7 @@
  else       if (declType != null) {
         isDeclared=true;
       }
-      newProps.put(objName,new Property(type,isDeclared ? declType : null,false));
+      newProps=newProps.with(objName,new Property(type,isDeclared ? declType : null,false));
     }
   }
  else {
@@ -22,10 +22,10 @@
     QualifiedName innerProps=qname.getAllButLeftmost();
     if (!this.props.containsKey(objName)) {
       Preconditions.checkState(mayHaveProp(objQname));
-      newProps.put(objName,getLeftmostProp(objQname));
+      newProps=newProps.with(objName,getLeftmostProp(objQname));
     }
     Property objProp=newProps.get(objName);
-    newProps.put(objName,new Property(objProp.getType().withProperty(innerProps,type),objProp.getDeclaredType(),objProp.isOptional()));
+    newProps=newProps.with(objName,new Property(objProp.getType().withProperty(innerProps,type),objProp.getDeclaredType(),objProp.isOptional()));
   }
   return ObjectType.makeObjectType(nominalType,newProps,fn,isLoose,objectKind);
 }

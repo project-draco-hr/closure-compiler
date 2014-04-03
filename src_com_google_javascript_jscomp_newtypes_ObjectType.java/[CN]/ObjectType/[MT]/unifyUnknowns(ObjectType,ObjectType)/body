@@ -5,7 +5,7 @@
   if (t1.fn != t2.fn) {
     throw new RuntimeException("Unification of functions not yet supported");
   }
-  Map<String,Property> newprops=Maps.newHashMap();
+  PersistentMap<String,Property> newProps=PersistentMap.create();
   for (  String propName : t1.props.keySet()) {
     Property prop1=t1.props.get(propName);
     Property prop2=t2.props.get(propName);
@@ -16,7 +16,7 @@
     if (p == null) {
       return null;
     }
-    newprops.put(propName,p);
+    newProps=newProps.with(propName,p);
   }
-  return makeObjectType(t1.nominalType,newprops,t1.fn,t1.isLoose || t2.isLoose,ObjectKind.join(t1.objectKind,t2.objectKind));
+  return makeObjectType(t1.nominalType,newProps,t1.fn,t1.isLoose || t2.isLoose,ObjectKind.join(t1.objectKind,t2.objectKind));
 }

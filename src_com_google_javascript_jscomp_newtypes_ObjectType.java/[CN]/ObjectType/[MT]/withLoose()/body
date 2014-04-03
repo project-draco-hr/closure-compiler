@@ -3,9 +3,9 @@
     return this;
   }
   FunctionType fn=this.fn == null ? null : this.fn.withLoose();
-  Map<String,Property> newProps=Maps.newHashMap();
+  PersistentMap<String,Property> newProps=PersistentMap.create();
   for (  String pname : this.props.keySet()) {
-    newProps.put(pname,this.props.get(pname).withRequired());
+    newProps=newProps.with(pname,this.props.get(pname).withRequired());
   }
   return ObjectType.makeObjectType(nominalType,newProps,fn,true,this.objectKind);
 }

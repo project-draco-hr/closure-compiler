@@ -1,8 +1,8 @@
 {
-  ImmutableMap.Builder<String,Property> builder=ImmutableMap.builder();
-  for (  String propName : props.keySet()) {
-    JSType propType=props.get(propName);
-    builder.put(propName,new Property(propType,propType,false));
+  PersistentMap<String,Property> props=PersistentMap.create();
+  for (  String propName : propTypes.keySet()) {
+    JSType propType=propTypes.get(propName);
+    props=props.with(propName,new Property(propType,propType,false));
   }
-  return ObjectType.makeObjectType(null,builder.build(),null,false,ObjectKind.UNRESTRICTED);
+  return ObjectType.makeObjectType(null,props,null,false,ObjectKind.UNRESTRICTED);
 }
