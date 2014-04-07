@@ -1,10 +1,23 @@
 {
+  Preconditions.checkState(isLoose || obj2.isLoose);
   if (obj2 == TOP_OBJECT) {
     return true;
   }
-  for (  String pname : obj2.props.keySet()) {
-    if (props.containsKey(pname)) {
-      if (!props.get(pname).getType().isSubtypeOf(obj2.props.get(pname).getType())) {
+  if (!isLoose) {
+    if (!objectKind.isSubtypeOf(obj2.objectKind)) {
+      return false;
+    }
+    for (    String pname : obj2.props.keySet()) {
+      QualifiedName qname=new QualifiedName(pname);
+      if (!mayHaveProp(qname) || !getProp(qname).isSubtypeOf(obj2.getProp(qname))) {
+        return false;
+      }
+    }
+  }
+ else {
+    for (    String pname : props.keySet()) {
+      QualifiedName qname=new QualifiedName(pname);
+      if (obj2.mayHaveProp(qname) && !getProp(qname).isSubtypeOf(obj2.getProp(qname))) {
         return false;
       }
     }
