@@ -1,0 +1,35 @@
+{
+  if (obj2 == TOP_OBJECT) {
+    return true;
+  }
+  if ((keepLoosenessOfThis && this.isLoose) || obj2.isLoose) {
+    return this.isLooseSubtypeOf(obj2);
+  }
+  if (!objectKind.isSubtypeOf(obj2.objectKind)) {
+    return false;
+  }
+  for (  String pname : obj2.props.keySet()) {
+    Property prop2=obj2.props.get(pname);
+    Property prop1=this.getLeftmostProp(new QualifiedName(pname));
+    if (prop2.isOptional()) {
+      if (prop1 != null && !prop1.getType().isSubtypeOf(prop2.getType())) {
+        return false;
+      }
+    }
+ else {
+      if (prop1 == null || prop1.isOptional() || !prop1.getType().isSubtypeOf(prop2.getType())) {
+        return false;
+      }
+    }
+  }
+  if ((this.nominalType == null && obj2.nominalType != null) || this.nominalType != null && obj2.nominalType != null && !this.nominalType.isSubclassOf(obj2.nominalType)) {
+    return false;
+  }
+  if (obj2.fn == null) {
+    return true;
+  }
+ else   if (this.fn == null) {
+    return false;
+  }
+  return this.fn.isSubtypeOf(obj2.fn);
+}

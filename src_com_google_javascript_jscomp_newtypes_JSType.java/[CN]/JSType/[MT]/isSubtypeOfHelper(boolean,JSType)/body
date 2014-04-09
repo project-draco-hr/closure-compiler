@@ -1,0 +1,15 @@
+{
+  if (isUnknown() || other.isUnknown() || other.isTop()) {
+    return true;
+  }
+ else   if ((mask | other.mask) != other.mask) {
+    return false;
+  }
+ else   if (!Objects.equal(this.typeVar,other.typeVar)) {
+    return false;
+  }
+ else   if (this.objs == null) {
+    return true;
+  }
+  return ObjectType.isUnionSubtype(keepLoosenessOfThis,this.objs,other.objs);
+}
