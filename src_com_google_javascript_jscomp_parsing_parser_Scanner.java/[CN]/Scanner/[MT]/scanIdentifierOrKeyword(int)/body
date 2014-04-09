@@ -4,10 +4,12 @@
     reportError(getPosition(beginToken),"Character '%c' (U+%04X) is not a valid identifier start char",ch,(int)ch);
     return createToken(TokenType.ERROR,beginToken);
   }
-  String value=ch + "";
+  StringBuilder valueBuilder=new StringBuilder();
+  valueBuilder.append(ch);
   while (isIdentifierPart(peekCharOrUnicodeEscape())) {
-    value+=nextCharOrUnicodeEscape();
+    valueBuilder.append(nextCharOrUnicodeEscape());
   }
+  String value=valueBuilder.toString();
   if (Keywords.isKeyword(value)) {
     return new Token(Keywords.getTokenType(value),getTokenRange(beginToken));
   }
