@@ -4,12 +4,12 @@
   Node initializer=parent.isAssign() ? parent.getLastChild() : null;
   Node ctorNameNode=NodeUtil.getPrototypeClassName(getProp);
   String ctorName=ctorNameNode.getQualifiedName();
-  if (!currentScope.isDefinedLocally(ctorName)) {
-    warnings.add(JSError.make(getProp,CTOR_IN_DIFFERENT_SCOPE));
+  RawNominalType rawType=currentScope.getNominalType(ctorName);
+  if (rawType == null) {
     return;
   }
-  RawNominalType rawType=currentScope.getLocalNominalType(ctorName);
-  if (rawType == null) {
+  if (!currentScope.isDefinedLocally(ctorName)) {
+    warnings.add(JSError.make(getProp,CTOR_IN_DIFFERENT_SCOPE));
     return;
   }
   String pname=NodeUtil.getPrototypePropertyName(getProp);

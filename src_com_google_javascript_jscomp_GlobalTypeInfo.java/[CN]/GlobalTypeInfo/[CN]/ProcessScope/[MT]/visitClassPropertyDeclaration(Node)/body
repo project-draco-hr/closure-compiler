@@ -6,10 +6,14 @@
   JSType declaredType=getTypeDeclarationFromJsdoc(NodeUtil.getBestJSDocInfo(getProp),currentScope);
   if (declaredType != null) {
     mayWarnAboutExistingProp(rawNominalType,pname,getProp);
-    rawNominalType.addClassProperty(pname,declaredType);
   }
+  if (mayAddPropToType(getProp,rawNominalType)) {
+    if (declaredType != null) {
+      rawNominalType.addClassProperty(pname,declaredType);
+    }
  else {
-    rawNominalType.addUndeclaredClassProperty(pname);
+      rawNominalType.addUndeclaredClassProperty(pname);
+    }
   }
   propertyDefs.put(rawNominalType.getId(),pname,new PropertyDef(getProp,null));
 }

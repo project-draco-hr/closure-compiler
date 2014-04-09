@@ -16,10 +16,8 @@
   if (recvType.isUnknown() || mayWarnAboutNonObject(receiver,pname,recvType,specializedType)) {
     return new EnvTypePair(pair.env,requiredType);
   }
-  if (propAccessNode.isGetProp()) {
-    if (mayWarnAboutDictPropAccess(receiver,recvType)) {
-      return new EnvTypePair(pair.env,requiredType);
-    }
+  if (propAccessNode.isGetProp() && mayWarnAboutDictPropAccess(receiver,recvType)) {
+    return new EnvTypePair(pair.env,requiredType);
   }
   JSType resultType=recvType.getProp(propQname);
   if (!propAccessNode.getParent().isExprResult() && !specializedType.isTruthy() && !specializedType.isFalsy()) {

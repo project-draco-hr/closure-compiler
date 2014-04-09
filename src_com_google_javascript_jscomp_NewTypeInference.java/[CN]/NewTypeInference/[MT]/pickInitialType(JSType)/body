@@ -1,0 +1,13 @@
+{
+  Preconditions.checkNotNull(declType);
+  FunctionType funType=declType.getFunTypeIfSingletonObj();
+  if (funType == null) {
+    return declType;
+  }
+ else   if (funType.isConstructor()) {
+    return funType.createConstructorObject();
+  }
+ else {
+    return declType.withProperty(new QualifiedName("prototype"),JSType.TOP_OBJECT);
+  }
+}

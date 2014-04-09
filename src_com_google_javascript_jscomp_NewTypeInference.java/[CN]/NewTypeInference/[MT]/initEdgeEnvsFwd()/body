@@ -14,16 +14,7 @@
     }
     for (    String name : formalsAndOuters) {
       JSType declType=currentScope.getDeclaredTypeOf(name);
-      JSType initType;
-      if (declType == null) {
-        initType=envGetType(entryEnv,name);
-      }
- else       if (declType.getFunTypeIfSingletonObj() != null && declType.getFunTypeIfSingletonObj().isConstructor()) {
-        initType=declType.getFunTypeIfSingletonObj().createConstructorObject();
-      }
- else {
-        initType=declType;
-      }
+      JSType initType=declType == null ? envGetType(entryEnv,name) : pickInitialType(declType);
       entryEnv=envPutType(entryEnv,name,initType.withLocation(name));
     }
     entryEnv=envPutType(entryEnv,RETVAL_ID,JSType.UNDEFINED);

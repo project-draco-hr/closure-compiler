@@ -23,4 +23,12 @@
     nominaltypesByNode.put(fn,rawNominalType);
     parentScope.addNominalType(qname,rawNominalType);
   }
+ else   if (fnDoc != null) {
+    if (fnDoc.makesStructs()) {
+      warnings.add(JSError.make(fn,CONSTRUCTOR_REQUIRED,"@struct"));
+    }
+ else     if (fnDoc.makesDicts()) {
+      warnings.add(JSError.make(fn,CONSTRUCTOR_REQUIRED,"@dict"));
+    }
+  }
 }

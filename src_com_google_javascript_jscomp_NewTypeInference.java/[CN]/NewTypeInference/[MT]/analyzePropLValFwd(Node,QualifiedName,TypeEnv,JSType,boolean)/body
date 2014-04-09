@@ -8,6 +8,9 @@
     return new LValueResultFwd(lvalue.env,type,null,null);
   }
   Node parent=obj.getParent();
+  if (parent.isGetProp() && parent.getParent().isAssign() && mayWarnAboutPropCreation(pname,parent,lvalueType)) {
+    return new LValueResultFwd(lvalue.env,type,null,null);
+  }
   boolean warnForInexistentProp=insideQualifiedName || parent.getParent().getType() != Token.ASSIGN;
   if (warnForInexistentProp && !lvalueType.isUnknown() && !lvalueType.isDict()&& !lvalueType.mayHaveProp(pname)) {
     warnings.add(JSError.make(obj,TypeCheck.INEXISTENT_PROPERTY,pname.getLeftmostName(),lvalueType.toString()));

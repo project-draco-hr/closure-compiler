@@ -26,12 +26,23 @@
     }
     RawNominalType rawNominalType=nominaltypesByNode.get(fn);
     if (fnDoc.isConstructor()) {
+      String className=rawNominalType.toString();
       if (parentClass != null) {
         if (!rawNominalType.addSuperClass(parentClass)) {
-          warnings.add(JSError.make(fn,INHERITANCE_CYCLE,rawNominalType.toString()));
+          warnings.add(JSError.make(fn,INHERITANCE_CYCLE,className));
+        }
+ else         if (rawNominalType.isStruct() && !parentClass.isStruct()) {
+          warnings.add(JSError.make(fn,TypeCheck.CONFLICTING_SHAPE_TYPE,className,"struct","struct"));
+        }
+ else         if (rawNominalType.isDict() && !parentClass.isDict()) {
+          warnings.add(JSError.make(fn,TypeCheck.CONFLICTING_SHAPE_TYPE,className,"dict","dict"));
         }
       }
-      boolean noCycles=rawNominalType.addInterfaces(typeParser.getImplementedInterfaces(fnDoc,ownerType,parentScope,typeParameters));
+      ImmutableSet<NominalType> implementedIntfs=typeParser.getImplementedInterfaces(fnDoc,ownerType,parentScope,typeParameters);
+      if (rawNominalType.isDict() && !implementedIntfs.isEmpty()) {
+        warnings.add(JSError.make(fn,DICT_IMPLEMENTS_INTERF,className));
+      }
+      boolean noCycles=rawNominalType.addInterfaces(implementedIntfs);
       Preconditions.checkState(noCycles);
       builder.addNominalType(NominalType.fromRaw(rawNominalType));
     }

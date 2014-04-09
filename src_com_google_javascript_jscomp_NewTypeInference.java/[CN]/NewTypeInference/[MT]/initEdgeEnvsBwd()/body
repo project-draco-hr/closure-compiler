@@ -13,12 +13,7 @@
   }
   for (  String varName : varNames) {
     JSType declType=currentScope.getDeclaredTypeOf(varName);
-    if (declType == null) {
-      env=envPutType(env,varName,JSType.UNKNOWN);
-    }
- else {
-      env=envPutType(env,varName,declType);
-    }
+    env=envPutType(env,varName,declType == null ? JSType.UNKNOWN : pickInitialType(declType));
   }
   for (  String fnName : currentScope.getLocalFunDefs()) {
     JSType summaryType=summaries.get(currentScope.getScope(fnName));
