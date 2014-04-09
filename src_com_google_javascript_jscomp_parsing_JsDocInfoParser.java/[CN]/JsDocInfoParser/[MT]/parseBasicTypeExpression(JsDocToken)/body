@@ -16,17 +16,17 @@
   }
  else   if (token == JsDocToken.STRING) {
     String string=stream.getString();
-    if ("function".equals(string)) {
+switch (string) {
+case "function":
       skipEOLs();
-      return parseFunctionType(next());
-    }
- else     if ("null".equals(string) || "undefined".equals(string)) {
-      return newStringNode(string);
-    }
- else {
-      return parseTypeName(token);
-    }
-  }
-  restoreLookAhead(token);
-  return reportGenericTypeSyntaxWarning();
+    return parseFunctionType(next());
+case "null":
+case "undefined":
+  return newStringNode(string);
+default :
+return parseTypeName(token);
+}
+}
+restoreLookAhead(token);
+return reportGenericTypeSyntaxWarning();
 }

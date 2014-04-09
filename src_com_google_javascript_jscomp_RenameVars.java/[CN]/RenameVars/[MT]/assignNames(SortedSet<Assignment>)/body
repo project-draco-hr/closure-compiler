@@ -9,8 +9,8 @@
     globalNameGenerator=new NameGenerator(reservedNames,prefix,reservedCharacters);
     localNameGenerator=prefix.isEmpty() ? globalNameGenerator : new NameGenerator(reservedNames,"",reservedCharacters);
   }
-  List<Assignment> pendingAssignments=new ArrayList<Assignment>();
-  List<String> generatedNamesForAssignments=new ArrayList<String>();
+  List<Assignment> pendingAssignments=new ArrayList<>();
+  List<String> generatedNamesForAssignments=new ArrayList<>();
   for (  Assignment a : varsToRename) {
     if (a.newName != null) {
       continue;
@@ -32,7 +32,7 @@
   }
   int numPendingAssignments=generatedNamesForAssignments.size();
   for (int i=0; i < numPendingAssignments; ) {
-    SortedSet<Assignment> varsByOrderOfOccurrence=new TreeSet<Assignment>(ORDER_OF_OCCURRENCE_COMPARATOR);
+    SortedSet<Assignment> varsByOrderOfOccurrence=new TreeSet<>(ORDER_OF_OCCURRENCE_COMPARATOR);
     int len=generatedNamesForAssignments.get(i).length();
     for (int j=i; j < numPendingAssignments && generatedNamesForAssignments.get(j).length() == len; j++) {
       varsByOrderOfOccurrence.add(pendingAssignments.get(j));
