@@ -1,9 +1,11 @@
 {
-  Preconditions.checkState(cfg.getOutEdges(n).size() > 0);
-  TypeEnv outEnv=null;
+  Preconditions.checkArgument(!cfg.getOutEdges(n).isEmpty());
+  Set<TypeEnv> envSet=Sets.newHashSet();
   for (  DiGraphEdge<Node,ControlFlowGraph.Branch> de : cfg.getOutEdges(n)) {
     TypeEnv env=envs.get(de);
-    outEnv=(outEnv == null) ? env : TypeEnv.join(outEnv,env);
+    if (env != null) {
+      envSet.add(env);
+    }
   }
-  return outEnv == null ? new TypeEnv() : outEnv;
+  return TypeEnv.join(envSet);
 }

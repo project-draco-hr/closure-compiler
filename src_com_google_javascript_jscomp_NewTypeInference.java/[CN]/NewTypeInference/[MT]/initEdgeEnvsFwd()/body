@@ -1,8 +1,6 @@
 {
-  DiGraphNode<Node,ControlFlowGraph.Branch> entry=cfg.getEntry();
-  DiGraphEdge<Node,ControlFlowGraph.Branch> entryOutEdge=cfg.getOutEdges(entry.getValue()).get(0);
-  TypeEnv entryEnv=envs.get(entryOutEdge);
-  initEdgeEnvs(new TypeEnv());
+  TypeEnv entryEnv=getInitTypeEnv();
+  initEdgeEnvs(null);
   if (currentScope.isFunction()) {
     Set<String> formalsAndOuters=currentScope.getOuterVars();
     if (currentScope.getName() != null) {
@@ -34,5 +32,5 @@
     entryEnv=envPutType(entryEnv,fnName,summaryType);
   }
   println("Keeping env: ",entryEnv);
-  envs.put(entryOutEdge,entryEnv);
+  setOutEnv(cfg.getEntry().getValue(),entryEnv);
 }

@@ -1,0 +1,26 @@
+{
+  Preconditions.checkArgument(!envs.isEmpty());
+  TypeEnv firstEnv=envs.iterator().next();
+  if (envs.size() == 1) {
+    return firstEnv;
+  }
+  PersistentMap<String,JSType> newMap=firstEnv.typeMap;
+  ImmutableSet.Builder<String> keys=ImmutableSet.builder();
+  for (  TypeEnv env : envs) {
+    keys.addAll(env.typeMap.keySet());
+  }
+  for (  String n : keys.build()) {
+    JSType joinedType=null;
+    for (    TypeEnv env : envs) {
+      JSType otherType=env.getType(n);
+      if (joinedType == null) {
+        joinedType=otherType;
+      }
+ else {
+        joinedType=JSType.join(joinedType,otherType);
+      }
+    }
+    newMap=newMap.with(n,joinedType);
+  }
+  return new TypeEnv(newMap);
+}
