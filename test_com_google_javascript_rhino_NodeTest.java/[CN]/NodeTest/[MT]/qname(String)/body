@@ -1,0 +1,24 @@
+{
+  int endPos=name.indexOf('.');
+  if (endPos == -1) {
+    return IR.name(name);
+  }
+  Node node;
+  String nodeName=name.substring(0,endPos);
+  if ("this".equals(nodeName)) {
+    node=IR.thisNode();
+  }
+ else {
+    node=IR.name(nodeName);
+  }
+  int startPos;
+  do {
+    startPos=endPos + 1;
+    endPos=name.indexOf('.',startPos);
+    String part=(endPos == -1 ? name.substring(startPos) : name.substring(startPos,endPos));
+    Node propNode=IR.string(part);
+    node=IR.getprop(node,propNode);
+  }
+ while (endPos != -1);
+  return node;
+}

@@ -1,0 +1,15 @@
+{
+  int start=qname.lastIndexOf('.',endIndex - 1) + 1;
+switch (getType()) {
+case Token.NAME:
+    String name=getString();
+  return start == 0 && !name.isEmpty() && name.length() == endIndex && qname.startsWith(name);
+case Token.THIS:
+return start == 0 && 4 == endIndex && qname.startsWith("this");
+case Token.GETPROP:
+String prop=getLastChild().getString();
+return start > 1 && prop.regionMatches(0,qname,start,endIndex - start) && getFirstChild().matchesQualifiedName(qname,start - 1);
+default :
+return false;
+}
+}

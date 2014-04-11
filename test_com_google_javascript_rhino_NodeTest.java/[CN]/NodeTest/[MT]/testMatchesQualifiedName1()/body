@@ -1,0 +1,31 @@
+{
+  assertTrue(IR.name("a").matchesQualifiedName("a"));
+  assertFalse(IR.name("a").matchesQualifiedName("a.b"));
+  assertFalse(IR.name("a").matchesQualifiedName((String)null));
+  assertFalse(IR.name("a").matchesQualifiedName(".b"));
+  assertFalse(IR.name("a").matchesQualifiedName("a."));
+  assertFalse(qname("a.b").matchesQualifiedName("a"));
+  assertTrue(qname("a.b").matchesQualifiedName("a.b"));
+  assertFalse(qname("a.b").matchesQualifiedName(".b"));
+  assertFalse(qname("a.b").matchesQualifiedName("this.b"));
+  assertFalse(qname("this.b").matchesQualifiedName("a"));
+  assertFalse(qname("this.b").matchesQualifiedName("a.b"));
+  assertFalse(qname("this.b").matchesQualifiedName(".b"));
+  assertFalse(qname("this.b").matchesQualifiedName("a."));
+  assertTrue(qname("this.b").matchesQualifiedName("this.b"));
+  assertTrue(qname("a.b.c").matchesQualifiedName("a.b.c"));
+  assertTrue(qname("a.b.c").matchesQualifiedName("a.b.c"));
+  assertFalse(IR.number(0).matchesQualifiedName("a.b"));
+  assertFalse(IR.arraylit().matchesQualifiedName("a.b"));
+  assertFalse(IR.objectlit().matchesQualifiedName("a.b"));
+  assertFalse(IR.string("").matchesQualifiedName("a.b"));
+  assertFalse(IR.getelem(IR.name("a"),IR.string("b")).matchesQualifiedName("a.b"));
+  assertFalse(IR.getprop(IR.getelem(IR.name("a"),IR.string("b")),IR.string("c")).matchesQualifiedName("a.b.c"));
+  assertFalse(IR.getelem(IR.getprop(IR.name("a"),IR.string("b")),IR.string("c")).matchesQualifiedName("a.b.c"));
+  assertFalse(IR.call(IR.name("a")).matchesQualifiedName("a"));
+  assertFalse(IR.getprop(IR.call(IR.name("a")),IR.string("b")).matchesQualifiedName("a.b"));
+  assertFalse(IR.call(IR.getprop(IR.name("a"),IR.string("b"))).matchesQualifiedName("a.b"));
+  assertFalse(IR.string("a").matchesQualifiedName("a"));
+  assertFalse(IR.regexp(IR.string("x")).matchesQualifiedName("x"));
+  assertFalse(new Node(Token.INC,IR.name("x")).matchesQualifiedName("x"));
+}
