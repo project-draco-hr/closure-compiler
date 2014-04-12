@@ -17,6 +17,7 @@
     addChangeHandler(tracker.getCodeChangeHandler());
   }
   Tracer tracer=newTracer(PARSING_PASS_NAME);
+  beforePass(PARSING_PASS_NAME);
   try {
     for (    CompilerInput input : externs) {
       Node n=input.getAstRoot(this);
@@ -80,6 +81,7 @@ catch (      JSModuleGraph.MissingModuleException e) {
     return externAndJsRoot;
   }
   finally {
+    afterPass(PARSING_PASS_NAME);
     stopTracer(tracer,PARSING_PASS_NAME);
   }
 }
