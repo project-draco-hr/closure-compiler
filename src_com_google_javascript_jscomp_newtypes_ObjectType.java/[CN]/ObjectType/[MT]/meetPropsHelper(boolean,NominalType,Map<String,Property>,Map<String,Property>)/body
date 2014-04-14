@@ -1,15 +1,17 @@
 {
   PersistentMap<String,Property> newProps=PersistentMap.create();
-  for (  String pname : props1.keySet()) {
+  for (  Map.Entry<String,Property> propsEntry : props1.entrySet()) {
+    String pname=propsEntry.getKey();
     if (!props2.containsKey(pname)) {
-      newProps=mayPutProp(pname,props1.get(pname),newProps,resultNominalType);
+      newProps=mayPutProp(pname,propsEntry.getValue(),newProps,resultNominalType);
     }
   }
-  for (  String pname : props2.keySet()) {
-    Property prop2=props2.get(pname);
+  for (  Map.Entry<String,Property> propsEntry : props2.entrySet()) {
+    String pname=propsEntry.getKey();
+    Property prop2=propsEntry.getValue();
     Property newProp;
     if (props1.containsKey(pname)) {
-      newProp=specializeProps1 ? props1.get(pname).specialize(prop2) : Property.meet(props1.get(pname),prop2);
+      newProp=specializeProps1 ? props1.get(pname).specialize(prop2) : Property.meet(props1.get(propsEntry.getKey()),prop2);
     }
  else {
       newProp=prop2;

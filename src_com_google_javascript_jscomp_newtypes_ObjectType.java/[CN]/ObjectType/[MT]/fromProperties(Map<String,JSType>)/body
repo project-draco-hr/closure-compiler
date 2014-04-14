@@ -1,7 +1,8 @@
 {
   PersistentMap<String,Property> props=PersistentMap.create();
-  for (  String propName : propTypes.keySet()) {
-    JSType propType=propTypes.get(propName);
+  for (  Map.Entry<String,JSType> propTypeEntry : propTypes.entrySet()) {
+    String propName=propTypeEntry.getKey();
+    JSType propType=propTypeEntry.getValue();
     props=props.with(propName,new Property(propType,propType,false));
   }
   return ObjectType.makeObjectType(null,props,null,false,ObjectKind.UNRESTRICTED);

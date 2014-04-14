@@ -27,10 +27,10 @@
       sb.append("  ").append(t).append(" (").append(now - t.startTimeMs).append(" ms, started at ").append(formatTime(t.startTimeMs)).append(")\n");
     }
   }
-  for (  String key : stats.keySet()) {
-    Stat stat=stats.get(key);
+  for (  Map.Entry<String,Stat> statEntry : stats.entrySet()) {
+    Stat stat=statEntry.getValue();
     if (stat.count > 1) {
-      sb.append(" TOTAL ").append(key).append(" ").append(stat.count).append(" (").append(stat.clockTime).append(" ms");
+      sb.append(" TOTAL ").append(statEntry.getKey()).append(" ").append(stat.count).append(" (").append(stat.clockTime).append(" ms");
       if (stat.extraInfo != null) {
         for (int i=0; i < stat.extraInfo.length; i++) {
           sb.append("; ");

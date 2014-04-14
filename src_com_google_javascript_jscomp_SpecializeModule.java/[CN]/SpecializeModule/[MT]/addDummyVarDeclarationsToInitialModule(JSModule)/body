@@ -1,7 +1,8 @@
 {
-  for (  Node modifiedFunction : functionInfoBySpecializedFunctionNode.keySet()) {
+  for (  Map.Entry<Node,OriginalFunctionInformation> nodeEntry : functionInfoBySpecializedFunctionNode.entrySet()) {
+    Node modifiedFunction=nodeEntry.getKey();
     if (specializationState.getRemovedFunctions().contains(modifiedFunction)) {
-      OriginalFunctionInformation originalInfo=functionInfoBySpecializedFunctionNode.get(modifiedFunction);
+      OriginalFunctionInformation originalInfo=nodeEntry.getValue();
       if (originalInfo.name != null && originalInfo.originalWasDeclaration()) {
         Node block=specializationState.removedFunctionToBlock.get(modifiedFunction);
         if (block != null) {

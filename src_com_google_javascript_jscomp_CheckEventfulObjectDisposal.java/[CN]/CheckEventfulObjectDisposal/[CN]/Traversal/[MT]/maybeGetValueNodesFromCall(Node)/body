@@ -10,9 +10,10 @@
   if (base != null) {
     baseType=base.getJSType();
   }
-  for (  JSType key : disposeCalls.keySet()) {
+  for (  Map.Entry<JSType,Map<String,List<Integer>>> disposeCallEntry : disposeCalls.entrySet()) {
+    JSType key=disposeCallEntry.getKey();
     if (key == null || (baseType != null && isPossiblySubtype(baseType,key))) {
-      addDisposeArgumentsMatched(disposeCalls.get(key),first,property,ret);
+      addDisposeArgumentsMatched(disposeCallEntry.getValue(),first,property,ret);
     }
   }
   return ret;
