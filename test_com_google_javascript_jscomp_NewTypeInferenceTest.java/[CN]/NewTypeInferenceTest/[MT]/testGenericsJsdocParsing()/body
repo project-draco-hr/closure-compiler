@@ -1,0 +1,6 @@
+{
+  checkNoWarnings("/** @template T\n@param {T} x */ function f(x) {}");
+  checkNoWarnings("/** @template T\n @param {T} x\n @return {T} */\n" + "function f(x) { return x; };");
+  typeCheck("/**\n" + " * @template T\n" + " * @constructor\n"+ " * @param {T} x\n"+ " * @extends {Bar.<T>} // error, Bar is not templatized \n"+ " */\n"+ "function Foo(x) {}\n"+ "/** @constructor */\n"+ "function Bar() {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/**\n" + " * @template T\n" + " * @constructor\n"+ " * @param {T} x\n"+ " */\n"+ "function Foo(x) {}\n"+ "/** @param {Foo.<number, string>} x */\n"+ "function f(x) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+}

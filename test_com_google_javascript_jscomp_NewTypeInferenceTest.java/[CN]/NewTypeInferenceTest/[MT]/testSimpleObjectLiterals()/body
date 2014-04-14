@@ -1,0 +1,11 @@
+{
+  checkNoWarnings("/** @param {{ p: number }} obj */\n" + "function f(obj) {\n" + "  obj = { p: 123 };\n"+ "}");
+  typeCheck("/** @param {{ p: number, p2: string }} obj */\n" + "function f(obj) {\n" + "  obj = { p: 123 };\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @param {{ p: number }} obj */\n" + "function f(obj) {\n" + "  obj = { p: 'str' };\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("var obj;\n" + "obj = { p: 123 };\n" + "obj.p < 'str';",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @param {{ p: number }} obj */\n" + "function f(obj, x) {\n" + "  obj = { p: x };\n"+ "  x < 'str';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @param {{ p: number }} obj */\n" + "function f(obj, x) {\n" + "  obj = { p: 123, q: x };\n"+ "  obj.q - 5;\n"+ "  x < 'str';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/** @param {{ p: number }} obj */\n" + "function f(obj) {\n" + "  obj.q = 123;\n"+ "}\n"+ "/** @param {{ p: number, q: string }} obj */\n"+ "function g(obj) { f(obj); }");
+  checkNoWarnings("/** @param {{ p: number }} obj */\n" + "function f(obj) {}\n" + "var obj = {p: 5};\n"+ "if (true) {\n"+ "  obj.q = 123;\n"+ "}\n"+ "f(obj);");
+  typeCheck("function f(/** number */ n) {}; f({});",NewTypeInference.INVALID_ARGUMENT_TYPE);
+}

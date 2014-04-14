@@ -1,0 +1,12 @@
+{
+  checkNoWarnings("/** @constructor */\n" + "function Parent() {}\n" + "/** @constructor @extends{Parent} */\n"+ "function Child() {}\n"+ "Child.prototype = new Parent();");
+  typeCheck("/** @constructor */\n" + "function Parent() {\n" + "  /** @type {string} */ this.prop = 'asdf';\n"+ "}\n"+ "/** @constructor @extends{Parent} */\n"+ "function Child() {}\n"+ "Child.prototype = new Parent();\n"+ "(new Child()).prop - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */\n" + "function Parent() {\n" + "  /** @type {string} */ this.prop = 'asdf';\n"+ "}\n"+ "/** @constructor @extends{Parent} */\n"+ "function Child() {}\n"+ "Child.prototype = new Parent();\n"+ "(new Child()).prop = 5;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @constructor */\n" + "function Parent() {}\n" + "/** @type {string} */ Parent.prototype.prop = 'asdf';\n"+ "/** @constructor @extends{Parent} */\n"+ "function Child() {}\n"+ "Child.prototype = new Parent();\n"+ "(new Child()).prop - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */\n" + "function Parent() {}\n" + "/** @type {string} */ Parent.prototype.prop = 'asdf';\n"+ "/** @constructor @extends{Parent} */\n"+ "function Child() {\n"+ "  /** @type {number} */ this.prop = 5;\n"+ "}\n"+ "Child.prototype = new Parent();",GlobalTypeInfo.INVALID_PROP_OVERRIDE);
+  typeCheck("/** @constructor */\n" + "function Parent() {}\n" + "/** @type {string} */ Parent.prototype.prop = 'asdf';\n"+ "/** @constructor @extends{Parent} */\n"+ "function Child() {}\n"+ "Child.prototype = new Parent();\n"+ "/** @type {number} */ Child.prototype.prop = 5;",ImmutableList.of(GlobalTypeInfo.INVALID_PROP_OVERRIDE,NewTypeInference.MISTYPED_ASSIGN_RHS));
+  typeCheck("/** @constructor */\n" + "function Parent() {}\n" + "/** @extends {Parent} */ function Child() {}",GlobalTypeInfo.EXTENDS_NOT_ON_CTOR_OR_INTERF);
+  typeCheck("/** @constructor @extends{number} */ function Foo() {}",GlobalTypeInfo.EXTENDS_NON_OBJECT);
+  typeCheck("/**\n" + " * @constructor\n" + " * @implements {string}\n"+ " */\n"+ "function Foo() {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/**\n" + " * @interface\n" + " * @extends {number}\n"+ " */\n"+ "function Foo() {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+}

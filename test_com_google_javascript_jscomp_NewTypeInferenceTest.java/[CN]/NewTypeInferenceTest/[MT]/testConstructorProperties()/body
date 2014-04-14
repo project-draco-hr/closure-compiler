@@ -1,0 +1,10 @@
+{
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @type {number} */ Foo.n = 1\n" + "/** @type {number} */ Foo.n = 1",GlobalTypeInfo.REDECLARED_PROPERTY);
+  checkNoWarnings("function g() { Foo.bar - 5; }\n" + "/** @constructor */ function Foo() {}\n" + "Foo.bar = 42;");
+  typeCheck("function g() { Foo.bar - 5; }\n" + "/** @constructor */ function Foo() {}\n" + "/** @type {string} */ Foo.bar = 'str';",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function g() { return (new Foo).bar; }\n" + "/** @constructor */ function Foo() {}\n" + "/** @type {string} */ Foo.bar = 'str';",TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @type {string} */ Foo.prop = 'asdf';\n" + "var x = Foo;\n"+ "x.prop - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function g() { Foo.prototype.baz = (new Foo).bar + Foo.bar; }\n" + "/** @constructor */ function Foo() {}\n" + "/** @type {number} */ Foo.prototype.bar = 5\n"+ "/** @type {string} */ Foo.bar = 'str';",GlobalTypeInfo.CTOR_IN_DIFFERENT_SCOPE);
+  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "/** @type {number} */ Foo.n = 1;\n" + "Foo.n = 1;");
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @type {number} */ Foo.n;\n" + "Foo.n = '';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

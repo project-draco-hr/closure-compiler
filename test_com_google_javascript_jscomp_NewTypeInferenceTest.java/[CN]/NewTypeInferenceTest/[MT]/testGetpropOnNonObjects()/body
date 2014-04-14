@@ -1,0 +1,11 @@
+{
+  typeCheck("(1).foo;",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck("var /** number */ n;\n" + "n.foo;",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck("var x = {}; x.foo.bar = 1;",TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck("var /** number */ n;\n" + "n.foo = 5;",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  checkNoWarnings("/** @param {*} x */\n" + "function f(x) {\n" + "  if (x.prop) {\n"+ "    var /** { prop: ? } */ y = x;\n"+ "  }\n"+ "}");
+  typeCheck("/** @param {number} x */\n" + "function f(x) {\n" + "  if (x.prop) {}\n"+ "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck("null[123];",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  checkNoWarnings("function f(/** Object */ x) { if (x[123]) { return 1; } }");
+  typeCheck("function f(/** number */ x) { if (x[123]) { return 1; } }",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+}

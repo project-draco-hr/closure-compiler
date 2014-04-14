@@ -1,0 +1,7 @@
+{
+  checkInference("/** @type {string} */ var x;","x",JSType.UNDEFINED);
+  checkInference("/** @type {string} */ var x = 'str';","x",JSType.STRING);
+  checkInference("/** @type {string} */ var x; x = 'str';","x",JSType.STRING);
+  typeCheck("var /** null */ obj = 5;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("var /** ?number */ n = true;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

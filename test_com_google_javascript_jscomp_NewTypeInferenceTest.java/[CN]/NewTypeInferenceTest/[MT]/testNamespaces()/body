@@ -1,0 +1,15 @@
+{
+  typeCheck("/** @const */ var ns = {};\n" + "/** @constructor */ ns.C = function() {};\n" + "ns.C();",TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck("/** @const */ var ns = {};\n" + "/** @param {number} x */ ns.f = function(x) {};\n" + "ns.f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @const */ var ns = {};\n" + "/** @constructor */ ns.C = function(){}\n" + "ns.C.prototype.method = function(/** string */ x){};\n"+ "(new ns.C).method(5);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @const */ var ns = {};\n" + "/** @const */ ns.ns2 = {};\n" + "/** @constructor */ ns.ns2.C = function() {};\n"+ "ns.ns2.C();",TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck("/** @const */ var ns = {};\n" + "/** @const */ ns.ns2 = {};\n" + "/** @constructor */ ns.ns2.C = function() {};\n"+ "ns.ns2.C.prototype.method = function(/** string */ x){};\n"+ "(new ns.ns2.C).method(11);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @constructor */ function C1(){}\n" + "/** @constructor */ C1.C2 = function(){}\n" + "C1.C2.prototype.method = function(/** string */ x){};\n"+ "(new C1.C2).method(1);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @constructor */ function C1(){};\n" + "/** @constructor */ C1.prototype.C2 = function(){};\n" + "(new C1).C2();",TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck("/** @const */ var ns = {};\n" + "/** @type {number} */ ns.N = 5;\n" + "ns.N();",TypeCheck.NOT_CALLABLE);
+  typeCheck("/** @const */ var ns = {};\n" + "/** @type {number} */ ns.foo = 123;\n" + "/** @type {string} */ ns.foo = '';",ImmutableList.of(GlobalTypeInfo.REDECLARED_PROPERTY,NewTypeInference.MISTYPED_ASSIGN_RHS));
+  typeCheck("/** @const */ var ns = {};\n" + "/** @type {number} */ ns.foo;\n" + "/** @type {string} */ ns.foo;",GlobalTypeInfo.REDECLARED_PROPERTY);
+  typeCheck("/** @const */ var ns = {};\n" + "/** @type {number} */ ns.foo;\n" + "/** @type {number} */ ns.foo;",GlobalTypeInfo.REDECLARED_PROPERTY);
+  checkNoWarnings("var ns = {};\n" + "/** @type {number} */ ns.foo = 123;\n" + "/** @type {string} */ ns.foo = '';");
+  typeCheck("/** @const */ var ns = {};\n" + "ns.x = 5;\n" + "/** @type {string} */\n"+ "ns.x = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

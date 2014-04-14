@@ -1,0 +1,7 @@
+{
+  typeCheck("(true in {});",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("('asdf' in 123);",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("var /** number */ n = ('asdf' in {});",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  checkNoWarnings("function f(/** { a: number } */ obj) {\n" + "  if ('p' in obj) {\n" + "    return obj.p;\n"+ "  }\n"+ "}\n"+ "f({ a: 123 });");
+  typeCheck("function f(/** { a: number } */ obj) {\n" + "  if (!('p' in obj)) {\n" + "    return obj.p;\n"+ "  }\n"+ "}",TypeCheck.INEXISTENT_PROPERTY);
+}

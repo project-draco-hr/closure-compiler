@@ -1,0 +1,8 @@
+{
+  checkNoWarnings("function f() { return {}; }\n" + "f().x = 123;");
+  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {number} */ this.a = 123; }\n" + "/** @return {!Foo} */\n"+ "function retFoo() { return new Foo(); }\n"+ "function f(cond) {\n"+ "  (retFoo()).a = 'asdf';\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "(new Foo).x += 123;",TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {number} */ this.a = 123; }\n" + "function f(cond, /** !Foo */ foo1) {\n"+ "  var /** { a: number } */ x = { a: 321 };\n"+ "  (cond ? foo1 : x).a = 'asdf';\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f(obj) { obj[1 - 'str'] = 3; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(/** number */ n, pname) { n[pname] = 3; }",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+}

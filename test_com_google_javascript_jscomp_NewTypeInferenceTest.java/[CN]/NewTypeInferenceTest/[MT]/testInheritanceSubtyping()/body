@@ -1,0 +1,5 @@
+{
+  checkNoWarnings("/** @constructor */ function Parent() {}\n" + "/** @constructor @extends{Parent} */ function Child() {}\n" + "(function(/** Parent */ x) {})(new Child);");
+  typeCheck("/** @constructor */ function Parent() {}\n" + "/** @constructor @extends{Parent} */ function Child() {}\n" + "(function(/** Child */ x) {})(new Parent);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @constructor */ function Parent() {}\n" + "/** @constructor @extends{Parent} */ function Child() {}\n" + "/** @constructor */\n"+ "function Foo() { /** @type {Parent} */ this.x = new Child(); }\n"+ "/** @type {Child} */ Foo.prototype.y = new Parent();",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

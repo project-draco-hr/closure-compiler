@@ -1,0 +1,5 @@
+{
+  typeCheck("function f(obj) {\n" + "  return obj.prop;\n" + "}\n"+ "f(/** @dict */ { 'prop': 123 });",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f(obj) {\n" + "  return obj['prop'];\n" + "}\n"+ "f(/** @struct */ { prop: 123 });",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  checkNoWarnings("/** @constructor @struct */\n" + "function Foo() {}\n" + "function f(obj) { obj['prop']; return obj; }\n"+ "var /** !Foo */ x = f({ prop: 123 });");
+}

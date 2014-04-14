@@ -1,0 +1,10 @@
+{
+  checkNoWarnings("function f(obj) { obj.x = 1; obj.x - 5; }");
+  typeCheck("function f(obj) { obj.x = 'str'; obj.x - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(obj) {\n" + "  var /** number */ x = obj.p;\n" + "  obj.p < 'str';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(obj) {\n" + "  var /** @type {{ p: number }} */ x = obj;\n" + "  obj.p < 'str';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("function f(obj) {\n" + "  obj.x = 1;\n" + "  return obj.x;\n"+ "}\n"+ "f({x: 'str'});");
+  typeCheck("function f(obj) {\n" + "  obj.x - 1;\n" + "}\n"+ "f({x: 'str'});",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  checkNoWarnings("function f(obj, cond) {\n" + "  if (cond) {\n" + "    obj.x = 'str';\n"+ "  }\n"+ "  obj.x - 5;\n"+ "}");
+  typeCheck("function f(obj) {\n" + "  obj.x - 1;\n" + "  return obj;\n"+ "}\n"+ "var /** string */ s = (f({x: 5})).x;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

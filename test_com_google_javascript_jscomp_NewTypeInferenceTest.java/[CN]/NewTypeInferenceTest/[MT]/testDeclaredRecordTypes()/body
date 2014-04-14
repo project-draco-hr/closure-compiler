@@ -1,0 +1,17 @@
+{
+  checkNoWarnings("/** @param {{ p: number }} x */ function f(x) {\n" + "  return x.p - 3;\n" + "}");
+  typeCheck("/** @param {{ p: string }} x */ function f(x) {\n" + "  return x.p - 3;\n" + "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @param {{ 'p': string }} x */ function f(x) {\n" + "  return x.p - 3;\n" + "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  return x.q;\n" + "}",TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck("/** @param {{ p: string }} obj */ function f(obj, x, y) {\n" + "  x < y;\n" + "  x - 5;\n"+ "  obj.p < y;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.p = 3;\n" + "}");
+  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.p = 'str';\n" + "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  checkNoWarnings("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.q = 'str';\n" + "}");
+  checkNoWarnings("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.q = 'str';\n" + "}\n"+ "/** @param {{ p: number }} x */ function g(x) {\n"+ "  f(x);\n"+ "}");
+  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.q = 'str';\n" + "  return x.q;\n"+ "}\n"+ "/** @param {{ p: number }} x */ function g(x) {\n"+ "  f(x) - 5;\n"+ "}",NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
+  checkNoWarnings("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.q = 'str';\n" + "  x.q = 7;\n"+ "}");
+  typeCheck("function f(/** { prop: number} */ obj) {\n" + "  obj.prop = 'asdf';\n" + "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f(/** { prop: number} */ obj, cond) {\n" + "  if (cond) { obj.prop = 123; } else { obj.prop = 234; }\n" + "  obj.prop = 'asdf';\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  checkNoWarnings("function f(/** {p: number} */ x, /** {p: (number|null)} */ y) {\n" + "  var z;\n" + "  if (true) { z = x; } else { z = y; }\n"+ "}");
+  typeCheck("var /** { a: number } */ obj1 = { a: 321};\n" + "var /** { a: number, b: number } */ obj2 = obj1;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

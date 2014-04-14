@@ -1,0 +1,10 @@
+{
+  typeCheck("function f() {}; f(5);",TypeCheck.WRONG_ARGUMENT_COUNT);
+  typeCheck("function f(x) { x-5; }; f();",TypeCheck.WRONG_ARGUMENT_COUNT);
+  typeCheck("/** @return {number} */ function f() { return 1; }\n" + "var /** string */ s = f();",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f(/** number */ x) {}; f(true);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f(/** boolean */ x) {}\n" + "function g() { f(123); }",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f(/** void */ x) {}\n" + "function g() { f(123); }",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f(/** boolean */ x) {}\n" + "function g(x) {\n" + "  var /** string */ s = x;\n"+ "  f(x < 7);\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(/** number */ x) {}\n" + "function g(x, y) {\n" + "  y < x;\n"+ "  f(x);\n"+ "  var /** string */ s = y;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+}

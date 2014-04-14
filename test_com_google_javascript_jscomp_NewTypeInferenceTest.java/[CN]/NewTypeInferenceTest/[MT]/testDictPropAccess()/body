@@ -1,0 +1,11 @@
+{
+  checkNoWarnings("/** @constructor @dict */ function Foo() { this['prop'] = 123; }\n" + "(new Foo)['prop'];");
+  typeCheck("/** @constructor @dict */ function Foo() { this['prop'] = 123; }\n" + "(new Foo).prop;",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck("/** @constructor @dict */ function Foo() {\n" + "  this['prop'] = 123;\n" + "  this.prop - 123;\n"+ "}",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck("/** @constructor @dict */ function Foo() { this['prop'] = 123; }\n" + "(new Foo).prop = 123;",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck("/** @constructor @dict */ function Foo() { this['prop'] = {}; }\n" + "(new Foo).prop.newprop = 123;",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck("/** @constructor @dict */ function Foo() {}\n" + "/** @constructor */ function Bar() {}\n" + "function f(cond) {\n"+ "  var x;\n"+ "  if (cond) {\n"+ "    x = new Foo;\n"+ "  }\n"+ "  else {\n"+ "    x = new Bar;\n"+ "  }\n"+ "  x.prop = 123;\n"+ "}",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck("(/** @dict */ { prop : 1 });",TypeCheck.ILLEGAL_OBJLIT_KEY);
+  typeCheck("var lit = /** @dict */ { 'prop' : 1 }; lit.prop;",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck("(/** @dict */ {}).toString();",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
+}

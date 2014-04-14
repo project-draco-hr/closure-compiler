@@ -1,0 +1,12 @@
+{
+  typeCheck("function f(/** function():number */ x) {\n" + "  var /** string */ s = x();\n" + "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f(/** function(number) */ x) {\n" + "  x(true);\n" + "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function g(x, y, /** function(number) */ f) {\n" + "  y < x;\n" + "  f(x);\n"+ "  var /** string */ s = y;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  var y = x(); y - 5; y < 'str';\n" + "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @param {function():?} x */ function f(x) {\n" + "  var y = x(); y - 5; y < 'str';\n" + "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(/** ? */ x) { x < 'asdf'; x - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/** @param {function(number): string} x */ function g(x) {}\n" + "/** @param {function(number): string} x */ function f(x) {\n" + "  g(x);\n"+ "}");
+  checkNoWarnings("/** @param {function(number): *} x */ function g(x) {}\n" + "/** @param {function(*): string} x */ function f(x) {\n" + "  g(x);\n"+ "}");
+  typeCheck("/** @param {function(*): string} x */ function g(x) {}\n" + "/** @param {function(number): string} x */ function f(x) {\n" + "  g(x);\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @param {function(number): string} x */ function g(x) {}\n" + "/** @param {function(number): *} x */ function f(x) {\n" + "  g(x);\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+}

@@ -1,0 +1,5 @@
+{
+  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "function takesObj(/** Object */ x) {}\n" + "takesObj(new Foo);");
+  checkNoWarnings("function takesObj(/** Object */ x) {}\n" + "takesObj(null);");
+  typeCheck("/** @constructor */ function Foo() {}\n" + "function /** Object */ returnsObj() { return {}; }\n" + "function takesFoo(/** Foo */ x) {}\n"+ "takesFoo(returnsObj());",NewTypeInference.INVALID_ARGUMENT_TYPE);
+}

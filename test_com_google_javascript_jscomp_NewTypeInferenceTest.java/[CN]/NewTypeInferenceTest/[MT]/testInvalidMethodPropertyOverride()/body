@@ -1,0 +1,6 @@
+{
+  typeCheck("/** @interface */ function Parent() {}\n" + "/** @type {number} */ Parent.prototype.y = 9;\n" + "/** @constructor @implements {Parent} */ function Child() {}\n"+ "/** @param {string} x */ Child.prototype.y = function(x) {};",GlobalTypeInfo.INVALID_PROP_OVERRIDE);
+  typeCheck("/** @interface */ function Parent() {}\n" + "/** @param {string} x */ Parent.prototype.y = function(x) {};\n" + "/** @constructor @implements {Parent} */ function Child() {}\n"+ "/** @type {number} */ Child.prototype.y = 9;",GlobalTypeInfo.INVALID_PROP_OVERRIDE);
+  typeCheck("/** @constructor */ function Parent() {}\n" + "/** @type {number} */ Parent.prototype.y = 9;\n" + "/** @constructor @extends {Parent} */ function Child() {}\n"+ "/** @param {string} x */ Child.prototype.y = function(x) {};",GlobalTypeInfo.INVALID_PROP_OVERRIDE);
+  typeCheck("/** @constructor */ function Parent() {}\n" + "/** @param {string} x */ Parent.prototype.y = function(x) {};\n" + "/** @constructor @extends {Parent} */ function Child() {}\n"+ "/** @type {number} */ Child.prototype.y = 9;",GlobalTypeInfo.INVALID_PROP_OVERRIDE);
+}

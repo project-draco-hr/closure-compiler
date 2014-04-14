@@ -1,0 +1,10 @@
+{
+  typeCheck("try { e; } catch (e) {}",VariableReferenceCheck.UNDECLARED_REFERENCE);
+  typeCheck("e; try {} catch (e) {}",VariableReferenceCheck.UNDECLARED_REFERENCE);
+  checkNoWarnings("try {} catch (e) { e; }");
+  checkNoWarnings("try {} catch (e) { 1 - 'asdf'; }");
+  typeCheck("try { throw 123; } catch (e) { 1 - 'asdf'; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("try { throw 123; } catch (e) {} finally { 1 - 'asdf'; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("try {} catch (e) {} e;");
+  typeCheck("var /** string */ e = 'asdf'; try {} catch (e) {} e - 5;",VariableReferenceCheck.REDECLARED_VARIABLE);
+}

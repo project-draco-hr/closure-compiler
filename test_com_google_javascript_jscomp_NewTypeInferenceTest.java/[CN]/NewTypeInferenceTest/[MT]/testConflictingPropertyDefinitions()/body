@@ -1,0 +1,10 @@
+{
+  typeCheck("/** @constructor */ function Foo() { this.x = 'str1'; };\n" + "/** @type {string} */ Foo.prototype.x = 'str2';\n" + "(new Foo).x - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @type {string} */ Foo.prototype.x = 'str1';\n" + "Foo.prototype.x = 'str2';\n"+ "(new Foo).x - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "Foo.prototype.x = 'str2';\n" + "/** @type {string} */ Foo.prototype.x = 'str1';\n"+ "(new Foo).x - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {string} */ this.x = 'str1'; };\n" + "Foo.prototype.x = 'str2';\n"+ "(new Foo).x - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */ function Foo() { this.x = 5; };\n" + "/** @type {string} */ Foo.prototype.x = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {string} */ this.x = 'str1'; };\n" + "Foo.prototype.x = 5;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {string} */ this.x = 'str'; };\n" + "/** @type {number} */ Foo.prototype.x = 'str';",GlobalTypeInfo.REDECLARED_PROPERTY);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @type {number} */ Foo.prototype.x = 1;\n" + "/** @type {number} */ Foo.prototype.x = 2;",GlobalTypeInfo.REDECLARED_PROPERTY);
+}

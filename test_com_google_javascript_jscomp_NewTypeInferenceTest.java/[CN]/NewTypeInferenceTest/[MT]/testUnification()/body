@@ -1,0 +1,11 @@
+{
+  typeCheck("/** @constructor */ function Foo(){};\n" + "/** @constructor */ function Bar(){};\n" + "/**\n"+ " * @template T\n"+ " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function id(x) { return x; }\n"+ "var /** Bar */ x = id(new Foo);",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function id(x) { return x; }\n"+ "id({}) - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function id(x) { return x; }\n"+ "var /** (number|string) */ x = id('str');");
+  typeCheck("function f(/** * */ a, /** string */ b) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f(a, b);\n"+ "}",NewTypeInference.NOT_UNIQUE_INSTANTIATION);
+  checkNoWarnings("function f(/** string */ b) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({p:5, r:'str'}, {p:20, r:b});\n"+ "}");
+  typeCheck("function f(/** string */ b) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({r:'str'}, {p:20, r:b});\n"+ "}",NewTypeInference.NOT_UNIQUE_INSTANTIATION);
+  typeCheck("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  var /** boolean */ y = true;\n"+ "  f(x, y);\n"+ "}\n"+ "g('str');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @param {number} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(123, 'asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/**\n" + " * @constructor\n" + " * @template T\n"+ " */\n"+ "function Foo() {}\n"+ "/**\n"+ " * @template T\n"+ " * @param {Foo.<T>} x\n"+ " */\n"+ "function takesFoo(x) {}\n"+ "takesFoo(undefined);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+}

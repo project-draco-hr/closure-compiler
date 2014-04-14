@@ -1,0 +1,31 @@
+{
+  checkNoWarnings("function f(f1, /** function(string=) */ f2, cond) {\n" + "  var y;\n" + "  if (cond) {\n"+ "    f1();"+ "    y = f1;\n"+ "  } else {\n"+ "    y = f2;\n"+ "  }\n"+ "  return y;\n"+ "}");
+  typeCheck("/** @param {function(number=)} fnum */\n" + "function f(fnum) {\n" + "  fnum(); fnum('asdf');\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @param {function(... [number])} fnum */\n" + "function f(fnum) {\n" + "  fnum(); fnum(1, 2, 3, 'asdf');\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @param {function(number=, number)} g */\n" + "function f(g) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/** @param {number=} x */\n" + "function f(x) {}\n" + "f(); f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @param {number=} x */\n" + "function f(x) {}\n" + "f(1, 2);",TypeCheck.WRONG_ARGUMENT_COUNT);
+  typeCheck("/** @type {function()} */ function f(x) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/** @type {function(number)} */ function f() {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/** @type {function(number)} */ function f(/** number */ x) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/**\n" + " * @param {number=} x\n" + " * @param {number} y\n"+ " */\n"+ "function f(x, y) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/** @type {function(number=)} */ function f(x) {}\n" + "f(); f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @type {function(number=, number)} */ function f(x, y) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("function /** number */ f() { return 'asdf'; }",NewTypeInference.RETURN_NONDECLARED_TYPE);
+  typeCheck("/** @return {number} */ function /** number */ f() { return 1; }",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/** @type {function(): number} */\n" + "function /** number */ f() { return 1; }",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/** @type {function(... [number])} */ function f() {}" + "f(); f(1, 2, 3); f(1, 2, 'asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @param {...number} var_args */ function f(var_args) {}\n" + "f(); f(1, 2, 3); f(1, 2, 'asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @type {function(... [number])} */ function f(x) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/**\n" + " * @param {...number} var_args\n" + " * @param {number=} x\n"+ " */\n"+ "function f(var_args, x) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/** @type {function(number=, ...[number])} */\n" + "function f(x) {}\n" + "f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f(/** function(number=) */ fnum," + "  /** function(string=) */ fstr, cond) {\n" + "  var y;\n"+ "  if (cond) {\n"+ "    y = fnum;\n"+ "  } else {\n"+ "    y = fstr;\n"+ "  }\n"+ "  y();\n"+ "  y(123);\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f(/** function(... [number]) */ fnum," + "  /** function(... [string]) */ fstr, cond) {\n" + "  var y;\n"+ "  if (cond) {\n"+ "    y = fnum;\n"+ "  } else {\n"+ "    y = fstr;\n"+ "  }\n"+ "  y();\n"+ "  y(123);\n"+ "}",NewTypeInference.CALL_FUNCTION_WITH_BOTTOM_FORMAL);
+  typeCheck("function f(\n" + "  /** function() */ f1, /** function(string=) */ f2, cond) {\n" + "  var y;\n"+ "  if (cond) {\n"+ "    y = f1;\n"+ "  } else {\n"+ "    y = f2;\n"+ "  }\n"+ "  y(123);\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @param {function(string): *} x */ function g(x) {}\n" + "/** @param {function(... [number]): string} x */ function f(x) {\n" + "  g(x);\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/**\n" + " * @param {number=} x\n" + " * @param {number=} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(undefined, 123);\n"+ "f('str')",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  checkNoWarnings("function f(/** function(...) */ fun) {}\n" + "f(function() {});");
+  typeCheck("/** @param {...number} x */ function f(x) { x - 5; }",VarCheck.UNDEFINED_VAR_ERROR);
+  typeCheck("/** @param {number=} x */ function f(x) { x - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/** @param {number=} x */ function f(x) { if (x) { x - 5; } }");
+}

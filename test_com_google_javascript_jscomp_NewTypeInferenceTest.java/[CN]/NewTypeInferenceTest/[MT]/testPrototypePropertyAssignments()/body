@@ -1,0 +1,11 @@
+{
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @type {string} */ Foo.prototype.x = 'str';\n" + "function g() { (new Foo()).x - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "Foo.prototype.x = 'str';\n" + "function g() { var f = new Foo(); f.x - 5; f.x < 'str'; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @type {function(string)} s */\n" + "Foo.prototype.bar = function(s) {};\n"+ "function g() { (new Foo()).bar(5); }",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @constructor */ function Foo() {};\n" + "Foo.prototype.bar = function(s) {\n" + "  /** @type {string} */ this.x = 'str';\n"+ "};\n"+ "(new Foo()).x - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "(function() { Foo.prototype.prop = 123; })();",GlobalTypeInfo.CTOR_IN_DIFFERENT_SCOPE);
+  typeCheck("/** @constructor */ function F() {}" + "F.prototype.bar = function() {};" + "F.prototype.bar = function() {};",GlobalTypeInfo.REDECLARED_PROPERTY);
+  typeCheck("/** @constructor */ function F() {}" + "/** @return {void} */ F.prototype.bar = function() {};" + "F.prototype.bar = function() {};",GlobalTypeInfo.REDECLARED_PROPERTY);
+  checkNoWarnings("/** @constructor */ function C(){}\n" + "C.prototype.foo = {};\n" + "C.prototype.method = function() { this.foo.bar = 123; }");
+  checkNoWarnings("function f() {}\n" + "function g() { f.prototype.prop = 123; }");
+}

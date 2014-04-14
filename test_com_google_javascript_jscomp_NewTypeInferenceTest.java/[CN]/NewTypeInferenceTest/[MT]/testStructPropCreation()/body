@@ -1,0 +1,14 @@
+{
+  checkNoWarnings("/** @constructor @struct */\n" + "function Foo() { this.prop = 1; }\n" + "(new Foo).prop = 2;");
+  typeCheck("/** @constructor @struct */\n" + "function Foo() {}\n" + "Foo.prototype.method = function() { this.prop = 1; };\n"+ "(new Foo).prop = 2;",ImmutableList.of(TypeCheck.ILLEGAL_PROPERTY_CREATION,TypeCheck.ILLEGAL_PROPERTY_CREATION));
+  typeCheck("/** @constructor @struct */\n" + "function Foo() {}\n" + "(new Foo).prop += 2;",TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck("/** @constructor @struct */\n" + "function Foo() {}\n" + "Foo.prototype.method = function() { this.prop = 1; };\n"+ "(new Foo).prop++;",ImmutableList.of(TypeCheck.ILLEGAL_PROPERTY_CREATION,TypeCheck.INEXISTENT_PROPERTY));
+  typeCheck("(/** @struct */ { prop: 1 }).prop2 = 123;",TypeCheck.ILLEGAL_PROPERTY_CREATION);
+  checkNoWarnings("/** @constructor @struct */\n" + "function Foo() {}\n" + "/** @constructor @struct @extends {Foo} */\n"+ "function Bar() {}\n"+ "Bar.prototype.prop = 123;");
+  typeCheck("/** @constructor @struct */\n" + "function Foo() {}\n" + "/** @constructor @struct @extends {Foo} */\n"+ "function Bar() {}\n"+ "Bar.prototype.prop = 123;\n"+ "(new Foo).prop = 234;",TypeCheck.ILLEGAL_PROPERTY_CREATION);
+  typeCheck("/**\n" + " * @constructor\n" + " * @struct\n"+ " */\n"+ "function Foo() {\n"+ "  var t = this;\n"+ "  t.x = 123;\n"+ "}",TypeCheck.ILLEGAL_PROPERTY_CREATION);
+  checkNoWarnings("/**\n" + " * @constructor\n" + " * @struct\n"+ " */\n"+ "function Foo() {}\n"+ "Foo.someprop = 123;");
+  checkNoWarnings("/** @constructor @struct */\n" + "function Foo() {}\n" + "Foo.prototype.bar = 123;\n"+ "(new Foo).bar = 123;");
+  checkNoWarnings("function f(obj) { obj.prop = 123; }\n" + "f(/** @struct */ {});");
+  typeCheck("/** @constructor @struct */\n" + "function Foo() {}\n" + "function f(obj) { obj.prop - 5; return obj; }\n"+ "var s = (1 < 2) ? new Foo : f({ prop: 123 });\n"+ "s.newprop = 123;",TypeCheck.ILLEGAL_PROPERTY_CREATION);
+}

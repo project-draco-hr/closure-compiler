@@ -1,0 +1,6 @@
+{
+  checkNoWarnings("/** @constructor */\n" + "function Foo(x) { this.prop = x; }\n" + "function f(/** !Foo */ obj) {\n"+ "  obj.prop = true ? 1 : 'asdf';\n"+ "  obj.prop - 5;\n"+ "}");
+  checkNoWarnings("/** @constructor */\n" + "function Foo(x) { this.prop = x; }\n" + "function f(/** !Foo */ obj) {\n"+ "  if (!(typeof obj.prop == 'number')) {\n"+ "    obj.prop < 'asdf';\n"+ "  }\n"+ "}");
+  typeCheck("/** @constructor */\n" + "function Foo(x) { this.prop = x; }\n" + "function f(/** !Foo */ obj) {\n"+ "  obj.prop = true ? 1 : 'asdf';\n"+ "  obj.prop - 5;\n"+ "  obj.prop < 'asdf';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("function /** string */ f(/** ?number */ x) {\n" + "  var o = { prop: 'str' };\n" + "  if (x) {\n"+ "    o.prop = x;\n"+ "  }\n"+ "  return o.prop;\n"+ "}");
+}

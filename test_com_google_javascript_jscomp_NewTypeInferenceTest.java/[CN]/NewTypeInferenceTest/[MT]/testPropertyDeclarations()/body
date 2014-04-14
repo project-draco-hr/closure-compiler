@@ -1,0 +1,8 @@
+{
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @type {number} */ this.x = 'abc';\n"+ "  /** @type {string} */ this.x = 'def';\n"+ "}",GlobalTypeInfo.REDECLARED_PROPERTY);
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @type {number} */ this.x = 5;\n"+ "  /** @type {number} */ this.x = 7;\n"+ "}",GlobalTypeInfo.REDECLARED_PROPERTY);
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  this.x = 5;\n"+ "  /** @type {number} */ this.x = 7;\n"+ "}\n"+ "function g() { (new Foo()).x < 'str'; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @type {number} */ this.x = 7;\n"+ "  this.x = 5;\n"+ "}\n"+ "function g() { (new Foo()).x < 'str'; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @type {number} */ this.x = 7;\n"+ "  this.x < 'str';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @type {?} */ this.x = 1;\n"+ "  /** @type {?} */ this.x = 1;\n"+ "}",GlobalTypeInfo.REDECLARED_PROPERTY);
+}

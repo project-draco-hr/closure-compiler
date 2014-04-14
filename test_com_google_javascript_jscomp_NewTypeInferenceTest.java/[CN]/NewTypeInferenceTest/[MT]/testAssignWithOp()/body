@@ -1,0 +1,8 @@
+{
+  typeCheck("function f(x) {\n" + "  var y = x, z = 0;\n" + "  y < (z -= 123);\n"+ "}\n"+ "f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f(x) {\n" + "  var y = x, z = { prop: 0 };\n" + "  y < (z.prop -= 123);\n"+ "}\n"+ "f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f(x) {\n" + "  var z = { prop: 0 };\n" + "  x < z.prop;\n"+ "  z.prop -= 123;\n"+ "}\n"+ "f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("var x = 0; x *= 'asdf';",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("var /** string */ x = 'asdf'; x *= 123;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("var x; x *= 123;",NewTypeInference.INVALID_OPERAND_TYPE);
+}

@@ -1,0 +1,6 @@
+{
+  typeCheck("/** @interface */\n" + "function Intf() {}\n" + "/** @param {(number|string)} x */\n"+ "Intf.prototype.method = function(x) {};\n"+ "/**\n"+ " * @constructor\n"+ " * @implements {Intf}\n"+ " */\n"+ "function C() {}\n"+ "/** @override */\n"+ "C.prototype.method = function (x) { x - 1; };\n"+ "(new C).method('asdf');",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @interface */\n" + "function Intf() {}\n" + "/** @param {(number|string)} x */\n"+ "Intf.prototype.method = function(x) {};\n"+ "/**\n"+ " * @constructor\n"+ " * @implements {Intf}\n"+ " */\n"+ "function C() {}\n"+ "/** @inheritDoc */\n"+ "C.prototype.method = function (x) { x - 1; };\n"+ "(new C).method('asdf');",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @override */\n"+ "Foo.prototype.method = function() {};",TypeCheck.UNKNOWN_OVERRIDE);
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @inheritDoc */\n"+ "Foo.prototype.method = function() {};",TypeCheck.UNKNOWN_OVERRIDE);
+}

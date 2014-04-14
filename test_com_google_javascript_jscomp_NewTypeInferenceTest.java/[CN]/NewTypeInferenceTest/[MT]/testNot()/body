@@ -1,0 +1,5 @@
+{
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @constructor */\n" + "function Bar() { /** @type {string} */ this.prop = 'asdf'; }\n"+ "function f(/** (!Foo|!Bar) */ obj) {\n"+ "  if (!(obj instanceof Foo)) {\n"+ "    obj.prop - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("function f(cond) {\n" + "  var x = cond ? null : 123;\n" + "  if (!(x === null)) { x - 5; }\n"+ "}");
+  typeCheck("/** @constructor */ function Foo(){ this.prop = 123; }\n" + "function f(/** Foo */ obj) {\n" + "  if (!obj) { obj.prop; }\n"+ "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+}

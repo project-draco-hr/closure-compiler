@@ -1,0 +1,12 @@
+{
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  x - 5;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/**\n" + " * @template T\n" + " * @param {{ a: T }} x\n"+ " */\n"+ "function f(x) {\n"+ "  x.a - 5;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @param {function(T):T} fun\n"+ " */\n"+ "function f(x, fun) {\n"+ "  fun(x) - 5;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function f(x) {\n"+ "  return 5;\n"+ "}",NewTypeInference.RETURN_NONDECLARED_TYPE);
+  checkNoWarnings("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  var /** ? */ y = x;\n"+ "}");
+  checkNoWarnings("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {(T|number)}\n"+ " */\n"+ "function f(x) {\n"+ "  var y;\n"+ "  if (1 < 2) {\n"+ "    y = x;\n"+ "  } else {\n"+ "    y = 123;\n"+ "  }\n"+ "  return y;\n"+ "}");
+  checkNoWarnings("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {(T|number)}\n"+ " */\n"+ "function f(x) {\n"+ "  var y;\n"+ "  if (1 < 2) {\n"+ "    y = x;\n"+ "  } else {\n"+ "    y = 123;\n"+ "  }\n"+ "  return y;\n"+ "}\n"+ "f(123) - 5;");
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {(T|number)}\n"+ " */\n"+ "function f(x) {\n"+ "  var y;\n"+ "  if (1 < 2) {\n"+ "    y = x;\n"+ "  } else {\n"+ "    y = 123;\n"+ "  }\n"+ "  return y;\n"+ "}\n"+ "var /** (number|boolean) */ z = f('asdf');",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  var /** T */ y = x;\n"+ "  y - 5;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/**\n" + " * @template T, U\n" + " * @param {T} x\n"+ " * @param {U} y\n"+ " */\n"+ "function f(x, y) {\n"+ "  x = y;\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

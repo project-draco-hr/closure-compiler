@@ -1,0 +1,11 @@
+{
+  checkNoWarnings("/** @constructor */ function Foo() {\n" + "  /** @type {number} */ this.n = 5;\n" + "};\n"+ "(new Foo()).n - 5;");
+  typeCheck("/** @constructor */ function Foo() {\n" + "  /** @type {number} */ this.n = 5;\n" + "};\n"+ "(new Foo()).n = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @constructor */ function Foo() {\n" + "  /** @type {number} */ this.n;\n" + "};\n"+ "(new Foo()).n = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f() { (new Foo()).n = 'str'; }\n" + "/** @constructor */ function Foo() {\n" + "  /** @type {number} */ this.n = 5;\n"+ "};",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f() { var x = new Foo(); x.n = 'str'; }\n" + "/** @constructor */ function Foo() {\n" + "  /** @type {number} */ this.n = 5;\n"+ "};",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  checkNoWarnings("function f() { var x = new Foo(); return x.n - 5; }\n" + "/** @constructor */ function Foo() {\n" + "  this.n = 5;\n"+ "};");
+  typeCheck("function f() { var x = new Foo(); x.s = 'str'; x.s < x.n; }\n" + "/** @constructor */ function Foo() {\n" + "  /** @type {number} */ this.n = 5;\n"+ "};",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */ function Foo() {\n" + "  /** @type {number} */ this.n = 5;\n" + "};\n"+ "function reqFoo(/** Foo */ x) {};\n"+ "reqFoo({ n : 20 });",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f() { var x = new Foo(); x.n - 5; x.n < 'str'; }\n" + "/** @constructor */ function Foo() {\n" + "  this.n = 5;\n"+ "};",NewTypeInference.INVALID_OPERAND_TYPE);
+}

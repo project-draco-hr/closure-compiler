@@ -1,0 +1,15 @@
+{
+  checkNoWarnings("switch (1) { case 1: break; case 2: break; default: break; }");
+  typeCheck("switch (1) {\n" + "  case 1:\n" + "    1 - 'asdf';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("switch (1) {\n" + "  default:\n" + "    1 - 'asdf';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("switch (1 - 'asdf') {\n" + "  case 1:\n" + "    break;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("switch (1) {\n" + "  case (1 - 'asdf'):\n" + "    break;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/** @constructor */\n" + "function Foo() {}\n" + "function f(/** Foo */ x) {\n"+ "  switch (x) {\n"+ "    case null:\n"+ "      break;\n"+ "    default:\n"+ "      var /** !Foo */ y = x;\n"+ "  }\n"+ "}");
+  checkNoWarnings("function f(x) {\n" + "  switch (x) {\n" + "    case 123:\n"+ "      x - 5;\n"+ "  }\n"+ "}");
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "function f(/** Foo */ x) {\n"+ "  switch (x) {\n"+ "    case null:\n"+ "    default:\n"+ "      var /** !Foo */ y = x;\n"+ "  }\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f(x) {\n" + "  switch (x) {\n" + "    case null:\n"+ "      x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  switch (x) {\n" + "    case null:\n"+ "      var /** undefined */ y = x;\n"+ "  }\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f(x) {\n" + "  switch (x) {\n" + "    case 1: x - 5;\n"+ "    case 'asdf': x < 123; x < 'asdf'; break;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("function f(x) {\n" + "  switch (x) {\n" + "    case 1: x - 5;\n"+ "    case 'asdf': break;\n"+ "  }\n"+ "}");
+  typeCheck("function g(/** number */ x) { return 5; }\n" + "function f() {\n" + "  switch (3) { case g('asdf'): return 123; }\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+}

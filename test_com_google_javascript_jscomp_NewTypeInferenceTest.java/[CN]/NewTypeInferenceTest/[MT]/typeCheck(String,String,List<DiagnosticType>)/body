@@ -1,0 +1,11 @@
+{
+  Preconditions.checkNotNull(warningKinds);
+  NewTypeInference typeInf=parseAndTypeCheck(externs,js);
+  Collection<JSError> warnings=typeInf.getWarnings();
+  String errorMessage="Expected warning of type:\n" + "================================================================\n" + warningKinds + "================================================================\n"+ "but found:\n"+ "----------------------------------------------------------------\n"+ warnings+ "\n"+ "----------------------------------------------------------------\n";
+  assertEquals(errorMessage + "For warnings",warningKinds.size(),warnings.size());
+  for (  JSError warning : warnings) {
+    assertTrue("Wrong warning type\n" + errorMessage,warningKinds.contains(warning.getType()));
+  }
+  return typeInf;
+}

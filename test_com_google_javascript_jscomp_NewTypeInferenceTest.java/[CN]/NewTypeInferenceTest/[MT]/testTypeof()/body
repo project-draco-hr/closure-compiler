@@ -1,0 +1,20 @@
+{
+  typeCheck("(typeof 'asdf') < 123;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  var y = x;\n" + "  y < (typeof 123);\n"+ "}\n"+ "f(123);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function f(x) {\n" + "  if (typeof x === 'string') {\n" + "    x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  if (typeof x == 'string') {\n" + "    x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  if ('string' === typeof x) {\n" + "    x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  if (typeof x === 'number') {\n" + "    x < 'asdf';\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  if (typeof x === 'boolean') {\n" + "    x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  if (typeof x === 'undefined') {\n" + "    x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  if (typeof x === 'function') {\n" + "    x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/** @param {*} x */\n" + "function f(x) {\n" + "  if (typeof x === 'function') {\n"+ "    x();\n"+ "  }\n"+ "}");
+  typeCheck("function f(x) {\n" + "  if (typeof x === 'object') {\n" + "    x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("function f(x) {\n" + "  if (!(typeof x == 'number')) {\n" + "    x < 'asdf';\n"+ "  }\n"+ "}");
+  typeCheck("function f(x) {\n" + "  if (!(typeof x == 'number')) {\n" + "    x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  if (typeof x !== 'number') {\n" + "    x - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  if (typeof x == 'number') {} else { x - 5; }\n" + "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("function f(/** (number|string) */ x) {\n" + "  if (typeof x !== 'string') {\n" + "    x - 5;\n"+ "  }\n"+ "}");
+  checkNoWarnings("function f() {" + "  return (typeof 123 == 'number' ||" + "    typeof 123 == 'string' ||"+ "    typeof 123 == 'boolean' ||"+ "    typeof 123 == 'undefined' ||"+ "    typeof 123 == 'function' ||"+ "    typeof 123 == 'object' ||"+ "    typeof 123 == 'unknown');"+ "}");
+  typeCheck("function f(){ if (typeof 123 == 'numbr') return 321; }",TypeValidator.UNKNOWN_TYPEOF_VALUE);
+}
