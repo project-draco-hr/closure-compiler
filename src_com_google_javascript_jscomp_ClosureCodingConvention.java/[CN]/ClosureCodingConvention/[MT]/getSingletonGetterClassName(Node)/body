@@ -1,7 +1,6 @@
 {
   Node callArg=callNode.getFirstChild();
-  String callName=callArg.getQualifiedName();
-  if (!("goog.addSingletonGetter".equals(callName) || "goog$addSingletonGetter".equals(callName)) || callNode.getChildCount() != 2) {
+  if (!(callArg.matchesQualifiedName("goog.addSingletonGetter") || callArg.matchesQualifiedName("goog$addSingletonGetter")) || callNode.getChildCount() != 2) {
     return super.getSingletonGetterClassName(callNode);
   }
   return callArg.getNext().getQualifiedName();

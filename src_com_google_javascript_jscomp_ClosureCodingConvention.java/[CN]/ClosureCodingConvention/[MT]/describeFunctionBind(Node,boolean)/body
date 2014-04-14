@@ -7,9 +7,8 @@
     return null;
   }
   Node callTarget=n.getFirstChild();
-  String name=callTarget.getQualifiedName();
-  if (name != null) {
-    if (name.equals("goog.bind") || name.equals("goog$bind")) {
+  if (callTarget.isQualifiedName()) {
+    if (callTarget.matchesQualifiedName("goog.bind") || callTarget.matchesQualifiedName("goog$bind")) {
       Node fn=callTarget.getNext();
       if (fn == null) {
         return null;
@@ -18,7 +17,7 @@
       Node parameters=safeNext(thisValue);
       return new Bind(fn,thisValue,parameters);
     }
-    if (name.equals("goog.partial") || name.equals("goog$partial")) {
+    if (callTarget.matchesQualifiedName("goog.partial") || callTarget.matchesQualifiedName("goog$partial")) {
       Node fn=callTarget.getNext();
       if (fn == null) {
         return null;

@@ -1,7 +1,6 @@
 {
   Node callName=n.getFirstChild();
-  String callNameQualifiedString=callName.getQualifiedName();
-  if ("goog.addDependency".equals(callNameQualifiedString) && n.getChildCount() >= 3) {
+  if (callName.matchesQualifiedName("goog.addDependency") && n.getChildCount() >= 3) {
     Node typeArray=callName.getNext().getNext();
     if (typeArray.isArrayLit()) {
       List<String> typeNames=Lists.newArrayList();
@@ -13,7 +12,7 @@
       return typeNames;
     }
   }
-  if ("goog.forwardDeclare".equals(callNameQualifiedString) && n.getChildCount() == 2) {
+  if (callName.matchesQualifiedName("goog.forwardDeclare") && n.getChildCount() == 2) {
     Node typeDeclaration=n.getChildAtIndex(1);
     if (typeDeclaration.isString()) {
       return Lists.newArrayList(typeDeclaration.getString());

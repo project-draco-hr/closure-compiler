@@ -13,12 +13,10 @@
       }
       if (inExterns) {
         List<Definition> stubsToRemove=Lists.newArrayList();
-        String qualifiedName=node.getQualifiedName();
-        if (qualifiedName != null) {
+        if (node.isQualifiedName()) {
           for (          Definition prevDef : nameDefinitionMultimap.get(name)) {
             if (prevDef instanceof ExternalNameOnlyDefinition && !jsdocContainsDeclarations(node)) {
-              String prevName=prevDef.getLValue().getQualifiedName();
-              if (qualifiedName.equals(prevName)) {
+              if (node.matchesQualifiedName(prevDef.getLValue())) {
                 stubsToRemove.add(prevDef);
               }
             }
@@ -37,11 +35,9 @@
     if (name != null) {
       boolean dropStub=false;
       if (!jsdocContainsDeclarations(node)) {
-        String qualifiedName=node.getQualifiedName();
-        if (qualifiedName != null) {
+        if (node.isQualifiedName()) {
           for (          Definition prevDef : nameDefinitionMultimap.get(name)) {
-            String prevName=prevDef.getLValue().getQualifiedName();
-            if (qualifiedName.equals(prevName)) {
+            if (node.matchesQualifiedName(prevDef.getLValue())) {
               dropStub=true;
               break;
             }

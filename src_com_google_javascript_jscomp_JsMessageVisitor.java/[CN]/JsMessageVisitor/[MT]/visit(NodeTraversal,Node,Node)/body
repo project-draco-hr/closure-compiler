@@ -26,11 +26,10 @@ msgNode=node.getLastChild();
 msgNodeParent=node;
 break;
 case Token.CALL:
-String fnName=node.getFirstChild().getQualifiedName();
-if (MSG_FUNCTION_NAME.equals(fnName)) {
+if (node.getFirstChild().matchesQualifiedName(MSG_FUNCTION_NAME)) {
 googMsgNodes.put(node,traversal.getSourceName());
 }
- else if (MSG_FALLBACK_FUNCTION_NAME.equals(fnName)) {
+ else if (node.getFirstChild().matchesQualifiedName(MSG_FALLBACK_FUNCTION_NAME)) {
 visitFallbackFunctionCall(traversal,node);
 }
 return;

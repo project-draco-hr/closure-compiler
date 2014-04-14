@@ -68,10 +68,10 @@ return new EnvTypePair(inEnv,thisType);
 }
 case Token.NAME:
 {
-String varName=expr.getQualifiedName();
-if (varName.equals("undefined")) {
+if (expr.matchesQualifiedName("undefined")) {
 return new EnvTypePair(inEnv,JSType.UNDEFINED);
 }
+String varName=expr.getQualifiedName();
 if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)|| varName.equals(currentScope.getName())) {
 JSType inferredType=envGetType(inEnv,varName);
 println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType," specializedType:  ",specializedType);
