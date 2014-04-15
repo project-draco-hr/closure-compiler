@@ -14,15 +14,29 @@
   }
   String pname=NodeUtil.getPrototypePropertyName(getProp);
   JSType propDeclType;
+  DeclaredFunctionType methodType;
   Scope methodScope=null;
   if (initializer != null && initializer.isFunction()) {
     methodScope=visitFunctionDef(initializer,rawType);
-    propDeclType=JSType.fromFunctionType(methodScope.getDeclaredType().toFunctionType());
+    methodType=methodScope.getDeclaredType();
+    propDeclType=JSType.fromFunctionType(methodType.toFunctionType());
   }
  else {
-    propDeclType=typeParser.getNodeTypeDeclaration(NodeUtil.getBestJSDocInfo(getProp),rawType,currentScope);
+    JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
+    if (jsdoc == null) {
+      methodType=null;
+      propDeclType=null;
+    }
+ else     if (jsdoc.hasType() && !jsdoc.getType().getRoot().isFunction()) {
+      methodType=null;
+      propDeclType=typeParser.getNodeTypeDeclaration(jsdoc,rawType,currentScope);
+    }
+ else {
+      methodType=computeFnDeclaredType(jsdoc,pname,getProp,rawType,currentScope);
+      propDeclType=JSType.fromFunctionType(methodType.toFunctionType());
+    }
   }
-  propertyDefs.put(rawType.getId(),pname,new PropertyDef(getProp,methodScope));
+  propertyDefs.put(rawType.getId(),pname,new PropertyDef(getProp,methodType,methodScope));
   if (propDeclType != null) {
     if (mayWarnAboutExistingProp(rawType,pname,getProp)) {
       return;

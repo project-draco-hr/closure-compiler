@@ -1,0 +1,66 @@
+{
+  Preconditions.checkArgument(declNode.isFunction() || declNode.isGetProp());
+  ImmutableList<String> typeParameters=fnDoc == null ? null : fnDoc.getTemplateTypeNames();
+  FunctionTypeBuilder builder=typeParser.getFunctionType(fnDoc,declNode,ownerType,parentScope);
+  if (fnDoc != null) {
+    NominalType parentClass=null;
+    if (fnDoc.hasBaseType()) {
+      if (!fnDoc.isConstructor()) {
+        warnings.add(JSError.make(declNode,EXTENDS_NOT_ON_CTOR_OR_INTERF,functionName));
+      }
+ else {
+        Node docNode=fnDoc.getBaseType().getRootNode();
+        if (typeParser.hasKnownType(docNode,ownerType,parentScope,typeParameters)) {
+          parentClass=typeParser.getNominalType(docNode,ownerType,parentScope,typeParameters);
+          if (parentClass == null) {
+            warnings.add(JSError.make(declNode,EXTENDS_NON_OBJECT,functionName,docNode.toStringTree()));
+          }
+ else           if (!parentClass.isClass()) {
+            warnings.add(JSError.make(declNode,TypeCheck.CONFLICTING_EXTENDED_TYPE,"constructor",functionName));
+            parentClass=null;
+          }
+        }
+      }
+    }
+    RawNominalType ctorType=declNode.isFunction() ? nominaltypesByNode.get(declNode) : null;
+    if (fnDoc.isConstructor()) {
+      String className=ctorType.toString();
+      if (parentClass != null) {
+        if (!ctorType.addSuperClass(parentClass)) {
+          warnings.add(JSError.make(declNode,INHERITANCE_CYCLE,className));
+        }
+ else         if (ctorType.isStruct() && !parentClass.isStruct()) {
+          warnings.add(JSError.make(declNode,TypeCheck.CONFLICTING_SHAPE_TYPE,className,"struct","struct"));
+        }
+ else         if (ctorType.isDict() && !parentClass.isDict()) {
+          warnings.add(JSError.make(declNode,TypeCheck.CONFLICTING_SHAPE_TYPE,className,"dict","dict"));
+        }
+      }
+      ImmutableSet<NominalType> implementedIntfs=typeParser.getImplementedInterfaces(fnDoc,ownerType,parentScope,typeParameters);
+      if (ctorType.isDict() && !implementedIntfs.isEmpty()) {
+        warnings.add(JSError.make(declNode,DICT_IMPLEMENTS_INTERF,className));
+      }
+      boolean noCycles=ctorType.addInterfaces(implementedIntfs);
+      Preconditions.checkState(noCycles);
+      builder.addNominalType(NominalType.fromRaw(ctorType));
+    }
+ else     if (fnDoc.isInterface()) {
+      if (declNode.isFunction() && !NodeUtil.isEmptyBlock(NodeUtil.getFunctionBody(declNode))) {
+        warnings.add(JSError.make(declNode,INTERFACE_WITH_A_BODY));
+      }
+      ImmutableSet<NominalType> implemented=typeParser.getImplementedInterfaces(fnDoc,ownerType,parentScope,typeParameters);
+      if (!implemented.isEmpty()) {
+        warnings.add(JSError.make(declNode,TypeCheck.CONFLICTING_IMPLEMENTED_TYPE,functionName));
+      }
+      boolean noCycles=ctorType.addInterfaces(typeParser.getExtendedInterfaces(fnDoc,ownerType,parentScope,typeParameters));
+      if (!noCycles) {
+        warnings.add(JSError.make(declNode,INHERITANCE_CYCLE,ctorType.toString()));
+      }
+      builder.addNominalType(NominalType.fromRaw(ctorType));
+    }
+  }
+  if (ownerType != null) {
+    builder.addReceiverType(NominalType.fromRaw(ownerType));
+  }
+  return builder.buildDeclaration();
+}

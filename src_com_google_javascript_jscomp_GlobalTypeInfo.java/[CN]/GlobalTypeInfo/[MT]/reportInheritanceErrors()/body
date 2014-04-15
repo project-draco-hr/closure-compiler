@@ -40,11 +40,10 @@
       Collection<DeclaredFunctionType> methodTypes=propMethodTypesToProcess.get(pname);
       Preconditions.checkState(!methodTypes.isEmpty());
       PropertyDef localPropDef=propertyDefs.get(rawNominalType.getId(),pname);
-      DeclaredFunctionType propDeclType=localPropDef.methodScope.getDeclaredType();
       DeclaredFunctionType superMethodType=DeclaredFunctionType.meet(methodTypes);
-      propDeclType=propDeclType.withTypeInfoFromSuper(superMethodType);
-      localPropDef.methodScope.setDeclaredType(propDeclType);
-      propTypesToProcess.put(pname,JSType.fromFunctionType(propDeclType.toFunctionType()));
+      DeclaredFunctionType updatedMethodType=localPropDef.methodType.withTypeInfoFromSuper(superMethodType);
+      localPropDef.updateMethodType(updatedMethodType);
+      propTypesToProcess.put(pname,JSType.fromFunctionType(updatedMethodType.toFunctionType()));
     }
     add_interface_props:     for (    String pname : propTypesToProcess.keySet()) {
       Collection<JSType> defs=propTypesToProcess.get(pname);

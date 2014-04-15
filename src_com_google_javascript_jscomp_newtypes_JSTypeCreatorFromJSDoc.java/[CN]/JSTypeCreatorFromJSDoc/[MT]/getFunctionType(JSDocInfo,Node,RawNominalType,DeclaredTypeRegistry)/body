@@ -4,19 +4,29 @@
       Node jsdocNode=jsdoc.getType().getRootNode();
       int tokenType=jsdocNode.getType();
       if (tokenType == Token.FUNCTION) {
-        return getFunTypeFromAtTypeJsdoc(jsdoc,funNode,ownerType,registry);
+        if (declNode.isFunction()) {
+          return getFunTypeFromAtTypeJsdoc(jsdoc,declNode,ownerType,registry);
+        }
+ else {
+          try {
+            return getFunTypeBuilder(jsdocNode,ownerType,registry,null);
+          }
+ catch (          UnknownTypeException e) {
+            return null;
+          }
+        }
       }
- else       if (tokenType == Token.STRING && jsdocNode.getString().equals("Function")) {
+ else       if (isQmarkFunction(jsdocNode)) {
         return FunctionTypeBuilder.qmarkFunctionBuilder();
       }
  else {
-        warn("The function is annotated with a non-function jsdoc. " + "Ignoring jsdoc.",funNode);
+        warn("The function is annotated with a non-function jsdoc. " + "Ignoring jsdoc.",declNode);
       }
     }
-    return getFunTypeFromTypicalFunctionJsdoc(jsdoc,funNode,ownerType,registry,false);
+    return getFunTypeFromTypicalFunctionJsdoc(jsdoc,declNode,ownerType,registry,false);
   }
  catch (  FunctionTypeBuilder.WrongParameterOrderException e) {
-    warn("Wrong parameter order: required parameters are first, " + "then optional, then varargs. Ignoring jsdoc.",funNode);
-    return getFunTypeFromTypicalFunctionJsdoc(null,funNode,ownerType,registry,true);
+    warn("Wrong parameter order: required parameters are first, " + "then optional, then varargs. Ignoring jsdoc.",declNode);
+    return getFunTypeFromTypicalFunctionJsdoc(null,declNode,ownerType,registry,true);
   }
 }
