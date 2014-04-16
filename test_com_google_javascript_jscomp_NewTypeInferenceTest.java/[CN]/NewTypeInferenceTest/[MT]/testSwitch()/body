@@ -12,4 +12,5 @@
   typeCheck("function f(x) {\n" + "  switch (x) {\n" + "    case 1: x - 5;\n"+ "    case 'asdf': x < 123; x < 'asdf'; break;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
   checkNoWarnings("function f(x) {\n" + "  switch (x) {\n" + "    case 1: x - 5;\n"+ "    case 'asdf': break;\n"+ "  }\n"+ "}");
   typeCheck("function g(/** number */ x) { return 5; }\n" + "function f() {\n" + "  switch (3) { case g('asdf'): return 123; }\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  checkNoWarnings("function f(/** number */ x, /** string */ y) {\n" + "  switch (y) { case x: ; }\n" + "}");
 }
