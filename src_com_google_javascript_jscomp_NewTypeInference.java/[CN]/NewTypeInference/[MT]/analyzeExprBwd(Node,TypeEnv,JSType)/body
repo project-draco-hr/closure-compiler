@@ -22,20 +22,25 @@ TypeEnv env=outEnv;
 JSType result=pickReqObjType(expr);
 for (Node prop=expr.getLastChild(); prop != null; prop=expr.getChildBefore(prop)) {
   QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(prop));
-  JSType jsdocType=symbolTable.getPropDeclaredType(prop);
-  JSType reqPtype;
-  if (jsdocType != null) {
-    reqPtype=jsdocType;
-  }
- else   if (requiredType.mayHaveProp(pname)) {
-    reqPtype=requiredType.getProp(pname);
+  if (prop.isGetterDef() || prop.isSetterDef()) {
+    env=analyzeExprBwd(prop.getFirstChild(),env).env;
   }
  else {
-    reqPtype=JSType.UNKNOWN;
+    JSType jsdocType=symbolTable.getPropDeclaredType(prop);
+    JSType reqPtype;
+    if (jsdocType != null) {
+      reqPtype=jsdocType;
+    }
+ else     if (requiredType.mayHaveProp(pname)) {
+      reqPtype=requiredType.getProp(pname);
+    }
+ else {
+      reqPtype=JSType.UNKNOWN;
+    }
+    EnvTypePair pair=analyzeExprBwd(prop.getFirstChild(),env,reqPtype);
+    result=result.withProperty(pname,pair.type);
+    env=pair.env;
   }
-  EnvTypePair pair=analyzeExprBwd(prop.getFirstChild(),env,reqPtype);
-  result=result.withProperty(pname,pair.type);
-  env=pair.env;
 }
 return new EnvTypePair(env,result);
 }

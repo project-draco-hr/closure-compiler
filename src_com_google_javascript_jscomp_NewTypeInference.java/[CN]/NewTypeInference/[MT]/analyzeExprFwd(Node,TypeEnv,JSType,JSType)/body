@@ -29,31 +29,51 @@ for (Node prop : expr.children()) {
  else   if (isDict && !prop.isQuotedString()) {
     warnings.add(JSError.make(prop,TypeCheck.ILLEGAL_OBJLIT_KEY,"dict"));
   }
-  QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(prop));
-  JSType jsdocType=symbolTable.getPropDeclaredType(prop);
-  JSType reqPtype, specPtype;
-  if (jsdocType != null) {
-    reqPtype=specPtype=jsdocType;
-  }
- else   if (requiredType.mayHaveProp(pname)) {
-    reqPtype=specPtype=requiredType.getProp(pname);
-    if (specializedType.mayHaveProp(pname)) {
-      specPtype=specializedType.getProp(pname);
+  String pname=NodeUtil.getObjectLitKeyName(prop);
+  if (prop.isGetterDef() || prop.isSetterDef()) {
+    EnvTypePair pair=analyzeExprFwd(prop.getFirstChild(),env);
+    FunctionType funType=pair.type.getFunType();
+    Preconditions.checkNotNull(funType);
+    String specialPropName;
+    JSType propType;
+    if (prop.isGetterDef()) {
+      specialPropName=GETTER_PREFIX + pname;
+      propType=funType.getReturnType();
     }
+ else {
+      specialPropName=SETTER_PREFIX + pname;
+      propType=pair.type;
+    }
+    result=result.withProperty(new QualifiedName(specialPropName),propType);
+    env=pair.env;
   }
  else {
-    reqPtype=specPtype=JSType.UNKNOWN;
-  }
-  EnvTypePair pair=analyzeExprFwd(prop.getFirstChild(),env,reqPtype,specPtype);
-  if (jsdocType != null) {
-    result=result.withDeclaredProperty(pname,jsdocType);
-    if (!pair.type.isSubtypeOf(jsdocType)) {
-      warnings.add(JSError.make(prop,NewTypeInference.INVALID_OBJLIT_PROPERTY_TYPE,jsdocType.toString(),pair.type.toString()));
-      pair.type=jsdocType;
+    QualifiedName qname=new QualifiedName(pname);
+    JSType jsdocType=symbolTable.getPropDeclaredType(prop);
+    JSType reqPtype, specPtype;
+    if (jsdocType != null) {
+      reqPtype=specPtype=jsdocType;
     }
+ else     if (requiredType.mayHaveProp(qname)) {
+      reqPtype=specPtype=requiredType.getProp(qname);
+      if (specializedType.mayHaveProp(qname)) {
+        specPtype=specializedType.getProp(qname);
+      }
+    }
+ else {
+      reqPtype=specPtype=JSType.UNKNOWN;
+    }
+    EnvTypePair pair=analyzeExprFwd(prop.getFirstChild(),env,reqPtype,specPtype);
+    if (jsdocType != null) {
+      result=result.withDeclaredProperty(qname,jsdocType);
+      if (!pair.type.isSubtypeOf(jsdocType)) {
+        warnings.add(JSError.make(prop,NewTypeInference.INVALID_OBJLIT_PROPERTY_TYPE,jsdocType.toString(),pair.type.toString()));
+        pair.type=jsdocType;
+      }
+    }
+    result=result.withProperty(qname,pair.type);
+    env=pair.env;
   }
-  result=result.withProperty(pname,pair.type);
-  env=pair.env;
 }
 return new EnvTypePair(env,result);
 }

@@ -67,6 +67,14 @@ warn("The function cannot have both an @type jsdoc and inline " + "jsdocs. Ignor
 if (jsdoc.getReturnType() != null) {
 warn("The function cannot have both an @type jsdoc and @return " + "jsdoc. Ignoring @return jsdoc.",funNode);
 }
+if (funNode.getParent().isSetterDef()) {
+if (childJsdoc != null) {
+warn("Cannot declare a return type on a setter",funNode);
+}
+builder.addRetType(JSType.UNDEFINED);
+}
+ else {
 builder.addRetType(getTypeFromNode(childJsdoc,ownerType,registry,null));
+}
 return builder;
 }

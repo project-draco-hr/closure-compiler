@@ -1,0 +1,15 @@
+{
+  typeCheck("var x = { /** @return {string} */ set a(b) {} };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("var x = { /** @type{function(number):number} */ set a(b) {} };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("var x = { set /** string */ a(b) {} };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("var x = {\n" + "  /**\n" + "   * @param {T|number} b\n"+ "   * @template T\n"+ "   */\n"+ "  set a(b) {}\n"+ "};",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("var x = { set a(b) { return 1; } };",NewTypeInference.RETURN_NONDECLARED_TYPE);
+  typeCheck("var x = { /** @type {string} */ set a(b) {} };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("var x = /** @dict */ { set a(b) {} };",TypeCheck.ILLEGAL_OBJLIT_KEY);
+  typeCheck("var x = /** @struct */ { set 'a'(b) {} };",TypeCheck.ILLEGAL_OBJLIT_KEY);
+  typeCheck("var x = { set a(b) { 1 - 'asdf'; } };",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("var x = { set a(b) {}, prop: 123 }; var y = x.a;",TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck("var x = { /** @param {string} b */ set a(b) {} };\n" + "x.a = 123;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("var x = { set a(b) { b - 5; } };\n" + "x.a = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("var x = { set 'a'(b) { b - 5; } };\n" + "x['a'] = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

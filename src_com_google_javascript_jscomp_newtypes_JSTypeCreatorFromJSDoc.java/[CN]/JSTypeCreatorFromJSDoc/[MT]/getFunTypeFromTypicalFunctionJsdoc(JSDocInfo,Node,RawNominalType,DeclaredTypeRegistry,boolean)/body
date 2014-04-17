@@ -6,10 +6,18 @@
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   Node params=funNode.getFirstChild().getNext();
   ImmutableList<String> typeParameters=null;
+  Node parent=funNode.getParent();
   if (jsdoc != null) {
     typeParameters=jsdoc.getTemplateTypeNames();
-    if (typeParameters.size() > 0) {
-      builder.addTypeParameters(typeParameters);
+    if (!typeParameters.isEmpty()) {
+      if (parent.isSetterDef() || parent.isGetterDef()) {
+        ignoreJsdoc=true;
+        jsdoc=null;
+        warn("@template can't be used with getters/setters",funNode);
+      }
+ else {
+        builder.addTypeParameters(typeParameters);
+      }
     }
   }
   for (Node param=params.getFirstChild(); param != null; param=param.getNext()) {
@@ -49,7 +57,14 @@
   }
   JSDocInfo inlineRetJsdoc=ignoreJsdoc ? null : funNode.getFirstChild().getJSDocInfo();
   JSTypeExpression retTypeExp=jsdoc == null ? null : jsdoc.getReturnType();
-  if (inlineRetJsdoc != null) {
+  if (parent.isSetterDef()) {
+    inlineRetJsdoc=ignoreJsdoc ? null : funNode.getLastChild().getJSDocInfo();
+    if (retTypeExp != null || inlineRetJsdoc != null) {
+      warn("Cannot declare a return type on a setter",funNode);
+    }
+    builder.addRetType(JSType.UNDEFINED);
+  }
+ else   if (inlineRetJsdoc != null) {
     builder.addRetType(getNodeTypeDeclaration(inlineRetJsdoc,ownerType,registry));
     if (retTypeExp != null) {
       warn("Found two JsDoc comments for the return type",funNode);

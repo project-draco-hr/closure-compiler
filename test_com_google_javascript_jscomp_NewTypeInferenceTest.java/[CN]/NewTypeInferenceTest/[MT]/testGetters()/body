@@ -1,0 +1,14 @@
+{
+  typeCheck("var x = { /** @return {string} */ get a() { return 1; } };",NewTypeInference.RETURN_NONDECLARED_TYPE);
+  typeCheck("var x = { /** @param {number} n */ get a() {} };",GlobalTypeInfo.INEXISTENT_PARAM);
+  typeCheck("var x = { /** @type {string} */ get a() {} };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("var x = {\n" + "  /**\n" + "   * @return {T|number} b\n"+ "   * @template T\n"+ "   */\n"+ "  get a() {}\n"+ "};",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("var x = /** @dict */ { get a() {} };",TypeCheck.ILLEGAL_OBJLIT_KEY);
+  typeCheck("var x = /** @struct */ { get 'a'() {} };",TypeCheck.ILLEGAL_OBJLIT_KEY);
+  typeCheck("var x = { get a() { 1 - 'asdf'; } };",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("var x = { get a() { return 1; } };\n" + "x.a < 'str';",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("var x = { get a() { return 1; } };\n" + "x.a();",TypeCheck.NOT_CALLABLE);
+  typeCheck("var x = { get 'a'() { return 1; } };\n" + "x['a']();",TypeCheck.NOT_CALLABLE);
+  checkNoWarnings("var x = { get a() { return 1; } };\n" + "x.a = 'str';\n" + "x.a - 1;");
+  typeCheck("var x = /** @struct */ { get a() {} }; x.a = 123;",TypeCheck.ILLEGAL_PROPERTY_CREATION);
+}

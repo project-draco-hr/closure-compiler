@@ -19,6 +19,10 @@
   if (propAccessNode.isGetProp() && mayWarnAboutDictPropAccess(receiver,recvType)) {
     return new EnvTypePair(pair.env,requiredType);
   }
+  QualifiedName getterPname=new QualifiedName(GETTER_PREFIX + pname);
+  if (recvType.hasProp(getterPname)) {
+    return new EnvTypePair(pair.env,recvType.getProp(getterPname));
+  }
   JSType resultType=recvType.getProp(propQname);
   if (!propAccessNode.getParent().isExprResult() && !specializedType.isTruthy() && !specializedType.isFalsy()) {
     if (!recvType.mayHaveProp(propQname)) {

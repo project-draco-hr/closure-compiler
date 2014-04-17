@@ -1,10 +1,11 @@
 {
   Preconditions.checkArgument(pname.isIdentifier());
+  String pnameAsString=pname.getLeftmostName();
   JSType reqObjType=pickReqObjType(obj).withLoose().withProperty(pname,type);
   LValueResultFwd lvalue=analyzeLValueFwd(obj,inEnv,reqObjType,true);
   JSType lvalueType=lvalue.type;
   if (!lvalueType.isSubtypeOf(JSType.TOP_OBJECT)) {
-    warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,pname.getLeftmostName(),lvalueType.toString()));
+    warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,pnameAsString,lvalueType.toString()));
     return new LValueResultFwd(lvalue.env,type,null,null);
   }
   Node parent=obj.getParent();
@@ -13,7 +14,7 @@
   }
   boolean warnForInexistentProp=insideQualifiedName || parent.getParent().getType() != Token.ASSIGN;
   if (warnForInexistentProp && !lvalueType.isUnknown() && !lvalueType.isDict()&& !lvalueType.mayHaveProp(pname)) {
-    warnings.add(JSError.make(obj,TypeCheck.INEXISTENT_PROPERTY,pname.getLeftmostName(),lvalueType.toString()));
+    warnings.add(JSError.make(obj,TypeCheck.INEXISTENT_PROPERTY,pnameAsString,lvalueType.toString()));
     return new LValueResultFwd(lvalue.env,type,null,null);
   }
   if (parent.isGetElem()) {
@@ -21,6 +22,14 @@
   }
  else   if (parent.isGetProp()) {
     mayWarnAboutDictPropAccess(obj,lvalueType);
+  }
+  QualifiedName setterPname=new QualifiedName(SETTER_PREFIX + pnameAsString);
+  if (lvalueType.hasProp(setterPname)) {
+    FunctionType funType=lvalueType.getProp(setterPname).getFunType();
+    Preconditions.checkNotNull(funType);
+    JSType formalType=funType.getFormalType(0);
+    Preconditions.checkState(!formalType.isBottom());
+    return new LValueResultFwd(lvalue.env,formalType,formalType,null);
   }
   return new LValueResultFwd(lvalue.env,lvalueType.mayHaveProp(pname) ? lvalueType.getProp(pname) : JSType.UNKNOWN,lvalueType.getDeclaredProp(pname),lvalue.ptr == null ? null : QualifiedName.join(lvalue.ptr,pname));
 }
