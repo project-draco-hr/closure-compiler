@@ -1,0 +1,4 @@
+{
+  typeCheck("/** @interface */\n" + "var Bar = function() {};\n" + "/** @type {Function} */\n"+ "Bar.prototype.method;\n"+ "/** @interface */\n"+ "var Baz = function() {};\n"+ "Baz.prototype.method = function() {};\n"+ "/** @constructor */\n"+ "var Foo = function() {};\n"+ "/** @type {!Bar|!Baz} */\n"+ "Foo.prototype.obj;\n"+ "Foo.prototype.set = function() {\n"+ "    this.obj.method = 5;\n"+ "};",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f(/** { prop: number } */ obj, x) {\n" + " x < obj.prop;\n" + " obj.prop < 'str';\n"+ " obj.prop = 123;\n"+ " x = 123;\n"+ "}\n"+ "f({ prop: 123}, 123)",NewTypeInference.INVALID_OPERAND_TYPE);
+}
