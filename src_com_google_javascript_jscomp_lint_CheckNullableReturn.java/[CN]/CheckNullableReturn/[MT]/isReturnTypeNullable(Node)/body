@@ -6,8 +6,9 @@
     return false;
   }
   JSType returnType=n.getJSType().toMaybeFunctionType().getReturnType();
-  if (returnType == null) {
+  if (returnType == null || returnType.isUnknownType() || !returnType.isNullable()) {
     return false;
   }
-  return !returnType.isUnknownType() && returnType.isNullable();
+  JSDocInfo info=NodeUtil.getBestJSDocInfo(n);
+  return info != null && info.hasReturnType();
 }
