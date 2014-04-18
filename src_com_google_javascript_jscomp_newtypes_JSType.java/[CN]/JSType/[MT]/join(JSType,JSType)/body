@@ -5,8 +5,14 @@
  else   if (lhs.isUnknown() || rhs.isUnknown()) {
     return UNKNOWN;
   }
+ else   if (lhs.isBottom()) {
+    return rhs;
+  }
+ else   if (rhs.isBottom()) {
+    return lhs;
+  }
   if (lhs.typeVar != null && rhs.typeVar != null && !lhs.typeVar.equals(rhs.typeVar)) {
     return UNKNOWN;
   }
-  return new JSType(lhs.mask | rhs.mask,Objects.equal(lhs.location,rhs.location) ? lhs.location : null,ObjectType.joinSets(lhs.objs,rhs.objs),lhs.typeVar != null ? lhs.typeVar : rhs.typeVar);
+  return new JSType(lhs.mask | rhs.mask,joinLocs(lhs.location,rhs.location),ObjectType.joinSets(lhs.objs,rhs.objs),lhs.typeVar != null ? lhs.typeVar : rhs.typeVar);
 }
