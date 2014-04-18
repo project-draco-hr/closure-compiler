@@ -142,6 +142,7 @@ return EnvTypePair.join(rhsPair,shortCircuitPair);
 }
 case Token.INC:
 case Token.DEC:
+mayWarnAboutConst(expr);
 case Token.BITNOT:
 case Token.POS:
 case Token.NEG:
@@ -228,6 +229,7 @@ return rhsPair;
 }
 case Token.ASSIGN:
 {
+mayWarnAboutConst(expr);
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,requiredType);
@@ -243,6 +245,7 @@ return rhsPair;
 }
 case Token.ASSIGN_ADD:
 {
+mayWarnAboutConst(expr);
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 JSType lhsReqType=specializeWithCorrection(requiredType,JSType.NUM_OR_STR);
@@ -269,6 +272,7 @@ case Token.ASSIGN_MUL:
 case Token.ASSIGN_DIV:
 case Token.ASSIGN_MOD:
 {
+mayWarnAboutConst(expr);
 Node lhs=expr.getFirstChild();
 Node rhs=expr.getLastChild();
 LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,JSType.NUMBER);

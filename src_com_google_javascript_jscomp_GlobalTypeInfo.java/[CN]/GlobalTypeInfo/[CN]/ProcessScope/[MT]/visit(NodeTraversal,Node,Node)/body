@@ -28,8 +28,16 @@ if (parent.isVar() || parent.isCatch()) {
  else     if (initializer != null && NodeUtil.isNamespaceDecl(n)) {
       currentScope.addNamespace(name);
     }
+ else     if (parent.isCatch()) {
+      currentScope.addLocal(name,JSType.UNKNOWN,false);
+    }
  else {
-      currentScope.addLocal(name,parent.isVar() ? getVarTypeFromAnnotation(n) : JSType.UNKNOWN);
+      JSDocInfo jsdoc=parent.getJSDocInfo();
+      boolean isConstant=jsdoc != null && jsdoc.isConstant();
+      if (isConstant && !n.isFromExterns() && initializer == null) {
+        warnings.add(JSError.make(n,CONST_WITHOUT_INITIALIZER));
+      }
+      currentScope.addLocal(name,getVarTypeFromAnnotation(n),isConstant);
     }
   }
 }
