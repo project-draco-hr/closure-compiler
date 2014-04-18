@@ -3,8 +3,11 @@
   for (  DiGraph.DiGraphEdge<Node,ControlFlowGraph.Branch> inEdge : ir.getInEdges()) {
     DiGraph.DiGraphNode<Node,ControlFlowGraph.Branch> graphNode=inEdge.getSource();
     Node possibleReturnNode=graphNode.getValue();
-    if (possibleReturnNode.isReturn() && possibleReturnNode.getFirstChild() != null && possibleReturnNode.getFirstChild().getJSType().isNullable()) {
-      return true;
+    if (possibleReturnNode.isReturn()) {
+      Node returnValue=possibleReturnNode.getFirstChild();
+      if (returnValue != null && isNullable(returnValue)) {
+        return true;
+      }
     }
   }
   return false;
