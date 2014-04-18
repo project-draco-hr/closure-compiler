@@ -59,7 +59,13 @@ warnings.add(JSError.make(obj,TypeCheck.IN_USED_WITH_STRUCT));
 }
 Node lhs=n.getFirstChild();
 LValueResultFwd lval=analyzeLValueFwd(lhs,inEnv,JSType.STRING);
+if (lval.declType != null && !lval.declType.isSubtypeOf(JSType.STRING)) {
+warnings.add(JSError.make(lhs,FORIN_EXPECTS_STRING_KEY,lval.declType.toString()));
+outEnv=lval.env;
+}
+ else {
 outEnv=updateLvalueTypeInEnv(lval.env,lhs,lval.ptr,JSType.STRING);
+}
 break;
 }
 conditional=true;
