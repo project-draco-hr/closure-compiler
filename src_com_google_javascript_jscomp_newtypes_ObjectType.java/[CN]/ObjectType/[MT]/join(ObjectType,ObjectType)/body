@@ -1,4 +1,14 @@
 {
   Preconditions.checkState(areRelatedClasses(obj1.nominalType,obj2.nominalType));
-  return ObjectType.makeObjectType(NominalType.pickSuperclass(obj1.nominalType,obj2.nominalType),(obj1.isLoose || obj2.isLoose) ? joinPropsLoosely(obj1.props,obj2.props) : joinProps(obj1.props,obj2.props),FunctionType.join(obj1.fn,obj2.fn),obj1.isLoose || obj2.isLoose,ObjectKind.join(obj1.objectKind,obj2.objectKind));
+  boolean isLoose=obj1.isLoose || obj2.isLoose;
+  FunctionType fn=FunctionType.join(obj1.fn,obj2.fn);
+  PersistentMap<String,Property> props;
+  if (isLoose) {
+    fn=fn == null ? null : fn.withLoose();
+    props=joinPropsLoosely(obj1.props,obj2.props);
+  }
+ else {
+    props=joinProps(obj1.props,obj2.props);
+  }
+  return ObjectType.makeObjectType(NominalType.pickSuperclass(obj1.nominalType,obj2.nominalType),props,fn,isLoose,ObjectKind.join(obj1.objectKind,obj2.objectKind));
 }
