@@ -1,6 +1,9 @@
 {
   Scope calleeScope=currentScope.getScope(callee.getQualifiedName());
   for (  String freeVar : calleeScope.getOuterVars()) {
+    if (!currentScope.isDefinedLocally(freeVar) && !currentScope.isOuterVar(freeVar)) {
+      continue;
+    }
     JSType declType=currentScope.getDeclaredTypeOf(freeVar);
     env=envPutType(env,freeVar,declType != null ? declType : JSType.UNKNOWN);
   }
