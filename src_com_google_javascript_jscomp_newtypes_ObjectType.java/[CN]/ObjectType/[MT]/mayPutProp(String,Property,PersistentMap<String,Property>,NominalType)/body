@@ -1,8 +1,15 @@
 {
-  Property nomProp=nom == null ? null : nom.getProp(pname);
+  if (nom == null) {
+    return props.with(pname,prop);
+  }
+  Property nomProp=nom.getProp(pname);
+  if (nomProp == null) {
+    return props.with(pname,prop);
+  }
   JSType propType=prop.getType();
-  if (nomProp == null || (!propType.isUnknown() && propType.isSubtypeOf(nomProp.getType()))) {
-    props=props.with(pname,prop);
+  JSType nomPropType=nomProp.getType();
+  if (!propType.isUnknown() && propType.isSubtypeOf(nomPropType) && !propType.equals(nomPropType)) {
+    return props.with(pname,nomProp.specialize(prop));
   }
   return props;
 }

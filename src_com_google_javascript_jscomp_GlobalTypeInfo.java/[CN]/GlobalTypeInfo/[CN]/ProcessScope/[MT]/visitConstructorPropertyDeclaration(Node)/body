@@ -5,12 +5,13 @@
   RawNominalType classType=currentScope.getNominalType(ctorName);
   String pname=getProp.getLastChild().getString();
   JSType propDeclType=getTypeDeclarationFromJsdoc(NodeUtil.getBestJSDocInfo(getProp),currentScope);
-  if (propDeclType != null) {
+  boolean isConstant=NodeUtil.hasConstAnnotation(getProp);
+  if (propDeclType != null || isConstant) {
     if (classType.hasCtorProp(pname) && classType.getCtorPropDeclaredType(pname) != null) {
       warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,pname,classType.toString()));
       return;
     }
-    classType.addCtorProperty(pname,propDeclType);
+    classType.addCtorProperty(pname,propDeclType,isConstant);
   }
  else {
     classType.addUndeclaredCtorProperty(pname);

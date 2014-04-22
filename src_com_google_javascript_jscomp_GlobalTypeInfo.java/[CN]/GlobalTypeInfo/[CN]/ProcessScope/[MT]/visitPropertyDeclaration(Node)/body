@@ -1,5 +1,8 @@
 {
   if (isClassPropAccess(getProp,currentScope)) {
+    if (NodeUtil.hasConstAnnotation(getProp) && currentScope.isPrototypeMethod()) {
+      warnings.add(JSError.make(getProp,MISPLACED_CONST_ANNOTATION));
+    }
     visitClassPropertyDeclaration(getProp);
     return;
   }
@@ -13,5 +16,9 @@
   }
   if (isPropDecl(getProp) && currentScope.isNamespace(getProp.getFirstChild().getQualifiedName())) {
     visitNamespacePropertyDeclaration(getProp);
+    return;
+  }
+  if (NodeUtil.hasConstAnnotation(getProp)) {
+    warnings.add(JSError.make(getProp,MISPLACED_CONST_ANNOTATION));
   }
 }

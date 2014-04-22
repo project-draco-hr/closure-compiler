@@ -6,6 +6,9 @@
   String ctorName=ctorNameNode.getQualifiedName();
   RawNominalType rawType=currentScope.getNominalType(ctorName);
   if (rawType == null) {
+    if (initializer != null && initializer.isFunction()) {
+      visitFunctionDef(initializer,null);
+    }
     return;
   }
   if (!currentScope.isDefinedLocally(ctorName)) {
@@ -41,11 +44,12 @@
     }
   }
   propertyDefs.put(rawType.getId(),pname,new PropertyDef(getProp,methodType,methodScope));
-  if (propDeclType != null) {
+  boolean isConstant=NodeUtil.hasConstAnnotation(getProp);
+  if (propDeclType != null || isConstant) {
     if (mayWarnAboutExistingProp(rawType,pname,getProp)) {
       return;
     }
-    rawType.addProtoProperty(pname,propDeclType);
+    rawType.addProtoProperty(pname,propDeclType,isConstant);
   }
  else {
     rawType.addUndeclaredProtoProperty(pname);

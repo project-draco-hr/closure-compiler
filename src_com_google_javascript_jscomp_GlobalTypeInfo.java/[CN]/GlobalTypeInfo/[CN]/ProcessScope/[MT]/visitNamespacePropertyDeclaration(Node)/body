@@ -3,15 +3,17 @@
   QualifiedName qname=QualifiedName.fromGetprop(getProp);
   String leftmost=qname.getLeftmostName();
   QualifiedName allButLeftmost=qname.getAllButLeftmost();
-  JSType typeInJsdoc=getTypeDeclarationFromJsdoc(NodeUtil.getBestJSDocInfo(getProp),currentScope);
   JSType currentType=currentScope.getDeclaredTypeOf(leftmost);
-  if (typeInJsdoc == null) {
+  JSType typeInJsdoc=getTypeDeclarationFromJsdoc(NodeUtil.getBestJSDocInfo(getProp),currentScope);
+  boolean isConstant=NodeUtil.hasConstAnnotation(getProp);
+  if (typeInJsdoc != null || isConstant) {
+    if (currentType.mayHaveProp(allButLeftmost) && currentType.getDeclaredProp(allButLeftmost) != null) {
+      warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,allButLeftmost.toString(),currentType.toString()));
+      return;
+    }
+    currentScope.updateTypeOfLocal(leftmost,currentType.withDeclaredProperty(allButLeftmost,typeInJsdoc,isConstant));
+  }
+ else {
     currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,JSType.UNKNOWN));
-    return;
   }
-  if (currentType.mayHaveProp(allButLeftmost) && currentType.getDeclaredProp(allButLeftmost) != null) {
-    warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,getProp.getQualifiedName(),currentType.toString()));
-    return;
-  }
-  currentScope.updateTypeOfLocal(leftmost,currentType.withDeclaredProperty(allButLeftmost,typeInJsdoc));
 }

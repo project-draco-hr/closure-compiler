@@ -32,8 +32,7 @@ if (parent.isVar() || parent.isCatch()) {
       currentScope.addLocal(name,JSType.UNKNOWN,false);
     }
  else {
-      JSDocInfo jsdoc=parent.getJSDocInfo();
-      boolean isConstant=jsdoc != null && jsdoc.isConstant();
+      boolean isConstant=NodeUtil.hasConstAnnotation(parent);
       if (isConstant && !n.isFromExterns() && initializer == null) {
         warnings.add(JSError.make(n,CONST_WITHOUT_INITIALIZER));
       }
@@ -71,7 +70,11 @@ for (Node prop : n.children()) {
 if (prop.getJSDocInfo() != null) {
 declaredObjLitProps.put(prop,getTypeDeclarationFromJsdoc(prop.getJSDocInfo(),currentScope));
 }
+if (NodeUtil.hasConstAnnotation(prop)) {
+warnings.add(JSError.make(prop,MISPLACED_CONST_ANNOTATION));
 }
+}
+break;
 }
 }
 }

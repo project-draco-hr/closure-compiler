@@ -4,16 +4,15 @@
   RawNominalType rawNominalType=thisType.getRawNominalType();
   String pname=getProp.getLastChild().getString();
   JSType declaredType=getTypeDeclarationFromJsdoc(NodeUtil.getBestJSDocInfo(getProp),currentScope);
-  if (declaredType != null) {
+  boolean isConstant=NodeUtil.hasConstAnnotation(getProp);
+  if (declaredType != null || isConstant) {
     mayWarnAboutExistingProp(rawNominalType,pname,getProp);
+    if (mayAddPropToType(getProp,rawNominalType)) {
+      rawNominalType.addClassProperty(pname,declaredType,isConstant);
+    }
   }
-  if (mayAddPropToType(getProp,rawNominalType)) {
-    if (declaredType != null) {
-      rawNominalType.addClassProperty(pname,declaredType);
-    }
- else {
-      rawNominalType.addUndeclaredClassProperty(pname);
-    }
+ else   if (mayAddPropToType(getProp,rawNominalType)) {
+    rawNominalType.addUndeclaredClassProperty(pname);
   }
   propertyDefs.put(rawNominalType.getId(),pname,new PropertyDef(getProp,null,null));
 }

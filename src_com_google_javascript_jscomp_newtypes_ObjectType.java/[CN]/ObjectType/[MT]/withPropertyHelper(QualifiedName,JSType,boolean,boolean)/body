@@ -1,0 +1,40 @@
+{
+  PersistentMap<String,Property> newProps=this.props;
+  if (qname.isIdentifier()) {
+    String pname=qname.getLeftmostName();
+    JSType declType=getDeclaredProp(qname);
+    Preconditions.checkState(declType == null || type == null || type.isSubtypeOf(declType),"Cannot add property of type %s to a property declared of type %s",type,declType);
+    if (type == null) {
+      type=declType;
+    }
+    if (declType != null) {
+      isDeclared=true;
+      if (hasConstantProp(qname)) {
+        isConstant=true;
+      }
+    }
+ else     if (isDeclared) {
+      declType=type;
+    }
+    if (type == null && declType == null) {
+      newProps=newProps.without(pname);
+    }
+ else {
+      newProps=newProps.with(pname,isConstant ? Property.makeConstant(type,declType) : Property.make(type,isDeclared ? declType : null));
+    }
+  }
+ else {
+    String objName=qname.getLeftmostName();
+    QualifiedName objQname=new QualifiedName(objName);
+    if (!mayHaveProp(objQname)) {
+      Preconditions.checkState(type == null);
+      return this;
+    }
+    QualifiedName innerProps=qname.getAllButLeftmost();
+    Property objProp=getLeftmostProp(objQname);
+    JSType inferred=objProp.getType().withProperty(innerProps,type);
+    JSType declared=objProp.getDeclaredType();
+    newProps=newProps.with(objName,objProp.isOptional() ? Property.makeOptional(inferred,declared) : Property.make(inferred,declared));
+  }
+  return ObjectType.makeObjectType(nominalType,newProps,fn,isLoose,objectKind);
+}

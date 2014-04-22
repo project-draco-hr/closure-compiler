@@ -67,7 +67,7 @@ for (Node prop : expr.children()) {
     }
     EnvTypePair pair=analyzeExprFwd(prop.getFirstChild(),env,reqPtype,specPtype);
     if (jsdocType != null) {
-      result=result.withDeclaredProperty(qname,jsdocType);
+      result=result.withDeclaredProperty(qname,jsdocType,false);
       if (!pair.type.isSubtypeOf(jsdocType)) {
         warnings.add(JSError.make(prop,NewTypeInference.INVALID_OBJLIT_PROPERTY_TYPE,jsdocType.toString(),pair.type.toString()));
         pair.type=jsdocType;
@@ -144,7 +144,20 @@ return EnvTypePair.join(rhsPair,shortCircuitPair);
 }
 case Token.INC:
 case Token.DEC:
+{
 mayWarnAboutConst(expr);
+Node ch=expr.getFirstChild();
+if (ch.isGetProp() || ch.isGetElem() && ch.getLastChild().isString()) {
+Node recv=ch.getFirstChild();
+String pname=ch.getLastChild().getString();
+EnvTypePair pair=analyzeExprFwd(recv,inEnv);
+JSType recvType=pair.type;
+if (mayWarnAboutConstProp(ch,recvType,new QualifiedName(pname))) {
+pair.type=requiredType;
+return pair;
+}
+}
+}
 case Token.BITNOT:
 case Token.POS:
 case Token.NEG:

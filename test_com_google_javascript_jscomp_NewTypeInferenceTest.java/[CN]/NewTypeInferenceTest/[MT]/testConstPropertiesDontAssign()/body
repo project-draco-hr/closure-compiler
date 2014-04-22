@@ -1,0 +1,15 @@
+{
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @const */ this.prop = 1;\n"+ "}\n"+ "var obj = new Foo;\n"+ "obj.prop = 2;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @const {number} */\n"+ "  this.prop = 1;\n"+ "}\n"+ "var obj = new Foo;\n"+ "obj.prop = 2;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @const */ this.prop = 1;\n"+ "}\n"+ "var obj = new Foo;\n"+ "obj.prop += 2;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @const */ this.prop = 1;\n"+ "}\n"+ "var obj = new Foo;\n"+ "obj.prop++;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @const */\n"+ "ns.prop = 1;\n"+ "ns.prop = 2;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @const */\n"+ "ns.prop = 1;\n"+ "function f() { ns.prop = 2; }",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @const {number} */\n"+ "ns.prop = 1;\n"+ "ns.prop = 2;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @const */\n"+ "ns.prop = 1;\n"+ "ns.prop++;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @const */ Foo.prop = 1;\n" + "Foo.prop = 2;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @const {number} */ Foo.prop = 1;\n" + "Foo.prop++;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @const */ Foo.prototype.prop = 1;\n" + "Foo.prototype.prop = 2;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @const */ Foo.prototype.prop = 1;\n" + "var protoAlias = Foo.prototype;\n"+ "protoAlias.prop = 2;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @constructor */\n" + "function Foo() { /** @const */ this.X = 4; }\n" + "/** @constructor */\n"+ "function Bar() { /** @const */ this.X = 5; }\n"+ "var fb = true ? new Foo : new Bar;\n"+ "fb.X++;",NewTypeInference.CONST_REASSIGNED);
+}

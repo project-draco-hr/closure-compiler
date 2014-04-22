@@ -16,6 +16,10 @@
   }
   PropertyDef localPropDef=propertyDefs.get(current.getId(),pname);
   JSType localPropType=localPropDef == null ? null : current.getPropDeclaredType(pname);
+  if (localPropDef != null && superType.isClass() && localPropType.getFunType() != null && superType.hasConstantProp(pname)) {
+    warnings.add(JSError.make(localPropDef.defSite,CANNOT_OVERRIDE_FINAL_METHOD,pname));
+    return;
+  }
   if (localPropType != null && !localPropType.isSubtypeOf(inheritedPropType)) {
     warnings.add(JSError.make(localPropDef.defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
   }
