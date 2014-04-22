@@ -4,10 +4,8 @@
   boolean lineSet=false;
   ParseTree cc=statementNode.catchBlock;
   if (cc != null) {
-    if (lineSet == false) {
-      setSourceInfo(block,cc);
-      lineSet=true;
-    }
+    setSourceInfo(block,cc);
+    lineSet=true;
     block.addChildToBack(transform(cc));
   }
   node.addChildToBack(block);
@@ -15,7 +13,7 @@
   if (finallyBlock != null) {
     node.addChildToBack(transformBlock(finallyBlock));
   }
-  if ((lineSet == false) && (finallyBlock != null)) {
+  if (!lineSet && (finallyBlock != null)) {
     setSourceInfo(block,finallyBlock);
   }
   return node;

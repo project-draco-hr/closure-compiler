@@ -1,20 +1,29 @@
 {
+  while (true) {
 switch (tree.type) {
 case EXPRESSION_STATEMENT:
-    return findNearestNode(tree.asExpressionStatement().expression);
+      tree=tree.asExpressionStatement().expression;
+    continue;
 case CALL_EXPRESSION:
-  return findNearestNode(tree.asCallExpression().operand);
+  tree=tree.asCallExpression().operand;
+continue;
 case BINARY_OPERATOR:
-return findNearestNode(tree.asBinaryOperator().left);
+tree=tree.asBinaryOperator().left;
+continue;
 case CONDITIONAL_EXPRESSION:
-return findNearestNode(tree.asConditionalExpression().condition);
+tree=tree.asConditionalExpression().condition;
+continue;
 case MEMBER_EXPRESSION:
-return findNearestNode(tree.asMemberExpression().operand);
+tree=tree.asMemberExpression().operand;
+continue;
 case MEMBER_LOOKUP_EXPRESSION:
-return findNearestNode(tree.asMemberLookupExpression().operand);
+tree=tree.asMemberLookupExpression().operand;
+continue;
 case POSTFIX_EXPRESSION:
-return findNearestNode(tree.asPostfixExpression().operand);
+tree=tree.asPostfixExpression().operand;
+continue;
 default :
 return tree;
+}
 }
 }
