@@ -4,10 +4,12 @@
   Preconditions.checkState(currentScope.isLocalFunDef(ctorName));
   RawNominalType classType=currentScope.getNominalType(ctorName);
   String pname=getProp.getLastChild().getString();
-  JSType propDeclType=getTypeDeclarationFromJsdoc(NodeUtil.getBestJSDocInfo(getProp),currentScope);
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
+  JSType propDeclType=getTypeDeclarationFromJsdoc(jsdoc,currentScope);
   boolean isConstant=NodeUtil.hasConstAnnotation(getProp);
   if (propDeclType != null || isConstant) {
-    if (classType.hasCtorProp(pname) && classType.getCtorPropDeclaredType(pname) != null) {
+    JSType previousPropType=classType.getCtorPropDeclaredType(pname);
+    if (classType.hasCtorProp(pname) && previousPropType != null && !suppressDupPropWarning(jsdoc,propDeclType,previousPropType)) {
       warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,pname,classType.toString()));
       return;
     }

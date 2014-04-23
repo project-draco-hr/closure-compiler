@@ -1,6 +1,8 @@
 {
   setUp();
-  compiler.init(Lists.newArrayList(SourceFile.fromCode("[externs]",externs)),Lists.newArrayList(SourceFile.fromCode("[testcode]",js)),compiler.getOptions());
+  CompilerOptions options=compiler.getOptions();
+  options.setWarningLevel(DiagnosticGroups.CHECK_VARIABLES,CheckLevel.WARNING);
+  compiler.init(Lists.newArrayList(SourceFile.fromCode("[externs]",externs)),Lists.newArrayList(SourceFile.fromCode("[testcode]",js)),options);
   Node externsRoot=compiler.getInput(new InputId("[externs]")).getAstRoot(compiler);
   Node astRoot=compiler.getInput(new InputId("[testcode]")).getAstRoot(compiler);
   assertEquals("parsing error: " + Joiner.on(", ").join(compiler.getErrors()),0,compiler.getErrorCount());

@@ -1,0 +1,7 @@
+{
+  checkNoWarnings("/**\n" + " * @fileoverview\n" + " * @suppress {newCheckTypes}\n"+ " */\n"+ "123();");
+  typeCheck("123();\n" + "/** @suppress {newCheckTypes} */\n" + "function f() { 123(); }",TypeCheck.NOT_CALLABLE);
+  typeCheck("123();\n" + "/** @suppress {newCheckTypes} */\n" + "function f() { 1 - 'str'; }",TypeCheck.NOT_CALLABLE);
+  checkNoWarnings("/** @const */ var ns = {};\n" + "/** @type {Object} */\n" + "ns.obj = { prop: 123 };\n"+ "/**\n"+ " * @suppress {duplicate}\n"+ " * @type {Object}\n"+ " */\n"+ "ns.obj = null;");
+  checkNoWarnings("function f() {\n" + "  /** @const */\n" + "  var ns = {};\n"+ "  /** @type {number} */\n"+ "  ns.prop = 1;\n"+ "  /**\n"+ "   * @type {number}\n"+ "   * @suppress {duplicate}\n"+ "   */\n"+ "  ns.prop = 2;\n"+ "}");
+}

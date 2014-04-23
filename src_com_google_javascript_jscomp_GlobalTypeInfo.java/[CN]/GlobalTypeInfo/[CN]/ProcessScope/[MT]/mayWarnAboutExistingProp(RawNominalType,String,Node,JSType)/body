@@ -1,0 +1,9 @@
+{
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(propCreationNode);
+  JSType previousPropType=classType.getPropDeclaredType(pname);
+  if (classType.mayHaveOwnProp(pname) && previousPropType != null && !suppressDupPropWarning(jsdoc,typeInJsdoc,previousPropType)) {
+    warnings.add(JSError.make(propCreationNode,REDECLARED_PROPERTY,pname,classType.toString()));
+    return true;
+  }
+  return false;
+}

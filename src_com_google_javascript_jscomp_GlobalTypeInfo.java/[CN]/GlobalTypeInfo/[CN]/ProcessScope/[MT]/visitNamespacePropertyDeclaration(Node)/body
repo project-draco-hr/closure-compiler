@@ -4,10 +4,12 @@
   String leftmost=qname.getLeftmostName();
   QualifiedName allButLeftmost=qname.getAllButLeftmost();
   JSType currentType=currentScope.getDeclaredTypeOf(leftmost);
-  JSType typeInJsdoc=getTypeDeclarationFromJsdoc(NodeUtil.getBestJSDocInfo(getProp),currentScope);
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
+  JSType typeInJsdoc=getTypeDeclarationFromJsdoc(jsdoc,currentScope);
   boolean isConstant=NodeUtil.hasConstAnnotation(getProp);
   if (typeInJsdoc != null || isConstant) {
-    if (currentType.mayHaveProp(allButLeftmost) && currentType.getDeclaredProp(allButLeftmost) != null) {
+    JSType previousPropType=currentType.getDeclaredProp(allButLeftmost);
+    if (currentType.mayHaveProp(allButLeftmost) && previousPropType != null && !suppressDupPropWarning(jsdoc,typeInJsdoc,previousPropType)) {
       warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,allButLeftmost.toString(),currentType.toString()));
       return;
     }
