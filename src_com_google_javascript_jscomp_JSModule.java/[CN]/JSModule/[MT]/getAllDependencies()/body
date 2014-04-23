@@ -1,11 +1,11 @@
 {
   Set<JSModule> allDeps=Sets.newHashSet(deps);
-  List<JSModule> workList=Lists.newArrayList(deps);
-  while (!workList.isEmpty()) {
-    JSModule module=workList.remove(workList.size() - 1);
+  ArrayDeque<JSModule> stack=Queues.newArrayDeque(deps);
+  while (!stack.isEmpty()) {
+    JSModule module=stack.pop();
     for (    JSModule dep : module.getDependencies()) {
       if (allDeps.add(dep)) {
-        workList.add(dep);
+        stack.push(dep);
       }
     }
   }

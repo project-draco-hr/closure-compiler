@@ -1,7 +1,6 @@
 {
   if (fuzzer instanceof ExpressionFuzzer) {
-    Set<Type> types=fuzzer.supportedTypes();
-    types.remove(Type.UNDEFINED);
+    Set<Type> types=Sets.immutableEnumSet(Sets.difference(fuzzer.supportedTypes(),EnumSet.of(Type.UNDEFINED)));
     return fuzzer.generate(budget,types);
   }
  else {
