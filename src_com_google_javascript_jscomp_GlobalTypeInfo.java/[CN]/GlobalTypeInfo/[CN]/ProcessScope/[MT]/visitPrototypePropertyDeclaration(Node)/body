@@ -49,6 +49,9 @@
     if (mayWarnAboutExistingProp(rawType,pname,getProp,propDeclType)) {
       return;
     }
+    if (isConstant && !mayWarnAboutNoInit(getProp) && propDeclType == null) {
+      propDeclType=inferConstTypeFromRhs(getProp);
+    }
     rawType.addProtoProperty(pname,propDeclType,isConstant);
   }
  else {

@@ -33,10 +33,11 @@ if (parent.isVar() || parent.isCatch()) {
     }
  else {
       boolean isConstant=NodeUtil.hasConstAnnotation(parent);
-      if (isConstant && !n.isFromExterns() && initializer == null) {
-        warnings.add(JSError.make(n,CONST_WITHOUT_INITIALIZER));
+      JSType declType=getVarTypeFromAnnotation(n);
+      if (isConstant && !mayWarnAboutNoInit(n) && declType == null) {
+        declType=inferConstTypeFromRhs(n);
       }
-      currentScope.addLocal(name,getVarTypeFromAnnotation(n),isConstant);
+      currentScope.addLocal(name,declType,isConstant);
     }
   }
 }

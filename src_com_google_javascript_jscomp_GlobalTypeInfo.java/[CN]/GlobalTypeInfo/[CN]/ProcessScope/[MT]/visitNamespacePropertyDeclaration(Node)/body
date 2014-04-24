@@ -13,7 +13,11 @@
       warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,allButLeftmost.toString(),currentType.toString()));
       return;
     }
-    currentScope.updateTypeOfLocal(leftmost,currentType.withDeclaredProperty(allButLeftmost,typeInJsdoc,isConstant));
+    JSType declType=typeInJsdoc;
+    if (isConstant && !mayWarnAboutNoInit(getProp) && declType == null) {
+      declType=inferConstTypeFromRhs(getProp);
+    }
+    currentScope.updateTypeOfLocal(leftmost,currentType.withDeclaredProperty(allButLeftmost,declType,isConstant));
   }
  else {
     currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,JSType.UNKNOWN));
