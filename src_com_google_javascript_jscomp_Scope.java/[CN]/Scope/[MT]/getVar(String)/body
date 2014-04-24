@@ -1,12 +1,11 @@
 {
-  Var var=vars.get(name);
-  if (var != null) {
-    return var;
+  Scope scope=this;
+  while (scope != null) {
+    Var var=scope.vars.get(name);
+    if (var != null) {
+      return var;
+    }
+    scope=scope.parent;
   }
- else   if (parent != null) {
-    return parent.getVar(name);
-  }
- else {
-    return null;
-  }
+  return null;
 }

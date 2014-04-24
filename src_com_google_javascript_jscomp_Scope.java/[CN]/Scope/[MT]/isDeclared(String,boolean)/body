@@ -1,10 +1,13 @@
 {
   Scope scope=this;
-  if (scope.vars.containsKey(name)) {
-    return true;
+  while (true) {
+    if (scope.vars.containsKey(name)) {
+      return true;
+    }
+    if (scope.parent != null && recurse) {
+      scope=scope.parent;
+      continue;
+    }
+    return false;
   }
-  if (scope.parent != null && recurse) {
-    return scope.parent.isDeclared(name,recurse);
-  }
-  return false;
 }

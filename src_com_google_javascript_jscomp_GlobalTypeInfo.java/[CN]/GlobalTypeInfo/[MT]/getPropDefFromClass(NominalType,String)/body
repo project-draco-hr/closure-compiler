@@ -1,11 +1,11 @@
 {
-  Preconditions.checkArgument(nominalType.isFinalized());
-  Preconditions.checkArgument(nominalType.isClass());
-  if (nominalType.getPropDeclaredType(pname) == null) {
-    return null;
+  while (nominalType.getPropDeclaredType(pname) != null) {
+    Preconditions.checkArgument(nominalType.isFinalized());
+    Preconditions.checkArgument(nominalType.isClass());
+    if (propertyDefs.get(nominalType.getId(),pname) != null) {
+      return propertyDefs.get(nominalType.getId(),pname);
+    }
+    nominalType=nominalType.getInstantiatedSuperclass();
   }
- else   if (propertyDefs.get(nominalType.getId(),pname) != null) {
-    return propertyDefs.get(nominalType.getId(),pname);
-  }
-  return getPropDefFromClass(nominalType.getInstantiatedSuperclass(),pname);
+  return null;
 }
