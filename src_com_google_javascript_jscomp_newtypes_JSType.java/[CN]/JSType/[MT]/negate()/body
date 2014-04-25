@@ -1,5 +1,5 @@
 {
-  if (isTop() || isUnknown() || objs != null || typeVar != null) {
+  if (isTop() || isUnknown()) {
     return this;
   }
   if (isTruthy()) {
@@ -8,5 +8,8 @@
  else   if (isFalsy()) {
     return TRUTHY;
   }
-  return new JSType(TOP_SCALAR_MASK & ~mask);
+ else   if (objs == null && typeVar == null) {
+    return new JSType(TOP_SCALAR_MASK & ~mask);
+  }
+  return UNKNOWN;
 }
