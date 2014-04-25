@@ -6,7 +6,17 @@
   for (  ObjectType obj2 : objs2) {
     for (    ObjectType obj1 : objs1) {
       if (areRelatedClasses(obj1.nominalType,obj2.nominalType)) {
-        newObjs.add(specializeObjs1 ? obj1.specialize(obj2) : meet(obj1,obj2));
+        ObjectType newObj;
+        if (specializeObjs1) {
+          newObj=obj1.specialize(obj2);
+          if (newObj == null) {
+            continue;
+          }
+        }
+ else {
+          newObj=meet(obj1,obj2);
+        }
+        newObjs.add(newObj);
         break;
       }
     }

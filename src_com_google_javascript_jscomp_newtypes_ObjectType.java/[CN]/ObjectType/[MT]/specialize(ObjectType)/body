@@ -1,5 +1,11 @@
 {
   Preconditions.checkState(areRelatedClasses(this.nominalType,other.nominalType));
   NominalType resultNominalType=NominalType.pickSubclass(this.nominalType,other.nominalType);
-  return ObjectType.makeObjectType(resultNominalType,meetPropsHelper(true,resultNominalType,this.props,other.props),(fn == null) ? null : fn.specialize(other.fn),resultNominalType == null && this.isLoose,ObjectKind.meet(this.objectKind,other.objectKind));
+  if (resultNominalType != null) {
+    if (fn != null || other.fn != null) {
+      return null;
+    }
+    return ObjectType.makeObjectType(resultNominalType,meetPropsHelper(true,resultNominalType,this.props,other.props),null,false,ObjectKind.meet(this.objectKind,other.objectKind));
+  }
+  return ObjectType.makeObjectType(null,meetPropsHelper(true,resultNominalType,this.props,other.props),this.fn == null ? null : this.fn.specialize(other.fn),this.isLoose,ObjectKind.meet(this.objectKind,other.objectKind));
 }
