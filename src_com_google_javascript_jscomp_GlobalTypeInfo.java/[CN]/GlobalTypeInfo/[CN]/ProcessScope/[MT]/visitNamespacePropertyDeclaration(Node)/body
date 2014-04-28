@@ -7,7 +7,10 @@
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
   JSType typeInJsdoc=getTypeDeclarationFromJsdoc(jsdoc,currentScope);
   boolean isConstant=NodeUtil.hasConstAnnotation(getProp);
-  if (typeInJsdoc != null || isConstant) {
+  if (NodeUtil.isNamespaceDecl(getProp)) {
+    currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,JSType.TOP_OBJECT));
+  }
+ else   if (typeInJsdoc != null || isConstant) {
     JSType previousPropType=currentType.getDeclaredProp(allButLeftmost);
     if (currentType.mayHaveProp(allButLeftmost) && previousPropType != null && !suppressDupPropWarning(jsdoc,typeInJsdoc,previousPropType)) {
       warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,allButLeftmost.toString(),currentType.toString()));

@@ -1,0 +1,17 @@
+{
+  if (expr.isName()) {
+    return localNamespaces.contains(expr.getString());
+  }
+  if (!expr.isGetProp()) {
+    return false;
+  }
+  QualifiedName qname=QualifiedName.fromGetprop(expr);
+  if (qname == null) {
+    return false;
+  }
+  String leftmost=qname.getLeftmostName();
+  if (!localNamespaces.contains(leftmost)) {
+    return false;
+  }
+  return getDeclaredTypeOf(leftmost).getProp(qname.getAllButLeftmost()).isRecordType();
+}
