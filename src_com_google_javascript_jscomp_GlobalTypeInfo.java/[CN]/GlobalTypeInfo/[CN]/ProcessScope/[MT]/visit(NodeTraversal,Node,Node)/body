@@ -32,12 +32,12 @@ if (parent.isVar() || parent.isCatch()) {
       currentScope.addLocal(name,JSType.UNKNOWN,false);
     }
  else {
-      boolean isConstant=NodeUtil.hasConstAnnotation(parent);
+      boolean isConst=NodeUtil.hasConstAnnotation(parent);
       JSType declType=getVarTypeFromAnnotation(n);
-      if (isConstant && !mayWarnAboutNoInit(n) && declType == null) {
+      if (isConst && !mayWarnAboutNoInit(n) && declType == null) {
         declType=inferConstTypeFromRhs(n);
       }
-      currentScope.addLocal(name,declType,isConstant);
+      currentScope.addLocal(name,declType,isConst);
     }
   }
 }

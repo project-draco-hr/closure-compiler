@@ -1,5 +1,6 @@
 {
   if (constExpr.isFromExterns()) {
+    warnings.add(JSError.make(constExpr,COULD_NOT_INFER_CONST_TYPE));
     return null;
   }
   Node rhs;
@@ -11,27 +12,10 @@
     Preconditions.checkState(constExpr.isGetProp() && constExpr.getParent().isAssign());
     rhs=constExpr.getParent().getLastChild();
   }
-switch (rhs.getType()) {
-case Token.NUMBER:
-    return JSType.NUMBER;
-case Token.STRING:
-  return JSType.STRING;
-case Token.TRUE:
-return JSType.TRUE_TYPE;
-case Token.FALSE:
-return JSType.FALSE_TYPE;
-case Token.NULL:
-return JSType.NULL;
-case Token.NAME:
-String varName=rhs.getString();
-if (varName.equals("undefined")) {
-return JSType.UNDEFINED;
-}
-if (currentScope.isFormalParam(varName)) {
-return currentScope.getDeclaredTypeOf(varName);
-}
-return null;
-default :
-return null;
-}
+  JSType rhsType=simpleInferExprType(rhs);
+  if (rhsType == null) {
+    warnings.add(JSError.make(constExpr,COULD_NOT_INFER_CONST_TYPE));
+    return null;
+  }
+  return rhsType;
 }

@@ -6,21 +6,21 @@
   JSType currentType=currentScope.getDeclaredTypeOf(leftmost);
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
   JSType typeInJsdoc=getTypeDeclarationFromJsdoc(jsdoc,currentScope);
-  boolean isConstant=NodeUtil.hasConstAnnotation(getProp);
+  boolean isConst=NodeUtil.hasConstAnnotation(getProp);
   if (NodeUtil.isNamespaceDecl(getProp)) {
     currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,JSType.TOP_OBJECT));
   }
- else   if (typeInJsdoc != null || isConstant) {
+ else   if (typeInJsdoc != null || isConst) {
     JSType previousPropType=currentType.getDeclaredProp(allButLeftmost);
     if (currentType.mayHaveProp(allButLeftmost) && previousPropType != null && !suppressDupPropWarning(jsdoc,typeInJsdoc,previousPropType)) {
       warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,allButLeftmost.toString(),currentType.toString()));
       return;
     }
     JSType declType=typeInJsdoc;
-    if (isConstant && !mayWarnAboutNoInit(getProp) && declType == null) {
+    if (isConst && !mayWarnAboutNoInit(getProp) && declType == null) {
       declType=inferConstTypeFromRhs(getProp);
     }
-    currentScope.updateTypeOfLocal(leftmost,currentType.withDeclaredProperty(allButLeftmost,declType,isConstant));
+    currentScope.updateTypeOfLocal(leftmost,currentType.withDeclaredProperty(allButLeftmost,declType,isConst));
   }
  else {
     currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,JSType.UNKNOWN));

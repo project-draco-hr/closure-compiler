@@ -6,17 +6,17 @@
   String pname=getProp.getLastChild().getString();
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
   JSType propDeclType=getTypeDeclarationFromJsdoc(jsdoc,currentScope);
-  boolean isConstant=NodeUtil.hasConstAnnotation(getProp);
-  if (propDeclType != null || isConstant) {
+  boolean isConst=NodeUtil.hasConstAnnotation(getProp);
+  if (propDeclType != null || isConst) {
     JSType previousPropType=classType.getCtorPropDeclaredType(pname);
     if (classType.hasCtorProp(pname) && previousPropType != null && !suppressDupPropWarning(jsdoc,propDeclType,previousPropType)) {
       warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,pname,classType.toString()));
       return;
     }
-    if (isConstant && !mayWarnAboutNoInit(getProp) && propDeclType == null) {
+    if (isConst && !mayWarnAboutNoInit(getProp) && propDeclType == null) {
       propDeclType=inferConstTypeFromRhs(getProp);
     }
-    classType.addCtorProperty(pname,propDeclType,isConstant);
+    classType.addCtorProperty(pname,propDeclType,isConst);
   }
  else {
     classType.addUndeclaredCtorProperty(pname);

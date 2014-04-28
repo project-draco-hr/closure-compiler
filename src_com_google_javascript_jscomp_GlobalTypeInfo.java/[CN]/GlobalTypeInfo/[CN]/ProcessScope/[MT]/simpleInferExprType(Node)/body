@@ -1,0 +1,84 @@
+{
+switch (n.getType()) {
+case Token.BITAND:
+case Token.BITNOT:
+case Token.BITOR:
+case Token.BITXOR:
+case Token.DEC:
+case Token.DIV:
+case Token.INC:
+case Token.LSH:
+case Token.MOD:
+case Token.MUL:
+case Token.NEG:
+case Token.NUMBER:
+case Token.POS:
+case Token.RSH:
+case Token.SUB:
+case Token.URSH:
+    return JSType.NUMBER;
+case Token.STRING:
+case Token.TYPEOF:
+  return JSType.STRING;
+case Token.TRUE:
+return JSType.TRUE_TYPE;
+case Token.FALSE:
+return JSType.FALSE_TYPE;
+case Token.EQ:
+case Token.GE:
+case Token.GT:
+case Token.IN:
+case Token.INSTANCEOF:
+case Token.LE:
+case Token.LT:
+case Token.NE:
+case Token.NOT:
+case Token.SHEQ:
+case Token.SHNE:
+return JSType.BOOLEAN;
+case Token.NULL:
+return JSType.NULL;
+case Token.VOID:
+return JSType.UNDEFINED;
+case Token.NAME:
+{
+String varName=n.getString();
+if (varName.equals("undefined")) {
+return JSType.UNDEFINED;
+}
+return currentScope.getDeclaredTypeOf(varName);
+}
+case Token.OBJECTLIT:
+{
+JSType objLitType=JSType.TOP_OBJECT;
+for (Node prop : n.children()) {
+JSType propType=simpleInferExprType(prop.getFirstChild());
+if (propType == null) {
+return null;
+}
+objLitType=objLitType.withProperty(new QualifiedName(NodeUtil.getObjectLitKeyName(prop)),propType);
+}
+return objLitType;
+}
+case Token.GETPROP:
+JSType recvType=simpleInferExprType(n.getFirstChild());
+if (recvType == null) {
+return null;
+}
+QualifiedName qname=new QualifiedName(n.getLastChild().getString());
+JSType propType=recvType.getProp(qname);
+return propType == null ? null : propType;
+case Token.COMMA:
+return simpleInferExprType(n.getLastChild());
+case Token.CALL:
+case Token.NEW:
+JSType ratorType=simpleInferExprType(n.getFirstChild());
+if (ratorType == null) {
+return null;
+}
+FunctionType funType=ratorType.getFunType();
+return funType == null ? null : funType.getReturnType();
+default :
+return null;
+}
+}
