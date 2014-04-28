@@ -1,10 +1,9 @@
 {
   Node n=cfg.getImplicitReturn().getValue();
-  if (cfg.getInEdges(n).isEmpty()) {
-    TypeEnv e=new TypeEnv();
-    return envPutType(e,RETVAL_ID,JSType.BOTTOM);
+  TypeEnv env=getInEnv(n);
+  if (env == null) {
+    env=new TypeEnv();
+    return envPutType(env,RETVAL_ID,JSType.BOTTOM);
   }
- else {
-    return getInEnv(n);
-  }
+  return env;
 }

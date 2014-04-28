@@ -1,11 +1,13 @@
 {
-  Preconditions.checkArgument(!cfg.getInEdges(n).isEmpty());
   Set<TypeEnv> envSet=Sets.newHashSet();
   for (  DiGraphEdge<Node,ControlFlowGraph.Branch> de : cfg.getInEdges(n)) {
     TypeEnv env=envs.get(de);
     if (env != null) {
       envSet.add(env);
     }
+  }
+  if (envSet.isEmpty()) {
+    return null;
   }
   return TypeEnv.join(envSet);
 }
