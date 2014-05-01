@@ -1,4 +1,13 @@
 {
-  String lhsString=n.getQualifiedName();
-  return lhsString != null && lhsString.contains(".prototype.");
+  if (!n.isGetProp()) {
+    return false;
+  }
+  n=n.getFirstChild();
+  while (n.isGetProp()) {
+    if (n.getLastChild().getString().equals("prototype")) {
+      return n.isQualifiedName();
+    }
+    n=n.getFirstChild();
+  }
+  return false;
 }
