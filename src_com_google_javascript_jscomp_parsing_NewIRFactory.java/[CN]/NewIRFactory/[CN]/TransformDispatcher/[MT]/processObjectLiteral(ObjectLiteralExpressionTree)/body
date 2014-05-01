@@ -1,5 +1,6 @@
 {
   Node node=newNode(Token.OBJECTLIT);
+  boolean maybeWarn=false;
   for (  ParseTree el : objTree.propertyNameAndValues) {
     if (config.languageMode == LanguageMode.ECMASCRIPT3) {
       if (el.type == ParseTreeType.GET_ACCESSOR) {
@@ -15,7 +16,13 @@
     if (!key.isQuotedString() && !isAllowedProp(key.getString())) {
       errorReporter.warning(INVALID_ES3_PROP_NAME,sourceName,key.getLineno(),"",key.getCharno());
     }
+    if (key.getFirstChild() == null) {
+      maybeWarn=true;
+    }
     node.addChildToBack(key);
+  }
+  if (maybeWarn) {
+    maybeWarnEs6Feature(objTree,"extended object literals");
   }
   return node;
 }

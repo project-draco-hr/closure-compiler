@@ -1,7 +1,7 @@
 {
   SourcePosition start=getTreeStartLocation();
   Token name=eatObjectLiteralPropertyName();
-  eat(TokenType.COLON);
-  ParseTree value=parseAssignmentExpression();
+  Token colon=eatOpt(TokenType.COLON);
+  ParseTree value=colon == null ? null : parseAssignmentExpression();
   return new PropertyNameAssignmentTree(getTreeLocation(start),name,value);
 }
