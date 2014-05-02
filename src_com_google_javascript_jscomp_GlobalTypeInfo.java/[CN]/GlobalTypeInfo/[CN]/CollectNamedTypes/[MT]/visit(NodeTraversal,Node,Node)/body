@@ -1,5 +1,24 @@
 {
-  if (n.isFunction()) {
+switch (n.getType()) {
+case Token.FUNCTION:
     initFnScope(n,currentScope);
+  break;
+case Token.VAR:
+if (NodeUtil.isTypedefDecl(n)) {
+  if (n.getFirstChild().getFirstChild() != null) {
+    warnings.add(JSError.make(n,CANNOT_INIT_TYPEDEF));
   }
+  String varName=n.getFirstChild().getString();
+  if (currentScope.isDefinedLocally(varName)) {
+    warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,varName));
+    break;
+  }
+  JSDocInfo jsdoc=n.getJSDocInfo();
+  Typedef td=Typedef.make(jsdoc.getTypedefType());
+  currentScope.addTypedef(varName,td);
+}
+break;
+case Token.GETPROP:
+break;
+}
 }

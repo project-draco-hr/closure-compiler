@@ -8,6 +8,7 @@
     new NodeTraversal(compiler,rootCnt).traverse(externs);
   }
   new NodeTraversal(compiler,rootCnt).traverse(root);
+  globalScope.resolveTypedefs(typeParser);
   ProcessScope rootPs=new ProcessScope(globalScope);
   if (externs != null) {
     new NodeTraversal(compiler,rootPs).traverse(externs);
@@ -18,6 +19,7 @@
     Scope s=scopeWorkset.removeFirst();
     Node scopeBody=s.getBody();
     new NodeTraversal(compiler,new CollectNamedTypes(s)).traverse(scopeBody);
+    s.resolveTypedefs(typeParser);
     ProcessScope ps=new ProcessScope(s);
     new NodeTraversal(compiler,ps).traverse(scopeBody);
     ps.finishProcessingScope();

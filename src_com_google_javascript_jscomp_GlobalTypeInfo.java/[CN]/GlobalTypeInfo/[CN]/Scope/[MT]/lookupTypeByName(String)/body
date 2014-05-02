@@ -1,14 +1,10 @@
 {
-  if (declaredType != null && declaredType.isGeneric()) {
-    if (declaredType.getTypeParameters().contains(name)) {
-      return JSType.fromTypeVar(name);
-    }
+  if (declaredType != null && declaredType.isGeneric() && declaredType.getTypeParameters().contains(name)) {
+    return JSType.fromTypeVar(name);
   }
-  if (localClassDefs != null) {
-    RawNominalType rawNominalType=localClassDefs.get(name);
-    if (rawNominalType != null) {
-      return JSType.fromObjectType(ObjectType.fromNominalType(NominalType.fromRaw(rawNominalType)));
-    }
+  RawNominalType rawNominalType=localClassDefs.get(name);
+  if (rawNominalType != null) {
+    return JSType.fromObjectType(ObjectType.fromNominalType(NominalType.fromRaw(rawNominalType)));
   }
   return parent == null ? null : parent.lookupTypeByName(name);
 }

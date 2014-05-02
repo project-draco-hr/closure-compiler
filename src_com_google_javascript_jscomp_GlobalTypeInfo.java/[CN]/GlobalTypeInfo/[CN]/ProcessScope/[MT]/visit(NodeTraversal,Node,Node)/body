@@ -13,6 +13,9 @@ if (name == null || "undefined".equals(name) || parent.isFunction()) {
   return;
 }
 if (parent.isVar() || parent.isCatch()) {
+  if (NodeUtil.isTypedefDecl(parent)) {
+    break;
+  }
   if (currentScope.isDefinedLocally(name)) {
     warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,name));
   }
@@ -44,7 +47,7 @@ if (parent.isVar() || parent.isCatch()) {
  else if (currentScope.isOuterVarEarly(name)) {
   currentScope.addOuterVar(name);
 }
- else if (!name.equals(currentScope.getName()) && !currentScope.isDefinedLocally(name)) {
+ else if (currentScope.getTypedef(name) != null || !name.equals(currentScope.getName()) && !currentScope.isDefinedLocally(name)) {
   undeclaredVars.put(name,n);
 }
 break;

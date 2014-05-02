@@ -1,8 +1,16 @@
 {
   typeCheck("function f(x) { var x; }",VariableReferenceCheck.REDECLARED_VARIABLE);
-  typeCheck("var f; function f() {}",VariableReferenceCheck.REDECLARED_VARIABLE);
-  typeCheck("function f() {}; var f;",VariableReferenceCheck.REDECLARED_VARIABLE);
-  typeCheck("function f() {}; function f() {};",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("function f(x) { function x() {} }",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("function f(x) { /** @typedef {number} */ var x; }",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("var x; var x;",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("var x; function x() {}",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("var x; /** @typedef {number} */ var x;",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("function x() {} function x() {}",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("function x() {} var x;",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("function x() {} /** @typedef {number} */ var x;",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("/** @typedef {number} */ var x; /** @typedef {number} */ var x;",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("/** @typedef {number} */ var x; var x;",VariableReferenceCheck.REDECLARED_VARIABLE);
+  typeCheck("/** @typedef {number} */ var x; function x() {}",VariableReferenceCheck.REDECLARED_VARIABLE);
   typeCheck("var f = function g() {}; function f() {};",VariableReferenceCheck.REDECLARED_VARIABLE);
   typeCheck("var f = function g() {}; var f = function h() {};",VariableReferenceCheck.REDECLARED_VARIABLE);
   checkNoWarnings("var g = function f() {}; var h = function f() {};");
