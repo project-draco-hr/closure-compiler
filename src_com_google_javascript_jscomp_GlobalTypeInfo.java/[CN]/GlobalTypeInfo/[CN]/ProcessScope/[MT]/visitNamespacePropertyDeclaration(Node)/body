@@ -22,6 +22,13 @@
     }
     currentScope.updateTypeOfLocal(leftmost,currentType.withDeclaredProperty(allButLeftmost,declType,isConst));
   }
+ else   if (getProp.getParent().isAssign()) {
+    JSType t=simpleInferExprType(getProp.getParent().getLastChild());
+    if (t == null) {
+      t=JSType.UNKNOWN;
+    }
+    currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,t));
+  }
  else {
     currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,JSType.UNKNOWN));
   }

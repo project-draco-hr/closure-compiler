@@ -12,4 +12,5 @@
   typeCheck("/** @const */ var ns = {};\n" + "/** @type {number} */ ns.foo;\n" + "/** @type {number} */ ns.foo;",GlobalTypeInfo.REDECLARED_PROPERTY);
   checkNoWarnings("var ns = {};\n" + "/** @type {number} */ ns.foo = 123;\n" + "/** @type {string} */ ns.foo = '';");
   typeCheck("/** @const */ var ns = {};\n" + "ns.x = 5;\n" + "/** @type {string} */\n"+ "ns.x = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @const */ var ns = {};\n" + "ns.prop = 1;\n" + "function f() { var /** string */ s = ns.prop; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

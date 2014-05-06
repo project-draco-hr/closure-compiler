@@ -28,7 +28,7 @@
   nominaltypesByNode=null;
   propertyDefs=null;
   for (  Scope s : scopes) {
-    s.finalizeScope();
+    s.removeTmpData();
   }
   Map<Node,String> unknownTypes=typeParser.getUnknownTypesMap();
   for (  Map.Entry<Node,String> unknownTypeEntry : unknownTypes.entrySet()) {
@@ -37,8 +37,10 @@
   for (  String warningText : typeParser.getWarnings()) {
     warnings.add(JSError.make(root,RhinoErrorReporter.BAD_JSDOC_ANNOTATION,warningText));
   }
+  typeParser=null;
   compiler.setSymbolTable(this);
   for (  JSError warning : warnings) {
     compiler.report(warning);
   }
+  warnings=null;
 }

@@ -1,0 +1,33 @@
+{
+  JSDocInfo jsdoc=objlit.getJSDocInfo();
+  String lendsName=jsdoc.getLendsName();
+  Preconditions.checkNotNull(lendsName);
+  Preconditions.checkState(!lendsName.contains("."));
+  JSType borrowerType=currentScope.getDeclaredTypeOf(lendsName);
+  if (borrowerType == null || borrowerType.isUnknown()) {
+    warnings.add(JSError.make(objlit,TypedScopeCreator.LENDS_ON_NON_OBJECT,lendsName,"unknown"));
+    return;
+  }
+  if (!borrowerType.isSubtypeOf(JSType.TOP_OBJECT)) {
+    warnings.add(JSError.make(objlit,TypedScopeCreator.LENDS_ON_NON_OBJECT,lendsName,borrowerType.toString()));
+    return;
+  }
+  if (!currentScope.isNamespace(lendsName)) {
+    return;
+  }
+  for (  Node prop : objlit.children()) {
+    String pname=NodeUtil.getObjectLitKeyName(prop);
+    QualifiedName qname=new QualifiedName(pname);
+    JSType propDeclType=declaredObjLitProps.get(prop);
+    if (propDeclType != null) {
+      currentScope.updateTypeOfLocal(lendsName,borrowerType.withDeclaredProperty(qname,propDeclType,false));
+    }
+ else {
+      JSType t=simpleInferExprType(prop.getFirstChild());
+      if (t == null) {
+        t=JSType.UNKNOWN;
+      }
+      currentScope.updateTypeOfLocal(lendsName,borrowerType.withProperty(qname,t));
+    }
+  }
+}
