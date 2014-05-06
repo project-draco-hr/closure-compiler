@@ -1,0 +1,15 @@
+{
+  passes.add(new PassFactory("smartNamePass",true){
+    @Override protected CompilerPass create(    final AbstractCompiler compiler){
+      return new CompilerPass(){
+        @Override public void process(        Node externs,        Node root){
+          NameAnalyzer na=new NameAnalyzer(compiler,false);
+          na.process(externs,root);
+          na.removeUnreferenced();
+        }
+      }
+;
+    }
+  }
+);
+}
