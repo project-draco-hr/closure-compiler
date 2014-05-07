@@ -59,6 +59,18 @@
       throw new FlagUsageException("Unknown language `" + config.languageIn + "' specified.");
     }
   }
+  if (config.languageOut.isEmpty()) {
+    options.setLanguageOut(options.getLanguageIn());
+  }
+ else {
+    CompilerOptions.LanguageMode languageMode=CompilerOptions.LanguageMode.fromString(config.languageOut);
+    if (languageMode != null) {
+      options.setLanguageOut(languageMode);
+    }
+ else {
+      throw new FlagUsageException("Unknown language `" + config.languageOut + "' specified.");
+    }
+  }
   options.setUseNewParser(config.useNewParser);
   if (!config.outputManifests.isEmpty()) {
     Set<String> uniqueNames=Sets.newHashSet();
