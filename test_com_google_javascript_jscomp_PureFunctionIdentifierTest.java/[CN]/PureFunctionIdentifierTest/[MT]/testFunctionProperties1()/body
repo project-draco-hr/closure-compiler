@@ -1,6 +1,6 @@
 {
   String source="/** @constructor */" + "function F() {}" + "function g() {"+ "  this.bar = function() { alert(3); };"+ "}"+ "var x = new F();"+ "g.call(x);"+ "x.bar();";
-  checkMarkedCalls(source,ImmutableList.<String>of("F"));
+  checkMarkedCalls(source,ImmutableList.of("F"));
   Node lastRoot=getLastCompiler().getRoot();
   Node call=findQualifiedNameNode("g.call",lastRoot).getParent();
   assertEquals(new Node.SideEffectFlags().clearAllFlags().setMutatesArguments().valueOf(),call.getSideEffectFlags());

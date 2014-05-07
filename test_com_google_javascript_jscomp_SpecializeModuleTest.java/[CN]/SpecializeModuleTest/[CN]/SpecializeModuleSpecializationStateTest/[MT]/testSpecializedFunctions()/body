@@ -1,11 +1,11 @@
 {
   testSame("function F(){}\nvar G = function(a){};");
-  assertEquals(ImmutableSet.of(),lastState.getSpecializedFunctions());
+  assertTrue(lastState.getSpecializedFunctions().isEmpty());
   Node functionF=findFunction("F");
   lastState.reportSpecializedFunction(functionF);
   assertEquals(ImmutableSet.of(functionF),lastState.getSpecializedFunctions());
   Node functionG=findFunction("F");
   lastState.reportSpecializedFunction(functionG);
   assertEquals(ImmutableSet.of(functionF,functionG),lastState.getSpecializedFunctions());
-  assertEquals(ImmutableSet.of(),lastState.getRemovedFunctions());
+  assertTrue(lastState.getRemovedFunctions().isEmpty());
 }

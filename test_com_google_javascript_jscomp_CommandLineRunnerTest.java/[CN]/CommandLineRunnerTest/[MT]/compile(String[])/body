@@ -11,15 +11,15 @@
     inputsSupplier=Suppliers.ofInstance(inputs);
   }
  else   if (useModules == ModulePattern.STAR) {
-    modulesSupplier=Suppliers.<List<JSModule>>ofInstance(Lists.<JSModule>newArrayList(CompilerTestCase.createModuleStar(original)));
+    modulesSupplier=Suppliers.<List<JSModule>>ofInstance(Lists.newArrayList(CompilerTestCase.createModuleStar(original)));
   }
  else   if (useModules == ModulePattern.CHAIN) {
-    modulesSupplier=Suppliers.<List<JSModule>>ofInstance(Lists.<JSModule>newArrayList(CompilerTestCase.createModuleChain(original)));
+    modulesSupplier=Suppliers.<List<JSModule>>ofInstance(Lists.newArrayList(CompilerTestCase.createModuleChain(original)));
   }
  else {
     throw new IllegalArgumentException("Unknown module type: " + useModules);
   }
-  runner.enableTestMode(Suppliers.<List<SourceFile>>ofInstance(externs),inputsSupplier,modulesSupplier,new Function<Integer,Boolean>(){
+  runner.enableTestMode(Suppliers.ofInstance(externs),inputsSupplier,modulesSupplier,new Function<Integer,Boolean>(){
     @Override public Boolean apply(    Integer code){
       return exitCodes.add(code);
     }
