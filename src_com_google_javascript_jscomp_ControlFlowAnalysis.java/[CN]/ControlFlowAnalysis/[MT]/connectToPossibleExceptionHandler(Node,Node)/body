@@ -7,7 +7,17 @@
       }
       Preconditions.checkState(handler.isTry());
       Node catchBlock=NodeUtil.getCatchBlock(handler);
-      if (!NodeUtil.hasCatchHandler(catchBlock)) {
+      boolean lastJumpInCatchBlock=false;
+      for (      Node ancestor : lastJump.getAncestors()) {
+        if (ancestor == handler) {
+          break;
+        }
+ else         if (ancestor == catchBlock) {
+          lastJumpInCatchBlock=true;
+          break;
+        }
+      }
+      if (!NodeUtil.hasCatchHandler(catchBlock) || lastJumpInCatchBlock) {
         if (lastJump == cfgNode) {
           createEdge(cfgNode,Branch.ON_EX,handler.getLastChild());
         }

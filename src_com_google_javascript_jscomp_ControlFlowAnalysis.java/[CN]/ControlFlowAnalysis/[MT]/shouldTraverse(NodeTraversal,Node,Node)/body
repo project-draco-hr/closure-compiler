@@ -36,7 +36,7 @@ case Token.RETURN:
 case Token.THROW:
 return false;
 case Token.TRY:
-if (n == parent.getFirstChild().getNext()) {
+if ((!NodeUtil.hasFinally(parent) && n == NodeUtil.getCatchBlock(parent)) || NodeUtil.isTryFinallyNode(parent,n)) {
 Preconditions.checkState(exceptionHandler.peek() == parent);
 exceptionHandler.pop();
 }
