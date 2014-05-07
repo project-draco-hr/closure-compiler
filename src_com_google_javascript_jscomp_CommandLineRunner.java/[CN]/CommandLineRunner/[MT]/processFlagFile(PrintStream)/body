@@ -3,10 +3,9 @@
   List<String> argsInFile=tokenizeKeepingQuotedStrings(Files.readLines(flagFileInput,UTF_8));
   flags.flagFile="";
   List<String> processedFileArgs=processArgs(argsInFile.toArray(new String[]{}));
-  CmdLineParser parserFileArgs=new CmdLineParser(flags);
-  List<GuardLevel> previous=Lists.newArrayList(Flags.guardLevels);
+  List<GuardLevel> previous=new ArrayList<>(Flags.guardLevels);
   Flags.guardLevels.clear();
-  parserFileArgs.parseArgument(processedFileArgs.toArray(new String[]{}));
+  flags.parse(processedFileArgs);
   Flags.guardLevels.addAll(previous);
   if (!flags.flagFile.isEmpty()) {
     err.println("ERROR - Arguments in the file cannot contain " + "--flagfile option.");

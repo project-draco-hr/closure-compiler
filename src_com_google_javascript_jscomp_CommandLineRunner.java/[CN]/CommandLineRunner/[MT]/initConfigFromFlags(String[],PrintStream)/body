@@ -1,13 +1,14 @@
 {
   List<String> processedArgs=processArgs(args);
-  CmdLineParser parser=new CmdLineParser(flags);
   Flags.guardLevels.clear();
   isConfigValid=true;
+  List<String> jsFiles=null;
   try {
-    parser.parseArgument(processedArgs.toArray(new String[]{}));
+    flags.parse(processedArgs);
     if (!flags.flagFile.isEmpty()) {
       processFlagFile(err);
     }
+    jsFiles=flags.getJsFiles();
   }
  catch (  CmdLineException e) {
     err.println(e.getMessage());
@@ -37,7 +38,7 @@ catch (  IOException ioErr) {
   }
   if (!isConfigValid || flags.displayHelp) {
     isConfigValid=false;
-    parser.printUsage(err);
+    flags.printUsage(err);
   }
  else {
     CodingConvention conv;
@@ -50,6 +51,6 @@ catch (  IOException ioErr) {
  else {
       conv=new ClosureCodingConvention();
     }
-    getCommandLineConfig().setPrintTree(flags.printTree).setPrintAst(flags.printAst).setPrintPassGraph(flags.printPassGraph).setJscompDevMode(flags.jscompDevMode).setLoggingLevel(flags.loggingLevel).setExterns(flags.externs).setJs(flags.getJsFiles()).setJsOutputFile(flags.jsOutputFile).setModule(flags.module).setCodingConvention(conv).setSummaryDetailLevel(flags.summaryDetailLevel).setOutputWrapper(flags.outputWrapper).setModuleWrapper(flags.moduleWrapper).setModuleOutputPathPrefix(flags.moduleOutputPathPrefix).setCreateSourceMap(flags.createSourceMap).setSourceMapFormat(flags.sourceMapFormat).setWarningGuardSpec(Flags.getWarningGuardSpec()).setDefine(flags.define).setCharset(flags.charset).setManageClosureDependencies(flags.manageClosureDependencies).setOnlyClosureDependencies(flags.onlyClosureDependencies).setClosureEntryPoints(flags.closureEntryPoint).setOutputManifest(ImmutableList.of(flags.outputManifest)).setOutputModuleDependencies(flags.outputModuleDependencies).setAcceptConstKeyword(flags.acceptConstKeyword).setLanguageIn(flags.languageIn).setProcessCommonJSModules(flags.processCommonJsModules).setCommonJSModulePathPrefix(flags.commonJsPathPrefix).setTransformAMDToCJSModules(flags.transformAmdModules).setWarningsWhitelistFile(flags.warningsWhitelistFile).setAngularPass(flags.angularPass).setTracerMode(flags.tracerMode).setNewTypeInference(flags.useNewTypeInference);
+    getCommandLineConfig().setPrintTree(flags.printTree).setPrintAst(flags.printAst).setPrintPassGraph(flags.printPassGraph).setJscompDevMode(flags.jscompDevMode).setLoggingLevel(flags.loggingLevel).setExterns(flags.externs).setJs(jsFiles).setJsOutputFile(flags.jsOutputFile).setModule(flags.module).setCodingConvention(conv).setSummaryDetailLevel(flags.summaryDetailLevel).setOutputWrapper(flags.outputWrapper).setModuleWrapper(flags.moduleWrapper).setModuleOutputPathPrefix(flags.moduleOutputPathPrefix).setCreateSourceMap(flags.createSourceMap).setSourceMapFormat(flags.sourceMapFormat).setWarningGuardSpec(Flags.getWarningGuardSpec()).setDefine(flags.define).setCharset(flags.charset).setManageClosureDependencies(flags.manageClosureDependencies).setOnlyClosureDependencies(flags.onlyClosureDependencies).setClosureEntryPoints(flags.closureEntryPoint).setOutputManifest(ImmutableList.of(flags.outputManifest)).setOutputModuleDependencies(flags.outputModuleDependencies).setAcceptConstKeyword(flags.acceptConstKeyword).setLanguageIn(flags.languageIn).setProcessCommonJSModules(flags.processCommonJsModules).setCommonJSModulePathPrefix(flags.commonJsPathPrefix).setTransformAMDToCJSModules(flags.transformAmdModules).setWarningsWhitelistFile(flags.warningsWhitelistFile).setAngularPass(flags.angularPass).setTracerMode(flags.tracerMode).setNewTypeInference(flags.useNewTypeInference);
   }
 }
