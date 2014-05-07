@@ -1,0 +1,13 @@
+{
+  SourceMapInput sourceMap=options.inputSourceMaps.get(sourceName);
+  if (sourceMap == null) {
+    return null;
+  }
+  OriginalMapping result=sourceMap.getSourceMap().getMappingForLine(lineNumber,columnNumber + 1);
+  if (result == null) {
+    return null;
+  }
+  String path=getRelativeTo(result.getOriginalFile(),sourceMap.getOriginalPath());
+  sourceMapOriginalSources.putIfAbsent(path,originalSourcesLoader.apply(path));
+  return result.toBuilder().setOriginalFile(path).setColumnPosition(result.getColumnPosition() - 1).build();
+}

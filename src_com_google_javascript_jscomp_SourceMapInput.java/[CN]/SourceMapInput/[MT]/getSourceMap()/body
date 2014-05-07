@@ -1,0 +1,16 @@
+{
+  if (parsedSourceMap == null) {
+synchronized (this) {
+      if (parsedSourceMap == null) {
+        parsedSourceMap=new SourceMapConsumerV3();
+        try {
+          parsedSourceMap.parse(sourceFile.getCode());
+        }
+ catch (        IOException|SourceMapParseException parseFailure) {
+          logger.log(Level.WARNING,"Failed to parse sourcemap",parseFailure);
+        }
+      }
+    }
+  }
+  return parsedSourceMap;
+}

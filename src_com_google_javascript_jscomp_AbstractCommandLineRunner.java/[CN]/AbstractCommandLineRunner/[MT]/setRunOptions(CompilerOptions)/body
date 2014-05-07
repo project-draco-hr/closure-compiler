@@ -38,6 +38,12 @@
   }
   options.sourceMapDetailLevel=config.sourceMapDetailLevel;
   options.sourceMapFormat=config.sourceMapFormat;
+  ImmutableMap.Builder<String,SourceMapInput> inputSourceMaps=new ImmutableMap.Builder<>();
+  for (  Map.Entry<String,String> files : config.sourceMapInputFiles.entrySet()) {
+    SourceFile sourceMap=SourceFile.fromFile(files.getValue());
+    inputSourceMaps.put(files.getKey(),new SourceMapInput(sourceMap));
+  }
+  options.inputSourceMaps=inputSourceMaps.build();
   if (!config.variableMapInputFile.isEmpty()) {
     options.inputVariableMap=VariableMap.load(config.variableMapInputFile);
   }
