@@ -1,6 +1,6 @@
 {
   typeCheck("/** @constructor */ function Foo() {}; Foo();",TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
-  typeCheck("function Foo() {}; new Foo();",TypeCheck.NOT_A_CONSTRUCTOR);
+  typeCheck("function Foo() {}; new Foo();",NewTypeInference.NOT_A_CONSTRUCTOR);
   checkNoWarnings("/** @constructor */ function Foo() {};\n" + "function reqFoo(/** Foo */ f) {};\n" + "reqFoo(new Foo());");
   typeCheck("/** @constructor */ function Foo() {};\n" + "/** @constructor */ function Bar() {};\n" + "function reqFoo(/** Foo */ f) {};\n"+ "reqFoo(new Bar());",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @constructor */ function Foo() {};\n" + "function reqFoo(/** Foo */ f) {};\n" + "function g() {\n"+ "  /** @constructor */ function Foo() {};\n"+ "  reqFoo(new Foo());\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);

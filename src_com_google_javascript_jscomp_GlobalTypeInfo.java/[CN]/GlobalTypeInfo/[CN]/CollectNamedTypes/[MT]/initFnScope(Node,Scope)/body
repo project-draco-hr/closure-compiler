@@ -6,6 +6,10 @@
   }
   JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
   if (fnDoc != null && (fnDoc.isConstructor() || fnDoc.isInterface())) {
+    if (qname == null) {
+      warnings.add(JSError.make(fn,ANONYMOUS_NOMINAL_TYPE));
+      return;
+    }
     ImmutableList<String> typeParameters=fnDoc.getTemplateTypeNames();
     RawNominalType rawNominalType;
     if (fnDoc.isInterface()) {

@@ -24,7 +24,10 @@
     }
     RawNominalType ctorType=declNode.isFunction() ? nominaltypesByNode.get(declNode) : null;
     ImmutableSet<NominalType> implementedIntfs=typeParser.getImplementedInterfaces(fnDoc,ownerType,parentScope,typeParameters);
-    if (fnDoc.isConstructor()) {
+    if (ctorType == null && (fnDoc.isConstructor() || fnDoc.isInterface())) {
+      return builder.buildDeclaration();
+    }
+ else     if (fnDoc.isConstructor()) {
       String className=ctorType.toString();
       if (parentClass != null) {
         if (!ctorType.addSuperClass(parentClass)) {
