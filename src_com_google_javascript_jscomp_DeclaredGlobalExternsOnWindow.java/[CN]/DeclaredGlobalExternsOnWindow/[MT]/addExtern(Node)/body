@@ -1,0 +1,34 @@
+{
+  String name=node.getString();
+  JSDocInfo oldJSDocInfo=NodeUtil.getBestJSDocInfo(node);
+  Node window=IR.name("window");
+  Node string=IR.string(name);
+  Node getprop=IR.getprop(window,string);
+  Node newNode=getprop;
+  if (oldJSDocInfo != null) {
+    JSDocInfo jsDocInfo;
+    if (oldJSDocInfo.isConstructor() || oldJSDocInfo.isInterface() || oldJSDocInfo.hasEnumParameterType()) {
+      Node nameNode=IR.name(name);
+      newNode=IR.assign(getprop,nameNode);
+      JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+      builder.recordSuppressions(ImmutableSet.of("duplicate"));
+      if (oldJSDocInfo.isConstructor()) {
+        builder.recordConstructor();
+      }
+      if (oldJSDocInfo.isInterface()) {
+        builder.recordInterface();
+      }
+      if (oldJSDocInfo.hasEnumParameterType()) {
+        builder.recordEnumParameterType(oldJSDocInfo.getEnumParameterType());
+      }
+      jsDocInfo=builder.build(newNode);
+    }
+ else {
+      jsDocInfo=oldJSDocInfo.clone();
+    }
+    jsDocInfo.setAssociatedNode(newNode);
+    newNode.setJSDocInfo(jsDocInfo);
+  }
+  NodeUtil.setDebugInformation(newNode,node,name);
+  node.getParent().getParent().addChildToBack(IR.exprResult(newNode));
+}
