@@ -1,0 +1,5 @@
+{
+  testScoped(Joiner.on('\n').join("var Foo = goog.Foo;","goog.x = {","  /** @param {Foo} foo */","  y: function(foo) { }","};"),"goog.x = {y: function(foo) { }};");
+  testScoped(Joiner.on('\n').join("var Foo = goog.Foo;","goog.x = {","  y:","  /** @param {Foo} foo */ function(foo) {}","};"),"goog.x = {y: function(foo) {}};");
+  testScoped(Joiner.on('\n').join("var Foo = goog.Foo;","goog.x = {","  y:","  /** @type {function(Foo)} */ (function(foo) {})","};"),"goog.x = {y: /** @type {function(Foo)} */ (function(foo) {})};");
+}

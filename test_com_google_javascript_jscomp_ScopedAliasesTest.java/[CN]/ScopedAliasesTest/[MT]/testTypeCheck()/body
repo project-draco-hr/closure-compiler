@@ -1,5 +1,6 @@
 {
   enableTypeCheck(CheckLevel.WARNING);
   runTypeCheckAfterProcessing=true;
-  test("goog.scope(function () {" + "  /** @constructor */ function F() {}" + "  /** @return {F} */ function createFoo() { return 1; }"+ "});",SCOPE_NAMESPACE + "$jscomp.scope.createFoo = function() { return 1; };" + "$jscomp.scope.F = function() { };",null,TypeValidator.TYPE_MISMATCH_WARNING);
+  String js=Joiner.on('\n').join("goog.scope(function () {","  /** @constructor */ function F() {}","  /** @return {F} */ function createFoo() { return 1; }","});");
+  test(js,SCOPE_NAMESPACE + "$jscomp.scope.createFoo = function() { return 1; };" + "$jscomp.scope.F = function() { };",null,TypeValidator.TYPE_MISMATCH_WARNING);
 }
