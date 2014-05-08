@@ -1,10 +1,17 @@
 {
   Node block=IR.block();
   if (exprRoot.isVar()) {
-    block.addChildToBack(IR.var(cls.name.cloneTree(),cls.constructor.value).srcref(exprRoot).setJSDocInfo(cls.constructor.info));
+    Node var=IR.var(cls.name.cloneTree(),cls.constructor.value).srcref(exprRoot);
+    JSDocInfo mergedClassInfo=mergeJsDocFor(cls,var);
+    var.setJSDocInfo(mergedClassInfo);
+    block.addChildToBack(var);
   }
  else {
-    block.addChildToBack(fixupSrcref(IR.exprResult(IR.assign(cls.name.cloneTree(),cls.constructor.value).srcref(exprRoot).setJSDocInfo(cls.constructor.info).srcref(exprRoot))).setJSDocInfo(cls.constructor.info));
+    Node assign=IR.assign(cls.name.cloneTree(),cls.constructor.value).srcref(exprRoot).setJSDocInfo(cls.constructor.info);
+    JSDocInfo mergedClassInfo=mergeJsDocFor(cls,assign);
+    assign.setJSDocInfo(mergedClassInfo);
+    Node expr=IR.exprResult(assign).srcref(exprRoot);
+    block.addChildToBack(expr);
   }
   if (cls.superClass != null) {
     block.addChildToBack(fixupSrcref(IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.inherits").srcrefTree(cls.superClass),cls.name.cloneTree(),cls.superClass.cloneTree()).srcref(cls.superClass))));

@@ -1,10 +1,11 @@
 {
+  JSDocInfo classInfo=NodeUtil.getBestJSDocInfo(targetName);
   Node superClass=NodeUtil.getArgumentForCallOrNew(callNode,0);
   if (superClass == null || (!superClass.isNull() && !superClass.isQualifiedName())) {
     compiler.report(JSError.make(callNode,GOOG_CLASS_SUPER_CLASS_NOT_VALID));
     return null;
   }
-  if (NodeUtil.isNullOrUndefined(superClass)) {
+  if (NodeUtil.isNullOrUndefined(superClass) || superClass.matchesQualifiedName("Object")) {
     superClass=null;
   }
   Node description=NodeUtil.getArgumentForCallOrNew(callNode,1);
@@ -46,6 +47,6 @@
   if (classModifier != null) {
     maybeDetach(classModifier.getParent());
   }
-  ClassDefinition def=new ClassDefinition(targetName,maybeDetach(superClass),new MemberDefinition(info,null,maybeDetach(constructor)),objectLitToList(maybeDetach(statics)),objectLitToList(description),maybeDetach(classModifier));
+  ClassDefinition def=new ClassDefinition(targetName,classInfo,maybeDetach(superClass),new MemberDefinition(info,null,maybeDetach(constructor)),objectLitToList(maybeDetach(statics)),objectLitToList(description),maybeDetach(classModifier));
   return def;
 }

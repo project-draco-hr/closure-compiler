@@ -1,0 +1,77 @@
+{
+  JSDocInfo classInfo=(cls.classInfo != null) ? cls.classInfo : new JSDocInfo(true);
+  JSDocInfo ctorInfo=(cls.constructor.info != null) ? cls.constructor.info : new JSDocInfo(true);
+  Node superNode=cls.superClass;
+  JSDocInfoBuilder mergedInfo=cls.constructor.info != null ? JSDocInfoBuilder.copyFrom(ctorInfo) : new JSDocInfoBuilder(true);
+  String blockDescription=Joiner.on("\n").skipNulls().join(classInfo.getBlockDescription(),ctorInfo.getBlockDescription());
+  if (!blockDescription.isEmpty()) {
+    mergedInfo.recordBlockDescription(blockDescription);
+  }
+  Set<String> suppressions=Sets.newHashSet();
+  suppressions.addAll(classInfo.getSuppressions());
+  suppressions.addAll(ctorInfo.getSuppressions());
+  if (!suppressions.isEmpty()) {
+    mergedInfo.recordSuppressions(suppressions);
+  }
+  if (classInfo.isDeprecated()) {
+    mergedInfo.recordDeprecated();
+  }
+  String deprecationReason=null;
+  if (classInfo.getDeprecationReason() != null) {
+    deprecationReason=classInfo.getDeprecationReason();
+    mergedInfo.recordDeprecationReason(deprecationReason);
+  }
+  Visibility visibility=classInfo.getVisibility();
+  if (visibility != null && visibility != JSDocInfo.Visibility.INHERITED) {
+    mergedInfo.recordVisibility(classInfo.getVisibility());
+  }
+  if (classInfo.isConstant()) {
+    mergedInfo.recordConstancy();
+  }
+  if (classInfo.isExport()) {
+    mergedInfo.recordExport();
+  }
+  boolean isInterface=classInfo.isInterface() || ctorInfo.isInterface();
+  if (isInterface) {
+    mergedInfo.recordInterface();
+    List<JSTypeExpression> extendedInterfaces=null;
+    if (classInfo.getExtendedInterfacesCount() > 0) {
+      extendedInterfaces=classInfo.getExtendedInterfaces();
+    }
+ else     if (ctorInfo.getExtendedInterfacesCount() == 0 && superNode != null) {
+      extendedInterfaces=ImmutableList.of(new JSTypeExpression(new Node(Token.BANG,IR.string(superNode.getQualifiedName())),VIRTUAL_FILE));
+    }
+    if (extendedInterfaces != null) {
+      for (      JSTypeExpression extend : extendedInterfaces) {
+        mergedInfo.recordExtendedInterface(extend);
+      }
+    }
+  }
+ else {
+    mergedInfo.recordConstructor();
+    if (classInfo.makesUnrestricted() || ctorInfo.makesUnrestricted()) {
+      mergedInfo.recordUnrestricted();
+    }
+ else     if (classInfo.makesDicts() || ctorInfo.makesDicts()) {
+      mergedInfo.recordDict();
+    }
+ else {
+      mergedInfo.recordStruct();
+    }
+    if (superNode != null) {
+      JSTypeExpression baseType=new JSTypeExpression(new Node(Token.BANG,IR.string(superNode.getQualifiedName())),VIRTUAL_FILE);
+      mergedInfo.recordBaseType(baseType);
+    }
+    List<JSTypeExpression> interfaces=classInfo.getImplementedInterfaces();
+    for (    JSTypeExpression implemented : interfaces) {
+      mergedInfo.recordImplementedInterface(implemented);
+    }
+  }
+  List<String> templateNames=new ArrayList<>();
+  templateNames.addAll(classInfo.getTemplateTypeNames());
+  templateNames.addAll(ctorInfo.getTemplateTypeNames());
+  if (templateNames.size() > 0) {
+    mergedInfo.recordTemplateTypeNames(templateNames);
+  }
+  return mergedInfo.build(associatedNode);
+}
