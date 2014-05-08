@@ -1,0 +1,24 @@
+{
+  validateNodeType(Token.PARAM_LIST,n);
+  boolean defaultParams=false;
+  for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+    if (c.isRest()) {
+      if (defaultParams) {
+        violation("Cannot include rest parameters " + "after parameters with a default value.",c);
+      }
+      if (c.getNext() != null) {
+        violation("Rest parameters must come after all other parameters.",c);
+      }
+    }
+ else {
+      validateNodeType(Token.NAME,c);
+      validateNonEmptyString(c);
+      validateMinimumChildCount(c,defaultParams ? 1 : 0);
+      validateMaximumChildCount(c,1);
+      if (c.hasOneChild()) {
+        validateExpression(c.getFirstChild());
+        defaultParams=true;
+      }
+    }
+  }
+}
