@@ -3,20 +3,20 @@
   final boolean checkUnchanged=verifyUnchangedNodes;
   Node clone=mtoc.get(main);
   if (main.getChangeTime() > clone.getChangeTime()) {
-    Preconditions.checkState(!main.isEquivalentToShallow(clone));
+    Preconditions.checkState(!isEquivalentToExcludingFunctions(main,clone));
   }
  else   if (checkUnchanged) {
-    Preconditions.checkState(main.isEquivalentToShallow(clone));
+    Preconditions.checkState(isEquivalentToExcludingFunctions(main,clone));
   }
   visitPreOrder(main,new Visitor(){
     @Override public void visit(    Node n){
       if (n.isFunction() && mtoc.containsKey(n)) {
         Node clone=mtoc.get(n);
         if (n.getChangeTime() > clone.getChangeTime()) {
-          Preconditions.checkState(!n.isEquivalentToShallow(clone));
+          Preconditions.checkState(!isEquivalentToExcludingFunctions(n,clone));
         }
  else         if (checkUnchanged) {
-          Preconditions.checkState(n.isEquivalentToShallow(clone));
+          Preconditions.checkState(isEquivalentToExcludingFunctions(n,clone));
         }
       }
     }

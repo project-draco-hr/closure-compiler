@@ -1,0 +1,24 @@
+{
+  if (thisNode == null || thatNode == null) {
+    return thisNode == null && thatNode == null;
+  }
+  if (!thisNode.isEquivalentToShallow(thatNode)) {
+    return false;
+  }
+  if (thisNode.getChildCount() != thatNode.getChildCount()) {
+    return false;
+  }
+  Node thisChild=thisNode.getFirstChild();
+  Node thatChild=thatNode.getFirstChild();
+  while (thisChild != null && thatChild != null) {
+    if (thisChild.isFunction()) {
+      return thatChild.isFunction();
+    }
+    if (!isEquivalentToExcludingFunctions(thisChild,thatChild)) {
+      return false;
+    }
+    thisChild=thisChild.getNext();
+    thatChild=thatChild.getNext();
+  }
+  return true;
+}
