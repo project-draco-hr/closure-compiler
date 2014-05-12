@@ -1,0 +1,7 @@
+{
+  test(Joiner.on('\n').join("var a1 = x => x+1;","var a2 = x => x-1;"),Joiner.on('\n').join("var a1 = function(x) { return x+1; };","var a2 = function(x) { return x-1; };"));
+  test(Joiner.on('\n').join("function f() {","  var a1 = x => x+1;","  var a2 = x => x-1;","}"),Joiner.on('\n').join("function f() {","  var a1 = function(x) { return x+1; };","  var a2 = function(x) { return x-1; };","}"));
+  test(Joiner.on('\n').join("function f() {","  var a1 = () => this.x;","  var a2 = () => this.y;","}"),Joiner.on('\n').join("function f() {","  var $jscomp$this = this;","  var a1 = function() { return $jscomp$this.x; };","  var a2 = function() { return $jscomp$this.y; };","}"));
+  test(Joiner.on('\n').join("var a = [1,2,3,4];","var b = a.map(x => x+1).map(x => x*x);"),Joiner.on('\n').join("var a = [1,2,3,4];","var b = a.map(function(x) { return x+1; }).map(function(x) { return x*x; });"));
+  test(Joiner.on('\n').join("function f() {","  var a = [1,2,3,4];","  var b = a.map(x => x+1).map(x => x*x);","}"),Joiner.on('\n').join("function f() {","  var a = [1,2,3,4];","  var b = a.map(function(x) { return x+1; }).map(function(x) { return x*x; });","}"));
+}

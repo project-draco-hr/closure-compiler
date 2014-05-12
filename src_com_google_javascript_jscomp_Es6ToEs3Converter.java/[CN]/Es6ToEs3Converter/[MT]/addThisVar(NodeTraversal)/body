@@ -1,0 +1,18 @@
+{
+  Scope scope=t.getScope();
+  if (scope.isDeclared(THIS_VAR,false)) {
+    return;
+  }
+  Node parent=t.getScopeRoot();
+  if (parent.isFunction()) {
+    parent=parent.getLastChild();
+  }
+  if (parent.isSyntheticBlock()) {
+    parent=parent.getFirstChild();
+  }
+  Node name=IR.name(THIS_VAR).srcref(parent);
+  Node thisVar=IR.var(name,IR.thisNode().srcref(parent));
+  thisVar.srcref(parent);
+  parent.addChildToFront(thisVar);
+  scope.declare(THIS_VAR,name,null,compiler.getInput(parent.getInputId()));
+}

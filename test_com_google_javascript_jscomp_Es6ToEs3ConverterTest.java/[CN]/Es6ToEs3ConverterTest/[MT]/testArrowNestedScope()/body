@@ -1,0 +1,4 @@
+{
+  test(Joiner.on('\n').join("var outer = {","  f: function() {","     var a1 = () => this.x;","     var inner = {","       f: function() {","         var a2 = () => this.y;","       }","     };","  }","}"),Joiner.on('\n').join("var outer = {","  f: function() {","     var $jscomp$this = this;","     var a1 = function() { return $jscomp$this.x; }","     var inner = {","       f: function() {","         var $jscomp$this = this;","         var a2 = function() { return $jscomp$this.y; }","       }","     };","  }","}"));
+  test(Joiner.on('\n').join("function f() {","  var setup = () => {","    function Foo() { this.x = 5; }","    this.f = new Foo;","  }","}"),Joiner.on('\n').join("function f() {","  var $jscomp$this = this;","  var setup = function() {","    function Foo() { this.x = 5; }","    $jscomp$this.f = new Foo;","  }","}"));
+}

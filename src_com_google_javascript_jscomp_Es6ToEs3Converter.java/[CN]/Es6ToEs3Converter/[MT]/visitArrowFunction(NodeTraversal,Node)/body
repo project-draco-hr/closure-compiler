@@ -1,0 +1,15 @@
+{
+  n.setIsArrowFunction(false);
+  Node body=n.getLastChild();
+  if (!body.isBlock()) {
+    body.detachFromParent();
+    Node newBody=IR.block(IR.returnNode(body).srcref(body)).srcref(body);
+    n.addChildToBack(newBody);
+  }
+  UpdateThisNodes thisUpdater=new UpdateThisNodes();
+  NodeTraversal.traverse(compiler,body,thisUpdater);
+  if (thisUpdater.changed) {
+    addThisVar(t);
+  }
+  compiler.reportCodeChange();
+}

@@ -1,0 +1,7 @@
+{
+  test("var f = x => { return x+1; };","var f = function(x) { return x+1; };");
+  test("var odds = [1,2,3,4].filter((n) => n%2 == 1);","var odds = [1,2,3,4].filter(function(n) { return n%2 == 1; });");
+  test("var f = x => x+1;","var f = function(x) { return x+1; };");
+  test("var f = x => { this.needsBinding(); return 0; };",Joiner.on('\n').join("var $jscomp$this = this;","var f = function(x) {","  $jscomp$this.needsBinding();","  return 0;","};"));
+  test(Joiner.on('\n').join("var f = x => {","  this.init();","  this.doThings();","  this.done();","};"),Joiner.on('\n').join("var $jscomp$this = this;","var f = function(x) {","  $jscomp$this.init();","  $jscomp$this.doThings();","  $jscomp$this.done();","};"));
+}
