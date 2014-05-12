@@ -22,7 +22,7 @@
   }
   for (Node param=params.getFirstChild(); param != null; param=param.getNext()) {
     String pname=param.getString();
-    JSType inlineParamType=ignoreJsdoc ? null : getNodeTypeDeclaration(param.getJSDocInfo(),ownerType,registry);
+    JSType inlineParamType=ignoreJsdoc ? null : getNodeTypeDeclaration(param.getJSDocInfo(),ownerType,registry,typeParameters);
     boolean isRequired=true, isRestFormals=false;
     JSTypeExpression texp=jsdoc == null ? null : jsdoc.getParameterType(pname);
     Node jsdocNode=texp == null ? null : texp.getRootNode();
@@ -65,7 +65,7 @@
     builder.addRetType(JSType.UNDEFINED);
   }
  else   if (inlineRetJsdoc != null) {
-    builder.addRetType(getNodeTypeDeclaration(inlineRetJsdoc,ownerType,registry));
+    builder.addRetType(getNodeTypeDeclaration(inlineRetJsdoc,ownerType,registry,typeParameters));
     if (retTypeExp != null) {
       warn("Found two JsDoc comments for the return type",funNode);
     }
