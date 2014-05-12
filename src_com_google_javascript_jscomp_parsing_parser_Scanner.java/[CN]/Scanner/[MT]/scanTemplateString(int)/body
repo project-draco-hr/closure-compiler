@@ -1,0 +1,14 @@
+{
+  while (peekTemplateStringChar()) {
+    if (!skipStringLiteralChar()) {
+      return new LiteralToken(TokenType.TEMPLATE_STRING,getTokenString(beginIndex),getTokenRange(beginIndex));
+    }
+  }
+  if (peekChar() != '`') {
+    reportError(getPosition(beginIndex),"Unterminated template string");
+  }
+ else {
+    nextChar();
+  }
+  return new LiteralToken(TokenType.TEMPLATE_STRING,getTokenString(beginIndex),getTokenRange(beginIndex));
+}
