@@ -1,0 +1,15 @@
+{
+  A.add(code("a2",provides("a2"),requires("a1")));
+  A.add(code("a1",provides("a1"),requires()));
+  A.add(code("base.js",BASEJS,provides(),requires()));
+  for (  CompilerInput input : A.getInputs()) {
+    input.setCompiler(compiler);
+  }
+  DependencyOptions depOptions=new DependencyOptions();
+  depOptions.setDependencySorting(true);
+  List<CompilerInput> inputs=Lists.newArrayList();
+  inputs.addAll(A.getInputs());
+  List<CompilerInput> results=graph.manageDependencies(depOptions,inputs);
+  assertInputs(A,"base.js","a1","a2");
+  assertEquals(Lists.newArrayList("base.js","a1","a2"),sourceNames(results));
+}
