@@ -3,9 +3,7 @@
   validateChildCount(n,Token.arity(Token.FUNCTION));
   validateParameters(n.getChildAtIndex(1));
   if (n.isArrowFunction()) {
-    if (!isEs6OrHigher()) {
-      violation("Arrow functions are not allowed in this language mode.",n);
-    }
+    validateEs6Feature("arrow functions",n);
     validateEmptyName(n.getFirstChild());
     if (n.getLastChild().getType() == Token.BLOCK) {
       validateBlock(n.getLastChild());

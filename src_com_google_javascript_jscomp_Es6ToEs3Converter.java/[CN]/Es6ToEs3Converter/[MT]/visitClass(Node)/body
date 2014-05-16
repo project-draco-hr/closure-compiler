@@ -1,0 +1,58 @@
+{
+  Node className=classNode.getFirstChild();
+  Node superClassName=className.getNext();
+  Node classMembers=classNode.getLastChild();
+  if (!NodeUtil.isStatement(classNode)) {
+    cannotConvert(classNode,"class expression");
+    return;
+  }
+  if (!superClassName.isEmpty()) {
+    cannotConvert(classNode,"extends");
+    return;
+  }
+  className.detachFromParent();
+  Node constructor=null;
+  JSDocInfo ctorJSDocInfo=null;
+  Node insertionPoint=classNode;
+  for (  Node member : classMembers.children()) {
+    if (member.isStaticMember()) {
+      cannotConvert(member,"static member");
+    }
+    if (member.getString().equals("constructor")) {
+      ctorJSDocInfo=member.getJSDocInfo();
+      constructor=member.getFirstChild().detachFromParent();
+      constructor.replaceChild(constructor.getFirstChild(),className);
+    }
+ else {
+      String qualName=Joiner.on('.').join(className.getString(),"prototype",member.getString());
+      Node assign=IR.assign(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),qualName,member,member.getString()),member.getFirstChild().detachFromParent());
+      assign.srcref(member);
+      JSDocInfo info=member.getJSDocInfo();
+      if (info != null) {
+        info.setAssociatedNode(assign);
+        assign.setJSDocInfo(info);
+      }
+      Node newNode=NodeUtil.newExpr(assign);
+      insertionPoint.getParent().addChildAfter(newNode,insertionPoint);
+      insertionPoint=newNode;
+    }
+  }
+  if (constructor == null) {
+    constructor=IR.function(className,IR.paramList().srcref(classNode),IR.block().srcref(classNode));
+  }
+  JSDocInfo classJSDoc=classNode.getJSDocInfo();
+  JSDocInfoBuilder newInfo=(classJSDoc != null) ? JSDocInfoBuilder.copyFrom(classJSDoc) : new JSDocInfoBuilder(true);
+  newInfo.recordConstructor();
+  if (!newInfo.isUnrestrictedRecorded() && !newInfo.isDictRecorded() && !newInfo.isStructRecorded()) {
+    newInfo.recordStruct();
+  }
+  if (ctorJSDocInfo != null) {
+    newInfo.recordSuppressions(ctorJSDocInfo.getSuppressions());
+    for (    String param : ctorJSDocInfo.getParameterNames()) {
+      newInfo.recordParameter(param,ctorJSDocInfo.getParameterType(param));
+    }
+  }
+  constructor.setJSDocInfo(newInfo.build(constructor));
+  classNode.getParent().replaceChild(classNode,constructor);
+  compiler.reportCodeChange();
+}
