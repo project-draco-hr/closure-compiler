@@ -8,15 +8,7 @@
     return type;
   }
   if (rValue.isQualifiedName()) {
-    String name=rValue.getQualifiedName();
-    Var slot=scope.getVar(name);
-    if (slot == null || slot.isTypeInferred()) {
-      return null;
-    }
-    type=slot.getType();
-    if (type != null && !type.isUnknownType()) {
-      return type;
-    }
+    return lookupQualifiedName(rValue);
   }
   if (rValue.isOr()) {
     Node firstClause=rValue.getFirstChild();

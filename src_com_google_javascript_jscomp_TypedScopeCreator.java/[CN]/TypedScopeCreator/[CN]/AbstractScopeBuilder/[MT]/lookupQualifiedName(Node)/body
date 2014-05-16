@@ -1,0 +1,18 @@
+{
+  String name=n.getQualifiedName();
+  Var slot=scope.getVar(name);
+  if (slot != null && !slot.isTypeInferred()) {
+    JSType type=slot.getType();
+    if (type != null && !type.isUnknownType()) {
+      return type;
+    }
+  }
+ else   if (n.isGetProp()) {
+    JSType type=lookupQualifiedName(n.getFirstChild());
+    if (type != null && type.isRecordType()) {
+      JSType propType=type.findPropertyType(n.getLastChild().getString());
+      return propType;
+    }
+  }
+  return null;
+}
