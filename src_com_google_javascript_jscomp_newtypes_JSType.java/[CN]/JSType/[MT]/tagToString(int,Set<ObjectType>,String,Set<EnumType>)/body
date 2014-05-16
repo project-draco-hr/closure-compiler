@@ -8,11 +8,13 @@ case BOTTOM_MASK:
 case STRING_MASK:
 return "string";
 case NON_SCALAR_MASK:
-Set<String> strReps=Sets.newHashSet();
+{
+Set<String> strReps=Sets.newTreeSet();
 for (ObjectType obj : objs) {
-strReps.add(obj.toString());
+  strReps.add(obj.toString());
 }
 return Joiner.on("|").join(strReps);
+}
 case NULL_MASK:
 return "null";
 case NUMBER_MASK:
@@ -25,6 +27,14 @@ case UNKNOWN_MASK:
 return "?";
 case TYPEVAR_MASK:
 return T;
+case ENUM_MASK:
+{
+Set<String> strReps=Sets.newTreeSet();
+for (EnumType e : enums) {
+strReps.add(e.toString());
+}
+return Joiner.on("|").join(strReps);
+}
 default :
 return null;
 }

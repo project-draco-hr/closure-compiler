@@ -9,6 +9,7 @@
   }
   new NodeTraversal(compiler,rootCnt).traverse(root);
   globalScope.resolveTypedefs(typeParser);
+  globalScope.resolveEnums(typeParser);
   ProcessScope rootPs=new ProcessScope(globalScope);
   if (externs != null) {
     new NodeTraversal(compiler,rootPs).traverse(externs);
@@ -20,6 +21,7 @@
     Node scopeBody=s.getBody();
     new NodeTraversal(compiler,new CollectNamedTypes(s)).traverse(scopeBody);
     s.resolveTypedefs(typeParser);
+    s.resolveEnums(typeParser);
     ProcessScope ps=new ProcessScope(s);
     new NodeTraversal(compiler,ps).traverse(scopeBody);
     ps.finishProcessingScope();

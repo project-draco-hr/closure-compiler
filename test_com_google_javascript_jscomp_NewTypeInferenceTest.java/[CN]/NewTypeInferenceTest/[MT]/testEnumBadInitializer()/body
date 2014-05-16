@@ -1,0 +1,8 @@
+{
+  typeCheck("/** @enum {number} */\n" + "var E;",GlobalTypeInfo.MALFORMED_ENUM);
+  typeCheck("/** @enum {number} */\n" + "var E = {};",GlobalTypeInfo.MALFORMED_ENUM);
+  typeCheck("/** @enum {number} */\n" + "var E = 1;",GlobalTypeInfo.MALFORMED_ENUM);
+  typeCheck("/** @enum {number} */\n" + "var E = {\n" + "  ONE: 1,\n"+ "  TWO: true\n"+ "};",NewTypeInference.INVALID_OBJLIT_PROPERTY_TYPE);
+  typeCheck("/** @enum {number} */\n" + "var E = { a: 1 };",TypeCheck.ENUM_NOT_CONSTANT);
+  typeCheck("/** @enum {number} */\n" + "var E = { A: 1, A: 2 };",GlobalTypeInfo.DUPLICATE_PROP_IN_ENUM);
+}

@@ -11,6 +11,22 @@
  else   if (t1.isTop() || t2.isTop()) {
     return null;
   }
+  ImmutableSet<EnumType> newEnums=null;
+  if (t1.enums == null) {
+    if (t2.enums != null) {
+      return null;
+    }
+    newEnums=null;
+  }
+ else   if (t2.enums == null) {
+    return null;
+  }
+ else   if (!t1.enums.equals(t2.enums)) {
+    return null;
+  }
+ else {
+    newEnums=t1.enums;
+  }
   int t1Mask=promoteBoolean(t1.mask);
   int t2Mask=promoteBoolean(t2.mask);
   if (t1Mask != t2Mask || !Objects.equal(t1.typeVar,t2.typeVar)) {
@@ -43,5 +59,5 @@
   if (!ununified.isEmpty()) {
     return null;
   }
-  return new JSType(t1Mask,null,ImmutableSet.copyOf(unifiedObjs),t1.typeVar);
+  return new JSType(t1Mask,null,ImmutableSet.copyOf(unifiedObjs),t1.typeVar,newEnums);
 }

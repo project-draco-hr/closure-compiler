@@ -14,5 +14,14 @@
   if (lhs.typeVar != null && rhs.typeVar != null && !lhs.typeVar.equals(rhs.typeVar)) {
     return UNKNOWN;
   }
-  return new JSType(lhs.mask | rhs.mask,joinLocs(lhs.location,rhs.location),ObjectType.joinSets(lhs.objs,rhs.objs),lhs.typeVar != null ? lhs.typeVar : rhs.typeVar);
+  int newMask=lhs.mask | rhs.mask;
+  String newLoc=joinLocs(lhs.location,rhs.location);
+  ImmutableSet<ObjectType> newObjs=ObjectType.joinSets(lhs.objs,rhs.objs);
+  String newTypevar=lhs.typeVar != null ? lhs.typeVar : rhs.typeVar;
+  ImmutableSet<EnumType> newEnums=EnumType.union(lhs.enums,rhs.enums);
+  if (newEnums == null) {
+    return new JSType(newMask,newLoc,newObjs,newTypevar,null);
+  }
+  JSType tmpJoin=new JSType(newMask & ~ENUM_MASK,newLoc,newObjs,newTypevar,null);
+  return new JSType(newMask,newLoc,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
 }

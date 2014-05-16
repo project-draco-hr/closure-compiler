@@ -17,33 +17,7 @@ case Token.STRING:
 case Token.TRUE:
 return new EnvTypePair(outEnv,scalarValueToType(exprKind));
 case Token.OBJECTLIT:
-{
-TypeEnv env=outEnv;
-JSType result=pickReqObjType(expr);
-for (Node prop=expr.getLastChild(); prop != null; prop=expr.getChildBefore(prop)) {
-  QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(prop));
-  if (prop.isGetterDef() || prop.isSetterDef()) {
-    env=analyzeExprBwd(prop.getFirstChild(),env).env;
-  }
- else {
-    JSType jsdocType=symbolTable.getPropDeclaredType(prop);
-    JSType reqPtype;
-    if (jsdocType != null) {
-      reqPtype=jsdocType;
-    }
- else     if (requiredType.mayHaveProp(pname)) {
-      reqPtype=requiredType.getProp(pname);
-    }
- else {
-      reqPtype=JSType.UNKNOWN;
-    }
-    EnvTypePair pair=analyzeExprBwd(prop.getFirstChild(),env,reqPtype);
-    result=result.withProperty(pname,pair.type);
-    env=pair.env;
-  }
-}
-return new EnvTypePair(env,result);
-}
+return analyzeObjLitBwd(expr,outEnv,requiredType);
 case Token.THIS:
 {
 if (!currentScope.hasThis()) {
@@ -57,7 +31,7 @@ case Token.NAME:
 if (expr.matchesQualifiedName("undefined")) {
 return new EnvTypePair(outEnv,JSType.UNDEFINED);
 }
-String varName=expr.getQualifiedName();
+String varName=expr.getString();
 JSType inferredType=envGetType(outEnv,varName);
 if (inferredType == null) {
 return new EnvTypePair(outEnv,JSType.UNKNOWN);
@@ -311,7 +285,7 @@ return pair;
 case Token.VAR:
 {
 Node vdecl=expr.getFirstChild();
-String name=vdecl.getQualifiedName();
+String name=vdecl.getString();
 Preconditions.checkState(!vdecl.hasChildren());
 return new EnvTypePair(envPutType(outEnv,name,JSType.UNKNOWN),JSType.UNKNOWN);
 }

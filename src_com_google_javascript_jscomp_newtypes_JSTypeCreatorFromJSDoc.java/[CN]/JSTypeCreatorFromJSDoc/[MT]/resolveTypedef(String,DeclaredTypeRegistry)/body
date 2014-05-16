@@ -1,0 +1,17 @@
+{
+  Typedef td=registry.getTypedef(name);
+  Preconditions.checkState(td != null,"getTypedef should only be " + "called when we know that the typedef is defined");
+  if (td.isResolved()) {
+    return;
+  }
+  JSTypeExpression texp=td.getTypeExpr();
+  JSType tdType;
+  if (texp == null) {
+    warn("Circular type definitions are not allowed.",td.getTypeExprForErrorReporting().getRootNode());
+    tdType=JSType.UNKNOWN;
+  }
+ else {
+    tdType=getTypeFromJSTypeExpression(texp,null,registry,null);
+  }
+  td.resolveTypedef(tdType);
+}

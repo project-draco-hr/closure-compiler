@@ -6,7 +6,7 @@
     return other.isTop();
   }
  else   if (this.mask == TYPEVAR_MASK && typeParameters.contains(typeVar)) {
-    updateTypemap(typeMultimap,typeVar,new JSType(promoteBoolean(other.mask),null,other.objs,other.typeVar));
+    updateTypemap(typeMultimap,typeVar,new JSType(promoteBoolean(other.mask),null,other.objs,other.typeVar,other.enums));
     return true;
   }
  else   if (other.isTop()) {
@@ -14,6 +14,29 @@
   }
  else   if (other.isUnknown()) {
     return true;
+  }
+  Set<EnumType> ununifiedEnums=null;
+  if (this.enums == null) {
+    ununifiedEnums=other.enums;
+  }
+ else   if (other.enums == null) {
+    return false;
+  }
+ else {
+    ununifiedEnums=Sets.newHashSet();
+    for (    EnumType e : this.enums) {
+      if (!other.enums.contains(e)) {
+        return false;
+      }
+    }
+    for (    EnumType e : other.enums) {
+      if (!this.enums.contains(e)) {
+        ununifiedEnums.add(e);
+      }
+    }
+    if (ununifiedEnums.isEmpty()) {
+      ununifiedEnums=null;
+    }
   }
   Set<ObjectType> ununified=ImmutableSet.of();
   if (other.objs != null) {
@@ -46,19 +69,13 @@
   }
  else {
     int templateMask=0;
-    if (!ununified.isEmpty()) {
-      templateMask|=NON_SCALAR_MASK;
-    }
-    if ((other.mask & TYPEVAR_MASK) != 0) {
-      templateMask|=TYPEVAR_MASK;
-    }
     int thisScalarBits=this.mask & ~NON_SCALAR_MASK & ~TYPEVAR_MASK;
     int otherScalarBits=other.mask & ~NON_SCALAR_MASK & ~TYPEVAR_MASK;
     templateMask|=otherScalarBits & ~thisScalarBits;
     if (templateMask == BOTTOM_MASK) {
       return false;
     }
-    JSType templateType=new JSType(promoteBoolean(templateMask),null,ImmutableSet.copyOf(ununified),otherTypevar);
+    JSType templateType=new JSType(promoteBoolean(templateMask),null,ImmutableSet.copyOf(ununified),otherTypevar,ununifiedEnums == null ? null : ImmutableSet.copyOf(ununifiedEnums));
     updateTypemap(typeMultimap,typeVar,templateType);
     return true;
   }

@@ -1,0 +1,31 @@
+{
+  if (enums == null) {
+    this.enums=null;
+  }
+ else   if (enums.isEmpty()) {
+    mask&=~ENUM_MASK;
+    this.enums=null;
+  }
+ else {
+    mask|=ENUM_MASK;
+    this.enums=enums;
+  }
+  if (objs == null) {
+    this.objs=null;
+  }
+ else   if (objs.isEmpty()) {
+    mask&=~NON_SCALAR_MASK;
+    this.objs=null;
+  }
+ else {
+    mask|=NON_SCALAR_MASK;
+    this.objs=objs;
+  }
+  if (typeVar != null) {
+    mask|=TYPEVAR_MASK;
+  }
+  this.typeVar=typeVar;
+  this.location=location;
+  this.mask=mask;
+  Preconditions.checkState(isValidType(),"Cannot create type with bits <<<%X>>>, " + "objs <<<%s>>>, typeVar <<<%s>>>, enums <<<%s>>>",mask,objs,typeVar,enums);
+}

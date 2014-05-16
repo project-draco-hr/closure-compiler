@@ -12,9 +12,8 @@
   for (  JSType argType : this.argTypes) {
     JSType formalType=fnSummary.getFormalType(i);
     Preconditions.checkState(!formalType.equals(JSType.topFunction()));
-    if (argNode.isName() && callerScope.isKnownFunction(argNode.getQualifiedName())) {
-      String argName=argNode.getQualifiedName();
-      argType=summaries.get(callerScope.getScope(argName));
+    if (argNode.isName() && callerScope.isKnownFunction(argNode.getString())) {
+      argType=summaries.get(callerScope.getScope(argNode.getString()));
     }
     if (argType != null && !argType.isSubtypeOf(formalType)) {
       warnings.add(JSError.make(argNode,INVALID_ARGUMENT_TYPE,Integer.toString(i + 1),calleeScope.getReadableName(),formalType.toString(),argType.toString()));

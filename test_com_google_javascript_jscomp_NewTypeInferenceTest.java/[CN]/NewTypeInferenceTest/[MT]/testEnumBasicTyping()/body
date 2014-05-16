@@ -1,0 +1,9 @@
+{
+  typeCheck("/** @enum {number} */\n" + "var E = {\n" + "  ONE: 1,\n"+ "  TWO: 2\n"+ "};\n"+ "function f(/** E */ x) { x < 'str'; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @enum */\n" + "var E = {\n" + "  ONE: 1,\n"+ "  TWO: 2\n"+ "};\n"+ "function f(/** E */ x) { x < 'str'; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/** @enum {number} */\n" + "var E = {\n" + "  ONE: 1,\n"+ "  TWO: 2\n"+ "};\n"+ "function f(/** E */ x) {}\n"+ "function g(/** number */ x) {}\n"+ "f(E.TWO);\n"+ "g(E.TWO);");
+  typeCheck("/** @enum {number} */\n" + "var E = {\n" + "  ONE: 1,\n"+ "  TWO: 2\n"+ "};\n"+ "function f(/** E */ x) {}\n"+ "f(1);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @enum {number} */\n" + "var E = {\n" + "  ONE: 1,\n"+ "  TWO: 2\n"+ "};\n"+ "function f() { E.THREE - 5; }",TypeCheck.INEXISTENT_PROPERTY);
+  checkNoWarnings("/** @enum {!Foo} */\n" + "var E = { ONE: new Foo };\n" + "/** @constructor */\n"+ "function Foo() {}");
+  typeCheck("/** @typedef {number} */\n" + "var num;\n" + "/** @enum {num} */\n"+ "var E = { ONE: 1 };\n"+ "function f(/** E */ x) { x < 'str'; }",NewTypeInference.INVALID_OPERAND_TYPE);
+}

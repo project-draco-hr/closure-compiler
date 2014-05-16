@@ -1,0 +1,19 @@
+{
+  boolean recreateEnums=false;
+  for (  EnumType e : newEnums) {
+    if (e.getEnumeratedType().isSubtypeOf(joinWithoutEnums)) {
+      recreateEnums=true;
+      break;
+    }
+  }
+  if (!recreateEnums) {
+    return newEnums;
+  }
+  ImmutableSet.Builder<EnumType> builder=ImmutableSet.builder();
+  for (  EnumType e : newEnums) {
+    if (!e.getEnumeratedType().isSubtypeOf(joinWithoutEnums)) {
+      builder.add(e);
+    }
+  }
+  return builder.build();
+}

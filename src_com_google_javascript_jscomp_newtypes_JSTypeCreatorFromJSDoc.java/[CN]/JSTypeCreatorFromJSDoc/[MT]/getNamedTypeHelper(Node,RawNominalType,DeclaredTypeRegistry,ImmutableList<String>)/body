@@ -25,12 +25,16 @@ return JSType.fromTypeVar(typeName);
 if (registry.getTypedef(typeName) != null) {
 return getTypedefType(typeName,registry);
 }
+if (registry.getEnum(typeName) != null) {
+return getEnumPropType(typeName,registry);
+}
 JSType namedType=registry.lookupTypeByName(typeName);
 if (namedType == null) {
 unknownTypeNames.put(n,typeName);
 throw new UnknownTypeException("Unhandled type: " + typeName);
 }
 if (namedType.isTypeVariable()) {
+howmanyTypeVars++;
 return namedType;
 }
 return JSType.join(JSType.NULL,getNominalTypeHelper(namedType,n,ownerType,registry,outerTypeParameters));

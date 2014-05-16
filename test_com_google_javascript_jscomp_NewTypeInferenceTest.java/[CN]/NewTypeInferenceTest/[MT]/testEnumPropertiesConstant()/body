@@ -1,0 +1,5 @@
+{
+  checkNoWarnings("/** @enum {number} */\n" + "var E = {\n" + "  ONE: 1,\n"+ "  TWO: 2\n"+ "};\n"+ "E.THREE = 3;");
+  typeCheck("/** @enum {number} */\n" + "var E = {\n" + "  ONE: 1,\n"+ "  TWO: 2\n"+ "};\n"+ "E.ONE = E.TWO;",NewTypeInference.CONST_REASSIGNED);
+  typeCheck("/** @enum {number} */\n" + "var E = {\n" + "  ONE: 1,\n"+ "  TWO: 2\n"+ "};\n"+ "function f(/** E */) { E.ONE = E.TWO; }",NewTypeInference.CONST_REASSIGNED);
+}

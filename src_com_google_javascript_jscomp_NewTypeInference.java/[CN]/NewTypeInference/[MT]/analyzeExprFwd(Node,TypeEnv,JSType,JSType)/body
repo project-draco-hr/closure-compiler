@@ -18,67 +18,7 @@ case Token.STRING:
 case Token.TRUE:
 return new EnvTypePair(inEnv,scalarValueToType(exprKind));
 case Token.OBJECTLIT:
-{
-JSDocInfo jsdoc=expr.getJSDocInfo();
-boolean isStruct=jsdoc != null && jsdoc.makesStructs();
-boolean isDict=jsdoc != null && jsdoc.makesDicts();
-TypeEnv env=inEnv;
-JSType result=pickReqObjType(expr);
-for (Node prop : expr.children()) {
-  if (isStruct && prop.isQuotedString()) {
-    warnings.add(JSError.make(prop,TypeCheck.ILLEGAL_OBJLIT_KEY,"struct"));
-  }
- else   if (isDict && !prop.isQuotedString()) {
-    warnings.add(JSError.make(prop,TypeCheck.ILLEGAL_OBJLIT_KEY,"dict"));
-  }
-  String pname=NodeUtil.getObjectLitKeyName(prop);
-  if (prop.isGetterDef() || prop.isSetterDef()) {
-    EnvTypePair pair=analyzeExprFwd(prop.getFirstChild(),env);
-    FunctionType funType=pair.type.getFunType();
-    Preconditions.checkNotNull(funType);
-    String specialPropName;
-    JSType propType;
-    if (prop.isGetterDef()) {
-      specialPropName=GETTER_PREFIX + pname;
-      propType=funType.getReturnType();
-    }
- else {
-      specialPropName=SETTER_PREFIX + pname;
-      propType=pair.type;
-    }
-    result=result.withProperty(new QualifiedName(specialPropName),propType);
-    env=pair.env;
-  }
- else {
-    QualifiedName qname=new QualifiedName(pname);
-    JSType jsdocType=symbolTable.getPropDeclaredType(prop);
-    JSType reqPtype, specPtype;
-    if (jsdocType != null) {
-      reqPtype=specPtype=jsdocType;
-    }
- else     if (requiredType.mayHaveProp(qname)) {
-      reqPtype=specPtype=requiredType.getProp(qname);
-      if (specializedType.mayHaveProp(qname)) {
-        specPtype=specializedType.getProp(qname);
-      }
-    }
- else {
-      reqPtype=specPtype=JSType.UNKNOWN;
-    }
-    EnvTypePair pair=analyzeExprFwd(prop.getFirstChild(),env,reqPtype,specPtype);
-    if (jsdocType != null) {
-      result=result.withDeclaredProperty(qname,jsdocType,false);
-      if (!pair.type.isSubtypeOf(jsdocType)) {
-        warnings.add(JSError.make(prop,INVALID_OBJLIT_PROPERTY_TYPE,jsdocType.toString(),pair.type.toString()));
-        pair.type=jsdocType;
-      }
-    }
-    result=result.withProperty(qname,pair.type);
-    env=pair.env;
-  }
-}
-return new EnvTypePair(env,result);
-}
+return analyzeObjLitFwd(expr,inEnv,requiredType,specializedType);
 case Token.THIS:
 {
 if (!currentScope.hasThis()) {
@@ -93,7 +33,7 @@ case Token.NAME:
 if (expr.matchesQualifiedName("undefined")) {
 return new EnvTypePair(inEnv,JSType.UNDEFINED);
 }
-String varName=expr.getQualifiedName();
+String varName=expr.getString();
 if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)|| varName.equals(currentScope.getName())) {
 JSType inferredType=envGetType(inEnv,varName);
 println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType," specializedType:  ",specializedType);
@@ -330,8 +270,8 @@ lhsPair=analyzeExprFwd(lhs,inEnv,rhsPair.type);
 rhsPair=analyzeExprFwd(rhs,lhsPair.env,rhsPair.type);
 }
  else if (lhs.isName() && lhsPair.type.isUnknown() && rhs.isName()&& rhsPair.type.isUnknown()) {
-TypeEnv env=envPutType(rhsPair.env,lhs.getQualifiedName(),JSType.TOP_SCALAR);
-env=envPutType(rhsPair.env,rhs.getQualifiedName(),JSType.TOP_SCALAR);
+TypeEnv env=envPutType(rhsPair.env,lhs.getString(),JSType.TOP_SCALAR);
+env=envPutType(rhsPair.env,rhs.getString(),JSType.TOP_SCALAR);
 return new EnvTypePair(env,JSType.BOOLEAN);
 }
 JSType lhsType=lhsPair.type;
