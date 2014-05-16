@@ -27,7 +27,12 @@
     }
  else {
       if (!(allowDupe || var.getParentNode().isExprResult()) || !newType.isEquivalentTo(varType)) {
-        report(JSError.make(sourceName,n,DUP_VAR_DECLARATION,variableName,newType.toString(),var.getInputName(),String.valueOf(var.nameNode.getLineno()),varType.toString()));
+        if (newType.isEquivalentTo(varType)) {
+          report(JSError.make(sourceName,n,DUP_VAR_DECLARATION,variableName,var.getInputName(),String.valueOf(var.nameNode.getLineno())));
+        }
+ else {
+          report(JSError.make(sourceName,n,DUP_VAR_DECLARATION_TYPE_MISMATCH,variableName,newType.toString(),var.getInputName(),String.valueOf(var.nameNode.getLineno()),varType.toString()));
+        }
       }
     }
   }
