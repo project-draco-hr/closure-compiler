@@ -1,0 +1,10 @@
+{
+  String externs="" + "/** @constructor */\n" + "function AppContext() {}\n";
+  String template="" + "function template() {\n" + "  new AppContext();"+ "}\n";
+  TestNodePair pair=compile(externs,template,"var foo = new AppContext()");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  assertMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild().getFirstChild());
+  pair=compile(externs,template,"var foo = new Object()");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild().getFirstChild());
+}

@@ -1,0 +1,13 @@
+{
+  String externs="" + "function foo() {};\n" + "function bar(arg) {};\n";
+  String template="" + "function template() {\n" + "  foo();\n"+ "}\n";
+  TestNodePair pair=compile(externs,template,"foo();");
+  assertMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  pair=compile(externs,template,"bar();");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  pair=compile(externs,template,"bar(foo());");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  assertMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild().getLastChild());
+}

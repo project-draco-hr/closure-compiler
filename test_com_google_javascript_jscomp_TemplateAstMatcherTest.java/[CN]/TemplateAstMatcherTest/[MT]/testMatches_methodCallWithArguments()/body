@@ -1,0 +1,26 @@
+{
+  String externs="" + "/** @constructor */\n" + "function AppContext() {}\n"+ "AppContext.prototype.init = function() {};\n"+ "/**\n"+ " * @param {string} arg\n"+ " */\n"+ "AppContext.prototype.get = function(arg) {};\n"+ "/**\n"+ " * @param {string} arg\n"+ " */\n"+ "AppContext.prototype.getOrNull = function(arg) {};";
+  String template="" + "/**\n" + " * @param {AppContext} context\n"+ " */\n"+ "function template(context) {\n"+ "  context.init();\n"+ "}\n";
+  TestNodePair pair=compile(externs,template,"'str'");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot());
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"var context = new AppContext(); context.init();");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  assertMatch(pair.templateNode,pair.testNode.getLastChild().getFirstChild());
+  pair=compile(externs,template,"var context = new AppContext(); context.get('str');");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getLastChild().getFirstChild());
+  template="" + "/**\n" + " * @param {AppContext} context\n"+ " * @param {string} service\n"+ " */\n"+ "function template(context, service) {\n"+ "  context.get(service);\n"+ "}\n";
+  pair=compile(externs,template,"var context = new AppContext(); context.init();");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getLastChild().getFirstChild());
+  pair=compile(externs,template,"var context = new AppContext(); context.get('s');");
+  assertMatch(pair.templateNode,pair.testNode.getLastChild().getFirstChild());
+  pair=compile(externs,template,"var context = new AppContext(); context.get(3);");
+  assertNotMatch(pair.templateNode,pair.testNode.getLastChild().getFirstChild());
+  pair=compile(externs,template,"var context = new AppContext(); context.getOrNull('s');");
+  assertNotMatch(pair.templateNode,pair.testNode.getLastChild().getFirstChild());
+}

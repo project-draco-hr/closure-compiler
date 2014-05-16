@@ -1,0 +1,20 @@
+{
+  String externs="" + "/** @constructor */\n" + "function AppContext() {}\n"+ "/** @type {string} */\n"+ "AppContext.prototype.location;\n";
+  String template="" + "/**\n" + " * @param {AppContext} context\n"+ " * @param {string} str\n"+ " */\n"+ "function template(context, str) {\n"+ "  context.location = str;\n"+ "  delete context.location;\n"+ "}\n";
+  TestNodePair pair=compile(externs,template,"var context = new AppContext(); context.location = '3';");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getLastChild().getFirstChild().getFirstChild());
+  pair=compile(externs,template,"var ac = new AppContext(); ac.location = '3'; delete ac.location;");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  assertMatch(pair.templateNode,pair.testNode.getFirstChild().getNext());
+  externs="" + "/** @param {string} arg */\n" + "function bar(arg) {};\n";
+  template="" + "function template() {\n" + "  var a = 'string';\n"+ "  bar(a);\n"+ "}\n";
+  pair=compile(externs,template,"var loc = 'string'; bar(loc);");
+  assertMatch(pair.templateNode,pair.testNode.getFirstChild());
+  pair=compile(externs,template,"var loc = 'string'; bar('foo');");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  pair=compile(externs,template,"var baz = 'qux'; var loc = 'string'; bar(baz);");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getNext());
+}

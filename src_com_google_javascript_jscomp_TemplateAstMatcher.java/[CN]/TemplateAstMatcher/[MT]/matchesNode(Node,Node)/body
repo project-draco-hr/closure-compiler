@@ -1,0 +1,47 @@
+{
+  if (isTemplateParameterNode(template)) {
+    int paramIndex=(int)(template.getDouble());
+    Node previousMatch=paramNodeMatches.get(paramIndex);
+    if (previousMatch != null) {
+      return ast.isEquivalentTo(previousMatch);
+    }
+    JSType templateType=template.getJSType();
+    Preconditions.checkNotNull(templateType,"null template parameter type.");
+    if (templateType.isNoResolvedType()) {
+      return false;
+    }
+    boolean isMatch=false;
+    JSType astType=ast.getJSType();
+    if (astType == null || astType.isUnknownType() || astType.isAllType()) {
+      isMatch=true;
+      isLooseMatch=true;
+    }
+ else {
+      isMatch=astType.isSubtype(templateType);
+    }
+    if (isMatch && previousMatch == null) {
+      paramNodeMatches.set(paramIndex,ast);
+    }
+    return isMatch;
+  }
+ else   if (isTemplateLocalNameNode(template)) {
+    int paramIndex=(int)(template.getDouble());
+    boolean previouslyMatched=this.localVarMatches.get(paramIndex) != null;
+    if (previouslyMatched) {
+      return ast.getString().equals(this.localVarMatches.get(paramIndex));
+    }
+ else {
+      this.localVarMatches.set(paramIndex,ast.getString());
+    }
+  }
+  Node templateChild=template.getFirstChild();
+  Node astChild=ast.getFirstChild();
+  while (templateChild != null) {
+    if (!matchesNode(templateChild,astChild)) {
+      return false;
+    }
+    templateChild=templateChild.getNext();
+    astChild=astChild.getNext();
+  }
+  return true;
+}

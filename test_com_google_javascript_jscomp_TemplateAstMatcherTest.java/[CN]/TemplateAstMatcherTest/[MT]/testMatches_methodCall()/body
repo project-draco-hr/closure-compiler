@@ -1,0 +1,13 @@
+{
+  String externs="" + "/** @return {string} */\n" + "function foo() {};\n";
+  String template="" + "/**\n" + " * @param {string} str\n"+ " */\n"+ "function template(str) {\n"+ "  str.toString();\n"+ "}\n";
+  TestNodePair pair=compile(externs,template,"'str'");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot());
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"'str'.toString()");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot());
+  assertMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"foo().toString()");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot());
+  assertMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+}

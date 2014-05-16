@@ -1,0 +1,23 @@
+{
+  if (isTemplateParameterNode(template)) {
+    return !NodeUtil.isStatement(ast);
+  }
+ else   if (isTemplateLocalNameNode(template)) {
+    if (!ast.isName()) {
+      return false;
+    }
+  }
+ else   if (!template.isEquivalentToShallow(ast)) {
+    return false;
+  }
+  Node templateChild=template.getFirstChild();
+  Node astChild=ast.getFirstChild();
+  while (templateChild != null) {
+    if (!matchesNodeShape(templateChild,astChild)) {
+      return false;
+    }
+    templateChild=templateChild.getNext();
+    astChild=astChild.getNext();
+  }
+  return true;
+}

@@ -1,0 +1,35 @@
+{
+  final List<String> locals=templateLocals;
+  final List<String> params=templateParams;
+  final Map<String,JSType> paramTypes=new HashMap<>();
+  fn.getFirstChild().setString("");
+  Node templateParametersNode=fn.getFirstChild().getNext();
+  JSDocInfo info=NodeUtil.getBestJSDocInfo(fn);
+  for (  Node paramNode : templateParametersNode.children()) {
+    String name=paramNode.getString();
+    JSTypeExpression expression=info.getParameterType(name);
+    JSType type=expression.evaluate(null,compiler.getTypeRegistry());
+    Preconditions.checkNotNull(type);
+    params.add(name);
+    paramTypes.put(name,type);
+  }
+  traverse(fn,new Visitor(){
+    @Override public void visit(    Node n){
+      if (n.isName()) {
+        Node parent=n.getParent();
+        String name=n.getString();
+        if (!name.isEmpty() && parent.isVar() && !locals.contains(name)) {
+          locals.add(n.getString());
+        }
+        if (params.contains(name)) {
+          JSType type=paramTypes.get(name);
+          replaceNodeInPlace(n,createTemplateParameterNode(params.indexOf(name),type));
+        }
+ else         if (locals.contains(name)) {
+          replaceNodeInPlace(n,createTemplateLocalNameNode(locals.indexOf(name)));
+        }
+      }
+    }
+  }
+);
+}

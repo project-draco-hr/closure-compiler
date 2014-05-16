@@ -1,0 +1,8 @@
+{
+  String externs="" + "/** @constructor */\n" + "function AppContext() {}\n"+ "/** @type {string} */\n"+ "AppContext.prototype.location;\n"+ "/**\n"+ " * @constructor\n"+ " * @extends {AppContext}\n"+ " */\n"+ "function SubAppContext() {}\n";
+  String template="" + "/**\n" + " * @param {AppContext} context\n"+ " * @param {string} str\n"+ " */\n"+ "function template(context, str) {\n"+ "  context.location = str;\n"+ "}\n";
+  TestNodePair pair=compile(externs,template,"var context = new SubAppContext(); context.location = '3';");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  assertMatch(pair.templateNode,pair.testNode.getLastChild().getFirstChild());
+}

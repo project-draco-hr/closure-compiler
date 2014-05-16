@@ -1,0 +1,32 @@
+{
+  String externs="" + "/** @return {string} */\n" + "function foo() {};\n"+ "/** @param {string} arg */\n"+ "function bar(arg) {};\n"+ "/**\n"+ " * @param {string} arg\n"+ " * @param {number arg2\n"+ " */\n"+ "function baz(arg, arg2) {};\n";
+  String template="" + "function template() {\n" + "  bar('str');\n"+ "}\n";
+  TestNodePair pair=compile(externs,template,"foo();");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"bar();");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot());
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"bar('str');");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot());
+  assertMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"bar(foo());");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot());
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild().getLastChild());
+  template="" + "/** @param {string} str */\n" + "function template(str) {\n"+ "  bar(str);\n"+ "}\n";
+  pair=compile(externs,template,"foo();");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"bar('str');");
+  assertMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"bar('str' + 'other_str');");
+  assertMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"bar(String(3));");
+  assertMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  template="" + "/**\n" + " * @param {string} str\n"+ " * @param {number} num\n"+ " */\n"+ "function template(str, num) {\n"+ "  baz(str, num);\n"+ "}\n";
+  pair=compile(externs,template,"foo();");
+  assertNotMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"baz('str', 3);");
+  assertMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+  pair=compile(externs,template,"baz('str' + 'other_str', 3 + 4);");
+  assertMatch(pair.templateNode,pair.getTestExprResultRoot().getFirstChild());
+}

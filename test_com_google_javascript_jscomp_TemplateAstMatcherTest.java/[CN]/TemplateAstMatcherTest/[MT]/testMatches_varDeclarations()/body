@@ -1,0 +1,22 @@
+{
+  String template="" + "function template() {\n" + "  var a = 3;\n"+ "}\n";
+  TestNodePair pair;
+  pair=compile("",template,"var a = 3;");
+  assertMatch(pair.templateNode,pair.testNode.getFirstChild());
+  pair=compile("",template,"var b = 3;");
+  assertMatch(pair.templateNode,pair.testNode.getFirstChild());
+  pair=compile("",template,"var a = 5;");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  pair=compile("",template,"5;");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  template="" + "function template() {\n" + "  var a = {};\n"+ "}\n";
+  pair=compile("",template,"var a = {};");
+  assertMatch(pair.templateNode,pair.testNode.getFirstChild());
+  pair=compile("",template,"var a = {'a': 'b'};");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+  template="" + "function template() {\n" + "  var a = {\n"+ "    'a': 'b'\n"+ "  };\n"+ "}\n";
+  pair=compile("",template,"var a = {'a': 'b'};");
+  assertMatch(pair.templateNode,pair.testNode.getFirstChild());
+  pair=compile("",template,"var a = {};");
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
+}
