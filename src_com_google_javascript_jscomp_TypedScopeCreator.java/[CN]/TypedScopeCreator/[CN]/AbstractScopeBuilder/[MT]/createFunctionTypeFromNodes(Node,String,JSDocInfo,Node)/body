@@ -4,7 +4,7 @@
     Var var=scope.getVar(rValue.getQualifiedName());
     if (var != null && var.getType() != null && var.getType().isFunctionType()) {
       FunctionType aliasedType=var.getType().toMaybeFunctionType();
-      if ((aliasedType.isConstructor() || aliasedType.isInterface()) && !aliasedType.isNativeObjectType()) {
+      if ((aliasedType.isConstructor() || aliasedType.isInterface()) && !isGoogAbstractMethod(rValue)) {
         functionType=aliasedType;
         if (name != null && scope.isGlobal()) {
           typeRegistry.declareType(name,functionType.getInstanceType());
