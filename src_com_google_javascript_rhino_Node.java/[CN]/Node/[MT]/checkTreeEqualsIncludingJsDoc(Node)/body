@@ -1,0 +1,12 @@
+{
+  NodeMismatch diff=checkTreeEqualsImpl(actual,true);
+  if (diff != null) {
+    if (diff.nodeA.isEquivalentTo(diff.nodeB,false,true,false)) {
+      String jsDoc1=diff.nodeA.getJSDocInfo() == null ? "(none)" : diff.nodeA.getJSDocInfo().toStringVerbose();
+      String jsDoc2=diff.nodeB.getJSDocInfo() == null ? "(none)" : diff.nodeB.getJSDocInfo().toStringVerbose();
+      return "Node tree inequality:" + "\nTree:\n" + toStringTree() + "\n\nJSDoc differs on subtree: "+ diff.nodeA+ "\nExpected JSDoc: "+ jsDoc1+ "\nActual JSDoc  : "+ jsDoc2;
+    }
+    return "Node tree inequality:" + "\nExpected tree:\n" + toStringTree() + "\n\nActual tree:\n"+ actual.toStringTree()+ "\n\nExpected subtree: "+ diff.nodeA.toStringTree()+ "\n\nActual subtree: "+ diff.nodeB.toStringTree();
+  }
+  return null;
+}

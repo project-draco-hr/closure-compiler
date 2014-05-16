@@ -124,7 +124,13 @@
     NodeUtil.verifyScopeChanges(mtoc,mainRoot,false,compiler);
     if (expected != null) {
       if (compareAsTree) {
-        String explanation=expectedRoot.checkTreeEquals(mainRoot);
+        String explanation;
+        if (compareJsDoc) {
+          explanation=expectedRoot.checkTreeEqualsIncludingJsDoc(mainRoot);
+        }
+ else {
+          explanation=expectedRoot.checkTreeEquals(mainRoot);
+        }
         assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult:   "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
       }
  else       if (expected != null) {
