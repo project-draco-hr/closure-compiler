@@ -6,7 +6,8 @@ case Token.NAME:
   Var var=syntacticScope.getVar(varName);
 JSType varType=var == null ? null : var.getType();
 boolean isVarDeclaration=left.hasChildren() && varType != null && !var.isTypeInferred();
-boolean isVarTypeBetter=isVarDeclaration && !resultType.isNullType() && !resultType.isVoidType();
+boolean isTypelessConstDecl=isVarDeclaration && NodeUtil.isConstantDeclaration(compiler.getCodingConvention(),var.getJSDocInfo(),var.getNameNode()) && !(var.getJSDocInfo() != null && var.getJSDocInfo().hasType());
+boolean isVarTypeBetter=isVarDeclaration && !resultType.isNullType() && !resultType.isVoidType()&& !isTypelessConstDecl;
 if (isVarTypeBetter) {
 redeclareSimpleVar(scope,left,varType);
 }
@@ -17,6 +18,9 @@ left.setJSType(resultType);
 if (var != null && var.isTypeInferred()) {
 JSType oldType=var.getType();
 var.setType(oldType == null ? resultType : oldType.getLeastSupertype(resultType));
+}
+ else if (isTypelessConstDecl) {
+var.setType(resultType);
 }
 break;
 case Token.GETPROP:
