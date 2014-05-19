@@ -1,12 +1,13 @@
 {
   FilePosition originalSourcePosition=new FilePosition(17,25);
-  ImmutableMap<String,SourceMapInput> inputSourceMaps=ImmutableMap.of("generated_js/example.js",sourcemap("generated_js/example.srcmap","../original/source.html",originalSourcePosition));
-  List<SourceFile> originalSources=Lists.newArrayList(SourceFile.fromCode("original/source.html","<div ng-show='foo()'>"));
+  ImmutableMap<String,SourceMapInput> inputSourceMaps=ImmutableMap.of(normalize("generated_js/example.js"),sourcemap(normalize("generated_js/example.srcmap"),normalize("../original/source.html"),originalSourcePosition));
+  String origSourceName=normalize("original/source.html");
+  List<SourceFile> originalSources=Lists.newArrayList(SourceFile.fromCode(origSourceName,"<div ng-show='foo()'>"));
   CompilerOptions options=new CompilerOptions();
   options.inputSourceMaps=inputSourceMaps;
   Compiler compiler=new Compiler();
   compiler.setOriginalSourcesLoader(createFileLoader(originalSources));
   compiler.init(Lists.<SourceFile>newArrayList(),Lists.<SourceFile>newArrayList(),options);
-  assertEquals(OriginalMapping.newBuilder().setOriginalFile("original/source.html").setLineNumber(18).setColumnPosition(25).build(),compiler.getSourceMapping("generated_js/example.js",3,3));
-  assertEquals("<div ng-show='foo()'>",compiler.getSourceLine("original/source.html",1));
+  assertEquals(OriginalMapping.newBuilder().setOriginalFile(origSourceName).setLineNumber(18).setColumnPosition(25).build(),compiler.getSourceMapping(normalize("generated_js/example.js"),3,3));
+  assertEquals("<div ng-show='foo()'>",compiler.getSourceLine(origSourceName,1));
 }
