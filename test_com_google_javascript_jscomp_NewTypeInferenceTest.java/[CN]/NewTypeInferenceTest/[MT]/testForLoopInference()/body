@@ -1,6 +1,6 @@
 {
-  checkInference("var x = 5;\n" + "for (;true;) {\n" + "  x = 'str';\n"+ "}","x",JSType.join(JSType.NUMBER,JSType.STRING));
-  checkInference("var x = 5;" + "while (true) {" + "  x = 'str';"+ "}","x",JSType.join(JSType.NUMBER,JSType.STRING));
-  checkInference("while (true) {" + "  var x = 'str';" + "}","x",JSType.join(JSType.STRING,JSType.UNDEFINED));
-  checkInference("for (var x = 5; x < 10; x++) {\n" + "}","x",JSType.NUMBER);
+  typeCheck("var x = 5;\n" + "for (;true;) {\n" + "  x = 'str';\n"+ "}\n"+ "var /** (string|number) */ y = x;\n"+ "(function(/** string */ s){})(x);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("var x = 5;" + "while (true) {" + "  x = 'str';"+ "}\n"+ "(function(/** string */ s){})(x);\n"+ "var /** (string|number) */ y = x;",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("while (true) {" + "  var x = 'str';" + "}\n"+ "var /** (string|undefined) */ y = x;\n"+ "(function(/** string */ s){})(x);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("for (var x = 5; x < 10; x++) {}\n" + "(function(/** string */ s){})(x);\n" + "var /** number */ y = x;",NewTypeInference.INVALID_ARGUMENT_TYPE);
 }
