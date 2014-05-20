@@ -493,6 +493,7 @@ return token;
 case CONSTANT:
 case DEFINE:
 case RETURN:
+case PACKAGE:
 case PRIVATE:
 case PROTECTED:
 case PUBLIC:
@@ -503,7 +504,7 @@ lineno=stream.getLineno();
 charno=stream.getCharno();
 Node typeNode=null;
 boolean hasType=lookAheadForType();
-boolean isAlternateTypeAnnotation=(annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC || annotation == Annotation.CONSTANT);
+boolean isAlternateTypeAnnotation=(annotation == Annotation.PACKAGE || annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC || annotation == Annotation.CONSTANT);
 boolean canSkipTypeAnnotation=(isAlternateTypeAnnotation || annotation == Annotation.RETURN);
 type=null;
 if (hasType || !canSkipTypeAnnotation) {
@@ -540,6 +541,14 @@ break;
 case PRIVATE:
 if (!jsdocBuilder.recordVisibility(Visibility.PRIVATE)) {
 parser.addParserWarning("msg.jsdoc.visibility.private",lineno,charno);
+}
+if (!isAnnotationNext) {
+return recordDescription(token);
+}
+break;
+case PACKAGE:
+if (!jsdocBuilder.recordVisibility(Visibility.PACKAGE)) {
+parser.addParserWarning("msg.jsdoc.visibility.package",lineno,charno);
 }
 if (!isAnnotationNext) {
 return recordDescription(token);
