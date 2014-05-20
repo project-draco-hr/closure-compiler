@@ -7,11 +7,18 @@
   println(cfg);
   List<DiGraphNode<Node,ControlFlowGraph.Branch>> workset=Lists.newLinkedList();
   buildWorkset(cfg.getEntry(),workset);
-  Collections.reverse(workset);
-  initEdgeEnvsBwd();
-  analyzeFunctionBwd(workset);
-  Collections.reverse(workset);
-  initEdgeEnvsFwd();
+  if (scope.hasUndeclaredFormalsOrOuters()) {
+    Collections.reverse(workset);
+    initEdgeEnvsBwd();
+    analyzeFunctionBwd(workset);
+    Collections.reverse(workset);
+    TypeEnv entryEnv=getEntryTypeEnv();
+    initEdgeEnvsFwd(entryEnv);
+  }
+ else {
+    TypeEnv entryEnv=getTypeEnvFromDeclaredTypes();
+    initEdgeEnvsFwd(entryEnv);
+  }
   analyzeFunctionFwd(workset);
   if (scope.isFunction()) {
     createSummary(scope);

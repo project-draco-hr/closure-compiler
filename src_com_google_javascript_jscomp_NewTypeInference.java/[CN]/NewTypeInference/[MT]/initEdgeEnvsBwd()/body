@@ -1,31 +1,4 @@
 {
-  TypeEnv env=new TypeEnv();
-  env=env.split();
-  Set<String> varNames=currentScope.getOuterVars();
-  varNames.addAll(currentScope.getLocals());
-  if (currentScope.isFunction()) {
-    if (currentScope.getName() != null) {
-      varNames.add(currentScope.getName());
-    }
-    varNames.addAll(currentScope.getFormals());
-    if (currentScope.hasThis()) {
-      varNames.add("this");
-    }
-  }
-  for (  String varName : varNames) {
-    JSType declType=currentScope.getDeclaredTypeOf(varName);
-    env=envPutType(env,varName,declType == null ? JSType.UNKNOWN : pickInitialType(declType));
-  }
-  for (  String fnName : currentScope.getLocalFunDefs()) {
-    JSType summaryType=summaries.get(currentScope.getScope(fnName));
-    FunctionType fnType=summaryType.getFunType();
-    if (fnType.isConstructor()) {
-      summaryType=fnType.createConstructorObject();
-    }
- else {
-      summaryType=summaryType.withProperty(new QualifiedName("prototype"),JSType.TOP_OBJECT);
-    }
-    env=envPutType(env,fnName,summaryType);
-  }
+  TypeEnv env=getTypeEnvFromDeclaredTypes();
   initEdgeEnvs(env);
 }

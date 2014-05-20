@@ -1,0 +1,14 @@
+{
+  for (  String formal : formals) {
+    if (getDeclaredTypeOf(formal) == null) {
+      return true;
+    }
+  }
+  for (  String outer : outerVars) {
+    JSType declType=getDeclaredTypeOf(outer);
+    if (declType == null || (declType.getFunType() != null && declType.getFunType().getReturnType().isUnknown())) {
+      return true;
+    }
+  }
+  return false;
+}
