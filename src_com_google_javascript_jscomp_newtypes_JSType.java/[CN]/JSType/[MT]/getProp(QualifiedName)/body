@@ -2,15 +2,6 @@
   if (isBottom() || isUnknown()) {
     return UNKNOWN;
   }
-  Preconditions.checkState(objs != null);
-  JSType ptype=BOTTOM;
-  for (  ObjectType o : objs) {
-    if (o.mayHaveProp(qname)) {
-      ptype=join(ptype,o.getProp(qname));
-    }
-  }
-  if (ptype.isBottom()) {
-    return null;
-  }
-  return ptype;
+  Preconditions.checkState(objs != null || enums != null);
+  return nullAcceptingJoin(TypeWithProperties.getProp(objs,qname),TypeWithProperties.getProp(enums,qname));
 }

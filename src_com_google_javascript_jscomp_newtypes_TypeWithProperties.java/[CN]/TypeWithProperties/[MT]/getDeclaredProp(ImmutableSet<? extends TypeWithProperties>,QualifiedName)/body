@@ -1,0 +1,15 @@
+{
+  if (types == null) {
+    return null;
+  }
+  JSType ptype=JSType.BOTTOM;
+  for (  TypeWithProperties t : types) {
+    if (t.mayHaveProp(qname)) {
+      JSType declType=t.getDeclaredProp(qname);
+      if (declType != null) {
+        ptype=JSType.join(ptype,declType);
+      }
+    }
+  }
+  return ptype.isBottom() ? null : ptype;
+}
