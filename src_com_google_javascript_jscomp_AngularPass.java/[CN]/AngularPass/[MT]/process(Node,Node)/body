@@ -1,26 +1,3 @@
 {
-  NodeTraversal.traverse(compiler,root,this);
-  CodingConvention convention=compiler.getCodingConvention();
-  boolean codeChanged=false;
-  for (  NodeContext entry : injectables) {
-    String name=entry.getName();
-    Node fn=entry.getFunctionNode();
-    List<Node> dependencies=createDependenciesList(fn);
-    if (dependencies.isEmpty()) {
-      continue;
-    }
-    Node dependenciesArray=IR.arraylit(dependencies.toArray(new Node[dependencies.size()]));
-    Node statement=IR.exprResult(IR.assign(IR.getelem(NodeUtil.newQualifiedNameNode(convention,name),IR.string(INJECT_PROPERTY_NAME)),dependenciesArray));
-    Node insertionPoint=entry.getTarget();
-    Node next=insertionPoint.getNext();
-    while (next != null && NodeUtil.isExprCall(next) && convention.getClassesDefinedByCall(next.getFirstChild()) != null) {
-      insertionPoint=next;
-      next=insertionPoint.getNext();
-    }
-    insertionPoint.getParent().addChildAfter(statement,insertionPoint);
-    codeChanged=true;
-  }
-  if (codeChanged) {
-    compiler.reportCodeChange();
-  }
+  hotSwapScript(root,null);
 }
