@@ -1,17 +1,21 @@
 {
-  if ((isTop() || isUnknown()) && other.equals(NULL)) {
-    return TOP_MINUS_NULL;
-  }
-  if ((isTop() || isUnknown()) && other.equals(UNDEFINED)) {
-    return TOP_MINUS_UNDEF;
-  }
-  if (other.equals(NULL) || other.equals(UNDEFINED)) {
-    return new JSType(mask & ~other.mask,location,objs,typeVar,enums);
-  }
-  if (objs == null) {
+  if (isUnknown()) {
     return this;
   }
-  Preconditions.checkState((other.mask & ~NON_SCALAR_MASK) == 0 && other.objs.size() == 1);
+  int otherMask=other.mask;
+  if (isTop()) {
+    if ((otherMask & NON_SCALAR_MASK) == 0 && (otherMask & TYPEVAR_MASK) == 0 && (otherMask & ENUM_MASK) == 0) {
+      return ALMOST_TOP.removeType(other);
+    }
+    return this;
+  }
+  if ((otherMask & NON_SCALAR_MASK) == 0 && (otherMask & TYPEVAR_MASK) == 0 && (otherMask & ENUM_MASK) == 0) {
+    return new JSType(mask & ~otherMask,location,objs,typeVar,enums);
+  }
+  if (objs == null || (otherMask & ~NON_SCALAR_MASK) != 0) {
+    return this;
+  }
+  Preconditions.checkState(otherMask == NON_SCALAR_MASK && other.objs.size() == 1,"Invalid type to remove: " + other);
   NominalType otherKlass=Iterables.getOnlyElement(other.objs).getNominalType();
   ImmutableSet.Builder<ObjectType> newObjs=ImmutableSet.builder();
   for (  ObjectType obj : objs) {
