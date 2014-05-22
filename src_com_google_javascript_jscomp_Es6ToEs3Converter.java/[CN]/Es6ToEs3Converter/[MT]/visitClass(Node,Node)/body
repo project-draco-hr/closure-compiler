@@ -1,0 +1,101 @@
+{
+  Node className=classNode.getFirstChild();
+  Node superClassName=className.getNext();
+  Node classMembers=classNode.getLastChild();
+  Node insertionPoint;
+  String fullClassName=null;
+  boolean anonymous;
+  if (!superClassName.isEmpty()) {
+    cannotConvertYet(superClassName,"extends");
+    return;
+  }
+  if (NodeUtil.isStatement(classNode)) {
+    fullClassName=className.getString();
+    anonymous=false;
+    insertionPoint=classNode;
+  }
+ else   if (parent.isAssign() && parent.getParent().isExprResult()) {
+    fullClassName=parent.getFirstChild().getQualifiedName();
+    if (fullClassName == null) {
+      cannotConvert(parent);
+      return;
+    }
+    anonymous=true;
+    insertionPoint=parent.getParent();
+  }
+ else   if (parent.isName()) {
+    fullClassName=parent.getString();
+    anonymous=true;
+    insertionPoint=parent.getParent();
+  }
+ else {
+    cannotConvert(parent);
+    return;
+  }
+  Verify.verify(NodeUtil.isStatement(insertionPoint));
+  className.detachFromParent();
+  Node constructor=null;
+  JSDocInfo ctorJSDocInfo=null;
+  for (  Node member : classMembers.children()) {
+    if (member.getString().equals("constructor")) {
+      ctorJSDocInfo=member.getJSDocInfo();
+      constructor=member.getFirstChild().detachFromParent();
+      if (!anonymous) {
+        constructor.replaceChild(constructor.getFirstChild(),className);
+      }
+    }
+ else {
+      String qualifiedMemberName;
+      if (member.isStaticMember()) {
+        if (NodeUtil.referencesThis(member.getFirstChild())) {
+          compiler.report(JSError.make(member,STATIC_METHOD_REFERENCES_THIS));
+        }
+        qualifiedMemberName=Joiner.on(".").join(fullClassName,member.getString());
+      }
+ else {
+        qualifiedMemberName=Joiner.on(".").join(fullClassName,"prototype",member.getString());
+      }
+      Node assign=IR.assign(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),qualifiedMemberName,member,member.getString()),member.getFirstChild().detachFromParent());
+      assign.srcref(member);
+      JSDocInfo info=member.getJSDocInfo();
+      if (info != null) {
+        info.setAssociatedNode(assign);
+        assign.setJSDocInfo(info);
+      }
+      Node newNode=NodeUtil.newExpr(assign);
+      insertionPoint.getParent().addChildAfter(newNode,insertionPoint);
+      insertionPoint=newNode;
+    }
+  }
+  if (constructor == null) {
+    Node name=anonymous ? IR.name("").srcref(className) : className;
+    constructor=IR.function(name,IR.paramList().srcref(classNode),IR.block().srcref(classNode));
+  }
+  JSDocInfo classJSDoc=classNode.getJSDocInfo();
+  JSDocInfoBuilder newInfo=(classJSDoc != null) ? JSDocInfoBuilder.copyFrom(classJSDoc) : new JSDocInfoBuilder(true);
+  newInfo.recordConstructor();
+  if (!newInfo.isUnrestrictedRecorded() && !newInfo.isDictRecorded() && !newInfo.isStructRecorded()) {
+    newInfo.recordStruct();
+  }
+  if (ctorJSDocInfo != null) {
+    newInfo.recordSuppressions(ctorJSDocInfo.getSuppressions());
+    for (    String param : ctorJSDocInfo.getParameterNames()) {
+      newInfo.recordParameter(param,ctorJSDocInfo.getParameterType(param));
+    }
+  }
+  parent.replaceChild(classNode,constructor);
+  if (NodeUtil.isStatement(constructor)) {
+    constructor.setJSDocInfo(newInfo.build(constructor));
+  }
+ else   if (parent.isName()) {
+    Node var=parent.getParent();
+    var.setJSDocInfo(newInfo.build(var));
+  }
+ else   if (parent.isAssign()) {
+    parent.setJSDocInfo(newInfo.build(parent));
+  }
+ else {
+    throw new IllegalStateException("Unexpected parent node " + parent);
+  }
+  compiler.reportCodeChange();
+}

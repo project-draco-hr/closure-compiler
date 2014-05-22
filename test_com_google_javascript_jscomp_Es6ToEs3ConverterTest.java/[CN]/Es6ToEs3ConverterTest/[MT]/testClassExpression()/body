@@ -1,5 +1,6 @@
 {
   enableAstValidation(false);
-  test("var C = class { }","var C = function() {}",Es6ToEs3Converter.CANNOT_CONVERT);
-  test("var c = new (class C {})",null,Es6ToEs3Converter.CANNOT_CONVERT);
+  test("var C = new (class {})();",null,Es6ToEs3Converter.CANNOT_CONVERT);
+  test("var C = new (foo || (foo = class { }))();",null,Es6ToEs3Converter.CANNOT_CONVERT);
+  test("(condition ? obj1 : obj2).prop = class C { };",null,Es6ToEs3Converter.CANNOT_CONVERT);
 }

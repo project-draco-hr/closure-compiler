@@ -1,4 +1,5 @@
 {
-  enableAstValidation(false);
-  test(Joiner.on('\n').join("class C {","  static foo() {}","}"),null,Es6ToEs3Converter.CANNOT_CONVERT);
+  test(Joiner.on('\n').join("class C {","  static foo() {}","}"),Joiner.on('\n').join("/** @constructor @struct */","function C() {}","","C.foo = function() {};"));
+  test(Joiner.on('\n').join("class C {","  static foo() {}","","  foo() {}","}"),Joiner.on('\n').join("/** @constructor @struct */","function C() {}","","C.foo = function() {};","","C.prototype.foo = function() {};"));
+  test(Joiner.on('\n').join("class C {","  static foo() {}","","  bar() { C.foo(); }","}"),Joiner.on('\n').join("/** @constructor @struct */","function C() {}","","C.foo = function() {};","","C.prototype.bar = function() { C.foo(); };"));
 }
