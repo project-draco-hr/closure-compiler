@@ -20,4 +20,6 @@
   checkNoWarnings("function f() {" + "  return (typeof 123 == 'number' ||" + "    typeof 123 == 'string' ||"+ "    typeof 123 == 'boolean' ||"+ "    typeof 123 == 'undefined' ||"+ "    typeof 123 == 'function' ||"+ "    typeof 123 == 'object' ||"+ "    typeof 123 == 'unknown');"+ "}");
   typeCheck("function f(){ if (typeof 123 == 'numbr') return 321; }",TypeValidator.UNKNOWN_TYPEOF_VALUE);
   typeCheck("switch (typeof 123) { case 'foo': }",TypeValidator.UNKNOWN_TYPEOF_VALUE);
+  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "/** @param {(number|null|Foo)} x */\n" + "function f(x) {\n"+ "  if (!(typeof x === 'object')) {\n"+ "    var /** number */ n = x;\n"+ "  }\n"+ "}");
+  checkNoWarnings("/** @param {(number|function(number):number)} x */\n" + "function f(x) {\n" + "  if (!(typeof x === 'function')) {\n"+ "    var /** number */ n = x;\n"+ "  }\n"+ "}");
 }
