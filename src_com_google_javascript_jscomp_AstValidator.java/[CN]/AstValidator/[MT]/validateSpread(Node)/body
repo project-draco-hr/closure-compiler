@@ -1,0 +1,17 @@
+{
+  validateNodeType(Token.SPREAD,n);
+  validateChildCount(n,Token.arity(Token.SPREAD));
+  Node parent=n.getParent();
+switch (parent.getType()) {
+case Token.CALL:
+case Token.NEW:
+    if (n == parent.getFirstChild()) {
+      violation("SPREAD node is not callable.",n);
+    }
+  break;
+case Token.ARRAYLIT:
+break;
+default :
+violation("SPREAD node should not be the child of a " + parent.getType() + " node.",n);
+}
+}
