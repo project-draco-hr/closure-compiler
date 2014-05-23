@@ -1,0 +1,10 @@
+{
+  Node srcref=current.moduleDecl != null ? current.moduleDecl : script;
+  Node block=IR.block();
+  Node scope=IR.exprResult(IR.call(IR.getprop(IR.name("goog"),IR.string("scope")),IR.function(IR.name(""),IR.paramList(),block))).srcrefTree(srcref);
+  Node fromNode=skipHeaderNodes(script);
+  Preconditions.checkNotNull(fromNode);
+  moveChildrenAfter(fromNode,block);
+  script.addChildAfter(scope,fromNode);
+  compiler.reportCodeChange();
+}

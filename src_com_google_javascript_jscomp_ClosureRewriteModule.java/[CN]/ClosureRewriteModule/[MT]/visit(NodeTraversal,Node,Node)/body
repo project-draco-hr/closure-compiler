@@ -1,0 +1,23 @@
+{
+switch (n.getType()) {
+case Token.CALL:
+    Node first=n.getFirstChild();
+  if (first.matchesQualifiedName("goog.module")) {
+    recordAndUpdateModule(t,n);
+  }
+ else   if (first.matchesQualifiedName("goog.require")) {
+    recordAndUpdateRequire(t,n);
+  }
+break;
+case Token.NAME:
+if (n.getString().equals("exports")) {
+Node replacement=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),current.moduleNamespace);
+replacement.srcrefTree(n);
+parent.replaceChild(n,replacement);
+}
+break;
+case Token.SCRIPT:
+rewriteModuleAsScope(n);
+break;
+}
+}

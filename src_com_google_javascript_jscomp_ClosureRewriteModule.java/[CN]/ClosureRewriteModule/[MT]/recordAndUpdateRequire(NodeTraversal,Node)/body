@@ -1,0 +1,16 @@
+{
+  Node idNode=call.getLastChild();
+  if (!idNode.isString()) {
+    t.report(idNode,INVALID_REQUIRE_IDENTIFIER);
+    return;
+  }
+  String namespace=idNode.getString();
+  if (current.requireInsertNode == null) {
+    current.requireInsertNode=getInsertRoot(call);
+  }
+  Node replacement=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),namespace).srcrefTree(call);
+  call.getParent().replaceChild(call,replacement);
+  Node require=IR.exprResult(call).srcref(call);
+  Node insertAt=current.requireInsertNode;
+  insertAt.getParent().addChildBefore(require,insertAt);
+}
