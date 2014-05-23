@@ -2,12 +2,18 @@
   int tokenType=expr.getType();
   Node lhs=expr.getFirstChild();
   Node rhs=expr.getLastChild();
-  if ((specializedType.isTruthy() || specializedType.isFalsy()) && (lhs.isTypeOf() || rhs.isTypeOf())) {
+  if (specializedType.isTruthy() || specializedType.isFalsy()) {
     if (lhs.isTypeOf()) {
       return analyzeSpecializedTypeof(lhs,rhs,tokenType,inEnv,specializedType);
     }
- else {
+ else     if (rhs.isTypeOf()) {
       return analyzeSpecializedTypeof(rhs,lhs,tokenType,inEnv,specializedType);
+    }
+ else     if (isGoogTypeof(lhs)) {
+      return analyzeGoogTypeof(lhs,rhs,inEnv,specializedType);
+    }
+ else     if (isGoogTypeof(rhs)) {
+      return analyzeGoogTypeof(rhs,lhs,inEnv,specializedType);
     }
   }
   EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);

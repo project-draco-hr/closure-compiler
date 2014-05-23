@@ -1,0 +1,13 @@
+{
+  int numArgs=call.getChildCount() - 1;
+  if (numArgs != 1) {
+    warnings.add(JSError.make(call,TypeCheck.WRONG_ARGUMENT_COUNT,call.getFirstChild().getQualifiedName(),Integer.toString(numArgs),"1","1"));
+    return analyzeCallNodeArgumentsFwd(call,inEnv);
+  }
+  EnvTypePair pair=analyzeExprFwd(call.getLastChild(),inEnv);
+  if (specializedType.isTruthy() || specializedType.isFalsy()) {
+    pair=analyzeExprFwd(call.getLastChild(),inEnv,JSType.UNKNOWN,googPredicateTransformType(typeHint,specializedType,pair.type));
+  }
+  pair.type=JSType.BOOLEAN;
+  return pair;
+}
