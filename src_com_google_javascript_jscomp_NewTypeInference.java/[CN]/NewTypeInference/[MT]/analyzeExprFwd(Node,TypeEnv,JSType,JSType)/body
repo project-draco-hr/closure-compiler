@@ -300,6 +300,9 @@ return EnvTypePair.join(thenPair,elsePair);
 case Token.CALL:
 case Token.NEW:
 {
+if (isClosureSpecificCall(expr)) {
+return analyzeClosureCallFwd(expr,inEnv,specializedType);
+}
 Node callee=expr.getFirstChild();
 EnvTypePair calleePair=analyzeExprFwd(callee,inEnv,JSType.topFunction());
 JSType calleeType=calleePair.type;

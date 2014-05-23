@@ -1,0 +1,24 @@
+{
+switch (predicateName) {
+case "isArray":
+    return booleanContext.isTruthy() ? arrayType : beforeType.removeType(arrayType);
+case "isBoolean":
+  return booleanContext.isTruthy() ? JSType.BOOLEAN : beforeType.removeType(JSType.BOOLEAN);
+case "isDef":
+return booleanContext.isTruthy() ? beforeType.removeType(JSType.UNDEFINED) : JSType.UNDEFINED;
+case "isDefAndNotNull":
+return booleanContext.isTruthy() ? beforeType.removeType(JSType.NULL_OR_UNDEF) : JSType.NULL_OR_UNDEF;
+case "isFunction":
+return booleanContext.isTruthy() ? JSType.topFunction() : beforeType.removeType(JSType.topFunction());
+case "isNull":
+return booleanContext.isTruthy() ? JSType.NULL : beforeType.removeType(JSType.NULL);
+case "isNumber":
+return booleanContext.isTruthy() ? JSType.NUMBER : beforeType.removeType(JSType.NUMBER);
+case "isObject":
+return booleanContext.isTruthy() ? JSType.TOP_OBJECT : beforeType.removeType(JSType.TOP_OBJECT);
+case "isString":
+return booleanContext.isTruthy() ? JSType.STRING : beforeType.removeType(JSType.STRING);
+default :
+throw new RuntimeException("Unknown predicate" + predicateName);
+}
+}

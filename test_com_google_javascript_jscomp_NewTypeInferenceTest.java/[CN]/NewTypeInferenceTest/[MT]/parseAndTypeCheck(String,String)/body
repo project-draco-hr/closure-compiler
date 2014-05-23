@@ -1,6 +1,7 @@
 {
   setUp();
   CompilerOptions options=compiler.getOptions();
+  options.setClosurePass(true);
   options.setWarningLevel(DiagnosticGroups.CHECK_VARIABLES,CheckLevel.WARNING);
   compiler.init(Lists.newArrayList(SourceFile.fromCode("[externs]",externs)),Lists.newArrayList(SourceFile.fromCode("[testcode]",js)),options);
   Node externsRoot=compiler.getInput(new InputId("[externs]")).getAstRoot(compiler);
@@ -10,7 +11,7 @@
   GlobalTypeInfo symbolTable=new GlobalTypeInfo(compiler);
   symbolTable.process(externsRoot,astRoot);
   compiler.setSymbolTable(symbolTable);
-  NewTypeInference typeInf=new NewTypeInference(compiler);
+  NewTypeInference typeInf=new NewTypeInference(compiler,true);
   typeInf.process(externsRoot,astRoot);
   return typeInf;
 }
