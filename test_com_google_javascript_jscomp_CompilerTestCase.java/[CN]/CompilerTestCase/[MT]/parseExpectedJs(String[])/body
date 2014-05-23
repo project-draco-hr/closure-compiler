@@ -1,17 +1,7 @@
 {
-  Compiler compiler=createCompiler();
   List<SourceFile> inputs=Lists.newArrayList();
   for (int i=0; i < expected.length; i++) {
     inputs.add(SourceFile.fromCode("expected" + i,expected[i]));
   }
-  compiler.init(externsInputs,inputs,getOptions());
-  Node root=compiler.parseInputs();
-  assertTrue("Unexpected parse error(s): " + Joiner.on("\n").join(compiler.getErrors()),root != null);
-  Node externsRoot=root.getFirstChild();
-  Node mainRoot=externsRoot.getNext();
-  if (normalizeEnabled && normalizeExpected && !compiler.hasErrors()) {
-    Normalize normalize=new Normalize(compiler,false);
-    normalize.process(externsRoot,mainRoot);
-  }
-  return mainRoot;
+  return parseExpectedJs(inputs);
 }

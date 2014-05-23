@@ -16,8 +16,8 @@
     if (objectType == null) {
       return;
     }
-    String referenceSource=getprop.getSourceFileName();
-    String definingSource=docInfo.getSourceName();
+    StaticSourceFile referenceSource=getprop.getStaticSourceFile();
+    StaticSourceFile definingSource=docInfo.getAssociatedNode().getStaticSourceFile();
     boolean sameInput=referenceSource != null && referenceSource.equals(definingSource);
     Visibility visibility=docInfo.getVisibility();
     JSType ownerType=normalizeClassType(objectType);
@@ -46,6 +46,14 @@
  else       if (visibility == Visibility.PROTECTED) {
         if (currentClass == null || !currentClass.isSubtype(ownerType)) {
           compiler.report(t.makeError(getprop,BAD_PROTECTED_PROPERTY_ACCESS,propertyName,validator.getReadableJSTypeName(getprop.getFirstChild(),true)));
+        }
+      }
+ else       if (visibility == Visibility.PACKAGE) {
+        CodingConvention codingConvention=compiler.getCodingConvention();
+        String refPackage=codingConvention.getPackageName(referenceSource);
+        String defPackage=codingConvention.getPackageName(definingSource);
+        if (refPackage == null || defPackage == null || !refPackage.equals(defPackage)) {
+          compiler.report(t.makeError(getprop,BAD_PACKAGE_PROPERTY_ACCESS,propertyName,validator.getReadableJSTypeName(getprop.getFirstChild(),true)));
         }
       }
     }
