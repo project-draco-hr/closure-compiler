@@ -9,10 +9,24 @@ break;
 case Token.PARAM_LIST:
 visitParamList(n,parent);
 break;
+case Token.ARRAYLIT:
+for (Node child : n.children()) {
+if (child.isSpread()) {
+visitArrayLitWithSpread(n,parent);
+break;
+}
+}
+break;
+case Token.CALL:
+case Token.NEW:
+for (Node child : n.children()) {
+if (child.isSpread()) {
+cannotConvertYet(child,"spread operator in a function call");
+}
+}
+break;
 case Token.COMPUTED_PROP:
-case Token.REST:
 case Token.SUPER:
-case Token.SPREAD:
 cannotConvertYet(n,Token.name(n.getType()));
 break;
 }
