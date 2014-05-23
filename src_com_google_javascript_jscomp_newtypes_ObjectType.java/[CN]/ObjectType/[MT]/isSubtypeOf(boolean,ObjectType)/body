@@ -5,11 +5,15 @@
   if ((keepLoosenessOfThis && this.isLoose) || obj2.isLoose) {
     return this.isLooseSubtypeOf(obj2);
   }
+  if ((this.nominalType == null && obj2.nominalType != null) || this.nominalType != null && obj2.nominalType != null && !this.nominalType.isSubclassOf(obj2.nominalType)) {
+    return false;
+  }
   if (!objectKind.isSubtypeOf(obj2.objectKind)) {
     return false;
   }
-  for (  String pname : obj2.props.keySet()) {
-    Property prop2=obj2.props.get(pname);
+  for (  Map.Entry<String,Property> entry : obj2.props.entrySet()) {
+    String pname=entry.getKey();
+    Property prop2=entry.getValue();
     Property prop1=this.getLeftmostProp(new QualifiedName(pname));
     if (prop2.isOptional()) {
       if (prop1 != null && !prop1.getType().isSubtypeOf(prop2.getType())) {
@@ -21,9 +25,6 @@
         return false;
       }
     }
-  }
-  if ((this.nominalType == null && obj2.nominalType != null) || this.nominalType != null && obj2.nominalType != null && !this.nominalType.isSubclassOf(obj2.nominalType)) {
-    return false;
   }
   if (obj2.fn == null) {
     return true;
