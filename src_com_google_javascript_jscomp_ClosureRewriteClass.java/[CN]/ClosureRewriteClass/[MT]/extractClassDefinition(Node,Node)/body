@@ -19,9 +19,19 @@
     return null;
   }
   Node constructor=extractProperty(description,"constructor");
-  if (constructor == null) {
-    compiler.report(JSError.make(description,GOOG_CLASS_CONSTRUCTOR_MISING));
+  if (classInfo != null && classInfo.isInterface()) {
+    if (constructor != null) {
+      compiler.report(JSError.make(description,GOOG_CLASS_CONSTRUCTOR_ON_INTERFACE));
+      return null;
+    }
+  }
+ else   if (constructor == null) {
+    compiler.report(JSError.make(description,GOOG_CLASS_CONSTRUCTOR_MISSING));
     return null;
+  }
+  if (constructor == null) {
+    constructor=IR.function(IR.name("").srcref(callNode),IR.paramList().srcref(callNode),IR.block().srcref(callNode));
+    constructor.srcref(callNode);
   }
   JSDocInfo info=NodeUtil.getBestJSDocInfo(constructor);
   Node classModifier=null;
