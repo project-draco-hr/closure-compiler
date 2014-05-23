@@ -1,0 +1,16 @@
+{
+  Node insertSpot=null;
+  for (int i=0; i < paramList.getChildCount(); i++) {
+    Node param=paramList.getChildAtIndex(i);
+    if (param.hasChildren()) {
+      param.setOptionalArg(true);
+      Node defaultValue=param.getFirstChild().detachFromParent();
+      Node name=IR.name(param.getString()).srcref(param);
+      Node undefined=IR.name("undefined").srcref(param);
+      Node stm=IR.exprResult(IR.and(IR.sheq(name,undefined).srcref(param),IR.assign(name.cloneNode(),defaultValue).srcref(param)).srcref(param)).srcref(param);
+      function.getLastChild().addChildAfter(stm,insertSpot);
+      insertSpot=stm;
+      compiler.reportCodeChange();
+    }
+  }
+}
