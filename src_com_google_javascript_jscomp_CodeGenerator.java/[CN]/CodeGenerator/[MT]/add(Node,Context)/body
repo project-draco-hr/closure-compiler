@@ -627,8 +627,7 @@ cc.listSeparator();
 if (c.isGetterDef() || c.isSetterDef()) {
 add(c);
 }
- else {
-Preconditions.checkState(c.isStringKey());
+ else if (c.isStringKey()) {
 String key=c.getString();
 if (!c.isQuotedString() && !(languageMode == LanguageMode.ECMASCRIPT3 && TokenStream.isKeyword(key)) && TokenStream.isJSIdentifier(key)&& NodeUtil.isLatin(key)) {
 add(key);
@@ -646,6 +645,14 @@ if (c.hasChildren()) {
 add(":");
 addExpr(c.getFirstChild(),1,Context.OTHER);
 }
+}
+ else {
+Preconditions.checkState(c.isComputedProp());
+add("[");
+add(c.getFirstChild());
+add("]");
+add(":");
+add(c.getLastChild());
 }
 }
 add("}");
