@@ -1,23 +1,41 @@
 {
   if (isTopFunction()) {
-    return "TOP_FUNCTION" + (isLoose ? " (loose)" : "");
+    if (isLoose) {
+      return "LOOSE_TOP_FUNCTION";
+    }
+    return "TOP_FUNCTION";
   }
-  List<String> formals=Lists.newLinkedList();
+  StringBuilder builder=new StringBuilder("function(");
   if (nominalType != null) {
-    formals.add("new:" + nominalType.getName());
+    builder.append("new:");
+    builder.append(nominalType.getName());
+    builder.append(',');
   }
   for (  JSType formal : requiredFormals) {
-    formals.add(formal.toString());
+    builder.append(formal.toString());
+    builder.append(',');
   }
   for (  JSType formal : optionalFormals) {
-    formals.add(formal.toString() + "=");
+    builder.append(formal.toString());
+    builder.append("=,");
   }
   if (restFormals != null) {
-    formals.add("..." + restFormals.toString());
+    builder.append("...");
+    builder.append(restFormals.toString());
+    builder.append(',');
   }
-  String result="function (" + Joiner.on(", ").join(formals) + ")";
+  builder.deleteCharAt(builder.length() - 1);
+  builder.append(')');
   if (returnType != null) {
-    result+=": " + returnType.toString();
+    builder.append(':');
+    builder.append(returnType.toString());
   }
-  return result + (isLoose ? " (loose)" : "") + (outerVarPreconditions.isEmpty() ? "" : "\tFV:" + outerVarPreconditions);
+  if (isLoose) {
+    builder.append(" (loose)");
+  }
+  if (!outerVarPreconditions.isEmpty()) {
+    builder.append("\tFV:");
+    builder.append(outerVarPreconditions);
+  }
+  return builder.toString();
 }
