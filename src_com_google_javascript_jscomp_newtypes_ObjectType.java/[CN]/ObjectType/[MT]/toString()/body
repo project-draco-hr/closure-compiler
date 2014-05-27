@@ -1,38 +1,3 @@
 {
-  if (props.isEmpty() || (props.size() == 1 && props.containsKey("prototype"))) {
-    if (fn != null) {
-      return fn.toString();
-    }
- else     if (nominalType != null) {
-      return nominalType.toString();
-    }
-  }
-  StringBuilder result=new StringBuilder();
-  if (nominalType != null) {
-    result.append(nominalType.toString());
-  }
- else   if (isStruct()) {
-    result.append("struct");
-  }
- else   if (isDict()) {
-    result.append("dict");
-  }
-  if (nominalType == null || !props.isEmpty()) {
-    result.append('{');
-    boolean firstIteration=true;
-    for (    String pname : Sets.newTreeSet(props.keySet())) {
-      if (!firstIteration) {
-        result.append(", ");
-        firstIteration=false;
-      }
-      result.append(pname);
-      result.append(':');
-      result.append(props.get(pname).toString());
-    }
-    result.append('}');
-  }
-  if (isLoose) {
-    result.append(" (loose)");
-  }
-  return result.toString();
+  return appendTo(new StringBuilder()).toString();
 }

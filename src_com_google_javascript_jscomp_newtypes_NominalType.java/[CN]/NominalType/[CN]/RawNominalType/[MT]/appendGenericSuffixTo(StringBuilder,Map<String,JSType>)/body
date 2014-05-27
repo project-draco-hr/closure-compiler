@@ -1,0 +1,22 @@
+{
+  Preconditions.checkState(typeMap.isEmpty() || typeMap.keySet().containsAll(typeParameters));
+  if (typeParameters.isEmpty()) {
+    return builder;
+  }
+  boolean firstIteration=true;
+  builder.append(".<");
+  for (  String typeParam : typeParameters) {
+    if (!firstIteration) {
+      builder.append(',');
+    }
+    JSType concrete=typeMap.get(typeParam);
+    if (concrete != null) {
+      concrete.appendTo(builder);
+    }
+ else {
+      builder.append(typeParam);
+    }
+  }
+  builder.append('>');
+  return builder;
+}

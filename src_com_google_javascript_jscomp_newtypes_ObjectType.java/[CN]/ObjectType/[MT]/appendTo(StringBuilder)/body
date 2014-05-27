@@ -1,0 +1,37 @@
+{
+  if (props.isEmpty() || (props.size() == 1 && props.containsKey("prototype"))) {
+    if (fn != null) {
+      return builder.append(fn.toString());
+    }
+ else     if (nominalType != null) {
+      return nominalType.appendTo(builder);
+    }
+  }
+  if (nominalType != null) {
+    nominalType.appendTo(builder);
+  }
+ else   if (isStruct()) {
+    builder.append("struct");
+  }
+ else   if (isDict()) {
+    builder.append("dict");
+  }
+  if (nominalType == null || !props.isEmpty()) {
+    builder.append('{');
+    boolean firstIteration=true;
+    for (    String pname : Sets.newTreeSet(props.keySet())) {
+      if (!firstIteration) {
+        builder.append(", ");
+        firstIteration=false;
+      }
+      builder.append(pname);
+      builder.append(':');
+      props.get(pname).appendTo(builder);
+    }
+    builder.append('}');
+  }
+  if (isLoose) {
+    builder.append(" (loose)");
+  }
+  return builder;
+}

@@ -1,0 +1,42 @@
+{
+  if (isTopFunction()) {
+    if (isLoose) {
+      return builder.append("LOOSE_TOP_FUNCTION");
+    }
+    return builder.append("TOP_FUNCTION");
+  }
+  builder.append("function(");
+  if (nominalType != null) {
+    builder.append("new:");
+    builder.append(nominalType.getName());
+    builder.append(',');
+  }
+  for (  JSType formal : requiredFormals) {
+    builder.append(formal.toString());
+    builder.append(',');
+  }
+  for (  JSType formal : optionalFormals) {
+    builder.append(formal.toString());
+    builder.append("=,");
+  }
+  if (restFormals != null) {
+    builder.append("...");
+    builder.append(restFormals.toString());
+  }
+  if (builder.charAt(builder.length() - 1) == ',') {
+    builder.deleteCharAt(builder.length() - 1);
+  }
+  builder.append(')');
+  if (returnType != null) {
+    builder.append(':');
+    builder.append(returnType.toString());
+  }
+  if (isLoose) {
+    builder.append(" (loose)");
+  }
+  if (!outerVarPreconditions.isEmpty()) {
+    builder.append("\tFV:");
+    builder.append(outerVarPreconditions);
+  }
+  return builder;
+}
