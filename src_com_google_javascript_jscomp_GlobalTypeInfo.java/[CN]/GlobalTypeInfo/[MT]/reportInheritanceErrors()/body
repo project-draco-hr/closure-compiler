@@ -39,7 +39,7 @@
     for (    String pname : propMethodTypesToProcess.keySet()) {
       Collection<DeclaredFunctionType> methodTypes=propMethodTypesToProcess.get(pname);
       Preconditions.checkState(!methodTypes.isEmpty());
-      PropertyDef localPropDef=propertyDefs.get(rawNominalType.getId(),pname);
+      PropertyDef localPropDef=propertyDefs.get(rawNominalType,pname);
       DeclaredFunctionType superMethodType=DeclaredFunctionType.meet(methodTypes);
       DeclaredFunctionType updatedMethodType=localPropDef.methodType.withTypeInfoFromSuper(superMethodType);
       localPropDef.updateMethodType(updatedMethodType);
@@ -61,7 +61,7 @@
       rawNominalType.addProtoProperty(pname,resultType,false);
     }
     for (    String pname : nonInheritedPropNames) {
-      Node defSite=propertyDefs.get(rawNominalType.getId(),pname).defSite;
+      Node defSite=propertyDefs.get(rawNominalType,pname).defSite;
       JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(defSite);
       if (jsdoc != null && jsdoc.isOverride()) {
         warnings.add(JSError.make(defSite,TypeCheck.UNKNOWN_OVERRIDE,pname,rawNominalType.getName()));
