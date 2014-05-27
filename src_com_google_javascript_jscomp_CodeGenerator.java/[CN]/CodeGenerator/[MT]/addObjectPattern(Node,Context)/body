@@ -1,0 +1,23 @@
+{
+  boolean needsParens=(context == Context.START_OF_EXPR);
+  if (needsParens) {
+    add("(");
+  }
+  add("{");
+  for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+    if (child == n.getLastChild() && n.getParent().isVar()) {
+      add("}");
+      add("=");
+    }
+ else     if (child != n.getFirstChild()) {
+      add(",");
+    }
+    add(child);
+  }
+  if (!n.getParent().isVar()) {
+    add("}");
+  }
+  if (needsParens) {
+    add(")");
+  }
+}

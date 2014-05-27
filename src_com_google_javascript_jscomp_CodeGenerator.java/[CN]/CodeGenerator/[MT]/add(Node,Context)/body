@@ -604,8 +604,7 @@ add(")");
 }
 break;
 case Token.STRING_KEY:
-Preconditions.checkState(childCount == 1,"Object lit key must have 1 child");
-addJsString(n);
+addStringKey(n);
 break;
 case Token.STRING:
 Preconditions.checkState(childCount == 0,"A string may not have children");
@@ -627,27 +626,8 @@ for (Node c=first; c != null; c=c.getNext()) {
 if (c != first) {
 cc.listSeparator();
 }
-if (c.isGetterDef() || c.isSetterDef()) {
+if (c.isGetterDef() || c.isSetterDef() || c.isStringKey()) {
 add(c);
-}
- else if (c.isStringKey()) {
-String key=c.getString();
-if (!c.isQuotedString() && !(languageMode == LanguageMode.ECMASCRIPT3 && TokenStream.isKeyword(key)) && TokenStream.isJSIdentifier(key)&& NodeUtil.isLatin(key)) {
-add(key);
-}
- else {
-double d=getSimpleNumber(key);
-if (!Double.isNaN(d)) {
-cc.addNumber(d);
-}
- else {
-addExpr(c,1,Context.OTHER);
-}
-}
-if (c.hasChildren()) {
-add(":");
-addExpr(c.getFirstChild(),1,Context.OTHER);
-}
 }
  else {
 Preconditions.checkState(c.isComputedProp());
@@ -664,6 +644,9 @@ add(")");
 }
 break;
 }
+case Token.OBJECT_PATTERN:
+addObjectPattern(n,context);
+break;
 case Token.SWITCH:
 add("switch(");
 add(first);

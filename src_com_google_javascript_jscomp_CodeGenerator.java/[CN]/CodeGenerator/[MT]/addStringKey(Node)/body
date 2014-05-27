@@ -1,0 +1,19 @@
+{
+  String key=n.getString();
+  if (!n.isQuotedString() && !(languageMode == LanguageMode.ECMASCRIPT3 && TokenStream.isKeyword(key)) && TokenStream.isJSIdentifier(key)&& NodeUtil.isLatin(key)) {
+    add(key);
+  }
+ else {
+    double d=getSimpleNumber(key);
+    if (!Double.isNaN(d)) {
+      cc.addNumber(d);
+    }
+ else {
+      addJsString(n);
+    }
+  }
+  if (n.hasChildren()) {
+    add(":");
+    addExpr(n.getFirstChild(),1,Context.OTHER);
+  }
+}
