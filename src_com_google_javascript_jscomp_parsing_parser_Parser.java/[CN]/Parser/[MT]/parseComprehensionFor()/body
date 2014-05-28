@@ -1,0 +1,16 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.FOR);
+  eat(TokenType.OPEN_PAREN);
+  ParseTree initializer;
+  if (peekId()) {
+    initializer=parseIdentifierExpression();
+  }
+ else {
+    initializer=parsePattern(PatternKind.ANY);
+  }
+  eatPredefinedString(PredefinedName.OF);
+  ParseTree collection=parseAssignmentExpression();
+  eat(TokenType.CLOSE_PAREN);
+  return new ComprehensionForTree(getTreeLocation(start),initializer,collection);
+}
