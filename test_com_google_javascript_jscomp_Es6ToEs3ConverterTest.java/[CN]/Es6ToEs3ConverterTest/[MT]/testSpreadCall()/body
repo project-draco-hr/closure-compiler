@@ -1,4 +1,10 @@
 {
-  enableAstValidation(false);
-  test("f(...args)",null,Es6ToEs3Converter.CANNOT_CONVERT_YET);
+  test("f(...arr);","f.apply(null, [].concat(arr));");
+  test("f(0, ...g());","f.apply(null, [].concat([0], g()));");
+  test("f(...arr, 1);","f.apply(null, [].concat(arr, [1]));");
+  test("f(0, ...g(), 2);","f.apply(null, [].concat([0], g(), [2]));");
+  test("obj.m(...arr);","obj.m.apply(obj, [].concat(arr));");
+  test("x.y.z.m(...arr);","x.y.z.m.apply(x.y.z, [].concat(arr));");
+  test("f(a, ...b, c, ...d, e);","f.apply(null, [].concat([a], b, [c], d, [e]));");
+  test("new F(...args);","new Function.prototype.bind.apply(F, [].concat(args));");
 }

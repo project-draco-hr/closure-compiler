@@ -1,0 +1,48 @@
+{
+  Preconditions.checkArgument(node.isCall() || node.isArrayLit() || node.isNew());
+  List<Node> groups=new ArrayList<>();
+  Node currGroup=null;
+  Node callee=node.isArrayLit() ? null : node.removeFirstChild();
+  Node currElement=node.removeFirstChild();
+  while (currElement != null) {
+    if (currElement.isSpread()) {
+      if (currGroup != null) {
+        groups.add(currGroup);
+        currGroup=null;
+      }
+      groups.add(currElement.removeFirstChild());
+    }
+ else {
+      if (currGroup == null) {
+        currGroup=IR.arraylit();
+      }
+      currGroup.addChildToBack(currElement);
+    }
+    currElement=node.removeFirstChild();
+  }
+  if (currGroup != null) {
+    groups.add(currGroup);
+  }
+  Node result=null;
+  Node joinedGroups=IR.call(IR.getprop(IR.arraylit(),IR.string("concat")),groups.toArray(new Node[groups.size()]));
+  if (node.isArrayLit()) {
+    result=joinedGroups;
+  }
+ else   if (node.isCall()) {
+    if (!NodeUtil.mayHaveSideEffects(callee)) {
+      Node context=callee.isGetProp() ? callee.getFirstChild().cloneTree() : IR.nullNode();
+      result=IR.call(IR.getprop(callee,IR.string("apply")),context,joinedGroups);
+    }
+ else {
+      cannotConvertYet(node,Token.name(node.getType()));
+      return;
+    }
+  }
+ else {
+    Node bindApply=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"Function.prototype.bind.apply");
+    result=IR.newNode(bindApply,callee,joinedGroups);
+  }
+  result.useSourceInfoIfMissingFromForTree(node);
+  parent.replaceChild(node,result);
+  compiler.reportCodeChange();
+}

@@ -10,18 +10,12 @@ case Token.PARAM_LIST:
 visitParamList(n,parent);
 break;
 case Token.ARRAYLIT:
-for (Node child : n.children()) {
-if (child.isSpread()) {
-visitArrayLitWithSpread(n,parent);
-break;
-}
-}
-break;
-case Token.CALL:
 case Token.NEW:
+case Token.CALL:
 for (Node child : n.children()) {
 if (child.isSpread()) {
-cannotConvertYet(child,"spread operator in a function call");
+visitArrayLitOrCallWithSpread(n,parent);
+break;
 }
 }
 break;
