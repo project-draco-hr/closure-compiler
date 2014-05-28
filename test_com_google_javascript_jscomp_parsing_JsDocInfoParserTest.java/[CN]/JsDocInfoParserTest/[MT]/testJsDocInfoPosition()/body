@@ -1,8 +1,11 @@
 {
-  SourceFile sourceFile=SourceFile.fromCode("comment-position-test.js","   \n" + "  /**\n" + "   * A comment\n"+ "   */\n"+ "  function double(x) {}");
-  List<JSDocInfo> jsdocs=parseFull(sourceFile.getCode());
-  assertEquals(1,jsdocs.size());
-  assertEquals(6,jsdocs.get(0).getOriginalCommentPosition());
-  assertEquals(2,sourceFile.getLineOfOffset(jsdocs.get(0).getOriginalCommentPosition()));
-  assertEquals(2,sourceFile.getColumnOfOffset(jsdocs.get(0).getOriginalCommentPosition()));
+  SourceFile sourceFile=SourceFile.fromCode("comment-position-test.js","   \n" + "  /**\n" + "   * A comment\n"+ "   */\n"+ "  function f(x) {}");
+  Node script=parseFull(sourceFile.getCode());
+  Preconditions.checkState(script.isScript());
+  Node fn=script.getFirstChild();
+  Preconditions.checkState(fn.isFunction());
+  JSDocInfo jsdoc=fn.getJSDocInfo();
+  assertEquals(6,jsdoc.getOriginalCommentPosition());
+  assertEquals(2,sourceFile.getLineOfOffset(jsdoc.getOriginalCommentPosition()));
+  assertEquals(2,sourceFile.getColumnOfOffset(jsdoc.getOriginalCommentPosition()));
 }

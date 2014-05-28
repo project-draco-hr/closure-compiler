@@ -5,14 +5,14 @@
       Node parent=n.getParent();
       while (!parent.isLabel() || !labelsMatch(parent,labelName)) {
         if (parent.isFunction() || parent.isScript()) {
-          errorReporter.error(String.format(UNDEFINED_LABEL,labelName.getString()),sourceName,n.getLineno(),"",n.getCharno());
+          errorReporter.error(String.format(UNDEFINED_LABEL,labelName.getString()),sourceName,n.getLineno(),n.getCharno());
           break;
         }
         parent=parent.getParent();
       }
       if (parent.isLabel() && labelsMatch(parent,labelName)) {
         if (n.isContinue() && !isContinueTarget(parent.getLastChild())) {
-          errorReporter.error(UNEXPECTED_LABLED_CONTINUE,sourceName,n.getLineno(),"",n.getCharno());
+          errorReporter.error(UNEXPECTED_LABLED_CONTINUE,sourceName,n.getLineno(),n.getCharno());
         }
       }
     }
@@ -21,7 +21,7 @@
         Node parent=n.getParent();
         while (!isContinueTarget(parent)) {
           if (parent.isFunction() || parent.isScript()) {
-            errorReporter.error(UNEXPECTED_CONTINUE,sourceName,n.getLineno(),"",n.getCharno());
+            errorReporter.error(UNEXPECTED_CONTINUE,sourceName,n.getLineno(),n.getCharno());
             break;
           }
           parent=parent.getParent();
@@ -31,7 +31,7 @@
         Node parent=n.getParent();
         while (!isBreakTarget(parent)) {
           if (parent.isFunction() || parent.isScript()) {
-            errorReporter.error(UNLABELED_BREAK,sourceName,n.getLineno(),"",n.getCharno());
+            errorReporter.error(UNLABELED_BREAK,sourceName,n.getLineno(),n.getCharno());
             break;
           }
           parent=parent.getParent();

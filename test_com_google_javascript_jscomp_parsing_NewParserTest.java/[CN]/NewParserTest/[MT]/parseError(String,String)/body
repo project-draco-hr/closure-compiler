@@ -1,8 +1,7 @@
 {
   TestErrorReporter testErrorReporter=new TestErrorReporter(errors,null);
-  Node script=null;
-  StaticSourceFile file=new SimpleSourceFile("input",false);
-  script=ParserRunner.parseEs6(file,string,ParserRunner.createConfig(isIdeMode,mode,false),testErrorReporter,Logger.getAnonymousLogger()).ast;
+  ParseResult result=ParserRunner.parse(new SimpleSourceFile("input",false),source,ParserRunner.createConfig(isIdeMode,mode,false),testErrorReporter);
+  Node script=result.ast;
   assertTrue(testErrorReporter.hasEncounteredAllErrors());
   assertTrue(testErrorReporter.hasEncounteredAllWarnings());
   return script;
