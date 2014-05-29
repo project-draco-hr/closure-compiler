@@ -29,13 +29,21 @@
     result=joinedGroups;
   }
  else   if (node.isCall()) {
-    if (!NodeUtil.mayHaveSideEffects(callee)) {
-      Node context=callee.isGetProp() ? callee.getFirstChild().cloneTree() : IR.nullNode();
-      result=IR.call(IR.getprop(callee,IR.string("apply")),context,joinedGroups);
+    if (NodeUtil.mayHaveSideEffects(callee) && callee.isGetProp()) {
+      Node statement=node;
+      while (!NodeUtil.isStatement(statement)) {
+        statement=statement.getParent();
+      }
+      Node freshVar=IR.name(FRESH_SPREAD_VAR + freshVarCounter++);
+      Node n=IR.var(freshVar.cloneTree());
+      n.useSourceInfoIfMissingFromForTree(statement);
+      statement.getParent().addChildBefore(n,statement);
+      callee.addChildToFront(IR.assign(freshVar.cloneTree(),callee.removeFirstChild()));
+      result=IR.call(IR.getprop(callee,IR.string("apply")),freshVar,joinedGroups);
     }
  else {
-      cannotConvertYet(node,Token.name(node.getType()));
-      return;
+      Node context=callee.isGetProp() ? callee.getFirstChild().cloneTree() : IR.nullNode();
+      result=IR.call(IR.getprop(callee,IR.string("apply")),context,joinedGroups);
     }
   }
  else {
