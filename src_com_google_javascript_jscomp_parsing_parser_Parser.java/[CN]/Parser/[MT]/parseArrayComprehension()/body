@@ -1,16 +1,3 @@
 {
-  SourcePosition start=getTreeStartLocation();
-  eat(TokenType.OPEN_SQUARE);
-  ImmutableList.Builder<ParseTree> children=ImmutableList.builder();
-  while (peek(TokenType.FOR) || peek(TokenType.IF)) {
-    if (peek(TokenType.FOR)) {
-      children.add(parseComprehensionFor());
-    }
- else {
-      children.add(parseComprehensionIf());
-    }
-  }
-  ParseTree tailExpression=parseAssignmentExpression();
-  eat(TokenType.CLOSE_SQUARE);
-  return new ArrayComprehensionTree(getTreeLocation(start),children.build(),tailExpression);
+  return parseComprehension(ComprehensionTree.ComprehensionType.ARRAY,TokenType.OPEN_SQUARE,TokenType.CLOSE_SQUARE);
 }

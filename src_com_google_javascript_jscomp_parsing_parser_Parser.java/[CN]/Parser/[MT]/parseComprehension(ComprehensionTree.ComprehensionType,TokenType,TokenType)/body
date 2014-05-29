@@ -1,0 +1,16 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(startToken);
+  ImmutableList.Builder<ParseTree> children=ImmutableList.builder();
+  while (peek(TokenType.FOR) || peek(TokenType.IF)) {
+    if (peek(TokenType.FOR)) {
+      children.add(parseComprehensionFor());
+    }
+ else {
+      children.add(parseComprehensionIf());
+    }
+  }
+  ParseTree tailExpression=parseAssignmentExpression();
+  eat(endToken);
+  return new ComprehensionTree(getTreeLocation(start),type,children.build(),tailExpression);
+}
