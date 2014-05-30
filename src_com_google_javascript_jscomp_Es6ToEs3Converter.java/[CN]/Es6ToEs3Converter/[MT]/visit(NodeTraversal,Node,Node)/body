@@ -1,8 +1,16 @@
 {
 switch (n.getType()) {
-case Token.STRING_KEY:
-    visitStringKey(n);
+case Token.OBJECTLIT:
+    for (    Node child : n.children()) {
+      if (child.isComputedProp()) {
+        visitObjectWithComputedProperty(n,parent);
+        break;
+      }
+    }
   break;
+case Token.STRING_KEY:
+visitStringKey(n);
+break;
 case Token.CLASS:
 visitClass(n,parent);
 break;

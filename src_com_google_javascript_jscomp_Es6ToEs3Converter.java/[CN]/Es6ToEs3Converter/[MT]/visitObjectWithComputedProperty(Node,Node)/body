@@ -1,0 +1,47 @@
+{
+  Preconditions.checkArgument(obj.isObjectLit());
+  List<Node> props=new ArrayList<>();
+  Node currElement=obj.getFirstChild();
+  while (currElement != null) {
+    if (currElement.isGetterDef() || currElement.isSetterDef()) {
+      currElement=currElement.getNext();
+    }
+ else {
+      Node nextNode=currElement.getNext();
+      obj.removeChild(currElement);
+      props.add(currElement);
+      currElement=nextNode;
+    }
+  }
+  String objName=FRESH_COMP_PROP_VAR + freshPropVarCounter++;
+  props=Lists.reverse(props);
+  Node result=IR.name(objName);
+  for (  Node propdef : props) {
+    if (propdef.isComputedProp()) {
+      Node propertyExpression=propdef.removeFirstChild();
+      Node value=propdef.removeFirstChild();
+      result=IR.comma(IR.assign(IR.getelem(IR.name(objName),propertyExpression),value),result);
+    }
+ else {
+      if (!propdef.hasChildren()) {
+        Node name=IR.name(propdef.getString()).copyInformationFrom(propdef);
+        propdef.addChildToBack(name);
+      }
+      Node val=propdef.removeFirstChild();
+      propdef.setType(Token.STRING);
+      int type=propdef.isQuotedString() ? Token.GETELEM : Token.GETPROP;
+      Node access=new Node(type,IR.name(objName),propdef);
+      result=IR.comma(IR.assign(access,val),result);
+    }
+  }
+  Node statement=obj;
+  while (!NodeUtil.isStatement(statement)) {
+    statement=statement.getParent();
+  }
+  result.useSourceInfoIfMissingFromForTree(obj);
+  parent.replaceChild(obj,result);
+  Node var=IR.var(IR.name(objName),obj);
+  var.useSourceInfoIfMissingFromForTree(statement);
+  statement.getParent().addChildBefore(var,statement);
+  compiler.reportCodeChange();
+}
