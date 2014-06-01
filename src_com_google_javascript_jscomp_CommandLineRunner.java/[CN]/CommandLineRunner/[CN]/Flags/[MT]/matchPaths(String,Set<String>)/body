@@ -1,0 +1,36 @@
+{
+  FileSystem fs=FileSystems.getDefault();
+  final boolean remove=pattern.indexOf("!") == 0;
+  if (remove)   pattern=pattern.substring(1);
+  if (File.separator.equals("\\")) {
+    pattern=pattern.replace('\\','/');
+  }
+  List<String> patternParts=ImmutableList.copyOf(Splitter.on("/").split(pattern));
+  String prefix=".";
+  for (int i=0; i < patternParts.size(); i++) {
+    if (patternParts.get(i).contains("*")) {
+      if (i == 0) {
+        break;
+      }
+ else {
+        prefix=Joiner.on("/").join(patternParts.subList(0,i));
+        pattern=Joiner.on("/").join(patternParts.subList(i,patternParts.size()));
+      }
+    }
+  }
+  final PathMatcher matcher=fs.getPathMatcher("glob:" + pattern);
+  java.nio.file.Files.walkFileTree(fs.getPath(prefix),new SimpleFileVisitor<Path>(){
+    @Override public FileVisitResult visitFile(    Path p,    BasicFileAttributes attrs){
+      if (matcher.matches(p)) {
+        if (remove) {
+          allJsInputs.remove(p.toString());
+        }
+ else {
+          allJsInputs.add(p.toString());
+        }
+      }
+      return FileVisitResult.CONTINUE;
+    }
+  }
+);
+}
