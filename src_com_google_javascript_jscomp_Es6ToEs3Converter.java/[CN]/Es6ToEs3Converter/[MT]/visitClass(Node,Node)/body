@@ -5,10 +5,6 @@
   Node insertionPoint;
   String fullClassName=null;
   boolean anonymous;
-  if (!superClassName.isEmpty()) {
-    cannotConvertYet(superClassName,"extends");
-    return;
-  }
   if (NodeUtil.isStatement(classNode)) {
     fullClassName=className.getString();
     anonymous=false;
@@ -74,6 +70,23 @@
   JSDocInfo classJSDoc=classNode.getJSDocInfo();
   JSDocInfoBuilder newInfo=(classJSDoc != null) ? JSDocInfoBuilder.copyFrom(classJSDoc) : new JSDocInfoBuilder(true);
   newInfo.recordConstructor();
+  if (!superClassName.isEmpty()) {
+    if (!superClassName.isQualifiedName()) {
+      compiler.report(JSError.make(superClassName,DYNAMIC_EXTENDS_TYPE));
+      return;
+    }
+    Node superClassString=IR.string(superClassName.getQualifiedName());
+    if (newInfo.isInterfaceRecorded()) {
+      newInfo.recordExtendedInterface(new JSTypeExpression(new Node(Token.BANG,superClassString),superClassName.getSourceFileName()));
+    }
+ else {
+      Node inherits=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.inherits");
+      Node inheritsCall=IR.exprResult(IR.call(inherits,className.cloneTree(),superClassName.cloneTree()));
+      inheritsCall.useSourceInfoIfMissingFromForTree(classNode);
+      parent.addChildAfter(inheritsCall,classNode);
+      newInfo.recordBaseType(new JSTypeExpression(new Node(Token.BANG,superClassString),superClassName.getSourceFileName()));
+    }
+  }
   if (!newInfo.isUnrestrictedRecorded() && !newInfo.isDictRecorded() && !newInfo.isStructRecorded()) {
     newInfo.recordStruct();
   }
