@@ -12,6 +12,14 @@
     Result result=compiler.compile(externs,sources,options);
     if (result.success) {
       StringBuilder source=new StringBuilder(compiler.toSource());
+      if (this.outputWrapperFile != null) {
+        try {
+          this.outputWrapper=Files.toString(this.outputWrapperFile,UTF_8);
+        }
+ catch (        Exception e) {
+          throw new BuildException("Invalid output_wrapper_file specified.");
+        }
+      }
       if (this.outputWrapper != null) {
         int pos=-1;
         pos=this.outputWrapper.indexOf(CommandLineRunner.OUTPUT_MARKER);
