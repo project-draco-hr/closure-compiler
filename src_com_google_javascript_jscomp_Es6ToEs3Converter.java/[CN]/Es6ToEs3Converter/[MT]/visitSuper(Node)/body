@@ -1,0 +1,32 @@
+{
+  Node enclosing=node.getParent();
+  Node potentialCallee=node;
+  if (!enclosing.isCall()) {
+    enclosing=enclosing.getParent();
+    potentialCallee=potentialCallee.getParent();
+  }
+  if (!(enclosing.isCall() && enclosing.getFirstChild() == potentialCallee)) {
+    cannotConvertYet(node,"Only calls to super or to a method of super are supported.");
+    return;
+  }
+  Node clazz=NodeUtil.getEnclosingClass(node);
+  if (clazz == null) {
+    compiler.report(JSError.make(node,NO_SUPERTYPE));
+    return;
+  }
+  Node methodName;
+  Node callName=enclosing.removeFirstChild();
+  if (callName.isSuper()) {
+    Node enclosingMember=NodeUtil.getEnclosingClassMember(enclosing);
+    methodName=IR.string(enclosingMember.getString()).srcref(enclosing);
+  }
+ else {
+    methodName=IR.string(callName.getLastChild().getString()).srcref(enclosing);
+  }
+  Node base=IR.getprop(clazz.getFirstChild().cloneTree().srcref(enclosing),IR.string("base").srcref(enclosing)).srcref(enclosing);
+  enclosing.addChildToFront(methodName);
+  enclosing.addChildToFront(IR.thisNode().srcref(enclosing));
+  enclosing.addChildToFront(base);
+  enclosing.putBooleanProp(Node.FREE_CALL,false);
+  compiler.reportCodeChange();
+}

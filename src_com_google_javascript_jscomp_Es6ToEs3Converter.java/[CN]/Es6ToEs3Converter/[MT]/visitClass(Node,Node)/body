@@ -3,6 +3,10 @@
   Node superClassName=className.getNext();
   Node classMembers=classNode.getLastChild();
   Node insertionPoint;
+  if (!superClassName.isEmpty() && !superClassName.isQualifiedName()) {
+    compiler.report(JSError.make(superClassName,DYNAMIC_EXTENDS_TYPE));
+    return;
+  }
   String fullClassName=null;
   boolean anonymous;
   if (NodeUtil.isStatement(classNode)) {
@@ -71,10 +75,6 @@
   JSDocInfoBuilder newInfo=(classJSDoc != null) ? JSDocInfoBuilder.copyFrom(classJSDoc) : new JSDocInfoBuilder(true);
   newInfo.recordConstructor();
   if (!superClassName.isEmpty()) {
-    if (!superClassName.isQualifiedName()) {
-      compiler.report(JSError.make(superClassName,DYNAMIC_EXTENDS_TYPE));
-      return;
-    }
     Node superClassString=IR.string(superClassName.getQualifiedName());
     if (newInfo.isInterfaceRecorded()) {
       newInfo.recordExtendedInterface(new JSTypeExpression(new Node(Token.BANG,superClassString),superClassName.getSourceFileName()));
