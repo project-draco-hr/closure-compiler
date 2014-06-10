@@ -1,6 +1,13 @@
 {
-  for (Iterator<Var> it=t.getScope().getVars(); it.hasNext(); ) {
+  Scope scope=t.getScope();
+  for (Iterator<Var> it=scope.getVars(); it.hasNext(); ) {
     Var v=it.next();
-    checkVar(v,referenceMap.getReferences(v).references);
+    ReferenceCollection referenceCollection=referenceMap.getReferences(v);
+    if (referenceCollection != null) {
+      if (scope.isBlockScope() && !scope.isGlobal() && scope.getParent().getRootNode().isFunction()) {
+        checkShadowParam(v,scope,referenceCollection.references);
+      }
+      checkVar(v,referenceCollection.references);
+    }
   }
 }

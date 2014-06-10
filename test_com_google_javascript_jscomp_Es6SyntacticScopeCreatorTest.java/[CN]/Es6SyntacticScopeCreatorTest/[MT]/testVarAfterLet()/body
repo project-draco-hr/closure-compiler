@@ -1,0 +1,12 @@
+{
+  String js=Joiner.on('\n').join("function f() {","  if (a) {","    let x;","  }","  var y;","}");
+  Node root=getRoot(js);
+  Node fBlock=root.getFirstChild().getLastChild();
+  Scope fBlockScope=scopeCreator.createScope(fBlock,null);
+  assertFalse(fBlockScope.isDeclared("x",false));
+  assertTrue(fBlockScope.isDeclared("y",false));
+  Node ifBlock=fBlock.getFirstChild().getLastChild();
+  Scope ifBlockScope=scopeCreator.createScope(ifBlock,fBlockScope);
+  assertTrue(ifBlockScope.isDeclared("x",false));
+  assertFalse(ifBlockScope.isDeclared("y",false));
+}

@@ -1,0 +1,11 @@
+{
+  String js="function f(x) { if (true) { let y = 3; } }";
+  Node functionBlock=getRoot(js).getLastChild();
+  Scope functionScope=scopeCreator.createScope(functionBlock,null);
+  assertTrue(functionScope.isDeclared("x",false));
+  assertFalse(functionScope.isDeclared("y",false));
+  Node ifBlock=functionBlock.getLastChild().getLastChild().getLastChild();
+  Scope blockScope=scopeCreator.createScope(ifBlock,functionScope);
+  assertFalse(blockScope.isDeclared("x",false));
+  assertTrue(blockScope.isDeclared("y",false));
+}

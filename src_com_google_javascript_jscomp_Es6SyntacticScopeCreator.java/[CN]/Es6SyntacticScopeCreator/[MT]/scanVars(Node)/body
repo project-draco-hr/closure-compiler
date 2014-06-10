@@ -1,0 +1,63 @@
+{
+switch (n.getType()) {
+case Token.VAR:
+    for (Node child=n.getFirstChild(); child != null; ) {
+      Node next=child.getNext();
+      declareVar(scope.getClosestHoistScope(),child);
+      child=next;
+    }
+  return;
+case Token.LET:
+case Token.CONST:
+if (!isNodeAtCurrentLexicalScope(n)) {
+  return;
+}
+for (Node child=n.getFirstChild(); child != null; ) {
+Node next=child.getNext();
+declareVar(child);
+child=next;
+}
+return;
+case Token.FUNCTION:
+if (NodeUtil.isFunctionExpression(n) || !isNodeAtCurrentLexicalScope(n)) {
+return;
+}
+String fnName=n.getFirstChild().getString();
+if (fnName.isEmpty()) {
+return;
+}
+declareVar(n.getFirstChild());
+return;
+case Token.CLASS:
+if (NodeUtil.isClassExpression(n) || !isNodeAtCurrentLexicalScope(n)) {
+return;
+}
+String className=n.getFirstChild().getString();
+if (className.isEmpty()) {
+return;
+}
+declareVar(n.getFirstChild());
+return;
+case Token.CATCH:
+Preconditions.checkState(n.getChildCount() == 2);
+Preconditions.checkState(n.getFirstChild().isName());
+final Node var=n.getFirstChild();
+final Node block=var.getNext();
+if (isNodeAtCurrentLexicalScope(n)) {
+declareVar(var);
+}
+scanVars(block);
+return;
+case Token.SCRIPT:
+inputId=n.getInputId();
+Preconditions.checkNotNull(inputId);
+break;
+}
+if (NodeUtil.isControlStructure(n) || NodeUtil.isStatementBlock(n)) {
+for (Node child=n.getFirstChild(); child != null; ) {
+Node next=child.getNext();
+scanVars(child);
+child=next;
+}
+}
+}

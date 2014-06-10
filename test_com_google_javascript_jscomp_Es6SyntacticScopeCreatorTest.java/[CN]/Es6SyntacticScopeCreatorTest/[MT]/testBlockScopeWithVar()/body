@@ -1,0 +1,12 @@
+{
+  String js="if (true) { if (true) { var x; } }";
+  Node root=getRoot(js);
+  Scope globalScope=scopeCreator.createScope(root,null);
+  assertTrue(globalScope.isDeclared("x",false));
+  Node firstLevelBlock=root.getFirstChild().getLastChild();
+  Scope firstLevelBlockScope=scopeCreator.createScope(firstLevelBlock,globalScope);
+  assertFalse(firstLevelBlockScope.isDeclared("x",false));
+  Node secondLevelBlock=firstLevelBlock.getFirstChild().getLastChild();
+  Scope secondLevelBLockScope=scopeCreator.createScope(secondLevelBlock,firstLevelBlockScope);
+  assertFalse(secondLevelBLockScope.isDeclared("x",false));
+}

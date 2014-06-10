@@ -1,0 +1,12 @@
+{
+  assertParameterShadowed("function f(x) { let x; }");
+  assertParameterShadowed("function f(x) { const x = 3; }");
+  assertRedeclare("function f(x) { function x() {} }");
+  assertParameterShadowed("function f(X) { class X {} }");
+  assertRedeclare("function f(x) { var x; }");
+  assertParameterShadowed("function f(x=3) { var x; }");
+  assertParameterShadowed("function f(...x) { var x; }");
+  assertParameterShadowed("function f(x=3) { function x() {} }");
+  assertParameterShadowed("function f(...x) { function x() {} }");
+  assertNoWarning("function f(x) { if (true) { let x; } }");
+}

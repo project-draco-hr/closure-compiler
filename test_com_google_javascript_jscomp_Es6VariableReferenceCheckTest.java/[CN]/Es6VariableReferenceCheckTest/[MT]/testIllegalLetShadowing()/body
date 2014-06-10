@@ -1,0 +1,10 @@
+{
+  assertRedeclareError(Joiner.on('\n').join("if (a) {","  let x;","  var x;","}"));
+  assertRedeclareError(Joiner.on('\n').join("if (a) {","  let x;","  let x;","}"));
+  assertRedeclareError(Joiner.on('\n').join("function f() {","  let x;","  if (a) {","    var x;","  }","}"));
+  assertNoWarning(Joiner.on('\n').join("function f() {","  if (a) {","    let x;","  }","  var x;","}"));
+  assertNoWarning(Joiner.on('\n').join("function f() {","  if (a) {","    let x;","  }","  if (b) {","    var x;","  }","}"));
+  assertRedeclareError("let x; var x;");
+  assertRedeclareError("var x; let x;");
+  assertRedeclareError("let x; let x;");
+}

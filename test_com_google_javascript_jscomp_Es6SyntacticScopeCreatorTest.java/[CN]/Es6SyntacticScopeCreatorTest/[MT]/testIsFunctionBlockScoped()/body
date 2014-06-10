@@ -1,0 +1,9 @@
+{
+  String js="if (true) { function f() {}; }";
+  Node root=getRoot(js);
+  Scope globalScope=scopeCreator.createScope(root,null);
+  assertFalse(globalScope.isDeclared("f",false));
+  Node ifBlock=root.getFirstChild().getLastChild();
+  Scope blockScope=scopeCreator.createScope(ifBlock,globalScope);
+  assertTrue(blockScope.isDeclared("f",false));
+}

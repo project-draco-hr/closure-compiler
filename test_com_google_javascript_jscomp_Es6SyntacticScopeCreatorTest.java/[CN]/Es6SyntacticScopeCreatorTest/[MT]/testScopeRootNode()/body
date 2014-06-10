@@ -1,0 +1,14 @@
+{
+  String js="function foo() {\n" + " var x = 10;" + "}";
+  Node root=getRoot(js);
+  Scope globalScope=scopeCreator.createScope(root,null);
+  assertEquals(root,globalScope.getRootNode());
+  assertFalse(globalScope.isBlockScope());
+  assertTrue(globalScope.isHoistScope());
+  Node fooBlockNode=root.getFirstChild().getLastChild();
+  Scope fooScope=scopeCreator.createScope(fooBlockNode,null);
+  assertEquals(fooBlockNode,fooScope.getRootNode());
+  assertTrue(fooScope.isBlockScope());
+  assertTrue(fooScope.isHoistScope());
+  assertTrue(fooScope.isDeclared("x",false));
+}

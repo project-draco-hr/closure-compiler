@@ -1,0 +1,14 @@
+{
+  Preconditions.checkState(n.isName() || n.isRest());
+  String name=n.getString();
+  if (s.getVar(name) != null && s.getVar(name).getNode() == n) {
+    return;
+  }
+  CompilerInput input=compiler.getInput(inputId);
+  if (s.isDeclared(name,false) || (s.isLocal() && name.equals(ARGUMENTS))) {
+    redeclarationHandler.onRedeclaration(s,name,n,input);
+  }
+ else {
+    s.declare(name,n,null,input);
+  }
+}

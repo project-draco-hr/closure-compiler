@@ -1,0 +1,15 @@
+{
+  String js="for (let i of arr) { let x; }";
+  Node root=getRoot(js);
+  Scope globalScope=scopeCreator.createScope(root,null);
+  assertFalse(globalScope.isDeclared("i",false));
+  assertFalse(globalScope.isDeclared("x",false));
+  Node forNode=root.getFirstChild();
+  Scope forScope=scopeCreator.createScope(forNode,globalScope);
+  assertTrue(forScope.isDeclared("i",false));
+  assertFalse(forScope.isDeclared("x",false));
+  Node forBlock=forNode.getLastChild();
+  Scope forBlockScope=scopeCreator.createScope(forBlock,forScope);
+  assertFalse(forBlockScope.isDeclared("i",false));
+  assertTrue(forBlockScope.isDeclared("x",false));
+}

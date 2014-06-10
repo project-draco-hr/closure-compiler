@@ -20,36 +20,57 @@
     }
     BasicBlock basicBlock=reference.getBasicBlock();
     boolean isDeclaration=reference.isDeclaration();
-    boolean allowDupe=VarCheck.hasDuplicateDeclarationSuppression(reference.getNode(),v);
+    Node referenceNode=reference.getNode();
+    boolean allowDupe=VarCheck.hasDuplicateDeclarationSuppression(referenceNode,v);
+    boolean letConstShadowsVar=v.getParentNode().isVar() && (reference.isLetDeclaration() || reference.isConstDeclaration());
+    boolean shadowCaught=false;
     if (isDeclaration && !allowDupe) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
         if (declaredBlock.provablyExecutesBefore(basicBlock)) {
-          String filename=NodeUtil.getSourceName(reference.getNode());
-          compiler.report(JSError.make(filename,reference.getNode(),checkLevel,REDECLARED_VARIABLE,v.name));
+          shadowCaught=true;
+          DiagnosticType diagnosticType;
+          if (((v.isLet() || v.isConst())) || letConstShadowsVar) {
+            diagnosticType=REDECLARED_VARIABLE_ERROR;
+          }
+ else {
+            diagnosticType=REDECLARED_VARIABLE;
+          }
+          compiler.report(JSError.make(NodeUtil.getSourceName(referenceNode),referenceNode,checkLevel,diagnosticType,v.name));
           break;
         }
+      }
+    }
+    if (!shadowCaught && isDeclaration && letConstShadowsVar) {
+      if (v.getScope() == reference.getScope()) {
+        compiler.report(JSError.make(NodeUtil.getSourceName(referenceNode),referenceNode,checkLevel,REDECLARED_VARIABLE_ERROR,v.name));
       }
     }
     if (isUnhoistedNamedFunction && !isDeclaration && isDeclaredInScope) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
         if (!declaredBlock.provablyExecutesBefore(basicBlock)) {
-          String filename=NodeUtil.getSourceName(reference.getNode());
-          compiler.report(JSError.make(filename,reference.getNode(),AMBIGUOUS_FUNCTION_DECL,v.name));
+          compiler.report(JSError.make(NodeUtil.getSourceName(referenceNode),referenceNode,AMBIGUOUS_FUNCTION_DECL,v.name));
           break;
         }
       }
     }
+    boolean isUndeclaredReference=false;
     if (!isDeclaration && !isDeclaredInScope) {
-      if (!reference.getNode().isFromExterns()) {
+      if (!referenceNode.isFromExterns()) {
         Node grandparent=reference.getGrandparent();
-        if (grandparent.isName() && grandparent.getString().equals(v.name)) {
+        if ((v.isVar() && grandparent.isName() && grandparent.getString().equals(v.name))) {
           continue;
         }
         if (reference.getScope() == v.scope) {
-          String filename=NodeUtil.getSourceName(reference.getNode());
-          compiler.report(JSError.make(filename,reference.getNode(),checkLevel,UNDECLARED_REFERENCE,v.name));
+          isUndeclaredReference=true;
+          compiler.report(JSError.make(NodeUtil.getSourceName(referenceNode),reference.getNode(),checkLevel,(v.isLet() || v.isConst()) ? UNDECLARED_REFERENCE_ERROR : UNDECLARED_REFERENCE,v.name));
         }
       }
+    }
+    if (!isDeclaration && !isUndeclaredReference && v.isConst()&& reference.isLvalue()) {
+      compiler.report(JSError.make(NodeUtil.getSourceName(referenceNode),referenceNode,checkLevel,REASSIGNED_CONSTANT,v.name));
+    }
+    if (isDeclaration && !v.isVar() && reference.getGrandparent().isAddedBlock()) {
+      compiler.report(JSError.make(NodeUtil.getSourceName(referenceNode),referenceNode,checkLevel,DECLARATION_NOT_DIRECTLY_IN_BLOCK,v.name));
     }
     if (isDeclaration) {
       blocksWithDeclarations.add(basicBlock);
