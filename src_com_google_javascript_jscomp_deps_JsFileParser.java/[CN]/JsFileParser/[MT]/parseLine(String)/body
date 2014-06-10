@@ -1,6 +1,6 @@
 {
   boolean lineHasProvidesOrRequires=false;
-  if (line.contains("provide") || line.contains("require") || line.contains("addDependency")) {
+  if (line.contains("provide") || line.contains("require") || line.contains("module")|| line.contains("addDependency")) {
     googMatcher.reset(line);
     while (googMatcher.find()) {
       lineHasProvidesOrRequires=true;
@@ -9,8 +9,12 @@
         requires.add("goog");
       }
       char firstChar=googMatcher.group(1).charAt(0);
-      boolean isProvide=firstChar == 'p';
+      boolean isProvide=(firstChar == 'p' || firstChar == 'm');
+      boolean isModule=firstChar == 'm';
       boolean isRequire=firstChar == 'r';
+      if (isModule) {
+        this.fileIsModule=true;
+      }
       if (isProvide || isRequire) {
         String arg=parseJsString(googMatcher.group(2));
         if (isRequire) {

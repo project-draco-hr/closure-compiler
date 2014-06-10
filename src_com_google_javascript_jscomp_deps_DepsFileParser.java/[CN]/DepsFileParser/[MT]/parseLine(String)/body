@@ -10,7 +10,9 @@
         throw new ParseException("Invalid arguments to goog.addDependency(). Found: " + addDependencyParams,true);
       }
       String path=pathTranslator.apply(parseJsString(depArgsMatch.group(1)));
-      DependencyInfo depInfo=new SimpleDependencyInfo(path,filePath,parseJsStringArray(depArgsMatch.group(2)),parseJsStringArray(depArgsMatch.group(3)));
+      String moduleMatch=depArgsMatch.group(4);
+      boolean isModule=moduleMatch == null ? false : parseJsBoolean(moduleMatch);
+      DependencyInfo depInfo=new SimpleDependencyInfo(path,filePath,parseJsStringArray(depArgsMatch.group(2)),parseJsStringArray(depArgsMatch.group(3)),isModule);
       if (logger.isLoggable(Level.FINE)) {
         logger.fine("Found dep: " + depInfo);
       }
