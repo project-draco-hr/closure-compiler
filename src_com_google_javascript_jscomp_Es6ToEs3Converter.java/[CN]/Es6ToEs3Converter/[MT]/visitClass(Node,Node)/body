@@ -87,6 +87,16 @@
       newInfo.recordBaseType(new JSTypeExpression(new Node(Token.BANG,superClassString),superClassName.getSourceFileName()));
     }
   }
+  if (NodeUtil.isStatement(classNode)) {
+    String classString=constructor.removeFirstChild().getString();
+    Node uniqueName=IR.name(FRESH_CLASS_NAME_BASE + classString);
+    constructor=IR.var(uniqueName.cloneTree(),IR.function(IR.name(""),constructor.removeFirstChild(),constructor.removeFirstChild()));
+    constructor.useSourceInfoIfMissingFromForTree(classNode);
+    Node reassign=IR.var(IR.name(classString),uniqueName);
+    reassign.useSourceInfoIfMissingFromForTree(classNode);
+    classNode.getParent().addChildAfter(reassign,classNode);
+    insertionPoint=reassign;
+  }
   if (!newInfo.isUnrestrictedRecorded() && !newInfo.isDictRecorded() && !newInfo.isStructRecorded()) {
     newInfo.recordStruct();
   }
@@ -98,7 +108,7 @@
   }
   parent.replaceChild(classNode,constructor);
   if (NodeUtil.isStatement(constructor)) {
-    constructor.setJSDocInfo(newInfo.build(constructor));
+    insertionPoint.setJSDocInfo(newInfo.build(insertionPoint));
   }
  else   if (parent.isName()) {
     Node var=parent.getParent();

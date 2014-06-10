@@ -26,7 +26,8 @@
  else {
     methodName=IR.string(callName.getLastChild().getString()).srcref(enclosing);
   }
-  Node base=IR.getprop(clazz.getFirstChild().cloneTree().srcref(enclosing),IR.string("base").srcref(enclosing)).srcref(enclosing);
+  Node uniqueClassName=IR.name(FRESH_CLASS_NAME_BASE + clazz.getFirstChild().getString());
+  Node base=IR.getprop(uniqueClassName.srcref(enclosing),IR.string("base").srcref(enclosing)).srcref(enclosing);
   enclosing.addChildToFront(methodName);
   enclosing.addChildToFront(IR.thisNode().srcref(enclosing));
   enclosing.addChildToFront(base);

@@ -1,8 +1,8 @@
 {
-  test("class C extends D { }",Joiner.on('\n').join("/** @constructor @struct @extends {D} */","function C() { }","goog.inherits(C, D);"));
-  test("class C extends ns.D { }",Joiner.on('\n').join("/** @constructor @struct @extends {ns.D} */","function C() { }","goog.inherits(C, ns.D);"));
-  test("class C extends D { constructor() { super(); } }",Joiner.on('\n').join("/** @constructor @struct @extends {D} */","function C() { C.base(this, 'constructor'); }","goog.inherits(C, D);"));
-  test("class C extends D { constructor(str) { super(str); } }",Joiner.on('\n').join("/** @constructor @struct @extends {D} */","function C(str) { C.base(this, 'constructor', str); }","goog.inherits(C, D);"));
+  test("class C extends D { }",Joiner.on('\n').join("var $jscomp$unique$class$C = function() {}","/** @constructor @struct @extends {D} */","var C = $jscomp$unique$class$C;","goog.inherits(C, D);"));
+  test("class C extends ns.D { }",Joiner.on('\n').join("var $jscomp$unique$class$C = function() {}","/** @constructor @struct @extends {ns.D} */","var C = $jscomp$unique$class$C;","goog.inherits(C, ns.D);"));
+  test("class C extends D { constructor() { super(); } }",Joiner.on('\n').join("var $jscomp$unique$class$C = function() {","  $jscomp$unique$class$C.base(this, 'constructor');","}","/** @constructor @struct @extends {D} */","var C = $jscomp$unique$class$C;","goog.inherits(C, D);"));
+  test("class C extends D { constructor(str) { super(str); } }",Joiner.on('\n').join("var $jscomp$unique$class$C = function(str) { ","  $jscomp$unique$class$C.base(this, 'constructor', str); }","/** @constructor @struct @extends {D} */","var C = $jscomp$unique$class$C;","goog.inherits(C, D);"));
   test("class C extends foo() {}",null,Es6ToEs3Converter.DYNAMIC_EXTENDS_TYPE);
   test("class C extends function(){} {}",null,Es6ToEs3Converter.DYNAMIC_EXTENDS_TYPE);
 }
