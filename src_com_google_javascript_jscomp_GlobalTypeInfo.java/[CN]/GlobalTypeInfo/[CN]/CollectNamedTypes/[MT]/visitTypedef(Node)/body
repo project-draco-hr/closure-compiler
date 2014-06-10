@@ -1,0 +1,14 @@
+{
+  Preconditions.checkState(n.isVar());
+  if (n.getFirstChild().getFirstChild() != null) {
+    warnings.add(JSError.make(n,CANNOT_INIT_TYPEDEF));
+  }
+  String varName=n.getFirstChild().getString();
+  if (currentScope.isDefinedLocally(varName)) {
+    warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,varName));
+    return;
+  }
+  JSDocInfo jsdoc=n.getJSDocInfo();
+  Typedef td=Typedef.make(jsdoc.getTypedefType());
+  currentScope.addTypedef(varName,td);
+}

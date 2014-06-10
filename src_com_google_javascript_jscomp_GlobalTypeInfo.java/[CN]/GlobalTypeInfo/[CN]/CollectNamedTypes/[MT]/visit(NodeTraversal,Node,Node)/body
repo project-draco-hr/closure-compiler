@@ -5,43 +5,10 @@ case Token.FUNCTION:
   break;
 case Token.VAR:
 if (NodeUtil.isTypedefDecl(n)) {
-  if (n.getFirstChild().getFirstChild() != null) {
-    warnings.add(JSError.make(n,CANNOT_INIT_TYPEDEF));
-  }
-  String varName=n.getFirstChild().getString();
-  if (currentScope.isDefinedLocally(varName)) {
-    warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,varName));
-    break;
-  }
-  JSDocInfo jsdoc=n.getJSDocInfo();
-  Typedef td=Typedef.make(jsdoc.getTypedefType());
-  currentScope.addTypedef(varName,td);
+  visitTypedef(n);
 }
  else if (NodeUtil.isEnumDecl(n)) {
-  String varName=n.getFirstChild().getString();
-  if (currentScope.isDefinedLocally(varName)) {
-    warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,varName));
-    break;
-  }
-  Node init=n.getFirstChild().getFirstChild();
-  if (init == null || !init.isObjectLit() || init.getFirstChild() == null) {
-    warnings.add(JSError.make(n,MALFORMED_ENUM));
-    currentScope.addLocal(varName,JSType.UNKNOWN,false);
-    break;
-  }
-  JSDocInfo jsdoc=n.getJSDocInfo();
-  Set<String> propNames=Sets.newHashSet();
-  for (  Node prop : init.children()) {
-    String pname=NodeUtil.getObjectLitKeyName(prop);
-    if (propNames.contains(pname)) {
-      warnings.add(JSError.make(n,DUPLICATE_PROP_IN_ENUM,pname));
-    }
-    if (!convention.isValidEnumKey(pname)) {
-      warnings.add(JSError.make(prop,TypeCheck.ENUM_NOT_CONSTANT,pname));
-    }
-    propNames.add(pname);
-  }
-  currentScope.addEnum(varName,EnumType.make(varName,jsdoc.getEnumParameterType(),ImmutableSet.copyOf(propNames)));
+  visitEnum(n);
 }
 break;
 case Token.GETPROP:

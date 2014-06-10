@@ -1,6 +1,6 @@
 {
   if (expr.isName()) {
-    return localNamespaces.contains(expr.getString());
+    return isNamespace(expr.getString());
   }
   if (!expr.isGetProp()) {
     return false;
@@ -10,7 +10,7 @@
     return false;
   }
   String leftmost=qname.getLeftmostName();
-  if (!localNamespaces.contains(leftmost)) {
+  if (!isNamespace(leftmost)) {
     return false;
   }
   JSType propType=getDeclaredTypeOf(leftmost).getProp(qname.getAllButLeftmost());
