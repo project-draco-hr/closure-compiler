@@ -11,4 +11,7 @@
   test("var x = b ? Factory.create().m(...arr) : null;",Joiner.on('\n').join("var $jscomp$spread$args0;","var x = b ? ($jscomp$spread$args0 = Factory.create()).m.apply($jscomp$spread$args0, ","    [].concat(arr)) : null;"));
   test("getF()(...args);","getF().apply(null, [].concat(args));");
   test("F.c().m(...a); G.d().n(...b);",Joiner.on('\n').join("var $jscomp$spread$args0;","($jscomp$spread$args0 = F.c()).m.apply($jscomp$spread$args0,","    [].concat(a));","var $jscomp$spread$args1;","($jscomp$spread$args1 = G.d()).n.apply($jscomp$spread$args1,","    [].concat(b));"));
+  enableTypeCheck(CheckLevel.WARNING);
+  test(EXTERNS_BASE,Joiner.on('\n').join("class C {}","class Factory {","  /** @return {C} */","  static create() {return new C()}","}","var arr = [1,2]","Factory.create().m(...arr);"),null,null,TypeCheck.INEXISTENT_PROPERTY);
+  test(EXTERNS_BASE,Joiner.on('\n').join("class C { m(a) {} }","class Factory {","  /** @return {C} */","  static create() {return new C()}","}","var arr = [1,2]","Factory.create().m(...arr);"),Joiner.on('\n').join("/** @constructor @struct */","function C() {}","C.prototype.m = function (a) {};","/** @constructor @struct */","function Factory() {}","/** @return {C} */","Factory.create = function () {return new C()};","var arr = [1,2]","var $jscomp$spread$args0;","($jscomp$spread$args0 = Factory.create()).m.apply($jscomp$spread$args0, [].concat(arr));"),null,null);
 }

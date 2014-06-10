@@ -1,0 +1,6 @@
+{
+  enableTypeCheck(CheckLevel.WARNING);
+  test(Joiner.on('\n').join(CLOSURE_BASE,"class D {","  static f() {}","}","class C extends D {}","C.f();"),null,null,TypeCheck.INEXISTENT_PROPERTY);
+  test(Joiner.on('\n').join(CLOSURE_BASE,"class D {","  static f() {}","}","class C extends D { f() {} }","C.f();"),null,null,TypeCheck.INEXISTENT_PROPERTY);
+  test(Joiner.on('\n').join(CLOSURE_BASE,"class D {","  static f() {}","}","class C extends D { static f() {} g() {this.f()} }"),null,null,TypeCheck.INEXISTENT_PROPERTY);
+}
