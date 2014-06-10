@@ -19,7 +19,26 @@
   }
   Node newValue=rhs.detachFromParent();
   newProperty.addChildToBack(newValue);
-  objectLiteral.addChildToBack(newProperty);
+  boolean propertyExists=false;
+  for (  Node currentProperty : objectLiteral.children()) {
+    String currentPropertyName=currentProperty.getString();
+    Node currentValue=currentProperty.getFirstChild();
+    if (currentPropertyName.equals(propertyName)) {
+      propertyExists=true;
+      boolean isCurrentValueSideEffect=NodeUtil.canBeSideEffected(currentValue);
+      boolean isNewValueSideEffect=NodeUtil.canBeSideEffected(newValue);
+      if (!isCurrentValueSideEffect && !isNewValueSideEffect) {
+        objectLiteral.removeChild(currentProperty);
+        objectLiteral.addChildToBack(newProperty);
+        propertyCandidate.detachFromParent();
+        return true;
+      }
+      break;
+    }
+  }
+  if (!propertyExists) {
+    objectLiteral.addChildToBack(newProperty);
+  }
   propertyCandidate.detachFromParent();
   return true;
 }
