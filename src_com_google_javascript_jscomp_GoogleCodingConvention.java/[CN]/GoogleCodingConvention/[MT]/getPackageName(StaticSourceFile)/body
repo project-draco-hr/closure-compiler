@@ -1,5 +1,11 @@
 {
   String name=source.getName();
-  int lastSlash=name.lastIndexOf("/");
-  return lastSlash == -1 ? "" : name.substring(0,lastSlash);
+  Matcher m=PACKAGE_WITH_TEST_DIR.matcher(name);
+  if (m.find()) {
+    return m.group(1);
+  }
+ else {
+    int lastSlash=name.lastIndexOf("/");
+    return lastSlash == -1 ? "" : name.substring(0,lastSlash);
+  }
 }
