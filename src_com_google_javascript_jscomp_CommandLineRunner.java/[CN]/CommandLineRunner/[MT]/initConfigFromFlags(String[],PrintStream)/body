@@ -32,6 +32,16 @@ catch (  IOException ioErr) {
     }
     flags.closureEntryPoint=Lists.newArrayList(ProcessCommonJSModules.toModuleName(flags.commonJsEntryModule));
   }
+  if (flags.outputWrapperFile != null && !flags.outputWrapperFile.isEmpty()) {
+    flags.outputWrapper="";
+    try {
+      flags.outputWrapper=Files.toString(new File(flags.outputWrapperFile),UTF_8);
+    }
+ catch (    Exception e) {
+      err.println("ERROR - invalid output_wrapper_file specified.");
+      isConfigValid=false;
+    }
+  }
   if (flags.outputWrapper != null && !flags.outputWrapper.isEmpty() && !flags.outputWrapper.contains(CommandLineRunner.OUTPUT_MARKER)) {
     err.println("ERROR - invalid output_wrapper specified. Missing '" + CommandLineRunner.OUTPUT_MARKER + "'.");
     isConfigValid=false;
