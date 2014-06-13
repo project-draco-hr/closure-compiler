@@ -1,0 +1,22 @@
+{
+  if (!NodeUtil.isReferenceName(n)) {
+    return;
+  }
+  String name=n.getString();
+  Scope referencedIn=t.getScope();
+  Var var=referencedIn.getVar(name);
+  if (var == null) {
+    return;
+  }
+  Scope declaredIn=var.getScope();
+  for (Scope s=declaredIn; !(NodeUtil.isLoopStructure(s.getRootNode()) || (s.getRootNode().getParent() != null && NodeUtil.isLoopStructure(s.getRootNode().getParent()))); s=s.getParent()) {
+    if (s.isFunctionBlockScope() || s.isGlobal()) {
+      return;
+    }
+  }
+  for (Scope s=referencedIn; s != declaredIn; s=s.getParent()) {
+    if (s.isFunctionBlockScope()) {
+      t.report(s.getRootNode(),Es6ToEs3Converter.CANNOT_CONVERT_YET,"Loop closure detected");
+    }
+  }
+}

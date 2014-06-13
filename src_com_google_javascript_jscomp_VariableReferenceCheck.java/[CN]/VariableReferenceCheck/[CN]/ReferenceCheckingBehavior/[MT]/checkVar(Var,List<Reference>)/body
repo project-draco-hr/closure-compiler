@@ -23,13 +23,14 @@
     Node referenceNode=reference.getNode();
     boolean allowDupe=VarCheck.hasDuplicateDeclarationSuppression(referenceNode,v);
     boolean letConstShadowsVar=v.getParentNode().isVar() && (reference.isLetDeclaration() || reference.isConstDeclaration());
-    boolean shadowCaught=false;
+    boolean shadowCatchVar=compiler.getLanguageMode().isEs6OrHigher() && v.getParentNode().isCatch() && reference.isDeclaration()&& reference.getNode() != v.getNode();
+    boolean shadowDetected=false;
     if (isDeclaration && !allowDupe) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
         if (declaredBlock.provablyExecutesBefore(basicBlock)) {
-          shadowCaught=true;
+          shadowDetected=true;
           DiagnosticType diagnosticType;
-          if (((v.isLet() || v.isConst())) || letConstShadowsVar) {
+          if (((v.isLet() || v.isConst())) || letConstShadowsVar || shadowCatchVar) {
             diagnosticType=REDECLARED_VARIABLE_ERROR;
           }
  else {
@@ -40,7 +41,7 @@
         }
       }
     }
-    if (!shadowCaught && isDeclaration && letConstShadowsVar) {
+    if (!shadowDetected && isDeclaration && (letConstShadowsVar || shadowCatchVar)) {
       if (v.getScope() == reference.getScope()) {
         compiler.report(JSError.make(NodeUtil.getSourceName(referenceNode),referenceNode,checkLevel,REDECLARED_VARIABLE_ERROR,v.name));
       }

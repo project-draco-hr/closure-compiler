@@ -1,0 +1,29 @@
+{
+  if (!n.isLet() && !n.isConst()) {
+    return;
+  }
+  Scope scope=t.getScope();
+  Node nameNode=n.getFirstChild();
+  if (!nameNode.hasChildren()) {
+    nameNode.addChildToFront(IR.name("undefined").useSourceInfoIfMissingFrom(nameNode));
+  }
+  String oldName=nameNode.getString();
+  n.setType(Token.VAR);
+  Scope hoistScope=scope.getClosestHoistScope();
+  if (scope != hoistScope) {
+    boolean doRename=hoistScope.isDeclared(oldName,true);
+    String newName=doRename ? newUniqueName(oldName) : oldName;
+    Var oldVar=scope.getVar(oldName);
+    scope.undeclare(oldVar);
+    hoistScope.declare(newName,nameNode,null,oldVar.input);
+    if (doRename) {
+      nameNode.setString(newName);
+      Node scopeRoot=scope.getRootNode();
+      if (!renameMap.containsKey(scopeRoot)) {
+        renameMap.put(scopeRoot,new HashMap<String,String>());
+      }
+      renameMap.get(scopeRoot).put(oldName,newName);
+    }
+  }
+  t.getCompiler().reportCodeChange();
+}
