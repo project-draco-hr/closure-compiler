@@ -1,0 +1,20 @@
+{
+  SourceMapGeneratorV3 sourceMap=new SourceMapGeneratorV3();
+  sourceMap.addMapping("source1.html",null,new FilePosition(10,0),new FilePosition(0,0),new FilePosition(0,100));
+  sourceMap.addMapping("source2.html",null,new FilePosition(10,0),new FilePosition(1,0),new FilePosition(1,100));
+  StringBuilder output=new StringBuilder();
+  sourceMap.appendTo(output,"unused.js");
+  compilerOptions=new CompilerOptions();
+  compilerOptions.inputSourceMaps=ImmutableMap.of("[testcode]",new SourceMapInput(SourceFile.fromCode("example.srcmap",output.toString())));
+  extractMessagesSafely("/** @desc Hello */ var MSG_HELLO = goog.getMsg('a');\n" + "/** @desc Hi */ var MSG_HI = goog.getMsg('b');\n");
+  assertEquals(0,compiler.getWarningCount());
+  assertEquals(2,messages.size());
+  JsMessage msg1=messages.get(0);
+  assertEquals("MSG_HELLO",msg1.getKey());
+  assertEquals("Hello",msg1.getDesc());
+  assertEquals("source1.html",msg1.getSourceName());
+  JsMessage msg2=messages.get(1);
+  assertEquals("MSG_HI",msg2.getKey());
+  assertEquals("Hi",msg2.getDesc());
+  assertEquals("source2.html",msg2.getSourceName());
+}

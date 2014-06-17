@@ -52,7 +52,13 @@ compiler.report(traversal.makeError(node,checkLevel,MESSAGE_NOT_INITIALIZED_USIN
 }
 boolean isUnnamedMsg=isUnnamedMessageName(messageKey);
 Builder builder=new Builder(isUnnamedMsg ? null : messageKey);
+OriginalMapping mapping=compiler.getSourceMapping(traversal.getSourceName(),traversal.getLineNumber(),traversal.getCharno());
+if (mapping != null) {
+builder.setSourceName(mapping.getOriginalFile());
+}
+ else {
 builder.setSourceName(traversal.getSourceName());
+}
 try {
 if (isVar) {
 extractMessageFromVariable(builder,node,parent,parent.getParent());
