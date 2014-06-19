@@ -14,21 +14,20 @@
     }
     ObjectType oType=objectType;
     while (oType != null) {
-      if (oType.hasReferenceName()) {
-        if (initializedConstantProperties.containsEntry(oType.getReferenceName(),propertyName)) {
-          compiler.report(t.makeError(getprop,CONST_PROPERTY_REASSIGNED_VALUE,propertyName));
-          break;
-        }
+      if (initializedConstantProperties.containsEntry(oType,propertyName)) {
+        compiler.report(t.makeError(getprop,CONST_PROPERTY_REASSIGNED_VALUE,propertyName));
+        break;
       }
       oType=oType.getImplicitPrototype();
     }
-    Preconditions.checkState(objectType.hasReferenceName());
-    initializedConstantProperties.put(objectType.getReferenceName(),propertyName);
-    if (objectType.isInstanceType()) {
-      ObjectType prototype=objectType.getImplicitPrototype();
-      if (prototype != null) {
-        if (prototype.hasProperty(propertyName) && prototype.hasReferenceName()) {
-          initializedConstantProperties.put(prototype.getReferenceName(),propertyName);
+    if (objectType != null) {
+      initializedConstantProperties.put(objectType,propertyName);
+      if (objectType.isInstanceType()) {
+        ObjectType prototype=objectType.getImplicitPrototype();
+        if (prototype != null) {
+          if (prototype.hasProperty(propertyName)) {
+            initializedConstantProperties.put(prototype,propertyName);
+          }
         }
       }
     }

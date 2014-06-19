@@ -2,15 +2,24 @@
   Var var=t.getScope().getVar(name.getString());
   if (var != null) {
     StaticSourceFile varSrc=var.getSourceFile();
+    boolean isPrivateByConvention=isPrivateByConvention(name.getString());
+    boolean isPrivate=isPrivateByConvention;
     JSDocInfo docInfo=var.getJSDocInfo();
     if (docInfo != null) {
       Visibility visibility=docInfo.getVisibility();
-      if (visibility == Visibility.PRIVATE && !isPrivateAccessAllowed(var,name,parent)) {
-        compiler.report(t.makeError(name,BAD_PRIVATE_GLOBAL_ACCESS,name.getString(),varSrc.getName()));
+      if (visibility != Visibility.INHERITED) {
+        isPrivate=visibility == Visibility.PRIVATE;
+        if (isPrivateByConvention && !isPrivate) {
+          compiler.report(t.makeError(name,CONVENTION_MISMATCH));
+          return;
+        }
+ else         if (visibility == Visibility.PACKAGE && !isPackageAccessAllowed(var,name)) {
+          compiler.report(t.makeError(name,BAD_PACKAGE_PROPERTY_ACCESS,name.getString(),varSrc.getName()));
+        }
       }
- else       if (visibility == Visibility.PACKAGE && !isPackageAccessAllowed(var,name)) {
-        compiler.report(t.makeError(name,BAD_PACKAGE_PROPERTY_ACCESS,name.getString(),varSrc.getName()));
-      }
+    }
+    if (isPrivate && !isPrivateAccessAllowed(var,name,parent)) {
+      compiler.report(t.makeError(name,BAD_PRIVATE_GLOBAL_ACCESS,name.getString(),varSrc.getName()));
     }
   }
 }

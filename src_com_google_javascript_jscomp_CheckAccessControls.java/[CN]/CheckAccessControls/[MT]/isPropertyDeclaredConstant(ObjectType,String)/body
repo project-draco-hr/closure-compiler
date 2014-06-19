@@ -1,5 +1,8 @@
 {
-  for (; objectType != null && objectType.hasReferenceName(); objectType=objectType.getImplicitPrototype()) {
+  if (enforceCodingConventions && compiler.getCodingConvention().isConstant(prop)) {
+    return true;
+  }
+  for (; objectType != null; objectType=objectType.getImplicitPrototype()) {
     JSDocInfo docInfo=objectType.getOwnPropertyJSDocInfo(prop);
     if (docInfo != null && docInfo.isConstant()) {
       return true;
