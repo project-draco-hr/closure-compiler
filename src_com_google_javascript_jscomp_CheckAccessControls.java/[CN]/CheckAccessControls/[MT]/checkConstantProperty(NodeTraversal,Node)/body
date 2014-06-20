@@ -12,6 +12,9 @@
       compiler.report(t.makeError(getprop,CONST_PROPERTY_DELETED,propertyName));
       return;
     }
+    if (objectType == null || (objectType.isFunctionType() && !objectType.toMaybeFunctionType().isConstructor())) {
+      return;
+    }
     ObjectType oType=objectType;
     while (oType != null) {
       if (initializedConstantProperties.containsEntry(oType,propertyName)) {
@@ -20,14 +23,12 @@
       }
       oType=oType.getImplicitPrototype();
     }
-    if (objectType != null) {
-      initializedConstantProperties.put(objectType,propertyName);
-      if (objectType.isInstanceType()) {
-        ObjectType prototype=objectType.getImplicitPrototype();
-        if (prototype != null) {
-          if (prototype.hasProperty(propertyName)) {
-            initializedConstantProperties.put(prototype,propertyName);
-          }
+    initializedConstantProperties.put(objectType,propertyName);
+    if (objectType.isInstanceType()) {
+      ObjectType prototype=objectType.getImplicitPrototype();
+      if (prototype != null) {
+        if (prototype.hasProperty(propertyName)) {
+          initializedConstantProperties.put(prototype,propertyName);
         }
       }
     }
