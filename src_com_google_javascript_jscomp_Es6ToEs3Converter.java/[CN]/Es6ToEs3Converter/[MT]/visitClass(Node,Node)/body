@@ -1,4 +1,5 @@
 {
+  checkClassReassignment(classNode);
   Node className=classNode.getFirstChild();
   Node superClassName=className.getNext();
   Node classMembers=classNode.getLastChild();
@@ -32,6 +33,9 @@
     cannotConvert(parent,"Can only convert classes that are declarations or the right hand" + " side of a simple assignment.");
     return;
   }
+  boolean useUnique=NodeUtil.isStatement(classNode) && !isInFunction(classNode);
+  String uniqueFullClassName=useUnique ? getUniqueClassName(fullClassName) : fullClassName;
+  String superClassString=superClassName.getQualifiedName();
   Verify.verify(NodeUtil.isStatement(insertionPoint));
   className.detachFromParent();
   Node constructor=null;
@@ -47,13 +51,10 @@
  else {
       String qualifiedMemberName;
       if (member.isStaticMember()) {
-        if (NodeUtil.referencesThis(member.getFirstChild())) {
-          compiler.report(JSError.make(member,STATIC_METHOD_REFERENCES_THIS));
-        }
-        qualifiedMemberName=Joiner.on(".").join(fullClassName,member.getString());
+        qualifiedMemberName=Joiner.on(".").join(uniqueFullClassName,member.getString());
       }
  else {
-        qualifiedMemberName=Joiner.on(".").join(fullClassName,"prototype",member.getString());
+        qualifiedMemberName=Joiner.on(".").join(uniqueFullClassName,"prototype",member.getString());
       }
       Node assign=IR.assign(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),qualifiedMemberName,member,member.getString()),member.getFirstChild().detachFromParent());
       assign.srcref(member);
@@ -75,27 +76,19 @@
   JSDocInfoBuilder newInfo=(classJSDoc != null) ? JSDocInfoBuilder.copyFrom(classJSDoc) : new JSDocInfoBuilder(true);
   newInfo.recordConstructor();
   if (!superClassName.isEmpty()) {
-    Node superClassString=IR.string(superClassName.getQualifiedName());
     if (newInfo.isInterfaceRecorded()) {
-      newInfo.recordExtendedInterface(new JSTypeExpression(new Node(Token.BANG,superClassString),superClassName.getSourceFileName()));
+      newInfo.recordExtendedInterface(new JSTypeExpression(new Node(Token.BANG,IR.string(superClassString)),superClassName.getSourceFileName()));
     }
  else {
       Node inherits=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.inherits");
       Node inheritsCall=IR.exprResult(IR.call(inherits,className.cloneTree(),superClassName.cloneTree()));
       inheritsCall.useSourceInfoIfMissingFromForTree(classNode);
       parent.addChildAfter(inheritsCall,classNode);
-      newInfo.recordBaseType(new JSTypeExpression(new Node(Token.BANG,superClassString),superClassName.getSourceFileName()));
+      newInfo.recordBaseType(new JSTypeExpression(new Node(Token.BANG,IR.string(superClassString)),superClassName.getSourceFileName()));
+      Node copyProps=IR.call(IR.name(COPY_PROP).srcref(classNode),className.cloneTree(),superClassName.cloneTree()).srcref(classNode);
+      copyProps.putBooleanProp(Node.FREE_CALL,true);
+      parent.addChildAfter(IR.exprResult(copyProps).srcref(classNode),inheritsCall);
     }
-  }
-  if (NodeUtil.isStatement(classNode)) {
-    String classString=constructor.removeFirstChild().getString();
-    Node uniqueName=IR.name(FRESH_CLASS_NAME_BASE + classString);
-    constructor=IR.var(uniqueName.cloneTree(),IR.function(IR.name(""),constructor.removeFirstChild(),constructor.removeFirstChild()));
-    constructor.useSourceInfoIfMissingFromForTree(classNode);
-    Node reassign=IR.var(IR.name(classString),uniqueName);
-    reassign.useSourceInfoIfMissingFromForTree(classNode);
-    classNode.getParent().addChildAfter(reassign,classNode);
-    insertionPoint=reassign;
   }
   if (!newInfo.isUnrestrictedRecorded() && !newInfo.isDictRecorded() && !newInfo.isStructRecorded()) {
     newInfo.recordStruct();
@@ -106,12 +99,38 @@
       newInfo.recordParameter(param,ctorJSDocInfo.getParameterType(param));
     }
   }
-  parent.replaceChild(classNode,constructor);
+  if (useUnique) {
+    constructor.removeFirstChild();
+    Node uniqueName=IR.name(uniqueFullClassName);
+    constructor=IR.var(uniqueName.cloneTree(),IR.function(IR.name(""),constructor.removeFirstChild(),constructor.removeFirstChild()));
+    constructor.useSourceInfoIfMissingFromForTree(classNode);
+    constructor.setJSDocInfo(newInfo.build(constructor));
+    newInfo=JSDocInfoBuilder.copyFrom(constructor.getJSDocInfo());
+    Node reassign=IR.var(IR.name(fullClassName),uniqueName);
+    reassign.useSourceInfoIfMissingFromForTree(classNode);
+    classNode.getParent().addChildAfter(reassign,classNode);
+    insertionPoint=reassign;
+  }
+ else {
+    insertionPoint=constructor;
+  }
+  if (NodeUtil.isStatement(classNode) && isInFunction(classNode)) {
+    Node ctorVar=IR.var(IR.name(fullClassName),constructor);
+    ctorVar.useSourceInfoIfMissingFromForTree(classNode);
+    parent.replaceChild(classNode,ctorVar);
+  }
+ else {
+    parent.replaceChild(classNode,constructor);
+  }
   if (NodeUtil.isStatement(constructor)) {
     insertionPoint.setJSDocInfo(newInfo.build(insertionPoint));
   }
  else   if (parent.isName()) {
     Node var=parent.getParent();
+    var.setJSDocInfo(newInfo.build(var));
+  }
+ else   if (constructor.getParent().isName()) {
+    Node var=constructor.getParent().getParent();
     var.setJSDocInfo(newInfo.build(var));
   }
  else   if (parent.isAssign()) {

@@ -1,0 +1,10 @@
+{
+  Node enclosingMemberDef=NodeUtil.getEnclosingClassMember(node);
+  if (enclosingMemberDef == null) {
+    return;
+  }
+  Node enclosingClass=NodeUtil.getEnclosingClass(node);
+  if (enclosingMemberDef.isStaticMember()) {
+    parent.replaceChild(node,IR.name(NodeUtil.getClassNameNode(enclosingClass).getQualifiedName()).srcref(node));
+  }
+}

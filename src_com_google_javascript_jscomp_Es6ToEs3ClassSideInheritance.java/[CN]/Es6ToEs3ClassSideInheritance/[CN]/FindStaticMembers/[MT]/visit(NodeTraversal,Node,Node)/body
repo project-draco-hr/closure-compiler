@@ -1,0 +1,13 @@
+{
+  if (!n.isAssign() || !n.hasChildren() || !n.getFirstChild().isGetProp()) {
+    return;
+  }
+  Node potentialClassName=n.getFirstChild().getFirstChild();
+  Scope.Var potentialClassDecl=nodeTraversal.getScope().getVar(potentialClassName.getQualifiedName());
+  if (potentialClassDecl != null && potentialClassDecl.getNode().getParent() != null && potentialClassDecl.getNode().getParent().getJSDocInfo() != null) {
+    JSDocInfo classInfo=potentialClassDecl.getNode().getParent().getJSDocInfo();
+    if (classInfo.isConstructor() && n.getLastChild().isFunction()) {
+      staticMembers.put(potentialClassDecl,n.getFirstChild().getLastChild().getString());
+    }
+  }
+}

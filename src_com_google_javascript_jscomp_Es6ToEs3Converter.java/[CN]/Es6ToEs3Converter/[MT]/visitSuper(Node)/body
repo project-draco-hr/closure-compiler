@@ -26,7 +26,9 @@
  else {
     methodName=IR.string(callName.getLastChild().getString()).srcref(enclosing);
   }
-  Node uniqueClassName=IR.name(FRESH_CLASS_NAME_BASE + clazz.getFirstChild().getString());
+  boolean inFunction=isInFunction(clazz);
+  String uniqueClassString=inFunction ? clazz.getFirstChild().getString() : getUniqueClassName(clazz.getFirstChild().getString());
+  Node uniqueClassName=IR.name(uniqueClassString);
   Node base=IR.getprop(uniqueClassName.srcref(enclosing),IR.string("base").srcref(enclosing)).srcref(enclosing);
   enclosing.addChildToFront(methodName);
   enclosing.addChildToFront(IR.thisNode().srcref(enclosing));
