@@ -1,0 +1,47 @@
+{
+  if (!NodeUtil.isReferenceName(n)) {
+    return;
+  }
+  String name=n.getString();
+  Scope referencedIn=t.getScope();
+  Var var=referencedIn.getVar(name);
+  if (var == null) {
+    return;
+  }
+  if (!var.isLet() && !var.isConst()) {
+    return;
+  }
+  Scope declaredIn=var.getScope();
+  Node loopNode=null;
+  for (Scope s=declaredIn; ; s=s.getParent()) {
+    Node scopeRoot=s.getRootNode();
+    if (NodeUtil.isLoopStructure(s.getRootNode())) {
+      loopNode=scopeRoot;
+      break;
+    }
+ else     if (scopeRoot.getParent() != null && NodeUtil.isLoopStructure(scopeRoot.getParent())) {
+      loopNode=scopeRoot.getParent();
+      break;
+    }
+ else     if (s.isFunctionBlockScope() || s.isGlobal()) {
+      return;
+    }
+  }
+  referenceMap.put(var,n);
+  for (Scope s=referencedIn; s != declaredIn; s=s.getParent()) {
+    if (s.isFunctionBlockScope()) {
+      Node function=s.getRootNode().getParent();
+      if (functionHandledMap.get(function).contains(name)) {
+        return;
+      }
+      functionHandledMap.put(function,name);
+      if (!loopObjectMap.containsKey(loopNode)) {
+        loopObjectMap.put(loopNode,new LoopObject(newUniqueName(LOOP_OBJECT_NAME)));
+      }
+      LoopObject object=loopObjectMap.get(loopNode);
+      object.vars.add(var);
+      functionLoopObjectsMap.put(function,object);
+      return;
+    }
+  }
+}

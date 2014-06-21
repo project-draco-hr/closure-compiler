@@ -1,0 +1,85 @@
+{
+  if (loopObjectMap.isEmpty()) {
+    return;
+  }
+  for (  Node loopNode : loopObjectMap.keySet()) {
+    LoopObject object=loopObjectMap.get(loopNode);
+    Node objectLit=IR.objectlit();
+    Node objectLitNextIteration=IR.objectlit();
+    for (    Var var : object.vars) {
+      objectLit.addChildToBack(IR.stringKey(var.name,IR.name("undefined")));
+      objectLitNextIteration.addChildToBack(IR.stringKey(var.name,IR.getprop(IR.name(object.name),IR.string(var.name))));
+    }
+    Node updateLoopObject=IR.assign(IR.name(object.name),objectLitNextIteration);
+    loopNode.getParent().addChildBefore(IR.var(IR.name(object.name),objectLit).useSourceInfoIfMissingFromForTree(loopNode),loopNode);
+    if (NodeUtil.isVanillaFor(loopNode)) {
+      Node initializer=loopNode.getFirstChild();
+      loopNode.replaceChild(initializer,IR.empty());
+      if (!initializer.isEmpty()) {
+        loopNode.getParent().addChildBefore(initializer,loopNode);
+      }
+      Node increment=loopNode.getChildAtIndex(2);
+      if (increment.isEmpty()) {
+        loopNode.replaceChild(increment,updateLoopObject.useSourceInfoIfMissingFromForTree(loopNode));
+      }
+ else {
+        Node placeHolder=IR.empty();
+        loopNode.replaceChild(increment,placeHolder);
+        loopNode.replaceChild(placeHolder,IR.comma(updateLoopObject,increment).useSourceInfoIfMissingFromForTree(loopNode));
+      }
+    }
+ else     if (loopNode.isDo()) {
+      loopNode.getFirstChild().addChildToBack(IR.exprResult(updateLoopObject).useSourceInfoIfMissingFromForTree(loopNode));
+    }
+ else {
+      loopNode.getLastChild().addChildToBack(IR.exprResult(updateLoopObject).useSourceInfoIfMissingFromForTree(loopNode));
+    }
+    for (    Var var : object.vars) {
+      for (      Node reference : referenceMap.get(var)) {
+        if (NodeUtil.isEnhancedFor(loopNode) && loopNode.getFirstChild() == reference.getParent()) {
+          loopNode.getLastChild().addChildToFront(IR.exprResult(IR.assign(IR.getprop(IR.name(object.name),IR.string(var.name)),IR.name(var.name))).useSourceInfoIfMissingFromForTree(reference));
+        }
+ else {
+          if (NodeUtil.isNameDeclaration(reference.getParent())) {
+            Node grandParent=reference.getParent().getParent();
+            Node declaration=reference.getParent();
+            if (declaration.getChildCount() > 1) {
+              for (int i=1; i < declaration.getChildCount(); i++) {
+                Node name=declaration.getChildAtIndex(i);
+                grandParent.addChildAfter(IR.nameDeclaration(name.detachFromParent(),declaration.getType()).useSourceInfoIfMissingFromForTree(declaration),declaration);
+              }
+            }
+            if (reference.hasChildren()) {
+              declaration=reference.getParent();
+              Node newReference=IR.name(var.name);
+              Node replacement=IR.exprResult(IR.assign(newReference,reference.removeFirstChild())).useSourceInfoIfMissingFromForTree(declaration);
+              grandParent.replaceChild(declaration,replacement);
+              reference=newReference;
+            }
+ else {
+              grandParent.removeChild(declaration);
+            }
+          }
+          reference.getParent().replaceChild(reference,IR.getprop(IR.name(object.name),IR.string(var.name)).useSourceInfoIfMissingFromForTree(reference));
+        }
+      }
+    }
+  }
+  for (  Node function : functionLoopObjectsMap.keySet()) {
+    Node returnNode=IR.returnNode();
+    Collection<LoopObject> objects=functionLoopObjectsMap.get(function);
+    Node[] objectNames=new Node[objects.size()];
+    Node[] objectNamesForCall=new Node[objects.size()];
+    int i=0;
+    for (    LoopObject object : objects) {
+      objectNames[i]=IR.name(object.name);
+      objectNamesForCall[i]=IR.name(object.name);
+      i++;
+    }
+    Node iife=IR.function(IR.name(""),IR.paramList(objectNames),IR.block(returnNode));
+    Node call=IR.call(iife,objectNamesForCall);
+    call.putBooleanProp(Node.FREE_CALL,true);
+    function.getParent().replaceChild(function,call.useSourceInfoIfMissingFromForTree(function));
+    returnNode.addChildToFront(function);
+  }
+}

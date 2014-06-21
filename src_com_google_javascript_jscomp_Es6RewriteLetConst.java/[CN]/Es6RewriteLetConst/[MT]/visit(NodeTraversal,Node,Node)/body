@@ -4,14 +4,15 @@
   }
   Scope scope=t.getScope();
   Node nameNode=n.getFirstChild();
-  if (!nameNode.hasChildren()) {
+  if (!nameNode.hasChildren() && (parent == null || !NodeUtil.isEnhancedFor(parent))) {
     nameNode.addChildToFront(IR.name("undefined").useSourceInfoIfMissingFrom(nameNode));
   }
   String oldName=nameNode.getString();
-  n.setType(Token.VAR);
+  letConsts.add(n);
   Scope hoistScope=scope.getClosestHoistScope();
+  boolean doRename=false;
   if (scope != hoistScope) {
-    boolean doRename=hoistScope.isDeclared(oldName,true);
+    doRename=hoistScope.isDeclared(oldName,true);
     String newName=doRename ? newUniqueName(oldName) : oldName;
     Var oldVar=scope.getVar(oldName);
     scope.undeclare(oldVar);
@@ -25,5 +26,7 @@
       renameMap.get(scopeRoot).put(oldName,newName);
     }
   }
-  t.getCompiler().reportCodeChange();
+  if (doRename) {
+    t.getCompiler().reportCodeChange();
+  }
 }

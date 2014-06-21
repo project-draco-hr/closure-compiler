@@ -1,0 +1,7 @@
+{
+  enableTypeCheck(CheckLevel.WARNING);
+  test("/** @type {number} */ let x = 5; x = 'str';",null,null,TypeValidator.TYPE_MISMATCH_WARNING);
+  test("let /** number */ x = 5; x = 'str';",null,null,TypeValidator.TYPE_MISMATCH_WARNING);
+  test(Joiner.on('\n').join("while (true) {","  /** @type {number} */ let x = 5;","  (function() { x++; })();","  x = 'str';","}"),null,null,TypeValidator.TYPE_MISMATCH_WARNING);
+  test(Joiner.on('\n').join("for (/** @type {number} */ let x = 5;;) {","  (function() { x++; })();","  x = 'str';","}"),null,null,TypeValidator.TYPE_MISMATCH_WARNING);
+}
