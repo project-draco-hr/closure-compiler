@@ -1,6 +1,6 @@
 {
   if (Objects.equal(enums1,enums2)) {
-    return new JSType(newMask,newLocation,newObjs,newTypevar,enums1);
+    return new UnionType(newMask,newLocation,newObjs,newTypevar,enums1);
   }
   ImmutableSet.Builder<EnumType> enumBuilder=ImmutableSet.builder();
   ImmutableSet<EnumType> allEnums=EnumType.union(enums1,enums2);
@@ -14,15 +14,15 @@
       enumBuilder.add(e);
       continue;
     }
-    if (enumeratedType.mask != NON_SCALAR_MASK) {
-      if ((enumeratedType.mask & unionMask) != 0) {
+    if (enumeratedType.getMask() != NON_SCALAR_MASK) {
+      if ((enumeratedType.getMask() & unionMask) != 0) {
         enumBuilder.add(e);
-        newMask&=~enumeratedType.mask;
+        newMask&=~enumeratedType.getMask();
       }
     }
  else     if (objs1 != null || objs2 != null) {
       Set<ObjectType> objsToRemove=Sets.newHashSet();
-      ObjectType enumObj=Iterables.getOnlyElement(enumeratedType.objs);
+      ObjectType enumObj=Iterables.getOnlyElement(enumeratedType.getObjs());
       if (objs1 != null) {
         for (        ObjectType obj1 : objs1) {
           if (enumObj.isSubtypeOf(obj1)) {
@@ -44,5 +44,5 @@
       }
     }
   }
-  return new JSType(newMask,newLocation,newObjs,newTypevar,enumBuilder.build());
+  return new UnionType(newMask,newLocation,newObjs,newTypevar,enumBuilder.build());
 }

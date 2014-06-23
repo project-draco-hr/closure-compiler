@@ -11,14 +11,14 @@
  else   if (rhs.isUnknown()) {
     return lhs;
   }
-  int newMask=lhs.mask & rhs.mask;
+  int newMask=lhs.getMask() & rhs.getMask();
   String newTypevar;
-  if (Objects.equal(lhs.typeVar,rhs.typeVar)) {
-    newTypevar=lhs.typeVar;
+  if (Objects.equal(lhs.getTypeVar(),rhs.getTypeVar())) {
+    newTypevar=lhs.getTypeVar();
   }
  else {
     newTypevar=null;
     newMask=newMask & ~TYPEVAR_MASK;
   }
-  return meetEnums(newMask,lhs.mask | rhs.mask,null,ObjectType.meetSets(lhs.objs,rhs.objs),newTypevar,lhs.objs,rhs.objs,lhs.enums,rhs.enums);
+  return meetEnums(newMask,lhs.getMask() | rhs.getMask(),null,ObjectType.meetSets(lhs.getObjs(),rhs.getObjs()),newTypevar,lhs.getObjs(),rhs.getObjs(),lhs.getEnums(),rhs.getEnums());
 }

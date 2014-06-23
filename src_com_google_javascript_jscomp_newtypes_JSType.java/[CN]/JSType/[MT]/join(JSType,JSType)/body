@@ -11,17 +11,17 @@
  else   if (rhs.isBottom()) {
     return lhs;
   }
-  if (lhs.typeVar != null && rhs.typeVar != null && !lhs.typeVar.equals(rhs.typeVar)) {
+  if (lhs.getTypeVar() != null && rhs.getTypeVar() != null && !lhs.getTypeVar().equals(rhs.getTypeVar())) {
     return UNKNOWN;
   }
-  int newMask=lhs.mask | rhs.mask;
-  String newLoc=joinLocs(lhs.location,rhs.location);
-  ImmutableSet<ObjectType> newObjs=ObjectType.joinSets(lhs.objs,rhs.objs);
-  String newTypevar=lhs.typeVar != null ? lhs.typeVar : rhs.typeVar;
-  ImmutableSet<EnumType> newEnums=EnumType.union(lhs.enums,rhs.enums);
+  int newMask=lhs.getMask() | rhs.getMask();
+  String newLoc=joinLocs(lhs.getLocation(),rhs.getLocation());
+  ImmutableSet<ObjectType> newObjs=ObjectType.joinSets(lhs.getObjs(),rhs.getObjs());
+  String newTypevar=lhs.getTypeVar() != null ? lhs.getTypeVar() : rhs.getTypeVar();
+  ImmutableSet<EnumType> newEnums=EnumType.union(lhs.getEnums(),rhs.getEnums());
   if (newEnums == null) {
-    return new JSType(newMask,newLoc,newObjs,newTypevar,null);
+    return new UnionType(newMask,newLoc,newObjs,newTypevar,null);
   }
-  JSType tmpJoin=new JSType(newMask & ~ENUM_MASK,newLoc,newObjs,newTypevar,null);
-  return new JSType(newMask,newLoc,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
+  JSType tmpJoin=new UnionType(newMask & ~ENUM_MASK,newLoc,newObjs,newTypevar,null);
+  return new UnionType(newMask,newLoc,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
 }

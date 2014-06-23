@@ -1,18 +1,18 @@
 {
-  if (isTop() || isUnknown() || objs == null && typeVar == null) {
+  if (isTop() || isUnknown() || getObjs() == null && getTypeVar() == null) {
     return this;
   }
   ImmutableSet<ObjectType> newObjs=null;
-  if (objs != null) {
+  if (getObjs() != null) {
     ImmutableSet.Builder<ObjectType> builder=ImmutableSet.builder();
-    for (    ObjectType obj : objs) {
+    for (    ObjectType obj : getObjs()) {
       builder.add(obj.substituteGenerics(concreteTypes));
     }
     newObjs=builder.build();
   }
-  JSType current=new JSType(mask & ~TYPEVAR_MASK,location,newObjs,null,enums);
-  if ((mask & TYPEVAR_MASK) != 0) {
-    current=JSType.join(current,concreteTypes.containsKey(typeVar) ? concreteTypes.get(typeVar) : fromTypeVar(typeVar));
+  JSType current=new UnionType(getMask() & ~TYPEVAR_MASK,getLocation(),newObjs,null,getEnums());
+  if ((getMask() & TYPEVAR_MASK) != 0) {
+    current=JSType.join(current,concreteTypes.containsKey(getTypeVar()) ? concreteTypes.get(getTypeVar()) : fromTypeVar(getTypeVar()));
   }
   return current;
 }

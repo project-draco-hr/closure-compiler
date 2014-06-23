@@ -9,16 +9,16 @@
     return makeFalsy();
   }
  else   if (this.isTop() || this.isUnknown()) {
-    return other.withLocation(this.location);
+    return other.withLocation(getLocation());
   }
-  int newMask=this.mask & other.mask;
+  int newMask=getMask() & other.getMask();
   String newTypevar;
-  if (Objects.equal(this.typeVar,other.typeVar)) {
-    newTypevar=this.typeVar;
+  if (Objects.equal(getTypeVar(),other.getTypeVar())) {
+    newTypevar=getTypeVar();
   }
  else {
     newTypevar=null;
     newMask&=~TYPEVAR_MASK;
   }
-  return meetEnums(newMask,this.mask | other.mask,this.location,ObjectType.specializeSet(this.objs,other.objs),newTypevar,this.objs,other.objs,enums,other.enums);
+  return meetEnums(newMask,getMask() | other.getMask(),getLocation(),ObjectType.specializeSet(getObjs(),other.getObjs()),newTypevar,getObjs(),other.getObjs(),getEnums(),other.getEnums());
 }
