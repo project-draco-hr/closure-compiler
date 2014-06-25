@@ -1,0 +1,28 @@
+{
+  int length=n.getChildCount();
+  if (length == 0) {
+    n.getParent().replaceChild(n,IR.string("\"\""));
+  }
+ else {
+    Node first=n.removeFirstChild();
+    if (length == 1) {
+      n.getParent().replaceChild(n,first);
+    }
+ else {
+      Node add=IR.add(first,n.removeFirstChild().removeFirstChild());
+      for (int i=2; i < length; i++) {
+        Node child=n.removeFirstChild();
+        if (child.isString()) {
+          if (child.getString().isEmpty()) {
+            continue;
+          }
+ else           if (i == 2 && first.getString().isEmpty()) {
+            add=add.getChildAtIndex(1).detachFromParent();
+          }
+        }
+        add=IR.add(add,child.isString() ? child : child.removeFirstChild());
+      }
+      n.getParent().replaceChild(n,add.useSourceInfoIfMissingFromForTree(n));
+    }
+  }
+}
