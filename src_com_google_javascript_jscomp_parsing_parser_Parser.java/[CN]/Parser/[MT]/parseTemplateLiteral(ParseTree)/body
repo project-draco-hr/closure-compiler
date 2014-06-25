@@ -1,0 +1,24 @@
+{
+  SourcePosition start=operand == null ? getTreeStartLocation() : operand.location.start;
+  Token token=nextToken();
+  ImmutableList.Builder<ParseTree> elements=ImmutableList.builder();
+  elements.add(new TemplateLiteralPortionTree(token.location,token));
+  if (token.type == TokenType.NO_SUBSTITUTION_TEMPLATE) {
+    return new TemplateLiteralExpressionTree(getTreeLocation(start),operand,elements.build());
+  }
+  ParseTree expression=parseExpression();
+  elements.add(new TemplateSubstitutionTree(expression.location,expression));
+  while (!errorReporter.hadError()) {
+    token=nextTemplateLiteralToken();
+    if (token.type == TokenType.ERROR || token.type == TokenType.END_OF_FILE) {
+      break;
+    }
+    elements.add(new TemplateLiteralPortionTree(token.location,token));
+    if (token.type == TokenType.TEMPLATE_TAIL) {
+      break;
+    }
+    expression=parseExpression();
+    elements.add(new TemplateSubstitutionTree(expression.location,expression));
+  }
+  return new TemplateLiteralExpressionTree(getTreeLocation(start),operand,elements.build());
+}

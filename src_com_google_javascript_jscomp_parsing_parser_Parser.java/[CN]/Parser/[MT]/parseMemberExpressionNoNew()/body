@@ -8,17 +8,25 @@
     operand=parsePrimaryExpression();
   }
   while (peekMemberExpressionSuffix()) {
-    if (peek(TokenType.OPEN_SQUARE)) {
+switch (peekType()) {
+case OPEN_SQUARE:
       eat(TokenType.OPEN_SQUARE);
-      ParseTree member=parseExpression();
-      eat(TokenType.CLOSE_SQUARE);
-      operand=new MemberLookupExpressionTree(getTreeLocation(start),operand,member);
-    }
- else {
-      eat(TokenType.PERIOD);
-      IdentifierToken id=eatIdOrKeywordAsId();
-      operand=new MemberExpressionTree(getTreeLocation(start),operand,id);
-    }
-  }
-  return operand;
+    ParseTree member=parseExpression();
+  eat(TokenType.CLOSE_SQUARE);
+operand=new MemberLookupExpressionTree(getTreeLocation(start),operand,member);
+break;
+case PERIOD:
+eat(TokenType.PERIOD);
+IdentifierToken id=eatIdOrKeywordAsId();
+operand=new MemberExpressionTree(getTreeLocation(start),operand,id);
+break;
+case NO_SUBSTITUTION_TEMPLATE:
+case TEMPLATE_HEAD:
+operand=parseTemplateLiteral(operand);
+break;
+default :
+throw new RuntimeException("unreachable");
+}
+}
+return operand;
 }

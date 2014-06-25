@@ -1,0 +1,19 @@
+{
+  int beginIndex=index;
+  skipTemplateCharacters();
+  if (isAtEnd()) {
+    reportError(getPosition(beginIndex),"Unterminated template string");
+  }
+  String value=getTokenString(beginIndex);
+switch (peekChar()) {
+case '`':
+    nextChar();
+  return new LiteralToken(endType,value,getTokenRange(beginIndex - 1));
+case '$':
+nextChar();
+nextChar();
+return new LiteralToken(middleType,value,getTokenRange(beginIndex - 1));
+default :
+return new LiteralToken(endType,value,getTokenRange(beginIndex - 1));
+}
+}
