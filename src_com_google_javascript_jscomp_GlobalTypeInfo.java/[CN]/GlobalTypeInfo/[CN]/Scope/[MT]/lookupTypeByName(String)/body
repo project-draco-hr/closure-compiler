@@ -1,4 +1,16 @@
 {
+  if (name.contains(".")) {
+    QualifiedName qname=QualifiedName.fromQname(name);
+    Namespace ns=getNamespace(qname.getLeftmostName());
+    if (ns == null) {
+      return null;
+    }
+    RawNominalType rawType=ns.getNominalType(qname.getAllButLeftmost());
+    if (rawType == null) {
+      return null;
+    }
+    return JSType.fromObjectType(ObjectType.fromNominalType(NominalType.fromRaw(rawType)));
+  }
   if (declaredType != null && declaredType.isGeneric() && declaredType.getTypeParameters().contains(name)) {
     return JSType.fromTypeVar(name);
   }

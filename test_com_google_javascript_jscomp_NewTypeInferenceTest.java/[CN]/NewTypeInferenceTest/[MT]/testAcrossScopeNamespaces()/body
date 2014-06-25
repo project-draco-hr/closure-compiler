@@ -1,0 +1,6 @@
+{
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "(function() {\n"+ "  /** @constructor */\n"+ "  ns.Foo = function() {};\n"+ "})();\n"+ "ns.Foo();",TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "(function() {\n"+ "  /** @type {string} */\n"+ "  ns.str = 'str';\n"+ "})();\n"+ "ns.str - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "(function() {\n"+ "  /** @constructor */\n"+ "  ns.Foo = function() {};\n"+ "})();\n"+ "function f(/** ns.Foo */ x) {}\n"+ "f(1);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "(function() {\n"+ "  /** @constructor */\n"+ "  ns.Foo = function() {};\n"+ "})();\n"+ "var /** ns.Foo */ x = 123;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

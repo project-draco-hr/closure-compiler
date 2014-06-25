@@ -1,35 +1,38 @@
 {
   Preconditions.checkArgument(getProp.isGetProp());
-  QualifiedName qname=QualifiedName.fromGetprop(getProp);
-  String leftmost=qname.getLeftmostName();
-  QualifiedName allButLeftmost=qname.getAllButLeftmost();
-  JSType currentType=currentScope.getDeclaredTypeOf(leftmost);
-  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
-  JSType typeInJsdoc=getTypeDeclarationFromJsdoc(jsdoc,currentScope);
-  boolean isConst=NodeUtil.hasConstAnnotation(getProp);
-  if (NodeUtil.isNamespaceDecl(getProp)) {
-    currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,JSType.TOP_OBJECT));
+  if (currentScope.isNamespace(getProp) || NodeUtil.isTypedefDecl(getProp)) {
+    return;
   }
- else   if (typeInJsdoc != null || isConst) {
-    JSType previousPropType=currentType.getDeclaredProp(allButLeftmost);
-    if (currentType.mayHaveProp(allButLeftmost) && previousPropType != null && !suppressDupPropWarning(jsdoc,typeInJsdoc,previousPropType)) {
-      warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,allButLeftmost.toString(),currentType.toString()));
+  Node nsNameNode=getProp.getFirstChild();
+  Preconditions.checkState(currentScope.isNamespace(nsNameNode));
+  Namespace ns;
+  if (nsNameNode.isName()) {
+    ns=currentScope.getNamespace(nsNameNode.getString());
+  }
+ else {
+    QualifiedName nsQname=QualifiedName.fromGetprop(nsNameNode);
+    ns=currentScope.getNamespace(nsQname.getLeftmostName()).getSubnamespace(nsQname.getAllButLeftmost());
+  }
+  String pname=getProp.getLastChild().getString();
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
+  JSType propDeclType=getTypeDeclarationFromJsdoc(jsdoc,currentScope);
+  boolean isConst=NodeUtil.hasConstAnnotation(getProp);
+  if (propDeclType != null || isConst) {
+    JSType previousPropType=ns.getPropDeclaredType(pname);
+    if (ns.hasProp(pname) && previousPropType != null && !suppressDupPropWarning(jsdoc,propDeclType,previousPropType)) {
+      warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,pname,ns.toString()));
       return;
     }
-    JSType declType=typeInJsdoc;
-    if (isConst && !mayWarnAboutNoInit(getProp) && declType == null) {
-      declType=inferConstTypeFromRhs(getProp);
+    if (isConst && !mayWarnAboutNoInit(getProp) && propDeclType == null) {
+      propDeclType=inferConstTypeFromRhs(getProp);
     }
-    currentScope.updateTypeOfLocal(leftmost,currentType.withDeclaredProperty(allButLeftmost,declType,isConst));
+    ns.addProperty(pname,propDeclType,isConst);
   }
- else   if (getProp.getParent().isAssign()) {
+ else {
     JSType t=simpleInferExprType(getProp.getParent().getLastChild());
     if (t == null) {
       t=JSType.UNKNOWN;
     }
-    currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,t));
-  }
- else {
-    currentScope.updateTypeOfLocal(leftmost,currentType.withProperty(allButLeftmost,JSType.UNKNOWN));
+    ns.addUndeclaredProperty(pname,t,isConst);
   }
 }

@@ -1,0 +1,16 @@
+{
+  String name;
+  Namespace ns;
+  if (qname.isIdentifier()) {
+    name=qname.getLeftmostName();
+    ns=this;
+  }
+ else {
+    name=qname.getRightmostName();
+    ns=getSubnamespace(qname.getAllButRightmost());
+    if (ns == null) {
+      return false;
+    }
+  }
+  return ns.nominals != null && ns.nominals.containsKey(name) || ns.enums != null && ns.enums.containsKey(name) || ns.namespaces != null && ns.namespaces.containsKey(name) || ns.typedefs != null && ns.typedefs.containsKey(name) || ns.otherProps.containsKey(name);
+}

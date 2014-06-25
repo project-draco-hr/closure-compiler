@@ -1,6 +1,15 @@
 {
-  if (isDefinedLocally(name)) {
-    return localTypedefs.get(name);
+  if (!name.contains(".")) {
+    if (isDefinedLocally(name)) {
+      return localTypedefs.get(name);
+    }
+  }
+ else {
+    QualifiedName qname=QualifiedName.fromQname(name);
+    Namespace ns=getNamespace(qname.getLeftmostName());
+    if (ns != null) {
+      return ns.getTypedef(qname.getAllButLeftmost());
+    }
   }
   if (parent != null) {
     return parent.getTypedef(name);

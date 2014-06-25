@@ -1,8 +1,8 @@
 {
   Preconditions.checkArgument(externs == null || externs.isSyntheticBlock());
   Preconditions.checkArgument(root.isSyntheticBlock());
-  globalScope=new Scope(root,null,new ArrayList<String>(),null);
-  scopes.addFirst(globalScope);
+  globalScope=new Scope(root,null,ImmutableList.<String>of());
+  scopes.add(globalScope);
   CollectNamedTypes rootCnt=new CollectNamedTypes(globalScope);
   if (externs != null) {
     new NodeTraversal(compiler,rootCnt).traverse(externs);
@@ -10,20 +10,23 @@
   new NodeTraversal(compiler,rootCnt).traverse(root);
   globalScope.resolveTypedefs(typeParser);
   globalScope.resolveEnums(typeParser);
+  for (int i=1; i < scopes.size(); i++) {
+    Scope s=scopes.get(i);
+    CollectNamedTypes cnt=new CollectNamedTypes(s);
+    new NodeTraversal(compiler,cnt).traverse(s.getBody());
+    s.resolveTypedefs(typeParser);
+    s.resolveEnums(typeParser);
+  }
   ProcessScope rootPs=new ProcessScope(globalScope);
   if (externs != null) {
     new NodeTraversal(compiler,rootPs).traverse(externs);
   }
   new NodeTraversal(compiler,rootPs).traverse(root);
   rootPs.finishProcessingScope();
-  while (!scopeWorkset.isEmpty()) {
-    Scope s=scopeWorkset.removeFirst();
-    Node scopeBody=s.getBody();
-    new NodeTraversal(compiler,new CollectNamedTypes(s)).traverse(scopeBody);
-    s.resolveTypedefs(typeParser);
-    s.resolveEnums(typeParser);
+  for (int i=1; i < scopes.size(); i++) {
+    Scope s=scopes.get(i);
     ProcessScope ps=new ProcessScope(s);
-    new NodeTraversal(compiler,ps).traverse(scopeBody);
+    new NodeTraversal(compiler,ps).traverse(s.getBody());
     ps.finishProcessingScope();
   }
   reportInheritanceErrors();
@@ -42,4 +45,5 @@
   typeParser=null;
   compiler.setSymbolTable(this);
   warnings=null;
+  Collections.reverse(scopes);
 }

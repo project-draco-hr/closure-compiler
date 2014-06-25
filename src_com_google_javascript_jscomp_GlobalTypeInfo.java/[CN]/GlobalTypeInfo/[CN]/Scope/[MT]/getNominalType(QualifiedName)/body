@@ -1,0 +1,15 @@
+{
+  if (qname.isIdentifier()) {
+    String name=qname.getLeftmostName();
+    RawNominalType rnt=localClassDefs.get(name);
+    if (rnt != null) {
+      return rnt;
+    }
+    return parent == null ? null : parent.getNominalType(qname);
+  }
+  Namespace ns=getNamespace(qname.getLeftmostName());
+  if (ns == null) {
+    return null;
+  }
+  return ns.getNominalType(qname.getAllButLeftmost());
+}

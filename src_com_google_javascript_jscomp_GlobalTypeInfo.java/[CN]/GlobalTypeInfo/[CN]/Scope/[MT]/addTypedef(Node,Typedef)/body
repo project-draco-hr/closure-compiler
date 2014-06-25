@@ -1,0 +1,12 @@
+{
+  if (nameNode.isName()) {
+    Preconditions.checkState(!localTypedefs.containsKey(nameNode.getString()));
+    localTypedefs.put(nameNode.getString(),td);
+  }
+ else {
+    Preconditions.checkState(!isDefined(nameNode));
+    QualifiedName qname=QualifiedName.fromGetprop(nameNode);
+    Namespace ns=getNamespace(qname.getLeftmostName());
+    ns.addTypedef(qname.getAllButLeftmost(),td);
+  }
+}

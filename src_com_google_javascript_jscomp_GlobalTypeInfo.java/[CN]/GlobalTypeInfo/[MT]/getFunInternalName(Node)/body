@@ -1,8 +1,9 @@
 {
   Preconditions.checkArgument(n.isFunction());
-  Node fnNameNode=NodeUtil.getFunctionNameNode(n);
-  if (fnNameNode != null && fnNameNode.isName()) {
-    return fnNameNode.getString();
+  if (anonFunNames.containsKey(n)) {
+    return anonFunNames.get(n);
   }
-  return anonFunNames.get(n);
+  Node fnNameNode=NodeUtil.getFunctionNameNode(n);
+  Preconditions.checkState(fnNameNode != null && fnNameNode.isName());
+  return fnNameNode.getString();
 }

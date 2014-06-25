@@ -15,19 +15,19 @@
   if (!currentScope.isNamespace(lendsName)) {
     return;
   }
+  Namespace borrowerNamespace=currentScope.getNamespace(lendsName);
   for (  Node prop : objlit.children()) {
     String pname=NodeUtil.getObjectLitKeyName(prop);
-    QualifiedName qname=new QualifiedName(pname);
     JSType propDeclType=declaredObjLitProps.get(prop);
     if (propDeclType != null) {
-      currentScope.updateTypeOfLocal(lendsName,borrowerType.withDeclaredProperty(qname,propDeclType,false));
+      borrowerNamespace.addProperty(pname,propDeclType,false);
     }
  else {
       JSType t=simpleInferExprType(prop.getFirstChild());
       if (t == null) {
         t=JSType.UNKNOWN;
       }
-      currentScope.updateTypeOfLocal(lendsName,borrowerType.withProperty(qname,t));
+      borrowerNamespace.addProperty(pname,t,false);
     }
   }
 }

@@ -1,0 +1,6 @@
+{
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @constructor */\n"+ "ns.Foo = function() {};\n"+ "ns.Foo();",TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @typedef {number} */\n"+ "ns.num;\n"+ "var /** ns.num */ y = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @enum {number} */\n"+ "ns.Foo = { A: 1 };\n"+ "var /** ns.Foo */ y = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @enum {number} */\n" + "var E = { A: 1 };\n" + "/** @typedef {number} */\n"+ "E.num;\n"+ "var /** E.num */ x = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

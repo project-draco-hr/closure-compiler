@@ -1,0 +1,60 @@
+{
+  JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
+  Node nameNode=NodeUtil.getFunctionNameNode(fn);
+  ArrayList<String> formals=Lists.newArrayList();
+  ArrayList<String> tmpRestFormals=Lists.newArrayList();
+  Node param=NodeUtil.getFunctionParameters(fn).getFirstChild();
+  int formalIndex=0;
+  while (param != null) {
+    if (JSTypeCreatorFromJSDoc.isRestArg(fnDoc,param.getString()) && param.getNext() == null) {
+      tmpRestFormals.add(param.getString());
+    }
+ else {
+      formals.add(param.getString());
+    }
+    param=param.getNext();
+    formalIndex++;
+  }
+  createFunctionScope(fn,formals,nameNode);
+  if (fnDoc != null) {
+    for (    String formalInJsdoc : fnDoc.getParameterNames()) {
+      if (!formals.contains(formalInJsdoc) && !tmpRestFormals.contains(formalInJsdoc)) {
+        String functionName=getFunInternalName(fn);
+        warnings.add(JSError.make(fn,INEXISTENT_PARAM,formalInJsdoc,functionName));
+      }
+    }
+  }
+  if (fnDoc != null && (fnDoc.isConstructor() || fnDoc.isInterface())) {
+    QualifiedName qname=QualifiedName.fromGetprop(nameNode);
+    if (qname == null) {
+      warnings.add(JSError.make(fn,ANONYMOUS_NOMINAL_TYPE));
+      return;
+    }
+    ImmutableList<String> typeParameters=fnDoc.getTemplateTypeNames();
+    RawNominalType rawNominalType;
+    if (fnDoc.isInterface()) {
+      rawNominalType=RawNominalType.makeInterface(qname,typeParameters);
+    }
+ else     if (fnDoc.makesStructs()) {
+      rawNominalType=RawNominalType.makeStructClass(qname,typeParameters);
+    }
+ else     if (fnDoc.makesDicts()) {
+      rawNominalType=RawNominalType.makeDictClass(qname,typeParameters);
+    }
+ else {
+      rawNominalType=RawNominalType.makeUnrestrictedClass(qname,typeParameters);
+    }
+    nominaltypesByNode.put(fn,rawNominalType);
+    if (nameNode.isName() || currentScope.isNamespace(nameNode.getFirstChild())) {
+      currentScope.addNominalType(nameNode,rawNominalType);
+    }
+  }
+ else   if (fnDoc != null) {
+    if (fnDoc.makesStructs()) {
+      warnings.add(JSError.make(fn,CONSTRUCTOR_REQUIRED,"@struct"));
+    }
+ else     if (fnDoc.makesDicts()) {
+      warnings.add(JSError.make(fn,CONSTRUCTOR_REQUIRED,"@dict"));
+    }
+  }
+}

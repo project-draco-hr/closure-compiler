@@ -1,7 +1,13 @@
 {
-  Preconditions.checkArgument(nameNode.isName());
-  String name=nameNode.getString();
-  Preconditions.checkArgument(!isDefinedLocally(name));
-  locals.put(name,JSType.TOP_OBJECT);
-  localNamespaces.add(name);
+  Preconditions.checkArgument(!isNamespace(qnameNode));
+  if (qnameNode.isName()) {
+    String name=qnameNode.getString();
+    localNamespaces.put(name,new NamespaceLit());
+  }
+ else {
+    QualifiedName qname=QualifiedName.fromGetprop(qnameNode);
+    String leftmost=qname.getLeftmostName();
+    Namespace ns=getNamespace(leftmost);
+    ns.addSubnamespace(qname.getAllButLeftmost());
+  }
 }

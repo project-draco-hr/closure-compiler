@@ -1,8 +1,9 @@
 {
   Preconditions.checkArgument(getProp.isGetProp());
   String ctorName=getProp.getFirstChild().getQualifiedName();
+  QualifiedName ctorQname=QualifiedName.fromGetprop(getProp.getFirstChild());
   Preconditions.checkState(currentScope.isLocalFunDef(ctorName));
-  RawNominalType classType=currentScope.getNominalType(ctorName);
+  RawNominalType classType=currentScope.getNominalType(ctorQname);
   String pname=getProp.getLastChild().getString();
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
   JSType propDeclType=getTypeDeclarationFromJsdoc(jsdoc,currentScope);

@@ -1,17 +1,37 @@
 {
 switch (n.getType()) {
 case Token.FUNCTION:
-    initFnScope(n,currentScope);
-  break;
+{
+      visitFunctionEarly(n);
+      break;
+    }
 case Token.VAR:
-if (NodeUtil.isTypedefDecl(n)) {
-  visitTypedef(n);
+{
+    Node nameNode=n.getFirstChild();
+    if (NodeUtil.isNamespaceDecl(nameNode)) {
+      visitNamespace(nameNode);
+    }
+ else     if (NodeUtil.isTypedefDecl(nameNode)) {
+      visitTypedef(nameNode);
+    }
+ else     if (NodeUtil.isEnumDecl(nameNode)) {
+      visitEnum(nameNode);
+    }
+    break;
+  }
+case Token.EXPR_RESULT:
+{
+  Node expr=n.getFirstChild();
+  if (expr.isGetProp() || expr.isAssign() && expr.getFirstChild().isGetProp()) {
+    Node getProp=expr.isGetProp() ? expr : expr.getFirstChild();
+    if (NodeUtil.isPrototypeProperty(getProp) || NodeUtil.referencesThis(getProp)) {
+      return;
+    }
+    if (NodeUtil.isNamespaceDecl(getProp) || NodeUtil.isTypedefDecl(getProp) || NodeUtil.isEnumDecl(getProp)) {
+      processQualifiedDefinition(getProp);
+    }
+  }
+  break;
 }
- else if (NodeUtil.isEnumDecl(n)) {
-  visitEnum(n);
-}
-break;
-case Token.GETPROP:
-break;
 }
 }

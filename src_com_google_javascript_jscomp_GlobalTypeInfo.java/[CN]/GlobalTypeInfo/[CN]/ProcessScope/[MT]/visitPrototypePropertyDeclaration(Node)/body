@@ -3,18 +3,18 @@
   Node parent=getProp.getParent();
   Node initializer=parent.isAssign() ? parent.getLastChild() : null;
   Node ctorNameNode=NodeUtil.getPrototypeClassName(getProp);
-  String ctorName=ctorNameNode.getQualifiedName();
-  RawNominalType rawType=currentScope.getNominalType(ctorName);
+  QualifiedName ctorQname=QualifiedName.fromGetprop(ctorNameNode);
+  RawNominalType rawType=currentScope.getNominalType(ctorQname);
   if (rawType == null) {
     if (initializer != null && initializer.isFunction()) {
-      visitFunctionDef(initializer,null);
+      visitFunctionLate(initializer,null);
     }
     return;
   }
-  if (!currentScope.isDefinedLocally(ctorName)) {
+  if (!currentScope.isDefined(ctorNameNode)) {
     warnings.add(JSError.make(getProp,CTOR_IN_DIFFERENT_SCOPE));
     if (initializer != null && initializer.isFunction()) {
-      visitFunctionDef(initializer,rawType);
+      visitFunctionLate(initializer,rawType);
     }
     return;
   }
@@ -23,7 +23,7 @@
   DeclaredFunctionType methodType;
   Scope methodScope;
   if (initializer != null && initializer.isFunction()) {
-    methodScope=visitFunctionDef(initializer,rawType);
+    methodScope=visitFunctionLate(initializer,rawType);
     methodType=methodScope.getDeclaredType();
     propDeclType=JSType.fromFunctionType(methodType.toFunctionType());
   }

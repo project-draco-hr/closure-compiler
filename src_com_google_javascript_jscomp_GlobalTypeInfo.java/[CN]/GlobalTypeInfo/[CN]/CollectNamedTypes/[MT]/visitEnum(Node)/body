@@ -1,27 +1,28 @@
 {
-  Preconditions.checkState(n.isVar());
-  String varName=n.getFirstChild().getString();
-  if (currentScope.isDefinedLocally(varName)) {
-    warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,varName));
+  Preconditions.checkState(nameNode.isQualifiedName());
+  if (nameNode.isName() && currentScope.isDefinedLocally(nameNode.getString())) {
+    String qname=nameNode.getQualifiedName();
+    warnings.add(JSError.make(nameNode,VariableReferenceCheck.REDECLARED_VARIABLE,qname));
+  }
+  if (currentScope.isDefined(nameNode)) {
     return;
   }
-  Node init=n.getFirstChild().getFirstChild();
+  Node init=NodeUtil.getInitializer(nameNode);
   if (init == null || !init.isObjectLit() || init.getFirstChild() == null) {
-    warnings.add(JSError.make(n,MALFORMED_ENUM));
-    currentScope.addLocal(varName,JSType.UNKNOWN,false);
+    warnings.add(JSError.make(nameNode,MALFORMED_ENUM));
     return;
   }
-  JSDocInfo jsdoc=n.getJSDocInfo();
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(nameNode);
   Set<String> propNames=Sets.newHashSet();
   for (  Node prop : init.children()) {
     String pname=NodeUtil.getObjectLitKeyName(prop);
     if (propNames.contains(pname)) {
-      warnings.add(JSError.make(n,DUPLICATE_PROP_IN_ENUM,pname));
+      warnings.add(JSError.make(nameNode,DUPLICATE_PROP_IN_ENUM,pname));
     }
     if (!convention.isValidEnumKey(pname)) {
       warnings.add(JSError.make(prop,TypeCheck.ENUM_NOT_CONSTANT,pname));
     }
     propNames.add(pname);
   }
-  currentScope.addEnum(varName,EnumType.make(varName,jsdoc.getEnumParameterType(),ImmutableSet.copyOf(propNames)));
+  currentScope.addEnum(nameNode,EnumType.make(nameNode.getQualifiedName(),jsdoc.getEnumParameterType(),ImmutableSet.copyOf(propNames)));
 }

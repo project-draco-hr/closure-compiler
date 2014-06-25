@@ -2,8 +2,8 @@
 switch (n.getType()) {
 case Token.FUNCTION:
     Node grandparent=parent.getParent();
-  if (grandparent == null || (!grandparent.isVar() && !NodeUtil.isPrototypePropertyDeclaration(grandparent))) {
-    visitFunctionDef(n,null);
+  if (grandparent == null || !NodeUtil.isPrototypePropertyDeclaration(grandparent)) {
+    visitFunctionLate(n,null);
   }
 break;
 case Token.NAME:
@@ -13,10 +13,14 @@ if (name == null || "undefined".equals(name) || parent.isFunction()) {
   return;
 }
 if (parent.isVar() || parent.isCatch()) {
-  if (NodeUtil.isTypedefDecl(parent) || NodeUtil.isEnumDecl(parent)) {
+  if (NodeUtil.isNamespaceDecl(n) || NodeUtil.isTypedefDecl(parent) || NodeUtil.isEnumDecl(parent)) {
     break;
   }
-  if (currentScope.isDefinedLocally(name)) {
+  Node initializer=n.getFirstChild();
+  if (initializer != null && initializer.isFunction()) {
+    break;
+  }
+ else   if (currentScope.isDefinedLocally(name)) {
     warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,name));
   }
  else {
@@ -24,14 +28,7 @@ if (parent.isVar() || parent.isCatch()) {
       warnings.add(JSError.make(useBeforeDeclNode,VariableReferenceCheck.UNDECLARED_REFERENCE,name));
     }
     undeclaredVars.removeAll(name);
-    Node initializer=n.getFirstChild();
-    if (initializer != null && initializer.isFunction()) {
-      visitFunctionDef(initializer,null);
-    }
- else     if (initializer != null && NodeUtil.isNamespaceDecl(n)) {
-      currentScope.addNamespace(n);
-    }
- else     if (parent.isCatch()) {
+    if (parent.isCatch()) {
       currentScope.addLocal(name,JSType.UNKNOWN,false);
     }
  else {
@@ -60,7 +57,7 @@ break;
 case Token.ASSIGN:
 {
 Node lvalue=n.getFirstChild();
-if (lvalue.isGetProp()) {
+if (lvalue.isGetProp() && parent.isExprResult()) {
 visitPropertyDeclaration(lvalue);
 }
 break;
