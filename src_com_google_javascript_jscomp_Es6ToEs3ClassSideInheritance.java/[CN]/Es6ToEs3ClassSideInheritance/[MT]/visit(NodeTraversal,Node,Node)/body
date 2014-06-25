@@ -5,13 +5,17 @@
   if (n.getFirstChild().matchesQualifiedName(Es6ToEs3Converter.COPY_PROP)) {
     Node superClassName=n.getLastChild();
     Node subClassName=n.getChildBefore(superClassName);
-    Scope.Var key=nodeTraversal.getScope().getVar(superClassName.getQualifiedName());
+    String key=superClassName.getQualifiedName();
+    if (multiplyDefinedClasses.contains(key)) {
+      compiler.report(JSError.make(n,DUPLICATE_CLASS));
+      return;
+    }
     if (staticMembers.containsKey(key)) {
       for (      String staticMember : staticMembers.get(key)) {
         Node sAssign=IR.exprResult(IR.assign(IR.getprop(subClassName.detachFromParent(),IR.string(staticMember)),IR.getprop(superClassName.detachFromParent(),IR.string(staticMember))));
         sAssign.useSourceInfoIfMissingFromForTree(n);
         parent.getParent().addChildAfter(sAssign,parent);
-        staticMembers.put(nodeTraversal.getScope().getVar(subClassName.getQualifiedName()),staticMember);
+        staticMembers.put(subClassName.getQualifiedName(),staticMember);
       }
       parent.detachFromParent();
     }
