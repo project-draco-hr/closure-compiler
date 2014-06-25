@@ -1,6 +1,28 @@
 {
+  if (enums != null) {
+    if (enums.isEmpty()) {
+      mask&=~ENUM_MASK;
+    }
+ else {
+      mask|=ENUM_MASK;
+    }
+  }
+  if (objs != null) {
+    if (objs.isEmpty()) {
+      mask&=~NON_SCALAR_MASK;
+    }
+ else {
+      mask|=NON_SCALAR_MASK;
+    }
+  }
   if (objs == null && typeVar == null && enums == null && location == null) {
     return MaskType.make(mask);
+  }
+  if (mask == NON_SCALAR_MASK && location == null) {
+    return new ObjsType(objs);
+  }
+  if (mask == (NON_SCALAR_MASK | NULL_MASK) && location == null) {
+    return new NullableObjsType(objs);
   }
   return new UnionType(mask,location,objs,typeVar,enums);
 }
