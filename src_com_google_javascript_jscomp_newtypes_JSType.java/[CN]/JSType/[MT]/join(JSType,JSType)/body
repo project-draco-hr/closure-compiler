@@ -20,8 +20,8 @@
   String newTypevar=lhs.getTypeVar() != null ? lhs.getTypeVar() : rhs.getTypeVar();
   ImmutableSet<EnumType> newEnums=EnumType.union(lhs.getEnums(),rhs.getEnums());
   if (newEnums == null) {
-    return new UnionType(newMask,newLoc,newObjs,newTypevar,null);
+    return makeType(newMask,newLoc,newObjs,newTypevar,null);
   }
-  JSType tmpJoin=new UnionType(newMask & ~ENUM_MASK,newLoc,newObjs,newTypevar,null);
-  return new UnionType(newMask,newLoc,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
+  JSType tmpJoin=makeType(newMask & ~ENUM_MASK,newLoc,newObjs,newTypevar,null);
+  return makeType(newMask,newLoc,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
 }

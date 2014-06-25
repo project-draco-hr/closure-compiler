@@ -6,7 +6,7 @@
     return other.isTop();
   }
  else   if (getMask() == TYPEVAR_MASK && typeParameters.contains(getTypeVar())) {
-    updateTypemap(typeMultimap,getTypeVar(),new UnionType(promoteBoolean(other.getMask()),null,other.getObjs(),other.getTypeVar(),other.getEnums()));
+    updateTypemap(typeMultimap,getTypeVar(),makeType(promoteBoolean(other.getMask()),null,other.getObjs(),other.getTypeVar(),other.getEnums()));
     return true;
   }
  else   if (other.isTop()) {
@@ -75,7 +75,7 @@
     if (templateMask == BOTTOM_MASK) {
       return false;
     }
-    JSType templateType=new UnionType(promoteBoolean(templateMask),null,ImmutableSet.copyOf(ununified),otherTypevar,ununifiedEnums == null ? null : ImmutableSet.copyOf(ununifiedEnums));
+    JSType templateType=makeType(promoteBoolean(templateMask),null,ImmutableSet.copyOf(ununified),otherTypevar,ununifiedEnums == null ? null : ImmutableSet.copyOf(ununifiedEnums));
     updateTypemap(typeMultimap,getTypeVar(),templateType);
     return true;
   }

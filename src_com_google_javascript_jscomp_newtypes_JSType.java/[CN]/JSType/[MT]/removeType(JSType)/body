@@ -9,7 +9,7 @@
   }
   int newMask=getMask() & ~otherMask;
   if ((otherMask & NON_SCALAR_MASK) == 0) {
-    return new UnionType(newMask,getLocation(),getObjs(),getTypeVar(),getEnums());
+    return makeType(newMask,getLocation(),getObjs(),getTypeVar(),getEnums());
   }
   Preconditions.checkState(other.getObjs().size() == 1,"Invalid type to remove: %s",other);
   ObjectType otherObj=Iterables.getOnlyElement(other.getObjs());
@@ -33,5 +33,5 @@
     }
     newEnums=builder.build();
   }
-  return new UnionType(newMask,getLocation(),newObjs,getTypeVar(),newEnums);
+  return makeType(newMask,getLocation(),newObjs,getTypeVar(),newEnums);
 }
