@@ -14,7 +14,7 @@
     compiler.report(JSError.make(node,NO_SUPERTYPE));
     return;
   }
-  if (clazz.getFirstChild().isEmpty() && !clazz.getFirstChild().getNext().isEmpty()) {
+  if (NodeUtil.getClassNameNode(clazz) == null) {
     return;
   }
   Node methodName;
@@ -27,7 +27,7 @@
     methodName=IR.string(callName.getLastChild().getString()).srcref(enclosing);
   }
   boolean inFunction=isInFunction(clazz);
-  String uniqueClassString=inFunction ? clazz.getFirstChild().getString() : getUniqueClassName(clazz.getFirstChild().getString());
+  String uniqueClassString=inFunction ? NodeUtil.getClassName(clazz) : getUniqueClassName(NodeUtil.getClassName(clazz));
   Node uniqueClassName=IR.name(uniqueClassString);
   Node base=IR.getprop(uniqueClassName.srcref(enclosing),IR.string("base").srcref(enclosing)).srcref(enclosing);
   enclosing.addChildToFront(methodName);

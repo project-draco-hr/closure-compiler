@@ -81,13 +81,15 @@
     }
  else {
       Node inherits=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.inherits");
-      Node inheritsCall=IR.exprResult(IR.call(inherits,className.cloneTree(),superClassName.cloneTree()));
+      Node inheritsCall=IR.exprResult(IR.call(inherits,NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),fullClassName),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),superClassString)));
       inheritsCall.useSourceInfoIfMissingFromForTree(classNode);
-      parent.addChildAfter(inheritsCall,classNode);
+      Node enclosingStatement=NodeUtil.getEnclosingStatement(classNode);
+      enclosingStatement.getParent().addChildAfter(inheritsCall,enclosingStatement);
       newInfo.recordBaseType(new JSTypeExpression(new Node(Token.BANG,IR.string(superClassString)),superClassName.getSourceFileName()));
-      Node copyProps=IR.call(IR.name(COPY_PROP).srcref(classNode),className.cloneTree(),superClassName.cloneTree()).srcref(classNode);
+      Node copyProps=IR.call(IR.name(COPY_PROP).srcref(classNode),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),fullClassName),NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),superClassString));
+      copyProps.useSourceInfoIfMissingFromForTree(classNode);
       copyProps.putBooleanProp(Node.FREE_CALL,true);
-      parent.addChildAfter(IR.exprResult(copyProps).srcref(classNode),inheritsCall);
+      enclosingStatement.getParent().addChildAfter(IR.exprResult(copyProps).srcref(classNode),inheritsCall);
     }
   }
   if (!newInfo.isUnrestrictedRecorded() && !newInfo.isDictRecorded() && !newInfo.isStructRecorded()) {
