@@ -102,22 +102,9 @@
       newInfo.recordParameter(param,ctorJSDocInfo.getParameterType(param));
     }
   }
-  if (useUnique) {
-    constructor.removeFirstChild();
-    Node uniqueName=IR.name(uniqueFullClassName);
-    constructor=IR.var(uniqueName.cloneTree(),IR.function(IR.name(""),constructor.removeFirstChild(),constructor.removeFirstChild()));
-    constructor.useSourceInfoIfMissingFromForTree(classNode);
-    constructor.setJSDocInfo(newInfo.build(constructor));
-    newInfo=JSDocInfoBuilder.copyFrom(constructor.getJSDocInfo());
-    Node reassign=IR.var(IR.name(fullClassName),uniqueName);
-    reassign.useSourceInfoIfMissingFromForTree(classNode);
-    classNode.getParent().addChildAfter(reassign,classNode);
-    insertionPoint=reassign;
-  }
- else {
-    insertionPoint=constructor;
-  }
-  if (NodeUtil.isStatement(classNode) && isInFunction(classNode)) {
+  insertionPoint=constructor;
+  if (NodeUtil.isStatement(classNode)) {
+    constructor.getFirstChild().setString("");
     Node ctorVar=IR.var(IR.name(fullClassName),constructor);
     ctorVar.useSourceInfoIfMissingFromForTree(classNode);
     parent.replaceChild(classNode,ctorVar);
