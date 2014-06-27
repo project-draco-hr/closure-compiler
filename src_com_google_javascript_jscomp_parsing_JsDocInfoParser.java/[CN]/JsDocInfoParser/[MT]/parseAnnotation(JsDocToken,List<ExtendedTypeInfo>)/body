@@ -438,8 +438,19 @@ token=parseSuppressTag(next());
 return token;
 case TEMPLATE:
 {
-ExtractionInfo templateInfo=extractSingleLineBlock();
-List<String> names=Lists.newArrayList(Splitter.on(',').trimResults().split(templateInfo.string));
+ExtractionInfo templateInfo=extractMultilineTextualBlock(token);
+List<String> templateString=Splitter.on(" as").trimResults().splitToList(templateInfo.string);
+boolean isTypeTransformation=false;
+if (templateString.size() >= 2) {
+isTypeTransformation=true;
+if (templateString.get(1).isEmpty()) {
+parser.addTypeWarning("msg.jsdoc.typetransformation.expression.missing",stream.getLineno(),stream.getCharno());
+}
+if (templateString.size() >= 3) {
+parser.addTypeWarning("msg.jsdoc.typetransformation.found.multiple.as",stream.getLineno(),stream.getCharno());
+}
+}
+List<String> names=Lists.newArrayList(Splitter.on(',').trimResults().split(templateString.get(0)));
 if (names.size() == 1 && names.get(0).isEmpty()) {
 parser.addTypeWarning("msg.jsdoc.templatemissing",stream.getLineno(),stream.getCharno());
 }
@@ -452,6 +463,9 @@ parser.addTypeWarning("msg.jsdoc.template.invalid.type.name",stream.getLineno(),
 parser.addTypeWarning("msg.jsdoc.template.name.declared.twice",stream.getLineno(),stream.getCharno());
 }
 }
+}
+if (isTypeTransformation && names.size() > 1) {
+parser.addTypeWarning("msg.jsdoc.typetransformation.with.multiple.names",stream.getLineno(),stream.getCharno());
 }
 token=templateInfo.token;
 return token;
