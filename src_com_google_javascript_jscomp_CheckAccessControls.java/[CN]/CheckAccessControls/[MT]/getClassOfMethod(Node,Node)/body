@@ -17,5 +17,15 @@
  else   if (NodeUtil.isFunctionDeclaration(n) || parent.isName()) {
     return normalizeClassType(n.getJSType());
   }
+ else   if (parent.isStringKey() || parent.isGetterDef() || parent.isSetterDef()) {
+    Node objectLitParent=parent.getParent().getParent();
+    if (!objectLitParent.isAssign()) {
+      return null;
+    }
+    Node className=NodeUtil.getPrototypeClassName(objectLitParent.getFirstChild());
+    if (className != null) {
+      return normalizeClassType(className.getJSType());
+    }
+  }
   return null;
 }
