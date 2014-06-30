@@ -1,10 +1,9 @@
 {
-  Node node;
   JSDocInfo info=handleInlineJsDoc(identifierToken,true);
-  if (identifierToken == null || isReservedKeyword(identifierToken.toString())) {
-    errorReporter.error("identifier is a reserved word",sourceName,identifierToken.location.start.line,0);
+  if (isReservedKeyword(identifierToken.toString())) {
+    errorReporter.error("identifier is a reserved word",sourceName,lineno(identifierToken.location.start),charno(identifierToken.location.start));
   }
-  node=newStringNode(Token.NAME,identifierToken.toString());
+  Node node=newStringNode(Token.NAME,identifierToken.toString());
   if (info != null) {
     attachJSDoc(info,node);
   }
