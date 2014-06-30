@@ -16,6 +16,9 @@
     new NodeTraversal(compiler,cnt).traverse(s.getBody());
     s.resolveTypedefs(typeParser);
     s.resolveEnums(typeParser);
+    if (NewTypeInference.measureMem) {
+      NewTypeInference.updatePeakMem();
+    }
   }
   ProcessScope rootPs=new ProcessScope(globalScope);
   if (externs != null) {
@@ -28,6 +31,9 @@
     ProcessScope ps=new ProcessScope(s);
     new NodeTraversal(compiler,ps).traverse(s.getBody());
     ps.finishProcessingScope();
+    if (NewTypeInference.measureMem) {
+      NewTypeInference.updatePeakMem();
+    }
   }
   reportInheritanceErrors();
   nominaltypesByNode=null;
