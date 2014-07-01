@@ -17,11 +17,20 @@
   if (NodeUtil.getClassNameNode(clazz) == null) {
     return;
   }
+  Node enclosingMemberDef=NodeUtil.getEnclosingClassMember(node);
+  if (enclosingMemberDef.isStaticMember()) {
+    node.getParent().replaceChild(node,clazz.getFirstChild().getNext().cloneTree());
+    Node callTarget=IR.getprop(potentialCallee.detachFromParent(),IR.string("call"));
+    callTarget.useSourceInfoIfMissingFromForTree(enclosing);
+    enclosing.addChildToFront(callTarget);
+    enclosing.addChildAfter(IR.thisNode(),callTarget);
+    compiler.reportCodeChange();
+    return;
+  }
   Node methodName;
   Node callName=enclosing.removeFirstChild();
   if (callName.isSuper()) {
-    Node enclosingMember=NodeUtil.getEnclosingClassMember(enclosing);
-    methodName=IR.string(enclosingMember.getString()).srcref(enclosing);
+    methodName=IR.string(enclosingMemberDef.getString()).srcref(enclosing);
   }
  else {
     methodName=IR.string(callName.getLastChild().getString()).srcref(enclosing);
