@@ -1,0 +1,14 @@
+{
+  Preconditions.checkState(lhs.isArrayPattern() || lhs.isName());
+  if (lhs.isName()) {
+    declareVar(declarationScope,lhs);
+  }
+ else   if (lhs.isArrayPattern()) {
+    for (Node child=lhs.getFirstChild(); child != null; child=child.getNext()) {
+      if (NodeUtil.isNameDeclaration(lhs.getParent()) && child.getNext() == null) {
+        return;
+      }
+      declareLHS(declarationScope,child);
+    }
+  }
+}

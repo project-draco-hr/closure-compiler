@@ -1,0 +1,13 @@
+{
+  String js="" + "function foo() {\n" + "  var [a, b] = getVars();"+ "  if (true) {"+ "    var [x, y] = getMoreVars();"+ "  }"+ "}";
+  Node root=getRoot(js);
+  Scope globalScope=scopeCreator.createScope(root,null);
+  Node functionNode=root.getFirstChild();
+  Scope functionScope=scopeCreator.createScope(functionNode,globalScope);
+  Node functionBlock=functionNode.getLastChild();
+  Scope functionBlockScope=scopeCreator.createScope(functionBlock,functionScope);
+  assertTrue(functionBlockScope.isDeclared("a",false));
+  assertTrue(functionBlockScope.isDeclared("b",false));
+  assertTrue(functionBlockScope.isDeclared("x",false));
+  assertTrue(functionBlockScope.isDeclared("y",false));
+}

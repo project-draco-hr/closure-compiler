@@ -1,10 +1,8 @@
 {
 switch (n.getType()) {
 case Token.VAR:
-    for (Node child=n.getFirstChild(); child != null; ) {
-      Node next=child.getNext();
-      declareVar(scope.getClosestHoistScope(),child);
-      child=next;
+    for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+      declareLHS(scope.getClosestHoistScope(),child);
     }
   return;
 case Token.LET:
@@ -12,10 +10,8 @@ case Token.CONST:
 if (!isNodeAtCurrentLexicalScope(n)) {
   return;
 }
-for (Node child=n.getFirstChild(); child != null; ) {
-Node next=child.getNext();
-declareVar(child);
-child=next;
+for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+declareLHS(scope,child);
 }
 return;
 case Token.FUNCTION:
