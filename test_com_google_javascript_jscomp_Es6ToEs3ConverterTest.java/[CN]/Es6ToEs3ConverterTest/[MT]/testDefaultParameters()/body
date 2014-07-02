@@ -1,5 +1,6 @@
 {
   enableTypeCheck(CheckLevel.WARNING);
+  test("var x = true; function f(a=x) { var x = false; return a; }","var x = true; function f(a) { a === undefined && (a = x); var x$0 = false; return a; }");
   test("function f(zero, one = 1, two = 2) {}; f(1); f(1,2,3);",Joiner.on('\n').join("function f(zero, one, two) {","  one === undefined && (one = 1);","  two === undefined && (two = 2);","};","f(1); f(1,2,3);"));
   test("function f(zero, one = 1, two = 2) {}; f();",Joiner.on('\n').join("function f(zero, one, two) {","  one === undefined && (one = 1);","  two === undefined && (two = 2);","}; f();"),null,TypeCheck.WRONG_ARGUMENT_COUNT);
 }

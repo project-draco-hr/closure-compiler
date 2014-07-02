@@ -1,0 +1,8 @@
+{
+  test("var x = 5; function f(y=x) { var x; }","var x = 5; function f(y=x) { var x$0; }");
+  test(Joiner.on('\n').join("function x() {}","function f(y=(function y() { return x(); }())) {","  var x; y++;","}"),Joiner.on('\n').join("function x() {}","function f(y=(function y() { return x(); }())) {","  var x$0; y++;","}"));
+  test(Joiner.on('\n').join("function x() {}","function f(y=(function y() { return x(); }())) {","  var x;","  { let x; x++; }","  x++;","}"),Joiner.on('\n').join("function x() {}","function f(y=(function y() { return x(); }())) {","  var x$0;","  { let x; x++; }","  x$0++;","}"));
+  test(Joiner.on('\n').join("function x() {}","function f(y=(function y() { return x(); }())) {","  var x; { x++ };","}"),Joiner.on('\n').join("function x() {}","function f(y=(function y() { return x(); }())) {","  var x$0; { x$0++ };","}"));
+  test(Joiner.on('\n').join("function f(a = x, b = y) {","  var y, x;","  return function() { var x = () => y };","}"),Joiner.on('\n').join("function f(a = x, b = y) {","  var y$0, x$1;","  return function() { var x = () => y$0 };","}"));
+  test(Joiner.on('\n').join("var x = 4;","function f(a=x) { let x = 5; { let x = 99; } return a + x; }"),Joiner.on('\n').join("var x = 4;","function f(a=x) { let x$0 = 5; { let x = 99; } return a + x$0; }"));
+}

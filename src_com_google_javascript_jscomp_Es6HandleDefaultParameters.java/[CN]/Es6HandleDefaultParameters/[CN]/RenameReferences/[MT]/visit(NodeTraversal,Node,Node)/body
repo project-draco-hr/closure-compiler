@@ -1,0 +1,14 @@
+{
+  if (!NodeUtil.isReferenceName(n)) {
+    return;
+  }
+  Scope scope=t.getScope();
+  String oldName=n.getString();
+  if (scope.getRootNode() != fBlockScope.getRootNode() && scope.isDeclared(oldName,false)) {
+    return;
+  }
+  if (currParamListMap.containsKey(oldName)) {
+    n.setString(currParamListMap.get(oldName));
+    compiler.reportCodeChange();
+  }
+}
