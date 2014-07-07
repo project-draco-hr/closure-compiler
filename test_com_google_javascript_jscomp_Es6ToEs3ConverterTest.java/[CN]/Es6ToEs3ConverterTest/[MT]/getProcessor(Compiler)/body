@@ -1,3 +1,8 @@
 {
-  return new Es6ToEs3Converter(compiler);
+  PhaseOptimizer optimizer=new PhaseOptimizer(compiler,null,null);
+  DefaultPassConfig passConfig=new DefaultPassConfig(getOptions());
+  optimizer.addOneTimePass(passConfig.es6HandleDefaultParams);
+  optimizer.addOneTimePass(passConfig.convertEs6ToEs3);
+  optimizer.addOneTimePass(passConfig.rewriteLetConst);
+  return optimizer;
 }
