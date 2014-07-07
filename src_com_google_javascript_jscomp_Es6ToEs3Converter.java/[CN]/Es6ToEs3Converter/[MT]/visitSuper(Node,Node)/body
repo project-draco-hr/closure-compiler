@@ -20,6 +20,9 @@
   Node enclosingMemberDef=NodeUtil.getEnclosingClassMember(node);
   if (enclosingMemberDef.isStaticMember()) {
     Node superName=clazz.getFirstChild().getNext();
+    if (!superName.isQualifiedName()) {
+      return;
+    }
     Node callTarget;
     potentialCallee.detachFromParent();
     if (potentialCallee == node) {
