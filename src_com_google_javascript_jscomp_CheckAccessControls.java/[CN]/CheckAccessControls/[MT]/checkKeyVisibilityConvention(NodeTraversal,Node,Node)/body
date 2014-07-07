@@ -1,0 +1,21 @@
+{
+  JSDocInfo info=key.getJSDocInfo();
+  if (info == null) {
+    return;
+  }
+  if (!isPrivateByConvention(key.getString())) {
+    return;
+  }
+  Node assign=parent.getParent();
+  if (assign == null || !assign.isAssign()) {
+    return;
+  }
+  Node left=assign.getFirstChild();
+  if (!left.isGetProp() || !left.getLastChild().getString().equals("prototype")) {
+    return;
+  }
+  Visibility declaredVisibility=info.getVisibility();
+  if (declaredVisibility != Visibility.INHERITED && declaredVisibility != Visibility.PRIVATE) {
+    compiler.report(t.makeError(key,CONVENTION_MISMATCH));
+  }
+}
