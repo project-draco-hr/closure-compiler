@@ -2,15 +2,16 @@
   if (peekParenPattern(kind,follow)) {
     return parseParenPattern(kind);
   }
-  boolean spread=false;
+  boolean rest=false;
   SourcePosition start=getTreeStartLocation();
   if (peek(TokenType.SPREAD)) {
     eat(TokenType.SPREAD);
-    spread=true;
+    rest=true;
   }
   ParseTree lvalue=parseLeftHandSideExpression();
-  if (kind == PatternKind.INITIALIZER && lvalue.type != ParseTreeType.IDENTIFIER_EXPRESSION) {
+  if ((rest || kind == PatternKind.INITIALIZER) && lvalue.type != ParseTreeType.IDENTIFIER_EXPRESSION) {
     reportError("lvalues in initializer patterns must be identifiers");
+    return lvalue;
   }
-  return spread ? new SpreadPatternElementTree(getTreeLocation(start),lvalue) : lvalue;
+  return rest ? new AssignmentRestElementTree(getTreeLocation(start),lvalue.asIdentifierExpression().identifierToken) : lvalue;
 }
