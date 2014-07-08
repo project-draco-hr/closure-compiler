@@ -1,0 +1,14 @@
+{
+  if (!problemNodes.isEmpty()) {
+    addExtern();
+    for (    Node n : problemNodes) {
+      Node name=IR.name(PROTECTOR_FN).srcref(n);
+      name.putBooleanProp(Node.IS_CONSTANT_NAME,true);
+      Node replacement=IR.call(name).srcref(n);
+      replacement.putBooleanProp(Node.FREE_CALL,true);
+      n.getParent().replaceChild(n,replacement);
+      replacement.addChildToBack(n);
+    }
+    compiler.reportCodeChange();
+  }
+}
