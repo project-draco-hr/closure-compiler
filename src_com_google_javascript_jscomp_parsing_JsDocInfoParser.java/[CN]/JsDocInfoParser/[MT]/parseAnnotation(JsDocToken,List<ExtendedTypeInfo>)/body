@@ -438,18 +438,32 @@ token=parseSuppressTag(next());
 return token;
 case TEMPLATE:
 {
-ExtractionInfo templateInfo=extractSingleLineBlock();
-boolean isTypeTransformation=false;
+ExtractionInfo templateInfo=extractMultilineTextualBlock(token,WhitespaceOption.TRIM);
+String templateString=templateInfo.string;
+String ttlStartDelimiter=":=";
+String ttlEndDelimiter="=:";
 String templateNames;
-String typeTransformationStart="";
-if (templateInfo.string.contains(" as")) {
-isTypeTransformation=true;
-int typeTransformationIndex=templateInfo.string.indexOf(" as");
-templateNames=templateInfo.string.substring(0,typeTransformationIndex);
-typeTransformationStart=templateInfo.string.substring(typeTransformationIndex + 3);
+String typeTransformationExpr="";
+boolean isTypeTransformation=false;
+if (!templateString.contains(ttlStartDelimiter)) {
+if (templateString.contains("\n")) {
+templateNames=templateString.substring(0,templateString.indexOf('\n'));
 }
  else {
-templateNames=templateInfo.string;
+templateNames=templateString;
+}
+}
+ else {
+int ttlStartIndex=templateString.indexOf(ttlStartDelimiter);
+templateNames=templateString.substring(0,ttlStartIndex);
+if (!templateString.contains(ttlEndDelimiter)) {
+parser.addTypeWarning("msg.jsdoc.typetransformation.missing.delimiter",stream.getLineno(),stream.getCharno());
+}
+ else {
+isTypeTransformation=true;
+int ttlEndIndex=templateString.indexOf(ttlEndDelimiter);
+typeTransformationExpr=templateString.substring(ttlStartIndex + ttlStartDelimiter.length(),ttlEndIndex).trim();
+}
 }
 List<String> names=Lists.newArrayList(Splitter.on(',').trimResults().split(templateNames));
 if (names.size() == 1 && names.get(0).isEmpty()) {
@@ -469,17 +483,11 @@ if (isTypeTransformation) {
 if (names.size() > 1) {
 parser.addTypeWarning("msg.jsdoc.typetransformation.with.multiple.names",stream.getLineno(),stream.getCharno());
 }
-ExtractionInfo typeTransformationInfo=extractMultilineTextualBlock(templateInfo.token);
-String typeTransformationEnd=typeTransformationInfo.string;
-String typeTransformationString=typeTransformationStart + typeTransformationEnd;
-if (typeTransformationString.equals("")) {
+if (typeTransformationExpr.equals("")) {
 parser.addTypeWarning("msg.jsdoc.typetransformation.expression.missing",stream.getLineno(),stream.getCharno());
 }
-token=typeTransformationInfo.token;
 }
- else {
 token=templateInfo.token;
-}
 return token;
 }
 case IDGENERATOR:
