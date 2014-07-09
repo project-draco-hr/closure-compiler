@@ -1,5 +1,7 @@
 {
-  JSError error=JSError.make("javascript/complex.js",Node.newString("foobar",5,8),FOO_TYPE);
+  Node n=Node.newString("foobar",5,8);
+  n.setSourceFileForTesting("javascript/complex.js");
+  JSError error=JSError.make(n,FOO_TYPE);
   LightweightMessageFormatter formatter=formatter("    if (foobar) {","<div ng-show='(foo'>");
   assertEquals("javascript/complex.js:5: \n" + "Originally at:\n" + "original/source.html:3: ERROR - error description here\n"+ "<div ng-show='(foo'>\n"+ "               ^\n",formatter.formatError(error));
 }

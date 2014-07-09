@@ -2,7 +2,7 @@
   JsMessage replacement=bundle.getMessage(message.getId());
   if (replacement == null) {
     if (strictReplacement) {
-      compiler.report(JSError.make(message.getSourceName(),definition.getMessageNode(),BUNDLE_DOES_NOT_HAVE_THE_MESSAGE,message.getId()));
+      compiler.report(JSError.make(definition.getMessageNode(),BUNDLE_DOES_NOT_HAVE_THE_MESSAGE,message.getId()));
       return;
     }
  else {
@@ -15,7 +15,7 @@
     newValue=getNewValueNode(replacement,msgNode);
   }
  catch (  MalformedException e) {
-    compiler.report(JSError.make(message.getSourceName(),e.getNode(),MESSAGE_TREE_MALFORMED,e.getMessage()));
+    compiler.report(JSError.make(e.getNode(),MESSAGE_TREE_MALFORMED,e.getMessage()));
     newValue=msgNode;
   }
   if (newValue != msgNode) {
