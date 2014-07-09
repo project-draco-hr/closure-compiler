@@ -1,0 +1,7 @@
+{
+  Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("{","  return {" + ITER_KEY + ": function() {","    var " + GENERATOR_CONTEXT + " = 0;","    return { next: function() {","      while (1) switch (" + GENERATOR_CONTEXT + ") {","        case 0:","          " + GENERATOR_CONTEXT + " = -1;","        default:","          return {done: true};","      }","    }}","  }}","}")).removeFirstChild();
+  Node genFunc=IR.function(n.removeFirstChild(),n.removeFirstChild(),genBlock);
+  parent.replaceChild(n,genFunc);
+  parent.useSourceInfoIfMissingFromForTree(parent);
+  compiler.reportCodeChange();
+}
