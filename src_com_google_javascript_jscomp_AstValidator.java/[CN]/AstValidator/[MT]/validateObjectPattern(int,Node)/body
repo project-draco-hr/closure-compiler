@@ -1,0 +1,15 @@
+{
+  validateNodeType(Token.OBJECT_PATTERN,n);
+  for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+    if (c == n.getLastChild() && NodeUtil.isNameDeclaration(n.getParent())) {
+      validateExpression(c);
+    }
+ else     if (c.isStringKey()) {
+      validateObjectLitStringKey(c);
+      validateChildCount(c,0);
+    }
+ else {
+      validateNameDeclarationChild(type,c);
+    }
+  }
+}

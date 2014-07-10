@@ -1,14 +1,16 @@
 {
-  Preconditions.checkState(lhs.isArrayPattern() || lhs.isName());
-  if (lhs.isName()) {
+  if (lhs.isName() || lhs.isStringKey()) {
     declareVar(declarationScope,lhs);
   }
- else   if (lhs.isArrayPattern()) {
+ else   if (lhs.isArrayPattern() || lhs.isObjectPattern()) {
     for (Node child=lhs.getFirstChild(); child != null; child=child.getNext()) {
       if (NodeUtil.isNameDeclaration(lhs.getParent()) && child.getNext() == null) {
         return;
       }
       declareLHS(declarationScope,child);
     }
+  }
+ else {
+    throw new RuntimeException("Cannot declare a variable for node: " + lhs);
   }
 }
