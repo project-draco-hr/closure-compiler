@@ -7,7 +7,7 @@ switch (currentNode.getType()) {
 case Token.DO:
 case Token.WHILE:
 case Token.FOR:
-    List<DiGraphEdge<Node,ControlFlowGraph.Branch>> outEdges=cfg.getOutEdges(dn.getValue());
+    List<DiGraphEdge<Node,ControlFlowGraph.Branch>> outEdges=cfg.getOutEdges(currentNode);
   seen.add(dn);
 workset.add(dn);
 for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : outEdges) {
@@ -23,7 +23,7 @@ buildWorksetHelper(outEdge.getDestination(),workset,seen);
 }
 break;
 default :
-for (DiGraphEdge<Node,ControlFlowGraph.Branch> inEdge : cfg.getInEdges(dn.getValue())) {
+for (DiGraphEdge<Node,ControlFlowGraph.Branch> inEdge : cfg.getInEdges(currentNode)) {
 if (!seen.contains(inEdge.getSource()) && !inEdge.getSource().getValue().isDo()) {
 return;
 }
@@ -31,6 +31,22 @@ return;
 seen.add(dn);
 if (cfg.getEntry() != dn) {
 workset.add(dn);
+}
+while (true) {
+List<DiGraphNode<Node,ControlFlowGraph.Branch>> succs=cfg.getDirectedSuccNodes(dn);
+if (succs.size() != 1) {
+break;
+}
+DiGraphNode<Node,ControlFlowGraph.Branch> succ=succs.get(0);
+if (succ == cfg.getImplicitReturn()) {
+return;
+}
+if (cfg.getDirectedPredNodes(succ).size() > 1) {
+break;
+}
+workset.add(succ);
+seen.add(succ);
+dn=succ;
 }
 for (DiGraphNode<Node,ControlFlowGraph.Branch> succ : cfg.getDirectedSuccNodes(dn)) {
 buildWorksetHelper(succ,workset,seen);
