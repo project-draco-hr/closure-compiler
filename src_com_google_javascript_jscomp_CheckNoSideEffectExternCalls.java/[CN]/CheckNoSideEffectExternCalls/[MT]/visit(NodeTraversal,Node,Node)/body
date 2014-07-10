@@ -1,12 +1,12 @@
 {
-  if (n.isCall() && !NodeUtil.isExpressionResultUsed(n) && (n.getFirstChild().isName() || n.getFirstChild().isString())) {
+  if (n.isCall() && !NodeUtil.isExpressionResultUsed(n) && (n.getFirstChild().isName() || n.getFirstChild().isString() || n.getFirstChild().isGetProp())) {
     JSType targetType=n.getFirstChild().getJSType();
     if (targetType != null && targetType.isFunctionType()) {
       targetType=targetType.restrictByNotNullOrUndefined();
       FunctionType functionType=targetType.toMaybeFunctionType();
       JSDocInfo functionJSDocInfo=functionType.getJSDocInfo();
       if (functionJSDocInfo != null && functionJSDocInfo.isNoSideEffects() && functionJSDocInfo.getAssociatedNode() != null && functionJSDocInfo.getAssociatedNode().isFromExterns()) {
-        t.getCompiler().report(t.makeError(n,level,USELESS_CODE_ERROR,n.getFirstChild().getString()));
+        t.getCompiler().report(t.makeError(n,level,USELESS_CODE_ERROR,n.getFirstChild().getQualifiedName()));
         problemNodes.add(n);
       }
     }
