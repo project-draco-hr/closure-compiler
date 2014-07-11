@@ -11,8 +11,12 @@
     }
     Preconditions.checkState(args.isParamList());
     for (Node a=args.getFirstChild(); a != null; a=a.getNext()) {
-      Preconditions.checkState(a.isName() || a.isRest());
-      declareVar(a);
+      if (a.isDefaultValue()) {
+        declareLHS(scope,a.getFirstChild());
+      }
+ else {
+        declareLHS(scope,a);
+      }
     }
   }
  else   if (n.isBlock() || n.isFor() || n.isForOf()) {

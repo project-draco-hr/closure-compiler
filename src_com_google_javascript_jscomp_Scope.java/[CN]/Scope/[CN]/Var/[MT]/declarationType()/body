@@ -1,0 +1,9 @@
+{
+  final Set<Integer> types=ImmutableSet.of(Token.VAR,Token.LET,Token.CONST,Token.FUNCTION,Token.CLASS,Token.CATCH,Token.PARAM_LIST);
+  for (Node current=nameNode; current != null; current=current.getParent()) {
+    if (types.contains(current.getType())) {
+      return current.getType();
+    }
+  }
+  throw new IllegalStateException("The nameNode for " + this + " must be a descendant"+ " of one of: "+ types);
+}

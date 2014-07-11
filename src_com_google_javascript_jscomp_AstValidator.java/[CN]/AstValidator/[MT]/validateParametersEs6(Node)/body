@@ -7,14 +7,32 @@
       }
       validateRest(c);
     }
+ else     if (c.isDefaultValue()) {
+      defaultParams=true;
+      validateAssignmentExpression(c);
+      Node lhs=c.getFirstChild();
+      if (lhs.isName()) {
+        validateName(lhs);
+      }
+ else       if (lhs.isArrayPattern()) {
+        validateArrayPattern(Token.PARAM_LIST,lhs);
+      }
  else {
-      validateNodeType(Token.NAME,c);
-      validateNonEmptyString(c);
-      validateMinimumChildCount(c,defaultParams ? 1 : 0);
-      validateMaximumChildCount(c,1);
-      if (c.hasOneChild()) {
-        validateExpression(c.getFirstChild());
-        defaultParams=true;
+        validateObjectPattern(Token.PARAM_LIST,lhs);
+      }
+    }
+ else {
+      if (defaultParams) {
+        violation("Cannot have a parameter without a default value," + " after one with a default value.",c);
+      }
+      if (c.isName()) {
+        validateName(c);
+      }
+ else       if (c.isArrayPattern()) {
+        validateArrayPattern(Token.PARAM_LIST,c);
+      }
+ else {
+        validateObjectPattern(Token.PARAM_LIST,c);
       }
     }
   }
