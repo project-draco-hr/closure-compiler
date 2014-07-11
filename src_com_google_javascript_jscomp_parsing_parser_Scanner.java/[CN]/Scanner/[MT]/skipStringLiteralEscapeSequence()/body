@@ -26,8 +26,12 @@ case 'x':
 case 'u':
 if (peek('{')) {
   nextChar();
+  if (peek('}')) {
+    reportError("Empty unicode escape");
+    return false;
+  }
   boolean allHexDigits=true;
-  while (!peek('}')) {
+  while (!peek('}') && allHexDigits) {
     allHexDigits=allHexDigits && skipHexDigit();
   }
   nextChar();
