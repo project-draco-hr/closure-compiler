@@ -1,0 +1,6 @@
+{
+  String externs="/** @const */ var foo = {};\n" + "/** @return {boolean}\n * @nosideeffects */\n" + "foo.noSideEffectsExtern = function(){}";
+  test(externs,"alert(foo.noSideEffectsExtern());","alert(foo.noSideEffectsExtern());",ok,null);
+  test(externs,"foo.noSideEffectsExtern();","JSCOMPILER_PRESERVE(foo.noSideEffectsExtern());",null,e,"Suspicious code. The result of the extern function call " + "'foo.noSideEffectsExtern' is not being used.");
+  testSame(externs,"(function() { var foo = {}; " + "foo.noSideEffectsExtern = function() {}; " + "noSideEffectsExtern(); })()",ok);
+}
