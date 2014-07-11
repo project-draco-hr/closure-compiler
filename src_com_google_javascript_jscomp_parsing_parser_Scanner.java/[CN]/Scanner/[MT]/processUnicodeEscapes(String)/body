@@ -1,0 +1,36 @@
+{
+  while (value.contains("\\")) {
+    int escapeStart=value.indexOf('\\');
+    try {
+      if (value.charAt(escapeStart + 1) != 'u') {
+        return null;
+      }
+      String hexDigits;
+      int escapeEnd;
+      if (value.charAt(escapeStart + 2) != '{') {
+        escapeEnd=escapeStart + 6;
+        hexDigits=value.substring(escapeStart + 2,escapeEnd);
+      }
+ else {
+        escapeEnd=escapeStart + 3;
+        while (isHexDigit(value.charAt(escapeEnd))) {
+          escapeEnd++;
+        }
+        if (value.charAt(escapeEnd) != '}') {
+          return null;
+        }
+        hexDigits=value.substring(escapeStart + 3,escapeEnd);
+        escapeEnd++;
+      }
+      char ch=(char)Integer.parseInt(hexDigits,0x10);
+      if (!isIdentifierPart(ch)) {
+        return null;
+      }
+      value=value.substring(0,escapeStart) + ch + value.substring(escapeEnd);
+    }
+ catch (    NumberFormatException|StringIndexOutOfBoundsException e) {
+      return null;
+    }
+  }
+  return value;
+}

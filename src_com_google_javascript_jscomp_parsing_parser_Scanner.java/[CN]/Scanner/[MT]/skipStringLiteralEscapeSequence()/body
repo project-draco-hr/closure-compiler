@@ -24,7 +24,18 @@ case '0':
 case 'x':
   return skipHexDigit() && skipHexDigit();
 case 'u':
-return skipHexDigit() && skipHexDigit() && skipHexDigit()&& skipHexDigit();
+if (peek('{')) {
+  nextChar();
+  boolean allHexDigits=true;
+  while (!peek('}')) {
+    allHexDigits=allHexDigits && skipHexDigit();
+  }
+  nextChar();
+  return allHexDigits;
+}
+ else {
+  return skipHexDigit() && skipHexDigit() && skipHexDigit()&& skipHexDigit();
+}
 default :
 return true;
 }
