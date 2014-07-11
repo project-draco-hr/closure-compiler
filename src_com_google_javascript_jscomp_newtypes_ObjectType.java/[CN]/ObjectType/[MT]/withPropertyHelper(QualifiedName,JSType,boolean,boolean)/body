@@ -3,7 +3,6 @@
   if (qname.isIdentifier()) {
     String pname=qname.getLeftmostName();
     JSType declType=getDeclaredProp(qname);
-    Preconditions.checkState(declType == null || type == null || type.isSubtypeOf(declType),"Cannot add property of type %s to a property declared of type %s",type,declType);
     if (type == null) {
       type=declType;
     }
@@ -11,6 +10,9 @@
       isDeclared=true;
       if (hasConstantProp(qname)) {
         isConstant=true;
+      }
+      if (type != null && !type.isSubtypeOf(declType)) {
+        type=declType;
       }
     }
  else     if (isDeclared) {
