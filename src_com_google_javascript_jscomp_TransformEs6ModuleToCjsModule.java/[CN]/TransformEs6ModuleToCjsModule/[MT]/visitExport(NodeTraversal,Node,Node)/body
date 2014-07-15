@@ -1,0 +1,30 @@
+{
+  if (n.getBooleanProp(Node.EXPORT_DEFAULT)) {
+    compiler.report(JSError.make(n,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Default export"));
+  }
+ else   if (n.getBooleanProp(Node.EXPORT_ALL_FROM)) {
+    compiler.report(JSError.make(n,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Wildcard export"));
+  }
+ else {
+    if (n.getChildCount() == 2) {
+      compiler.report(JSError.make(n,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Export with FromClause"));
+      return;
+    }
+    if (n.getFirstChild().getType() == Token.EXPORT_SPECS) {
+      for (      Node grandChild : n.getFirstChild().children()) {
+        Node origName=grandChild.getFirstChild();
+        exportMap.put(grandChild.getChildCount() == 2 ? grandChild.getLastChild().getString() : origName.getString(),origName.getString());
+      }
+      parent.removeChild(n);
+    }
+ else {
+      String name=n.getFirstChild().getFirstChild().getString();
+      Var v=t.getScope().getVar(name);
+      if (v == null || v.isGlobal()) {
+        exportMap.put(name,name);
+      }
+      parent.replaceChild(n,n.removeFirstChild());
+    }
+    compiler.reportCodeChange();
+  }
+}

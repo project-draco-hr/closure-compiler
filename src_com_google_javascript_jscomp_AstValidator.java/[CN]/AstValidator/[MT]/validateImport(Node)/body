@@ -1,0 +1,24 @@
+{
+  validateEs6Feature("import statement",n);
+  validateNodeType(Token.IMPORT,n);
+  validateChildCount(n,Token.arity(Token.IMPORT));
+  if (n.getFirstChild().isEmpty()) {
+    if (n.getChildAtIndex(1).isEmpty()) {
+      validateString(n.getChildAtIndex(2));
+    }
+ else {
+      validateImportSpecifiers(n.getChildAtIndex(1));
+      validateString(n.getChildAtIndex(2));
+    }
+  }
+ else   if (n.getFirstChild().isName()) {
+    validateName(n.getFirstChild());
+    if (n.getChildAtIndex(1).isEmpty()) {
+      validateString(n.getChildAtIndex(2));
+    }
+ else {
+      validateImportSpecifiers(n.getChildAtIndex(1));
+      validateString(n.getChildAtIndex(2));
+    }
+  }
+}

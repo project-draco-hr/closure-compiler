@@ -1,0 +1,25 @@
+{
+  String module=n.getLastChild().getString();
+  Map<String,String> nameMap=new LinkedHashMap<>();
+  for (  Node child : n.children()) {
+    if (child.isEmpty() || child.isString()) {
+      continue;
+    }
+ else     if (child.isName()) {
+      nameMap.put(child.getString(),child.getString());
+    }
+ else {
+      for (      Node grandChild : child.children()) {
+        Node origName=grandChild.getFirstChild();
+        nameMap.put(origName.getString(),grandChild.getChildCount() == 2 ? grandChild.getLastChild().getString() : origName.getString());
+      }
+    }
+  }
+  for (  Map.Entry<String,String> entry : nameMap.entrySet()) {
+    Node call=IR.call(IR.name("require"),IR.string(module));
+    call.putBooleanProp(Node.FREE_CALL,true);
+    parent.addChildBefore(IR.var(IR.name(entry.getValue()),IR.getprop(call,IR.string(entry.getKey()))).useSourceInfoIfMissingFromForTree(n),n);
+  }
+  parent.removeChild(n);
+  compiler.reportCodeChange();
+}
