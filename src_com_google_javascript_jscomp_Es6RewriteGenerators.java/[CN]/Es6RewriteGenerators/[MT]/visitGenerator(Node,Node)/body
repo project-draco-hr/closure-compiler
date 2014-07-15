@@ -5,12 +5,17 @@
   Node originalBody=n.getFirstChild();
   originalBody.addChildToBack(IR.exprResult(IR.assign(IR.name(GENERATOR_STATE),IR.number(-1))));
   Node currentCase=getUnique(genBlock,Token.CASE);
+  Node varRoot=getUnique(genBlock,Token.VAR);
   while (originalBody.hasChildren()) {
     Node nextStatement=originalBody.removeFirstChild();
     boolean makeFreshCase;
     if (nextStatement.isExprResult() && nextStatement.getFirstChild().isYield()) {
       visitYieldExprResult(nextStatement,currentCase);
       makeFreshCase=true;
+    }
+ else     if (nextStatement.isVar()) {
+      visitVar(nextStatement,currentCase,varRoot);
+      makeFreshCase=false;
     }
  else {
       currentCase.getLastChild().addChildToBack(nextStatement);
