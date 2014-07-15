@@ -4,7 +4,10 @@
     Var v=it.next();
     ReferenceCollection referenceCollection=referenceMap.getReferences(v);
     if (referenceCollection != null) {
-      if (scope.isBlockScope() && !scope.isGlobal() && scope.getParent().getRootNode().isFunction()) {
+      if (scope.getRootNode().isFunction() && v.getParentNode().isDefaultValue() && v.getParentNode().getFirstChild() == v.getNode()) {
+        checkDefaultParam(v,scope);
+      }
+ else       if (scope.isFunctionBlockScope()) {
         checkShadowParam(v,scope,referenceCollection.references);
       }
       checkVar(v,referenceCollection.references);

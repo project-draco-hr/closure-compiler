@@ -1,0 +1,10 @@
+{
+  ShallowReferenceCollector check=new ShallowReferenceCollector();
+  NodeTraversal.traverse(compiler,v.getParentNode().getChildAtIndex(1),check);
+  for (  Node ref : check.currParamReferences) {
+    String refName=ref.getString();
+    if (!scope.isDeclared(refName,true)) {
+      compiler.report(JSError.make(ref,checkLevel,EARLY_REFERENCE_ERROR,v.name));
+    }
+  }
+}

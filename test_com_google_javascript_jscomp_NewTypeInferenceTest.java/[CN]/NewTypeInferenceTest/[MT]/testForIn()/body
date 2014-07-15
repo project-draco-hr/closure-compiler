@@ -1,6 +1,6 @@
 {
   checkNoWarnings("function f(/** string */ y) {\n" + "  for (var x in { a: 1, b: 2 }) { y = x; }\n" + "  x = 234;\n"+ "  return 123;\n"+ "}");
-  typeCheck("function f(y) {\n" + "  var z = x + 234;\n" + "  for (var x in { a: 1, b: 2 }) {}\n"+ "  return 123;\n"+ "}",ImmutableList.of(VariableReferenceCheck.UNDECLARED_REFERENCE,NewTypeInference.INVALID_OPERAND_TYPE));
+  typeCheck("function f(y) {\n" + "  var z = x + 234;\n" + "  for (var x in { a: 1, b: 2 }) {}\n"+ "  return 123;\n"+ "}",ImmutableList.of(VariableReferenceCheck.EARLY_REFERENCE,NewTypeInference.INVALID_OPERAND_TYPE));
   typeCheck("function f(/** number */ y) {\n" + "  for (var x in { a: 1, b: 2 }) { y = x; }\n" + "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("for (var x in 123) ;",NewTypeInference.FORIN_EXPECTS_OBJECT);
   typeCheck("var /** number */ x = 5; for (x in {a : 1});",NewTypeInference.FORIN_EXPECTS_STRING_KEY);
