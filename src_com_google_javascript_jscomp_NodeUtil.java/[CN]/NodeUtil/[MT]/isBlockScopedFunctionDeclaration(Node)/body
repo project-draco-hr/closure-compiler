@@ -1,0 +1,19 @@
+{
+  if (!isFunctionDeclaration(n)) {
+    return false;
+  }
+  Node current=n.getParent();
+  while (current != null) {
+    if (current.isBlock()) {
+      return !current.getParent().isFunction();
+    }
+ else     if (current.isFunction() || current.isScript()) {
+      return false;
+    }
+ else {
+      Preconditions.checkArgument(current.isLabel());
+      current=current.getParent();
+    }
+  }
+  return false;
+}

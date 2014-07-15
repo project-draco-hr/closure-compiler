@@ -4,8 +4,12 @@
   Node var=IR.var(fnNameNode).srcref(n);
   oldNameNode.setString("");
   Node parent=n.getParent();
-  parent.removeChild(n);
-  parent.addChildToFront(var);
+  if (parent.isLabel()) {
+    parent.replaceChild(n,var);
+  }
+ else {
+    parent.removeChild(n);
+    parent.addChildToFront(var);
+  }
   fnNameNode.addChildToFront(n);
-  reportCodeChange("Function declaration");
 }

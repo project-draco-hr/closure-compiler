@@ -1,14 +1,16 @@
 {
-  if (!n.isLet() && !n.isConst()) {
+  if (!n.isLet() && !n.isConst() && !NodeUtil.isBlockScopedFunctionDeclaration(n)) {
     return;
   }
   Scope scope=t.getScope();
   Node nameNode=n.getFirstChild();
-  if (!nameNode.hasChildren() && (parent == null || !NodeUtil.isEnhancedFor(parent))) {
+  if (!n.isFunction() && !nameNode.hasChildren() && (parent == null || !NodeUtil.isEnhancedFor(parent))) {
     nameNode.addChildToFront(IR.name("undefined").useSourceInfoIfMissingFrom(nameNode));
   }
   String oldName=nameNode.getString();
-  letConsts.add(n);
+  if (n.isLet() || n.isConst()) {
+    blockScopedDeclarations.add(n);
+  }
   Scope hoistScope=scope.getClosestHoistScope();
   boolean doRename=false;
   if (scope != hoistScope) {
