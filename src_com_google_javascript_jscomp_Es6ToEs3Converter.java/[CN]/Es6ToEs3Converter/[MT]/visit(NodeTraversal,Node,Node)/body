@@ -40,5 +40,15 @@ break;
 break;
 case Token.TEMPLATELIT:
 visitTemplateLiteral(n);
+break;
+case Token.ARRAY_PATTERN:
+for (Node child : n.children()) {
+if (child.isRest()) {
+cannotConvertYet(child,"REST node in an ARRAY_PATTERN");
+return;
+}
+}
+visitArrayPattern(t,n,parent);
+break;
 }
 }

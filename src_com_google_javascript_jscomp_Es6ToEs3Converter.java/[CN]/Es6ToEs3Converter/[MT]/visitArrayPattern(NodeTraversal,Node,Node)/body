@@ -1,0 +1,43 @@
+{
+  Node rhs, nodeToDetach;
+  if (NodeUtil.isNameDeclaration(parent)) {
+    Preconditions.checkState(arrayPattern.getNext() == null);
+    rhs=arrayPattern.getLastChild();
+    nodeToDetach=parent;
+  }
+ else   if (parent.isAssign()) {
+    rhs=arrayPattern.getNext();
+    nodeToDetach=parent.getParent();
+    Preconditions.checkState(nodeToDetach.isExprResult());
+  }
+ else   if (parent.isArrayPattern()) {
+    return;
+  }
+ else {
+    cannotConvertYet(arrayPattern,"ARRAY_PATTERN that is a child of a " + Token.name(parent.getType()));
+    return;
+  }
+  String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
+  Node tempDecl=IR.var(IR.name(tempVarName),rhs.detachFromParent()).useSourceInfoFromForTree(arrayPattern);
+  nodeToDetach.getParent().addChildBefore(tempDecl,nodeToDetach);
+  int i=0;
+  for (Node child=arrayPattern.getFirstChild(), next; child != null; child=next, i++) {
+    next=child.getNext();
+    if (child.isEmpty()) {
+      continue;
+    }
+    Node newRHS=IR.getelem(IR.name(tempVarName),IR.number(i));
+    Node newNode;
+    if (parent.isAssign()) {
+      Node assignment=IR.assign(child.detachFromParent(),newRHS);
+      newNode=IR.exprResult(assignment);
+    }
+ else {
+      newNode=IR.declaration(child.detachFromParent(),newRHS,parent.getType()).useSourceInfoFromForTree(arrayPattern);
+    }
+    nodeToDetach.getParent().addChildBefore(newNode,nodeToDetach);
+    visit(t,child,newNode);
+  }
+  nodeToDetach.detachFromParent();
+  compiler.reportCodeChange();
+}
