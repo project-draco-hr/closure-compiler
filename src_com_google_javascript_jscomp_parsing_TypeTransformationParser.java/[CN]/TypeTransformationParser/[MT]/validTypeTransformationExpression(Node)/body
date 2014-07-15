@@ -1,0 +1,15 @@
+{
+  if (expression.getType() != Token.NAME && expression.getType() != Token.CALL) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.expression",expression);
+    return false;
+  }
+  if (expression.getType() == Token.NAME) {
+    return validTTLTypeVar(expression);
+  }
+  Node operation=expression.getFirstChild();
+  if (!TYPE_CONSTRUCTORS.contains(operation.getString())) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.expression",operation);
+    return false;
+  }
+  return validTTLTypeExpression(expression);
+}

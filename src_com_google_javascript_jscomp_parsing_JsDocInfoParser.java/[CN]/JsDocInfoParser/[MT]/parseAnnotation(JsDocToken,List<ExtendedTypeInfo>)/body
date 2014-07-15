@@ -445,6 +445,7 @@ String ttlEndDelimiter="=:";
 String templateNames;
 String typeTransformationExpr="";
 boolean isTypeTransformation=false;
+boolean validTypeTransformation=true;
 if (!templateString.contains(ttlStartDelimiter)) {
 if (templateString.contains("\n")) {
 templateNames=templateString.substring(0,templateString.indexOf('\n'));
@@ -457,6 +458,7 @@ templateNames=templateString;
 int ttlStartIndex=templateString.indexOf(ttlStartDelimiter);
 templateNames=templateString.substring(0,ttlStartIndex);
 if (!templateString.contains(ttlEndDelimiter)) {
+validTypeTransformation=false;
 parser.addTypeWarning("msg.jsdoc.typetransformation.missing.delimiter",stream.getLineno(),stream.getCharno());
 }
  else {
@@ -484,7 +486,20 @@ if (names.size() > 1) {
 parser.addTypeWarning("msg.jsdoc.typetransformation.with.multiple.names",stream.getLineno(),stream.getCharno());
 }
 if (typeTransformationExpr.equals("")) {
+validTypeTransformation=false;
 parser.addTypeWarning("msg.jsdoc.typetransformation.expression.missing",stream.getLineno(),stream.getCharno());
+}
+if (validTypeTransformation) {
+TypeTransformationParser ttlParser=new TypeTransformationParser(typeTransformationExpr,sourceFile,errorReporter);
+if (ttlParser.parseTypeTransformation()) {
+Node ttlAst=ttlParser.getTypeTransformationAst();
+}
+ else {
+ArrayList<TypeTransformationWarning> warnings=ttlParser.getWarnings();
+for (TypeTransformationWarning currentWarning : warnings) {
+parser.addTypeWarning(currentWarning.messageId,stream.getLineno() + currentWarning.nodeWarning.getLineno(),stream.getCharno() + currentWarning.nodeWarning.getCharno());
+}
+}
 }
 }
 token=templateInfo.token;

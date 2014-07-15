@@ -1,0 +1,26 @@
+{
+  if (expression.getType() != Token.NAME && expression.getType() != Token.CALL) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.basictype",expression);
+    return false;
+  }
+  if (expression.getType() == Token.NAME) {
+    return validTTLTypeVar(expression);
+  }
+  if (!expression.getFirstChild().getString().equals(TYPE_KEYWORD)) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.basictype",expression);
+    return false;
+  }
+  if (expression.getChildCount() < 2) {
+    addNewWarning("msg.jsdoc.typetransformation.missing.param.type",expression);
+    return false;
+  }
+  if (expression.getChildCount() > 2) {
+    addNewWarning("msg.jsdoc.typetransformation.extra.param.type",expression);
+    return false;
+  }
+  if (expression.getChildAtIndex(1).getType() != Token.STRING) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.typename",expression);
+    return false;
+  }
+  return true;
+}

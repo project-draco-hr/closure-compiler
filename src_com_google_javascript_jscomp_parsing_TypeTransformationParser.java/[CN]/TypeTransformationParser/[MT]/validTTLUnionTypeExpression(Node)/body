@@ -1,0 +1,26 @@
+{
+  if (expression.getType() != Token.NAME && expression.getType() != Token.CALL) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.uniontype",expression);
+    return false;
+  }
+  if (expression.getType() == Token.NAME) {
+    return validTTLTypeVar(expression);
+  }
+  if (!expression.getFirstChild().getString().equals(UNION_KEYWORD)) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.uniontype",expression);
+    return false;
+  }
+  if (expression.getChildCount() < 3) {
+    addNewWarning("msg.jsdoc.typetransformation.missing.param.uniontype",expression);
+    return false;
+  }
+  for (  Node basicExp : expression.children()) {
+    if (basicExp.equals(expression.getFirstChild())) {
+      continue;
+    }
+    if (!validTTLBasicTypeExpression(basicExp)) {
+      return false;
+    }
+  }
+  return true;
+}
