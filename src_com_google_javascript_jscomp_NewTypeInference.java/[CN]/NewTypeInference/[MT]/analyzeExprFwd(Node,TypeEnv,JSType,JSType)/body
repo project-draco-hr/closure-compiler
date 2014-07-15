@@ -372,19 +372,20 @@ println("Updating deferred check with ret: ",expectedRetType," and args: ",argTy
 DeferredCheck dc;
 if (expr.isCall()) {
 dc=deferredChecks.get(expr);
-if (dc == null) {
-Preconditions.checkState(!currentScope.hasUndeclaredFormalsOrOuters(),"No deferred check created in backward direction for %s",expr);
-dc=new DeferredCheck(expr,expectedRetType,currentScope,currentScope.getScope(calleeName));
+if (dc != null) {
+dc.updateReturn(expectedRetType);
 }
  else {
-dc.updateReturn(expectedRetType);
+Preconditions.checkState(!currentScope.hasUndeclaredFormalsOrOuters(),"No deferred check created in backward direction for %s",expr);
 }
 }
  else {
 dc=new DeferredCheck(expr,null,currentScope,currentScope.getScope(calleeName));
 deferredChecks.put(expr,dc);
 }
+if (dc != null) {
 dc.updateArgTypes(argTypes);
+}
 }
 }
 }
