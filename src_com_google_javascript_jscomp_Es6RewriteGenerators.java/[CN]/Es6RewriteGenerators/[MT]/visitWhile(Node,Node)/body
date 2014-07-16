@@ -1,0 +1,19 @@
+{
+  Node condition=whileStatement.removeFirstChild();
+  Node body=whileStatement.removeFirstChild();
+  int loopBeginState=generatorCaseCount++;
+  int loopEndState=generatorCaseCount++;
+  Node beginCase=IR.number(loopBeginState);
+  beginCase.setGeneratorMarker(true);
+  Node conditionalBranch=IR.ifNode(IR.not(condition),IR.block(createStateUpdate(loopEndState),IR.breakNode()));
+  Node setStateLoopStart=createStateUpdate(loopBeginState);
+  Node breakToStart=IR.breakNode();
+  Node endCase=IR.number(loopEndState);
+  endCase.setGeneratorMarker(true);
+  originalGeneratorBody.addChildToFront(beginCase);
+  originalGeneratorBody.addChildAfter(conditionalBranch,beginCase);
+  originalGeneratorBody.addChildAfter(body,conditionalBranch);
+  originalGeneratorBody.addChildAfter(setStateLoopStart,body);
+  originalGeneratorBody.addChildAfter(breakToStart,setStateLoopStart);
+  originalGeneratorBody.addChildAfter(endCase,breakToStart);
+}

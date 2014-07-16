@@ -1,0 +1,29 @@
+{
+  if (statement.isExprResult() && statement.getFirstChild().isYield()) {
+    visitYieldExprResult(statement,currentCase);
+    return true;
+  }
+ else   if (statement.isVar()) {
+    visitVar(statement,currentCase,varRoot);
+    return false;
+  }
+ else   if (statement.isFor() && NodeUtil.referencesYield(statement)) {
+    visitFor(statement,originalBody);
+    return false;
+  }
+ else   if (statement.isWhile() && NodeUtil.referencesYield(statement)) {
+    visitWhile(statement,originalBody);
+    return false;
+  }
+ else   if (statement.isBlock()) {
+    visitBlock(statement,originalBody);
+    return false;
+  }
+ else   if (statement.isGeneratorMarker()) {
+    return true;
+  }
+ else {
+    currentCase.getLastChild().addChildToBack(statement);
+    return false;
+  }
+}

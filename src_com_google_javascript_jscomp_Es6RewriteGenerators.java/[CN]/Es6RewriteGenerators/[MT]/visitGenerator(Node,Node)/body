@@ -8,24 +8,19 @@
   Node varRoot=getUnique(genBlock,Token.VAR);
   while (originalBody.hasChildren()) {
     Node nextStatement=originalBody.removeFirstChild();
-    boolean makeFreshCase;
-    if (nextStatement.isExprResult() && nextStatement.getFirstChild().isYield()) {
-      visitYieldExprResult(nextStatement,currentCase);
-      makeFreshCase=true;
-    }
- else     if (nextStatement.isVar()) {
-      visitVar(nextStatement,currentCase,varRoot);
-      makeFreshCase=false;
-    }
+    boolean advanceCase=translateStatementInOriginalBody(nextStatement,currentCase,originalBody,varRoot);
+    if (advanceCase) {
+      int caseNumber;
+      if (nextStatement.isGeneratorMarker()) {
+        caseNumber=(int)nextStatement.getDouble();
+      }
  else {
-      currentCase.getLastChild().addChildToBack(nextStatement);
-      makeFreshCase=false;
-    }
-    if (makeFreshCase) {
-      Node newCase=IR.caseNode(IR.number(generatorCaseCount),IR.block());
+        caseNumber=generatorCaseCount;
+        generatorCaseCount++;
+      }
+      Node newCase=IR.caseNode(IR.number(caseNumber),IR.block());
       currentCase.getParent().addChildAfter(newCase,currentCase);
       currentCase=newCase;
-      generatorCaseCount++;
     }
   }
   parent.replaceChild(n,genFunc);
