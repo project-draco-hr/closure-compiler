@@ -27,7 +27,7 @@
       CanInlineResult canInline=injector.canInlineReferenceToFunction(ref,fnNode,unsafe,NodeUtil.referencesThis(fnNode),NodeUtil.containsFunction(NodeUtil.getFunctionBody(fnNode)));
       assertTrue("canInlineReferenceToFunction should not be CAN_NOT_INLINE",CanInlineResult.NO != canInline);
       if (decompose) {
-        assertTrue("canInlineReferenceToFunction " + "should be CAN_INLINE_AFTER_DECOMPOSITION",CanInlineResult.AFTER_PREPARATION == canInline);
+        assertSame("canInlineReferenceToFunction " + "should be CAN_INLINE_AFTER_DECOMPOSITION",canInline,CanInlineResult.AFTER_PREPARATION);
         Set<String> knownConstants=Sets.newHashSet();
         injector.setKnownConstants(knownConstants);
         injector.maybePrepareCall(ref);

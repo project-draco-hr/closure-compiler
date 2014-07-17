@@ -9,13 +9,13 @@
   assertEquals(Token.VAR,varNode.getType());
   JSType googNodeType=varNode.getFirstChild().getJSType();
   assertTrue(googNodeType instanceof ObjectType);
-  assertTrue(googScopeType == googNodeType);
+  assertSame(googNodeType,googScopeType);
   Node getpropFoo1=varNode.getNext().getFirstChild().getFirstChild();
   assertEquals(Token.GETPROP,getpropFoo1.getType());
   assertEquals("goog",getpropFoo1.getFirstChild().getString());
   JSType googGetpropFoo1Type=getpropFoo1.getFirstChild().getJSType();
   assertTrue(googGetpropFoo1Type instanceof ObjectType);
-  assertTrue(googGetpropFoo1Type == googScopeType);
+  assertSame(googScopeType,googGetpropFoo1Type);
   JSType googFooType=((ObjectType)googScopeType).getPropertyType("foo");
   assertTrue(googFooType instanceof ObjectType);
   Node getpropFoo2=varNode.getNext().getNext().getFirstChild().getFirstChild().getFirstChild();
@@ -23,7 +23,7 @@
   assertEquals("goog",getpropFoo2.getFirstChild().getString());
   JSType googGetpropFoo2Type=getpropFoo2.getFirstChild().getJSType();
   assertTrue(googGetpropFoo2Type instanceof ObjectType);
-  assertTrue(googGetpropFoo2Type == googScopeType);
+  assertSame(googScopeType,googGetpropFoo2Type);
   JSType googFooGetprop2Type=getpropFoo2.getJSType();
   assertTrue("goog.foo incorrectly annotated in goog.foo.bar selection",googFooGetprop2Type instanceof ObjectType);
   ObjectType googFooGetprop2ObjectType=(ObjectType)googFooGetprop2Type;

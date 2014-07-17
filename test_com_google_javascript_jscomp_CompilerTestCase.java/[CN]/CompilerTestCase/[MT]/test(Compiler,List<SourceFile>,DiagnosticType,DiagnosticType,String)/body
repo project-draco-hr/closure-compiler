@@ -2,9 +2,9 @@
   RecentChange recentChange=new RecentChange();
   compiler.addChangeHandler(recentChange);
   Node root=compiler.parseInputs();
-  assertTrue("Unexpected parse error(s): " + Joiner.on("\n").join(compiler.getErrors()),root != null);
+  assertNotNull("Unexpected parse error(s): " + Joiner.on("\n").join(compiler.getErrors()),root);
   if (!expectParseWarningsThisTest) {
-    assertTrue("Unexpected parse warnings(s): " + Joiner.on("\n").join(compiler.getWarnings()),compiler.getWarnings().length == 0);
+    assertEquals("Unexpected parse warnings(s): " + Joiner.on("\n").join(compiler.getWarnings()),0,compiler.getWarnings().length);
   }
   if (astValidationEnabled) {
     (new AstValidator(compiler)).validateRoot(root);
@@ -64,7 +64,7 @@
       }
       hasCodeChanged=hasCodeChanged || recentChange.hasCodeChanged();
       aggregateWarningCount+=errorManagers[i].getWarningCount();
-      aggregateWarnings.addAll(Lists.newArrayList(compiler.getWarnings()));
+      Collections.addAll(aggregateWarnings,compiler.getWarnings());
       if (normalizeEnabled) {
         boolean verifyDeclaredConstants=true;
         new Normalize.VerifyConstants(compiler,verifyDeclaredConstants).process(externsRoot,mainRoot);

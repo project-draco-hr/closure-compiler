@@ -1,6 +1,5 @@
 {
-  List<DiGraphNode<Node,Branch>> cfgNodes=Lists.newArrayList(cfg.getDirectedGraphNodes());
-  Collections.sort(cfgNodes,cfg.getOptionalNodeComparator(true));
+  List<DiGraphNode<Node,Branch>> cfgNodes=Ordering.from(cfg.getOptionalNodeComparator(true)).sortedCopy(cfg.getDirectedGraphNodes());
   Node implicitReturn=cfgNodes.remove(cfgNodes.size() - 1).getValue();
   assertNull(implicitReturn == null ? "null" : implicitReturn.toStringTree(),implicitReturn);
   assertEquals("Wrong number of CFG nodes",nodeTypes.size(),cfgNodes.size());
