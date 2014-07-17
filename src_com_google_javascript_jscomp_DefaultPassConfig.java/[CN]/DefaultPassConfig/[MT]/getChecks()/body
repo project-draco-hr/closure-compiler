@@ -1,6 +1,19 @@
 {
   List<PassFactory> checks=Lists.newArrayList();
   checks.add(createEmptyPass("beforeStandardChecks"));
+  boolean needsConversion=options.getLanguageIn() != options.getLanguageOut();
+  if (needsConversion || options.aggressiveVarCheck.isOn()) {
+    checks.add(checkVariableReferences);
+  }
+  if (needsConversion) {
+    checks.add(es6HandleDefaultParams);
+    checks.add(es6SplitVariableDeclarations);
+    checks.add(convertEs6ToEs3);
+    checks.add(rewriteLetConst);
+    checks.add(rewriteGenerators);
+    checks.add(markTranspilationDone);
+    checks.add(convertStaticInheritance);
+  }
   if (options.declaredGlobalExternsOnWindow) {
     checks.add(declaredGlobalExternsOnWindow);
   }
@@ -53,19 +66,6 @@
   checks.add(inferConsts);
   if (options.computeFunctionSideEffects) {
     checks.add(checkRegExp);
-  }
-  boolean needsConversion=options.getLanguageIn() != options.getLanguageOut();
-  if (needsConversion || options.aggressiveVarCheck.isOn()) {
-    checks.add(checkVariableReferences);
-  }
-  if (needsConversion) {
-    checks.add(es6HandleDefaultParams);
-    checks.add(es6SplitVariableDeclarations);
-    checks.add(convertEs6ToEs3);
-    checks.add(rewriteLetConst);
-    checks.add(rewriteGenerators);
-    checks.add(markTranspilationDone);
-    checks.add(convertStaticInheritance);
   }
   if (options.processObjectPropertyString) {
     checks.add(objectPropertyStringPreprocess);
