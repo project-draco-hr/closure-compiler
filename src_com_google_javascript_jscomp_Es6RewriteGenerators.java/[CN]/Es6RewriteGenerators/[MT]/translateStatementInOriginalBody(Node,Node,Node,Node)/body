@@ -7,15 +7,15 @@
     visitVar(statement,currentCase,varRoot);
     return false;
   }
- else   if (statement.isFor() && NodeUtil.referencesYield(statement)) {
+ else   if (statement.isFor() && yieldsOrReturns(statement)) {
     visitFor(statement,originalBody);
     return false;
   }
- else   if (statement.isWhile() && NodeUtil.referencesYield(statement)) {
+ else   if (statement.isWhile() && yieldsOrReturns(statement)) {
     visitWhile(statement,originalBody);
     return false;
   }
- else   if (statement.isIf() && NodeUtil.referencesYield(statement) && !statement.isGeneratorSafeIf()) {
+ else   if (statement.isIf() && yieldsOrReturns(statement) && !statement.isGeneratorSafeIf()) {
     visitIf(statement,originalBody);
     return false;
   }
@@ -25,6 +25,10 @@
   }
  else   if (statement.isGeneratorMarker()) {
     return true;
+  }
+ else   if (statement.isReturn()) {
+    visitReturn(statement,currentCase);
+    return false;
   }
  else {
     currentCase.getLastChild().addChildToBack(statement);
