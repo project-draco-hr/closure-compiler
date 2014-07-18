@@ -1,0 +1,41 @@
+{
+  if (currentStatement.isExprResult() && currentStatement.getFirstChild().isYield()) {
+    visitYieldExprResult();
+    return true;
+  }
+ else   if (currentStatement.isVar()) {
+    visitVar();
+    return false;
+  }
+ else   if (currentStatement.isFor() && yieldsOrReturns(currentStatement)) {
+    visitFor();
+    return false;
+  }
+ else   if (currentStatement.isWhile() && yieldsOrReturns(currentStatement)) {
+    visitWhile();
+    return false;
+  }
+ else   if (currentStatement.isIf() && yieldsOrReturns(currentStatement) && !currentStatement.isGeneratorSafe()) {
+    visitIf();
+    return false;
+  }
+ else   if (currentStatement.isBlock()) {
+    visitBlock();
+    return false;
+  }
+ else   if (currentStatement.isGeneratorMarker()) {
+    return true;
+  }
+ else   if (currentStatement.isReturn()) {
+    visitReturn();
+    return false;
+  }
+ else   if ((currentStatement.isBreak() && !currentStatement.isGeneratorSafe()) || currentStatement.isContinue() || currentStatement.isThrow()) {
+    compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Breaks, continues, and throws are not yet allowed if their" + " enclosing control structure contains a yield or return."));
+    return false;
+  }
+ else {
+    enclosingCase.getLastChild().addChildToBack(currentStatement);
+    return false;
+  }
+}

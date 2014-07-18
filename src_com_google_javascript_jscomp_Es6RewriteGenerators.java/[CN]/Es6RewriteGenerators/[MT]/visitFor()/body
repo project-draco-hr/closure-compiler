@@ -1,0 +1,10 @@
+{
+  Node initializer=currentStatement.removeFirstChild();
+  Node condition=currentStatement.removeFirstChild();
+  Node postStatement=IR.exprResult(currentStatement.removeFirstChild());
+  Node body=currentStatement.removeFirstChild();
+  Node equivalentWhile=IR.whileNode(condition,body);
+  body.addChildToBack(postStatement);
+  originalGeneratorBody.addChildToFront(initializer);
+  originalGeneratorBody.addChildAfter(equivalentWhile,initializer);
+}

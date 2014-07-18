@@ -1,7 +1,7 @@
 {
-  Node condition=ifStatement.removeFirstChild();
-  Node ifBody=ifStatement.removeFirstChild();
-  boolean hasElse=ifStatement.hasChildren();
+  Node condition=currentStatement.removeFirstChild();
+  Node ifBody=currentStatement.removeFirstChild();
+  boolean hasElse=currentStatement.hasChildren();
   int ifEndState=generatorCaseCount++;
   Node safeBreak=IR.breakNode();
   safeBreak.setGeneratorSafe(true);
@@ -13,7 +13,7 @@
   originalGeneratorBody.addChildAfter(ifBody,invertedConditional);
   originalGeneratorBody.addChildAfter(endIf,ifBody);
   if (hasElse) {
-    Node elseBlock=ifStatement.removeFirstChild();
+    Node elseBlock=currentStatement.removeFirstChild();
     int elseEndState=generatorCaseCount++;
     Node endElse=IR.number(elseEndState);
     endElse.setGeneratorMarker(true);
