@@ -1,0 +1,23 @@
+{
+  if (expression.getType() != Token.CALL) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.bool",expression);
+    return false;
+  }
+  if (!BOOLEAN_PREDICATES.contains(expression.getFirstChild().getString())) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.predicate",expression);
+    return false;
+  }
+  if (expression.getChildCount() < 3) {
+    addNewWarning("msg.jsdoc.typetransformation.missing.param.bool",expression);
+    return false;
+  }
+  if (expression.getChildCount() > 3) {
+    addNewWarning("msg.jsdoc.typetransformation.extra.param.bool",expression);
+    return false;
+  }
+  if (!validTTLTypeExpression(expression.getChildAtIndex(1)) || !validTTLTypeExpression(expression.getChildAtIndex(2))) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.param.bool",expression);
+    return false;
+  }
+  return true;
+}

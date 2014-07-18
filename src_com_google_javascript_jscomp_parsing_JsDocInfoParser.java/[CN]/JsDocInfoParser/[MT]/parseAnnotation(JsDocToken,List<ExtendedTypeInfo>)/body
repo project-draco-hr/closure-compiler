@@ -438,6 +438,8 @@ token=parseSuppressTag(next());
 return token;
 case TEMPLATE:
 {
+int templateLineno=stream.getLineno();
+int templateCharno=stream.getCharno();
 ExtractionInfo templateInfo=extractMultilineTextualBlock(token,WhitespaceOption.TRIM);
 String templateString=templateInfo.string;
 String ttlStartDelimiter=":=";
@@ -459,7 +461,7 @@ int ttlStartIndex=templateString.indexOf(ttlStartDelimiter);
 templateNames=templateString.substring(0,ttlStartIndex);
 if (!templateString.contains(ttlEndDelimiter)) {
 validTypeTransformation=false;
-parser.addTypeWarning("msg.jsdoc.typetransformation.missing.delimiter",stream.getLineno(),stream.getCharno());
+parser.addTypeWarning("msg.jsdoc.typetransformation.missing.delimiter",templateLineno,templateCharno);
 }
  else {
 isTypeTransformation=true;
@@ -469,25 +471,25 @@ typeTransformationExpr=templateString.substring(ttlStartIndex + ttlStartDelimite
 }
 List<String> names=Lists.newArrayList(Splitter.on(',').trimResults().split(templateNames));
 if (names.size() == 1 && names.get(0).isEmpty()) {
-parser.addTypeWarning("msg.jsdoc.templatemissing",stream.getLineno(),stream.getCharno());
+parser.addTypeWarning("msg.jsdoc.templatemissing",templateLineno,templateCharno);
 }
  else {
 for (String typeName : names) {
 if (!validTemplateTypeName(typeName)) {
-parser.addTypeWarning("msg.jsdoc.template.invalid.type.name",stream.getLineno(),stream.getCharno());
+parser.addTypeWarning("msg.jsdoc.template.invalid.type.name",templateLineno,templateCharno);
 }
  else if (!jsdocBuilder.recordTemplateTypeName(typeName)) {
-parser.addTypeWarning("msg.jsdoc.template.name.declared.twice",stream.getLineno(),stream.getCharno());
+parser.addTypeWarning("msg.jsdoc.template.name.declared.twice",templateLineno,templateCharno);
 }
 }
 }
 if (isTypeTransformation) {
 if (names.size() > 1) {
-parser.addTypeWarning("msg.jsdoc.typetransformation.with.multiple.names",stream.getLineno(),stream.getCharno());
+parser.addTypeWarning("msg.jsdoc.typetransformation.with.multiple.names",templateLineno,templateCharno);
 }
 if (typeTransformationExpr.isEmpty()) {
 validTypeTransformation=false;
-parser.addTypeWarning("msg.jsdoc.typetransformation.expression.missing",stream.getLineno(),stream.getCharno());
+parser.addTypeWarning("msg.jsdoc.typetransformation.expression.missing",templateLineno,templateCharno);
 }
 if (validTypeTransformation) {
 TypeTransformationParser ttlParser=new TypeTransformationParser(typeTransformationExpr,sourceFile,errorReporter);
@@ -497,7 +499,7 @@ Node ttlAst=ttlParser.getTypeTransformationAst();
  else {
 ArrayList<TypeTransformationWarning> warnings=ttlParser.getWarnings();
 for (TypeTransformationWarning currentWarning : warnings) {
-parser.addTypeWarning(currentWarning.messageId,stream.getLineno() + currentWarning.nodeWarning.getLineno(),stream.getCharno() + currentWarning.nodeWarning.getCharno());
+parser.addTypeWarning(currentWarning.messageId,templateLineno,templateCharno);
 }
 }
 }

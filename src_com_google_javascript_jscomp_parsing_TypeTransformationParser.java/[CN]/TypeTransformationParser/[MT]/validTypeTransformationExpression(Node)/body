@@ -7,9 +7,12 @@
     return validTTLTypeVar(expression);
   }
   Node operation=expression.getFirstChild();
-  if (!TYPE_CONSTRUCTORS.contains(operation.getString())) {
+  if (!TYPE_CONSTRUCTORS.contains(operation.getString()) && !OPERATIONS.contains(operation.getString())) {
     addNewWarning("msg.jsdoc.typetransformation.invalid.expression",operation);
     return false;
   }
-  return validTTLTypeExpression(expression);
+  if (TYPE_CONSTRUCTORS.contains(operation.getString())) {
+    return validTTLTypeExpression(expression);
+  }
+  return validTTLCondionalExpression(expression);
 }
