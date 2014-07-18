@@ -9,7 +9,9 @@
     CompilerInput ci=t.getInput();
     ci.addProvide(moduleName);
     JSModule m=new JSModule(moduleName);
-    m.addAndOverrideModule(ci);
+    if (overrideModule) {
+      m.addAndOverrideModule(ci);
+    }
     module=m;
   }
   script.addChildToFront(IR.exprResult(IR.call(IR.getprop(IR.name("goog"),IR.string("provide")),IR.string(moduleName))).copyInformationFromForTree(script));

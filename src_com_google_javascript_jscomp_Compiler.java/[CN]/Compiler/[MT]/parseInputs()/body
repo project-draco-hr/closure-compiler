@@ -27,7 +27,10 @@
       externsRoot.addChildToBack(n);
     }
     boolean needsConversion=options.getLanguageIn() != options.getLanguageOut();
-    if (options.transformAMDToCJSModules || options.processCommonJSModules || needsConversion) {
+    if (needsConversion && options.processCommonJSModules) {
+      processEs6Modules();
+    }
+    if (options.transformAMDToCJSModules || options.processCommonJSModules) {
       processAMDAndCommonJSModules();
     }
     hoistExterns(externsRoot);
