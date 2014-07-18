@@ -2,6 +2,16 @@
   Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("{","  return {" + ITER_KEY + ": function() {","    var " + GENERATOR_STATE + " = "+ generatorCaseCount+ ";","    return { next: function() {","      while (1) switch (" + GENERATOR_STATE + ") {","        case " + generatorCaseCount + ":","        default:","          return {done: true};","      }","    }}","  }}","}")).removeFirstChild();
   generatorCaseCount++;
   Node genFunc=IR.function(n.removeFirstChild(),n.removeFirstChild(),genBlock);
+  JSDocInfoBuilder genDoc;
+  if (n.getJSDocInfo() == null) {
+    genDoc=new JSDocInfoBuilder(true);
+  }
+ else {
+    genDoc=JSDocInfoBuilder.copyFrom(n.getJSDocInfo());
+  }
+  genDoc.recordSuppressions(ImmutableSet.of("uselessCode"));
+  JSDocInfo genInfo=genDoc.build(genFunc);
+  genFunc.setJSDocInfo(genInfo);
   originalGeneratorBody=n.getFirstChild();
   originalGeneratorBody.addChildToBack(IR.exprResult(IR.assign(IR.name(GENERATOR_STATE),IR.number(-1))));
   enclosingCase=getUnique(genBlock,Token.CASE);

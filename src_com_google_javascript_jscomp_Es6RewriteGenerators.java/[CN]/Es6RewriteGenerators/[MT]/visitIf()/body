@@ -3,9 +3,7 @@
   Node ifBody=currentStatement.removeFirstChild();
   boolean hasElse=currentStatement.hasChildren();
   int ifEndState=generatorCaseCount++;
-  Node safeBreak=IR.breakNode();
-  safeBreak.setGeneratorSafe(true);
-  Node invertedConditional=IR.ifNode(IR.not(condition),IR.block(createStateUpdate(ifEndState),safeBreak));
+  Node invertedConditional=IR.ifNode(IR.not(condition),IR.block(createStateUpdate(ifEndState),createSafeBreak()));
   invertedConditional.setGeneratorSafe(true);
   Node endIf=IR.number(ifEndState);
   endIf.setGeneratorMarker(true);
@@ -18,7 +16,7 @@
     Node endElse=IR.number(elseEndState);
     endElse.setGeneratorMarker(true);
     ifBody.addChildToBack(createStateUpdate(elseEndState));
-    ifBody.addChildToBack(safeBreak.cloneTree());
+    ifBody.addChildToBack(createSafeBreak());
     originalGeneratorBody.addChildAfter(elseBlock,endIf);
     originalGeneratorBody.addChildAfter(endElse,elseBlock);
   }

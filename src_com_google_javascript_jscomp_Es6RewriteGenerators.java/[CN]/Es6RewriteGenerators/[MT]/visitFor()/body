@@ -1,10 +1,15 @@
 {
   Node initializer=currentStatement.removeFirstChild();
   Node condition=currentStatement.removeFirstChild();
-  Node postStatement=IR.exprResult(currentStatement.removeFirstChild());
+  Node postExpression=currentStatement.removeFirstChild();
   Node body=currentStatement.removeFirstChild();
   Node equivalentWhile=IR.whileNode(condition,body);
-  body.addChildToBack(postStatement);
-  originalGeneratorBody.addChildToFront(initializer);
+  if (!postExpression.isEmpty()) {
+    body.addChildToBack(IR.exprResult(postExpression));
+    currentLoopContinueStatement.addFirst(body.getLastChild());
+  }
+  if (!initializer.isEmpty()) {
+    originalGeneratorBody.addChildToFront(initializer);
+  }
   originalGeneratorBody.addChildAfter(equivalentWhile,initializer);
 }
