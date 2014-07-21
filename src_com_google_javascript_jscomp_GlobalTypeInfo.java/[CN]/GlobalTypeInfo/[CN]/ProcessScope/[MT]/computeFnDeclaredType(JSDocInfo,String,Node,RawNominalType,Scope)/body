@@ -46,7 +46,7 @@
       }
       boolean noCycles=ctorType.addInterfaces(implementedIntfs);
       Preconditions.checkState(noCycles);
-      builder.addNominalType(NominalType.fromRaw(ctorType));
+      builder.addNominalType(ctorType.getAsNominalType());
     }
  else     if (fnDoc.isInterface()) {
       if (declNode.isFunction() && !NodeUtil.isEmptyBlock(NodeUtil.getFunctionBody(declNode))) {
@@ -59,14 +59,14 @@
       if (!noCycles) {
         warnings.add(JSError.make(declNode,INHERITANCE_CYCLE,ctorType.toString()));
       }
-      builder.addNominalType(NominalType.fromRaw(ctorType));
+      builder.addNominalType(ctorType.getAsNominalType());
     }
  else     if (!implementedIntfs.isEmpty()) {
       warnings.add(JSError.make(declNode,IMPLEMENTS_WITHOUT_CONSTRUCTOR,functionName));
     }
   }
   if (ownerType != null) {
-    builder.addReceiverType(NominalType.fromRaw(ownerType));
+    builder.addReceiverType(ownerType.getAsNominalType());
   }
   DeclaredFunctionType result=builder.buildDeclaration();
   if (ctorType != null) {

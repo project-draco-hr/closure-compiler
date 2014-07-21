@@ -9,14 +9,14 @@
     if (rawType == null) {
       return null;
     }
-    return JSType.fromObjectType(ObjectType.fromNominalType(NominalType.fromRaw(rawType)));
+    return rawType.getInstanceAsJSType();
   }
   if (declaredType != null && declaredType.isGeneric() && declaredType.getTypeParameters().contains(name)) {
     return JSType.fromTypeVar(name);
   }
   RawNominalType rawNominalType=localClassDefs.get(name);
   if (rawNominalType != null) {
-    return JSType.fromObjectType(ObjectType.fromNominalType(NominalType.fromRaw(rawNominalType)));
+    return rawNominalType.getInstanceAsJSType();
   }
   return parent == null ? null : parent.lookupTypeByName(name);
 }
