@@ -1,4 +1,6 @@
 {
   enclosingCase.getLastChild().addChildToBack(createStateUpdate());
-  enclosingCase.getLastChild().addChildToBack(IR.returnNode(createIteratorResult(currentStatement.getFirstChild().removeFirstChild())));
+  Node yield=currentStatement.getFirstChild();
+  Node value=yield.hasChildren() ? yield.removeFirstChild() : IR.name("undefined");
+  enclosingCase.getLastChild().addChildToBack(IR.returnNode(createIteratorResult(value)));
 }
