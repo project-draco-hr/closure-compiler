@@ -1,0 +1,10 @@
+{
+  Node enclosingStatement=NodeUtil.getEnclosingStatement(n);
+  Node exprName=IR.name(GENERATOR_EXPRESSION_YIELD_NAME + generatorExprCount.get());
+  Node yieldDecl=IR.var(exprName.cloneTree(),n.getFirstChild().cloneTree());
+  Node yieldStatement=IR.exprResult(IR.yield(exprName.cloneTree()));
+  parent.replaceChild(n,exprName);
+  enclosingStatement.getParent().addChildBefore(yieldDecl,enclosingStatement);
+  enclosingStatement.getParent().addChildBefore(yieldStatement,enclosingStatement);
+  compiler.reportCodeChange();
+}
