@@ -1,0 +1,18 @@
+{
+  Node enclosingStatement=NodeUtil.getEnclosingStatement(n);
+  Node generator=IR.var(IR.name(GENERATOR_YIELD_ALL_NAME),n.removeFirstChild());
+  Node entryDecl=IR.var(IR.name(GENERATOR_YIELD_ALL_ENTRY));
+  Node assignIterResult=IR.assign(IR.name(GENERATOR_YIELD_ALL_ENTRY),IR.call(IR.getprop(IR.name(GENERATOR_YIELD_ALL_NAME),IR.string("next"))));
+  Node loopCondition=IR.not(IR.getprop(assignIterResult,IR.string("done")));
+  Node elemValue=IR.getprop(IR.name(GENERATOR_YIELD_ALL_ENTRY),IR.string("value"));
+  Node loop=IR.whileNode(loopCondition,IR.block(IR.exprResult(IR.yield(elemValue.cloneTree()))));
+  enclosingStatement.getParent().addChildBefore(generator,enclosingStatement);
+  enclosingStatement.getParent().addChildBefore(entryDecl,enclosingStatement);
+  enclosingStatement.getParent().addChildBefore(loop,enclosingStatement);
+  if (parent.isExprResult()) {
+    parent.detachFromParent();
+  }
+ else {
+    parent.replaceChild(n,elemValue);
+  }
+}

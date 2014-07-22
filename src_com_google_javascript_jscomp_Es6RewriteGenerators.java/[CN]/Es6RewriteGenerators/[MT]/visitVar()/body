@@ -1,7 +1,9 @@
 {
   Node name=currentStatement.removeFirstChild();
   while (name != null) {
-    enclosingCase.getLastChild().addChildToBack(IR.exprResult(IR.assign(name,name.removeFirstChild())));
+    if (name.hasChildren()) {
+      enclosingCase.getLastChild().addChildToBack(IR.exprResult(IR.assign(name,name.removeFirstChild())));
+    }
     hoistRoot.getParent().addChildAfter(IR.var(name.cloneTree()),hoistRoot);
     name=currentStatement.removeFirstChild();
   }
