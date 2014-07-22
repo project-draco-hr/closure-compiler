@@ -1,5 +1,5 @@
 {
-  Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("{","  return {" + ITER_KEY + ": function() {","    var " + GENERATOR_STATE + " = "+ generatorCaseCount+ ";","    return { next: function() {","      while (1) switch (" + GENERATOR_STATE + ") {","        case " + generatorCaseCount + ":","        default:","          return {value: undefined, done: true};","      }","    }}","  }}","}")).removeFirstChild();
+  Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("{","  var " + GENERATOR_STATE + " = "+ generatorCaseCount+ ";","  return {","    " + ITER_KEY + ": function() { return this; },","    next: function() {","      while (1) switch (" + GENERATOR_STATE + ") {","        case " + generatorCaseCount + ":","        default:","          return {value: undefined, done: true};","      }","    }","  }","}")).removeFirstChild();
   generatorCaseCount++;
   Node genFunc=IR.function(n.removeFirstChild(),n.removeFirstChild(),genBlock);
   JSDocInfoBuilder genDoc;
