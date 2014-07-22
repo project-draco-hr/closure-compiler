@@ -1,0 +1,38 @@
+{
+  if (expression.getChildCount() < 1 + MAPUNION_PARAM_COUNT) {
+    addNewWarning("msg.jsdoc.typetransformation.missing.param","mapunion",expression);
+    return false;
+  }
+  if (expression.getChildCount() > 1 + MAPUNION_PARAM_COUNT) {
+    addNewWarning("msg.jsdoc.typetransformation.extra.param","mapunion",expression);
+    return false;
+  }
+  if (!validTTLUnionTypeExpression(expression.getChildAtIndex(1))) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","mapunion",expression.getChildAtIndex(1));
+    return false;
+  }
+  if (!expression.getChildAtIndex(2).isFunction()) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid","map function",expression.getChildAtIndex(2));
+    return false;
+  }
+  Node mapFunction=expression.getChildAtIndex(2);
+  if (!mapFunction.getChildAtIndex(1).hasChildren()) {
+    addNewWarning("msg.jsdoc.typetransformation.missing.param","map function",mapFunction.getChildAtIndex(1));
+    return false;
+  }
+  if (!mapFunction.getChildAtIndex(1).hasOneChild()) {
+    addNewWarning("msg.jsdoc.typetransformation.extra.param","map function",mapFunction.getChildAtIndex(1));
+    return false;
+  }
+  Node mapFunctionParam=mapFunction.getChildAtIndex(1).getFirstChild();
+  if (!validTTLTypeVar(mapFunctionParam)) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","map function",mapFunctionParam);
+    return false;
+  }
+  Node mapFunctionBody=mapFunction.getChildAtIndex(2);
+  if (!validTypeTransformationExpression(mapFunctionBody)) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","map function body",mapFunctionBody);
+    return false;
+  }
+  return true;
+}
