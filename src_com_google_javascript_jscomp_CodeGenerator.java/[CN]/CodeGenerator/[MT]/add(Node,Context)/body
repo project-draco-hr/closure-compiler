@@ -633,7 +633,12 @@ addStringKey(n);
 break;
 case Token.STRING:
 Preconditions.checkState(childCount == 0,"A string may not have children");
+if (n.getBooleanProp(Node.COOKED_STRING)) {
+add("\"" + n.getString() + "\"");
+}
+ else {
 addJsString(n);
+}
 break;
 case Token.DELPROP:
 Preconditions.checkState(childCount == 1);

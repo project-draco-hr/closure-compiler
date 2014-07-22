@@ -1,0 +1,18 @@
+{
+  Node raw=createRawStringArray(n);
+  Node cooked=createCookedStringArray(n);
+  Node callsiteId=IR.name(TEMPLATELIT_VAR + t.getCompiler().getUniqueNameIdSupplier().get());
+  Node var=IR.var(callsiteId,cooked).useSourceInfoIfMissingFromForTree(n);
+  Node script=NodeUtil.getEnclosingType(n,Token.SCRIPT);
+  script.addChildrenToFront(var);
+  Node defineRaw=IR.exprResult(IR.assign(IR.getelem(callsiteId.cloneNode(),IR.string("raw")),raw)).useSourceInfoIfMissingFromForTree(n);
+  script.addChildAfter(defineRaw,var);
+  Node[] args=new Node[n.getChildCount() / 2];
+  args[0]=callsiteId.cloneNode();
+  for (int i=1, j=2; i < args.length; i++, j+=2) {
+    args[i]=n.getChildAtIndex(j).removeFirstChild();
+  }
+  Node call=IR.call(n.removeFirstChild(),args).useSourceInfoIfMissingFromForTree(n);
+  call.putBooleanProp(Node.FREE_CALL,true);
+  n.getParent().replaceChild(n,call);
+}
