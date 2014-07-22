@@ -1,22 +1,22 @@
 {
-  if (expression.getType() != Token.CALL) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.bool",expression);
+  if (!expression.isCall()) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","boolean",expression);
     return false;
   }
   if (!BOOLEAN_PREDICATES.contains(expression.getFirstChild().getString())) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.predicate",expression);
+    addNewWarning("msg.jsdoc.typetransformation.invalid","boolean predicate",expression);
     return false;
   }
-  if (expression.getChildCount() < 3) {
-    addNewWarning("msg.jsdoc.typetransformation.missing.param.bool",expression);
+  if (expression.getChildCount() < 1 + BOOLPRED_PARAM_COUNT) {
+    addNewWarning("msg.jsdoc.typetransformation.missing.param","boolean predicate",expression);
     return false;
   }
-  if (expression.getChildCount() > 3) {
-    addNewWarning("msg.jsdoc.typetransformation.extra.param.bool",expression);
+  if (expression.getChildCount() > 1 + BOOLPRED_PARAM_COUNT) {
+    addNewWarning("msg.jsdoc.typetransformation.extra.param","boolean predicate",expression);
     return false;
   }
   if (!validTTLTypeExpression(expression.getChildAtIndex(1)) || !validTTLTypeExpression(expression.getChildAtIndex(2))) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.param.bool",expression);
+    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","boolean",expression);
     return false;
   }
   return true;

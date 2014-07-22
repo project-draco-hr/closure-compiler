@@ -2,8 +2,8 @@
   Config config=new Config(new HashSet<String>(),new HashSet<String>(),true,LanguageMode.ECMASCRIPT6,false);
   ParseResult result=ParserRunner.parse(sourceFile,typeTransformationString,config,errorReporter);
   Node ast=result.ast;
-  if (ast.getType() != Token.SCRIPT || ast.getFirstChild().getType() != Token.EXPR_RESULT) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.expression",ast);
+  if (!ast.isScript() || !ast.getFirstChild().isExprResult()) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","type transformation",ast);
     return false;
   }
   Node expr=ast.getFirstChild().getFirstChild();

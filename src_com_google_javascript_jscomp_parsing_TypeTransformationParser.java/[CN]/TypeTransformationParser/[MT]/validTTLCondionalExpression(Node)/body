@@ -1,30 +1,22 @@
 {
-  if (expression.getType() != Token.CALL) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.cond",expression);
+  if (expression.getChildCount() < 1 + COND_PARAM_COUNT) {
+    addNewWarning("msg.jsdoc.typetransformation.missing.param","conditional",expression);
     return false;
   }
-  if (!expression.getFirstChild().getString().equals(COND_KEYWORD)) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.cond",expression);
-    return false;
-  }
-  if (expression.getChildCount() < 4) {
-    addNewWarning("msg.jsdoc.typetransformation.missing.param.cond",expression);
-    return false;
-  }
-  if (expression.getChildCount() > 4) {
-    addNewWarning("msg.jsdoc.typetransformation.extra.param.cond",expression);
+  if (expression.getChildCount() > 1 + COND_PARAM_COUNT) {
+    addNewWarning("msg.jsdoc.typetransformation.extra.param","conditional",expression);
     return false;
   }
   if (!validTTLBooleanTypeExpression(expression.getChildAtIndex(1))) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.param.bool.cond",expression);
+    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","conditional",expression);
     return false;
   }
   if (!validTypeTransformationExpression(expression.getChildAtIndex(2))) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.param.if.cond",expression);
+    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","conditional",expression);
     return false;
   }
   if (!validTypeTransformationExpression(expression.getChildAtIndex(3))) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.param.else.cond",expression);
+    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","conditional",expression);
     return false;
   }
   return true;

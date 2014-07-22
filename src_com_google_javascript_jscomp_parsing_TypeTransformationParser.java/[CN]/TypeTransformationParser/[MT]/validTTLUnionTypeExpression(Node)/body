@@ -1,17 +1,17 @@
 {
-  if (expression.getType() != Token.NAME && expression.getType() != Token.CALL) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.uniontype",expression);
+  if (!expression.isName() && !expression.isCall()) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","union type",expression);
     return false;
   }
-  if (expression.getType() == Token.NAME) {
+  if (expression.isName()) {
     return validTTLTypeVar(expression);
   }
   if (!expression.getFirstChild().getString().equals(UNION_KEYWORD)) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.uniontype",expression);
+    addNewWarning("msg.jsdoc.typetransformation.invalid.uniontype","union type",expression);
     return false;
   }
-  if (expression.getChildCount() < 3) {
-    addNewWarning("msg.jsdoc.typetransformation.missing.param.uniontype",expression);
+  if (expression.getChildCount() < 1 + UNION_MIN_PARAM_COUNT) {
+    addNewWarning("msg.jsdoc.typetransformation.missing.param","union type",expression);
     return false;
   }
   for (  Node basicExp : expression.children()) {
@@ -19,6 +19,7 @@
       continue;
     }
     if (!validTTLBasicTypeExpression(basicExp)) {
+      addNewWarning("msg.jsdoc.typetransformation.invalid.inside","union type",expression);
       return false;
     }
   }

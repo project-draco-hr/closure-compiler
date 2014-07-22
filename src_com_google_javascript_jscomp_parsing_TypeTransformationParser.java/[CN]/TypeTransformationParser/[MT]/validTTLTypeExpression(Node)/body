@@ -1,14 +1,14 @@
 {
-  if (expression.getType() != Token.NAME && expression.getType() != Token.CALL) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.typeexpr",expression);
+  if (!expression.isName() && !expression.isCall()) {
+    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","type",expression);
     return false;
   }
-  if (expression.getType() == Token.NAME) {
+  if (expression.isName()) {
     return validTTLTypeVar(expression);
   }
   Node operation=expression.getFirstChild();
   if (!TYPE_CONSTRUCTORS.contains(operation.getString())) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.typeexpr",operation);
+    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","type",operation);
     return false;
   }
   if (operation.getString().equals(TYPE_KEYWORD)) {
