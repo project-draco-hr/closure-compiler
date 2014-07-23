@@ -16,6 +16,9 @@
   originalGeneratorBody.addChildToBack(IR.exprResult(IR.assign(IR.name(GENERATOR_STATE),IR.number(-1))));
   enclosingCase=getUnique(genBlock,Token.CASE);
   hoistRoot=getUnique(genBlock,Token.VAR);
+  if (NodeUtil.isNameReferenced(n,GENERATOR_ARGUMENTS)) {
+    hoistRoot.getParent().addChildAfter(IR.var(IR.name(GENERATOR_ARGUMENTS),IR.name("arguments")),hoistRoot);
+  }
   while (originalGeneratorBody.hasChildren()) {
     currentStatement=originalGeneratorBody.removeFirstChild();
     boolean advanceCase=translateStatementInOriginalBody();

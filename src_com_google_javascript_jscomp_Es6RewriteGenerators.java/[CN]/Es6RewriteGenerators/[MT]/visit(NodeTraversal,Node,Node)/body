@@ -6,16 +6,22 @@ case Token.FUNCTION:
       visitGenerator(n,parent);
     }
   break;
+case Token.NAME:
+Node enclosing=NodeUtil.getEnclosingFunction(n);
+if (enclosing != null && enclosing.isGeneratorFunction() && n.matchesQualifiedName("arguments")) {
+n.setString(GENERATOR_ARGUMENTS);
+}
+break;
 case Token.YIELD:
 if (n.isYieldFor()) {
-  visitYieldFor(n,parent);
+visitYieldFor(n,parent);
 }
  else if (!parent.isExprResult()) {
-  visitYieldExpr(n,parent);
+visitYieldExpr(n,parent);
 }
 break;
 case Token.LABEL:
-Node enclosing=NodeUtil.getEnclosingFunction(n);
+enclosing=NodeUtil.getEnclosingFunction(n);
 if (enclosing != null && enclosing.isGeneratorFunction()) {
 compiler.report(JSError.make(n,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Labels in generator functions"));
 }
