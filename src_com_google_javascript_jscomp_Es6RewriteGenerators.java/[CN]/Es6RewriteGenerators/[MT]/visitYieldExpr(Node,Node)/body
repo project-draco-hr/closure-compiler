@@ -1,10 +1,10 @@
 {
   Node enclosingStatement=NodeUtil.getEnclosingStatement(n);
-  Node exprName=IR.name(GENERATOR_EXPRESSION_YIELD_NAME + generatorExprCount.get());
-  Node yieldDecl=IR.var(exprName.cloneTree(),n.getFirstChild().cloneTree());
-  Node yieldStatement=IR.exprResult(IR.yield(exprName.cloneTree()));
-  parent.replaceChild(n,exprName);
-  enclosingStatement.getParent().addChildBefore(yieldDecl,enclosingStatement);
+  Node yieldStatement=IR.exprResult(n.hasChildren() ? IR.yield(n.removeFirstChild()) : IR.yield());
+  Node yieldResult=IR.name(GENERATOR_NEXT_ARG + generatorResultCount.get());
+  Node yieldResultDecl=IR.var(yieldResult.cloneTree(),IR.name(GENERATOR_NEXT_ARG));
+  parent.replaceChild(n,yieldResult);
   enclosingStatement.getParent().addChildBefore(yieldStatement,enclosingStatement);
+  enclosingStatement.getParent().addChildBefore(yieldResultDecl,enclosingStatement);
   compiler.reportCodeChange();
 }
