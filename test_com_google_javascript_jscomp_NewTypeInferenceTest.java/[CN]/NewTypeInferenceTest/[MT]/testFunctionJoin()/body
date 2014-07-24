@@ -1,0 +1,6 @@
+{
+  checkNoWarnings("/** @constructor */\n" + "function Foo() {}\n" + "/**\n"+ " * @param {function(new:Foo, (number|string))} x \n"+ " * @param {function(new:Foo, number)} y \n"+ " */\n"+ "function f(x, y) {\n"+ "  var z = 1 < 2 ? x : y;\n"+ "  return new z(123);\n"+ "}");
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @constructor */\n"+ "function Bar() {}\n"+ "/**\n"+ " * @param {function(new:Foo)} x \n"+ " * @param {function(new:Bar)} y \n"+ " */\n"+ "function f(x, y) {\n"+ "  var z = 1 < 2 ? x : y;\n"+ "  return new z();\n"+ "}",NewTypeInference.NOT_A_CONSTRUCTOR);
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "function f(/** function(new:Foo) */ x, /** function() */ y) {\n"+ "  var z = 1 < 2 ? x : y;\n"+ "  return new z();\n"+ "}",NewTypeInference.NOT_A_CONSTRUCTOR);
+  checkNoWarnings("/** @constructor */\n" + "function Foo() {}\n" + "function f(/** function(new:Foo) */ x, /** function() */ y) {\n"+ "  var z = 1 < 2 ? x : y;\n"+ "  return z();\n"+ "}");
+}

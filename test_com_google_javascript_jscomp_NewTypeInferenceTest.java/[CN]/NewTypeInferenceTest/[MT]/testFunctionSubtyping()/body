@@ -1,0 +1,5 @@
+{
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @constructor */\n"+ "function Bar() {}\n"+ "function f(/** function(new:Foo) */ x) {}\n"+ "f(Bar);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "function f(/** function(new:Foo) */ x) {}\n"+ "f(function() {});",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  checkNoWarnings("/** @constructor */\n" + "function Foo() {}\n" + "/** @constructor @extends {Foo} */\n"+ "function Bar() {}\n"+ "function f(/** function(new:Foo) */ x) {}\n"+ "f(Bar);");
+}
