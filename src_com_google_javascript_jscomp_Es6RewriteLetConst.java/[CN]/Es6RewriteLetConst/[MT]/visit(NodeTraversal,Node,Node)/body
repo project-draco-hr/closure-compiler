@@ -14,7 +14,7 @@
   Scope hoistScope=scope.getClosestHoistScope();
   boolean doRename=false;
   if (scope != hoistScope) {
-    doRename=hoistScope.isDeclared(oldName,true);
+    doRename=hoistScope.isDeclared(oldName,true) || undeclaredNames.contains(oldName);
     String newName=doRename ? oldName + "$" + compiler.getUniqueNameIdSupplier().get() : oldName;
     Var oldVar=scope.getVar(oldName);
     scope.undeclare(oldVar);
