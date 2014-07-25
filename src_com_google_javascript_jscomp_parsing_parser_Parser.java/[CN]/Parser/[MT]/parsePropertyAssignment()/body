@@ -15,7 +15,17 @@
     }
   }
  else   if (type == TokenType.OPEN_SQUARE) {
-    return parseComputedProperty();
+    SourcePosition start=getTreeStartLocation();
+    ParseTree name=parseComputedPropertyName();
+    if (peek(TokenType.COLON)) {
+      eat(TokenType.COLON);
+      ParseTree value=parseAssignmentExpression();
+      return new ComputedPropertyDefinitionTree(getTreeLocation(start),name,value);
+    }
+ else {
+      ParseTree value=parseFunctionTail(start,null,false,false,FunctionDeclarationTree.Kind.EXPRESSION);
+      return new ComputedPropertyMethodTree(getTreeLocation(start),name,value);
+    }
   }
  else {
     throw new RuntimeException("unreachable");

@@ -319,6 +319,7 @@ break;
 case Token.GETTER_DEF:
 case Token.SETTER_DEF:
 case Token.MEMBER_DEF:
+{
 n.getParent().toStringTree();
 Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers());
 Preconditions.checkState(childCount == 1);
@@ -362,6 +363,7 @@ addJsString(n);
 add(parameters);
 add(body,Context.PRESERVE_BLOCK);
 break;
+}
 case Token.SCRIPT:
 case Token.BLOCK:
 {
@@ -656,17 +658,8 @@ for (Node c=first; c != null; c=c.getNext()) {
 if (c != first) {
 cc.listSeparator();
 }
-if (c.isGetterDef() || c.isSetterDef() || c.isStringKey()|| c.isMemberDef()) {
+Preconditions.checkState(c.isComputedProp() || c.isGetterDef() || c.isSetterDef()|| c.isStringKey()|| c.isMemberDef());
 add(c);
-}
- else {
-Preconditions.checkState(c.isComputedProp());
-add("[");
-add(c.getFirstChild());
-add("]");
-add(":");
-add(c.getLastChild());
-}
 }
 add("}");
 if (needsParens) {
@@ -674,6 +667,22 @@ add(")");
 }
 break;
 }
+case Token.COMPUTED_PROP:
+add("[");
+add(first);
+add("]");
+if (n.getBooleanProp(Node.COMPUTED_PROP_METHOD)) {
+Node function=first.getNext();
+Node params=function.getFirstChild().getNext();
+Node body=function.getLastChild();
+add(params);
+add(body,Context.PRESERVE_BLOCK);
+}
+ else {
+add(":");
+add(first.getNext());
+}
+break;
 case Token.OBJECT_PATTERN:
 addObjectPattern(n,context);
 break;
@@ -732,7 +741,7 @@ add("}");
 add("`");
 break;
 default :
-throw new Error("Unknown type " + type + "\n"+ n.toStringTree());
+throw new RuntimeException("Unknown type " + Token.name(type) + "\n"+ n.toStringTree());
 }
 cc.endSourceMapping(n);
 }

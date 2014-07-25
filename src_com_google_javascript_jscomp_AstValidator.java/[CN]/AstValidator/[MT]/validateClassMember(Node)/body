@@ -1,7 +1,12 @@
 {
-  if (n.getType() != Token.MEMBER_DEF && n.getType() != Token.GETTER_DEF && n.getType() != Token.SETTER_DEF) {
-    violation("Class contained member which was not a MEMBER_DEF, GETTER_DEF, or SETTER_DEF",n);
+  if (n.getType() == Token.MEMBER_DEF || n.getType() == Token.GETTER_DEF || n.getType() == Token.SETTER_DEF) {
+    validateChildCount(n,Token.arity(n.getType()));
+    validateFunctionExpression(n.getFirstChild());
   }
-  validateChildCount(n,Token.arity(n.getType()));
-  validateFunctionExpression(n.getFirstChild());
+ else   if (n.isComputedProp()) {
+    validateComputedPropClassMethod(n);
+  }
+ else {
+    violation("Class contained member of invalid type " + Token.name(n.getType()),n);
+  }
 }

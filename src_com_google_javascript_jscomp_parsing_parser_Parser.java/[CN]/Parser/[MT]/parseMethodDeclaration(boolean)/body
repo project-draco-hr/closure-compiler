@@ -2,6 +2,13 @@
   SourcePosition start=getTreeStartLocation();
   boolean isStatic=allowStatic && eatOpt(TokenType.STATIC) != null;
   boolean isGenerator=eatOpt(TokenType.STAR) != null;
-  IdentifierToken name=eatIdOrKeywordAsId();
-  return parseFunctionTail(start,name,isStatic,isGenerator,FunctionDeclarationTree.Kind.MEMBER);
+  if (peekId()) {
+    IdentifierToken name=eatIdOrKeywordAsId();
+    return parseFunctionTail(start,name,isStatic,isGenerator,FunctionDeclarationTree.Kind.MEMBER);
+  }
+ else {
+    ParseTree name=parseComputedPropertyName();
+    ParseTree function=parseFunctionTail(start,null,isStatic,isGenerator,FunctionDeclarationTree.Kind.EXPRESSION);
+    return new ComputedPropertyMethodTree(getTreeLocation(start),name,function);
+  }
 }
