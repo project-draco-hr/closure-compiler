@@ -1,0 +1,11 @@
+{
+  if (n.isLabel()) {
+    Node labelName=n.getFirstChild();
+    for (Node parent=n.getParent(); parent != null && !parent.isFunction(); parent=parent.getParent()) {
+      if (parent.isLabel() && labelsMatch(parent,labelName)) {
+        errorReporter.error(String.format(DUPLICATE_LABEL,labelName.getString()),sourceName,n.getLineno(),n.getCharno());
+        break;
+      }
+    }
+  }
+}
