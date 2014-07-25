@@ -2,7 +2,6 @@
   TypeEnv entryEnv=getEntryTypeEnv();
   TypeEnv exitEnv=getFinalTypeEnv();
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
-  Multimap<String,String> taints=exitEnv.getTaints();
   DeclaredFunctionType declType=fn.getDeclaredType();
   int reqArity=declType.getRequiredArity();
   int optArity=declType.getOptionalArity();
@@ -16,7 +15,7 @@
       break;
     }
     String formalName=formals.get(i);
-    formalType=getFormalTypeAfterFwd(formalName,envGetType(entryEnv,formalName),exitEnv,taints);
+    formalType=getTypeAfterFwd(formalName,entryEnv,exitEnv);
     if (formalType.isUnknown() || JSType.UNDEFINED.isSubtypeOf(formalType)) {
       reqArity--;
     }
@@ -28,8 +27,7 @@
   for (  String formal : formals) {
     JSType formalType=fn.getDeclaredTypeOf(formal);
     if (formalType == null) {
-      formalType=getFormalTypeAfterFwd(formal,envGetType(entryEnv,formal),exitEnv,taints);
-      formalType=formalType.withLocation(null);
+      formalType=getTypeAfterFwd(formal,entryEnv,exitEnv);
     }
     if (formalIndex < reqArity) {
       builder.addReqFormal(formalType);
@@ -44,18 +42,13 @@
   }
   for (  String outer : fn.getOuterVars()) {
     println("Free var ",outer," going in summary");
-    JSType outerType=envGetType(entryEnv,outer);
-    for (    String taintedVarName : taints.get(outer)) {
-      JSType taintType=envGetType(exitEnv,taintedVarName);
-      outerType=JSType.meet(taintType,outerType);
-    }
-    builder.addOuterVarPrecondition(outer,outerType.withLocation(null));
+    builder.addOuterVarPrecondition(outer,getTypeAfterFwd(outer,entryEnv,exitEnv));
   }
   builder.addNominalType(declType.getNominalType());
   JSType declRetType=declType.getReturnType();
   JSType actualRetType=envGetType(exitEnv,RETVAL_ID);
   if (declRetType == null) {
-    builder.addRetType(actualRetType.withLocation(null));
+    builder.addRetType(actualRetType);
   }
  else {
     builder.addRetType(declRetType);

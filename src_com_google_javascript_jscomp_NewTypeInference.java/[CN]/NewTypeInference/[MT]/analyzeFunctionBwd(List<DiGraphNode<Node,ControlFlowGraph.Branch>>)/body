@@ -31,12 +31,12 @@ case Token.VAR:
     inEnv=outEnv;
     break;
   }
-  inEnv=null;
+  inEnv=outEnv;
   for (Node nameNode=n.getFirstChild(); nameNode != null; nameNode=nameNode.getNext()) {
     String varName=nameNode.getString();
     Node rhs=nameNode.getFirstChild();
     JSType declType=currentScope.getDeclaredTypeOf(varName);
-    inEnv=envPutType(outEnv,varName,JSType.UNKNOWN);
+    inEnv=envPutType(inEnv,varName,JSType.UNKNOWN);
     if (rhs == null || currentScope.isLocalFunDef(varName)) {
       continue;
     }

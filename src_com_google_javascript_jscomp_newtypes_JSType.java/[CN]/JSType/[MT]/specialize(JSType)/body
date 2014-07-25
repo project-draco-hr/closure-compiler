@@ -9,7 +9,7 @@
     return makeFalsy();
   }
  else   if (this.isTop() || this.isUnknown()) {
-    return other.withLocation(getLocation());
+    return other;
   }
   int newMask=getMask() & other.getMask();
   String newTypevar;
@@ -20,5 +20,5 @@
     newTypevar=null;
     newMask&=~TYPEVAR_MASK;
   }
-  return meetEnums(newMask,getMask() | other.getMask(),getLocation(),ObjectType.specializeSet(getObjs(),other.getObjs()),newTypevar,getObjs(),other.getObjs(),getEnums(),other.getEnums());
+  return meetEnums(newMask,getMask() | other.getMask(),ObjectType.specializeSet(getObjs(),other.getObjs()),newTypevar,getObjs(),other.getObjs(),getEnums(),other.getEnums());
 }

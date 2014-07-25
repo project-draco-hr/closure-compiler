@@ -15,13 +15,12 @@
     return UNKNOWN;
   }
   int newMask=lhs.getMask() | rhs.getMask();
-  String newLoc=joinLocs(lhs.getLocation(),rhs.getLocation());
   ImmutableSet<ObjectType> newObjs=ObjectType.joinSets(lhs.getObjs(),rhs.getObjs());
   String newTypevar=lhs.getTypeVar() != null ? lhs.getTypeVar() : rhs.getTypeVar();
   ImmutableSet<EnumType> newEnums=EnumType.union(lhs.getEnums(),rhs.getEnums());
   if (newEnums == null) {
-    return makeType(newMask,newLoc,newObjs,newTypevar,null);
+    return makeType(newMask,newObjs,newTypevar,null);
   }
-  JSType tmpJoin=makeType(newMask & ~ENUM_MASK,newLoc,newObjs,newTypevar,null);
-  return makeType(newMask,newLoc,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
+  JSType tmpJoin=makeType(newMask & ~ENUM_MASK,newObjs,newTypevar,null);
+  return makeType(newMask,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
 }

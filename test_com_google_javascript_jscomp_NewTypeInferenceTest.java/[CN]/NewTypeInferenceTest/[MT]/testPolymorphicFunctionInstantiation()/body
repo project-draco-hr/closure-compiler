@@ -5,7 +5,7 @@
   typeCheck("/**\n" + " * @template T\n" + " * @param {(T|number)} x\n"+ " */\n"+ "function f(x) {}\n"+ "/** @return {*} */ function g() { return 1; }\n"+ "f(g());",NewTypeInference.FAILED_TO_UNIFY);
   typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function id(x) { return x; }\n"+ "/** @return {*} */ function g() { return 1; }\n"+ "id(g()) - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("/**\n" + " * @template T, U\n" + " * @param {T} x\n"+ " * @param {U} y\n"+ " * @return {U}\n"+ " */\n"+ "function f(x, y) { return y; }\n"+ "f(10, 'asdf') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f(x, 5);\n"+ "  x = 'asdf';\n"+ "}\n"+ "g('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f(x, 5);\n"+ "}\n"+ "g('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
   checkNoWarnings("function g(/** ? */ x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {(T|number)} x\n"+ "   */\n"+ "  function f(x) {}\n"+ "  f(x)\n"+ "}");
   checkNoWarnings("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @return {T}\n"+ "   */\n"+ "  function f(x) { return x; }\n"+ "  f(x) - 5;\n"+ "  x = 'asdf';\n"+ "}\n"+ "g('asdf');");
   typeCheck("/**\n" + " * @template T\n" + " * @param {(T|number)} x\n"+ " */\n"+ "function f(x) {}\n"+ "f(123);",NewTypeInference.FAILED_TO_UNIFY);
