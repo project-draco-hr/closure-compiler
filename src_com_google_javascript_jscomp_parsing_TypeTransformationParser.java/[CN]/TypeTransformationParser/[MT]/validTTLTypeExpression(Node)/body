@@ -7,12 +7,16 @@
     return validTTLTypeVar(expression);
   }
   Node operation=expression.getFirstChild();
-  if (!TYPE_CONSTRUCTORS.contains(operation.getString())) {
+  String keyword=operation.getString();
+  if (!belongsTo(keyword,TYPE_CONSTRUCTORS)) {
     addNewWarning("msg.jsdoc.typetransformation.invalid.expression","type",operation);
     return false;
   }
-  if (operation.getString().equals(TYPE_KEYWORD)) {
+  if (isKeyword(keyword,Keywords.TYPE)) {
     return validTTLBasicTypeExpression(expression);
   }
-  return validTTLUnionTypeExpression(expression);
+  if (isKeyword(keyword,Keywords.UNION)) {
+    return validTTLUnionTypeExpression(expression);
+  }
+  throw new IllegalStateException("Invalid type expression");
 }

@@ -7,17 +7,18 @@
     return validTTLTypeVar(expression);
   }
   Node operation=expression.getFirstChild();
-  if (!TYPE_CONSTRUCTORS.contains(operation.getString()) && !OPERATIONS.contains(operation.getString())) {
+  String keyword=operation.getString();
+  if (!belongsTo(keyword,TYPE_CONSTRUCTORS) && !belongsTo(keyword,OPERATIONS)) {
     addNewWarning("msg.jsdoc.typetransformation.invalid.expression","type transformation",operation);
     return false;
   }
-  if (TYPE_CONSTRUCTORS.contains(operation.getString())) {
+  if (belongsTo(keyword,TYPE_CONSTRUCTORS)) {
     return validTTLTypeExpression(expression);
   }
-  if (operation.getString().equals(COND_KEYWORD)) {
+  if (isKeyword(keyword,Keywords.COND)) {
     return validTTLCondionalExpression(expression);
   }
-  if (operation.getString().equals(MAPUNION_KEYWORD)) {
+  if (isKeyword(keyword,Keywords.MAPUNION)) {
     return validTTLMapunionExpression(expression);
   }
   throw new IllegalStateException("Invalid type transformation expression");
