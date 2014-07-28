@@ -6,10 +6,8 @@
     body=IR.block(IR.returnNode(body).srcref(body)).srcref(body);
     n.addChildToBack(body);
   }
-  UpdateThisNodes thisUpdater=new UpdateThisNodes();
-  NodeTraversal.traverse(compiler,body,thisUpdater);
-  if (thisUpdater.changed) {
-    addThisVar(t);
-  }
+  UpdateThisAndArgumentsReferences updater=new UpdateThisAndArgumentsReferences();
+  NodeTraversal.traverse(compiler,body,updater);
+  addVarDecls(t,updater.changedThis,updater.changedArguments);
   compiler.reportCodeChange();
 }
