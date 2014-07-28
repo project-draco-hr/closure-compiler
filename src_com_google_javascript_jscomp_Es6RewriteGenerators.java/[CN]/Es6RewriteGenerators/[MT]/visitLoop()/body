@@ -1,0 +1,46 @@
+{
+  Node initializer;
+  Node condition;
+  Node postExpression;
+  Node body;
+  if (currentStatement.isWhile()) {
+    condition=currentStatement.removeFirstChild();
+    body=currentStatement.removeFirstChild();
+    initializer=IR.empty();
+    postExpression=IR.empty();
+  }
+ else   if (currentStatement.isFor()) {
+    initializer=currentStatement.removeFirstChild();
+    condition=currentStatement.removeFirstChild();
+    postExpression=currentStatement.removeFirstChild();
+    body=currentStatement.removeFirstChild();
+  }
+ else {
+    Preconditions.checkState(currentStatement.isDo());
+    Node firstEntry=IR.name(GENERATOR_DO_WHILE_INITIAL);
+    initializer=IR.var(firstEntry.cloneTree(),IR.trueNode());
+    postExpression=IR.assign(firstEntry.cloneTree(),IR.falseNode());
+    body=currentStatement.removeFirstChild();
+    condition=IR.or(firstEntry,currentStatement.removeFirstChild());
+  }
+  postExpression=postExpression.isEmpty() ? postExpression : IR.exprResult(postExpression);
+  int loopBeginState=generatorCaseCount++;
+  currentLoopEndCase.add(0,generatorCaseCount);
+  currentBreakCaptureIsSwitch.add(0,false);
+  currentLoopContinueStatement.add(0,postExpression);
+  if (!postExpression.isEmpty()) {
+    body.addChildToBack(postExpression);
+  }
+  Node beginCase=IR.number(loopBeginState);
+  beginCase.setGeneratorMarker(true);
+  Node conditionalBranch=IR.ifNode(condition,body);
+  Node setStateLoopStart=createStateUpdate(loopBeginState);
+  Node breakToStart=createSafeBreak();
+  originalGeneratorBody.addChildToFront(beginCase);
+  if (!initializer.isEmpty()) {
+    originalGeneratorBody.addChildToFront(initializer);
+  }
+  originalGeneratorBody.addChildAfter(conditionalBranch,beginCase);
+  body.addChildToBack(setStateLoopStart);
+  body.addChildToBack(breakToStart);
+}

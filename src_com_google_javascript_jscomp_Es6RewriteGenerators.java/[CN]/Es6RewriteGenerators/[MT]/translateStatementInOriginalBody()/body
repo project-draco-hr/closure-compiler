@@ -7,16 +7,12 @@
     visitVar();
     return false;
   }
- else   if (currentStatement.isFor() && yieldsOrReturns(currentStatement)) {
-    visitFor();
+ else   if (NodeUtil.isForIn(currentStatement) && yieldsOrReturns(currentStatement)) {
+    compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"For...in loops containing yield or return"));
     return false;
   }
- else   if (currentStatement.isWhile() && yieldsOrReturns(currentStatement)) {
-    visitWhile();
-    return false;
-  }
- else   if (currentStatement.isDo() && yieldsOrReturns(currentStatement)) {
-    visitDo();
+ else   if (NodeUtil.isLoopStructure(currentStatement) && yieldsOrReturns(currentStatement)) {
+    visitLoop();
     return false;
   }
  else   if (currentStatement.isSwitch() && yieldsOrReturns(currentStatement)) {
