@@ -1,9 +1,12 @@
 {
   String value=token.value;
-  int start=1;
+  if (templateLiteral) {
+    value=value.replaceAll("(?<!\\\\)\r(\n)?","\n");
+  }
+  int start=templateLiteral ? 0 : 1;
   int cur=value.indexOf('\\');
   if (cur == -1) {
-    return value.substring(1,value.length() - 1);
+    return templateLiteral ? value : value.substring(1,value.length() - 1);
   }
   StringBuilder result=new StringBuilder();
   while (cur != -1) {
@@ -101,6 +104,6 @@ break;
 start=cur + 1;
 cur=value.indexOf('\\',start);
 }
-result.append(value,start,value.length() - 1);
+result.append(value,start,templateLiteral ? value.length() : value.length() - 1);
 return result.toString();
 }
