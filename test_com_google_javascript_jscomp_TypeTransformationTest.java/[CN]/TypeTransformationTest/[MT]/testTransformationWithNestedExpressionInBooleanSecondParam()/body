@@ -1,6 +1,3 @@
 {
-  Node nested=buildConditional(buildEqtypePredicate(buildTypeVariable("T"),buildTypeVariable("T")),buildTypePredicate("string"),buildTypePredicate("number"));
-  Node ttlExp=buildConditional(buildEqtypePredicate(buildTypePredicate("string"),nested),buildTypePredicate("string"),buildTypePredicate("number"));
-  ImmutableMap<String,JSType> typeVars=ImmutableMap.of("T",NUMBER_TYPE);
-  assertTypeEquals(STRING_TYPE,transform(ttlExp,typeVars));
+  testTTL(STRING_TYPE,"cond( eq( type('string')," + "cond(eq(N, N), type('string'), type('number'))" + "),"+ "type('string'),"+ "type('number'))");
 }
