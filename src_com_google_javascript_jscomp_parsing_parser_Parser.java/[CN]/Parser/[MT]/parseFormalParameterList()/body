@@ -2,7 +2,6 @@
   SourcePosition listStart=getTreeStartLocation();
   eat(TokenType.OPEN_PAREN);
   ImmutableList.Builder<ParseTree> result=ImmutableList.builder();
-  boolean hasDefaultParameters=false;
   while (peek(TokenType.SPREAD) || peekId() || peek(TokenType.OPEN_SQUARE)|| peek(TokenType.OPEN_CURLY)) {
     SourcePosition start=getTreeStartLocation();
     if (peek(TokenType.SPREAD)) {
@@ -20,11 +19,10 @@
  else {
       parameter=parseObjectPattern(PatternKind.INITIALIZER);
     }
-    if (hasDefaultParameters || peek(TokenType.EQUAL)) {
+    if (peek(TokenType.EQUAL)) {
       eat(TokenType.EQUAL);
       ParseTree defaultValue=parseAssignmentExpression();
       parameter=new DefaultParameterTree(getTreeLocation(start),parameter,defaultValue);
-      hasDefaultParameters=true;
     }
     result.add(parameter);
     if (!peek(TokenType.CLOSE_PAREN)) {
