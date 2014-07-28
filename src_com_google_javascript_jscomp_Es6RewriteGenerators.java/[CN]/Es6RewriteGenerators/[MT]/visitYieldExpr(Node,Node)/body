@@ -1,7 +1,7 @@
 {
   Node enclosingStatement=NodeUtil.getEnclosingStatement(n);
   Node yieldStatement=IR.exprResult(n.hasChildren() ? IR.yield(n.removeFirstChild()) : IR.yield());
-  Node yieldResult=IR.name(GENERATOR_NEXT_ARG + generatorResultCount.get());
+  Node yieldResult=IR.name(GENERATOR_NEXT_ARG + generatorCounter.get());
   Node yieldResultDecl=IR.var(yieldResult.cloneTree(),IR.name(GENERATOR_NEXT_ARG));
   parent.replaceChild(n,yieldResult);
   enclosingStatement.getParent().addChildBefore(yieldStatement,enclosingStatement);

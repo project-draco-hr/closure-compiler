@@ -1,7 +1,11 @@
 {
-  if (!currentLoopContinueStatement.peekFirst().isEmpty()) {
-    enclosingCase.getLastChild().addChildToBack(currentLoopContinueStatement.peekFirst().cloneTree());
+  int nested=0;
+  while (!currentBreakCaptureIsSwitch.isEmpty() && currentBreakCaptureIsSwitch.get(nested)) {
+    nested++;
   }
-  enclosingCase.getLastChild().addChildToBack(createStateUpdate(currentLoopEndCase.peekFirst() - 1));
+  if (!currentLoopContinueStatement.get(nested).isEmpty()) {
+    enclosingCase.getLastChild().addChildToBack(currentLoopContinueStatement.get(nested).cloneTree());
+  }
+  enclosingCase.getLastChild().addChildToBack(createStateUpdate(currentLoopEndCase.get(nested) - 1));
   enclosingCase.getLastChild().addChildToBack(createSafeBreak());
 }

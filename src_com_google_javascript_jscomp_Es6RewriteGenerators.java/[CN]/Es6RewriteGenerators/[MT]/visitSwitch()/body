@@ -1,0 +1,32 @@
+{
+  Node didEnter=IR.name(GENERATOR_SWITCH_ENTERED + generatorCounter.get());
+  Node didEnterDecl=IR.var(didEnter.cloneTree(),IR.falseNode());
+  Node switchVal=IR.name(GENERATOR_SWITCH_VAL + generatorCounter.get());
+  Node switchValDecl=IR.var(switchVal.cloneTree(),currentStatement.removeFirstChild());
+  originalGeneratorBody.addChildToFront(didEnterDecl);
+  originalGeneratorBody.addChildAfter(switchValDecl,didEnterDecl);
+  Node insertionPoint=switchValDecl;
+  while (currentStatement.hasChildren()) {
+    Node currCase=currentStatement.removeFirstChild();
+    Node equivBlock;
+    currCase.getLastChild().addChildToFront(IR.exprResult(IR.assign(didEnter.cloneTree(),IR.trueNode())));
+    if (currCase.isDefaultCase()) {
+      if (currentStatement.hasChildren()) {
+        compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Default case as intermediate case"));
+      }
+      equivBlock=IR.block(currCase.removeFirstChild());
+    }
+ else {
+      equivBlock=IR.ifNode(IR.or(didEnter.cloneTree(),IR.sheq(switchVal.cloneTree(),currCase.removeFirstChild())),currCase.removeFirstChild());
+    }
+    originalGeneratorBody.addChildAfter(equivBlock,insertionPoint);
+    insertionPoint=equivBlock;
+  }
+  int breakTarget=generatorCaseCount++;
+  currentLoopEndCase.add(0,breakTarget);
+  currentLoopContinueStatement.add(0,IR.empty());
+  currentBreakCaptureIsSwitch.add(0,true);
+  Node breakCase=IR.number(breakTarget);
+  breakCase.setGeneratorMarker(true);
+  originalGeneratorBody.addChildAfter(breakCase,insertionPoint);
+}
