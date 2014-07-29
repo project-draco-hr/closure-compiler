@@ -1,11 +1,5 @@
 {
-  int nested=0;
-  while (!currentBreakCaptureIsSwitch.isEmpty() && currentBreakCaptureIsSwitch.get(nested)) {
-    nested++;
-  }
-  if (!currentLoopContinueStatement.get(nested).isEmpty()) {
-    enclosingCase.getLastChild().addChildToBack(currentLoopContinueStatement.get(nested).cloneTree());
-  }
-  enclosingCase.getLastChild().addChildToBack(createStateUpdate(currentLoopEndCase.get(nested) - 1));
+  Preconditions.checkState(currentLoopContext.get(0).continueCase != -1);
+  enclosingCase.getLastChild().addChildToBack(createStateUpdate(currentLoopContext.get(0).continueCase));
   enclosingCase.getLastChild().addChildToBack(createSafeBreak());
 }

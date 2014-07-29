@@ -25,12 +25,15 @@
   }
   postExpression=postExpression.isEmpty() ? postExpression : IR.exprResult(postExpression);
   int loopBeginState=generatorCaseCount++;
-  currentLoopEndCase.add(0,generatorCaseCount);
-  currentBreakCaptureIsSwitch.add(0,false);
-  currentLoopContinueStatement.add(0,postExpression);
+  int continueState=loopBeginState;
   if (!postExpression.isEmpty()) {
+    continueState=generatorCaseCount++;
+    Node continueCase=IR.number(continueState);
+    continueCase.setGeneratorMarker(true);
+    body.addChildToBack(continueCase);
     body.addChildToBack(postExpression);
   }
+  currentLoopContext.add(0,new LoopContext(generatorCaseCount,continueState));
   Node beginCase=IR.number(loopBeginState);
   beginCase.setGeneratorMarker(true);
   Node conditionalBranch=IR.ifNode(condition,body);
