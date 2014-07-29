@@ -14,4 +14,5 @@
   typeCheck("/**\n" + " * @template T\n" + " * @param {function(T):T} f\n"+ " * @param {T} x\n"+ " */\n"+ "function apply(f, x) { return f(x); }\n"+ "/** @type {string} */"+ "var out;"+ "var result = apply(function(x){ out = x; return x; }, 0);",NewTypeInference.NOT_UNIQUE_INSTANTIATION);
   typeCheck("/** @template T */\n" + "function f(/** T */ x, /** T */ y) {}\n" + "f(1, 'str');",NewTypeInference.NOT_UNIQUE_INSTANTIATION);
   typeCheck("/** @template T */\n" + "function /** T */ f(/** T */ x) { return x; }\n" + "f('str') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  /** @constructor */\n"+ "  function Foo() {\n"+ "    /** @type {T} */\n"+ "    this.prop = x;\n"+ "  }\n"+ "  return (new Foo()).prop;\n"+ "}\n"+ "f('asdf') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
 }

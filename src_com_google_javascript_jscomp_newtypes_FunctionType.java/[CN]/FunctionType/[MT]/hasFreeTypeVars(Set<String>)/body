@@ -1,0 +1,16 @@
+{
+  if (typeParameters != null) {
+    boundTypeVars.addAll(typeParameters);
+  }
+  for (  JSType t : requiredFormals) {
+    if (t.hasFreeTypeVars(boundTypeVars)) {
+      return true;
+    }
+  }
+  for (  JSType t : optionalFormals) {
+    if (t.hasFreeTypeVars(boundTypeVars)) {
+      return true;
+    }
+  }
+  return restFormals != null && restFormals.hasFreeTypeVars(boundTypeVars) || returnType.hasFreeTypeVars(boundTypeVars) || (nominalType != null && nominalType.hasFreeTypeVars(boundTypeVars));
+}
