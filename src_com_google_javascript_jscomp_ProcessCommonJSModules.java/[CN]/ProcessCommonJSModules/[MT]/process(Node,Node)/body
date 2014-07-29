@@ -1,7 +1,7 @@
 {
-  dontProcess=false;
-  NodeTraversal.traverse(compiler,root,new FindGoogProvideAndGoogModule());
-  if (dontProcess) {
+  FindGoogProvideOrGoogModule finder=new FindGoogProvideOrGoogModule();
+  NodeTraversal.traverse(compiler,root,finder);
+  if (finder.found) {
     return;
   }
   NodeTraversal.traverse(compiler,root,new ProcessCommonJsModulesCallback());

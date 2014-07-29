@@ -1,0 +1,26 @@
+{
+  JSDocInfo info=n.getJSDocInfo();
+  if (info != null) {
+    for (    Node typeNode : info.getTypeNodes()) {
+      fixTypeNode(t,typeNode);
+    }
+  }
+  if (n.isName()) {
+    String name=n.getString();
+    if (suffix.equals(name)) {
+      return;
+    }
+    Scope.Var var=t.getScope().getVar(name);
+    if (var != null && var.isGlobal()) {
+      n.setString(name + "$$" + suffix);
+      n.putProp(Node.ORIGINALNAME_PROP,name);
+    }
+ else     if (var == null && importMap.containsKey(name)) {
+      if (parent.isCall() && parent.getFirstChild() == n) {
+        parent.putBooleanProp(Node.FREE_CALL,false);
+      }
+      ModuleOriginalNamePair pair=importMap.get(name);
+      n.getParent().replaceChild(n,IR.getprop(IR.name(pair.module),IR.string(pair.originalName)).useSourceInfoIfMissingFromForTree(n));
+    }
+  }
+}

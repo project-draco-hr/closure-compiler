@@ -1,0 +1,36 @@
+{
+  String importName=n.getLastChild().getString();
+  String loadAddress=loader.locate(importName,t.getInput());
+  try {
+    loader.load(loadAddress);
+  }
+ catch (  ES6ModuleLoader.LoadFailedException e) {
+    t.makeError(n,ES6ModuleLoader.LOAD_ERROR,importName);
+  }
+  String moduleName=toModuleName(loadAddress);
+  for (  Node child : n.children()) {
+    if (child.isEmpty() || child.isString()) {
+      continue;
+    }
+ else     if (child.isName()) {
+      importMap.put(child.getString(),new ModuleOriginalNamePair(moduleName,child.getString()));
+    }
+ else {
+      for (      Node grandChild : child.children()) {
+        String origName=grandChild.getFirstChild().getString();
+        if (grandChild.getChildCount() == 2) {
+          importMap.put(grandChild.getLastChild().getString(),new ModuleOriginalNamePair(moduleName,origName));
+        }
+ else {
+          importMap.put(origName,new ModuleOriginalNamePair(moduleName,origName));
+        }
+      }
+    }
+  }
+  if (!alreadyRequired.contains(moduleName)) {
+    alreadyRequired.add(moduleName);
+    NodeUtil.getEnclosingType(parent,Token.SCRIPT).addChildToFront(IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.require"),IR.string(moduleName))).copyInformationFromForTree(n));
+  }
+  parent.removeChild(n);
+  compiler.reportCodeChange();
+}

@@ -1,0 +1,45 @@
+{
+  if (typeNode.isString()) {
+    String name=typeNode.getString();
+    if (ES6ModuleLoader.isRelativeIdentifier(name)) {
+      int lastSlash=name.lastIndexOf("/");
+      int endIndex=name.indexOf('.',lastSlash);
+      String localTypeName=null;
+      if (endIndex == -1) {
+        endIndex=name.length();
+      }
+ else {
+        localTypeName=name.substring(endIndex);
+      }
+      String moduleName=name.substring(0,endIndex);
+      String loadAddress=loader.locate(moduleName,t.getInput());
+      if (loadAddress == null) {
+        t.makeError(typeNode,ES6ModuleLoader.LOAD_ERROR,moduleName);
+        return;
+      }
+      String globalModuleName=toModuleName(loadAddress);
+      typeNode.setString(localTypeName == null ? globalModuleName : globalModuleName + localTypeName);
+    }
+ else {
+      List<String> splitted=Splitter.on('.').limit(2).splitToList(name);
+      String baseName=splitted.get(0);
+      String rest="";
+      if (splitted.size() == 2) {
+        rest="." + splitted.get(1);
+      }
+      Scope.Var var=t.getScope().getVar(baseName);
+      if (var != null && var.isGlobal()) {
+        typeNode.setString(baseName + "$$" + suffix+ rest);
+      }
+ else       if (var == null && importMap.containsKey(name)) {
+        ModuleOriginalNamePair pair=importMap.get(baseName);
+        typeNode.setString(pair.module + "." + pair.originalName);
+      }
+      typeNode.putProp(Node.ORIGINALNAME_PROP,name);
+    }
+  }
+  for (Node child=typeNode.getFirstChild(); child != null; child=child.getNext()) {
+    fixTypeNode(t,child);
+  }
+  compiler.reportCodeChange();
+}

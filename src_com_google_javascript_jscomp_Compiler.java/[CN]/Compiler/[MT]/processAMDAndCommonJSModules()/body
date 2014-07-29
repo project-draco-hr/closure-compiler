@@ -1,7 +1,6 @@
 {
   Map<String,JSModule> modulesByName=Maps.newLinkedHashMap();
   Map<CompilerInput,JSModule> modulesByInput=Maps.newLinkedHashMap();
-  boolean needsConversion=options.getLanguageIn() != options.getLanguageOut();
   for (  CompilerInput input : inputs) {
     input.setCompiler(this);
     Node root=input.getAstRoot(this);
@@ -12,7 +11,7 @@
       new TransformAMDToCJSModule(this).process(null,root);
     }
     if (options.processCommonJSModules) {
-      ProcessCommonJSModules cjs=new ProcessCommonJSModules(this,ES6ModuleLoader.createNaiveLoader(this,options.commonJSModulePathPrefix),true,!needsConversion);
+      ProcessCommonJSModules cjs=new ProcessCommonJSModules(this,ES6ModuleLoader.createNaiveLoader(this,options.commonJSModulePathPrefix),true);
       cjs.process(null,root);
       JSModule m=cjs.getModule();
       if (m != null) {
@@ -21,7 +20,7 @@
       }
     }
   }
-  if (options.processCommonJSModules && !needsConversion) {
+  if (options.processCommonJSModules) {
     List<JSModule> modules=Lists.newArrayList(modulesByName.values());
     if (!modules.isEmpty()) {
       this.modules=modules;
