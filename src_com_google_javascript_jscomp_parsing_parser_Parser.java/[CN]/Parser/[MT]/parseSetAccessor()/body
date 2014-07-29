@@ -2,10 +2,20 @@
   SourcePosition start=getTreeStartLocation();
   boolean isStatic=eatOpt(TokenType.STATIC) != null;
   eatPredefinedString(PredefinedName.SET);
-  Token propertyName=eatObjectLiteralPropertyName();
-  eat(TokenType.OPEN_PAREN);
-  IdentifierToken parameter=eatId();
-  eat(TokenType.CLOSE_PAREN);
-  BlockTree body=parseFunctionBody();
-  return new SetAccessorTree(getTreeLocation(start),propertyName,isStatic,parameter,body);
+  if (peekPropertyName(0)) {
+    Token propertyName=eatObjectLiteralPropertyName();
+    eat(TokenType.OPEN_PAREN);
+    IdentifierToken parameter=eatId();
+    eat(TokenType.CLOSE_PAREN);
+    BlockTree body=parseFunctionBody();
+    return new SetAccessorTree(getTreeLocation(start),propertyName,isStatic,parameter,body);
+  }
+ else {
+    ParseTree property=parseComputedPropertyName();
+    eat(TokenType.OPEN_PAREN);
+    IdentifierToken parameter=eatId();
+    eat(TokenType.CLOSE_PAREN);
+    BlockTree body=parseFunctionBody();
+    return new ComputedPropertySetterTree(getTreeLocation(start),property,isStatic,parameter,body);
+  }
 }

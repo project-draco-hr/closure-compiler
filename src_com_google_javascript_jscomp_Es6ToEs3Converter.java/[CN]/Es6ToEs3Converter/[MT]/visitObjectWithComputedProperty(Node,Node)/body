@@ -3,7 +3,11 @@
   List<Node> props=new ArrayList<>();
   Node currElement=obj.getFirstChild();
   while (currElement != null) {
-    if (currElement.isGetterDef() || currElement.isSetterDef()) {
+    if (currElement.getBooleanProp(Node.COMPUTED_PROP_GETTER) || currElement.getBooleanProp(Node.COMPUTED_PROP_SETTER)) {
+      cannotConvertYet(currElement,"computed getter/setter");
+      return;
+    }
+ else     if (currElement.isGetterDef() || currElement.isSetterDef()) {
       currElement=currElement.getNext();
     }
  else {
