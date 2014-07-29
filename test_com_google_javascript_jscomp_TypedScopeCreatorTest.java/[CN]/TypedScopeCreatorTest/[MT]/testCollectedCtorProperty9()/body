@@ -1,0 +1,8 @@
+{
+  testSame("/** @constructor */ function f() {}\n" + "f.prototype.init_f = function() {" + "  /** @const */ this.FOO = 'abc';"+ "};"+ "var x = new f();");
+  ObjectType x=(ObjectType)findNameType("x",globalScope);
+  assertEquals("f",x.toString());
+  assertTrue(x.hasProperty("FOO"));
+  assertEquals("string",x.getPropertyType("FOO").toString());
+  assertFalse(x.isPropertyTypeInferred("FOO"));
+}
