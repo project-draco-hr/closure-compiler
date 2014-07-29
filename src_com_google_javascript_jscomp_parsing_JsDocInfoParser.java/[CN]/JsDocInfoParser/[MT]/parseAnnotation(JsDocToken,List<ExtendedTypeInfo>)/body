@@ -493,15 +493,9 @@ validTypeTransformation=false;
 parser.addTypeWarning("msg.jsdoc.typetransformation.expression.missing",templateLineno,templateCharno);
 }
 if (validTypeTransformation) {
-TypeTransformationParser ttlParser=new TypeTransformationParser(typeTransformationExpr,sourceFile,errorReporter);
+TypeTransformationParser ttlParser=new TypeTransformationParser(typeTransformationExpr,sourceFile,errorReporter,templateLineno,templateCharno);
 if (ttlParser.parseTypeTransformation()) {
 Node ttlAst=ttlParser.getTypeTransformationAst();
-}
- else {
-ArrayList<TypeTransformationWarning> warnings=ttlParser.getWarnings();
-for (TypeTransformationWarning currentWarning : warnings) {
-parser.addTypeWarning(currentWarning.messageId,currentWarning.messageArg,templateLineno,templateCharno);
-}
 }
 }
 }
