@@ -1,0 +1,9 @@
+{
+  String externs="/** @return {boolean}\n * @nosideeffects */\n" + "function noSideEffectsExtern(){}\n" + "/** @return {boolean}\n * @nosideeffects */\n"+ "var noSideEffectsExtern2 = function(){};\n"+ "/** @return {boolean} */ function hasSideEffectsExtern(){}\n"+ "/** @return {boolean} */ var hasSideEffectsExtern2 = function(){}\n";
+  testSame(externs,"alert(noSideEffectsExtern());",ok);
+  test(externs,"noSideEffectsExtern();","JSCOMPILER_PRESERVE(noSideEffectsExtern());",null,e,"Suspicious code. The result of the extern function call " + "'noSideEffectsExtern' is not being used.");
+  test(externs,"noSideEffectsExtern2();","JSCOMPILER_PRESERVE(noSideEffectsExtern2());",null,e,"Suspicious code. The result of the extern function call " + "'noSideEffectsExtern2' is not being used.");
+  testSame(externs,"hasSideEffectsExtern()",ok);
+  testSame(externs,"hasSideEffectsExtern2()",ok);
+  testSame(externs,"(function() { function noSideEffectsExtern() {}; " + "noSideEffectsExtern(); })()",ok);
+}
