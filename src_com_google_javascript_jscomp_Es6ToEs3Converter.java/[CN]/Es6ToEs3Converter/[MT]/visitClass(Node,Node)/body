@@ -48,7 +48,7 @@
     if (member.isEmpty()) {
       continue;
     }
-    if (member.getString().equals("constructor")) {
+    if (member.isMemberDef() && member.getString().equals("constructor")) {
       ctorJSDocInfo=member.getJSDocInfo();
       constructor=member.getFirstChild().detachFromParent();
       if (!anonymous) {
@@ -56,15 +56,31 @@
       }
     }
  else {
-      String qualifiedMemberName;
-      if (member.isStaticMember()) {
-        qualifiedMemberName=Joiner.on(".").join(uniqueFullClassName,member.getString());
+      Node qualifiedMemberName;
+      Node method;
+      if (member.isMemberDef()) {
+        if (member.isStaticMember()) {
+          qualifiedMemberName=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),Joiner.on(".").join(uniqueFullClassName,member.getString()));
+        }
+ else {
+          qualifiedMemberName=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),Joiner.on(".").join(uniqueFullClassName,"prototype",member.getString()));
+        }
+        method=member.getFirstChild().detachFromParent();
+      }
+ else       if (member.isComputedProp()) {
+        if (member.isStaticMember()) {
+          qualifiedMemberName=IR.getelem(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),uniqueFullClassName),member.removeFirstChild());
+        }
+ else {
+          qualifiedMemberName=IR.getelem(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),Joiner.on('.').join(uniqueFullClassName,"prototype")),member.removeFirstChild());
+        }
+        method=member.getLastChild().detachFromParent();
       }
  else {
-        qualifiedMemberName=Joiner.on(".").join(uniqueFullClassName,"prototype",member.getString());
+        throw new IllegalStateException("Unexpected class member: " + member);
       }
-      Node assign=IR.assign(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),qualifiedMemberName,member,member.getString()),member.getFirstChild().detachFromParent());
-      assign.srcref(member);
+      Node assign=IR.assign(qualifiedMemberName,method);
+      assign.useSourceInfoIfMissingFromForTree(member);
       JSDocInfo info=member.getJSDocInfo();
       if (member.isStaticMember() && NodeUtil.referencesThis(assign.getLastChild())) {
         JSDocInfoBuilder memberDoc;

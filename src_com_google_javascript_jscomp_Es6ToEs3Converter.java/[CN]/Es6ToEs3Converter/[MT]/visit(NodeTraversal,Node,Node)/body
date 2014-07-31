@@ -24,8 +24,12 @@ visitStringKey(n);
 break;
 case Token.CLASS:
 for (Node member=n.getLastChild().getFirstChild(); member != null; member=member.getNext()) {
-if (member.isComputedProp()) {
-cannotConvertYet(member,"class method whose name is a computed property");
+if (member.isGetterDef() || member.isSetterDef() || member.getBooleanProp(Node.COMPUTED_PROP_GETTER)|| member.getBooleanProp(Node.COMPUTED_PROP_SETTER)) {
+cannotConvert(member,"getters or setters in class definitions");
+return;
+}
+ else if (member.isComputedProp() && member.getLastChild().isGeneratorFunction()) {
+cannotConvertYet(member,"generator method in class definition");
 return;
 }
 }
