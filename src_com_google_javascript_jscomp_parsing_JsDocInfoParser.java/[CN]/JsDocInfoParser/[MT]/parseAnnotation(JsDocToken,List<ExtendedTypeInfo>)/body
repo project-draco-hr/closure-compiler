@@ -479,8 +479,10 @@ for (String typeName : names) {
 if (!validTemplateTypeName(typeName)) {
 parser.addTypeWarning("msg.jsdoc.template.invalid.type.name",templateLineno,templateCharno);
 }
- else if (!jsdocBuilder.recordTemplateTypeName(typeName)) {
+ else if (!isTypeTransformation) {
+if (!jsdocBuilder.recordTemplateTypeName(typeName)) {
 parser.addTypeWarning("msg.jsdoc.template.name.declared.twice",templateLineno,templateCharno);
+}
 }
 }
 }
@@ -495,7 +497,9 @@ parser.addTypeWarning("msg.jsdoc.typetransformation.expression.missing",template
 if (validTypeTransformation) {
 TypeTransformationParser ttlParser=new TypeTransformationParser(typeTransformationExpr,sourceFile,errorReporter,templateLineno,templateCharno);
 if (ttlParser.parseTypeTransformation()) {
-Node ttlAst=ttlParser.getTypeTransformationAst();
+if (!jsdocBuilder.recordTypeTransformation(names.get(0),ttlParser.getTypeTransformationAst())) {
+parser.addTypeWarning("msg.jsdoc.template.name.declared.twice",templateLineno,templateCharno);
+}
 }
 }
 }
