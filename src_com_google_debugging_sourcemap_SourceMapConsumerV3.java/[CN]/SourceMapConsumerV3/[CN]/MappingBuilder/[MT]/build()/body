@@ -3,18 +3,10 @@
   ArrayList<Entry> entries=new ArrayList<>();
   while (content.hasNext()) {
     if (tryConsumeToken(';')) {
-      ArrayList<Entry> result;
+      completeLine(entries);
       if (!entries.isEmpty()) {
-        result=entries;
         entries=new ArrayList<>();
       }
- else {
-        result=null;
-      }
-      lines.add(result);
-      entries.clear();
-      line++;
-      previousCol=0;
     }
  else {
       int entryValues=0;
@@ -27,5 +19,8 @@
       entries.add(entry);
       tryConsumeToken(',');
     }
+  }
+  if (!entries.isEmpty()) {
+    completeLine(entries);
   }
 }
