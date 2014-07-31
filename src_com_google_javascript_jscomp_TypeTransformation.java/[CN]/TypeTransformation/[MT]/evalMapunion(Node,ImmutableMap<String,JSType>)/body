@@ -1,0 +1,29 @@
+{
+  ArrayList<Node> params=getParameters(ttlAst);
+  Node unionParam=params.get(0);
+  Node mapFunction=params.get(1);
+  String paramName=getFunctionParameter(mapFunction,0);
+  Node mapFunctionBody=mapFunction.getChildAtIndex(2);
+  JSType unionType;
+  if (isUnionType(unionParam)) {
+    unionType=evalUnionType(unionParam,typeVars);
+  }
+ else   if (isTypeVar(unionParam)) {
+    unionType=typeOrUnknown(typeVars.get(unionParam.getString()));
+  }
+ else {
+    throw new IllegalStateException("Invalid union type parameter in mapunion");
+  }
+  if (!unionType.isUnionType()) {
+    return eval(mapFunctionBody,addNewVar(typeVars,paramName,unionType));
+  }
+  Collection<JSType> unionElms=((UnionType)unionType).getAlternates();
+  int unionSize=unionElms.size();
+  JSType[] newUnionElms=new JSType[unionSize];
+  int i=0;
+  for (  JSType elm : unionElms) {
+    newUnionElms[i]=eval(mapFunctionBody,addNewVar(typeVars,paramName,elm));
+    i++;
+  }
+  return union(newUnionElms);
+}
