@@ -1,7 +1,6 @@
 {
   Preconditions.checkArgument(requiredType != null && !requiredType.isBottom());
-  int exprKind=expr.getType();
-switch (exprKind) {
+switch (expr.getType()) {
 case Token.EMPTY:
     return new EnvTypePair(inEnv,JSType.UNKNOWN);
 case Token.FUNCTION:
@@ -16,7 +15,7 @@ case Token.NULL:
 case Token.NUMBER:
 case Token.STRING:
 case Token.TRUE:
-return new EnvTypePair(inEnv,scalarValueToType(exprKind));
+return new EnvTypePair(inEnv,scalarValueToType(expr.getType()));
 case Token.OBJECTLIT:
 return analyzeObjLitFwd(expr,inEnv,requiredType,specializedType);
 case Token.THIS:
@@ -29,87 +28,17 @@ JSType thisType=currentScope.getDeclaredTypeOf("this");
 return new EnvTypePair(inEnv,thisType);
 }
 case Token.NAME:
-{
-if (expr.matchesQualifiedName("undefined")) {
-return new EnvTypePair(inEnv,JSType.UNDEFINED);
-}
-String varName=expr.getString();
-if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)|| varName.equals(currentScope.getName())) {
-JSType inferredType=envGetType(inEnv,varName);
-println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType," specializedType:  ",specializedType);
-if (!inferredType.isSubtypeOf(requiredType)) {
-JSType declType=currentScope.getDeclaredTypeOf(varName);
-if (tightenTypeAndDontWarn(varName,declType,inferredType,requiredType)) {
-  inferredType=inferredType.specialize(requiredType);
-}
- else {
-  return new EnvTypePair(inEnv,inferredType);
-}
-}
-JSType preciseType=inferredType.specialize(specializedType);
-println(varName,"'s preciseType: ",preciseType);
-if (!preciseType.isBottom() && currentScope.isUndeclaredFormal(varName) && preciseType.hasNonScalar()) {
-preciseType=preciseType.withLoose();
-}
-return EnvTypePair.addBinding(inEnv,varName,preciseType);
-}
-println("Found global variable ",varName);
-return new EnvTypePair(inEnv,JSType.UNKNOWN);
-}
+return analyzeNameFwd(expr,inEnv,requiredType,specializedType);
 case Token.AND:
 case Token.OR:
-{
-Node lhs=expr.getFirstChild();
-Node rhs=expr.getLastChild();
-if ((specializedType.isTruthy() && exprKind == Token.AND) || (specializedType.isFalsy() && exprKind == Token.OR)) {
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.UNKNOWN,specializedType);
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.UNKNOWN,specializedType);
-return rhsPair;
-}
- else if ((specializedType.isFalsy() && exprKind == Token.AND) || (specializedType.isTruthy() && exprKind == Token.OR)) {
-inEnv=inEnv.split();
-EnvTypePair shortCircuitPair=analyzeExprFwd(lhs,inEnv,JSType.UNKNOWN,specializedType);
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.UNKNOWN,specializedType.negate());
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.UNKNOWN,specializedType);
-return EnvTypePair.join(rhsPair,shortCircuitPair);
-}
- else {
-inEnv=inEnv.split();
-JSType stopAfterLhsType=exprKind == Token.AND ? JSType.FALSY : JSType.TRUTHY;
-EnvTypePair shortCircuitPair=analyzeExprFwd(lhs,inEnv,requiredType,stopAfterLhsType);
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.UNKNOWN,stopAfterLhsType.negate());
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,requiredType,specializedType);
-return EnvTypePair.join(rhsPair,shortCircuitPair);
-}
-}
+return analyzeLogicalOpFwd(expr,inEnv,requiredType,specializedType);
 case Token.INC:
 case Token.DEC:
-{
-mayWarnAboutConst(expr);
-Node ch=expr.getFirstChild();
-if (ch.isGetProp() || ch.isGetElem() && ch.getLastChild().isString()) {
-Node recv=ch.getFirstChild();
-String pname=ch.getLastChild().getString();
-EnvTypePair pair=analyzeExprFwd(recv,inEnv);
-JSType recvType=pair.type;
-if (mayWarnAboutConstProp(ch,recvType,new QualifiedName(pname))) {
-pair.type=requiredType;
-return pair;
-}
-}
-}
+return analyzeIncDecFwd(expr,inEnv,requiredType);
 case Token.BITNOT:
 case Token.POS:
 case Token.NEG:
-{
-Node child=expr.getFirstChild();
-EnvTypePair pair=analyzeExprFwd(child,inEnv,JSType.NUMBER);
-if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
-warnInvalidOperand(child,expr.getType(),JSType.NUMBER,pair.type);
-}
-pair.type=JSType.NUMBER;
-return pair;
-}
+return analyzeUnaryNumFwd(expr,inEnv);
 case Token.TYPEOF:
 {
 EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
@@ -117,47 +46,9 @@ pair.type=JSType.STRING;
 return pair;
 }
 case Token.INSTANCEOF:
-{
-Node obj=expr.getFirstChild();
-Node ctor=expr.getLastChild();
-EnvTypePair objPair, ctorPair;
-objPair=analyzeExprFwd(obj,inEnv);
-JSType objType=objPair.type;
-if (!objType.equals(JSType.TOP) && !objType.equals(JSType.UNKNOWN) && !objType.hasNonScalar()) {
-warnInvalidOperand(obj,Token.INSTANCEOF,"an object or a union type that includes an object",objPair.type);
-}
-ctorPair=analyzeExprFwd(ctor,objPair.env,JSType.topFunction());
-JSType ctorType=ctorPair.type;
-FunctionType ctorFunType=ctorType.getFunType();
-if (!ctorType.isUnknown() && (!ctorType.isSubtypeOf(JSType.topFunction()) || !ctorFunType.isConstructor())) {
-warnInvalidOperand(ctor,Token.INSTANCEOF,"a constructor function",ctorType);
-}
-if (ctorFunType == null || !ctorFunType.isConstructor() || (!specializedType.isTruthy() && !specializedType.isFalsy())) {
-ctorPair.type=JSType.BOOLEAN;
-return ctorPair;
-}
-JSType instanceType=ctorFunType.getTypeOfThis();
-objPair=analyzeExprFwd(obj,inEnv,JSType.UNKNOWN,specializedType.isTruthy() ? objPair.type.specialize(instanceType) : objPair.type.removeType(instanceType));
-ctorPair=analyzeExprFwd(ctor,objPair.env,JSType.topFunction());
-ctorPair.type=JSType.BOOLEAN;
-return ctorPair;
-}
+return analyzeInstanceofFwd(expr,inEnv,specializedType);
 case Token.ADD:
-{
-Node lhs=expr.getFirstChild();
-Node rhs=expr.getLastChild();
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.NUM_OR_STR);
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.NUM_OR_STR);
-JSType lhsType=lhsPair.type;
-JSType rhsType=rhsPair.type;
-if (!lhsType.isSubtypeOf(JSType.NUM_OR_STR)) {
-warnInvalidOperand(lhs,expr.getType(),JSType.NUM_OR_STR,lhsType);
-}
-if (!rhsType.isSubtypeOf(JSType.NUM_OR_STR)) {
-warnInvalidOperand(rhs,expr.getType(),JSType.NUM_OR_STR,rhsType);
-}
-return new EnvTypePair(rhsPair.env,JSType.plus(lhsType,rhsType));
-}
+return analyzeAddFwd(expr,inEnv);
 case Token.BITOR:
 case Token.BITAND:
 case Token.BITXOR:
@@ -168,54 +59,11 @@ case Token.MUL:
 case Token.RSH:
 case Token.SUB:
 case Token.URSH:
-{
-Node lhs=expr.getFirstChild();
-Node rhs=expr.getLastChild();
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.NUMBER);
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.NUMBER);
-if (!lhsPair.type.isSubtypeOf(JSType.NUMBER)) {
-warnInvalidOperand(lhs,expr.getType(),JSType.NUMBER,lhsPair.type);
-}
-if (!rhsPair.type.isSubtypeOf(JSType.NUMBER)) {
-warnInvalidOperand(rhs,expr.getType(),JSType.NUMBER,rhsPair.type);
-}
-rhsPair.type=JSType.NUMBER;
-return rhsPair;
-}
+return analyzeBinaryNumericOpFwd(expr,inEnv);
 case Token.ASSIGN:
-{
-mayWarnAboutConst(expr);
-Node lhs=expr.getFirstChild();
-Node rhs=expr.getLastChild();
-LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,requiredType);
-JSType declType=lvalue.declType;
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lvalue.env,requiredType,specializedType);
-if (declType != null && !rhsPair.type.isSubtypeOf(declType)) {
-warnings.add(JSError.make(expr,MISTYPED_ASSIGN_RHS,declType.toString(),rhsPair.type.toString()));
-}
- else {
-rhsPair.env=updateLvalueTypeInEnv(rhsPair.env,lhs,lvalue.ptr,rhsPair.type);
-}
-return rhsPair;
-}
+return analyzeAssignFwd(expr,inEnv,requiredType,specializedType);
 case Token.ASSIGN_ADD:
-{
-mayWarnAboutConst(expr);
-Node lhs=expr.getFirstChild();
-Node rhs=expr.getLastChild();
-JSType lhsReqType=specializeWithCorrection(requiredType,JSType.NUM_OR_STR);
-LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,lhsReqType);
-JSType lhsType=lvalue.type;
-if (!lhsType.isSubtypeOf(JSType.NUM_OR_STR)) {
-warnInvalidOperand(lhs,Token.ASSIGN_ADD,JSType.NUM_OR_STR,lhsType);
-}
-JSType rhsReqType=lhsType.equals(JSType.NUMBER) ? JSType.NUMBER : JSType.NUM_OR_STR;
-EnvTypePair pair=analyzeExprFwd(rhs,lvalue.env,rhsReqType);
-if (!pair.type.isSubtypeOf(rhsReqType)) {
-warnInvalidOperand(rhs,Token.ASSIGN_ADD,rhsReqType,pair.type);
-}
-return pair;
-}
+return analyzeAssignAddFwd(expr,inEnv,requiredType);
 case Token.ASSIGN_BITOR:
 case Token.ASSIGN_BITXOR:
 case Token.ASSIGN_BITAND:
@@ -226,30 +74,10 @@ case Token.ASSIGN_SUB:
 case Token.ASSIGN_MUL:
 case Token.ASSIGN_DIV:
 case Token.ASSIGN_MOD:
-{
-mayWarnAboutConst(expr);
-Node lhs=expr.getFirstChild();
-Node rhs=expr.getLastChild();
-LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,JSType.NUMBER);
-JSType lhsType=lvalue.type;
-boolean lhsWarned=false;
-if (!lhsType.isSubtypeOf(JSType.NUMBER)) {
-warnInvalidOperand(lhs,expr.getType(),JSType.NUMBER,lhsType);
-lhsWarned=true;
-}
-EnvTypePair pair=analyzeExprFwd(rhs,lvalue.env,JSType.NUMBER);
-if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
-warnInvalidOperand(rhs,expr.getType(),JSType.NUMBER,pair.type);
-}
-if (!lhsWarned) {
-pair.env=updateLvalueTypeInEnv(pair.env,lhs,lvalue.ptr,JSType.NUMBER);
-}
-pair.type=JSType.NUMBER;
-return pair;
-}
+return analyzeAssignNumericOpFwd(expr,inEnv);
 case Token.SHEQ:
 case Token.SHNE:
-return analyzeStrictComparisonFwd(exprKind,expr.getFirstChild(),expr.getLastChild(),inEnv,specializedType);
+return analyzeStrictComparisonFwd(expr.getType(),expr.getFirstChild(),expr.getLastChild(),inEnv,specializedType);
 case Token.EQ:
 case Token.NE:
 return analyzeNonStrictComparisonFwd(expr,inEnv,specializedType);
@@ -257,140 +85,15 @@ case Token.LT:
 case Token.GT:
 case Token.LE:
 case Token.GE:
-{
-Node lhs=expr.getFirstChild();
-Node rhs=expr.getLastChild();
-EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
-EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
-if (lhsPair.type.isScalar() && !rhsPair.type.isScalar()) {
-rhsPair=analyzeExprFwd(rhs,lhsPair.env,lhsPair.type);
-}
- else if (rhsPair.type.isScalar()) {
-lhsPair=analyzeExprFwd(lhs,inEnv,rhsPair.type);
-rhsPair=analyzeExprFwd(rhs,lhsPair.env,rhsPair.type);
-}
- else if (lhs.isName() && lhsPair.type.isUnknown() && rhs.isName()&& rhsPair.type.isUnknown()) {
-TypeEnv env=envPutType(rhsPair.env,lhs.getString(),JSType.TOP_SCALAR);
-env=envPutType(rhsPair.env,rhs.getString(),JSType.TOP_SCALAR);
-return new EnvTypePair(env,JSType.BOOLEAN);
-}
-JSType lhsType=lhsPair.type;
-JSType rhsType=rhsPair.type;
-if (!lhsType.isSubtypeOf(JSType.TOP_SCALAR) || !rhsType.isSubtypeOf(JSType.TOP_SCALAR) || !JSType.areCompatibleScalarTypes(lhsType,rhsType)) {
-warnInvalidOperand(expr,exprKind,"matching scalar types",lhsType.toString() + ", " + rhsType.toString());
-}
-rhsPair.type=JSType.BOOLEAN;
-return rhsPair;
-}
+return analyzeLtGtFwd(expr,inEnv);
 case Token.GETPROP:
 Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()) || !NodeUtil.isLValue(expr));
 return analyzePropAccessFwd(expr.getFirstChild(),expr.getLastChild().getString(),inEnv,requiredType,specializedType);
 case Token.HOOK:
-{
-Node cond=expr.getFirstChild();
-Node thenBranch=cond.getNext();
-Node elseBranch=thenBranch.getNext();
-inEnv=inEnv.split();
-TypeEnv trueEnv=analyzeExprFwd(cond,inEnv,JSType.UNKNOWN,JSType.TRUE_TYPE).env;
-TypeEnv falseEnv=analyzeExprFwd(cond,inEnv,JSType.UNKNOWN,JSType.FALSE_TYPE).env;
-EnvTypePair thenPair=analyzeExprFwd(thenBranch,trueEnv,requiredType,specializedType);
-EnvTypePair elsePair=analyzeExprFwd(elseBranch,falseEnv,requiredType,specializedType);
-return EnvTypePair.join(thenPair,elsePair);
-}
+return analyzeHookFwd(expr,inEnv,requiredType,specializedType);
 case Token.CALL:
 case Token.NEW:
-{
-if (isClosureSpecificCall(expr)) {
-return analyzeClosureCallFwd(expr,inEnv,specializedType);
-}
-Node callee=expr.getFirstChild();
-EnvTypePair calleePair=analyzeExprFwd(callee,inEnv,JSType.topFunction());
-JSType calleeType=calleePair.type;
-if (!calleeType.isSubtypeOf(JSType.topFunction())) {
-warnings.add(JSError.make(expr,TypeCheck.NOT_CALLABLE,calleeType.toString()));
-}
-FunctionType funType=calleeType.getFunType();
-if (funType == null || funType.isTopFunction() || funType.isQmarkFunction()) {
-return analyzeCallNodeArgumentsFwd(expr,inEnv);
-}
- else if (funType.isLoose()) {
-return analyzeLooseCallNodeFwd(expr,inEnv,requiredType);
-}
- else if (expr.isCall() && funType.isConstructor()) {
-warnings.add(JSError.make(expr,TypeCheck.CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
-return analyzeCallNodeArgumentsFwd(expr,inEnv);
-}
- else if (expr.isNew() && !funType.isConstructor()) {
-warnings.add(JSError.make(expr,NOT_A_CONSTRUCTOR,funType.toString()));
-return analyzeCallNodeArgumentsFwd(expr,inEnv);
-}
-int maxArity=funType.getMaxArity();
-int minArity=funType.getMinArity();
-int numArgs=expr.getChildCount() - 1;
-if (numArgs < minArity || numArgs > maxArity) {
-warnings.add(JSError.make(expr,TypeCheck.WRONG_ARGUMENT_COUNT,"",Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
-return analyzeCallNodeArgumentsFwd(expr,inEnv);
-}
-FunctionType origFunType=funType;
-if (funType.isGeneric()) {
-Map<String,JSType> typeMap=calcTypeInstantiationFwd(expr,funType,inEnv);
-funType=funType.instantiateGenerics(typeMap);
-println("Instantiated function type: " + funType);
-}
-List<JSType> argTypes=Lists.newArrayList();
-TypeEnv tmpEnv=inEnv;
-Node arg=expr.getChildAtIndex(1);
-for (int i=0; i < numArgs; i++) {
-JSType formalType=funType.getFormalType(i);
-if (formalType.isBottom()) {
-warnings.add(JSError.make(expr,CALL_FUNCTION_WITH_BOTTOM_FORMAL,Integer.toString(i)));
-formalType=JSType.UNKNOWN;
-}
-EnvTypePair pair=analyzeExprFwd(arg,tmpEnv,formalType);
-JSType argTypeForDeferredCheck=pair.type;
-if (i >= minArity && pair.type.equals(JSType.UNDEFINED)) {
-argTypeForDeferredCheck=null;
-}
- else if (!pair.type.isSubtypeOf(formalType)) {
-warnings.add(JSError.make(arg,INVALID_ARGUMENT_TYPE,Integer.toString(i + 1),"",formalType.toString(),pair.type.toString()));
-argTypeForDeferredCheck=null;
-}
-argTypes.add(argTypeForDeferredCheck);
-tmpEnv=pair.env;
-arg=arg.getNext();
-}
-JSType retType=funType.getReturnType();
-if (callee.isName()) {
-String calleeName=callee.getQualifiedName();
-if (currentScope.isKnownFunction(calleeName)) {
-if (currentScope.isLocalFunDef(calleeName)) {
-collectTypesForFreeVarsFwd(callee,tmpEnv);
-}
- else if (!origFunType.isGeneric()) {
-JSType expectedRetType=requiredType;
-println("Updating deferred check with ret: ",expectedRetType," and args: ",argTypes);
-DeferredCheck dc;
-if (expr.isCall()) {
-dc=deferredChecks.get(expr);
-if (dc != null) {
-dc.updateReturn(expectedRetType);
-}
- else {
-Preconditions.checkState(!currentScope.hasUndeclaredFormalsOrOuters(),"No deferred check created in backward direction for %s",expr);
-}
-}
- else {
-dc=new DeferredCheck(expr,null,currentScope,currentScope.getScope(calleeName));
-deferredChecks.put(expr,dc);
-}
-if (dc != null) {
-dc.updateArgTypes(argTypes);
-}
-}
-}
-}
-return new EnvTypePair(tmpEnv,retType);
-}
+return analyzeCallNewFwd(expr,inEnv,requiredType,specializedType);
 case Token.COMMA:
 return analyzeExprFwd(expr.getLastChild(),analyzeExprFwd(expr.getFirstChild(),inEnv).env,requiredType,specializedType);
 case Token.NOT:
@@ -400,27 +103,7 @@ pair.type=pair.type.negate().toBoolean();
 return pair;
 }
 case Token.GETELEM:
-{
-Node receiver=expr.getFirstChild();
-Node index=expr.getLastChild();
-JSType reqObjType=pickReqObjType(expr);
-EnvTypePair pair=analyzeExprFwd(receiver,inEnv,reqObjType);
-JSType recvType=pair.type;
-if (!mayWarnAboutNonObject(receiver,"",recvType,specializedType) && !mayWarnAboutStructPropAccess(receiver,recvType)) {
-if (isArrayType(recvType)) {
-pair=analyzeExprFwd(index,pair.env,JSType.NUMBER);
-if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
-warnings.add(JSError.make(index,NewTypeInference.NON_NUMERIC_ARRAY_INDEX,pair.type.toString()));
-}
-}
- else if (index.isString()) {
-return analyzePropAccessFwd(receiver,index.getString(),inEnv,requiredType,specializedType);
-}
-}
-pair=analyzeExprFwd(index,pair.env);
-pair.type=requiredType;
-return pair;
-}
+return analyzeGetElemFwd(expr,inEnv,requiredType,specializedType);
 case Token.VOID:
 {
 EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
@@ -428,42 +111,7 @@ pair.type=JSType.UNDEFINED;
 return pair;
 }
 case Token.IN:
-{
-Node lhs=expr.getFirstChild();
-Node rhs=expr.getLastChild();
-JSType reqObjType=pickReqObjType(expr);
-EnvTypePair pair;
-pair=analyzeExprFwd(lhs,inEnv,JSType.NUM_OR_STR);
-if (!pair.type.isSubtypeOf(JSType.NUM_OR_STR)) {
-warnInvalidOperand(lhs,Token.IN,JSType.NUM_OR_STR,pair.type);
-}
-pair=analyzeExprFwd(rhs,pair.env,reqObjType);
-if (!pair.type.isSubtypeOf(JSType.TOP_OBJECT)) {
-warnInvalidOperand(rhs,Token.IN,"Object",pair.type);
-pair.type=JSType.BOOLEAN;
-return pair;
-}
-if (pair.type.isStruct()) {
-warnings.add(JSError.make(rhs,TypeCheck.IN_USED_WITH_STRUCT));
-pair.type=JSType.BOOLEAN;
-return pair;
-}
-JSType resultType=JSType.BOOLEAN;
-if (lhs.isString()) {
-QualifiedName pname=new QualifiedName(lhs.getString());
-if (specializedType.isTruthy()) {
-pair=analyzeExprFwd(rhs,inEnv,reqObjType,reqObjType.withPropertyRequired(pname.getLeftmostName()));
-resultType=JSType.TRUE_TYPE;
-}
- else if (specializedType.isFalsy()) {
-pair=analyzeExprFwd(rhs,inEnv,reqObjType);
-pair=analyzeExprFwd(rhs,inEnv,reqObjType,pair.type.withoutProperty(pname));
-resultType=JSType.FALSE_TYPE;
-}
-}
-pair.type=resultType;
-return pair;
-}
+return analyzeInFwd(expr,inEnv,specializedType);
 case Token.DELPROP:
 {
 EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
@@ -473,24 +121,9 @@ return pair;
 case Token.REGEXP:
 return new EnvTypePair(inEnv,regexpType);
 case Token.ARRAYLIT:
-{
-TypeEnv env=inEnv;
-for (Node arrayElm=expr.getFirstChild(); arrayElm != null; arrayElm=arrayElm.getNext()) {
-env=analyzeExprFwd(arrayElm,env).env;
-}
-return new EnvTypePair(env,arrayType);
-}
+return analyzeArrayLitFwd(expr,inEnv);
 case Token.CAST:
-{
-EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
-JSType fromType=pair.type;
-JSType toType=symbolTable.getCastType(expr);
-if (!toType.isSubtypeOf(fromType) && !fromType.isSubtypeOf(toType)) {
-warnings.add(JSError.make(expr,TypeValidator.INVALID_CAST,fromType.toString(),toType.toString()));
-}
-pair.type=toType;
-return pair;
-}
+return analyzeCastFwd(expr,inEnv);
 case Token.CASE:
 return analyzeStrictComparisonFwd(Token.SHEQ,expr.getParent().getFirstChild(),expr.getFirstChild(),inEnv,specializedType);
 default :

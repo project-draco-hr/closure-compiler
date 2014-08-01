@@ -1,0 +1,21 @@
+{
+  String varName=expr.getString();
+  if (varName.equals("undefined")) {
+    return new EnvTypePair(outEnv,JSType.UNDEFINED);
+  }
+  JSType inferredType=envGetType(outEnv,varName);
+  println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType);
+  if (inferredType == null) {
+    return new EnvTypePair(outEnv,JSType.UNKNOWN);
+  }
+  JSType preciseType=inferredType.specialize(requiredType);
+  if (currentScope.isUndeclaredFormal(varName) && preciseType.hasNonScalar()) {
+    preciseType=preciseType.withLoose();
+  }
+  println(varName,"'s preciseType: ",preciseType);
+  if (preciseType.isBottom()) {
+    JSType declType=currentScope.getDeclaredTypeOf(varName);
+    preciseType=declType == null ? requiredType : declType;
+  }
+  return EnvTypePair.addBinding(outEnv,varName,preciseType);
+}

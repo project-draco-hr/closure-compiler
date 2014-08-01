@@ -1,0 +1,10 @@
+{
+  Node lhs=expr.getFirstChild();
+  Node rhs=expr.getLastChild();
+  JSType lhsReqType=specializeWithCorrection(requiredType,JSType.NUM_OR_STR);
+  LValueResultBwd lvalue=analyzeLValueBwd(lhs,outEnv,lhsReqType,false);
+  JSType rhsReqType=lvalue.type.equals(JSType.NUMBER) ? JSType.NUMBER : JSType.NUM_OR_STR;
+  EnvTypePair pair=analyzeExprBwd(rhs,outEnv,rhsReqType);
+  pair.env=analyzeLValueBwd(lhs,pair.env,lhsReqType,false).env;
+  return pair;
+}

@@ -1,0 +1,36 @@
+{
+  Node lhs=expr.getFirstChild();
+  Node rhs=expr.getLastChild();
+  JSType reqObjType=pickReqObjType(expr);
+  EnvTypePair pair;
+  pair=analyzeExprFwd(lhs,inEnv,JSType.NUM_OR_STR);
+  if (!pair.type.isSubtypeOf(JSType.NUM_OR_STR)) {
+    warnInvalidOperand(lhs,Token.IN,JSType.NUM_OR_STR,pair.type);
+  }
+  pair=analyzeExprFwd(rhs,pair.env,reqObjType);
+  if (!pair.type.isSubtypeOf(JSType.TOP_OBJECT)) {
+    warnInvalidOperand(rhs,Token.IN,"Object",pair.type);
+    pair.type=JSType.BOOLEAN;
+    return pair;
+  }
+  if (pair.type.isStruct()) {
+    warnings.add(JSError.make(rhs,TypeCheck.IN_USED_WITH_STRUCT));
+    pair.type=JSType.BOOLEAN;
+    return pair;
+  }
+  JSType resultType=JSType.BOOLEAN;
+  if (lhs.isString()) {
+    QualifiedName pname=new QualifiedName(lhs.getString());
+    if (specializedType.isTruthy()) {
+      pair=analyzeExprFwd(rhs,inEnv,reqObjType,reqObjType.withPropertyRequired(pname.getLeftmostName()));
+      resultType=JSType.TRUE_TYPE;
+    }
+ else     if (specializedType.isFalsy()) {
+      pair=analyzeExprFwd(rhs,inEnv,reqObjType);
+      pair=analyzeExprFwd(rhs,inEnv,reqObjType,pair.type.withoutProperty(pname));
+      resultType=JSType.FALSE_TYPE;
+    }
+  }
+  pair.type=resultType;
+  return pair;
+}

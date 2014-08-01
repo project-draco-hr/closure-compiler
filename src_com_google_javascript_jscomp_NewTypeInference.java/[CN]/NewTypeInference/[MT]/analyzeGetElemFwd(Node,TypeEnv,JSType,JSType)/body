@@ -1,0 +1,21 @@
+{
+  Node receiver=expr.getFirstChild();
+  Node index=expr.getLastChild();
+  JSType reqObjType=pickReqObjType(expr);
+  EnvTypePair pair=analyzeExprFwd(receiver,inEnv,reqObjType);
+  JSType recvType=pair.type;
+  if (!mayWarnAboutNonObject(receiver,"",recvType,specializedType) && !mayWarnAboutStructPropAccess(receiver,recvType)) {
+    if (isArrayType(recvType)) {
+      pair=analyzeExprFwd(index,pair.env,JSType.NUMBER);
+      if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
+        warnings.add(JSError.make(index,NewTypeInference.NON_NUMERIC_ARRAY_INDEX,pair.type.toString()));
+      }
+    }
+ else     if (index.isString()) {
+      return analyzePropAccessFwd(receiver,index.getString(),inEnv,requiredType,specializedType);
+    }
+  }
+  pair=analyzeExprFwd(index,pair.env);
+  pair.type=requiredType;
+  return pair;
+}

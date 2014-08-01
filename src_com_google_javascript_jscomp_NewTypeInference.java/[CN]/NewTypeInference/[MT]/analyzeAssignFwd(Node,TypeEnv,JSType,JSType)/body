@@ -1,0 +1,15 @@
+{
+  mayWarnAboutConst(expr);
+  Node lhs=expr.getFirstChild();
+  Node rhs=expr.getLastChild();
+  LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,requiredType);
+  JSType declType=lvalue.declType;
+  EnvTypePair rhsPair=analyzeExprFwd(rhs,lvalue.env,requiredType,specializedType);
+  if (declType != null && !rhsPair.type.isSubtypeOf(declType)) {
+    warnings.add(JSError.make(expr,MISTYPED_ASSIGN_RHS,declType.toString(),rhsPair.type.toString()));
+  }
+ else {
+    rhsPair.env=updateLvalueTypeInEnv(rhsPair.env,lhs,lvalue.ptr,rhsPair.type);
+  }
+  return rhsPair;
+}

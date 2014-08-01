@@ -1,0 +1,92 @@
+{
+  if (isClosureSpecificCall(expr)) {
+    return analyzeClosureCallFwd(expr,inEnv,specializedType);
+  }
+  Node callee=expr.getFirstChild();
+  EnvTypePair calleePair=analyzeExprFwd(callee,inEnv,JSType.topFunction());
+  JSType calleeType=calleePair.type;
+  if (!calleeType.isSubtypeOf(JSType.topFunction())) {
+    warnings.add(JSError.make(expr,TypeCheck.NOT_CALLABLE,calleeType.toString()));
+  }
+  FunctionType funType=calleeType.getFunType();
+  if (funType == null || funType.isTopFunction() || funType.isQmarkFunction()) {
+    return analyzeCallNodeArgumentsFwd(expr,inEnv);
+  }
+ else   if (funType.isLoose()) {
+    return analyzeLooseCallNodeFwd(expr,inEnv,requiredType);
+  }
+ else   if (expr.isCall() && funType.isConstructor()) {
+    warnings.add(JSError.make(expr,TypeCheck.CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
+    return analyzeCallNodeArgumentsFwd(expr,inEnv);
+  }
+ else   if (expr.isNew() && !funType.isConstructor()) {
+    warnings.add(JSError.make(expr,NOT_A_CONSTRUCTOR,funType.toString()));
+    return analyzeCallNodeArgumentsFwd(expr,inEnv);
+  }
+  int maxArity=funType.getMaxArity();
+  int minArity=funType.getMinArity();
+  int numArgs=expr.getChildCount() - 1;
+  if (numArgs < minArity || numArgs > maxArity) {
+    warnings.add(JSError.make(expr,TypeCheck.WRONG_ARGUMENT_COUNT,"",Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
+    return analyzeCallNodeArgumentsFwd(expr,inEnv);
+  }
+  FunctionType origFunType=funType;
+  if (funType.isGeneric()) {
+    Map<String,JSType> typeMap=calcTypeInstantiationFwd(expr,funType,inEnv);
+    funType=funType.instantiateGenerics(typeMap);
+    println("Instantiated function type: " + funType);
+  }
+  List<JSType> argTypes=Lists.newArrayList();
+  TypeEnv tmpEnv=inEnv;
+  Node arg=expr.getChildAtIndex(1);
+  for (int i=0; i < numArgs; i++) {
+    JSType formalType=funType.getFormalType(i);
+    if (formalType.isBottom()) {
+      warnings.add(JSError.make(expr,CALL_FUNCTION_WITH_BOTTOM_FORMAL,Integer.toString(i)));
+      formalType=JSType.UNKNOWN;
+    }
+    EnvTypePair pair=analyzeExprFwd(arg,tmpEnv,formalType);
+    JSType argTypeForDeferredCheck=pair.type;
+    if (i >= minArity && pair.type.equals(JSType.UNDEFINED)) {
+      argTypeForDeferredCheck=null;
+    }
+ else     if (!pair.type.isSubtypeOf(formalType)) {
+      warnings.add(JSError.make(arg,INVALID_ARGUMENT_TYPE,Integer.toString(i + 1),"",formalType.toString(),pair.type.toString()));
+      argTypeForDeferredCheck=null;
+    }
+    argTypes.add(argTypeForDeferredCheck);
+    tmpEnv=pair.env;
+    arg=arg.getNext();
+  }
+  JSType retType=funType.getReturnType();
+  if (callee.isName()) {
+    String calleeName=callee.getQualifiedName();
+    if (currentScope.isKnownFunction(calleeName)) {
+      if (currentScope.isLocalFunDef(calleeName)) {
+        collectTypesForFreeVarsFwd(callee,tmpEnv);
+      }
+ else       if (!origFunType.isGeneric()) {
+        JSType expectedRetType=requiredType;
+        println("Updating deferred check with ret: ",expectedRetType," and args: ",argTypes);
+        DeferredCheck dc;
+        if (expr.isCall()) {
+          dc=deferredChecks.get(expr);
+          if (dc != null) {
+            dc.updateReturn(expectedRetType);
+          }
+ else {
+            Preconditions.checkState(!currentScope.hasUndeclaredFormalsOrOuters(),"No deferred check created in backward direction for %s",expr);
+          }
+        }
+ else {
+          dc=new DeferredCheck(expr,null,currentScope,currentScope.getScope(calleeName));
+          deferredChecks.put(expr,dc);
+        }
+        if (dc != null) {
+          dc.updateArgTypes(argTypes);
+        }
+      }
+    }
+  }
+  return new EnvTypePair(tmpEnv,retType);
+}

@@ -1,0 +1,14 @@
+{
+  Node lhs=expr.getFirstChild();
+  Node rhs=expr.getLastChild();
+  EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.NUMBER);
+  EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.NUMBER);
+  if (!lhsPair.type.isSubtypeOf(JSType.NUMBER)) {
+    warnInvalidOperand(lhs,expr.getType(),JSType.NUMBER,lhsPair.type);
+  }
+  if (!rhsPair.type.isSubtypeOf(JSType.NUMBER)) {
+    warnInvalidOperand(rhs,expr.getType(),JSType.NUMBER,rhsPair.type);
+  }
+  rhsPair.type=JSType.NUMBER;
+  return rhsPair;
+}

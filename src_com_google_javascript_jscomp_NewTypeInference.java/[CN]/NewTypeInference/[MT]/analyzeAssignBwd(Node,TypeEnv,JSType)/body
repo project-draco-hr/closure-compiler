@@ -1,0 +1,10 @@
+{
+  Node lhs=expr.getFirstChild();
+  Node rhs=expr.getLastChild();
+  LValueResultBwd lvalue=analyzeLValueBwd(lhs,outEnv,requiredType,true);
+  TypeEnv slicedEnv=lvalue.env;
+  JSType rhsReqType=specializeWithCorrection(lvalue.type,requiredType);
+  EnvTypePair pair=analyzeExprBwd(rhs,slicedEnv,rhsReqType);
+  pair.env=analyzeLValueBwd(lhs,pair.env,requiredType,true).env;
+  return pair;
+}

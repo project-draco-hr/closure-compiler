@@ -1,0 +1,27 @@
+{
+  String varName=expr.getString();
+  if (varName.equals("undefined")) {
+    return new EnvTypePair(inEnv,JSType.UNDEFINED);
+  }
+  if (currentScope.isLocalVar(varName) || currentScope.isFormalParam(varName) || currentScope.isLocalFunDef(varName)|| currentScope.isOuterVar(varName)|| varName.equals(currentScope.getName())) {
+    JSType inferredType=envGetType(inEnv,varName);
+    println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType," specializedType:  ",specializedType);
+    if (!inferredType.isSubtypeOf(requiredType)) {
+      JSType declType=currentScope.getDeclaredTypeOf(varName);
+      if (tightenTypeAndDontWarn(varName,declType,inferredType,requiredType)) {
+        inferredType=inferredType.specialize(requiredType);
+      }
+ else {
+        return new EnvTypePair(inEnv,inferredType);
+      }
+    }
+    JSType preciseType=inferredType.specialize(specializedType);
+    println(varName,"'s preciseType: ",preciseType);
+    if (!preciseType.isBottom() && currentScope.isUndeclaredFormal(varName) && preciseType.hasNonScalar()) {
+      preciseType=preciseType.withLoose();
+    }
+    return EnvTypePair.addBinding(inEnv,varName,preciseType);
+  }
+  println("Found global variable ",varName);
+  return new EnvTypePair(inEnv,JSType.UNKNOWN);
+}

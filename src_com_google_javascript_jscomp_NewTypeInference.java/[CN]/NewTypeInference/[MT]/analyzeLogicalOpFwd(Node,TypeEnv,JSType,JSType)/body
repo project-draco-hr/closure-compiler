@@ -1,0 +1,25 @@
+{
+  int exprKind=expr.getType();
+  Node lhs=expr.getFirstChild();
+  Node rhs=expr.getLastChild();
+  if ((specializedType.isTruthy() && exprKind == Token.AND) || (specializedType.isFalsy() && exprKind == Token.OR)) {
+    EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.UNKNOWN,specializedType);
+    EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.UNKNOWN,specializedType);
+    return rhsPair;
+  }
+ else   if ((specializedType.isFalsy() && exprKind == Token.AND) || (specializedType.isTruthy() && exprKind == Token.OR)) {
+    inEnv=inEnv.split();
+    EnvTypePair shortCircuitPair=analyzeExprFwd(lhs,inEnv,JSType.UNKNOWN,specializedType);
+    EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.UNKNOWN,specializedType.negate());
+    EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.UNKNOWN,specializedType);
+    return EnvTypePair.join(rhsPair,shortCircuitPair);
+  }
+ else {
+    inEnv=inEnv.split();
+    JSType stopAfterLhsType=exprKind == Token.AND ? JSType.FALSY : JSType.TRUTHY;
+    EnvTypePair shortCircuitPair=analyzeExprFwd(lhs,inEnv,requiredType,stopAfterLhsType);
+    EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.UNKNOWN,stopAfterLhsType.negate());
+    EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,requiredType,specializedType);
+    return EnvTypePair.join(rhsPair,shortCircuitPair);
+  }
+}

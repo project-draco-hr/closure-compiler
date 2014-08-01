@@ -1,0 +1,15 @@
+{
+  Node lhs=expr.getFirstChild();
+  Node rhs=expr.getLastChild();
+  EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv);
+  EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env);
+  JSType meetType=JSType.meet(lhsPair.type,rhsPair.type);
+  if (meetType.isBottom()) {
+    lhsPair.type=JSType.BOOLEAN;
+    return lhsPair;
+  }
+  rhsPair=analyzeExprBwd(rhs,outEnv,meetType);
+  lhsPair=analyzeExprBwd(lhs,rhsPair.env,meetType);
+  lhsPair.type=JSType.BOOLEAN;
+  return lhsPair;
+}

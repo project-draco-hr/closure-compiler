@@ -1,0 +1,25 @@
+{
+  Node obj=expr.getFirstChild();
+  Node ctor=expr.getLastChild();
+  EnvTypePair objPair, ctorPair;
+  objPair=analyzeExprFwd(obj,inEnv);
+  JSType objType=objPair.type;
+  if (!objType.equals(JSType.TOP) && !objType.equals(JSType.UNKNOWN) && !objType.hasNonScalar()) {
+    warnInvalidOperand(obj,Token.INSTANCEOF,"an object or a union type that includes an object",objPair.type);
+  }
+  ctorPair=analyzeExprFwd(ctor,objPair.env,JSType.topFunction());
+  JSType ctorType=ctorPair.type;
+  FunctionType ctorFunType=ctorType.getFunType();
+  if (!ctorType.isUnknown() && (!ctorType.isSubtypeOf(JSType.topFunction()) || !ctorFunType.isConstructor())) {
+    warnInvalidOperand(ctor,Token.INSTANCEOF,"a constructor function",ctorType);
+  }
+  if (ctorFunType == null || !ctorFunType.isConstructor() || (!specializedType.isTruthy() && !specializedType.isFalsy())) {
+    ctorPair.type=JSType.BOOLEAN;
+    return ctorPair;
+  }
+  JSType instanceType=ctorFunType.getTypeOfThis();
+  objPair=analyzeExprFwd(obj,inEnv,JSType.UNKNOWN,specializedType.isTruthy() ? objPair.type.specialize(instanceType) : objPair.type.removeType(instanceType));
+  ctorPair=analyzeExprFwd(ctor,objPair.env,JSType.topFunction());
+  ctorPair.type=JSType.BOOLEAN;
+  return ctorPair;
+}
