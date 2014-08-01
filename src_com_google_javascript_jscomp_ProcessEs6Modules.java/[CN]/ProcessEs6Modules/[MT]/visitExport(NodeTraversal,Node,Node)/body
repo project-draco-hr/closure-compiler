@@ -5,27 +5,31 @@
  else   if (n.getBooleanProp(Node.EXPORT_ALL_FROM)) {
     compiler.report(JSError.make(n,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Wildcard export"));
   }
+ else   if (n.getChildCount() == 2) {
+    compiler.report(JSError.make(n,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Export with FromClause"));
+  }
  else {
-    if (n.getChildCount() == 2) {
-      compiler.report(JSError.make(n,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Export with FromClause"));
-      return;
-    }
     if (n.getFirstChild().getType() == Token.EXPORT_SPECS) {
-      for (      Node grandChild : n.getFirstChild().children()) {
-        Node origName=grandChild.getFirstChild();
-        exportMap.put(grandChild.getChildCount() == 2 ? grandChild.getLastChild().getString() : origName.getString(),origName.getString());
+      for (      Node exportSpec : n.getFirstChild().children()) {
+        Node origName=exportSpec.getFirstChild();
+        exportMap.put(exportSpec.getChildCount() == 2 ? exportSpec.getLastChild().getString() : origName.getString(),origName.getString());
       }
       parent.removeChild(n);
     }
  else {
-      for (      Node grandChild : n.getFirstChild().children()) {
-        if (!grandChild.isName()) {
+      Node declaration=n.getFirstChild();
+      for (int i=0; i < declaration.getChildCount(); i++) {
+        Node maybeName=declaration.getChildAtIndex(i);
+        if (!maybeName.isName() || (n.getFirstChild().isClass() && i > 0)) {
           break;
         }
-        String name=grandChild.getString();
+        String name=maybeName.getString();
         Var v=t.getScope().getVar(name);
         if (v == null || v.isGlobal()) {
           exportMap.put(name,name);
+        }
+        if (declaration.isClass()) {
+          typedefs.add(name);
         }
       }
       parent.replaceChild(n,n.removeFirstChild());

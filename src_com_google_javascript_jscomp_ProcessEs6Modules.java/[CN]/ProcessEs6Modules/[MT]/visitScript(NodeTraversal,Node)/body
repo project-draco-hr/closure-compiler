@@ -14,6 +14,14 @@
   }
   Node varNode=IR.var(IR.name(moduleName),objectlit).copyInformationFromForTree(script);
   script.addChildToBack(varNode);
+  for (  String name : typedefs) {
+    Node typedef=IR.getprop(IR.name(moduleName),IR.string(name));
+    JSDocInfoBuilder builder=new JSDocInfoBuilder(true);
+    builder.recordTypedef(new JSTypeExpression(Node.newString(exportMap.get(name) + "$$" + moduleName),t.getSourceName()));
+    JSDocInfo info=builder.build(typedef);
+    typedef.setJSDocInfo(info);
+    script.addChildToBack(IR.exprResult(typedef).useSourceInfoIfMissingFromForTree(varNode));
+  }
   exportMap.clear();
   script.addChildToFront(IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.provide"),IR.string(moduleName))).copyInformationFromForTree(script));
   compiler.reportCodeChange();
