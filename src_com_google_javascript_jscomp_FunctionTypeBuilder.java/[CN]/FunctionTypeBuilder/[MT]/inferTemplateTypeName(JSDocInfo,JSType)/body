@@ -1,10 +1,21 @@
 {
-  if (info != null && !info.getTemplateTypeNames().isEmpty()) {
+  if (info != null) {
     ImmutableList.Builder<TemplateType> builder=ImmutableList.builder();
-    for (    String key : info.getTemplateTypeNames()) {
-      builder.add(typeRegistry.createTemplateType(key));
+    ImmutableList<String> infoTemplateTypeNames=info.getTemplateTypeNames();
+    ImmutableMap<String,Node> infoTypeTransformations=info.getTypeTransformations();
+    if (!infoTemplateTypeNames.isEmpty()) {
+      for (      String key : infoTemplateTypeNames) {
+        builder.add(typeRegistry.createTemplateType(key));
+      }
     }
-    templateTypeNames=builder.build();
+    if (!infoTypeTransformations.isEmpty()) {
+      for (      Entry<String,Node> entry : infoTypeTransformations.entrySet()) {
+        builder.add(typeRegistry.createTemplateTypeWithTransformation(entry.getKey(),entry.getValue()));
+      }
+    }
+    if (!infoTemplateTypeNames.isEmpty() || !infoTypeTransformations.isEmpty()) {
+      templateTypeNames=builder.build();
+    }
   }
   ImmutableList<TemplateType> keys=templateTypeNames;
   if (ownerType != null) {
