@@ -2,12 +2,11 @@
   if (seen.contains(dn) || dn == cfg.getImplicitReturn()) {
     return;
   }
-  Node currentNode=dn.getValue();
-switch (currentNode.getType()) {
+switch (dn.getValue().getType()) {
 case Token.DO:
 case Token.WHILE:
 case Token.FOR:
-    List<DiGraphEdge<Node,ControlFlowGraph.Branch>> outEdges=cfg.getOutEdges(currentNode);
+    List<DiGraphEdge<Node,ControlFlowGraph.Branch>> outEdges=dn.getOutEdges();
   seen.add(dn);
 workset.add(dn);
 for (DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : outEdges) {
@@ -23,7 +22,7 @@ buildWorksetHelper(outEdge.getDestination(),workset,seen);
 }
 break;
 default :
-for (DiGraphEdge<Node,ControlFlowGraph.Branch> inEdge : cfg.getInEdges(currentNode)) {
+for (DiGraphEdge<Node,ControlFlowGraph.Branch> inEdge : dn.getInEdges()) {
 if (!seen.contains(inEdge.getSource()) && !inEdge.getSource().getValue().isDo()) {
 return;
 }

@@ -2,7 +2,7 @@
   for (  DiGraphNode<Node,ControlFlowGraph.Branch> dn : workset) {
     Node n=dn.getValue();
     Preconditions.checkState(n != null,"Implicit return should not be in workset.");
-    TypeEnv inEnv=getInEnv(n);
+    TypeEnv inEnv=getInEnv(dn);
     TypeEnv outEnv=null;
     println("\tFWD Statment: ",n);
     println("\t\tinEnv: ",inEnv);
@@ -70,12 +70,12 @@ outEnv=updateLvalueTypeInEnv(lval.env,lhs,lval.ptr,JSType.STRING);
 break;
 }
 conditional=true;
-analyzeConditionalStmFwd(n,NodeUtil.getConditionExpression(n),inEnv);
+analyzeConditionalStmFwd(dn,NodeUtil.getConditionExpression(n),inEnv);
 break;
 case Token.CASE:
 {
 conditional=true;
-analyzeConditionalStmFwd(n,n,inEnv);
+analyzeConditionalStmFwd(dn,n,inEnv);
 break;
 }
 case Token.VAR:
@@ -102,7 +102,7 @@ break;
 }
 if (!conditional) {
 println("\t\toutEnv: ",outEnv);
-setOutEnv(n,outEnv);
+setOutEnv(dn,outEnv);
 }
 }
 }
