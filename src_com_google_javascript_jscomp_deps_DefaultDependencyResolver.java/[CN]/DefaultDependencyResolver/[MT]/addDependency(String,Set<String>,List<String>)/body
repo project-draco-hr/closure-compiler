@@ -1,0 +1,15 @@
+{
+  DependencyInfo dependency=getDependencyInfo(symbol);
+  if (dependency == null) {
+    if (this.strictRequires) {
+      throw new ServiceException("Unknown require of " + symbol);
+    }
+  }
+ else   if (!seen.containsAll(dependency.getProvides())) {
+    seen.addAll(dependency.getProvides());
+    for (    String require : dependency.getRequires()) {
+      addDependency(require,seen,list);
+    }
+    list.add(dependency.getPathRelativeToClosureBase());
+  }
+}

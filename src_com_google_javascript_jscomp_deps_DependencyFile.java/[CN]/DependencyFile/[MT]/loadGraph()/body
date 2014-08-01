@@ -1,0 +1,22 @@
+{
+  dependencies.clear();
+  logger.info("Loading dependency graph");
+  ErrorManager errorManager=new LoggerErrorManager(logger);
+  DepsFileParser parser=new DepsFileParser(errorManager);
+  List<DependencyInfo> depInfos=parser.parseFile(getName(),getContent());
+  if (!parser.didParseSucceed()) {
+    throw new ServiceException("Problem parsing " + getName() + ". See logs for details.");
+  }
+  for (  DependencyInfo depInfo : depInfos) {
+    for (    String provide : depInfo.getProvides()) {
+      DependencyInfo existing=dependencies.get(provide);
+      if (existing != null && !existing.equals(depInfo)) {
+        throw new ServiceException("Duplicate provide of " + provide + ". Was provided by "+ existing.getPathRelativeToClosureBase()+ " and "+ depInfo.getPathRelativeToClosureBase());
+      }
+      dependencies.put(provide,depInfo);
+    }
+  }
+  dependencies.put(CLOSURE_BASE_PROVIDE,new SimpleDependencyInfo(CLOSURE_BASE,CLOSURE_BASE,Lists.newArrayList(CLOSURE_BASE_PROVIDE),Collections.<String>emptyList(),false));
+  errorManager.generateReport();
+  logger.info("Dependencies loaded");
+}

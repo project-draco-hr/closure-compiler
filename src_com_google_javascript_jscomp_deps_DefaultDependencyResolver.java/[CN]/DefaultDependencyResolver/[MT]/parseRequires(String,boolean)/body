@@ -1,0 +1,12 @@
+{
+  ErrorManager errorManager=new LoggerErrorManager(logger);
+  JsFileParser parser=new JsFileParser(errorManager);
+  DependencyInfo deps=parser.parseFile("<unknown path>","<unknown path>",code);
+  List<String> requires=Lists.newArrayList();
+  if (addClosureBase) {
+    requires.add(CLOSURE_BASE_PROVIDE);
+  }
+  requires.addAll(deps.getRequires());
+  errorManager.generateReport();
+  return requires;
+}
