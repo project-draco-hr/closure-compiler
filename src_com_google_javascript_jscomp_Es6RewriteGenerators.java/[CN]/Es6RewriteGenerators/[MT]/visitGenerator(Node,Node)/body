@@ -23,7 +23,7 @@
   JSDocInfo info=builder.build(suppressionInsertSpot);
   suppressionInsertSpot.setJSDocInfo(info);
   originalGeneratorBody.addChildToBack(IR.exprResult(IR.assign(IR.name(GENERATOR_STATE),IR.number(-1))));
-  enclosingCase=getUnique(genBlock,Token.CASE);
+  enclosingBlock=getUnique(genBlock,Token.CASE).getLastChild();
   hoistRoot=getUnique(genBlock,Token.VAR);
   if (NodeUtil.isNameReferenced(originalGeneratorBody,GENERATOR_ARGUMENTS)) {
     hoistRoot.getParent().addChildAfter(IR.var(IR.name(GENERATOR_ARGUMENTS),IR.name("arguments")),hoistRoot);
@@ -41,8 +41,9 @@
         generatorCaseCount++;
       }
       Node newCase=IR.caseNode(IR.number(caseNumber),IR.block());
-      enclosingCase.getParent().addChildAfter(newCase,enclosingCase);
-      enclosingCase=newCase;
+      Node oldCase=enclosingBlock.getParent();
+      oldCase.getParent().addChildAfter(newCase,oldCase);
+      enclosingBlock=newCase.getLastChild();
     }
   }
   parent.useSourceInfoIfMissingFromForTree(parent);
