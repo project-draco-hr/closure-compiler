@@ -28,6 +28,9 @@
   if (NodeUtil.isNameReferenced(originalGeneratorBody,GENERATOR_ARGUMENTS)) {
     hoistRoot.getParent().addChildAfter(IR.var(IR.name(GENERATOR_ARGUMENTS),IR.name("arguments")),hoistRoot);
   }
+  if (NodeUtil.isNameReferenced(originalGeneratorBody,GENERATOR_THIS)) {
+    hoistRoot.getParent().addChildAfter(IR.var(IR.name(GENERATOR_THIS),IR.thisNode()),hoistRoot);
+  }
   while (originalGeneratorBody.hasChildren()) {
     currentStatement=originalGeneratorBody.removeFirstChild();
     boolean advanceCase=translateStatementInOriginalBody();

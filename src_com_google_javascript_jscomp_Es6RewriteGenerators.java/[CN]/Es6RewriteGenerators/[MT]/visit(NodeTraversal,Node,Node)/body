@@ -12,6 +12,12 @@ if (enclosing != null && enclosing.isGeneratorFunction() && n.matchesQualifiedNa
 n.setString(GENERATOR_ARGUMENTS);
 }
 break;
+case Token.THIS:
+enclosing=NodeUtil.getEnclosingFunction(n);
+if (enclosing != null && enclosing.isGeneratorFunction()) {
+n.getParent().replaceChild(n,IR.name(GENERATOR_THIS));
+}
+break;
 case Token.YIELD:
 if (n.isYieldFor()) {
 visitYieldFor(n,parent);
