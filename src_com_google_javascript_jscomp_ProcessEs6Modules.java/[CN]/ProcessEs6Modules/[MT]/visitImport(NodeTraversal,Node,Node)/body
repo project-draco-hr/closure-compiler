@@ -31,6 +31,9 @@
     alreadyRequired.add(moduleName);
     NodeUtil.getEnclosingType(parent,Token.SCRIPT).addChildToFront(IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.require"),IR.string(moduleName))).copyInformationFromForTree(n));
   }
+  if (reportDependencies) {
+    t.getInput().addRequire(moduleName);
+  }
   parent.removeChild(n);
   compiler.reportCodeChange();
 }
