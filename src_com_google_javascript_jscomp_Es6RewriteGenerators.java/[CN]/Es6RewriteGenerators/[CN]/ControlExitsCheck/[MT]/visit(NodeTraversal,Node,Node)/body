@@ -1,0 +1,39 @@
+{
+switch (n.getType()) {
+case Token.DO:
+case Token.WHILE:
+case Token.FOR:
+    continuesCaught=true;
+  breaksCaught=true;
+break;
+case Token.SWITCH:
+breaksCaught=true;
+break;
+case Token.TRY:
+throwsCaught=true;
+break;
+case Token.BREAK:
+if (!breaksCaught || n.hasChildren()) {
+exited=true;
+}
+break;
+case Token.CONTINUE:
+if (!continuesCaught || n.hasChildren()) {
+exited=true;
+}
+break;
+case Token.THROW:
+if (!throwsCaught) {
+exited=true;
+}
+break;
+case Token.RETURN:
+exited=true;
+break;
+case Token.EXPR_RESULT:
+if (n.getFirstChild().isYield()) {
+exited=true;
+}
+break;
+}
+}

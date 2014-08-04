@@ -1,54 +1,58 @@
 {
-  if (currentStatement.isExprResult() && currentStatement.getFirstChild().isYield()) {
-    visitYieldExprResult();
-    return true;
-  }
- else   if (currentStatement.isVar()) {
+  if (currentStatement.isVar()) {
     visitVar();
-    return false;
-  }
- else   if (NodeUtil.isForIn(currentStatement) && yieldsOrReturns(currentStatement)) {
-    compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"For...in loops containing yield or return"));
-    return false;
-  }
- else   if (NodeUtil.isLoopStructure(currentStatement) && yieldsOrReturns(currentStatement)) {
-    visitLoop();
-    return false;
-  }
- else   if (currentStatement.isSwitch() && yieldsOrReturns(currentStatement)) {
-    visitSwitch();
-    return false;
-  }
- else   if (currentStatement.isIf() && (yieldsOrReturns(currentStatement) || jumpsOut(currentStatement)) && !currentStatement.isGeneratorSafe()) {
-    visitIf();
-    return false;
-  }
- else   if (currentStatement.isBlock()) {
-    visitBlock();
     return false;
   }
  else   if (currentStatement.isGeneratorMarker()) {
     visitGeneratorMarker();
     return true;
   }
- else   if (currentStatement.isReturn()) {
-    visitReturn();
-    return false;
-  }
- else   if (currentStatement.isContinue()) {
-    visitContinue();
-    return false;
-  }
- else   if (currentStatement.isBreak() && !currentStatement.isGeneratorSafe()) {
-    visitBreak();
-    return false;
-  }
- else   if (currentStatement.isThrow()) {
-    visitThrow();
-    return false;
-  }
- else {
-    enclosingBlock.addChildToBack(currentStatement);
-    return false;
-  }
+ else   if (controlCanExit(currentStatement)) {
+switch (currentStatement.getType()) {
+case Token.WHILE:
+case Token.DO:
+case Token.FOR:
+      if (NodeUtil.isForIn(currentStatement)) {
+        compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"For...in loops containing yield or return"));
+        return false;
+      }
+    visitLoop();
+  return false;
+case Token.SWITCH:
+visitSwitch();
+return false;
+case Token.IF:
+if (!currentStatement.isGeneratorSafe()) {
+visitIf();
+return false;
+}
+break;
+case Token.EXPR_RESULT:
+if (currentStatement.getFirstChild().isYield()) {
+visitYieldExprResult();
+return true;
+}
+break;
+case Token.BLOCK:
+visitBlock();
+return false;
+case Token.RETURN:
+visitReturn();
+return false;
+case Token.CONTINUE:
+visitContinue();
+return false;
+case Token.BREAK:
+if (!currentStatement.isGeneratorSafe()) {
+visitBreak();
+return false;
+}
+break;
+case Token.THROW:
+visitThrow();
+return false;
+}
+}
+enclosingBlock.addChildToBack(currentStatement);
+return false;
 }
