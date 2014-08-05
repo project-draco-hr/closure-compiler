@@ -1,0 +1,13 @@
+{
+  Map<String,JSType> typeVars=buildTypeVariables(inferredTypes);
+  Map<TemplateType,JSType> result=new HashMap<TemplateType,JSType>();
+  TypeTransformation ttlObj=new TypeTransformation(compiler);
+  for (  TemplateType type : templateTypes) {
+    if (type.isTypeTransformation()) {
+      JSType transformedType=ttlObj.eval(type.getTypeTransformation(),ImmutableMap.<String,JSType>copyOf(typeVars));
+      result.put(type,transformedType);
+      typeVars.put(type.getReferenceName(),transformedType);
+    }
+  }
+  return result;
+}
