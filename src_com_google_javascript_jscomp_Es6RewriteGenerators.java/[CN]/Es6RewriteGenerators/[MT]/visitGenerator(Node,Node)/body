@@ -2,16 +2,8 @@
   Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("{","  var " + GENERATOR_STATE + " = "+ generatorCaseCount+ ";","  return {","    " + ITER_KEY + ": function() { return this; },","    next: function(" + GENERATOR_NEXT_ARG + ") {","      while (1) switch (" + GENERATOR_STATE + ") {","        case " + generatorCaseCount + ":","        default:","          return {value: undefined, done: true};","      }","    }","  }","}")).removeFirstChild();
   generatorCaseCount++;
   originalGeneratorBody=n.getLastChild();
-  Node suppressionInsertSpot=null;
-  if (NodeUtil.isFunctionExpression(n)) {
-    n.replaceChild(originalGeneratorBody,genBlock);
-    n.setIsGeneratorFunction(false);
-    suppressionInsertSpot=n;
-  }
- else {
-    suppressionInsertSpot=IR.var(n.removeFirstChild(),IR.function(IR.name(""),n.removeFirstChild(),genBlock));
-    parent.replaceChild(n,suppressionInsertSpot);
-  }
+  n.replaceChild(originalGeneratorBody,genBlock);
+  n.setIsGeneratorFunction(false);
   JSDocInfoBuilder builder;
   if (n.getJSDocInfo() == null) {
     builder=new JSDocInfoBuilder(true);
@@ -20,8 +12,8 @@
     builder=JSDocInfoBuilder.copyFrom(n.getJSDocInfo());
   }
   builder.recordSuppressions(ImmutableSet.of("uselessCode"));
-  JSDocInfo info=builder.build(suppressionInsertSpot);
-  suppressionInsertSpot.setJSDocInfo(info);
+  JSDocInfo info=builder.build(n);
+  n.setJSDocInfo(info);
   originalGeneratorBody.addChildToBack(IR.exprResult(IR.assign(IR.name(GENERATOR_STATE),IR.number(-1))));
   enclosingBlock=getUnique(genBlock,Token.CASE).getLastChild();
   hoistRoot=getUnique(genBlock,Token.VAR);
