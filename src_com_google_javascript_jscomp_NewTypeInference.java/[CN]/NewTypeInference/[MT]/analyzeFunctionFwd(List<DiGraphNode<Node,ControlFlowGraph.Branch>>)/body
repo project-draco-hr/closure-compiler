@@ -1,9 +1,13 @@
 {
   for (  DiGraphNode<Node,ControlFlowGraph.Branch> dn : workset) {
     Node n=dn.getValue();
+    Node parent=n.getParent();
     Preconditions.checkState(n != null,"Implicit return should not be in workset.");
     TypeEnv inEnv=getInEnv(dn);
     TypeEnv outEnv=null;
+    if (parent.isScript() || (parent.isBlock() && parent.getParent().isFunction())) {
+      inEnv=inEnv.clearChangeLog();
+    }
     println("\tFWD Statment: ",n);
     println("\t\tinEnv: ",inEnv);
     boolean conditional=false;

@@ -6,17 +6,36 @@
     return firstEnv;
   }
   PersistentMap<String,JSType> newMap=firstEnv.typeMap;
+  if (firstEnv.changedVars == null) {
+    while (envsIter.hasNext()) {
+      TypeEnv env=envsIter.next();
+      for (      Map.Entry<String,JSType> entry : env.typeMap.entrySet()) {
+        String name=entry.getKey();
+        JSType currentType=newMap.get(name);
+        JSType otherType=entry.getValue();
+        Preconditions.checkNotNull(currentType,"%s is missing from an env",name);
+        if (!currentType.equals(otherType)) {
+          newMap=newMap.with(name,JSType.join(currentType,otherType));
+        }
+      }
+    }
+    return new TypeEnv(newMap);
+  }
+  PersistentSet<String> newLog=PersistentSet.create();
+  for (  TypeEnv env : envs) {
+    for (    String varName : env.changedVars) {
+      newLog=newLog.with(varName);
+    }
+  }
   while (envsIter.hasNext()) {
     TypeEnv env=envsIter.next();
-    for (    Map.Entry<String,JSType> entry : env.typeMap.entrySet()) {
-      String name=entry.getKey();
-      JSType currentType=newMap.get(name);
-      JSType otherType=entry.getValue();
-      Preconditions.checkNotNull(currentType,"%s is missing from an env",name);
+    for (    String changedVar : newLog) {
+      JSType currentType=newMap.get(changedVar);
+      JSType otherType=env.typeMap.get(changedVar);
       if (!currentType.equals(otherType)) {
-        newMap=newMap.with(name,JSType.join(currentType,otherType));
+        newMap=newMap.with(changedVar,JSType.join(currentType,otherType));
       }
     }
   }
-  return new TypeEnv(newMap);
+  return new TypeEnv(newMap,newLog);
 }

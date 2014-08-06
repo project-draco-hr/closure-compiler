@@ -1,5 +1,17 @@
 {
   Preconditions.checkArgument(!n.contains("."));
   Preconditions.checkArgument(t != null);
-  return new TypeEnv(typeMap.with(n,t));
+  if (changedVars == null) {
+    return new TypeEnv(typeMap.with(n,t));
+  }
+  JSType oldType=typeMap.get(n);
+  if (oldType == null) {
+    return new TypeEnv(typeMap.with(n,t));
+  }
+ else   if (t.equals(oldType)) {
+    return this;
+  }
+ else {
+    return new TypeEnv(typeMap.with(n,t),changedVars.with(n));
+  }
 }
