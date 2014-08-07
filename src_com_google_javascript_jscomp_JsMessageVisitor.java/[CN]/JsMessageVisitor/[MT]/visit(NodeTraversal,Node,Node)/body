@@ -1,7 +1,7 @@
 {
   String messageKey;
   boolean isVar;
-  Node msgNode, msgNodeParent;
+  Node msgNode;
 switch (node.getType()) {
 case Token.NAME:
     if ((parent != null) && (parent.isVar())) {
@@ -12,7 +12,6 @@ case Token.NAME:
       return;
     }
   msgNode=node.getFirstChild();
-msgNodeParent=node;
 break;
 case Token.ASSIGN:
 isVar=false;
@@ -23,7 +22,6 @@ return;
 Node propNode=getProp.getLastChild();
 messageKey=propNode.getString();
 msgNode=node.getLastChild();
-msgNodeParent=node;
 break;
 case Token.CALL:
 if (node.getFirstChild().matchesQualifiedName(MSG_FUNCTION_NAME)) {
@@ -64,7 +62,7 @@ if (isVar) {
 extractMessageFromVariable(builder,node,parent,parent.getParent());
 }
  else {
-extractMessageFromProperty(builder,node.getFirstChild(),node);
+extractMessageFrom(builder,msgNode,node);
 }
 }
  catch (MalformedException ex) {
@@ -83,6 +81,6 @@ String desc=extractedMessage.getDesc();
 if (isNewStyleMessage && (desc == null || desc.trim().isEmpty()) && !extractedMessage.isExternal()) {
 compiler.report(traversal.makeError(node,MESSAGE_HAS_NO_DESCRIPTION,messageKey));
 }
-JsMessageDefinition msgDefinition=new JsMessageDefinition(node,msgNode,msgNodeParent);
+JsMessageDefinition msgDefinition=new JsMessageDefinition(msgNode);
 processJsMessage(extractedMessage,msgDefinition);
 }
