@@ -1,5 +1,8 @@
 {
   String typeName=ttlAst.getChildAtIndex(1).getString();
   JSType resultingType=typeRegistry.getType(typeName);
+  if (resultingType == null) {
+    compiler.report(JSError.make(ttlAst,UNKNOWN_TYPENAME,typeName));
+  }
   return typeOrUnknown(resultingType);
 }
