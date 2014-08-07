@@ -1,0 +1,32 @@
+{
+  Node tryBody=currentStatement.removeFirstChild();
+  Node caughtError=currentStatement.getFirstChild().getFirstChild().removeFirstChild();
+  Node catchBody=currentStatement.getFirstChild().getFirstChild().removeFirstChild();
+  int catchStartState=generatorCaseCount++;
+  Node catchStart=IR.number(catchStartState);
+  catchStart.setGeneratorMarker(true);
+  int catchEndState=generatorCaseCount++;
+  Node catchEnd=IR.number(catchEndState);
+  catchEnd.setGeneratorMarker(true);
+  tryBody.addChildToBack(createStateUpdate(catchEndState));
+  tryBody.addChildToBack(createSafeBreak());
+  catchBody.addChildToFront(IR.var(caughtError,IR.name(GENERATOR_ERROR)));
+  Node errorNameGenerated=IR.name("$jscomp$generator$" + caughtError.getString());
+  originalGeneratorBody.addChildToFront(tryBody);
+  originalGeneratorBody.addChildAfter(catchStart,tryBody);
+  originalGeneratorBody.addChildAfter(catchBody,catchStart);
+  originalGeneratorBody.addChildAfter(catchEnd,catchBody);
+  Node assignError=IR.assign(IR.name(GENERATOR_ERROR),errorNameGenerated.cloneTree());
+  Node newCatchBody=IR.block(IR.exprResult(assignError),createStateUpdate(catchStartState),createSafeBreak());
+  Node newCatch=IR.catchNode(errorNameGenerated,newCatchBody);
+  currentExceptionContext.add(0,new ExceptionContext(catchStartState,newCatch));
+  if (enclosingBlock.getParent().isTry()) {
+    enclosingBlock=enclosingBlock.getParent().getParent();
+  }
+  enclosingBlock.addChildToBack(IR.tryCatch(IR.block(),newCatch));
+  enclosingBlock=enclosingBlock.getLastChild().getFirstChild();
+  if (!hasTranslatedTry) {
+    hasTranslatedTry=true;
+    hoistRoot.getParent().addChildAfter(IR.var(IR.name(GENERATOR_ERROR)),hoistRoot);
+  }
+}

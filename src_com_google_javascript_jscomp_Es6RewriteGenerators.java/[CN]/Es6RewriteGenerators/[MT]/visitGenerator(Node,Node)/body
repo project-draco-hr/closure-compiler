@@ -1,4 +1,5 @@
 {
+  hasTranslatedTry=false;
   Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("{","  var " + GENERATOR_STATE + " = "+ generatorCaseCount+ ";","  return {","    " + ITER_KEY + ": function() { return this; },","    next: function(" + GENERATOR_NEXT_ARG + ") {","      while (1) switch (" + GENERATOR_STATE + ") {","        case " + generatorCaseCount + ":","        default:","          return {value: undefined, done: true};","      }","    }","  }","}")).removeFirstChild();
   generatorCaseCount++;
   originalGeneratorBody=n.getLastChild();
@@ -35,10 +36,18 @@
         caseNumber=generatorCaseCount;
         generatorCaseCount++;
       }
-      Node newCase=IR.caseNode(IR.number(caseNumber),IR.block());
       Node oldCase=enclosingBlock.getParent();
-      oldCase.getParent().addChildAfter(newCase,oldCase);
+      Node newCase=IR.caseNode(IR.number(caseNumber),IR.block());
       enclosingBlock=newCase.getLastChild();
+      if (oldCase.isTry()) {
+        oldCase=oldCase.getParent().getParent();
+        if (!currentExceptionContext.isEmpty()) {
+          Node newTry=IR.tryCatch(IR.block(),currentExceptionContext.get(0).catchBlock.cloneTree());
+          newCase.getLastChild().addChildToBack(newTry);
+          enclosingBlock=newCase.getLastChild().getLastChild().getFirstChild();
+        }
+      }
+      oldCase.getParent().addChildAfter(newCase,oldCase);
     }
   }
   parent.useSourceInfoIfMissingFromForTree(parent);

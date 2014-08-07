@@ -11,6 +11,10 @@
     visitFunctionStatement();
     return false;
   }
+ else   if (currentStatement.isBlock()) {
+    visitBlock();
+    return false;
+  }
  else   if (controlCanExit(currentStatement)) {
 switch (currentStatement.getType()) {
 case Token.WHILE:
@@ -31,15 +35,20 @@ visitIf();
 return false;
 }
 break;
+case Token.TRY:
+if (currentStatement.getChildCount() == 3) {
+compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Try statements with finally blocks inside generators"));
+}
+ else {
+visitTry();
+}
+return false;
 case Token.EXPR_RESULT:
 if (currentStatement.getFirstChild().isYield()) {
 visitYieldExprResult();
 return true;
 }
 break;
-case Token.BLOCK:
-visitBlock();
-return false;
 case Token.RETURN:
 visitReturn();
 return false;

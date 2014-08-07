@@ -1,3 +1,42 @@
 {
-  return !n.isFunction();
+switch (n.getType()) {
+case Token.FUNCTION:
+    return false;
+case Token.DO:
+case Token.WHILE:
+case Token.FOR:
+  continueCatchers++;
+breakCatchers++;
+break;
+case Token.SWITCH:
+breakCatchers++;
+break;
+case Token.TRY:
+throwCatchers++;
+break;
+case Token.BREAK:
+if (breakCatchers == 0 || n.hasChildren()) {
+exited=true;
+}
+break;
+case Token.CONTINUE:
+if (continueCatchers == 0 || n.hasChildren()) {
+exited=true;
+}
+break;
+case Token.THROW:
+if (throwCatchers == 0) {
+exited=true;
+}
+break;
+case Token.RETURN:
+exited=true;
+break;
+case Token.EXPR_RESULT:
+if (n.getFirstChild().isYield()) {
+exited=true;
+}
+break;
+}
+return true;
 }
