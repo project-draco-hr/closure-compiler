@@ -116,20 +116,6 @@ break;
 case Token.ARRAY_PATTERN:
 addArrayPattern(n);
 break;
-case Token.ARRAY_COMP:
-add("[");
-for (Node child=first; child != null; child=child.getNext()) {
-add(child);
-}
-add("]");
-break;
-case Token.GENERATOR_COMP:
-add("(");
-for (Node child=first; child != null; child=child.getNext()) {
-add(child);
-}
-add(")");
-break;
 case Token.PARAM_LIST:
 add("(");
 addList(first);
@@ -431,7 +417,7 @@ addNonEmptyStatement(last,getContextForNonEmptyExpression(context),false);
 }
 break;
 case Token.FOR_OF:
-Preconditions.checkState(childCount == 2 || childCount == 3);
+Preconditions.checkState(childCount == 3);
 add("for");
 cc.maybeInsertSpace();
 add("(");
@@ -439,9 +425,7 @@ add(first);
 add("of");
 add(first.getNext());
 add(")");
-if (childCount == 3) {
 addNonEmptyStatement(last,getContextForNonEmptyExpression(context),false);
-}
 break;
 case Token.DO:
 Preconditions.checkState(childCount == 2);
