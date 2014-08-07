@@ -1,11 +1,10 @@
 {
   List<PassFactory> checks=Lists.newArrayList();
   checks.add(createEmptyPass("beforeStandardChecks"));
-  boolean needsConversion=options.getLanguageIn() != options.getLanguageOut();
-  if (needsConversion || options.aggressiveVarCheck.isOn()) {
+  if (options.needsConversion() || options.aggressiveVarCheck.isOn()) {
     checks.add(checkVariableReferences);
   }
-  if (needsConversion) {
+  if (options.needsConversion()) {
     checks.add(es6RuntimeLibrary);
     checks.add(es6HandleDefaultParams);
     checks.add(es6SplitVariableDeclarations);
@@ -14,6 +13,9 @@
     checks.add(rewriteGenerators);
     checks.add(markTranspilationDone);
     checks.add(convertStaticInheritance);
+    if (options.transpileOnly) {
+      return checks;
+    }
   }
   if (options.declaredGlobalExternsOnWindow) {
     checks.add(declaredGlobalExternsOnWindow);
