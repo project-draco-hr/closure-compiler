@@ -9,7 +9,10 @@
     }
   }
 );
-  inferred.putAll(evaluateTypeTransformations(keys,inferred));
+  Map<TemplateType,JSType> typeTransformations=evaluateTypeTransformations(keys,inferred);
+  if (typeTransformations != null) {
+    inferred.putAll(typeTransformations);
+  }
   TemplateTypeReplacer replacer=new TemplateTypeReplacer(registry,inferred);
   Node callTarget=n.getFirstChild();
   FunctionType replacementFnType=fnType.visit(replacer).toMaybeFunctionType();
