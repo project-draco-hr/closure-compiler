@@ -9,11 +9,15 @@
     return;
   }
   Node objectlit=IR.objectlit();
-  for (  String name : exportMap.keySet()) {
-    objectlit.addChildToBack(IR.stringKey(name,IR.name(exportMap.get(name) + "$$" + moduleName)));
-  }
-  Node varNode=IR.var(IR.name(moduleName),objectlit).copyInformationFromForTree(script);
+  Node varNode=IR.var(IR.name(moduleName),objectlit).useSourceInfoIfMissingFromForTree(script);
   script.addChildToBack(varNode);
+  for (  Map.Entry<String,String> entry : exportMap.entrySet()) {
+    String exportedName=entry.getKey();
+    String withSuffix=entry.getValue() + "$$" + moduleName;
+    Node getProp=IR.getprop(IR.name(moduleName),IR.string(exportedName));
+    Node exprResult=IR.exprResult(IR.assign(getProp,NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),withSuffix))).useSourceInfoIfMissingFromForTree(script);
+    script.addChildToBack(exprResult);
+  }
   for (  String name : typedefs) {
     Node typedef=IR.getprop(IR.name(moduleName),IR.string(name));
     JSDocInfoBuilder builder=new JSDocInfoBuilder(true);
@@ -22,10 +26,18 @@
     typedef.setJSDocInfo(info);
     script.addChildToBack(IR.exprResult(typedef).useSourceInfoIfMissingFromForTree(varNode));
   }
-  exportMap.clear();
-  script.addChildToFront(IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.provide"),IR.string(moduleName))).copyInformationFromForTree(script));
+  Node googProvide=IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.provide"),IR.string(moduleName)));
+  script.addChildToFront(googProvide.copyInformationFromForTree(script));
   if (reportDependencies) {
     t.getInput().addProvide(moduleName);
   }
+  for (  String name : exportMap.keySet()) {
+    String qualifiedName=moduleName + "." + name;
+    script.addChildAfter(IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.provide"),IR.string(qualifiedName))).copyInformationFromForTree(script),googProvide);
+    if (reportDependencies) {
+      t.getInput().addProvide(qualifiedName);
+    }
+  }
+  exportMap.clear();
   compiler.reportCodeChange();
 }
