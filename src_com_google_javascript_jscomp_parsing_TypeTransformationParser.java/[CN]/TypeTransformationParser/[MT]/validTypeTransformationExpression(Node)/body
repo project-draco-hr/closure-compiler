@@ -1,25 +1,25 @@
 {
-  if (!expression.isName() && !expression.isCall()) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","type transformation",expression);
+  if (!isValidExpression(expr)) {
+    warnInvalidExpression("type transformation",expr);
     return false;
   }
-  if (expression.isName()) {
-    return validTTLTypeVar(expression);
+  if (isTypeVar(expr) || isTypeName(expr)) {
+    return true;
   }
-  Node operation=expression.getFirstChild();
+  Node operation=expr.getFirstChild();
   String keyword=operation.getString();
-  if (!belongsTo(keyword,TYPE_CONSTRUCTORS) && !belongsTo(keyword,OPERATIONS)) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","type transformation",operation);
+  if (!isValidOperation(keyword)) {
+    warnInvalidExpression("type transformation",operation);
     return false;
   }
   if (belongsTo(keyword,TYPE_CONSTRUCTORS)) {
-    return validTTLTypeExpression(expression);
+    return validTTLTypeExpression(expr);
   }
   if (isKeyword(keyword,Keywords.COND)) {
-    return validTTLCondionalExpression(expression);
+    return validTTLCondionalExpression(expr);
   }
   if (isKeyword(keyword,Keywords.MAPUNION)) {
-    return validTTLMapunionExpression(expression);
+    return validTTLMapunionExpression(expr);
   }
   throw new IllegalStateException("Invalid type transformation expression");
 }

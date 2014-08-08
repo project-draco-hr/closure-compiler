@@ -1,23 +1,23 @@
 {
-  if (!expression.isCall()) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","boolean",expression);
+  if (!isOperation(expr)) {
+    warnInvalidExpression("boolean",expr);
     return false;
   }
-  String predicate=expression.getFirstChild().getString();
+  String predicate=expr.getFirstChild().getString();
   if (!belongsTo(predicate,BOOLEAN_PREDICATES)) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid","boolean predicate",expression);
+    warnInvalid("boolean predicate",expr);
     return false;
   }
-  if (expression.getChildCount() < 1 + BOOLPRED_PARAM_COUNT) {
-    addNewWarning("msg.jsdoc.typetransformation.missing.param","boolean predicate",expression);
+  if (expr.getChildCount() < 1 + BOOLPRED_PARAM_COUNT) {
+    warnMissingParam("boolean predicate",expr);
     return false;
   }
-  if (expression.getChildCount() > 1 + BOOLPRED_PARAM_COUNT) {
-    addNewWarning("msg.jsdoc.typetransformation.extra.param","boolean predicate",expression);
+  if (expr.getChildCount() > 1 + BOOLPRED_PARAM_COUNT) {
+    warnExtraParam("boolean predicate",expr);
     return false;
   }
-  if (!validTypeTransformationExpression(expression.getChildAtIndex(1)) || !validTypeTransformationExpression(expression.getChildAtIndex(2))) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","boolean",expression);
+  if (!validTypeTransformationExpression(expr.getChildAtIndex(1)) || !validTypeTransformationExpression(expr.getChildAtIndex(2))) {
+    warnInvalidInside("boolean",expr);
     return false;
   }
   return true;

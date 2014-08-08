@@ -1,37 +1,33 @@
 {
-  if (expression.getChildCount() < 1 + MAPUNION_PARAM_COUNT) {
-    addNewWarning("msg.jsdoc.typetransformation.missing.param","mapunion",expression);
+  if (expr.getChildCount() < 1 + MAPUNION_PARAM_COUNT) {
+    warnMissingParam("mapunion",expr);
     return false;
   }
-  if (expression.getChildCount() > 1 + MAPUNION_PARAM_COUNT) {
-    addNewWarning("msg.jsdoc.typetransformation.extra.param","mapunion",expression);
+  if (expr.getChildCount() > 1 + MAPUNION_PARAM_COUNT) {
+    warnExtraParam("mapunion",expr);
     return false;
   }
-  if (!validTTLUnionTypeExpression(expression.getChildAtIndex(1))) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","mapunion",expression.getChildAtIndex(1));
+  if (!validTTLUnionTypeExpression(expr.getChildAtIndex(1))) {
+    warnInvalidInside("mapunion",expr.getChildAtIndex(1));
     return false;
   }
-  if (!expression.getChildAtIndex(2).isFunction()) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid","map function",expression.getChildAtIndex(2));
+  if (!expr.getChildAtIndex(2).isFunction()) {
+    warnInvalid("map function",expr.getChildAtIndex(2));
     return false;
   }
-  Node mapFunction=expression.getChildAtIndex(2);
-  if (!mapFunction.getChildAtIndex(1).hasChildren()) {
-    addNewWarning("msg.jsdoc.typetransformation.missing.param","map function",mapFunction.getChildAtIndex(1));
+  Node mapFn=expr.getChildAtIndex(2);
+  Node mapFnParam=mapFn.getChildAtIndex(1);
+  if (!mapFnParam.hasChildren()) {
+    warnMissingParam("map function",mapFnParam);
     return false;
   }
-  if (!mapFunction.getChildAtIndex(1).hasOneChild()) {
-    addNewWarning("msg.jsdoc.typetransformation.extra.param","map function",mapFunction.getChildAtIndex(1));
+  if (!mapFnParam.hasOneChild()) {
+    warnExtraParam("map function",mapFnParam);
     return false;
   }
-  Node mapFunctionParam=mapFunction.getChildAtIndex(1).getFirstChild();
-  if (!validTTLTypeVar(mapFunctionParam)) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","map function",mapFunctionParam);
-    return false;
-  }
-  Node mapFunctionBody=mapFunction.getChildAtIndex(2);
-  if (!validTypeTransformationExpression(mapFunctionBody)) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.inside","map function body",mapFunctionBody);
+  Node mapFnBody=mapFn.getChildAtIndex(2);
+  if (!validTypeTransformationExpression(mapFnBody)) {
+    warnInvalidInside("map function body",mapFnBody);
     return false;
   }
   return true;

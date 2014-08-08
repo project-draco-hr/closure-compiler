@@ -1,15 +1,15 @@
 {
-  if (!expression.isCall()) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","none",expression);
+  if (!isOperation(expr)) {
+    warnInvalidExpression("none",expr);
     return false;
   }
-  String keyword=expression.getFirstChild().getString();
+  String keyword=expr.getFirstChild().getString();
   if (!isKeyword(keyword,Keywords.NONE)) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","none",expression);
+    warnInvalidExpression("none",expr);
     return false;
   }
-  if (expression.getChildCount() > 1) {
-    addNewWarning("msg.jsdoc.typetransformation.extra.param","none",expression);
+  if (expr.getChildCount() > 1) {
+    warnExtraParam("none",expr);
     return false;
   }
   return true;

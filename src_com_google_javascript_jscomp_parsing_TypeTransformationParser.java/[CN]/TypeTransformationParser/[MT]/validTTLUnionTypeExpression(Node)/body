@@ -1,26 +1,24 @@
 {
-  if (!expression.isName() && !expression.isCall()) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","union type",expression);
+  if (!isTypeVar(expr) && !isOperation(expr)) {
+    warnInvalidExpression("union type",expr);
     return false;
   }
-  if (expression.isName()) {
-    return validTTLTypeVar(expression);
+  if (isTypeVar(expr)) {
+    return true;
   }
-  String keyword=expression.getFirstChild().getString();
+  String keyword=expr.getFirstChild().getString();
   if (!isKeyword(keyword,Keywords.UNION)) {
-    addNewWarning("msg.jsdoc.typetransformation.invalid.expression","union type",expression);
+    warnInvalidExpression("union type",expr);
     return false;
   }
-  if (expression.getChildCount() < 1 + UNION_MIN_PARAM_COUNT) {
-    addNewWarning("msg.jsdoc.typetransformation.missing.param","union type",expression);
+  int childCount=expr.getChildCount();
+  if (childCount < 1 + UNION_MIN_PARAM_COUNT) {
+    warnMissingParam("union type",expr);
     return false;
   }
-  for (  Node param : expression.children()) {
-    if (param.equals(expression.getFirstChild())) {
-      continue;
-    }
-    if (!validTTLTypeExpression(param)) {
-      addNewWarning("msg.jsdoc.typetransformation.invalid.inside","union type",expression);
+  for (int i=1; i < childCount; i++) {
+    if (!validTTLTypeExpression(expr.getChildAtIndex(i))) {
+      warnInvalidInside("union type",expr);
       return false;
     }
   }
