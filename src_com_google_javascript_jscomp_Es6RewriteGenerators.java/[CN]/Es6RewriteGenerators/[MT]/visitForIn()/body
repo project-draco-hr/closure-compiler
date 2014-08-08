@@ -1,0 +1,20 @@
+{
+  Node variable=currentStatement.removeFirstChild();
+  Node iterable=currentStatement.removeFirstChild();
+  Node body=currentStatement.removeFirstChild();
+  String loopId=generatorCounter.get();
+  Node arrayName=IR.name(GENERATOR_FOR_IN_ARRAY + loopId);
+  Node varName=IR.name(GENERATOR_FOR_IN_VAR + loopId);
+  if (variable.isVar()) {
+    variable=variable.removeFirstChild();
+  }
+  body.addChildToFront(IR.var(variable,IR.getelem(arrayName.cloneTree(),varName.cloneTree())));
+  hoistRoot.getParent().addChildAfter(IR.var(arrayName.cloneTree()),hoistRoot);
+  hoistRoot.getParent().addChildAfter(IR.var(varName.cloneTree()),hoistRoot);
+  Node arrayDef=IR.exprResult(IR.assign(arrayName.cloneTree(),IR.arraylit()));
+  Node newForIn=IR.forIn(varName.cloneTree(),iterable,IR.block(IR.exprResult(IR.call(IR.getprop(arrayName.cloneTree(),IR.string("push")),varName.cloneTree()))));
+  Node newFor=IR.forNode(IR.assign(varName.cloneTree(),IR.number(0)),IR.lt(varName.cloneTree(),IR.getprop(arrayName,IR.string("length"))),IR.inc(varName,true),body);
+  enclosingBlock.addChildToBack(arrayDef);
+  enclosingBlock.addChildToBack(newForIn);
+  originalGeneratorBody.addChildToFront(newFor);
+}

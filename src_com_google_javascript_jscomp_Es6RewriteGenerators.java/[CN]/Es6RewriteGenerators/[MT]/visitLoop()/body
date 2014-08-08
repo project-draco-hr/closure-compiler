@@ -11,6 +11,9 @@
   }
  else   if (currentStatement.isFor()) {
     initializer=currentStatement.removeFirstChild();
+    if (initializer.isAssign()) {
+      initializer=IR.exprResult(initializer);
+    }
     condition=currentStatement.removeFirstChild();
     if (condition.isEmpty()) {
       condition=IR.trueNode();
