@@ -1,15 +1,15 @@
 {
-  Preconditions.checkArgument(nameNode.isQualifiedName());
-  if (nameNode.isThis()) {
+  Preconditions.checkArgument(qnameNode.isQualifiedName());
+  if (qnameNode.isThis()) {
     return true;
   }
- else   if (nameNode.isName()) {
-    return isDefinedLocally(nameNode.getString());
+ else   if (qnameNode.isName()) {
+    return isDefinedLocally(qnameNode.getString());
   }
-  QualifiedName qname=QualifiedName.fromGetprop(nameNode);
+  QualifiedName qname=QualifiedName.fromGetprop(qnameNode);
   String leftmost=qname.getLeftmostName();
   if (isNamespace(leftmost)) {
     return getNamespace(leftmost).isDefined(qname.getAllButLeftmost());
   }
-  return parent == null ? null : parent.isDefined(nameNode);
+  return parent == null ? null : parent.isDefined(qnameNode);
 }

@@ -1,15 +1,15 @@
 {
-  Preconditions.checkState(nameNode.isQualifiedName());
-  if (NodeUtil.getInitializer(nameNode) != null) {
-    warnings.add(JSError.make(nameNode,CANNOT_INIT_TYPEDEF));
+  Preconditions.checkState(qnameNode.isQualifiedName());
+  if (NodeUtil.getInitializer(qnameNode) != null) {
+    warnings.add(JSError.make(qnameNode,CANNOT_INIT_TYPEDEF));
   }
-  if (nameNode.isName() && currentScope.isDefinedLocally(nameNode.getString())) {
-    warnings.add(JSError.make(nameNode,VariableReferenceCheck.REDECLARED_VARIABLE,nameNode.getQualifiedName()));
+  if (qnameNode.isName() && currentScope.isDefinedLocally(qnameNode.getString())) {
+    warnings.add(JSError.make(qnameNode,VariableReferenceCheck.REDECLARED_VARIABLE,qnameNode.getQualifiedName()));
   }
-  if (currentScope.isDefined(nameNode)) {
+  if (currentScope.isDefined(qnameNode)) {
     return;
   }
-  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(nameNode);
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(qnameNode);
   Typedef td=Typedef.make(jsdoc.getTypedefType());
-  currentScope.addTypedef(nameNode,td);
+  currentScope.addTypedef(qnameNode,td);
 }

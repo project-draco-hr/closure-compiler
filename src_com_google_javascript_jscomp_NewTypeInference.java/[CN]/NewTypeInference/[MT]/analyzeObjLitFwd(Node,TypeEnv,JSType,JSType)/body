@@ -1,22 +1,6 @@
 {
   if (NodeUtil.isEnumDecl(objLit.getParent().getParent())) {
-    if (objLit.getFirstChild() == null) {
-      return new EnvTypePair(inEnv,requiredType);
-    }
-    String pname=NodeUtil.getObjectLitKeyName(objLit.getFirstChild());
-    JSType enumeratedType=requiredType.getProp(new QualifiedName(pname)).getEnumeratedType();
-    if (enumeratedType == null) {
-      return new EnvTypePair(inEnv,requiredType);
-    }
-    TypeEnv env=inEnv;
-    for (    Node prop : objLit.children()) {
-      EnvTypePair pair=analyzeExprFwd(prop.getFirstChild(),env,enumeratedType);
-      if (!pair.type.isSubtypeOf(enumeratedType)) {
-        warnings.add(JSError.make(prop,INVALID_OBJLIT_PROPERTY_TYPE,enumeratedType.toString(),pair.type.toString()));
-      }
-      env=pair.env;
-    }
-    return new EnvTypePair(env,requiredType);
+    return analyzeEnumObjLitFwd(objLit,inEnv,requiredType);
   }
   JSDocInfo jsdoc=objLit.getJSDocInfo();
   boolean isStruct=jsdoc != null && jsdoc.makesStructs();

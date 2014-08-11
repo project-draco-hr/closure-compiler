@@ -1,0 +1,15 @@
+{
+  if (objLit.getFirstChild() == null) {
+    return new EnvTypePair(outEnv,requiredType);
+  }
+  String pname=NodeUtil.getObjectLitKeyName(objLit.getFirstChild());
+  JSType enumeratedType=requiredType.getProp(new QualifiedName(pname)).getEnumeratedType();
+  if (enumeratedType == null) {
+    return new EnvTypePair(outEnv,requiredType);
+  }
+  TypeEnv env=outEnv;
+  for (Node prop=objLit.getLastChild(); prop != null; prop=objLit.getChildBefore(prop)) {
+    env=analyzeExprBwd(prop.getFirstChild(),env,enumeratedType).env;
+  }
+  return new EnvTypePair(env,requiredType);
+}

@@ -1,10 +1,9 @@
 {
   JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
   Node nameNode=NodeUtil.getFunctionNameNode(fn);
-  ArrayList<String> formals=Lists.newArrayList();
-  ArrayList<String> tmpRestFormals=Lists.newArrayList();
+  ArrayList<String> formals=new ArrayList<>();
+  ArrayList<String> tmpRestFormals=new ArrayList<>();
   Node param=NodeUtil.getFunctionParameters(fn).getFirstChild();
-  int formalIndex=0;
   while (param != null) {
     if (JSTypeCreatorFromJSDoc.isRestArg(fnDoc,param.getString()) && param.getNext() == null) {
       tmpRestFormals.add(param.getString());
@@ -13,7 +12,6 @@
       formals.add(param.getString());
     }
     param=param.getNext();
-    formalIndex++;
   }
   createFunctionScope(fn,formals,nameNode);
   if (fnDoc != null) {
