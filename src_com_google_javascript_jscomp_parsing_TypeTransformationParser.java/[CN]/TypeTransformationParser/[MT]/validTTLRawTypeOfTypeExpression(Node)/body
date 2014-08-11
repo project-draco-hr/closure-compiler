@@ -1,0 +1,15 @@
+{
+  if (expr.getChildCount() < 1 + RAWTYPEOF_PARAM_COUNT) {
+    warnMissingParam("rawTypeOf",expr);
+    return false;
+  }
+  if (expr.getChildCount() > 1 + RAWTYPEOF_PARAM_COUNT) {
+    warnExtraParam("rawTypeOf",expr);
+    return false;
+  }
+  if (!validTTLTypeExpression(expr.getChildAtIndex(1))) {
+    warnInvalidInside("rawTypeOf",expr);
+    return false;
+  }
+  return true;
+}
