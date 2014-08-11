@@ -22,11 +22,13 @@ if (hasTypeVariable(outerTypeParameters,ownerType,typeName)) {
 return JSType.fromTypeVar(typeName);
 }
  else {
-if (registry.getTypedef(typeName) != null) {
-return getTypedefType(typeName,registry);
+Typedef td=registry.getTypedef(typeName);
+if (td != null) {
+return getTypedefType(td,registry);
 }
-if (registry.getEnum(typeName) != null) {
-return getEnumPropType(typeName,registry);
+EnumType e=registry.getEnum(typeName);
+if (e != null) {
+return getEnumPropType(e,registry);
 }
 JSType namedType=registry.lookupTypeByName(typeName);
 if (namedType == null) {

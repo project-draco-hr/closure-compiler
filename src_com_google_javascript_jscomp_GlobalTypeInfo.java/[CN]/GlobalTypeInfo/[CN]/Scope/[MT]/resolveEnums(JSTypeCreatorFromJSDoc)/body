@@ -1,10 +1,13 @@
 {
-  for (  Map.Entry<String,EnumType> entry : localEnums.entrySet()) {
-    String name=entry.getKey();
-    EnumType e=entry.getValue();
+  for (  EnumType e : localEnums.values()) {
     if (!e.isResolved()) {
-      typeParser.resolveEnum(name,this);
+      typeParser.resolveEnum(e,this);
     }
-    locals.put(name,e.getObjLitType());
   }
+  for (  EnumType e : qualifiedEnums) {
+    if (!e.isResolved()) {
+      typeParser.resolveEnum(e,this);
+    }
+  }
+  qualifiedEnums=null;
 }

@@ -4,6 +4,9 @@
   Node rhs=expr.getLastChild();
   LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,requiredType);
   JSType declType=lvalue.declType;
+  if (NodeUtil.isEnumDecl(expr) && rhs.isObjectLit()) {
+    return analyzeEnumObjLitFwd(rhs,lvalue.env,lvalue.type);
+  }
   EnvTypePair rhsPair=analyzeExprFwd(rhs,lvalue.env,requiredType,specializedType);
   if (declType != null && !rhsPair.type.isSubtypeOf(declType)) {
     warnings.add(JSError.make(expr,MISTYPED_ASSIGN_RHS,declType.toString(),rhsPair.type.toString()));
