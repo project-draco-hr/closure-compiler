@@ -10,14 +10,7 @@
     out.append("//");
     out.append(displayName);
     out.append("\n");
-    if (input.isModule()) {
-      String moduleName=Iterables.get(input.getProvides(),0);
-      out.append("goog.loadModule('" + moduleName + "', function(exports) {"+ "'use strict';");
-    }
-    Files.copy(file,inputCharset,out);
-    if (input.isModule()) {
-      out.append("\n" + ";return exports;" + "});"+ "\n");
-    }
+    ClosureBundler.appendInput(out,input,file,inputCharset);
     out.append("\n");
   }
 }
