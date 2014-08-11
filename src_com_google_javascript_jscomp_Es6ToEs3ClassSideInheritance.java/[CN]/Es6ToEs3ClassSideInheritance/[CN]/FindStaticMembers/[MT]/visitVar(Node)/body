@@ -1,0 +1,14 @@
+{
+  Node child=n.getFirstChild();
+  if (!child.hasChildren()) {
+    return;
+  }
+  String maybeOriginalName=child.getFirstChild().getQualifiedName();
+  if (classNames.contains(maybeOriginalName)) {
+    String maybeAlias=child.getQualifiedName();
+    if (maybeAlias != null) {
+      classNames.add(maybeAlias);
+      staticMembers.putAll(maybeAlias,staticMembers.get(maybeOriginalName));
+    }
+  }
+}

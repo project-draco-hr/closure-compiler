@@ -1,9 +1,16 @@
 {
-  if (!n.hasChildren() || !n.getFirstChild().isGetProp()) {
-    return;
+  if (classNames.contains(n.getLastChild().getQualifiedName())) {
+    String maybeAlias=n.getFirstChild().getQualifiedName();
+    if (maybeAlias != null) {
+      classNames.add(maybeAlias);
+      staticMembers.putAll(maybeAlias,staticMembers.get(n.getLastChild().getQualifiedName()));
+    }
   }
-  Node potentialClassName=n.getFirstChild().getFirstChild();
-  if (classNames.contains(potentialClassName.getQualifiedName())) {
-    staticMembers.put(potentialClassName.getQualifiedName(),n.getFirstChild().getLastChild().getString());
+ else   if (n.getFirstChild().isGetProp()) {
+    Node getProp=n.getFirstChild();
+    String maybeClassName=getProp.getFirstChild().getQualifiedName();
+    if (classNames.contains(maybeClassName)) {
+      staticMembers.put(maybeClassName,getProp.getLastChild().getString());
+    }
   }
 }
