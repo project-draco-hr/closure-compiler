@@ -44,6 +44,9 @@
     }
     nominaltypesByNode.put(fn,rawNominalType);
     if (nameNode.isName() || currentScope.isNamespace(nameNode.getFirstChild())) {
+      if (fn.getParent().isAssign()) {
+        fn.getParent().getFirstChild().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+      }
       currentScope.addNominalType(nameNode,rawNominalType);
     }
   }

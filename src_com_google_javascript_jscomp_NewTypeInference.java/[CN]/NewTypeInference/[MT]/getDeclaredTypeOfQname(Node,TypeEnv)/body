@@ -1,0 +1,20 @@
+{
+switch (qnameNode.getType()) {
+case Token.NAME:
+{
+      JSType result=envGetType(env,qnameNode.getString());
+      Preconditions.checkNotNull(result);
+      return result;
+    }
+case Token.GETPROP:
+{
+    Preconditions.checkState(qnameNode.isQualifiedName());
+    JSType recvType=getDeclaredTypeOfQname(qnameNode.getFirstChild(),env);
+    JSType result=recvType.getProp(new QualifiedName(qnameNode.getLastChild().getString()));
+    Preconditions.checkNotNull(result);
+    return result;
+  }
+default :
+throw new RuntimeException("getDeclaredTypeOfQname: unexpected node " + Token.name(qnameNode.getType()));
+}
+}

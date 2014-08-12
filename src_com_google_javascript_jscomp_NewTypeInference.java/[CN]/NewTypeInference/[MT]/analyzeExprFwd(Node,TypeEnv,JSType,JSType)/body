@@ -88,6 +88,10 @@ case Token.GE:
 return analyzeLtGtFwd(expr,inEnv);
 case Token.GETPROP:
 Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()) || !NodeUtil.isLValue(expr));
+if (expr.getBooleanProp(Node.ANALYZED_DURING_GTI)) {
+expr.removeProp(Node.ANALYZED_DURING_GTI);
+return new EnvTypePair(inEnv,requiredType);
+}
 return analyzePropAccessFwd(expr.getFirstChild(),expr.getLastChild().getString(),inEnv,requiredType,specializedType);
 case Token.HOOK:
 return analyzeHookFwd(expr,inEnv,requiredType,specializedType);

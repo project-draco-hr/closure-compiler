@@ -1,12 +1,22 @@
 {
+  if (expr.getBooleanProp(Node.ANALYZED_DURING_GTI)) {
+    expr.removeProp(Node.ANALYZED_DURING_GTI);
+    return new EnvTypePair(inEnv,requiredType);
+  }
   mayWarnAboutConst(expr);
   Node lhs=expr.getFirstChild();
   Node rhs=expr.getLastChild();
+  if (lhs.getBooleanProp(Node.ANALYZED_DURING_GTI)) {
+    lhs.removeProp(Node.ANALYZED_DURING_GTI);
+    JSType declType=getDeclaredTypeOfQname(lhs,inEnv);
+    EnvTypePair rhsPair=analyzeExprFwd(rhs,inEnv,declType);
+    if (!rhsPair.type.isSubtypeOf(declType)) {
+      warnings.add(JSError.make(expr,MISTYPED_ASSIGN_RHS,declType.toString(),rhsPair.type.toString()));
+    }
+    return rhsPair;
+  }
   LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,requiredType);
   JSType declType=lvalue.declType;
-  if (NodeUtil.isEnumDecl(expr) && rhs.isObjectLit()) {
-    return analyzeEnumObjLitFwd(rhs,lvalue.env,lvalue.type);
-  }
   EnvTypePair rhsPair=analyzeExprFwd(rhs,lvalue.env,requiredType,specializedType);
   if (declType != null && !rhsPair.type.isSubtypeOf(declType)) {
     warnings.add(JSError.make(expr,MISTYPED_ASSIGN_RHS,declType.toString(),rhsPair.type.toString()));

@@ -90,6 +90,9 @@ return analyzeAssignNumericOpBwd(expr,outEnv);
 case Token.GETPROP:
 {
 Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()) || !NodeUtil.isLValue(expr));
+if (expr.getBooleanProp(Node.ANALYZED_DURING_GTI)) {
+return new EnvTypePair(outEnv,requiredType);
+}
 return analyzePropAccessBwd(expr.getFirstChild(),expr.getLastChild().getString(),outEnv,requiredType);
 }
 case Token.HOOK:
