@@ -1,0 +1,31 @@
+{
+  if (expr.getChildCount() < 1 + RECORD_PARAM_COUNT) {
+    warnMissingParam("record",expr);
+    return false;
+  }
+  if (expr.getChildCount() > 1 + RECORD_PARAM_COUNT) {
+    warnExtraParam("record",expr);
+    return false;
+  }
+  Node record=expr.getChildAtIndex(1);
+  if (!record.isObjectLit()) {
+    warnInvalid("record expression",record);
+    return false;
+  }
+  if (record.getChildCount() < RECORD_MIN_PROPERTY_COUNT) {
+    warnMissingParam("record expression",record);
+    return false;
+  }
+  for (  Node prop : record.children()) {
+    if (!prop.hasChildren()) {
+      warnInvalid("property, missing type",prop);
+      warnInvalidInside("record",prop);
+      return false;
+    }
+ else     if (!validTTLTypeExpression(prop.getFirstChild())) {
+      warnInvalidInside("record",prop);
+      return false;
+    }
+  }
+  return true;
+}
