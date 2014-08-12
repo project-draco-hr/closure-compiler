@@ -1,0 +1,26 @@
+{
+  if (expr.getChildCount() < 1 + TEMPTYPEOF_PARAM_COUNT) {
+    warnMissingParam("templateTypeOf",expr);
+    return false;
+  }
+  if (expr.getChildCount() > 1 + TEMPTYPEOF_PARAM_COUNT) {
+    warnExtraParam("templateTypeOf",expr);
+    return false;
+  }
+  if (!validTTLTypeExpression(expr.getChildAtIndex(1))) {
+    warnInvalidInside("templateTypeOf",expr);
+    return false;
+  }
+  if (!expr.getChildAtIndex(2).isNumber()) {
+    warnInvalid("index",expr);
+    warnInvalidInside("templateTypeOf",expr);
+    return false;
+  }
+  double index=expr.getChildAtIndex(2).getDouble();
+  if (!DoubleMath.isMathematicalInteger(index) || index < 0) {
+    warnInvalid("index",expr);
+    warnInvalidInside("templateTypeOf",expr);
+    return false;
+  }
+  return true;
+}
