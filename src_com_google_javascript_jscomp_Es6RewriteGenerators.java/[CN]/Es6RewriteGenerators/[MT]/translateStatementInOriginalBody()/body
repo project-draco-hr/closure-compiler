@@ -24,8 +24,11 @@ case Token.FOR:
         visitForIn();
         return false;
       }
-    visitLoop();
+    visitLoop(null);
   return false;
+case Token.LABEL:
+visitLabel();
+return false;
 case Token.SWITCH:
 visitSwitch();
 return false;
@@ -58,9 +61,6 @@ return false;
 break;
 case Token.THROW:
 visitThrow();
-return false;
-case Token.LABEL:
-compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Labels in generator functions"));
 return false;
 default :
 throw new RuntimeException("Untranslatable control-exiting statement in generator function: " + Token.name(currentStatement.getType()));

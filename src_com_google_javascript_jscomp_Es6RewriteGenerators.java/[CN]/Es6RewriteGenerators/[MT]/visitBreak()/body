@@ -1,4 +1,16 @@
 {
-  enclosingBlock.addChildToBack(createStateUpdate(currentLoopContext.get(0).breakCase));
+  int breakCase;
+  if (currentStatement.hasChildren()) {
+    LoopContext loop=getLoopContext(currentStatement.removeFirstChild().getString());
+    if (loop == null) {
+      compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Breaking to a label that is not a loop"));
+      return;
+    }
+    breakCase=loop.breakCase;
+  }
+ else {
+    breakCase=currentLoopContext.get(0).breakCase;
+  }
+  enclosingBlock.addChildToBack(createStateUpdate(breakCase));
   enclosingBlock.addChildToBack(createSafeBreak());
 }

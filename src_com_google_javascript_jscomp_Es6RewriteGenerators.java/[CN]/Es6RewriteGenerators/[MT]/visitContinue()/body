@@ -1,5 +1,12 @@
 {
   Preconditions.checkState(currentLoopContext.get(0).continueCase != -1);
-  enclosingBlock.addChildToBack(createStateUpdate(currentLoopContext.get(0).continueCase));
+  int continueCase;
+  if (currentStatement.hasChildren()) {
+    continueCase=getLoopContext(currentStatement.removeFirstChild().getString()).continueCase;
+  }
+ else {
+    continueCase=currentLoopContext.get(0).continueCase;
+  }
+  enclosingBlock.addChildToBack(createStateUpdate(continueCase));
   enclosingBlock.addChildToBack(createSafeBreak());
 }

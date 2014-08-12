@@ -2,10 +2,13 @@
 switch (n.getType()) {
 case Token.FUNCTION:
     return false;
+case Token.LABEL:
+  labels.add(0,n.getFirstChild().getString());
+break;
 case Token.DO:
 case Token.WHILE:
 case Token.FOR:
-  continueCatchers++;
+continueCatchers++;
 breakCatchers++;
 break;
 case Token.SWITCH:
@@ -18,7 +21,7 @@ throwCatchers++;
 }
 break;
 case Token.BREAK:
-if (breakCatchers == 0 || n.hasChildren()) {
+if ((breakCatchers == 0 && !n.hasChildren()) || (n.hasChildren() && !labels.contains(n.getFirstChild().getString()))) {
 exited=true;
 if (addJumps) {
 parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
@@ -26,7 +29,7 @@ parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
 }
 break;
 case Token.CONTINUE:
-if (continueCatchers == 0 || n.hasChildren()) {
+if (continueCatchers == 0 || (n.hasChildren() && !labels.contains(n.getFirstChild().getString()))) {
 exited=true;
 if (addJumps) {
 parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
