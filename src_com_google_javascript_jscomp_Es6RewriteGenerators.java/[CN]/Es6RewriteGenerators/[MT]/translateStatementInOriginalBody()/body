@@ -36,12 +36,7 @@ return false;
 }
 break;
 case Token.TRY:
-if (currentStatement.getChildCount() == 3) {
-compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Try statements with finally blocks inside generators"));
-}
- else {
 visitTry();
-}
 return false;
 case Token.EXPR_RESULT:
 if (currentStatement.getFirstChild().isYield()) {
@@ -64,6 +59,11 @@ break;
 case Token.THROW:
 visitThrow();
 return false;
+case Token.LABEL:
+compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Labels in generator functions"));
+return false;
+default :
+throw new RuntimeException("Untranslatable control-exiting statement in generator function: " + Token.name(currentStatement.getType()));
 }
 }
 enclosingBlock.addChildToBack(currentStatement);

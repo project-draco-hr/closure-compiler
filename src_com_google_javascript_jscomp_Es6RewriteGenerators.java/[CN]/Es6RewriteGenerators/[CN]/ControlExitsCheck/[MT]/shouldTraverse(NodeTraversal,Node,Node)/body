@@ -11,26 +11,41 @@ break;
 case Token.SWITCH:
 breakCatchers++;
 break;
-case Token.TRY:
+case Token.BLOCK:
+parent=n.getParent();
+if (parent != null && parent.isTry() && parent.getFirstChild() == n && n.getNext().hasChildren()) {
 throwCatchers++;
+}
 break;
 case Token.BREAK:
 if (breakCatchers == 0 || n.hasChildren()) {
 exited=true;
+if (addJumps) {
+parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
+}
 }
 break;
 case Token.CONTINUE:
 if (continueCatchers == 0 || n.hasChildren()) {
 exited=true;
+if (addJumps) {
+parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
+}
 }
 break;
 case Token.THROW:
 if (throwCatchers == 0) {
 exited=true;
+if (addJumps && !n.isGeneratorSafe()) {
+parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
+}
 }
 break;
 case Token.RETURN:
 exited=true;
+if (addJumps) {
+parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
+}
 break;
 case Token.EXPR_RESULT:
 if (n.getFirstChild().isYield()) {
