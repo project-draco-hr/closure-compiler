@@ -9,4 +9,5 @@
   checkNoWarnings("/** @constructor */ function C(){}\n" + "C.prototype.foo = {};\n" + "C.prototype.method = function() { this.foo.bar = 123; }");
   checkNoWarnings("function f() {}\n" + "function g() { f.prototype.prop = 123; }");
   checkNoWarnings("/** @param {!Function} f */" + "function foo(f) { f.prototype.bar = function(x) {}; }");
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "Foo.prototype.method = function() {};\n"+ "/** @type {number} */\n"+ "Foo.prototype.method.pnum = 123;\n"+ "var /** number */ n = Foo.prototype['method.pnum'];",TypeCheck.INEXISTENT_PROPERTY);
 }

@@ -24,7 +24,7 @@ case Token.EXPR_RESULT:
   Node expr=n.getFirstChild();
   if (expr.isGetProp() || expr.isAssign() && expr.getFirstChild().isGetProp()) {
     Node getProp=expr.isGetProp() ? expr : expr.getFirstChild();
-    if (NodeUtil.isPrototypeProperty(getProp) || NodeUtil.referencesThis(getProp) || !getProp.isQualifiedName()) {
+    if (isPrototypeProperty(getProp) || NodeUtil.referencesThis(getProp) || !getProp.isQualifiedName()) {
       return;
     }
     if (NodeUtil.isNamespaceDecl(getProp) || NodeUtil.isTypedefDecl(getProp) || NodeUtil.isEnumDecl(getProp)) {
