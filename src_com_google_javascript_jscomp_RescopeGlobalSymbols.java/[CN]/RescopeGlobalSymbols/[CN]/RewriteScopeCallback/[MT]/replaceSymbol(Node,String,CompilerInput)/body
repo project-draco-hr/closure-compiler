@@ -24,6 +24,9 @@
   }
  else   if (isCrossModule) {
     parent.replaceChild(node,replacement);
+    if (parent.isCall() && !maybeReferencesThis.contains(name)) {
+      parent.putBooleanProp(Node.FREE_CALL,false);
+    }
   }
   if (!isCrossModule && parent.isVar()) {
     input.getAstRoot(compiler).addChildToFront(IR.var(IR.name(name).srcref(node)).srcref(node));

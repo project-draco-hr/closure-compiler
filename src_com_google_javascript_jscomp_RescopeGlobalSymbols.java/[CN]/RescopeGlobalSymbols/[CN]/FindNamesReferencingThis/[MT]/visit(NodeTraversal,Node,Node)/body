@@ -1,0 +1,32 @@
+{
+  if (n.isName()) {
+    String name=n.getString();
+    if (name.isEmpty()) {
+      return;
+    }
+    Node value=null;
+    if (parent.isAssign() && n == parent.getFirstChild()) {
+      value=parent.getLastChild();
+    }
+ else     if (parent.isVar()) {
+      value=n.getFirstChild();
+    }
+ else     if (parent.isFunction()) {
+      value=parent;
+    }
+    if (value == null) {
+      return;
+    }
+    if (maybeReferencesThis.contains(name)) {
+      return;
+    }
+    Scope s=t.getScope();
+    Scope.Var v=s.getVar(name);
+    if (v == null || !v.isGlobal()) {
+      return;
+    }
+    if (!value.isFunction() || NodeUtil.referencesThis(value)) {
+      maybeReferencesThis.add(name);
+    }
+  }
+}
