@@ -7,7 +7,9 @@
   nonMutatingPasses.add(new FindCrossModuleNamesCallback());
   nonMutatingPasses.add(new FindNamesReferencingThis());
   CombinedCompilerPass.traverse(compiler,root,nonMutatingPasses);
-  NodeTraversal.traverse(compiler,root,new RewriteScopeCallback());
+  RewriteScopeCallback rewriteScope=new RewriteScopeCallback();
+  NodeTraversal.traverse(compiler,root,rewriteScope);
   NodeTraversal.traverse(compiler,root,new RemoveGlobalVarCallback());
+  rewriteScope.declareModuleGlobals();
   NodeTraversal.traverse(compiler,root,new MakeExternsReferenceWindowExplicitly());
 }
