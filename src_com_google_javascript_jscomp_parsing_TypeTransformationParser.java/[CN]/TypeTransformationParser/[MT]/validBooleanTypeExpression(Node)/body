@@ -4,19 +4,14 @@
     return false;
   }
   String predicate=expr.getFirstChild().getString();
-  if (!belongsTo(predicate,BOOLEAN_PREDICATES)) {
+  if (!isValidBooleanPredicate(predicate)) {
     warnInvalid("boolean predicate",expr);
     return false;
   }
-  if (expr.getChildCount() < 1 + BOOLPRED_PARAM_COUNT) {
-    warnMissingParam("boolean predicate",expr);
+  if (!checkParameterCount(expr,Keywords.EQ)) {
     return false;
   }
-  if (expr.getChildCount() > 1 + BOOLPRED_PARAM_COUNT) {
-    warnExtraParam("boolean predicate",expr);
-    return false;
-  }
-  if (!validTypeTransformationExpression(expr.getChildAtIndex(1)) || !validTypeTransformationExpression(expr.getChildAtIndex(2))) {
+  if (!validTypeTransformationExpression(getCallArgument(expr,0)) || !validTypeTransformationExpression(getCallArgument(expr,1))) {
     warnInvalidInside("boolean",expr);
     return false;
   }

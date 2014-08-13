@@ -1,21 +1,16 @@
 {
-  if (expr.getChildCount() < 1 + MAPUNION_PARAM_COUNT) {
-    warnMissingParam("mapunion",expr);
+  if (!checkParameterCount(expr,Keywords.MAPUNION)) {
     return false;
   }
-  if (expr.getChildCount() > 1 + MAPUNION_PARAM_COUNT) {
-    warnExtraParam("mapunion",expr);
+  if (!validUnionTypeExpression(getCallArgument(expr,0))) {
+    warnInvalidInside("mapunion",getCallArgument(expr,0));
     return false;
   }
-  if (!validUnionTypeExpression(expr.getChildAtIndex(1))) {
-    warnInvalidInside("mapunion",expr.getChildAtIndex(1));
+  if (!getCallArgument(expr,1).isFunction()) {
+    warnInvalid("map function",getCallArgument(expr,1));
     return false;
   }
-  if (!expr.getChildAtIndex(2).isFunction()) {
-    warnInvalid("map function",expr.getChildAtIndex(2));
-    return false;
-  }
-  Node mapFn=expr.getChildAtIndex(2);
+  Node mapFn=getCallArgument(expr,1);
   Node mapFnParam=mapFn.getChildAtIndex(1);
   if (!mapFnParam.hasChildren()) {
     warnMissingParam("map function",mapFnParam);

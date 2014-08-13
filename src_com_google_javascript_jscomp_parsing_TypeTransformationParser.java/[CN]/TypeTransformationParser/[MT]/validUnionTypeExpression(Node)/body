@@ -6,18 +6,17 @@
   if (isTypeVar(expr)) {
     return true;
   }
-  String keyword=expr.getFirstChild().getString();
-  if (!isKeyword(keyword,Keywords.UNION)) {
+  String name=expr.getFirstChild().getString();
+  if (!isUnion(name)) {
     warnInvalidExpression("union type",expr);
     return false;
   }
-  int childCount=expr.getChildCount();
-  if (childCount < 1 + UNION_MIN_PARAM_COUNT) {
-    warnMissingParam("union type",expr);
+  if (!checkParameterCount(expr,Keywords.UNION)) {
     return false;
   }
-  for (int i=1; i < childCount; i++) {
-    if (!validTTLTypeExpression(expr.getChildAtIndex(i))) {
+  int numParams=expr.getChildCount() - 1;
+  for (int i=0; i < numParams; i++) {
+    if (!validTypeExpression(expr.getChildAtIndex(i))) {
       warnInvalidInside("union type",expr);
       return false;
     }

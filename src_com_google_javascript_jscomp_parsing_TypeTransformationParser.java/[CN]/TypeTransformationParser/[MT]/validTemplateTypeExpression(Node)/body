@@ -1,29 +1,16 @@
 {
-  if (!isTypeVar(expr) && !isOperation(expr)) {
-    warnInvalidExpression("template type operation",expr);
+  if (!checkParameterCount(expr,Keywords.TYPE)) {
     return false;
   }
-  if (isTypeVar(expr)) {
-    return true;
-  }
-  String keyword=expr.getFirstChild().getString();
-  if (!isKeyword(keyword,Keywords.TYPE)) {
-    warnInvalidExpression("template type operation",expr);
-    return false;
-  }
-  int childCount=expr.getChildCount();
-  if (childCount < 1 + TYPE_MIN_PARAM_COUNT) {
-    warnMissingParam("template type operation",expr);
-    return false;
-  }
-  Node firstParam=expr.getChildAtIndex(1);
+  int numParams=expr.getChildCount() - 1;
+  Node firstParam=getCallArgument(expr,0);
   if (!isTypeVar(firstParam) && !isTypeName(firstParam)) {
     warnInvalid("type name or type variable",expr);
     warnInvalidInside("template type operation",expr);
     return false;
   }
-  for (int i=2; i < childCount; i++) {
-    if (!validTTLTypeExpression(expr.getChildAtIndex(i))) {
+  for (int i=1; i < numParams; i++) {
+    if (!validTypeExpression(getCallArgument(expr,i))) {
       warnInvalidInside("template type operation",expr);
       return false;
     }

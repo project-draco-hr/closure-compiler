@@ -6,19 +6,19 @@
   if (isTypeVar(expr) || isTypeName(expr)) {
     return true;
   }
-  Node operation=expr.getFirstChild();
-  String keyword=operation.getString();
-  if (!isValidOperation(keyword)) {
-    warnInvalidExpression("type transformation",operation);
+  String name=expr.getFirstChild().getString();
+  if (!isValidKeyword(name)) {
+    warnInvalidExpression("type transformation",expr);
     return false;
   }
-  if (belongsTo(keyword,TYPE_CONSTRUCTORS)) {
-    return validTTLTypeExpression(expr);
+  Keywords keyword=nameToKeyword(name);
+  if (keyword.kind == OperationKind.TYPE_CONSTRUCTOR) {
+    return validTypeExpression(expr);
   }
-  if (isKeyword(keyword,Keywords.COND)) {
+  if (keyword == Keywords.COND) {
     return validConditionalExpression(expr);
   }
-  if (isKeyword(keyword,Keywords.MAPUNION)) {
+  if (keyword == Keywords.MAPUNION) {
     return validMapunionExpression(expr);
   }
   throw new IllegalStateException("Invalid type transformation expression");

@@ -7,27 +7,28 @@
     return true;
   }
   Node operation=expr.getFirstChild();
-  String keyword=operation.getString();
-  if (!belongsTo(keyword,TYPE_CONSTRUCTORS)) {
+  String name=operation.getString();
+  if (!isValidTypeConstructor(name)) {
     warnInvalidExpression("type",expr);
     return false;
   }
-  if (isKeyword(keyword,Keywords.TYPE)) {
+  Keywords keyword=nameToKeyword(name);
+  if (keyword == Keywords.TYPE) {
     return validTemplateTypeExpression(expr);
   }
-  if (isKeyword(keyword,Keywords.UNION)) {
+  if (keyword == Keywords.UNION) {
     return validUnionTypeExpression(expr);
   }
-  if (isKeyword(keyword,Keywords.NONE)) {
+  if (keyword == Keywords.NONE) {
     return validNoneTypeExpression(expr);
   }
-  if (isKeyword(keyword,Keywords.RAWTYPEOF)) {
+  if (keyword == Keywords.RAWTYPEOF) {
     return validRawTypeOfTypeExpression(expr);
   }
-  if (isKeyword(keyword,Keywords.TEMPTYPEOF)) {
+  if (keyword == Keywords.TEMPLATETYPEOF) {
     return validTemplateTypeOfExpression(expr);
   }
-  if (isKeyword(keyword,Keywords.RECORD)) {
+  if (keyword == Keywords.RECORD) {
     return validRecordTypeExpression(expr);
   }
   throw new IllegalStateException("Invalid type expression");

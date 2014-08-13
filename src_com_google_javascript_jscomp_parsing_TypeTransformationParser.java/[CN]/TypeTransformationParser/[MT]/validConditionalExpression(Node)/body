@@ -1,21 +1,16 @@
 {
-  if (expr.getChildCount() < 1 + COND_PARAM_COUNT) {
-    warnMissingParam("conditional",expr);
+  if (!checkParameterCount(expr,Keywords.COND)) {
     return false;
   }
-  if (expr.getChildCount() > 1 + COND_PARAM_COUNT) {
-    warnExtraParam("conditional",expr);
-    return false;
-  }
-  if (!validBooleanTypeExpression(expr.getChildAtIndex(1))) {
+  if (!validBooleanTypeExpression(getCallArgument(expr,0))) {
     warnInvalidInside("conditional",expr);
     return false;
   }
-  if (!validTypeTransformationExpression(expr.getChildAtIndex(2))) {
+  if (!validTypeTransformationExpression(getCallArgument(expr,1))) {
     warnInvalidInside("conditional",expr);
     return false;
   }
-  if (!validTypeTransformationExpression(expr.getChildAtIndex(3))) {
+  if (!validTypeTransformationExpression(getCallArgument(expr,2))) {
     warnInvalidInside("conditional",expr);
     return false;
   }
