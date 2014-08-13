@@ -1,9 +1,7 @@
 {
   typeCheck("/** @typedef {number} */\n" + "var num = 1;",GlobalTypeInfo.CANNOT_INIT_TYPEDEF);
-  typeCheck("/** @typedef {number} */\n" + "var num;\n" + "num - 5;",VarCheck.UNDEFINED_VAR_ERROR);
   typeCheck("/** @typedef {NonExistentType} */\n" + "var t;\n" + "function f(/** t */ x) { x - 1; }",GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
-  typeCheck("/** @typedef {number} */\n" + "var dup;\n" + "/** @typedef {number} */\n"+ "var dup;",VariableReferenceCheck.REDECLARED_VARIABLE);
-  typeCheck("/** @typedef {number} */\n" + "var dup;\n" + "/** @typedef {string} */\n"+ "var dup;\n"+ "var /** dup */ n = 'str';",ImmutableList.of(VariableReferenceCheck.REDECLARED_VARIABLE,NewTypeInference.MISTYPED_ASSIGN_RHS));
+  typeCheck("/** @typedef {number} */\n" + "var dup;\n" + "/** @typedef {string} */\n"+ "var dup;\n"+ "var /** dup */ n = 'str';",ImmutableList.of(NewTypeInference.MISTYPED_ASSIGN_RHS));
   checkNoWarnings("/** @typedef {number} */\n" + "var num;\n" + "/** @type {num} */\n"+ "var n = 1;");
   typeCheck("/** @typedef {number} */\n" + "var num;\n" + "/** @type {num} */\n"+ "var n = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @type {num} */\n" + "var n = 'str';\n" + "/** @typedef {number} */\n"+ "var num;",NewTypeInference.MISTYPED_ASSIGN_RHS);

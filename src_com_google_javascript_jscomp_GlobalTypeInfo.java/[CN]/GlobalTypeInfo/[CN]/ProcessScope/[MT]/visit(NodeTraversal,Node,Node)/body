@@ -24,12 +24,8 @@ if (parent.isVar() || parent.isCatch()) {
     break;
   }
  else   if (currentScope.isDefinedLocally(name)) {
-    warnings.add(JSError.make(n,VariableReferenceCheck.REDECLARED_VARIABLE,name));
   }
  else {
-    for (    Node useBeforeDeclNode : undeclaredVars.get(name)) {
-      warnings.add(JSError.make(useBeforeDeclNode,VariableReferenceCheck.EARLY_REFERENCE,name));
-    }
     undeclaredVars.removeAll(name);
     if (parent.isCatch()) {
       currentScope.addLocal(name,JSType.UNKNOWN,false);
