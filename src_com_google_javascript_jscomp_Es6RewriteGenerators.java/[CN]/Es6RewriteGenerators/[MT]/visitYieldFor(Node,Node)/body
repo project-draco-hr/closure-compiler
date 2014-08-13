@@ -5,7 +5,8 @@
   Node assignIterResult=IR.assign(IR.name(GENERATOR_YIELD_ALL_ENTRY),IR.call(IR.getprop(IR.name(GENERATOR_YIELD_ALL_NAME),IR.string("next"))));
   Node loopCondition=IR.not(IR.getprop(assignIterResult,IR.string("done")));
   Node elemValue=IR.getprop(IR.name(GENERATOR_YIELD_ALL_ENTRY),IR.string("value"));
-  Node loop=IR.whileNode(loopCondition,IR.block(IR.exprResult(IR.yield(elemValue.cloneTree()))));
+  Node yieldStatement=IR.exprResult(IR.yield(elemValue.cloneTree()));
+  Node loop=IR.whileNode(loopCondition,IR.block(yieldStatement));
   enclosingStatement.getParent().addChildBefore(generator,enclosingStatement);
   enclosingStatement.getParent().addChildBefore(entryDecl,enclosingStatement);
   enclosingStatement.getParent().addChildBefore(loop,enclosingStatement);
@@ -15,4 +16,6 @@
  else {
     parent.replaceChild(n,elemValue);
   }
+  visitYieldThrows(yieldStatement,yieldStatement.getParent());
+  compiler.reportCodeChange();
 }

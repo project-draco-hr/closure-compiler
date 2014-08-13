@@ -21,7 +21,7 @@ throwCatchers++;
 }
 break;
 case Token.BREAK:
-if ((breakCatchers == 0 && !n.hasChildren()) || (n.hasChildren() && !labels.contains(n.getFirstChild().getString()))) {
+if (!n.isGeneratorSafe() && ((breakCatchers == 0 && !n.hasChildren()) || (n.hasChildren() && !labels.contains(n.getFirstChild().getString())))) {
 exited=true;
 if (addJumps) {
 parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);

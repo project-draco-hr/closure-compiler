@@ -1,6 +1,6 @@
 {
   hasTranslatedTry=false;
-  Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("{","  var " + GENERATOR_STATE + " = "+ generatorCaseCount+ ";","  return {","    " + ITER_KEY + ": function() { return this; },","    next: function(" + GENERATOR_NEXT_ARG + ") {","      while (1) switch (" + GENERATOR_STATE + ") {","        case " + generatorCaseCount + ":","        default:","          return {value: undefined, done: true};","      }","    }","  }","}")).removeFirstChild();
+  Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("{","  var " + GENERATOR_STATE + " = "+ generatorCaseCount+ ";","  function $jscomp$generator$impl(" + GENERATOR_NEXT_ARG + ", ","      " + GENERATOR_THROW_ARG + ") {","    while (1) switch (" + GENERATOR_STATE + ") {","      case " + generatorCaseCount + ":","      default:","        return {value: undefined, done: true};","    }","  }","  return {","    " + ITER_KEY + ": function() { return this; },","    next: function(arg){ return $jscomp$generator$impl(arg, undefined); },","    throw: function(arg){ return $jscomp$generator$impl(undefined, arg); },","  }","}")).removeFirstChild();
   generatorCaseCount++;
   originalGeneratorBody=n.getLastChild();
   n.replaceChild(originalGeneratorBody,genBlock);
