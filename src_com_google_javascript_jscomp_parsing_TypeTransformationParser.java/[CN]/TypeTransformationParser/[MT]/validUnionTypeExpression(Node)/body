@@ -1,22 +1,10 @@
 {
-  if (!isTypeVar(expr) && !isOperation(expr)) {
-    warnInvalidExpression("union type",expr);
-    return false;
-  }
-  if (isTypeVar(expr)) {
-    return true;
-  }
-  String name=expr.getFirstChild().getString();
-  if (!isUnion(name)) {
-    warnInvalidExpression("union type",expr);
-    return false;
-  }
   if (!checkParameterCount(expr,Keywords.UNION)) {
     return false;
   }
   int numParams=expr.getChildCount() - 1;
   for (int i=0; i < numParams; i++) {
-    if (!validTypeExpression(expr.getChildAtIndex(i))) {
+    if (!validTypeTransformationExpression(expr.getChildAtIndex(i))) {
       warnInvalidInside("union type",expr);
       return false;
     }

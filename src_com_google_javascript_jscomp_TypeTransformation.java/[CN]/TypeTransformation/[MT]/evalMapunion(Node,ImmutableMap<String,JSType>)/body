@@ -4,16 +4,7 @@
   Node mapFunction=params.get(1);
   String paramName=getFunctionParameter(mapFunction,0);
   Node mapFunctionBody=mapFunction.getChildAtIndex(2);
-  JSType unionType;
-  if (isUnionType(unionParam)) {
-    unionType=evalUnionType(unionParam,typeVars);
-  }
- else   if (isTypeVar(unionParam)) {
-    unionType=evalTypeVar(unionParam,typeVars);
-  }
- else {
-    throw new IllegalStateException("Invalid union type parameter in mapunion");
-  }
+  JSType unionType=eval(unionParam,typeVars);
   if (!unionType.isUnionType()) {
     return eval(mapFunctionBody,addNewVar(typeVars,paramName,unionType));
   }

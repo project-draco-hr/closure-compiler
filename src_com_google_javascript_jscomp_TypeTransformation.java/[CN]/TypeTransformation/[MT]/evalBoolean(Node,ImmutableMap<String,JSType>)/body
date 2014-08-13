@@ -2,11 +2,14 @@
   ImmutableList<Node> params=getParameters(ttlAst);
   JSType type0=eval(params.get(0),typeVars);
   JSType type1=eval(params.get(1),typeVars);
-  if (isEqtype(ttlAst)) {
+  String name=ttlAst.getFirstChild().getString();
+  Keywords keyword=nameToKeyword(name);
+switch (keyword) {
+case EQ:
     return type0.isEquivalentTo(type1);
-  }
- else   if (isSubtype(ttlAst)) {
-    return type0.isSubtype(type1);
-  }
-  throw new IllegalStateException("Invalid boolean predicate in the type transformation");
+case SUB:
+  return type0.isSubtype(type1);
+default :
+throw new IllegalStateException("Invalid boolean predicate in the type transformation");
+}
 }

@@ -12,14 +12,12 @@
     return false;
   }
   Keywords keyword=nameToKeyword(name);
-  if (keyword.kind == OperationKind.TYPE_CONSTRUCTOR) {
+switch (keyword.kind) {
+case TYPE_CONSTRUCTOR:
     return validTypeExpression(expr);
-  }
-  if (keyword == Keywords.COND) {
-    return validConditionalExpression(expr);
-  }
-  if (keyword == Keywords.MAPUNION) {
-    return validMapunionExpression(expr);
-  }
-  throw new IllegalStateException("Invalid type transformation expression");
+case OPERATION:
+  return validOperationExpression(expr);
+default :
+throw new IllegalStateException("Invalid type transformation expression");
+}
 }
