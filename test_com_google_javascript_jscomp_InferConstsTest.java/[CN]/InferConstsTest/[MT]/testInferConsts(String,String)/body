@@ -1,0 +1,15 @@
+{
+  Compiler compiler=new Compiler();
+  SourceFile extern=SourceFile.fromCode("extern","");
+  SourceFile input=SourceFile.fromCode("js",js);
+  compiler.init(ImmutableList.<SourceFile>of(),ImmutableList.of(input),new CompilerOptions());
+  compiler.parseInputs();
+  CompilerPass inferConsts=new InferConsts(compiler);
+  inferConsts.process(compiler.getRoot().getFirstChild(),compiler.getRoot().getLastChild());
+  Node n=compiler.getRoot().getLastChild();
+  FindConstants constFinder=new FindConstants(constants);
+  NodeTraversal.traverse(compiler,n,constFinder);
+  for (  String name : constants) {
+    assertTrue("Did not find a const node for " + name,constFinder.foundNodes.containsKey(name));
+  }
+}
