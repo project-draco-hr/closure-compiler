@@ -5,11 +5,6 @@
   LoopClosureTransformer transformer=new LoopClosureTransformer();
   NodeTraversal.traverse(compiler,scriptRoot,transformer);
   transformer.transformLoopClosure();
-  if (!blockScopedDeclarations.isEmpty()) {
-    for (    Node n : blockScopedDeclarations) {
-      n.setType(Token.VAR);
-    }
-    compiler.reportCodeChange();
-  }
+  varify();
   NodeTraversal.traverse(compiler,scriptRoot,new RewriteBlockScopedFunctionDeclaration());
 }

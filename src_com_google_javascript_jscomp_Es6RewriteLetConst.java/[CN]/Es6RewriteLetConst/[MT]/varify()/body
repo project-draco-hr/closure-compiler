@@ -1,0 +1,15 @@
+{
+  if (!blockScopedDeclarations.isEmpty()) {
+    for (    Node n : blockScopedDeclarations) {
+      if (n.isConst()) {
+        JSDocInfoBuilder builder=(n.getJSDocInfo() == null) ? new JSDocInfoBuilder(true) : JSDocInfoBuilder.copyFrom(n.getJSDocInfo());
+        builder.recordConstancy();
+        JSDocInfo info=builder.build(n);
+        info.setAssociatedNode(n);
+        n.setJSDocInfo(info);
+      }
+      n.setType(Token.VAR);
+    }
+    compiler.reportCodeChange();
+  }
+}
