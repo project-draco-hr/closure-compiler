@@ -5,16 +5,21 @@
   String loopId=generatorCounter.get();
   Node arrayName=IR.name(GENERATOR_FOR_IN_ARRAY + loopId);
   Node varName=IR.name(GENERATOR_FOR_IN_VAR + loopId);
+  Node iterableName=IR.name(GENERATOR_FOR_IN_ITER + loopId);
   if (variable.isVar()) {
     variable=variable.removeFirstChild();
   }
-  body.addChildToFront(IR.var(variable,IR.getelem(arrayName.cloneTree(),varName.cloneTree())));
+  body.addChildToFront(IR.ifNode(IR.not(IR.in(variable.cloneTree(),iterableName.cloneTree())),IR.block(IR.continueNode())));
+  body.addChildToFront(IR.var(variable.cloneTree(),IR.getelem(arrayName.cloneTree(),varName.cloneTree())));
   hoistRoot.getParent().addChildAfter(IR.var(arrayName.cloneTree()),hoistRoot);
   hoistRoot.getParent().addChildAfter(IR.var(varName.cloneTree()),hoistRoot);
+  hoistRoot.getParent().addChildAfter(IR.var(iterableName.cloneTree()),hoistRoot);
   Node arrayDef=IR.exprResult(IR.assign(arrayName.cloneTree(),IR.arraylit()));
-  Node newForIn=IR.forIn(varName.cloneTree(),iterable,IR.block(IR.exprResult(IR.call(IR.getprop(arrayName.cloneTree(),IR.string("push")),varName.cloneTree()))));
+  Node iterDef=IR.exprResult(IR.assign(iterableName.cloneTree(),iterable));
+  Node newForIn=IR.forIn(variable.cloneTree(),iterableName,IR.block(IR.exprResult(IR.call(IR.getprop(arrayName.cloneTree(),IR.string("push")),variable))));
   Node newFor=IR.forNode(IR.assign(varName.cloneTree(),IR.number(0)),IR.lt(varName.cloneTree(),IR.getprop(arrayName,IR.string("length"))),IR.inc(varName,true),body);
   enclosingBlock.addChildToBack(arrayDef);
+  enclosingBlock.addChildToBack(iterDef);
   enclosingBlock.addChildToBack(newForIn);
   originalGeneratorBody.addChildToFront(newFor);
 }
