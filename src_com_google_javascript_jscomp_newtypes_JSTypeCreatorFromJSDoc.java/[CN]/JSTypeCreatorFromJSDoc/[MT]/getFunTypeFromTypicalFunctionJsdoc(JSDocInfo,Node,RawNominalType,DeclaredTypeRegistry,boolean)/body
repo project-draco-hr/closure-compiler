@@ -26,6 +26,13 @@
     boolean isRequired=true, isRestFormals=false;
     JSTypeExpression texp=jsdoc == null ? null : jsdoc.getParameterType(pname);
     Node jsdocNode=texp == null ? null : texp.getRootNode();
+    if (convention.isOptionalParameter(param)) {
+      isRequired=false;
+    }
+ else     if (convention.isVarArgsParameter(param)) {
+      isRequired=false;
+      isRestFormals=true;
+    }
     if (jsdocNode != null && jsdocNode.getType() == Token.EQUALS) {
       isRequired=false;
       jsdocNode=jsdocNode.getFirstChild();
@@ -49,7 +56,7 @@
       builder.addReqFormal(fnParamType);
     }
  else     if (isRestFormals) {
-      builder.addRestFormals(fnParamType);
+      builder.addRestFormals(fnParamType == null ? JSType.UNKNOWN : fnParamType);
     }
  else {
       builder.addOptFormal(fnParamType);

@@ -1,8 +1,15 @@
 {
-  Preconditions.checkNotNull(t);
   if (restFormals != null) {
     throw new WrongParameterOrderException("Cannot add optional formal after rest args");
   }
-  optionalFormals.add(t.isBottom() ? t : JSType.join(t,JSType.UNDEFINED));
+  if (t == null) {
+    optionalFormals.add(null);
+  }
+ else   if (t.isBottom()) {
+    optionalFormals.add(JSType.BOTTOM);
+  }
+ else {
+    optionalFormals.add(JSType.join(t,JSType.UNDEFINED));
+  }
   return this;
 }
