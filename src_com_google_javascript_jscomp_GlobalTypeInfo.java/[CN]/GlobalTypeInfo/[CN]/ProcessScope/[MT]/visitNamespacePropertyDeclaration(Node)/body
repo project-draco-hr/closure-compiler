@@ -3,16 +3,9 @@
   if (currentScope.isNamespace(getProp) || NodeUtil.isTypedefDecl(getProp)) {
     return;
   }
-  Node nsNameNode=getProp.getFirstChild();
-  Preconditions.checkState(currentScope.isNamespace(nsNameNode));
-  Namespace ns;
-  if (nsNameNode.isName()) {
-    ns=currentScope.getNamespace(nsNameNode.getString());
-  }
- else {
-    QualifiedName nsQname=QualifiedName.fromGetprop(nsNameNode);
-    ns=currentScope.getNamespace(nsQname.getLeftmostName()).getSubnamespace(nsQname.getAllButLeftmost());
-  }
+  Node recv=getProp.getFirstChild();
+  Preconditions.checkState(currentScope.isNamespace(recv));
+  Namespace ns=currentScope.getNamespace(QualifiedName.fromNode(recv));
   String pname=getProp.getLastChild().getString();
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
   JSType propDeclType=getTypeDeclarationFromJsdoc(jsdoc,currentScope);

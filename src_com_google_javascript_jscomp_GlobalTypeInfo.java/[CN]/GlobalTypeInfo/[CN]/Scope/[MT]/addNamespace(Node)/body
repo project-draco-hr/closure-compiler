@@ -1,13 +1,11 @@
 {
   Preconditions.checkArgument(!isNamespace(qnameNode));
   if (qnameNode.isName()) {
-    String name=qnameNode.getString();
-    localNamespaces.put(name,new NamespaceLit());
+    localNamespaces.put(qnameNode.getString(),new NamespaceLit());
   }
  else {
-    QualifiedName qname=QualifiedName.fromGetprop(qnameNode);
-    String leftmost=qname.getLeftmostName();
-    Namespace ns=getNamespace(leftmost);
+    QualifiedName qname=QualifiedName.fromNode(qnameNode);
+    Namespace ns=getNamespace(qname.getLeftmostName());
     ns.addSubnamespace(qname.getAllButLeftmost());
   }
 }

@@ -1,15 +1,10 @@
 {
+  if (currentScope.isDefined(qnameNode)) {
+    return;
+  }
   if (qnameNode.isGetProp()) {
     Preconditions.checkState(qnameNode.getParent().isAssign());
-    QualifiedName qname=QualifiedName.fromGetprop(qnameNode);
-    String leftmost=qname.getLeftmostName();
-    QualifiedName props=qname.getAllButLeftmost();
-    if (currentScope.getNamespace(leftmost).isDefined(props)) {
-      return;
-    }
     qnameNode.getParent().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
   }
-  if (!currentScope.isNamespace(qnameNode)) {
-    currentScope.addNamespace(qnameNode);
-  }
+  currentScope.addNamespace(qnameNode);
 }
