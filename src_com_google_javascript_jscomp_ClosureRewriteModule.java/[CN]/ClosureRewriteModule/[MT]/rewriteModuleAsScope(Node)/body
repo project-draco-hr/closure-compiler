@@ -1,10 +1,18 @@
 {
-  Node srcref=current.moduleDecl != null ? current.moduleDecl : script;
+  Node moduleRoot=current.moduleStatementRoot;
+  Node srcref=current.moduleDecl != null ? current.moduleDecl : root;
   Node block=IR.block();
   Node scope=IR.exprResult(IR.call(IR.getprop(IR.name("goog"),IR.string("scope")),IR.function(IR.name(""),IR.paramList(),block))).srcrefTree(srcref);
-  Node fromNode=skipHeaderNodes(script);
+  Node fromNode=skipHeaderNodes(moduleRoot);
   Preconditions.checkNotNull(fromNode);
   moveChildrenAfter(fromNode,block);
-  script.addChildAfter(scope,fromNode);
+  moduleRoot.addChildAfter(scope,fromNode);
+  if (root.isCall()) {
+    Node expr=root.getParent();
+    Preconditions.checkState(expr.isExprResult(),expr);
+    expr.getParent().addChildrenAfter(moduleRoot.removeChildren(),expr);
+    expr.detachFromParent();
+  }
   compiler.reportCodeChange();
+  current=null;
 }

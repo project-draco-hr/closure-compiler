@@ -1,4 +1,7 @@
 {
+  if (!inModule()) {
+    return;
+  }
 switch (n.getType()) {
 case Token.CALL:
     Node first=n.getFirstChild();
@@ -7,6 +10,9 @@ case Token.CALL:
   }
  else   if (first.matchesQualifiedName("goog.require")) {
     recordAndUpdateRequire(t,n);
+  }
+ else   if (isLoadModuleCall(n)) {
+    rewriteModuleAsScope(n);
   }
 break;
 case Token.NAME:
@@ -18,6 +24,11 @@ parent.replaceChild(n,replacement);
 break;
 case Token.SCRIPT:
 rewriteModuleAsScope(n);
+break;
+case Token.RETURN:
+if (t.getScopeRoot() == current.moduleScopeRoot) {
+n.detachFromParent();
+}
 break;
 }
 }
