@@ -1,0 +1,9 @@
+{
+  ImmutableList<Node> params=getParameters(ttlAst);
+  JSType type=evalInternal(params.get(0),nameResolver);
+  if (!type.isTemplatizedType()) {
+    reportWarning(ttlAst,TEMPTYPE_INVALID,"rawTypeOf",type.toString());
+    return getUnknownType();
+  }
+  return ((TemplatizedType)type).getReferencedType();
+}

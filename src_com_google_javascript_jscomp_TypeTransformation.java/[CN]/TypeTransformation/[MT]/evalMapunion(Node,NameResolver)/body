@@ -1,0 +1,26 @@
+{
+  ImmutableList<Node> params=getParameters(ttlAst);
+  Node unionParam=params.get(0);
+  Node mapFunction=params.get(1);
+  String paramName=getFunctionParameter(mapFunction,0);
+  if (nameResolver.typeVars.containsKey(paramName)) {
+    reportWarning(ttlAst,DUPLICATE_VARIABLE,paramName);
+    return getUnknownType();
+  }
+  Node mapFunctionBody=mapFunction.getChildAtIndex(2);
+  JSType unionType=evalInternal(unionParam,nameResolver);
+  if (!unionType.isUnionType()) {
+    NameResolver newNameResolver=new NameResolver(addNewEntry(nameResolver.typeVars,paramName,unionType),nameResolver.nameVars);
+    return evalInternal(mapFunctionBody,newNameResolver);
+  }
+  Collection<JSType> unionElms=((UnionType)unionType).getAlternates();
+  int unionSize=unionElms.size();
+  JSType[] newUnionElms=new JSType[unionSize];
+  int i=0;
+  for (  JSType elm : unionElms) {
+    NameResolver newNameResolver=new NameResolver(addNewEntry(nameResolver.typeVars,paramName,elm),nameResolver.nameVars);
+    newUnionElms[i]=evalInternal(mapFunctionBody,newNameResolver);
+    i++;
+  }
+  return createUnionType(newUnionElms);
+}

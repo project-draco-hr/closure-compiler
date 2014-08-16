@@ -1,0 +1,20 @@
+{
+  String name=ttlAst.getFirstChild().getString();
+  Keywords keyword=nameToKeyword(name);
+switch (keyword) {
+case TYPE:
+    return evalTemplatizedType(ttlAst,nameResolver);
+case UNION:
+  return evalUnionType(ttlAst,nameResolver);
+case NONE:
+return getNoType();
+case RAWTYPEOF:
+return evalRawTypeOf(ttlAst,nameResolver);
+case TEMPLATETYPEOF:
+return evalTemplateTypeOf(ttlAst,nameResolver);
+case RECORD:
+return evalRecordType(ttlAst,nameResolver);
+default :
+throw new IllegalStateException("Invalid type expression");
+}
+}

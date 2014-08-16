@@ -1,18 +1,3 @@
 {
-  if (isTypeName(ttlAst)) {
-    return evalTypeName(ttlAst);
-  }
-  if (isTypeVar(ttlAst)) {
-    return evalTypeVar(ttlAst,typeVars);
-  }
-  String name=ttlAst.getFirstChild().getString();
-  Keywords keyword=nameToKeyword(name);
-switch (keyword.kind) {
-case TYPE_CONSTRUCTOR:
-    return evalTypeExpression(ttlAst,typeVars);
-case OPERATION:
-  return evalOperationExpression(ttlAst,typeVars);
-default :
-throw new IllegalStateException("Could not evaluate the type transformation expression");
-}
+  return eval(ttlAst,typeVars,ImmutableMap.<String,String>of());
 }

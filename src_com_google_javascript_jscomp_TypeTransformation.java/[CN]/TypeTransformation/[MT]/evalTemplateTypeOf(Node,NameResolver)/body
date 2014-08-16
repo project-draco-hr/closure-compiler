@@ -1,0 +1,15 @@
+{
+  ImmutableList<Node> params=getParameters(ttlAst);
+  JSType type=evalInternal(params.get(0),nameResolver);
+  if (!type.isTemplatizedType()) {
+    reportWarning(ttlAst,TEMPTYPE_INVALID,"templateTypeOf",type.toString());
+    return getUnknownType();
+  }
+  int index=(int)params.get(1).getDouble();
+  ImmutableList<JSType> templateTypes=((TemplatizedType)type).getTemplateTypes();
+  if (index > templateTypes.size()) {
+    reportWarning(ttlAst,INDEX_OUTOFBOUNDS,Integer.toString(index),Integer.toString(templateTypes.size()));
+    return getUnknownType();
+  }
+  return templateTypes.get(index);
+}

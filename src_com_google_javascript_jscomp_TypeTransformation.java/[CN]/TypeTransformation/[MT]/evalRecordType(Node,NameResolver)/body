@@ -1,0 +1,18 @@
+{
+  Node record=getCallArgument(ttlAst,0);
+  RecordTypeBuilder builder=new RecordTypeBuilder(typeRegistry);
+  for (  Node p : record.children()) {
+    if (p.isComputedProp()) {
+      String nameVar=p.getFirstChild().getString();
+      if (!nameResolver.nameVars.containsKey(nameVar)) {
+        reportWarning(ttlAst,UNKNOWN_NAMEVAR,nameVar);
+        return getUnknownType();
+      }
+      builder.addProperty(nameResolver.nameVars.get(nameVar),evalInternal(p.getChildAtIndex(1),nameResolver),null);
+    }
+ else {
+      builder.addProperty(p.getString(),evalInternal(p.getFirstChild(),nameResolver),null);
+    }
+  }
+  return builder.build();
+}

@@ -1,0 +1,18 @@
+{
+  if (isTypeName(ttlAst)) {
+    return evalTypeName(ttlAst);
+  }
+  if (isTypeVar(ttlAst)) {
+    return evalTypeVar(ttlAst,nameResolver);
+  }
+  String name=ttlAst.getFirstChild().getString();
+  Keywords keyword=nameToKeyword(name);
+switch (keyword.kind) {
+case TYPE_CONSTRUCTOR:
+    return evalTypeExpression(ttlAst,nameResolver);
+case OPERATION:
+  return evalOperationExpression(ttlAst,nameResolver);
+default :
+throw new IllegalStateException("Could not evaluate the type transformation expression");
+}
+}

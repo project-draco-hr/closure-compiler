@@ -1,0 +1,14 @@
+{
+  ImmutableList<Node> params=getParameters(ttlAst);
+  JSType firstParam=evalInternal(params.get(0),nameResolver);
+  if (!isTemplatizable(firstParam)) {
+    reportWarning(ttlAst,BASETYPE_INVALID,firstParam.toString());
+    return getUnknownType();
+  }
+  ObjectType baseType=firstParam.toObjectType();
+  JSType[] templatizedTypes=new JSType[params.size() - 1];
+  for (int i=0; i < templatizedTypes.length; i++) {
+    templatizedTypes[i]=evalInternal(params.get(i + 1),nameResolver);
+  }
+  return createTemplatizedType(baseType,templatizedTypes);
+}
