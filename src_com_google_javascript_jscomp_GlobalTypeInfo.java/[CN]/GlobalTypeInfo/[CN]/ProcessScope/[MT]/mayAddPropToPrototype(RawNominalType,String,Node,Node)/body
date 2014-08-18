@@ -1,0 +1,45 @@
+{
+  Scope methodScope;
+  DeclaredFunctionType methodType;
+  JSType propDeclType;
+  if (initializer != null && initializer.isFunction()) {
+    methodScope=visitFunctionLate(initializer,rawType);
+    methodType=methodScope.getDeclaredType();
+    propDeclType=JSType.fromFunctionType(methodType.toFunctionType());
+  }
+ else {
+    JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(defSite);
+    if (jsdoc != null && jsdoc.containsFunctionDeclaration()) {
+      methodScope=null;
+      methodType=computeFnDeclaredType(jsdoc,pname,defSite,rawType,currentScope);
+      propDeclType=JSType.fromFunctionType(methodType.toFunctionType());
+    }
+ else     if (jsdoc != null && jsdoc.hasType()) {
+      methodScope=null;
+      methodType=null;
+      propDeclType=typeParser.getNodeTypeDeclaration(jsdoc,rawType,currentScope);
+    }
+ else {
+      methodScope=null;
+      methodType=null;
+      propDeclType=null;
+    }
+  }
+  propertyDefs.put(rawType,pname,new PropertyDef(defSite,methodType,methodScope));
+  boolean isConst=NodeUtil.hasConstAnnotation(defSite);
+  if (propDeclType != null || isConst) {
+    if (mayWarnAboutExistingProp(rawType,pname,defSite,propDeclType)) {
+      return;
+    }
+    if (defSite.isGetProp() && propDeclType == null && isConst && !mayWarnAboutNoInit(defSite)) {
+      propDeclType=inferConstTypeFromRhs(defSite);
+    }
+    rawType.addProtoProperty(pname,propDeclType,isConst);
+    if (defSite.isGetProp()) {
+      defSite.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+    }
+  }
+ else {
+    rawType.addUndeclaredProtoProperty(pname);
+  }
+}

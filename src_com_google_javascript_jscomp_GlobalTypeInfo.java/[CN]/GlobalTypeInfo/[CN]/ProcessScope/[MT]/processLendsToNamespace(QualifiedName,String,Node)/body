@@ -1,0 +1,22 @@
+{
+  RawNominalType rawType=currentScope.getNominalType(lendsQname);
+  if (rawType != null && rawType.isInterface()) {
+    warnings.add(JSError.make(objlit,LENDS_ON_BAD_TYPE,lendsName));
+    return;
+  }
+  Namespace borrowerNamespace=currentScope.getNamespace(lendsQname);
+  for (  Node prop : objlit.children()) {
+    String pname=NodeUtil.getObjectLitKeyName(prop);
+    JSType propDeclType=declaredObjLitProps.get(prop);
+    if (propDeclType != null) {
+      borrowerNamespace.addProperty(pname,propDeclType,false);
+    }
+ else {
+      JSType t=simpleInferExprType(prop.getFirstChild());
+      if (t == null) {
+        t=JSType.UNKNOWN;
+      }
+      borrowerNamespace.addProperty(pname,t,false);
+    }
+  }
+}

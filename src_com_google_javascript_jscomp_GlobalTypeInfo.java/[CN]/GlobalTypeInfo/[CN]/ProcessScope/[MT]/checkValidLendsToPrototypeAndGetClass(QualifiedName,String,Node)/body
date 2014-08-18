@@ -1,0 +1,12 @@
+{
+  if (!lendsQname.getRightmostName().equals("prototype")) {
+    warnings.add(JSError.make(objlit,LENDS_ON_BAD_TYPE,lendsName));
+    return null;
+  }
+  QualifiedName recv=lendsQname.getAllButRightmost();
+  RawNominalType rawType=currentScope.getNominalType(recv);
+  if (rawType == null || rawType.isInterface()) {
+    warnings.add(JSError.make(objlit,LENDS_ON_BAD_TYPE,lendsName));
+  }
+  return rawType;
+}
