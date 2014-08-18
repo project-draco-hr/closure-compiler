@@ -1,0 +1,42 @@
+{
+  ImmutableList<Node> params=getParameters(ttlAst);
+  Node recParam=params.get(0);
+  JSType recType=evalInternal(recParam,nameResolver);
+  if (!recType.isRecordType()) {
+    reportWarning(ttlAst,RECTYPE_INVALID,recType.toString());
+    return getUnknownType();
+  }
+  ObjectType objRecType=((ObjectType)recType);
+  Set<String> ownPropsNames=objRecType.getOwnPropertyNames();
+  Node mapFunction=params.get(1);
+  String paramKey=getFunctionParameter(mapFunction,0);
+  String paramValue=getFunctionParameter(mapFunction,1);
+  if (nameResolver.nameVars.containsKey(paramKey)) {
+    reportWarning(ttlAst,DUPLICATE_VARIABLE,paramKey);
+    return getUnknownType();
+  }
+  if (nameResolver.typeVars.containsKey(paramValue)) {
+    reportWarning(ttlAst,DUPLICATE_VARIABLE,paramValue);
+    return getUnknownType();
+  }
+  Node mapFnBody=mapFunction.getChildAtIndex(2);
+  ImmutableMap.Builder<String,JSType> newPropsBuilder=new ImmutableMap.Builder<String,JSType>();
+  for (  String propName : ownPropsNames) {
+    JSType propValue=objRecType.getSlot(propName).getType();
+    NameResolver newNameResolver=new NameResolver(addNewEntry(nameResolver.typeVars,paramValue,propValue),addNewEntry(nameResolver.nameVars,paramKey,propName));
+    JSType mapFnBodyResult=evalInternal(mapFnBody,newNameResolver);
+    if (mapFnBodyResult.isNoType()) {
+      continue;
+    }
+    if (!mapFnBodyResult.isRecordType()) {
+      reportWarning(ttlAst,MAPRECORD_BODY_INVALID,mapFnBodyResult.toString());
+      return getUnknownType();
+    }
+    ObjectType mapFnBodyAsObjType=((ObjectType)mapFnBodyResult);
+    for (    String newPropName : mapFnBodyAsObjType.getOwnPropertyNames()) {
+      JSType newPropValue=mapFnBodyAsObjType.getSlot(newPropName).getType();
+      newPropsBuilder.put(newPropName,newPropValue);
+    }
+  }
+  return createRecordType(newPropsBuilder.build());
+}

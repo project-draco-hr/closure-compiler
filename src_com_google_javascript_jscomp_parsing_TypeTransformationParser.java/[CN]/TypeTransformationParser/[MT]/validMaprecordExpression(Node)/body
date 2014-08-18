@@ -1,0 +1,32 @@
+{
+  if (!checkParameterCount(expr,Keywords.MAPRECORD)) {
+    return false;
+  }
+  if (!validTypeTransformationExpression(getCallArgument(expr,0))) {
+    warnInvalidInside(Keywords.MAPRECORD.name,getCallArgument(expr,0));
+    return false;
+  }
+  if (!getCallArgument(expr,1).isFunction()) {
+    warnInvalid("map function",getCallArgument(expr,1));
+    warnInvalidInside(Keywords.MAPRECORD.name,getCallArgument(expr,1));
+    return false;
+  }
+  Node mapFn=getCallArgument(expr,1);
+  int mapFnParamCount=mapFn.getChildAtIndex(1).getChildCount();
+  if (mapFnParamCount < 2) {
+    warnMissingParam("map function",mapFn);
+    warnInvalidInside(Keywords.MAPRECORD.name,getCallArgument(expr,1));
+    return false;
+  }
+  if (mapFnParamCount > 2) {
+    warnExtraParam("map function",mapFn);
+    warnInvalidInside(Keywords.MAPRECORD.name,getCallArgument(expr,1));
+    return false;
+  }
+  Node mapFnBody=mapFn.getChildAtIndex(2);
+  if (!validTypeTransformationExpression(mapFnBody)) {
+    warnInvalidInside("map function body",mapFnBody);
+    return false;
+  }
+  return true;
+}
