@@ -1,6 +1,16 @@
 {
   JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
   Node nameNode=NodeUtil.getFunctionNameNode(fn);
+  boolean isRedeclaration;
+  if (nameNode == null || !nameNode.isQualifiedName()) {
+    isRedeclaration=false;
+  }
+ else   if (nameNode.isName()) {
+    isRedeclaration=currentScope.isDefinedLocally(nameNode.getString());
+  }
+ else {
+    isRedeclaration=currentScope.isDefined(nameNode);
+  }
   ArrayList<String> formals=new ArrayList<>();
   ArrayList<String> tmpRestFormals=new ArrayList<>();
   Node param=NodeUtil.getFunctionParameters(fn).getFirstChild();
@@ -43,8 +53,11 @@
       rawNominalType=RawNominalType.makeUnrestrictedClass(qname,typeParameters);
     }
     nominaltypesByNode.put(fn,rawNominalType);
+    if (isRedeclaration) {
+      return;
+    }
     if (nameNode.isName() || currentScope.isNamespace(nameNode.getFirstChild())) {
-      if (fn.getParent().isAssign()) {
+      if (nameNode.isGetProp()) {
         fn.getParent().getFirstChild().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
       }
       currentScope.addNominalType(nameNode,rawNominalType);
