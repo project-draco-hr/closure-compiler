@@ -10,7 +10,7 @@
     nodeToDetach=parent.getParent();
     Preconditions.checkState(nodeToDetach.isExprResult());
   }
- else   if (parent.isArrayPattern()) {
+ else   if (parent.isArrayPattern() || parent.isDefaultValue()) {
     return;
   }
  else {
@@ -26,18 +26,27 @@
     if (child.isEmpty()) {
       continue;
     }
-    Node newRHS=IR.getelem(IR.name(tempVarName),IR.number(i));
+    Node newLHS, newRHS;
+    if (child.isDefaultValue()) {
+      Node getElem=IR.getelem(IR.name(tempVarName),IR.number(i));
+      newLHS=child.getFirstChild().detachFromParent();
+      newRHS=IR.hook(IR.sheq(getElem.cloneTree(),IR.name("undefined")),child.getLastChild().detachFromParent(),getElem);
+    }
+ else {
+      newLHS=child.detachFromParent();
+      newRHS=IR.getelem(IR.name(tempVarName),IR.number(i));
+    }
     Node newNode;
     if (parent.isAssign()) {
-      Node assignment=IR.assign(child.detachFromParent(),newRHS);
+      Node assignment=IR.assign(newLHS,newRHS);
       newNode=IR.exprResult(assignment);
     }
  else {
-      newNode=IR.declaration(child.detachFromParent(),newRHS,parent.getType());
+      newNode=IR.declaration(newLHS,newRHS,parent.getType());
     }
     newNode.useSourceInfoFromForTree(arrayPattern);
     nodeToDetach.getParent().addChildBefore(newNode,nodeToDetach);
-    visit(t,child,child.getParent());
+    visit(t,newLHS,newLHS.getParent());
   }
   nodeToDetach.detachFromParent();
   compiler.reportCodeChange();
