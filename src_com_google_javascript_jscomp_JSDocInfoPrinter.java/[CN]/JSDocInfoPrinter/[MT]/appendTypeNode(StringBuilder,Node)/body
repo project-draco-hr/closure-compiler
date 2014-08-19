@@ -1,0 +1,71 @@
+{
+  if (typeNode.getType() == Token.BANG) {
+    sb.append("!");
+    appendTypeNode(sb,typeNode.getFirstChild());
+  }
+ else   if (typeNode.getType() == Token.EQUALS) {
+    appendTypeNode(sb,typeNode.getFirstChild());
+    sb.append("=");
+  }
+ else   if (typeNode.getType() == Token.PIPE) {
+    for (int i=0; i < typeNode.getChildCount() - 1; i++) {
+      appendTypeNode(sb,typeNode.getChildAtIndex(i));
+      sb.append("|");
+    }
+    appendTypeNode(sb,typeNode.getLastChild());
+  }
+ else   if (typeNode.getType() == Token.ELLIPSIS) {
+    sb.append("...");
+    appendTypeNode(sb,typeNode.getFirstChild());
+  }
+ else   if (typeNode.getType() == Token.STAR) {
+    sb.append("*");
+  }
+ else   if (typeNode.getType() == Token.QMARK) {
+    sb.append("?");
+  }
+ else   if (typeNode.isFunction()) {
+    sb.append("function(");
+    Node paramList=typeNode.getFirstChild();
+    if (paramList.isEmpty()) {
+      sb.append(")");
+    }
+ else {
+      for (int i=0; i < paramList.getChildCount() - 1; i++) {
+        appendTypeNode(sb,paramList.getChildAtIndex(i));
+        sb.append(",");
+      }
+      appendTypeNode(sb,paramList.getLastChild());
+      sb.append(")");
+    }
+    Node returnType=typeNode.getLastChild();
+    if (!returnType.isEmpty()) {
+      sb.append(":");
+      appendTypeNode(sb,returnType);
+    }
+  }
+ else   if (typeNode.getType() == Token.LC) {
+    sb.append("{");
+    Node lb=typeNode.getFirstChild();
+    for (int i=0; i < lb.getChildCount() - 1; i++) {
+      Node colon=lb.getChildAtIndex(i);
+      sb.append(colon.getFirstChild().getString() + ":");
+      appendTypeNode(sb,colon.getLastChild());
+      sb.append(",");
+    }
+    Node lastColon=lb.getLastChild();
+    sb.append(lastColon.getFirstChild().getString() + ":");
+    appendTypeNode(sb,lastColon.getLastChild());
+    sb.append("}");
+  }
+ else {
+    if (typeNode.getString().equals("Array")) {
+      sb.append("Array.<");
+      appendTypeNode(sb,typeNode.getFirstChild().getFirstChild());
+      sb.append(">");
+    }
+ else {
+      sb.append(typeNode.getString());
+    }
+  }
+}

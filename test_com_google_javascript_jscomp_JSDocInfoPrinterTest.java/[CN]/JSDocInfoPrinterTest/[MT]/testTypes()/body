@@ -1,0 +1,20 @@
+{
+  builder.recordReturnType(new JSTypeExpression(IR.string("number|string"),""));
+  JSDocInfo info=builder.build(null);
+  assertEquals("/**@return {number|string} */",JSDocInfoPrinter.print(info));
+  builder.recordThisType(new JSTypeExpression(IR.string("...number"),""));
+  info=builder.build(null);
+  assertEquals("/**@this {...number} */",JSDocInfoPrinter.print(info));
+  builder.recordThrowType(new JSTypeExpression(IR.string("*"),""));
+  info=builder.build(null);
+  assertEquals("/**@throws {*} */",JSDocInfoPrinter.print(info));
+  builder.recordTypedef(new JSTypeExpression(IR.string("?"),""));
+  info=builder.build(null);
+  assertEquals("/**@typedef {?} */",JSDocInfoPrinter.print(info));
+  builder.recordEnumParameterType(new JSTypeExpression(IR.string("{foo: number, bar: string}"),""));
+  info=builder.build(null);
+  assertEquals("/**@enum {{foo: number, bar: string}} */",JSDocInfoPrinter.print(info));
+  builder.recordType(new JSTypeExpression(IR.string("!Array.<number|string>"),""));
+  info=builder.build(null);
+  assertEquals("/**@type {!Array.<number|string>} */",JSDocInfoPrinter.print(info));
+}
