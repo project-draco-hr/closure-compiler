@@ -1,0 +1,22 @@
+{
+  final Map<String,String> nameMap=new HashMap<>();
+  for (  String root : roots) {
+    if (s.getOwnSlot(root) != null) {
+      nameMap.put(root,root + "_module");
+    }
+  }
+  if (nameMap.isEmpty()) {
+    return;
+  }
+  new NodeTraversal(compiler,new AbstractPostOrderCallback(){
+    @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
+      if (n.isName()) {
+        String rename=nameMap.get(n.getString());
+        if (rename != null) {
+          n.setString(rename);
+        }
+      }
+    }
+  }
+).traverseAtScope(s);
+}

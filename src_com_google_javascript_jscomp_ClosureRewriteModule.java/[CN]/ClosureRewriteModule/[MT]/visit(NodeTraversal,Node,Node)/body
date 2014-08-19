@@ -3,17 +3,22 @@
     return;
   }
 switch (n.getType()) {
+case Token.FUNCTION:
+    if (current.moduleScopeRoot == n) {
+      current.moduleScope=t.getScope();
+    }
+  break;
 case Token.CALL:
-    Node first=n.getFirstChild();
-  if (first.matchesQualifiedName("goog.module")) {
-    recordAndUpdateModule(t,n);
-  }
- else   if (first.matchesQualifiedName("goog.require")) {
-    recordAndUpdateRequire(t,n);
-  }
- else   if (isLoadModuleCall(n)) {
-    rewriteModuleAsScope(n);
-  }
+Node first=n.getFirstChild();
+if (first.matchesQualifiedName("goog.module")) {
+recordAndUpdateModule(t,n);
+}
+ else if (first.matchesQualifiedName("goog.require")) {
+recordRequire(t,n);
+}
+ else if (isLoadModuleCall(n)) {
+rewriteModuleAsScope(n);
+}
 break;
 case Token.NAME:
 if (n.getString().equals("exports")) {
@@ -23,6 +28,7 @@ parent.replaceChild(n,replacement);
 }
 break;
 case Token.SCRIPT:
+current.moduleScope=t.getScope();
 rewriteModuleAsScope(n);
 break;
 case Token.RETURN:
