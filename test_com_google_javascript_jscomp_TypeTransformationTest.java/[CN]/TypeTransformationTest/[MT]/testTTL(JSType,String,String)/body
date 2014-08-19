@@ -2,7 +2,9 @@
   TypeTransformationParser ttlParser=new TypeTransformationParser(ttlExp,SourceFile.fromCode("[testcode]",ttlExp),errorReporter,0,0);
   if (ttlParser.parseTypeTransformation()) {
     Node ast=ttlParser.getTypeTransformationAst();
-    TypeTransformation typeTransformation=new TypeTransformation(compiler);
+    Node extraTypeDefs=compiler.parseTestCode(EXTRA_TYPE_DEFS);
+    Scope scope=new TypedScopeCreator(compiler).createScope(extraTypeDefs,null);
+    TypeTransformation typeTransformation=new TypeTransformation(compiler,scope);
     JSType resultType=typeTransformation.eval(ast,typeVars,nameVars);
     checkReportedWarningsHelper(expectedWarnings);
     assertTypeEquals(expectedType,resultType);
