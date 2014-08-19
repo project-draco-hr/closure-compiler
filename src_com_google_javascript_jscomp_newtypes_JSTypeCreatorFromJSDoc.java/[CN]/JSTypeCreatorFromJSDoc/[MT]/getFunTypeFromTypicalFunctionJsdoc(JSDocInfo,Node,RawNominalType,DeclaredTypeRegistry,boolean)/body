@@ -1,10 +1,9 @@
 {
   Preconditions.checkArgument(!ignoreJsdoc || jsdoc == null);
-  if (!funNode.isFunction()) {
-    return FunctionTypeBuilder.qmarkFunctionBuilder();
-  }
+  Preconditions.checkArgument(!ignoreJsdoc || funNode.isFunction());
+  boolean ignoreFunNode=!funNode.isFunction();
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
-  Node params=funNode.getFirstChild().getNext();
+  Node params=ignoreFunNode ? null : funNode.getFirstChild().getNext();
   ImmutableList<String> typeParameters=null;
   Node parent=funNode.getParent();
   if (jsdoc != null) {
@@ -20,30 +19,34 @@
       }
     }
   }
-  for (Node param=params.getFirstChild(); param != null; param=param.getNext()) {
-    String pname=param.getString();
-    JSType inlineParamType=ignoreJsdoc ? null : getNodeTypeDeclaration(param.getJSDocInfo(),ownerType,registry,typeParameters);
+  ParamIterator iterator=new ParamIterator(params,jsdoc);
+  while (iterator.hasNext()) {
+    String pname=iterator.nextString();
+    Node param=iterator.getNode();
+    JSType inlineParamType=(ignoreJsdoc || ignoreFunNode) ? null : getNodeTypeDeclaration(param.getJSDocInfo(),ownerType,registry,typeParameters);
     boolean isRequired=true, isRestFormals=false;
     JSTypeExpression texp=jsdoc == null ? null : jsdoc.getParameterType(pname);
     Node jsdocNode=texp == null ? null : texp.getRootNode();
-    if (convention.isOptionalParameter(param)) {
-      isRequired=false;
-    }
- else     if (convention.isVarArgsParameter(param)) {
-      isRequired=false;
-      isRestFormals=true;
-    }
-    if (jsdocNode != null && jsdocNode.getType() == Token.EQUALS) {
-      isRequired=false;
-      jsdocNode=jsdocNode.getFirstChild();
-    }
- else     if (jsdocNode != null && jsdocNode.getType() == Token.ELLIPSIS) {
-      isRequired=false;
-      isRestFormals=true;
-      jsdocNode=jsdocNode.getFirstChild();
+    if (param != null) {
+      if (convention.isOptionalParameter(param)) {
+        isRequired=false;
+      }
+ else       if (convention.isVarArgsParameter(param)) {
+        isRequired=false;
+        isRestFormals=true;
+      }
     }
     JSType fnParamType=null;
     if (jsdocNode != null) {
+      if (jsdocNode.getType() == Token.EQUALS) {
+        isRequired=false;
+        jsdocNode=jsdocNode.getFirstChild();
+      }
+ else       if (jsdocNode.getType() == Token.ELLIPSIS) {
+        isRequired=false;
+        isRestFormals=true;
+        jsdocNode=jsdocNode.getFirstChild();
+      }
       fnParamType=getTypeFromNode(jsdocNode,ownerType,registry,typeParameters);
     }
     if (inlineParamType != null) {
