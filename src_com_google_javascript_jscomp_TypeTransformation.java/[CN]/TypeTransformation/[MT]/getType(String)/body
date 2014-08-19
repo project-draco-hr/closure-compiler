@@ -1,3 +1,33 @@
 {
+  JSType type=null;
+  JSType thisType=null;
+  if (scope != null && scope.getTypeOfThis() != null) {
+    thisType=scope.getTypeOfThis().toObjectType();
+  }
+  if (thisType != null) {
+    type=thisType.getTemplateTypeMap().getTemplateTypeKeyByName(name);
+    if (type != null) {
+      Preconditions.checkState(type.isTemplateType(),"Expected a template type, but found: %s",type);
+      return type;
+    }
+  }
+  StaticSlot<JSType> slot=scope.getSlot(name);
+  if (slot != null) {
+    JSType rawType=slot.getType();
+    if (rawType != null) {
+      if ((rawType.isConstructor() || rawType.isInterface()) && rawType.isFunctionType() && rawType.isNominalConstructor()) {
+        return rawType.toMaybeFunctionType().getInstanceType();
+      }
+      if (rawType.isEnumType()) {
+        return rawType.toMaybeEnumType().getElementsType();
+      }
+    }
+    JSDocInfo info=slot.getJSDocInfo();
+    if (info != null && info.hasTypedefType()) {
+      JSTypeExpression expr=info.getTypedefType();
+      StaticScope<JSType> typedefScope=getScope(scope,name);
+      return expr.evaluate(typedefScope,typeRegistry);
+    }
+  }
   return typeRegistry.getType(name);
 }
