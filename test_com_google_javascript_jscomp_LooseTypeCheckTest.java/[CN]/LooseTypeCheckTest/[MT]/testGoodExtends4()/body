@@ -1,9 +1,0 @@
-{
-  Node n=parseAndTypeCheck("var goog = {};\n" + "/** @constructor */goog.Base = function(){};\n" + "/** @constructor\n"+ "  * @extends {goog.Base} */goog.Derived = function(){};\n");
-  Node subTypeName=n.getLastChild().getLastChild().getFirstChild();
-  assertEquals("goog.Derived",subTypeName.getQualifiedName());
-  FunctionType subCtorType=(FunctionType)subTypeName.getNext().getJSType();
-  assertEquals("goog.Derived",subCtorType.getInstanceType().toString());
-  JSType superType=subCtorType.getPrototype().getImplicitPrototype();
-  assertEquals("goog.Base",superType.toString());
-}
