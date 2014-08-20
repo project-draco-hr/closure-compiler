@@ -12,18 +12,18 @@
     return false;
   }
   Node mapFn=getCallArgument(expr,1);
-  Node mapFnParam=mapFn.getChildAtIndex(1);
-  if (!mapFnParam.hasChildren()) {
-    warnMissingParam("map function",mapFnParam);
+  int mapFnParamCount=getFunctionParamCount(mapFn);
+  if (mapFnParamCount < 1) {
+    warnMissingParam("map function",mapFn);
     warnInvalidInside(Keywords.MAPUNION.name,getCallArgument(expr,1));
     return false;
   }
-  if (!mapFnParam.hasOneChild()) {
-    warnExtraParam("map function",mapFnParam);
+  if (mapFnParamCount > 1) {
+    warnExtraParam("map function",mapFn);
     warnInvalidInside(Keywords.MAPUNION.name,getCallArgument(expr,1));
     return false;
   }
-  Node mapFnBody=mapFn.getChildAtIndex(2);
+  Node mapFnBody=getFunctionBody(mapFn);
   if (!validTypeTransformationExpression(mapFnBody)) {
     warnInvalidInside("map function body",mapFnBody);
     return false;

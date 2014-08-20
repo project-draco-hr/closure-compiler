@@ -2,14 +2,14 @@
   if (!checkParameterCount(expr,Keywords.TYPE)) {
     return false;
   }
-  int numParams=expr.getChildCount() - 1;
+  int paramCount=getCallParamCount(expr);
   Node firstParam=getCallArgument(expr,0);
   if (!isTypeVar(firstParam) && !isTypeName(firstParam)) {
     warnInvalid("type name or type variable",expr);
     warnInvalidInside("template type operation",expr);
     return false;
   }
-  for (int i=1; i < numParams; i++) {
+  for (int i=1; i < paramCount; i++) {
     if (!validTypeTransformationExpression(getCallArgument(expr,i))) {
       warnInvalidInside("template type operation",expr);
       return false;

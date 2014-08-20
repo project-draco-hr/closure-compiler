@@ -1,17 +1,22 @@
 {
   Node record=getCallArgument(ttlAst,0);
   RecordTypeBuilder builder=new RecordTypeBuilder(typeRegistry);
-  for (  Node p : record.children()) {
-    if (p.isComputedProp()) {
-      String nameVar=p.getFirstChild().getString();
-      if (!nameResolver.nameVars.containsKey(nameVar)) {
-        reportWarning(ttlAst,UNKNOWN_NAMEVAR,nameVar);
+  for (  Node propNode : record.children()) {
+    if (propNode.isComputedProp()) {
+      String compPropName=getComputedPropName(propNode);
+      if (!nameResolver.nameVars.containsKey(compPropName)) {
+        reportWarning(ttlAst,UNKNOWN_NAMEVAR,compPropName);
         return getUnknownType();
       }
-      builder.addProperty(nameResolver.nameVars.get(nameVar),evalInternal(p.getChildAtIndex(1),nameResolver),null);
+      Node propValue=getComputedPropValue(propNode);
+      String resolvedName=nameResolver.nameVars.get(compPropName);
+      JSType resultingType=evalInternal(propValue,nameResolver);
+      builder.addProperty(resolvedName,resultingType,null);
     }
  else {
-      builder.addProperty(p.getString(),evalInternal(p.getFirstChild(),nameResolver),null);
+      String propName=propNode.getString();
+      JSType resultingType=evalInternal(propNode.getFirstChild(),nameResolver);
+      builder.addProperty(propName,resultingType,null);
     }
   }
   return builder.build();

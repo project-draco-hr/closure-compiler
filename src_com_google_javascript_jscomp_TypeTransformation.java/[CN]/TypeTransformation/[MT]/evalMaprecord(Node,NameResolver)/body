@@ -1,5 +1,5 @@
 {
-  ImmutableList<Node> params=getParameters(ttlAst);
+  ImmutableList<Node> params=getCallParams(ttlAst);
   Node recParam=params.get(0);
   JSType recType=evalInternal(recParam,nameResolver);
   if (!recType.isRecordType()) {
@@ -19,7 +19,7 @@
     reportWarning(ttlAst,DUPLICATE_VARIABLE,paramValue);
     return getUnknownType();
   }
-  Node mapFnBody=mapFunction.getChildAtIndex(2);
+  Node mapFnBody=getFunctionBody(mapFunction);
   ImmutableMap.Builder<String,JSType> newPropsBuilder=new ImmutableMap.Builder<String,JSType>();
   for (  String propName : ownPropsNames) {
     JSType propValue=objRecType.getSlot(propName).getType();

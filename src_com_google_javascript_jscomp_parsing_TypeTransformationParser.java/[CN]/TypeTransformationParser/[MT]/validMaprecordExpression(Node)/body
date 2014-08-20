@@ -12,7 +12,7 @@
     return false;
   }
   Node mapFn=getCallArgument(expr,1);
-  int mapFnParamCount=mapFn.getChildAtIndex(1).getChildCount();
+  int mapFnParamCount=getFunctionParamCount(mapFn);
   if (mapFnParamCount < 2) {
     warnMissingParam("map function",mapFn);
     warnInvalidInside(Keywords.MAPRECORD.name,getCallArgument(expr,1));
@@ -23,7 +23,7 @@
     warnInvalidInside(Keywords.MAPRECORD.name,getCallArgument(expr,1));
     return false;
   }
-  Node mapFnBody=mapFn.getChildAtIndex(2);
+  Node mapFnBody=getFunctionBody(mapFn);
   if (!validTypeTransformationExpression(mapFnBody)) {
     warnInvalidInside("map function body",mapFnBody);
     return false;

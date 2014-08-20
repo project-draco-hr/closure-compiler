@@ -1,5 +1,5 @@
 {
-  ImmutableList<Node> params=getParameters(ttlAst);
+  ImmutableList<Node> params=getCallParams(ttlAst);
   Node unionParam=params.get(0);
   Node mapFunction=params.get(1);
   String paramName=getFunctionParameter(mapFunction,0);
@@ -7,7 +7,7 @@
     reportWarning(ttlAst,DUPLICATE_VARIABLE,paramName);
     return getUnknownType();
   }
-  Node mapFunctionBody=mapFunction.getChildAtIndex(2);
+  Node mapFunctionBody=getFunctionBody(mapFunction);
   JSType unionType=evalInternal(unionParam,nameResolver);
   if (!unionType.isUnionType()) {
     NameResolver newNameResolver=new NameResolver(addNewEntry(nameResolver.typeVars,paramName,unionType),nameResolver.nameVars);
