@@ -1,0 +1,17 @@
+{
+  super(compiler,requirement);
+  if (requirement.getValueCount() == 0) {
+    throw new InvalidRequirementSpec("missing value");
+  }
+  ImmutableList.Builder<TemplateAstMatcher> builder=ImmutableList.builder();
+  for (  String value : requirement.getValueList()) {
+    Node parseRoot=new JsAst(SourceFile.fromCode("template",value)).getAstRoot(compiler);
+    if (!parseRoot.hasOneChild() || !parseRoot.getFirstChild().isFunction()) {
+      throw new InvalidRequirementSpec("invalid conformance template: " + value);
+    }
+    Node templateRoot=parseRoot.getFirstChild();
+    TemplateAstMatcher astMatcher=new TemplateAstMatcher(compiler,templateRoot);
+    builder.add(astMatcher);
+  }
+  restrictions=builder.build();
+}

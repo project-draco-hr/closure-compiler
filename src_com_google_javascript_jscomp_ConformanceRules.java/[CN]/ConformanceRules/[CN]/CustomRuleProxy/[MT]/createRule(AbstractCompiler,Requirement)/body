@@ -1,0 +1,24 @@
+{
+  try {
+    Class<Rule> custom=getRuleClass(requirement.getJavaClass());
+    Constructor<?> ctor=getRuleConstructor(custom);
+    Rule rule;
+    try {
+      rule=(Rule)(ctor.newInstance(compiler,requirement));
+    }
+ catch (    InvocationTargetException e) {
+      Throwable cause=e.getCause();
+      if (cause instanceof InvalidRequirementSpec) {
+        throw (InvalidRequirementSpec)cause;
+      }
+      throw e;
+    }
+    return rule;
+  }
+ catch (  InvalidRequirementSpec e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw Throwables.propagate(e);
+  }
+}

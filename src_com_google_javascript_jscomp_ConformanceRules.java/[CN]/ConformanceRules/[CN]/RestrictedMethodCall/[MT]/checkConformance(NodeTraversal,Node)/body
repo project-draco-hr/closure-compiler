@@ -1,0 +1,18 @@
+{
+  if (NodeUtil.isGet(n) && ConformanceUtil.isCallTarget(n) && n.getLastChild().isString()) {
+    for (int i=0; i < restrictions.size(); i++) {
+      Restriction r=restrictions.get(i);
+      ConformanceResult result=ConformanceResult.CONFORMANCE;
+      if (matchesProp(n,r)) {
+        result=checkConformance(t,n,r,false);
+      }
+ else       if (n.getLastChild().getString().equals("call") && matchesProp(n.getFirstChild(),r)) {
+        result=checkConformance(t,n,r,true);
+      }
+      if (result != ConformanceResult.CONFORMANCE) {
+        return result;
+      }
+    }
+  }
+  return ConformanceResult.CONFORMANCE;
+}

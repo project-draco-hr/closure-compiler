@@ -1,0 +1,14 @@
+{
+  Class<?> customClass;
+  try {
+    customClass=Class.forName(className);
+  }
+ catch (  ClassNotFoundException e) {
+    throw new InvalidRequirementSpec("JavaClass not found.");
+  }
+  if (RULE_TYPE.isAssignableFrom(TypeToken.of(customClass))) {
+    @SuppressWarnings("unchecked") Class<Rule> ruleClass=(Class<Rule>)customClass;
+    return ruleClass;
+  }
+  throw new InvalidRequirementSpec("JavaClass is not a rule.");
+}

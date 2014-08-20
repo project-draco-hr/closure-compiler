@@ -1,0 +1,22 @@
+{
+  if (reqPatterns == null || reqPatterns.isEmpty()) {
+    return null;
+  }
+  for (  String reqPattern : reqPatterns) {
+    try {
+      Pattern.compile(reqPattern);
+    }
+ catch (    PatternSyntaxException e) {
+      throw new InvalidRequirementSpec("invalid regex pattern");
+    }
+  }
+  Pattern pattern=null;
+  try {
+    String jointRegExp="(" + Joiner.on("|").join(reqPatterns) + ")";
+    pattern=Pattern.compile(jointRegExp);
+  }
+ catch (  PatternSyntaxException e) {
+    throw new RuntimeException("bad joined regexp",e);
+  }
+  return pattern;
+}

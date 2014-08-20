@@ -1,0 +1,20 @@
+{
+  super(compiler,requirement);
+  if (requirement.getValueCount() == 0) {
+    throw new InvalidRequirementSpec("missing value");
+  }
+  ImmutableList.Builder<Restriction> builder=ImmutableList.builder();
+  for (  String value : requirement.getValueList()) {
+    String name=getNameFromValue(value);
+    String restrictedDecl=getTypeFromValue(value);
+    if (name == null || restrictedDecl == null) {
+      throw new InvalidRequirementSpec("bad prop value");
+    }
+    FunctionType restrictedCallType=ConformanceUtil.evaluateTypeString(compiler,restrictedDecl).toMaybeFunctionType();
+    if (restrictedCallType == null) {
+      throw new InvalidRequirementSpec("invalid conformance type");
+    }
+    builder.add(new Restriction(name,restrictedCallType));
+  }
+  restrictions=builder.build();
+}

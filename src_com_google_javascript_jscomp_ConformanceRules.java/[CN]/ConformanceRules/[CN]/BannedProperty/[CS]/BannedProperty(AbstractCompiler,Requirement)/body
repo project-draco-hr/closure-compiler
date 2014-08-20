@@ -1,0 +1,19 @@
+{
+  super(compiler,requirement);
+  if (requirement.getValueCount() == 0) {
+    throw new InvalidRequirementSpec("missing value");
+  }
+  Preconditions.checkArgument(requirement.getType() == Type.BANNED_PROPERTY || requirement.getType() == Type.BANNED_PROPERTY_READ || requirement.getType() == Type.BANNED_PROPERTY_WRITE || requirement.getType() == Type.BANNED_PROPERTY_CALL);
+  requirementType=requirement.getType();
+  ImmutableList.Builder<Property> builder=ImmutableList.builder();
+  List<String> values=requirement.getValueList();
+  for (  String value : values) {
+    String type=getClassFromDeclarationName(value);
+    String property=getPropertyFromDeclarationName(value);
+    if (type == null || property == null) {
+      throw new InvalidRequirementSpec("bad prop value");
+    }
+    builder.add(new Property(type,property));
+  }
+  props=builder.build();
+}
