@@ -1,5 +1,4 @@
 {
-  Preconditions.checkState(this.nominalType == null);
   Preconditions.checkState(this.typeParameters == null);
   Preconditions.checkState(this.outerVarPreconditions.isEmpty());
   if (requiredFormals.size() != other.requiredFormals.size()) {
@@ -30,6 +29,18 @@
     return false;
   }
   if (restFormals != null && !restFormals.unifyWith(other.restFormals,typeParameters,typeMultimap)) {
+    return false;
+  }
+  if (nominalType == null && other.nominalType != null || nominalType != null && other.nominalType == null) {
+    return false;
+  }
+  if (nominalType != null && !nominalType.unifyWith(other.nominalType,typeParameters,typeMultimap)) {
+    return false;
+  }
+  if (receiverType == null && other.receiverType != null || receiverType != null && other.receiverType == null) {
+    return false;
+  }
+  if (receiverType != null && !receiverType.unifyWith(other.receiverType,typeParameters,typeMultimap)) {
     return false;
   }
   return returnType.unifyWith(other.returnType,typeParameters,typeMultimap);
