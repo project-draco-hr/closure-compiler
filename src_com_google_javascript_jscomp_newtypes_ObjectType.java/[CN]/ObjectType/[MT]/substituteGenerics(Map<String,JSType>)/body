@@ -3,8 +3,10 @@
     return this;
   }
   PersistentMap<String,Property> newProps=PersistentMap.create();
-  for (  String p : props.keySet()) {
-    newProps=newProps.with(p,props.get(p).substituteGenerics(concreteTypes));
+  for (  Map.Entry<String,Property> propsEntry : this.props.entrySet()) {
+    String pname=propsEntry.getKey();
+    Property newProp=propsEntry.getValue().substituteGenerics(concreteTypes);
+    newProps=newProps.with(pname,newProp);
   }
   return makeObjectType(nominalType == null ? null : nominalType.instantiateGenerics(concreteTypes),newProps,fn == null ? null : fn.substituteGenerics(concreteTypes),isLoose,objectKind);
 }

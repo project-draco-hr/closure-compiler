@@ -6,6 +6,9 @@
       Property nomProp=resultNominalType.getProp(pname);
       if (nomProp != null) {
         newProps=addOrRemoveProp(newProps,pname,nomProp,propsEntry.getValue());
+        if (newProps == BOTTOM_MAP) {
+          return BOTTOM_MAP;
+        }
       }
     }
   }
@@ -26,8 +29,14 @@
     if (resultNominalType != null && resultNominalType.getProp(pname) != null) {
       Property nomProp=resultNominalType.getProp(pname);
       newProps=addOrRemoveProp(newProps,pname,nomProp,newProp);
+      if (newProps == BOTTOM_MAP) {
+        return BOTTOM_MAP;
+      }
     }
  else {
+      if (newProp.getType().isBottom()) {
+        return BOTTOM_MAP;
+      }
       newProps=newProps.with(pname,newProp);
     }
   }

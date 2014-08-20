@@ -2,7 +2,11 @@
   JSType propType=objProp.getType();
   JSType nomPropType=nomProp.getType();
   if (!propType.isUnknown() && propType.isSubtypeOf(nomPropType) && !propType.equals(nomPropType)) {
-    return props.with(pname,nomProp.specialize(objProp));
+    Property newProp=nomProp.specialize(objProp);
+    if (newProp.getType().isBottom()) {
+      return BOTTOM_MAP;
+    }
+    return props.with(pname,newProp);
   }
   return props.without(pname);
 }

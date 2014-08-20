@@ -3,7 +3,10 @@
   for (  Map.Entry<String,JSType> propTypeEntry : propTypes.entrySet()) {
     String propName=propTypeEntry.getKey();
     JSType propType=propTypeEntry.getValue();
+    if (propType.isBottom()) {
+      return BOTTOM_OBJECT;
+    }
     props=props.with(propName,Property.make(propType,propType));
   }
-  return ObjectType.makeObjectType(null,props,null,false,ObjectKind.UNRESTRICTED);
+  return new ObjectType(null,props,null,false,ObjectKind.UNRESTRICTED);
 }

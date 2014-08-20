@@ -5,7 +5,15 @@
     if (fn != null || other.fn != null) {
       return null;
     }
-    return ObjectType.makeObjectType(resultNominalType,meetPropsHelper(true,resultNominalType,this.props,other.props),null,false,ObjectKind.meet(this.objectKind,other.objectKind));
+    PersistentMap<String,Property> newProps=meetPropsHelper(true,resultNominalType,this.props,other.props);
+    if (newProps == BOTTOM_MAP) {
+      return BOTTOM_OBJECT;
+    }
+    return new ObjectType(resultNominalType,newProps,null,false,ObjectKind.meet(this.objectKind,other.objectKind));
   }
-  return ObjectType.makeObjectType(null,meetPropsHelper(true,null,this.props,other.props),this.fn == null ? null : this.fn.specialize(other.fn),this.isLoose,ObjectKind.meet(this.objectKind,other.objectKind));
+  PersistentMap<String,Property> newProps=meetPropsHelper(true,null,this.props,other.props);
+  if (newProps == BOTTOM_MAP) {
+    return BOTTOM_OBJECT;
+  }
+  return new ObjectType(null,newProps,this.fn == null ? null : this.fn.specialize(other.fn),this.isLoose,ObjectKind.meet(this.objectKind,other.objectKind));
 }

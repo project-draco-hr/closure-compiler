@@ -4,8 +4,10 @@
   }
   FunctionType fn=this.fn == null ? null : this.fn.withLoose();
   PersistentMap<String,Property> newProps=PersistentMap.create();
-  for (  String pname : this.props.keySet()) {
-    newProps=newProps.with(pname,this.props.get(pname).withRequired());
+  for (  Map.Entry<String,Property> propsEntry : this.props.entrySet()) {
+    String pname=propsEntry.getKey();
+    Property prop=propsEntry.getValue();
+    newProps=newProps.with(pname,prop.withRequired());
   }
-  return ObjectType.makeObjectType(nominalType,newProps,fn,true,this.objectKind);
+  return new ObjectType(nominalType,newProps,fn,true,this.objectKind);
 }
