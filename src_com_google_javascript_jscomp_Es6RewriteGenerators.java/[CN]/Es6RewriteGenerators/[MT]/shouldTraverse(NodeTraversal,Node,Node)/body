@@ -1,0 +1,37 @@
+{
+  Node enclosing=NodeUtil.getEnclosingFunction(n);
+  if (enclosing == null || !enclosing.isGeneratorFunction() || !NodeUtil.isLoopStructure(n) || NodeUtil.isForIn(n)) {
+    return true;
+  }
+  Node guard=null, incr=null;
+switch (n.getType()) {
+case Token.FOR:
+    guard=n.getFirstChild().getNext();
+  incr=guard.getNext();
+break;
+case Token.WHILE:
+guard=n.getFirstChild();
+incr=IR.empty();
+break;
+case Token.DO:
+guard=n.getLastChild();
+incr=IR.empty();
+break;
+}
+if (!controlCanExit(guard) && !controlCanExit(incr)) {
+return true;
+}
+Node guardName=IR.name(GENERATOR_LOOP_GUARD + generatorCounter.get());
+if (!guard.isEmpty()) {
+Node container=new Node(Token.BLOCK);
+n.replaceChild(guard,container);
+container.addChildToFront(IR.block(IR.exprResult(IR.assign(guardName.cloneTree(),guard.cloneTree()))));
+container.addChildToBack(guardName.cloneTree());
+}
+if (!incr.isEmpty()) {
+n.addChildBefore(IR.block(IR.exprResult(incr.detachFromParent())),n.getLastChild());
+}
+Node block=NodeUtil.getEnclosingType(n,Token.BLOCK);
+block.addChildToFront(IR.var(guardName));
+return true;
+}

@@ -1,55 +1,69 @@
 {
   Node initializer;
-  Node condition;
-  Node postExpression;
+  Node guard;
+  Node incr;
   Node body;
+  Node firstEntry;
   if (currentStatement.isWhile()) {
-    condition=currentStatement.removeFirstChild();
+    guard=currentStatement.removeFirstChild();
+    firstEntry=null;
     body=currentStatement.removeFirstChild();
     initializer=IR.empty();
-    postExpression=IR.empty();
+    incr=IR.empty();
   }
  else   if (currentStatement.isFor()) {
     initializer=currentStatement.removeFirstChild();
     if (initializer.isAssign()) {
       initializer=IR.exprResult(initializer);
     }
-    condition=currentStatement.removeFirstChild();
-    if (condition.isEmpty()) {
-      condition=IR.trueNode();
-    }
-    postExpression=currentStatement.removeFirstChild();
+    guard=currentStatement.removeFirstChild();
+    firstEntry=null;
+    incr=currentStatement.removeFirstChild();
     body=currentStatement.removeFirstChild();
   }
  else {
     Preconditions.checkState(currentStatement.isDo());
-    Node firstEntry=IR.name(GENERATOR_DO_WHILE_INITIAL);
+    firstEntry=IR.name(GENERATOR_DO_WHILE_INITIAL);
     initializer=IR.var(firstEntry.cloneTree(),IR.trueNode());
-    postExpression=IR.assign(firstEntry.cloneTree(),IR.falseNode());
+    incr=IR.assign(firstEntry.cloneTree(),IR.falseNode());
     body=currentStatement.removeFirstChild();
-    condition=IR.or(firstEntry,currentStatement.removeFirstChild());
+    guard=currentStatement.removeFirstChild();
   }
-  postExpression=postExpression.isEmpty() ? postExpression : IR.exprResult(postExpression);
+  Node condition, prestatement;
+  if (guard.isBlock()) {
+    prestatement=guard.removeFirstChild();
+    condition=guard.removeFirstChild();
+  }
+ else {
+    prestatement=IR.block();
+    condition=guard;
+  }
+  if (currentStatement.isDo()) {
+    condition=IR.or(firstEntry,condition);
+  }
   int loopBeginState=generatorCaseCount++;
   int continueState=loopBeginState;
-  if (!postExpression.isEmpty()) {
+  if (!incr.isEmpty()) {
     continueState=generatorCaseCount++;
     Node continueCase=IR.number(continueState);
     continueCase.setGeneratorMarker(true);
     body.addChildToBack(continueCase);
-    body.addChildToBack(postExpression);
+    body.addChildToBack(incr.isBlock() ? incr : IR.exprResult(incr));
   }
   currentLoopContext.add(0,new LoopContext(generatorCaseCount,continueState,label));
   Node beginCase=IR.number(loopBeginState);
   beginCase.setGeneratorMarker(true);
-  Node conditionalBranch=IR.ifNode(condition,body);
+  Node conditionalBranch=IR.ifNode(condition.isEmpty() ? IR.trueNode() : condition,body);
   Node setStateLoopStart=createStateUpdate(loopBeginState);
   Node breakToStart=createSafeBreak();
+  originalGeneratorBody.addChildToFront(conditionalBranch);
+  if (!prestatement.isEmpty()) {
+    originalGeneratorBody.addChildToFront(prestatement);
+  }
   originalGeneratorBody.addChildToFront(beginCase);
   if (!initializer.isEmpty()) {
     originalGeneratorBody.addChildToFront(initializer);
   }
-  originalGeneratorBody.addChildAfter(conditionalBranch,beginCase);
   body.addChildToBack(setStateLoopStart);
   body.addChildToBack(breakToStart);
 }
