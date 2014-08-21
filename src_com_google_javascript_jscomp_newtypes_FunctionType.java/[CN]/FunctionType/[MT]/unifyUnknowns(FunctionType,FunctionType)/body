@@ -1,0 +1,64 @@
+{
+  Preconditions.checkState(f1 != null || f2 != null);
+  if (f1 == null || f2 == null) {
+    return null;
+  }
+  Preconditions.checkArgument(f1.typeParameters == null);
+  Preconditions.checkArgument(f2.typeParameters == null);
+  Preconditions.checkArgument(f1.outerVarPreconditions.isEmpty());
+  Preconditions.checkArgument(f2.outerVarPreconditions.isEmpty());
+  if (f1.equals(f2)) {
+    return f1;
+  }
+  ImmutableList<JSType> formals1=f1.requiredFormals;
+  ImmutableList<JSType> formals2=f2.requiredFormals;
+  if (formals1.size() != formals2.size()) {
+    return null;
+  }
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  int numReqFormals=formals1.size();
+  for (int i=0; i < numReqFormals; i++) {
+    JSType t=JSType.unifyUnknowns(formals1.get(i),formals2.get(i));
+    if (t == null) {
+      return null;
+    }
+    builder.addReqFormal(t);
+  }
+  formals1=f1.optionalFormals;
+  formals2=f2.optionalFormals;
+  if (formals1.size() != formals2.size()) {
+    return null;
+  }
+  int numOptFormals=formals1.size();
+  for (int i=0; i < numOptFormals; i++) {
+    JSType t=JSType.unifyUnknowns(formals1.get(i),formals2.get(i));
+    if (t == null) {
+      return null;
+    }
+    builder.addOptFormal(t);
+  }
+  if (f1.restFormals == null && f2.restFormals != null || f1.restFormals != null && f2.restFormals == null) {
+    return null;
+  }
+  if (f1.restFormals != null) {
+    JSType t=JSType.unifyUnknowns(f1.restFormals,f2.restFormals);
+    if (t == null) {
+      return null;
+    }
+    builder.addRestFormals(t);
+  }
+  JSType t=JSType.unifyUnknowns(f1.returnType,f2.returnType);
+  if (t == null) {
+    return null;
+  }
+  builder.addRetType(t);
+  if (!Objects.equals(f1.nominalType,f2.nominalType)) {
+    return null;
+  }
+  builder.addNominalType(f1.nominalType);
+  if (!Objects.equals(f1.receiverType,f2.receiverType)) {
+    return null;
+  }
+  builder.addReceiverType(f1.receiverType);
+  return builder.buildFunction();
+}
