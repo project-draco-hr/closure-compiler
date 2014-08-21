@@ -1,5 +1,19 @@
 {
   Preconditions.checkArgument(declNode.isFunction() || declNode.isGetProp());
+  Node parent=declNode.getParent();
+  if (fnDoc == null && !NodeUtil.functionHasInlineJsdocs(declNode) && parent.isCall() && declNode != parent.getFirstChild()) {
+    FunctionType calleeDeclType=getDeclaredFunctionTypeOfCalleeIfAny(parent.getFirstChild(),parentScope);
+    if (calleeDeclType != null) {
+      int index=parent.getIndexOfChild(declNode) - 1;
+      JSType declTypeFromCallee=calleeDeclType.getFormalType(index);
+      if (declTypeFromCallee != null) {
+        DeclaredFunctionType t=computeFnDeclaredTypeFromCallee(declNode,declTypeFromCallee);
+        if (t != null) {
+          return t;
+        }
+      }
+    }
+  }
   ImmutableList<String> typeParameters=fnDoc == null ? null : fnDoc.getTemplateTypeNames();
   FunctionTypeBuilder builder=typeParser.getFunctionType(fnDoc,declNode,ownerType,parentScope);
   RawNominalType ctorType=null;

@@ -1,0 +1,24 @@
+{
+  Preconditions.checkArgument(declNode.isFunction());
+  Preconditions.checkArgument(declNode.getParent().isCall());
+  Preconditions.checkNotNull(declaredTypeAsJSType);
+  FunctionType funType=declaredTypeAsJSType.getFunType();
+  if (funType == null) {
+    return null;
+  }
+  DeclaredFunctionType declType=funType.toDeclaredFunctionType();
+  if (declType == null) {
+    return null;
+  }
+  int numFormals=declNode.getChildAtIndex(1).getChildCount();
+  int reqArity=declType.getRequiredArity();
+  int optArity=declType.getOptionalArity();
+  boolean hasRestFormals=declType.hasRestFormals();
+  if (reqArity == optArity && !hasRestFormals) {
+    return numFormals == reqArity ? declType : null;
+  }
+  if (numFormals == optArity && !hasRestFormals || numFormals == (optArity + 1) && hasRestFormals) {
+    return declType;
+  }
+  return null;
+}

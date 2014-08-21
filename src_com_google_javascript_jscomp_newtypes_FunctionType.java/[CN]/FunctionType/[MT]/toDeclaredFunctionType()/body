@@ -1,0 +1,21 @@
+{
+  Preconditions.checkState(!isLoose);
+  if (typeParameters != null || hasFreeTypeVars(new HashSet<String>())) {
+    return null;
+  }
+  if (nominalType != null) {
+    return null;
+  }
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  for (  JSType type : requiredFormals) {
+    builder.addReqFormal(type);
+  }
+  for (  JSType type : optionalFormals) {
+    builder.addOptFormal(type);
+  }
+  builder.addRestFormals(restFormals);
+  builder.addRetType(returnType);
+  builder.addNominalType(nominalType);
+  builder.addReceiverType(receiverType);
+  return builder.buildDeclaration();
+}
