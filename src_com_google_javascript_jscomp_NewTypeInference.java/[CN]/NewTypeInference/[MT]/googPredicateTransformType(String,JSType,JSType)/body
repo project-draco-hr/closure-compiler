@@ -2,10 +2,14 @@
 switch (typeHint) {
 case "array":
 case "isArray":
-    return booleanContext.isTruthy() ? arrayType : beforeType.removeType(arrayType);
+    JSType arrayType=symbolTable.getArrayType();
+  if (arrayType.isUnknown()) {
+    return JSType.UNKNOWN;
+  }
+return booleanContext.isTruthy() ? arrayType : beforeType.removeType(arrayType);
 case "boolean":
 case "isBoolean":
-  return booleanContext.isTruthy() ? JSType.BOOLEAN : beforeType.removeType(JSType.BOOLEAN);
+return booleanContext.isTruthy() ? JSType.BOOLEAN : beforeType.removeType(JSType.BOOLEAN);
 case "function":
 case "isFunction":
 return booleanContext.isTruthy() ? JSType.topFunction() : beforeType.removeType(JSType.topFunction());

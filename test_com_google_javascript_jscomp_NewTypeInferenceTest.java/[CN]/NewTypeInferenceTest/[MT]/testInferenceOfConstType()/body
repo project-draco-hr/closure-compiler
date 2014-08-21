@@ -1,6 +1,12 @@
 {
   typeCheck("/** @const */\n" + "var s = 'str';\n" + "function f() { s - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("function f(/** string */ x) {\n" + "  /** @const */\n" + "  var s = x;\n"+ "  function g() { s - 5; }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/** @constructor */ function RegExp(){};","/** @const */\n" + "var r = /find/;");
+  typeCheck("/** @constructor */ function RegExp(){};","/** @const */\n" + "var r = /find/;\n" + "function g() { r - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings("/** @constructor */ function Array(){};\n" + "/** @const */\n" + "var a = [5];");
+  typeCheck("/** @constructor */ function Array(){};\n" + "/** @const */\n" + "var a = [5];\n"+ "function g() { a - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("var x;\n" + "/** @const */ var o = x = {};\n" + "function g() { return o.prop; }",TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck("/** @const */ var o = (0,{});\n" + "function g() { return o.prop; }",TypeCheck.INEXISTENT_PROPERTY);
   typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @const */\n"+ "  this.prop = 'str';\n"+ "}\n"+ "(new Foo).prop - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @const */\n"+ "Foo.prop = 'str';\n"+ "function g() { Foo.prop - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("function f(/** string */ s) {\n" + "  /** @constructor */\n" + "  function Foo() {}\n"+ "  /** @const */\n"+ "  Foo.prototype.prop = s;\n"+ "  function g() {\n"+ "    (new Foo).prop - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);

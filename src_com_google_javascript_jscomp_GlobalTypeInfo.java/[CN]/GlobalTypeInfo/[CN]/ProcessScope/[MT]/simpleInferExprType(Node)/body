@@ -1,5 +1,9 @@
 {
 switch (n.getType()) {
+case Token.REGEXP:
+    return getRegexpType();
+case Token.ARRAYLIT:
+  return getArrayType();
 case Token.BITAND:
 case Token.BITNOT:
 case Token.BITOR:
@@ -16,10 +20,10 @@ case Token.POS:
 case Token.RSH:
 case Token.SUB:
 case Token.URSH:
-    return JSType.NUMBER;
+return JSType.NUMBER;
 case Token.STRING:
 case Token.TYPEOF:
-  return JSType.STRING;
+return JSType.STRING;
 case Token.TRUE:
 return JSType.TRUE_TYPE;
 case Token.FALSE:
@@ -74,6 +78,7 @@ return null;
 }
 return recvType.getProp(qname);
 case Token.COMMA:
+case Token.ASSIGN:
 return simpleInferExprType(n.getLastChild());
 case Token.CALL:
 case Token.NEW:
