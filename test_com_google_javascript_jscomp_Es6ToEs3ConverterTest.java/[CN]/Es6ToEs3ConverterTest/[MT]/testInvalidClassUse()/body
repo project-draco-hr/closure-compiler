@@ -1,7 +1,7 @@
 {
   enableTypeCheck(CheckLevel.WARNING);
   compareJsDoc=false;
-  test(EXTERNS_BASE,Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.f = function() {};","class Sub extends Foo {}","(new Sub).f();"),Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.f = function() {};","/** @constructor @struct @extends {Foo} */","var Sub = function() {};","$jscomp.copyProperties(Sub, Foo);","$jscomp.inherits(Sub, Foo);","(new Sub).f();"),null,null);
+  test(EXTERNS_BASE,Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.f = function() {};","class Sub extends Foo {}","(new Sub).f();"),Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.f = function() {};","/** @constructor @struct @extends {Foo} */","var Sub = function() { Sub.base(this, 'constructor'); };","$jscomp.copyProperties(Sub, Foo);","$jscomp.inherits(Sub, Foo);","(new Sub).f();"),null,null);
   test(EXTERNS_BASE,Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.f = function() {};","class Sub extends Foo {}","Sub.f();"),null,null,TypeCheck.INEXISTENT_PROPERTY);
   test(EXTERNS_BASE,Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.f = function() {};","class Sub extends Foo {}"),null,null,TypeCheck.CONFLICTING_SHAPE_TYPE);
 }

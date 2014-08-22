@@ -8,6 +8,20 @@
     compiler.report(JSError.make(superClassName,DYNAMIC_EXTENDS_TYPE));
     return;
   }
+  if (!superClassName.isEmpty()) {
+    boolean hasConstructor=false;
+    for (    Node member : classMembers.children()) {
+      if (member.isMemberDef() && member.getString().equals("constructor")) {
+        hasConstructor=true;
+        break;
+      }
+    }
+    if (!hasConstructor) {
+      Node superCall=IR.call(new Node(Token.SUPER));
+      classMembers.addChildrenToFront(IR.memberDef("constructor",IR.function(IR.name(""),IR.paramList(),IR.block(IR.exprResult(superCall)))).useSourceInfoIfMissingFromForTree(classMembers));
+      visitSuper(superCall.getFirstChild(),superCall);
+    }
+  }
   String fullClassName=null;
   boolean anonymous;
   if (NodeUtil.isStatement(classNode)) {
@@ -104,7 +118,7 @@
   }
   if (constructor == null) {
     Node name=anonymous ? IR.name("").srcref(className) : className;
-    constructor=IR.function(name,IR.paramList().srcref(classNode),IR.block().srcref(classNode));
+    constructor=IR.function(name,IR.paramList(),IR.block()).useSourceInfoIfMissingFromForTree(classNode);
   }
   JSDocInfo classJSDoc=classNode.getJSDocInfo();
   JSDocInfoBuilder newInfo=(classJSDoc != null) ? JSDocInfoBuilder.copyFrom(classJSDoc) : new JSDocInfoBuilder(true);
