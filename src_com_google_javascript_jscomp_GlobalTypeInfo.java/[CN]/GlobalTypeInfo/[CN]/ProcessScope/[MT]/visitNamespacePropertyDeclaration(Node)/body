@@ -4,29 +4,6 @@
     return;
   }
   Node recv=getProp.getFirstChild();
-  Preconditions.checkState(currentScope.isNamespace(recv));
-  Namespace ns=currentScope.getNamespace(QualifiedName.fromNode(recv));
   String pname=getProp.getLastChild().getString();
-  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
-  JSType propDeclType=getTypeAtPropDeclNode(getProp,jsdoc);
-  boolean isConst=NodeUtil.hasConstAnnotation(getProp);
-  if (propDeclType != null || isConst) {
-    JSType previousPropType=ns.getPropDeclaredType(pname);
-    if (ns.hasProp(pname) && previousPropType != null && !suppressDupPropWarning(jsdoc,propDeclType,previousPropType)) {
-      warnings.add(JSError.make(getProp,REDECLARED_PROPERTY,pname,ns.toString()));
-      return;
-    }
-    if (isConst && !mayWarnAboutNoInit(getProp) && propDeclType == null) {
-      propDeclType=inferConstTypeFromRhs(getProp);
-    }
-    ns.addProperty(pname,propDeclType,isConst);
-    getProp.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
-  }
- else {
-    JSType t=simpleInferExprType(getProp.getParent().getLastChild());
-    if (t == null) {
-      t=JSType.UNKNOWN;
-    }
-    ns.addUndeclaredProperty(pname,t,isConst);
-  }
+  visitNamespacePropertyDeclaration(getProp,recv,pname);
 }

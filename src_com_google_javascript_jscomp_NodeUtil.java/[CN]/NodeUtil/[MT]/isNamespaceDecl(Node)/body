@@ -1,4 +1,7 @@
 {
+  if (isEnumDecl(n)) {
+    return false;
+  }
   Node qnameNode;
   Node initializer;
   if (n.getParent().isVar()) {
@@ -31,8 +34,8 @@
   if (initializer == null || qnameNode == null) {
     return false;
   }
-  if (isEmptyObjectLit(initializer)) {
+  if (initializer.isObjectLit()) {
     return true;
   }
-  return initializer.isOr() && qnameNode.matchesQualifiedName(initializer.getFirstChild()) && isEmptyObjectLit(initializer.getLastChild());
+  return initializer.isOr() && qnameNode.matchesQualifiedName(initializer.getFirstChild()) && initializer.getLastChild().isObjectLit();
 }

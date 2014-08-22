@@ -17,7 +17,7 @@
   typeCheck("/** @const */\n" + "var n = ('str', 123);\n" + "function f() { n < 'str'; }",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("/** @const */\n" + "var s = x;\n" + "var /** string */ x;\n",ImmutableList.of(GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE));
   typeCheck("function f(x) {\n" + "  /** @const */\n" + "  var c = x;\n"+ "}",GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
-  typeCheck("function f(x) {\n" + "  /** @const */\n" + "  var c = { a: 1, b: x };\n"+ "}",GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
+  checkNoWarnings("function f(x) {\n" + "  /** @const */\n" + "  var c = { a: 1, b: x };\n"+ "}");
   typeCheck("/**\n" + " * @constructor\n" + " * @param {{ a: string }} x\n"+ " */\n"+ "function Foo(x) {\n"+ "  /** @const */\n"+ "  this.prop = x.a;\n"+ "}\n"+ "(new Foo({ a: ''})).prop - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("/** @return {string} */\n" + "function f() { return ''; }\n" + "/** @const */\n"+ "var s = f();\n"+ "function g() { s - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("/** @const */\n" + "var s = f();\n" + "/** @return {string} */\n"+ "function f() { return ''; }",GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);

@@ -3,15 +3,7 @@
     warnings.add(JSError.make(constExpr,COULD_NOT_INFER_CONST_TYPE));
     return null;
   }
-  Node rhs;
-  if (constExpr.isName()) {
-    Preconditions.checkState(constExpr.getParent().isVar());
-    rhs=constExpr.getFirstChild();
-  }
- else {
-    Preconditions.checkState(constExpr.isGetProp() && constExpr.getParent().isAssign());
-    rhs=constExpr.getParent().getLastChild();
-  }
+  Node rhs=NodeUtil.getInitializer(constExpr);
   JSType rhsType=simpleInferExprType(rhs);
   if (rhsType == null) {
     warnings.add(JSError.make(constExpr,COULD_NOT_INFER_CONST_TYPE));

@@ -70,12 +70,20 @@ JSDocInfo jsdoc=n.getJSDocInfo();
 if (jsdoc != null && jsdoc.getLendsName() != null) {
 lendsObjlits.add(n);
 }
+if (NodeUtil.isNamespaceDecl(parent)) {
+Node namespaceName=parent.isAssign() ? parent.getFirstChild() : parent;
+for (Node prop : n.children()) {
+visitNamespacePropertyDeclaration(prop,namespaceName,prop.getString());
+}
+}
+ else {
 for (Node prop : n.children()) {
 if (prop.getJSDocInfo() != null) {
 declaredObjLitProps.put(prop,getTypeDeclarationFromJsdoc(prop.getJSDocInfo(),currentScope));
 }
 if (NodeUtil.hasConstAnnotation(prop)) {
 warnings.add(JSError.make(prop,MISPLACED_CONST_ANNOTATION));
+}
 }
 }
 break;
