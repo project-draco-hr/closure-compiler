@@ -1,0 +1,22 @@
+{
+  if (!isOperation(expr)) {
+    warnInvalidExpression("boolean",expr);
+    return false;
+  }
+  if (!isValidBooleanPredicate(getCallName(expr))) {
+    warnInvalid("boolean predicate",expr);
+    return false;
+  }
+  Keywords keyword=nameToKeyword(getCallName(expr));
+  if (!checkParameterCount(expr,keyword)) {
+    return false;
+  }
+switch (keyword.kind) {
+case BOOLEAN_TYPE_PREDICATE:
+    return validBooleanTypePredicate(expr);
+case BOOLEAN_STRING_PREDICATE:
+  return validBooleanStringPredicate(expr);
+default :
+throw new IllegalStateException("Invalid boolean expression");
+}
+}

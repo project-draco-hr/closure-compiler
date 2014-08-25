@@ -1,14 +1,11 @@
 {
-  ImmutableList<Node> params=getCallParams(ttlAst);
-  JSType type0=evalInternal(params.get(0),nameResolver);
-  JSType type1=evalInternal(params.get(1),nameResolver);
   String name=getCallName(ttlAst);
   Keywords keyword=nameToKeyword(name);
-switch (keyword) {
-case EQ:
-    return type0.isEquivalentTo(type1);
-case SUB:
-  return type0.isSubtype(type1);
+switch (keyword.kind) {
+case BOOLEAN_STRING_PREDICATE:
+    return evalBooleanStringPredicate(ttlAst,nameResolver);
+case BOOLEAN_TYPE_PREDICATE:
+  return evalBooleanTypePredicate(ttlAst,nameResolver);
 default :
 throw new IllegalStateException("Invalid boolean predicate in the type transformation");
 }

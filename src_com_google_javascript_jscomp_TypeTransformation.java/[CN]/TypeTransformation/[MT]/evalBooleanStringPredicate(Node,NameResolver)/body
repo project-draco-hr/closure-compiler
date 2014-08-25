@@ -1,0 +1,16 @@
+{
+  ImmutableList<Node> params=getCallParams(ttlAst);
+  String str0=evalBooleanStringPredicateParam(params.get(0),nameResolver);
+  String str1=evalBooleanStringPredicateParam(params.get(1),nameResolver);
+  if (str0.equals("") || str1.equals("")) {
+    return false;
+  }
+  String name=getCallName(ttlAst);
+  Keywords keyword=nameToKeyword(name);
+switch (keyword) {
+case STREQ:
+    return str0.equals(str1);
+default :
+  throw new IllegalStateException("Invalid boolean string predicate in the type transformation");
+}
+}
