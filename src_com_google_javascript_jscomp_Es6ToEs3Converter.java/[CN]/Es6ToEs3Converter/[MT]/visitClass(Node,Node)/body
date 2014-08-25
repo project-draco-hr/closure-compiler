@@ -8,20 +8,6 @@
     compiler.report(JSError.make(superClassName,DYNAMIC_EXTENDS_TYPE));
     return;
   }
-  if (!superClassName.isEmpty()) {
-    boolean hasConstructor=false;
-    for (    Node member : classMembers.children()) {
-      if (member.isMemberDef() && member.getString().equals("constructor")) {
-        hasConstructor=true;
-        break;
-      }
-    }
-    if (!hasConstructor) {
-      Node superCall=IR.call(new Node(Token.SUPER));
-      classMembers.addChildrenToFront(IR.memberDef("constructor",IR.function(IR.name(""),IR.paramList(),IR.block(IR.exprResult(superCall)))).useSourceInfoIfMissingFromForTree(classMembers));
-      visitSuper(superCall.getFirstChild(),superCall);
-    }
-  }
   String fullClassName=null;
   boolean anonymous;
   if (NodeUtil.isStatement(classNode)) {
@@ -55,7 +41,6 @@
   String uniqueFullClassName=useUnique ? getUniqueClassName(fullClassName) : fullClassName;
   String superClassString=superClassName.getQualifiedName();
   Verify.verify(NodeUtil.isStatement(insertionPoint));
-  className.detachFromParent();
   Node constructor=null;
   JSDocInfo ctorJSDocInfo=null;
   for (  Node member : classMembers.children()) {
@@ -66,7 +51,7 @@
       ctorJSDocInfo=member.getJSDocInfo();
       constructor=member.getFirstChild().detachFromParent();
       if (!anonymous) {
-        constructor.replaceChild(constructor.getFirstChild(),className);
+        constructor.replaceChild(constructor.getFirstChild(),className.cloneNode());
       }
     }
  else {
@@ -117,8 +102,13 @@
     }
   }
   if (constructor == null) {
-    Node name=anonymous ? IR.name("").srcref(className) : className;
-    constructor=IR.function(name,IR.paramList(),IR.block()).useSourceInfoIfMissingFromForTree(classNode);
+    Node body=IR.block();
+    if (!superClassName.isEmpty()) {
+      Node superCall=baseCall(classNode,"constructor",null);
+      body.addChildToBack(IR.exprResult(superCall));
+    }
+    Node name=anonymous ? IR.name("").srcref(className) : className.detachFromParent();
+    constructor=IR.function(name,IR.paramList(),body).useSourceInfoIfMissingFromForTree(classNode);
   }
   JSDocInfo classJSDoc=classNode.getJSDocInfo();
   JSDocInfoBuilder newInfo=(classJSDoc != null) ? JSDocInfoBuilder.copyFrom(classJSDoc) : new JSDocInfoBuilder(true);
