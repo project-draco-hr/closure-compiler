@@ -1,0 +1,13 @@
+{
+  Node parent=node.getParent();
+  if (parent.isClass() && node != parent.getFirstChild()) {
+    return false;
+  }
+  if (NodeUtil.isNameDeclaration(parent.getParent()) && node == parent.getLastChild()) {
+    return false;
+  }
+  if (parent.isDestructuringPattern() || (parent.isStringKey() && parent.getParent().isObjectPattern()) || (parent.isDefaultValue() && node == parent.getFirstChild())) {
+    return isDeclarationHelper(parent);
+  }
+  return DECLARATION_PARENTS.contains(parent.getType());
+}
