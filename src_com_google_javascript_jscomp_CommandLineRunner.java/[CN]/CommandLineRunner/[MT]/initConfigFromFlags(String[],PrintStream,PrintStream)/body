@@ -1,34 +1,26 @@
 {
+  errorStream=err;
   List<String> processedArgs=processArgs(args);
   Flags.guardLevels.clear();
-  isConfigValid=true;
   List<String> jsFiles=null;
   try {
     flags.parse(processedArgs);
     if (!flags.flagFile.isEmpty()) {
-      processFlagFile(err);
+      processFlagFile();
     }
     jsFiles=flags.getJsFiles();
   }
  catch (  CmdLineException e) {
-    err.println(e.getMessage());
-    isConfigValid=false;
+    reportError(e.getMessage());
   }
 catch (  IOException ioErr) {
-    err.println("ERROR - " + flags.flagFile + " read error.");
-    isConfigValid=false;
-  }
-  if (flags.version) {
-    out.println("Closure Compiler (http://github.com/google/closure-compiler)\n" + "Version: " + Compiler.getReleaseVersion() + "\n"+ "Built on: "+ Compiler.getReleaseDate());
-    out.flush();
+    reportError("ERROR - " + flags.flagFile + " read error.");
   }
   if (flags.processCommonJsModules) {
     flags.processClosurePrimitives=true;
     flags.manageClosureDependencies=true;
     if (flags.commonJsEntryModule == null) {
-      err.println("Please specify --common_js_entry_module.");
-      err.flush();
-      isConfigValid=false;
+      reportError("Please specify --common_js_entry_module.");
     }
     flags.closureEntryPoint=Lists.newArrayList(ProcessCommonJSModules.toModuleName(flags.commonJsEntryModule));
   }
@@ -38,22 +30,25 @@ catch (  IOException ioErr) {
       flags.outputWrapper=Files.toString(new File(flags.outputWrapperFile),UTF_8);
     }
  catch (    Exception e) {
-      err.println("ERROR - invalid output_wrapper_file specified.");
-      isConfigValid=false;
+      reportError("ERROR - invalid output_wrapper_file specified.");
     }
   }
   if (flags.outputWrapper != null && !flags.outputWrapper.isEmpty() && !flags.outputWrapper.contains(CommandLineRunner.OUTPUT_MARKER)) {
-    err.println("ERROR - invalid output_wrapper specified. Missing '" + CommandLineRunner.OUTPUT_MARKER + "'.");
-    isConfigValid=false;
+    reportError("ERROR - invalid output_wrapper specified. Missing '" + CommandLineRunner.OUTPUT_MARKER + "'.");
   }
-  if (!isConfigValid || flags.displayHelp) {
-    isConfigValid=false;
-    flags.printUsage(err);
+  if (errors) {
+    errorStream.println("Run with the --help option for the usage");
+    errorStream.flush();
+  }
+ else   if (flags.displayHelp) {
+    flags.printUsage(out);
   }
  else   if (flags.version) {
-    isConfigValid=false;
+    out.println("Closure Compiler (http://github.com/google/closure-compiler)\n" + "Version: " + Compiler.getReleaseVersion() + "\n"+ "Built on: "+ Compiler.getReleaseDate());
+    out.flush();
   }
  else {
+    runCompiler=true;
     CodingConvention conv;
     if (flags.thirdParty) {
       conv=CodingConventions.getDefault();
@@ -66,4 +61,5 @@ catch (  IOException ioErr) {
     }
     getCommandLineConfig().setPrintTree(flags.printTree).setPrintAst(flags.printAst).setPrintPassGraph(flags.printPassGraph).setJscompDevMode(flags.jscompDevMode).setLoggingLevel(flags.loggingLevel).setExterns(flags.externs).setJs(jsFiles).setJsOutputFile(flags.jsOutputFile).setModule(flags.module).setVariableMapOutputFile(flags.variableMapOutputFile).setCreateNameMapFiles(flags.createNameMapFiles).setPropertyMapOutputFile(flags.propertyMapOutputFile).setCodingConvention(conv).setSummaryDetailLevel(flags.summaryDetailLevel).setOutputWrapper(flags.outputWrapper).setModuleWrapper(flags.moduleWrapper).setModuleOutputPathPrefix(flags.moduleOutputPathPrefix).setCreateSourceMap(flags.createSourceMap).setSourceMapFormat(flags.sourceMapFormat).setSourceMapLocationMappings(flags.getSourceMapLocationMappings()).setWarningGuardSpec(Flags.getWarningGuardSpec()).setDefine(flags.define).setCharset(flags.charset).setManageClosureDependencies(flags.manageClosureDependencies).setOnlyClosureDependencies(flags.onlyClosureDependencies).setClosureEntryPoints(flags.closureEntryPoint).setOutputManifest(ImmutableList.of(flags.outputManifest)).setOutputModuleDependencies(flags.outputModuleDependencies).setAcceptConstKeyword(flags.acceptConstKeyword).setLanguageIn(flags.languageIn).setLanguageOut(flags.languageOut).setProcessCommonJSModules(flags.processCommonJsModules).setRewriteEs6Modules(flags.rewriteEs6Modules).setTranspileOnly(flags.transpileOnly).setCommonJSModulePathPrefix(flags.commonJsPathPrefix).setTransformAMDToCJSModules(flags.transformAmdModules).setWarningsWhitelistFile(flags.warningsWhitelistFile).setAngularPass(flags.angularPass).setTracerMode(flags.tracerMode).setNewTypeInference(flags.useNewTypeInference);
   }
+  errorStream=null;
 }

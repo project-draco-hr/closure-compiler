@@ -1,6 +1,9 @@
 {
   CommandLineRunner runner=createCommandLineRunner(original);
-  assertTrue(new String(errReader.toByteArray()),runner.shouldRunCompiler());
+  if (!runner.shouldRunCompiler()) {
+    assertTrue(runner.hasErrors());
+    fail(new String(errReader.toByteArray()));
+  }
   Supplier<List<SourceFile>> inputsSupplier=null;
   Supplier<List<JSModule>> modulesSupplier=null;
   if (useModules == ModulePattern.NONE) {
