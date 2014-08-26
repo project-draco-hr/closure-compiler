@@ -1,7 +1,7 @@
 {
-  Node parent=getProp.getParent();
-  if (parent.isAssign() && parent.getLastChild().isFunction()) {
-    return JSType.fromFunctionType(currentScope.getScope(getFunInternalName(parent.getLastChild())).getDeclaredType().toFunctionType());
+  Node initializer=NodeUtil.getInitializer(declNode);
+  if (initializer != null && initializer.isFunction()) {
+    return JSType.fromFunctionType(currentScope.getScope(getFunInternalName(initializer)).getDeclaredType().toFunctionType());
   }
   return getTypeDeclarationFromJsdoc(jsdoc,currentScope);
 }
