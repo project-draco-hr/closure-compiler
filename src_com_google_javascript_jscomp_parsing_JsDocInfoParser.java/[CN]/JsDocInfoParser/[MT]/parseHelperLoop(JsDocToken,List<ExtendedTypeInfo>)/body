@@ -11,11 +11,22 @@ case ANNOTATION:
       }
     break;
 case EOC:
-  if (hasParsedFileOverviewDocInfo()) {
-    fileOverviewJSDocInfo=retrieveAndResetParsedJSDocInfo();
-  }
+  boolean success=true;
+if (hasParsedFileOverviewDocInfo()) {
+  fileOverviewJSDocInfo=retrieveAndResetParsedJSDocInfo();
+  Visibility visibility=fileOverviewJSDocInfo.getVisibility();
+switch (visibility) {
+case PRIVATE:
+case PROTECTED:
+    parser.addParserWarning("msg.bad.fileoverview.visibility.annotation",visibility.toString().toLowerCase(),stream.getLineno(),stream.getCharno());
+  success=false;
+break;
+default :
+break;
+}
+}
 checkExtendedTypes(extendedTypes);
-return true;
+return success;
 case EOF:
 jsdocBuilder.build(null);
 parser.addParserWarning("msg.unexpected.eof",stream.getLineno(),stream.getCharno());

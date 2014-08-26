@@ -5,8 +5,14 @@
     boolean isPrivateByConvention=isPrivateByConvention(name.getString());
     boolean isPrivate=isPrivateByConvention;
     JSDocInfo docInfo=var.getJSDocInfo();
+    Visibility visibility=null;
     if (docInfo != null) {
-      Visibility visibility=docInfo.getVisibility();
+      visibility=docInfo.getVisibility();
+    }
+    if ((visibility == null || visibility == Visibility.INHERITED) && fileOverviewJsDoc != null) {
+      visibility=fileOverviewJsDoc.getVisibility();
+    }
+    if (visibility != null) {
       if (visibility != Visibility.INHERITED) {
         isPrivate=visibility == Visibility.PRIVATE;
         if (isPrivateByConvention && !isPrivate) {

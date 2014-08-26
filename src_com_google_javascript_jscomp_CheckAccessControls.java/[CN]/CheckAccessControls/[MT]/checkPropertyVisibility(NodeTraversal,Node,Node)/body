@@ -39,10 +39,14 @@
         break;
       }
     }
+    Visibility fileOverviewVisibility=(fileOverviewJsDoc != null) ? fileOverviewJsDoc.getVisibility() : null;
     if (objectType == null) {
       if (isPrivateByConvention && visibility == Visibility.INHERITED && referenceType != null) {
         objectType=referenceType;
         visibility=Visibility.PRIVATE;
+      }
+ else       if (fileOverviewVisibility != null) {
+        definingSource=fileOverviewJsDoc.getStaticSourceFile();
       }
  else {
         return;
@@ -57,11 +61,17 @@
       if (visibility == Visibility.PRIVATE && !sameInput) {
         compiler.report(t.makeError(getprop,PRIVATE_OVERRIDE,objectType.toString()));
       }
- else       if (overridingVisibility != Visibility.INHERITED && overridingVisibility != visibility) {
+ else       if (overridingVisibility != Visibility.INHERITED && overridingVisibility != visibility && fileOverviewVisibility == null) {
         compiler.report(t.makeError(getprop,VISIBILITY_MISMATCH,visibility.name(),objectType.toString(),overridingVisibility.name()));
+      }
+ else       if (overridingVisibility == Visibility.INHERITED && overridingVisibility != visibility && fileOverviewVisibility != null && fileOverviewVisibility != Visibility.INHERITED) {
+        compiler.report(t.makeError(getprop,BAD_PROPERTY_OVERRIDE_IN_FILE_WITH_FILEOVERVIEW_VISIBILITY,propertyName,fileOverviewVisibility.name()));
       }
     }
  else {
+      if (fileOverviewVisibility != null && visibility == Visibility.INHERITED) {
+        visibility=fileOverviewVisibility;
+      }
       if (sameInput) {
         return;
       }
