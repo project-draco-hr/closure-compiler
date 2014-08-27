@@ -1,0 +1,20 @@
+{
+  String externs="" + "/** @constructor */\n" + "function FooType() {}\n"+ "FooType.prototype.bar = function() {};"+ "FooType.prototype.baz = function() {};";
+  String template=externs + "/**\n" + " * @param {FooType} foo\n"+ " */\n"+ "function before_foo(foo) {\n"+ "  foo.bar();\n"+ "  foo.baz();\n"+ "};\n"+ "function after_foo() {\n"+ "}\n";
+  Compiler compiler=createCompiler();
+  String preamble="var obj = new FooType();\n";
+  String postamble="var someOtherCode = 3;\n";
+  String testCode="" + preamble + "obj.bar();\n"+ "obj.baz();\n"+ postamble;
+  compileTestCode(compiler,testCode,externs);
+  Node root=getScriptRoot(compiler);
+  RefasterJsScanner scanner=createScanner(compiler,template);
+  Match match=new Match(root.getFirstChild().getNext(),new NodeMetadata(compiler));
+  assertTrue(scanner.matches(match.getNode(),match.getMetadata()));
+  List<SuggestedFix> fixes=scanner.processMatch(match);
+  assertEquals(1,fixes.size());
+  Set<CodeReplacement> replacements=fixes.get(0).getReplacements().get("test");
+  assertEquals(2,replacements.size());
+  Iterator<CodeReplacement> iterator=replacements.iterator();
+  assertEquals(new CodeReplacement(preamble.length(),"obj.bar();".length(),""),iterator.next());
+  assertEquals(new CodeReplacement(preamble.length() + "obj.bar();\n".length(),"obj.baz();".length(),""),iterator.next());
+}

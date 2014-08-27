@@ -1,0 +1,10 @@
+{
+  String externs="" + "/** @constructor */\n" + "function Foo() {};\n"+ "Foo.prototype.bar = 3;\n";
+  String input="var foo = new Foo(); foo.bar;";
+  Compiler compiler=getCompiler(externs,input);
+  Node root=compileToScriptRoot(compiler);
+  Node node=root.getLastChild().getFirstChild();
+  assertTrue(Matchers.propertyAccess().matches(node,new NodeMetadata(compiler)));
+  assertTrue(Matchers.propertyAccess("Foo.prototype.bar").matches(node,new NodeMetadata(compiler)));
+  assertTrue(Matchers.propertyAccess("foo.bar").matches(node,new NodeMetadata(compiler)));
+}

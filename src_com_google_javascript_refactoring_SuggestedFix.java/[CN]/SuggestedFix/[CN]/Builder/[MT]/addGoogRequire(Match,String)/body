@@ -1,0 +1,54 @@
+{
+  Node node=m.getNode();
+  NodeMetadata metadata=m.getMetadata();
+  Node existingNode=findGoogRequireNode(m.getNode(),metadata,namespace);
+  if (existingNode != null) {
+    return this;
+  }
+  Node googRequireNode=IR.exprResult(IR.call(IR.getprop(IR.name("goog"),IR.string("require")),IR.string(namespace)));
+  Node script=node.getParent();
+  while (script != null && !script.isScript()) {
+    script=script.getParent();
+  }
+  if (script == null) {
+    return this;
+  }
+  Node lastGoogProvideNode=null;
+  Node lastGoogRequireNode=null;
+  Node nodeToInsertBefore=null;
+  Node child=script.getFirstChild();
+  while (child != null) {
+    if (child.isExprResult() && child.getFirstChild().isCall()) {
+      Node grandchild=child.getFirstChild();
+      if (Matchers.functionCall("goog.provide").matches(grandchild,metadata)) {
+        lastGoogProvideNode=grandchild;
+      }
+ else       if (Matchers.functionCall("goog.require").matches(grandchild,metadata)) {
+        lastGoogRequireNode=grandchild;
+        if (grandchild.getLastChild().isString() && namespace.compareTo(grandchild.getLastChild().getString()) < 0) {
+          nodeToInsertBefore=child;
+          break;
+        }
+      }
+    }
+    child=child.getNext();
+  }
+  if (nodeToInsertBefore == null) {
+    if (lastGoogProvideNode != null || lastGoogRequireNode != null) {
+      Node nodeToInsertAfter=lastGoogRequireNode != null ? lastGoogRequireNode : lastGoogProvideNode;
+      int startPosition=nodeToInsertAfter.getSourceOffset() + nodeToInsertAfter.getLength() + 2;
+      replacements.put(nodeToInsertAfter.getSourceFileName(),new CodeReplacement(startPosition,0,generateCode(m.getMetadata().getCompiler(),googRequireNode)));
+      return this;
+    }
+ else {
+      if (script.getFirstChild() != null) {
+        nodeToInsertBefore=script.getFirstChild();
+      }
+ else {
+        replacements.put(script.getSourceFileName(),new CodeReplacement(0,0,generateCode(m.getMetadata().getCompiler(),googRequireNode)));
+        return this;
+      }
+    }
+  }
+  return insertBefore(nodeToInsertBefore,googRequireNode,m.getMetadata().getCompiler());
+}

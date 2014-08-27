@@ -1,0 +1,9 @@
+{
+  String input="goog.require('abc.def');\n" + "\n" + "/** @private */\n"+ "function foo_() {};\n";
+  Compiler compiler=getCompiler(input);
+  Node root=compileToScriptRoot(compiler);
+  Match match=new Match(root.getFirstChild(),new NodeMetadata(compiler));
+  SuggestedFix fix=new SuggestedFix.Builder().removeGoogRequire(match,"fakefake").build();
+  SetMultimap<String,CodeReplacement> replacementMap=fix.getReplacements();
+  assertEquals(0,replacementMap.size());
+}

@@ -1,0 +1,11 @@
+{
+  String externs="" + "/** @constructor */\n" + "function Foo() {};\n"+ "Foo.prototype.bar = function() {};\n"+ "Foo.prototype.baz = function() {};\n";
+  String input="var foo = new Foo(); foo.bar();";
+  Compiler compiler=getCompiler(externs,input);
+  NodeMetadata metadata=new NodeMetadata(compiler);
+  Node root=compileToScriptRoot(compiler);
+  Node fnCall=root.getLastChild().getFirstChild();
+  assertTrue(fnCall.isCall());
+  assertTrue(Matchers.functionCall("Foo.prototype.bar").matches(fnCall,metadata));
+  assertFalse(Matchers.functionCall("Foo.prototype.baz").matches(fnCall,metadata));
+}

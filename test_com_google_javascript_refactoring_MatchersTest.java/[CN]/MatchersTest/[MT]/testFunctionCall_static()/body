@@ -1,0 +1,8 @@
+{
+  String input="goog.require('goog.dom');";
+  Node root=compileToScriptRoot(getCompiler(input));
+  Node fnCall=root.getFirstChild().getFirstChild();
+  assertTrue(fnCall.isCall());
+  assertTrue(Matchers.functionCall("goog.require").matches(fnCall,null));
+  assertFalse(Matchers.functionCall("goog.provide").matches(fnCall,null));
+}

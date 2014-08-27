@@ -1,0 +1,14 @@
+{
+  String input="/** @constructor */ var Foo = function() {};";
+  Node root=compileToScriptRoot(getCompiler(input));
+  Node ctorNode=root.getFirstChild();
+  assertTrue(Matchers.constructor("Foo").matches(ctorNode,null));
+  input="/** @constructor */ bar.Foo = function() {};";
+  root=compileToScriptRoot(getCompiler(input));
+  ctorNode=root.getFirstChild().getFirstChild();
+  assertTrue(Matchers.constructor("bar.Foo").matches(ctorNode,null));
+  input="/** @constructor */ function Foo() {};";
+  root=compileToScriptRoot(getCompiler(input));
+  ctorNode=root.getFirstChild();
+  assertTrue(Matchers.constructor("Foo").matches(ctorNode,null));
+}

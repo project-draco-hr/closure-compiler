@@ -1,0 +1,16 @@
+{
+  JSDocInfo jsDoc=NodeUtil.getBestJSDocInfo(beforeTemplate);
+  if (jsDoc == null) {
+    return ImmutableList.of();
+  }
+  String jsDocContent=jsDoc.getOriginalCommentString();
+  if (jsDocContent == null) {
+    return ImmutableList.of();
+  }
+  ImmutableList.Builder<String> requires=ImmutableList.builder();
+  Matcher m=pattern.matcher(jsDocContent);
+  while (m.find()) {
+    requires.add(m.group(1));
+  }
+  return requires.build();
+}

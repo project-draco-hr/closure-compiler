@@ -1,0 +1,20 @@
+{
+  return new Matcher(){
+    @Override public boolean matches(    Node node,    NodeMetadata metadata){
+      if (!node.isNew()) {
+        return false;
+      }
+      JSType providedJsType=getJsType(metadata,className);
+      if (providedJsType == null) {
+        return false;
+      }
+      JSType jsType=node.getJSType();
+      if (jsType == null) {
+        return false;
+      }
+      jsType=jsType.restrictByNotNullOrUndefined();
+      return areTypesEquivalentIgnoringGenerics(jsType,providedJsType);
+    }
+  }
+;
+}

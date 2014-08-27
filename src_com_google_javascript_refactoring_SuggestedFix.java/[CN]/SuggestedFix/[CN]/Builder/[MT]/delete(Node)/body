@@ -1,0 +1,11 @@
+{
+  int startPosition=n.getSourceOffset();
+  int length=n.getLength();
+  JSDocInfo jsDoc=n.isExprResult() ? n.getFirstChild().getJSDocInfo() : n.getJSDocInfo();
+  if (jsDoc != null) {
+    length=n.getLength() + (startPosition - jsDoc.getOriginalCommentPosition());
+    startPosition=jsDoc.getOriginalCommentPosition();
+  }
+  replacements.put(n.getSourceFileName(),new CodeReplacement(startPosition,length,""));
+  return this;
+}

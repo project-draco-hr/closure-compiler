@@ -1,0 +1,26 @@
+{
+  String[] parts=name.split(".prototype.");
+  String className=parts[0];
+  String propertyName=parts[1];
+  JSType providedJsType=getJsType(metadata,className);
+  if (providedJsType == null) {
+    return false;
+  }
+  JSType jsType=null;
+  if (node.hasChildren()) {
+    jsType=node.getFirstChild().getJSType();
+  }
+  if (jsType == null) {
+    return false;
+  }
+  jsType=jsType.restrictByNotNullOrUndefined();
+  if (!jsType.isUnknownType() && !jsType.isAllType() && jsType.isSubtype(providedJsType)) {
+    if (node.isName() && propertyName.equals(node.getString())) {
+      return true;
+    }
+ else     if (node.isGetProp() && propertyName.equals(node.getLastChild().getString())) {
+      return true;
+    }
+  }
+  return false;
+}

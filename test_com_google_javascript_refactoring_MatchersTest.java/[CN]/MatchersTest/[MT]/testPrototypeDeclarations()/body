@@ -1,0 +1,12 @@
+{
+  String input="" + "/** @constructor */\n" + "function Foo() {}\n"+ "Foo.prototype.bar = 3;\n"+ "Foo.prototype.baz = function() {};\n";
+  Compiler compiler=getCompiler(input);
+  NodeMetadata metadata=new NodeMetadata(compiler);
+  Node root=compileToScriptRoot(compiler);
+  Node prototypeVarAssign=root.getFirstChild().getNext().getFirstChild();
+  Node prototypeFnAssign=root.getLastChild().getFirstChild();
+  assertTrue(Matchers.prototypeVariableDeclaration().matches(prototypeVarAssign.getFirstChild(),metadata));
+  assertFalse(Matchers.prototypeMethodDeclaration().matches(prototypeVarAssign.getFirstChild(),metadata));
+  assertTrue(Matchers.prototypeMethodDeclaration().matches(prototypeFnAssign.getFirstChild(),metadata));
+  assertFalse(Matchers.prototypeVariableDeclaration().matches(prototypeFnAssign.getFirstChild(),metadata));
+}

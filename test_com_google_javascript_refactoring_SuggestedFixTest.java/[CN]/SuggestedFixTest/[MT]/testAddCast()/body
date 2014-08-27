@@ -1,0 +1,9 @@
+{
+  String input="obj.fnCall();";
+  Compiler compiler=getCompiler(input);
+  Node root=compileToScriptRoot(compiler);
+  Node objNode=root.getFirstChild().getFirstChild().getFirstChild().getFirstChild();
+  SuggestedFix fix=new SuggestedFix.Builder().addCast(objNode,compiler,"FooBar").build();
+  CodeReplacement replacement=new CodeReplacement(0,"obj".length(),"/** @type {FooBar} */ (obj)");
+  assertReplacement(fix,replacement);
+}

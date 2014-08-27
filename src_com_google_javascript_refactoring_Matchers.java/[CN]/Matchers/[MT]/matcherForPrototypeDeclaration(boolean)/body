@@ -1,0 +1,22 @@
+{
+  return new Matcher(){
+    @Override public boolean matches(    Node node,    NodeMetadata metadata){
+      Node firstChild=node.getFirstChild();
+      if (node.isGetProp() && firstChild.isGetProp() && firstChild.getLastChild().isString()&& "prototype".equals(firstChild.getLastChild().getString())) {
+        JSType fnJsType=getJsType(metadata,JSTypeNative.FUNCTION_FUNCTION_TYPE);
+        JSType jsType=node.getJSType();
+        if (jsType == null) {
+          return false;
+        }
+ else         if (requireFunctionType) {
+          return jsType.canCastTo(fnJsType);
+        }
+ else {
+          return !jsType.canCastTo(fnJsType);
+        }
+      }
+      return false;
+    }
+  }
+;
+}

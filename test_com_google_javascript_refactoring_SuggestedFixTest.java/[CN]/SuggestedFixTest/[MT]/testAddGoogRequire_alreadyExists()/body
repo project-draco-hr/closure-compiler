@@ -1,0 +1,9 @@
+{
+  String input="goog.provide('js.Foo');\n" + "goog.require('abc.def');\n" + "\n"+ "/** @private */\n"+ "function foo_() {};\n";
+  Compiler compiler=getCompiler(input);
+  Node root=compileToScriptRoot(compiler);
+  Match match=new Match(root.getFirstChild(),new NodeMetadata(compiler));
+  SuggestedFix fix=new SuggestedFix.Builder().addGoogRequire(match,"abc.def").build();
+  SetMultimap<String,CodeReplacement> replacementMap=fix.getReplacements();
+  assertEquals(0,replacementMap.size());
+}

@@ -1,0 +1,19 @@
+{
+  JSDocInfo info=NodeUtil.getBestJSDocInfo(n);
+  Preconditions.checkNotNull(info,"Node " + n + " does not have JS Doc associated with it.");
+  Node typeNode=JsDocInfoParser.parseTypeString(type);
+  Preconditions.checkNotNull(typeNode,"Invalid type: %s",type);
+  JSTypeExpression typeExpr=new JSTypeExpression(typeNode,"jsflume");
+  JSType newJsType=typeExpr.evaluate(null,compiler.getTypeRegistry());
+  if (newJsType == null) {
+    throw new RuntimeException("JS Compiler does not recognize type: " + type);
+  }
+  String originalComment=info.getOriginalCommentString();
+  int originalPosition=info.getOriginalCommentPosition();
+  Pattern typeDocPattern=Pattern.compile("@(type|private|protected|public|const|return) *\\{?[^\\s}]+\\}?");
+  Matcher m=typeDocPattern.matcher(originalComment);
+  while (m.find()) {
+    replacements.put(n.getSourceFileName(),new CodeReplacement(originalPosition + m.start(),m.end() - m.start(),"@" + m.group(1) + " {"+ type+ "}"));
+  }
+  return this;
+}

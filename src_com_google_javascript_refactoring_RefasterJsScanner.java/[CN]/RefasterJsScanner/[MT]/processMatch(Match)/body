@@ -1,0 +1,22 @@
+{
+  SuggestedFix.Builder fix=new SuggestedFix.Builder();
+  Node newNode=transformNode(matchedTemplate.afterTemplate.getLastChild(),matchedTemplate.matcher.getTemplateNodeToMatchMap());
+  Node nodeToReplace=match.getNode();
+  if (nodeToReplace.getParent().isExprResult()) {
+    nodeToReplace=nodeToReplace.getParent();
+  }
+  fix.replace(nodeToReplace,newNode,match.getMetadata().getCompiler());
+  Node n=match.getNode().getNext();
+  for (int i=1; i < matchedTemplate.beforeTemplate.getLastChild().getChildCount(); i++) {
+    Preconditions.checkNotNull(n,"Found mismatched sibling count between before template and matched node.\n" + "Template: %s\nMatch: %s",matchedTemplate.beforeTemplate.getLastChild(),match.getNode());
+    fix.delete(n);
+    n=n.getNext();
+  }
+  for (  String require : matchedTemplate.getGoogRequiresToAdd()) {
+    fix.addGoogRequire(match,require);
+  }
+  for (  String require : matchedTemplate.getGoogRequiresToRemove()) {
+    fix.removeGoogRequire(match,require);
+  }
+  return ImmutableList.of(fix.build());
+}

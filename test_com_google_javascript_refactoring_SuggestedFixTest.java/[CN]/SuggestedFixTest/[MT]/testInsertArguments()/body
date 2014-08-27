@@ -1,0 +1,9 @@
+{
+  String before="goog.dom.classes.add(";
+  String after="foo, bar);";
+  Compiler compiler=getCompiler(before + after);
+  Node root=compileToScriptRoot(compiler);
+  SuggestedFix fix=new SuggestedFix.Builder().insertArguments(root.getFirstChild().getFirstChild(),0,"baz").build();
+  CodeReplacement replacement=new CodeReplacement(before.length(),0,"baz, ");
+  assertReplacement(fix,replacement);
+}

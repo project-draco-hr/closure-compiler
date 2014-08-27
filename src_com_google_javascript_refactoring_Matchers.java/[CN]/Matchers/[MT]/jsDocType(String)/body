@@ -1,0 +1,18 @@
+{
+  return new Matcher(){
+    @Override public boolean matches(    Node node,    NodeMetadata metadata){
+      JSType providedJsType=getJsType(metadata,type);
+      if (providedJsType == null) {
+        return false;
+      }
+      providedJsType=providedJsType.restrictByNotNullOrUndefined();
+      JSDocInfo jsDoc=node.getParent().isVar() ? node.getParent().getJSDocInfo() : node.getJSDocInfo();
+      JSType jsType=node.getJSType();
+      if (jsDoc != null && jsType != null && providedJsType.isEquivalentTo(jsType.restrictByNotNullOrUndefined())) {
+        return true;
+      }
+      return false;
+    }
+  }
+;
+}

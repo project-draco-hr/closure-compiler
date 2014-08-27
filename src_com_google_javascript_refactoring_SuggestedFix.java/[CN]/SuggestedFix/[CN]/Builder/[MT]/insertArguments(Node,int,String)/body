@@ -1,0 +1,26 @@
+{
+  Preconditions.checkArgument(n.isCall(),"insertArguments is only applicable to function call nodes.");
+  int startPosition;
+  Node argument=n.getFirstChild().getNext();
+  int i=0;
+  while (argument != null && i < position) {
+    argument=argument.getNext();
+    i++;
+  }
+  if (argument == null) {
+    Preconditions.checkArgument(position == i,"The specified position must be less than the number of arguments.");
+    startPosition=n.getSourceOffset() + n.getLength() - 1;
+  }
+ else {
+    startPosition=argument.getSourceOffset();
+  }
+  String newContent=Joiner.on(", ").join(args);
+  if (argument != null) {
+    newContent+=", ";
+  }
+ else   if (i > 0) {
+    newContent=", " + newContent;
+  }
+  replacements.put(n.getSourceFileName(),new CodeReplacement(startPosition,0,newContent));
+  return this;
+}

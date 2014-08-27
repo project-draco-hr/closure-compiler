@@ -1,0 +1,8 @@
+{
+  Compiler compiler=getCompiler(before + after);
+  Node root=compileToScriptRoot(compiler);
+  Match match=new Match(root.getFirstChild(),new NodeMetadata(compiler));
+  SuggestedFix fix=new SuggestedFix.Builder().addGoogRequire(match,namespace).build();
+  CodeReplacement replacement=new CodeReplacement(before.length(),0,"goog.require('" + namespace + "');\n");
+  assertReplacement(fix,replacement);
+}

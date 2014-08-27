@@ -1,0 +1,20 @@
+{
+  Node clone=templateNode.cloneNode();
+  if (templateNode.isName()) {
+    String name=templateNode.getString();
+    if (templateNodeToMatchMap.containsKey(name)) {
+      Node templateMatch=templateNodeToMatchMap.get(name);
+      Preconditions.checkNotNull(templateMatch,"Match for %s is null",name);
+      if (templateNode.getParent().isVar()) {
+        clone.setString(templateMatch.getString());
+      }
+ else {
+        return templateMatch.cloneTree();
+      }
+    }
+  }
+  for (  Node child : templateNode.children()) {
+    clone.addChildToBack(transformNode(child,templateNodeToMatchMap));
+  }
+  return clone;
+}

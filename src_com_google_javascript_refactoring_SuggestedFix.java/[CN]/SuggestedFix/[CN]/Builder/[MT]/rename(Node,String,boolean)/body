@@ -1,0 +1,26 @@
+{
+  Node nodeToRename=null;
+  if (n.isCall()) {
+    Node child=n.getFirstChild();
+    nodeToRename=child;
+    if (!replaceEntireName && child.isGetProp()) {
+      nodeToRename=child.getLastChild();
+    }
+  }
+ else   if (n.isGetProp()) {
+    nodeToRename=n.getLastChild();
+    if (replaceEntireName) {
+      while (nodeToRename.getParent().isGetProp()) {
+        nodeToRename=nodeToRename.getParent();
+      }
+    }
+  }
+ else   if (n.isStringKey()) {
+    nodeToRename=n;
+  }
+ else {
+    throw new UnsupportedOperationException("Rename is not implemented for node type: " + n.getType());
+  }
+  replacements.put(nodeToRename.getSourceFileName(),new CodeReplacement(nodeToRename.getSourceOffset(),nodeToRename.getLength(),name));
+  return this;
+}

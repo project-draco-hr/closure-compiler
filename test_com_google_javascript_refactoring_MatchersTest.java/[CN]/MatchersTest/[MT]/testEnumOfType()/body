@@ -1,0 +1,8 @@
+{
+  String input="/** @enum {string} */ var foo = {BAR: 'baz'};";
+  Compiler compiler=getCompiler(input);
+  Node root=compileToScriptRoot(compiler);
+  Node enumNode=root.getFirstChild().getFirstChild();
+  assertTrue(Matchers.enumDefinitionOfType("string").matches(enumNode,new NodeMetadata(compiler)));
+  assertFalse(Matchers.enumDefinitionOfType("number").matches(enumNode,new NodeMetadata(compiler)));
+}

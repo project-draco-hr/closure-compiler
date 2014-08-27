@@ -1,0 +1,12 @@
+{
+  String input="foo.bar.method();";
+  Compiler compiler=getCompiler(input);
+  Node root=compileToScriptRoot(compiler);
+  Node methodNode=root.getFirstChild().getFirstChild().getFirstChild();
+  Node barNode=methodNode.getFirstChild();
+  assertTrue(Matchers.propertyAccess().matches(methodNode,new NodeMetadata(compiler)));
+  assertTrue(Matchers.propertyAccess().matches(barNode,new NodeMetadata(compiler)));
+  assertTrue(Matchers.propertyAccess("foo.bar.method").matches(methodNode,new NodeMetadata(compiler)));
+  assertTrue(Matchers.propertyAccess("foo.bar").matches(barNode,new NodeMetadata(compiler)));
+  assertFalse(Matchers.propertyAccess("foo").matches(barNode.getFirstChild(),new NodeMetadata(compiler)));
+}

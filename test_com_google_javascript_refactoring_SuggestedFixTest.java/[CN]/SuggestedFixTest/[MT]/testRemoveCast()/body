@@ -1,0 +1,10 @@
+{
+  String input="var x = /** @type {string} */ (y);";
+  Compiler compiler=getCompiler(input);
+  Node root=compileToScriptRoot(compiler);
+  Node castNode=root.getFirstChild().getFirstChild().getFirstChild();
+  assertTrue(castNode.isCast());
+  SuggestedFix fix=new SuggestedFix.Builder().removeCast(castNode,compiler).build();
+  CodeReplacement replacement=new CodeReplacement("var x = ".length(),"/** @type {string} */ (y)".length(),"y");
+  assertReplacement(fix,replacement);
+}

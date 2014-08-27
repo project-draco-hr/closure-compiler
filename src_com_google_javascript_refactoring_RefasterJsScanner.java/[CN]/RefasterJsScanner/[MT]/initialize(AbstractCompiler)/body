@@ -1,0 +1,29 @@
+{
+  Preconditions.checkState(!Strings.isNullOrEmpty(templateJs),"The template JS must be loaded before the scanner is used.");
+  Node scriptRoot=new JsAst(SourceFile.fromCode("template",templateJs)).getAstRoot(compiler);
+  Map<String,Node> beforeTemplates=Maps.newHashMap();
+  Map<String,Node> afterTemplates=Maps.newHashMap();
+  for (  Node templateNode : scriptRoot.children()) {
+    if (templateNode.isFunction()) {
+      String fnName=templateNode.getFirstChild().getQualifiedName();
+      if (fnName.startsWith("before_")) {
+        String templateName=fnName.substring("before_".length());
+        Preconditions.checkState(!beforeTemplates.containsKey(templateName),"Found existing template with the same name: %s",beforeTemplates.get(templateName));
+        Preconditions.checkState(templateNode.getLastChild().hasChildren(),"Before templates are not allowed to be empty!");
+        beforeTemplates.put(templateName,templateNode);
+      }
+ else       if (fnName.startsWith("after_")) {
+        String templateName=fnName.substring("after_".length());
+        Preconditions.checkState(!afterTemplates.containsKey(templateName),"Found existing template with the same name: %s",afterTemplates.get(templateName));
+        afterTemplates.put(templateName,templateNode);
+      }
+    }
+  }
+  Preconditions.checkState(!beforeTemplates.isEmpty(),"Did not find any RefasterJs templates!");
+  ImmutableList.Builder<RefasterJsTemplate> builder=ImmutableList.builder();
+  for (  String templateName : beforeTemplates.keySet()) {
+    Preconditions.checkState(afterTemplates.containsKey(templateName),"Found before template without a corresponding after template: %s",templateName);
+    builder.add(new RefasterJsTemplate(compiler,beforeTemplates.get(templateName),afterTemplates.get(templateName)));
+  }
+  this.templates=builder.build();
+}

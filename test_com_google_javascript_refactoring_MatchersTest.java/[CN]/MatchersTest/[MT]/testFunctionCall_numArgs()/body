@@ -1,0 +1,12 @@
+{
+  String input="goog.base(this)";
+  Node root=compileToScriptRoot(getCompiler(input));
+  Node fnCall=root.getFirstChild().getFirstChild();
+  assertTrue(fnCall.isCall());
+  assertTrue(Matchers.functionCallWithNumArgs(1).matches(fnCall,null));
+  assertFalse(Matchers.functionCallWithNumArgs(2).matches(fnCall,null));
+  assertTrue(Matchers.functionCallWithNumArgs("goog.base",1).matches(fnCall,null));
+  assertFalse(Matchers.functionCallWithNumArgs("goog.base",2).matches(fnCall,null));
+  assertFalse(Matchers.functionCallWithNumArgs("goog.require",1).matches(fnCall,null));
+  assertFalse(Matchers.functionCallWithNumArgs("goog.require",2).matches(fnCall,null));
+}

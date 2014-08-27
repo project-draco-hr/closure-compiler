@@ -1,0 +1,9 @@
+{
+  String before="/** ";
+  String after="@type {Foo} */\nvar foo = new Foo()";
+  Compiler compiler=getCompiler(before + after);
+  Node root=compileToScriptRoot(compiler);
+  SuggestedFix fix=new SuggestedFix.Builder().changeJsDocType(root.getFirstChild(),compiler,"Object").build();
+  CodeReplacement replacement=new CodeReplacement(before.length(),"@type {Foo}".length(),"@type {Object}");
+  assertReplacement(fix,replacement);
+}

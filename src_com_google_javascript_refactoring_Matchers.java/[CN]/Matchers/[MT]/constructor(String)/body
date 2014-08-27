@@ -1,0 +1,18 @@
+{
+  return new Matcher(){
+    @Override public boolean matches(    Node node,    NodeMetadata metadata){
+      JSDocInfo info=node.getJSDocInfo();
+      if (info != null && info.isConstructor()) {
+        Node firstChild=node.getFirstChild();
+        if (name == null) {
+          return true;
+        }
+        if ((firstChild.isGetProp() || firstChild.isName()) && firstChild.matchesQualifiedName(name)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+;
+}

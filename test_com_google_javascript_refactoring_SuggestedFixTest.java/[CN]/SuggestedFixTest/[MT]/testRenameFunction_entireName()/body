@@ -1,0 +1,10 @@
+{
+  String fnName="goog.dom.classes.add";
+  String newFnName="goog.dom.classlist.add";
+  String input=fnName + "(foo, bar);";
+  Compiler compiler=getCompiler(input);
+  Node root=compileToScriptRoot(compiler);
+  SuggestedFix fix=new SuggestedFix.Builder().rename(root.getFirstChild().getFirstChild(),newFnName,true).build();
+  CodeReplacement replacement=new CodeReplacement(0,fnName.length(),newFnName);
+  assertReplacement(fix,replacement);
+}

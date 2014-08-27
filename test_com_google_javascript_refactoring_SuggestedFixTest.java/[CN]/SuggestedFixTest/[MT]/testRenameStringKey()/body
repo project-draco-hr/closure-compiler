@@ -1,0 +1,9 @@
+{
+  String input="var obj = {foo: 'bar'};";
+  Compiler compiler=getCompiler(input);
+  Node root=compileToScriptRoot(compiler);
+  Node node=root.getFirstChild().getFirstChild().getFirstChild().getFirstChild();
+  SuggestedFix fix=new SuggestedFix.Builder().rename(node,"fooBar").build();
+  CodeReplacement replacement=new CodeReplacement(11,"foo".length(),"fooBar");
+  assertReplacement(fix,replacement);
+}

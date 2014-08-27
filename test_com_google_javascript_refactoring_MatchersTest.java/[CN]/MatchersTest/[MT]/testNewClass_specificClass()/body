@@ -1,0 +1,13 @@
+{
+  String externs="" + "/** @constructor */\n" + "function Foo() {};\n"+ "/** @constructor */\n"+ "function Bar() {};";
+  String input="var foo = new Foo();";
+  Compiler compiler=getCompiler(externs,input);
+  NodeMetadata metadata=new NodeMetadata(compiler);
+  Node root=compileToScriptRoot(compiler);
+  Node varNode=root.getFirstChild();
+  Node newNode=varNode.getFirstChild().getFirstChild();
+  assertTrue(newNode.isNew());
+  assertTrue(Matchers.newClass("Foo").matches(newNode,metadata));
+  assertFalse(Matchers.newClass("Bar").matches(newNode,metadata));
+  assertFalse(Matchers.newClass("Foo").matches(newNode.getFirstChild(),metadata));
+}

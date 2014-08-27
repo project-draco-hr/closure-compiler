@@ -1,0 +1,17 @@
+{
+  return new Matcher(){
+    @Override public boolean matches(    Node node,    NodeMetadata metadata){
+      JSType providedJsType=getJsType(metadata,type);
+      if (providedJsType == null) {
+        return false;
+      }
+      providedJsType=providedJsType.restrictByNotNullOrUndefined();
+      JSType jsType=node.getJSType();
+      if (jsType != null && jsType.isEnumType() && providedJsType.isEquivalentTo(jsType.toMaybeEnumType().getElementsType().getPrimitiveType())) {
+        return true;
+      }
+      return false;
+    }
+  }
+;
+}
