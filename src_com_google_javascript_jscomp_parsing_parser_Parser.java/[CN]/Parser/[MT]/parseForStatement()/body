@@ -8,10 +8,13 @@
       if (variables.declarations.size() > 1) {
         reportError("for-in statement may not have more than one variable declaration");
       }
-      if ((variables.declarationType == TokenType.LET || variables.declarationType == TokenType.CONST)) {
-        VariableDeclarationTree declaration=variables.declarations.get(0);
-        if (declaration.initializer != null) {
-          reportError("let/const in for-in statement may not have initializer");
+      VariableDeclarationTree declaration=variables.declarations.get(0);
+      if (declaration.initializer != null) {
+        if (config.atLeast6) {
+          reportError("for-in statement may not have initializer");
+        }
+ else {
+          errorReporter.reportWarning(declaration.location.start,"for-in statement should not have initializer");
         }
       }
       return parseForInStatement(start,variables);
