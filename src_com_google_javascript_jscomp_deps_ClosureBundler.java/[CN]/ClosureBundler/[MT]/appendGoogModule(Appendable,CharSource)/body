@@ -1,0 +1,14 @@
+{
+  if (useEval) {
+    out.append("goog.loadModule(\"");
+    append(out,Mode.ESCAPED,contents);
+    appendSourceUrl(out,Mode.ESCAPED);
+    out.append("\");");
+  }
+ else {
+    out.append("goog.loadModule(function(exports) {" + "'use strict';");
+    append(out,Mode.NORMAL,contents);
+    out.append("\n" + ";" + "return exports;});\n");
+    appendSourceUrl(out,Mode.NORMAL);
+  }
+}
