@@ -1,0 +1,15 @@
+{
+  Node namespace=n.getFirstChild().getNext();
+  if (!namespace.isString()) {
+    t.report(namespace,INVALID_GET_IDENTIFIER);
+    return;
+  }
+  if (!inModule() && t.inGlobalScope()) {
+    t.report(namespace,INVALID_GET_CALL_SCOPE);
+    return;
+  }
+  Node replacement=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),namespace.getString());
+  replacement.srcrefTree(namespace);
+  n.getParent().replaceChild(n,replacement);
+  compiler.reportCodeChange();
+}
