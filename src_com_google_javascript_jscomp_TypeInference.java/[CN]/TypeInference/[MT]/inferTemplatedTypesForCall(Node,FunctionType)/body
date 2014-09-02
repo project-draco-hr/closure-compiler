@@ -3,12 +3,15 @@
   if (keys.isEmpty()) {
     return false;
   }
-  Map<TemplateType,JSType> inferred=Maps.filterKeys(inferTemplateTypesFromParameters(fnType,n),new Predicate<TemplateType>(){
-    @Override public boolean apply(    TemplateType key){
-      return keys.contains(key);
+  Map<TemplateType,JSType> rawInferrence=inferTemplateTypesFromParameters(fnType,n);
+  Map<TemplateType,JSType> inferred=Maps.newIdentityHashMap();
+  for (  TemplateType key : keys) {
+    JSType type=rawInferrence.get(key);
+    if (type == null) {
+      type=unknownType;
     }
+    inferred.put(key,type);
   }
-);
   Map<TemplateType,JSType> typeTransformations=evaluateTypeTransformations(keys,inferred);
   if (typeTransformations != null) {
     inferred.putAll(typeTransformations);
