@@ -3,7 +3,7 @@
     warnInvalidExpression("boolean",expr);
     return false;
   }
-  if (!isValidBooleanPredicate(getCallName(expr))) {
+  if (!isValidPredicate(getCallName(expr))) {
     warnInvalid("boolean predicate",expr);
     return false;
   }
@@ -12,10 +12,12 @@
     return false;
   }
 switch (keyword.kind) {
-case BOOLEAN_TYPE_PREDICATE:
-    return validBooleanTypePredicate(expr,getCallParamCount(expr));
-case BOOLEAN_STRING_PREDICATE:
-  return validBooleanStringPredicate(expr,getCallParamCount(expr));
+case TYPE_PREDICATE:
+    return validTypePredicate(expr,getCallParamCount(expr));
+case STRING_PREDICATE:
+  return validStringPredicate(expr,getCallParamCount(expr));
+case TYPEVAR_PREDICATE:
+return validTypevarPredicate(expr,getCallParamCount(expr));
 default :
 throw new IllegalStateException("Invalid boolean expression");
 }
