@@ -1,0 +1,17 @@
+{
+  if (expr.isObjectLit()) {
+    for (    Node prop : expr.children()) {
+      if (!prop.hasChildren()) {
+        warnInvalid("property, missing type",prop);
+        return false;
+      }
+ else       if (!validTypeTransformationExpression(prop.getFirstChild())) {
+        return false;
+      }
+    }
+  }
+ else   if (!validTypeTransformationExpression(expr)) {
+    return false;
+  }
+  return true;
+}

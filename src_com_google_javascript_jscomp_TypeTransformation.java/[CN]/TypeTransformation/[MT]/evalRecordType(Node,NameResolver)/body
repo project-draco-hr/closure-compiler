@@ -1,23 +1,16 @@
 {
-  Node record=getCallArgument(ttlAst,0);
-  RecordTypeBuilder builder=new RecordTypeBuilder(typeRegistry);
-  for (  Node propNode : record.children()) {
-    if (propNode.isComputedProp()) {
-      String compPropName=getComputedPropName(propNode);
-      if (!nameResolver.nameVars.containsKey(compPropName)) {
-        reportWarning(ttlAst,UNKNOWN_NAMEVAR,compPropName);
-        return getUnknownType();
-      }
-      Node propValue=getComputedPropValue(propNode);
-      String resolvedName=nameResolver.nameVars.get(compPropName);
-      JSType resultingType=evalInternal(propValue,nameResolver);
-      builder.addProperty(resolvedName,resultingType,null);
+  int paramCount=getCallParamCount(ttlAst);
+  ImmutableList.Builder<RecordType> recTypesBuilder=new ImmutableList.Builder<RecordType>();
+  for (int i=0; i < paramCount; i++) {
+    JSType type=evalRecordParam(getCallArgument(ttlAst,i),nameResolver);
+    if (type.isEquivalentTo(getObjectType())) {
+      continue;
     }
- else {
-      String propName=propNode.getString();
-      JSType resultingType=evalInternal(propNode.getFirstChild(),nameResolver);
-      builder.addProperty(propName,resultingType,null);
+    if (!type.isRecordType()) {
+      reportWarning(ttlAst,RECPARAM_INVALID,type.getDisplayName());
+      return getUnknownType();
     }
+    recTypesBuilder.add((RecordType)type);
   }
-  return builder.build();
+  return joinRecordTypes(recTypesBuilder.build());
 }

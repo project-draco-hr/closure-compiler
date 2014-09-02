@@ -2,23 +2,9 @@
   if (!checkParameterCount(expr,Keywords.RECORD)) {
     return false;
   }
-  Node record=getCallArgument(expr,0);
-  if (!record.isObjectLit()) {
-    warnInvalid("record expression",record);
-    return false;
-  }
-  if (record.getChildCount() < 1) {
-    warnMissingParam("record expression",record);
-    return false;
-  }
-  for (  Node prop : record.children()) {
-    if (!prop.hasChildren()) {
-      warnInvalid("property, missing type",prop);
-      warnInvalidInside(Keywords.RECORD.name,prop);
-      return false;
-    }
- else     if (!validTypeTransformationExpression(prop.getFirstChild())) {
-      warnInvalidInside(Keywords.RECORD.name,prop);
+  for (int i=0; i < getCallParamCount(expr); i++) {
+    if (!validRecordParam(getCallArgument(expr,i))) {
+      warnInvalidInside(Keywords.RECORD.name,expr);
       return false;
     }
   }

@@ -1,0 +1,22 @@
+{
+  RecordTypeBuilder builder=new RecordTypeBuilder(typeRegistry);
+  for (  Node propNode : record.children()) {
+    if (propNode.isComputedProp()) {
+      String compPropName=getComputedPropName(propNode);
+      if (!nameResolver.nameVars.containsKey(compPropName)) {
+        reportWarning(record,UNKNOWN_NAMEVAR,compPropName);
+        return getUnknownType();
+      }
+      Node propValue=getComputedPropValue(propNode);
+      String resolvedName=nameResolver.nameVars.get(compPropName);
+      JSType resultingType=evalInternal(propValue,nameResolver);
+      builder.addProperty(resolvedName,resultingType,null);
+    }
+ else {
+      String propName=propNode.getString();
+      JSType resultingType=evalInternal(propNode.getFirstChild(),nameResolver);
+      builder.addProperty(propName,resultingType,null);
+    }
+  }
+  return builder.build();
+}
