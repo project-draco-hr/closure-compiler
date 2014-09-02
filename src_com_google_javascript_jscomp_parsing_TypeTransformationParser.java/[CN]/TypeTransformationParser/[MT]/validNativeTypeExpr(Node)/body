@@ -1,0 +1,15 @@
+{
+  if (!checkParameterCount(expr,Keywords.TYPEEXPR)) {
+    return false;
+  }
+  Node typeString=getCallArgument(expr,0);
+  if (!typeString.isString()) {
+    warnInvalidExpression("native type",expr);
+    warnInvalidInside(Keywords.TYPEEXPR.name,expr);
+    return false;
+  }
+  Node typeExpr=JsDocInfoParser.parseTypeString(typeString.getString());
+  typeString.detachFromParent();
+  expr.addChildToBack(typeExpr);
+  return true;
+}
