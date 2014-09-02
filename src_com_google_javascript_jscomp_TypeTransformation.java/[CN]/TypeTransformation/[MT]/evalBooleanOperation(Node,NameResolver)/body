@@ -1,0 +1,13 @@
+{
+  boolean param0=evalBoolean(ttlAst.getFirstChild(),nameResolver);
+  if (ttlAst.isNot()) {
+    return !param0;
+  }
+  if (ttlAst.isAnd()) {
+    return param0 && evalBoolean(ttlAst.getLastChild(),nameResolver);
+  }
+  if (ttlAst.isOr()) {
+    return param0 || evalBoolean(ttlAst.getLastChild(),nameResolver);
+  }
+  throw new IllegalStateException("Invalid boolean predicate in the type transformation");
+}
