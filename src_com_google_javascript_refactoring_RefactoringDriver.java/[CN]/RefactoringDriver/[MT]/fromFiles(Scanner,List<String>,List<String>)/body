@@ -1,7 +1,4 @@
 {
-  CompilerOptions options=getCompilerOptions();
-  Compiler compiler=new Compiler();
-  compiler.disableThreads();
   Function<String,SourceFile> toSourceFileFn=new Function<String,SourceFile>(){
     @Override public SourceFile apply(    String file){
       return new SourceFile.Builder().buildFromFile(file);
@@ -10,6 +7,5 @@
 ;
   List<SourceFile> inputSourceFiles=Lists.transform(inputs,toSourceFileFn);
   List<SourceFile> externSourceFiles=Lists.transform(externs,toSourceFileFn);
-  compiler.compile(externSourceFiles,inputSourceFiles,options);
-  return compiler;
+  return fromSourceFiles(scanner,inputSourceFiles,externSourceFiles);
 }
