@@ -1,13 +1,15 @@
 {
   ImmutableList<Node> params=getCallParams(ttlAst);
-  Node recParam=params.get(0);
-  JSType recType=evalInternal(recParam,nameResolver);
-  if (!recType.isRecordType()) {
-    reportWarning(ttlAst,RECTYPE_INVALID,recType.toString());
+  JSType type=evalInternal(params.get(0),nameResolver);
+  if (type.isEquivalentTo(getObjectType())) {
+    return getObjectType();
+  }
+  if (!type.isRecordType()) {
+    reportWarning(params.get(0),RECTYPE_INVALID,type.toString());
     return getUnknownType();
   }
-  ObjectType objRecType=((ObjectType)recType);
-  Set<String> ownPropsNames=objRecType.getOwnPropertyNames();
+  RecordType recType=((RecordType)type);
+  Set<String> ownPropsNames=recType.getOwnPropertyNames();
   Node mapFunction=params.get(1);
   String paramKey=getFunctionParameter(mapFunction,0);
   String paramValue=getFunctionParameter(mapFunction,1);
@@ -22,19 +24,22 @@
   Node mapFnBody=getFunctionBody(mapFunction);
   Map<String,JSType> newProps=new HashMap<String,JSType>();
   for (  String propName : ownPropsNames) {
-    JSType propValue=objRecType.getSlot(propName).getType();
+    JSType propValue=recType.getSlot(propName).getType();
     NameResolver newNameResolver=new NameResolver(addNewEntry(nameResolver.typeVars,paramValue,propValue),addNewEntry(nameResolver.nameVars,paramKey,propName));
-    JSType mapFnBodyResult=evalInternal(mapFnBody,newNameResolver);
-    if (mapFnBodyResult.isNoType()) {
-      continue;
-    }
-    if (!mapFnBodyResult.isRecordType()) {
-      reportWarning(ttlAst,MAPRECORD_BODY_INVALID,mapFnBodyResult.toString());
+    JSType body=evalInternal(mapFnBody,newNameResolver);
+    if (body.isUnknownType()) {
       return getUnknownType();
     }
-    ObjectType mapFnBodyAsObjType=((ObjectType)mapFnBodyResult);
-    for (    String newPropName : mapFnBodyAsObjType.getOwnPropertyNames()) {
-      JSType newPropValue=mapFnBodyAsObjType.getSlot(newPropName).getType();
+    if (body.isNoType() || body.isEquivalentTo(getObjectType())) {
+      continue;
+    }
+    if (!body.isRecordType()) {
+      reportWarning(ttlAst,MAPRECORD_BODY_INVALID,body.toString());
+      return getUnknownType();
+    }
+    RecordType bodyAsRecType=((RecordType)body);
+    for (    String newPropName : bodyAsRecType.getOwnPropertyNames()) {
+      JSType newPropValue=bodyAsRecType.getSlot(newPropName).getType();
       putNewPropInPropertyMap(newProps,newPropName,newPropValue);
     }
   }
