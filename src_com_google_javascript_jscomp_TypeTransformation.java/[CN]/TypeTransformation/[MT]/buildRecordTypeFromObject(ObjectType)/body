@@ -9,12 +9,7 @@
   }
   ImmutableMap.Builder<String,JSType> props=new ImmutableMap.Builder<String,JSType>();
   for (  String propName : propNames) {
-    JSType propValue=objType.getPropertyType(propName);
-    ObjectType propValueObj=propValue.toObjectType();
-    if (propValueObj != null && propValue != getUnknownType()) {
-      propValue=buildRecordTypeFromObject(propValueObj);
-    }
-    props.put(propName,propValue);
+    props.put(propName,objType.getPropertyType(propName));
   }
   return createRecordType(props.build());
 }
