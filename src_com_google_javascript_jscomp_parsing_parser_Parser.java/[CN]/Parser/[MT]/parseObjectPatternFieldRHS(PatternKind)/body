@@ -1,0 +1,16 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ParseTree value;
+  if (peekPattern(kind)) {
+    value=parsePattern(kind);
+  }
+ else {
+    value=parseIdentifierExpression();
+  }
+  if (peek(TokenType.EQUAL)) {
+    eat(TokenType.EQUAL);
+    ParseTree defaultValue=parseAssignmentExpression();
+    return new DefaultParameterTree(getTreeLocation(start),value,defaultValue);
+  }
+  return value;
+}

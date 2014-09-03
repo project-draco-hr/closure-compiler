@@ -1,19 +1,28 @@
 {
   SourcePosition start=getTreeStartLocation();
-  IdentifierToken identifier=eatIdOrKeywordAsId();
-  if (peek(TokenType.EQUAL)) {
-    ParseTree lhs=new IdentifierExpressionTree(getTreeLocation(start),identifier);
-    eat(TokenType.EQUAL);
-    ParseTree defaultValue=parseAssignmentExpression();
-    return new DefaultParameterTree(getTreeLocation(start),lhs,defaultValue);
-  }
-  ParseTree element=null;
-  if (peek(TokenType.COLON)) {
+  if (peekType() == TokenType.OPEN_SQUARE) {
+    ParseTree key=parseComputedPropertyName();
     eat(TokenType.COLON);
-    element=parsePatternElement(kind,objectSubPatternFollowSet);
-    if (element.isAssignmentRestElement()) {
-      reportError("Rest can not be used in object patterns");
+    ParseTree value=parseObjectPatternFieldRHS(kind);
+    return new ComputedPropertyDefinitionTree(getTreeLocation(start),key,value);
+  }
+  Token name;
+  if (peekId()) {
+    IdentifierExpressionTree idTree=parseIdentifierExpression();
+    name=idTree.identifierToken;
+    if (peek(TokenType.EQUAL)) {
+      eat(TokenType.EQUAL);
+      ParseTree defaultValue=parseAssignmentExpression();
+      return new DefaultParameterTree(getTreeLocation(start),idTree,defaultValue);
+    }
+ else     if (!peek(TokenType.COLON)) {
+      return new PropertyNameAssignmentTree(getTreeLocation(start),name,null);
     }
   }
-  return new ObjectPatternFieldTree(getTreeLocation(start),identifier,element);
+ else {
+    name=parseLiteralExpression().literalToken;
+  }
+  eat(TokenType.COLON);
+  ParseTree value=parseObjectPatternFieldRHS(kind);
+  return new PropertyNameAssignmentTree(getTreeLocation(start),name,value);
 }
