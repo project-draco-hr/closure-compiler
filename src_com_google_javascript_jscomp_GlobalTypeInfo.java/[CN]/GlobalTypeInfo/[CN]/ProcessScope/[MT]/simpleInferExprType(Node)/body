@@ -87,7 +87,24 @@ if (ratorType == null) {
 return null;
 }
 FunctionType funType=ratorType.getFunType();
-return funType == null ? null : funType.getReturnType();
+if (funType == null) {
+return null;
+}
+if (funType.isGeneric()) {
+ImmutableList.Builder<JSType> argTypes=ImmutableList.builder();
+for (Node argNode=n.getFirstChild().getNext(); argNode != null; argNode=argNode.getNext()) {
+JSType t=simpleInferExprType(argNode);
+if (t == null) {
+return null;
+}
+argTypes.add(t);
+}
+funType=funType.instantiateGenericsFromArgumentList(argTypes.build());
+if (funType == null) {
+return null;
+}
+}
+return funType.getReturnType();
 default :
 return null;
 }

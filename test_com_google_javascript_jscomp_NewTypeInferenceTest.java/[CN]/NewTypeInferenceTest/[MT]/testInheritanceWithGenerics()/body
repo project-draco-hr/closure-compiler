@@ -10,4 +10,5 @@
   checkNoWarnings("/**\n" + " * @template T\n" + " * @constructor\n"+ " */\n"+ "function High() {}\n"+ "/** @param {Low.<number>} x */\n"+ "High.prototype.method = function(x) {};\n"+ "/**\n"+ " * @template T\n"+ " * @constructor\n"+ " * @extends {High.<T>}\n"+ " */\n"+ "function Low() {}");
   typeCheck("/**\n" + " * @template T\n" + " * @constructor\n"+ " */\n"+ "function High() {}\n"+ "/** @param {Low.<T>} x */ // error, low is not templatized\n"+ "High.prototype.method = function(x) {};\n"+ "/**\n"+ " * @constructor\n"+ " * @extends {High.<number>}\n"+ " */\n"+ "function Low() {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
   checkNoWarnings("/**\n" + " * @template T\n" + " * @interface\n"+ " */\n"+ "function I(x) {}\n"+ "/**\n"+ " * @template T\n"+ " * @constructor\n"+ " * @implements {I.<T>}\n"+ " * @extends {Bar}\n"+ " */\n"+ "function Foo(x) {}\n"+ "/**\n"+ " * @constructor\n"+ " * @implements {I.<number>}\n"+ " */\n"+ "function Bar(x) {}");
+  checkNoWarnings("/**\n" + " * @interface\n" + " * @template T\n"+ " */\n"+ "function Foo() {}\n"+ "/** @constructor @implements {Foo.<number>} */\n"+ "function A() {}\n"+ "var /** Foo.<number> */ x = new A();");
 }
