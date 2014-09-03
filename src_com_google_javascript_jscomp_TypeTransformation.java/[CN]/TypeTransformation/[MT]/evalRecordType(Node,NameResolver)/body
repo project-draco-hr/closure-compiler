@@ -3,14 +3,15 @@
   ImmutableList.Builder<RecordType> recTypesBuilder=new ImmutableList.Builder<RecordType>();
   for (int i=0; i < paramCount; i++) {
     JSType type=evalRecordParam(getCallArgument(ttlAst,i),nameResolver);
-    if (type.isEquivalentTo(getObjectType())) {
-      continue;
-    }
-    if (!type.isRecordType()) {
-      reportWarning(ttlAst,RECPARAM_INVALID,type.getDisplayName());
+    ObjectType objType=type.toObjectType();
+    if (objType == null || objType.isUnknownType()) {
+      reportWarning(ttlAst,RECPARAM_INVALID,type.toString());
       return getUnknownType();
     }
-    recTypesBuilder.add((RecordType)type);
+    JSType recType=buildRecordTypeFromObject(objType);
+    if (!recType.isEquivalentTo(getObjectType())) {
+      recTypesBuilder.add(recType.toMaybeRecordType());
+    }
   }
   return joinRecordTypes(recTypesBuilder.build());
 }

@@ -1,0 +1,20 @@
+{
+  RecordType recType=objType.toMaybeRecordType();
+  if (recType != null) {
+    return recType;
+  }
+  Set<String> propNames=objType.getOwnPropertyNames();
+  if (propNames.isEmpty()) {
+    return getObjectType();
+  }
+  ImmutableMap.Builder<String,JSType> props=new ImmutableMap.Builder<String,JSType>();
+  for (  String propName : propNames) {
+    JSType propValue=objType.getPropertyType(propName);
+    ObjectType propValueObj=propValue.toObjectType();
+    if (propValueObj != null && propValue != getUnknownType()) {
+      propValue=buildRecordTypeFromObject(propValueObj);
+    }
+    props.put(propName,propValue);
+  }
+  return createRecordType(props.build());
+}
