@@ -20,18 +20,16 @@
     warnings.add(JSError.make(localPropDef.defSite,CANNOT_OVERRIDE_FINAL_METHOD,pname));
     return;
   }
-  if (localPropType != null && !localPropType.isSubtypeOf(inheritedPropType)) {
+  if (localPropType == null) {
+    propTypesToProcess.put(pname,inheritedPropType);
+  }
+ else   if (!localPropType.isSubtypeOf(inheritedPropType)) {
     warnings.add(JSError.make(localPropDef.defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
   }
- else {
-    if (localPropType == null) {
-      propTypesToProcess.put(pname,inheritedPropType);
-    }
- else     if (localPropDef.methodType != null) {
-      for (      PropertyDef inheritedPropDef : inheritedPropDefs) {
-        if (inheritedPropDef.methodType != null) {
-          propMethodTypesToProcess.put(pname,inheritedPropDef.methodType);
-        }
+ else   if (localPropDef.methodType != null) {
+    for (    PropertyDef inheritedPropDef : inheritedPropDefs) {
+      if (inheritedPropDef.methodType != null) {
+        propMethodTypesToProcess.put(pname,inheritedPropDef.methodType);
       }
     }
   }
