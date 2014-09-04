@@ -4,7 +4,7 @@
   Preconditions.checkArgument(!inputs.isEmpty(),"At least one input must be provided.");
   RefasterJsScanner scanner=new RefasterJsScanner();
   scanner.loadRefasterJsTemplate(refasterJsTemplate);
-  RefactoringDriver driver=RefactoringDriver.fromFiles(scanner,inputs,externs);
+  RefactoringDriver driver=new RefactoringDriver.Builder(scanner).addExterns(includeDefaultExterns ? CommandLineRunner.getDefaultExterns() : ImmutableList.<SourceFile>of()).addExternsFromFile(externs).addInputsFromFile(inputs).build();
   List<SuggestedFix> fixes=driver.drive();
   System.out.println("SuggestedFixes: " + fixes);
 }
