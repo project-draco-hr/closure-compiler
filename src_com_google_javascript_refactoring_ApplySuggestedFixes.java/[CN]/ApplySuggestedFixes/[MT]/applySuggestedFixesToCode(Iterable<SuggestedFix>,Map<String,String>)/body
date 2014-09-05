@@ -1,0 +1,18 @@
+{
+  ImmutableSetMultimap.Builder<String,CodeReplacement> builder=ImmutableSetMultimap.builder();
+  for (  SuggestedFix fix : fixes) {
+    builder.putAll(fix.getReplacements());
+  }
+  SetMultimap<String,CodeReplacement> replacementsMap=builder.build();
+  ImmutableMap.Builder<String,String> newCodeMap=ImmutableMap.builder();
+  for (  Map.Entry<String,Set<CodeReplacement>> entry : Multimaps.asMap(replacementsMap).entrySet()) {
+    String filename=entry.getKey();
+    if (!filenameToCodeMap.containsKey(filename)) {
+      throw new IllegalArgumentException("filenameToCodeMap missing code for file: " + filename);
+    }
+    Set<CodeReplacement> replacements=entry.getValue();
+    String newCode=applyCodeReplacements(replacements,filenameToCodeMap.get(filename));
+    newCodeMap.put(filename,newCode);
+  }
+  return newCodeMap.build();
+}

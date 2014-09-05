@@ -1,0 +1,10 @@
+{
+  String code="var someNode;";
+  Compiler compiler=getCompiler(code);
+  Node root=compileToScriptRoot(compiler);
+  List<SuggestedFix> fixes=ImmutableList.of(new SuggestedFix.Builder().delete(root).build());
+  Map<String,String> codeMap=ImmutableMap.of("test",code);
+  Map<String,String> newCodeMap=ApplySuggestedFixes.applySuggestedFixesToCode(fixes,codeMap);
+  assertEquals(1,newCodeMap.size());
+  assertEquals("",newCodeMap.get("test"));
+}

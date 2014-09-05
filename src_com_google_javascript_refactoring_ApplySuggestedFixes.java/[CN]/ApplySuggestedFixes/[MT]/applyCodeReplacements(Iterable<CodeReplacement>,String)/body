@@ -1,0 +1,16 @@
+{
+  List<CodeReplacement> sortedReplacements=Lists.newArrayList(replacements);
+  Collections.sort(sortedReplacements,ORDER_CODE_REPLACEMENTS);
+  validateNoOverlaps(sortedReplacements);
+  StringBuilder sb=new StringBuilder();
+  int lastIndex=0;
+  for (  CodeReplacement replacement : sortedReplacements) {
+    sb.append(code.substring(lastIndex,replacement.getStartPosition()));
+    sb.append(replacement.getNewContent());
+    lastIndex=replacement.getStartPosition() + replacement.getLength();
+  }
+  if (lastIndex <= sb.length()) {
+    sb.append(code.substring(lastIndex));
+  }
+  return sb.toString();
+}
