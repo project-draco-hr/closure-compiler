@@ -1,0 +1,11 @@
+{
+  String js="function foo({['s']: a}) {}";
+  Node root=getRoot(js);
+  Scope globalScope=scopeCreator.createScope(root,null);
+  Node functionNode=root.getFirstChild();
+  Scope functionScope=scopeCreator.createScope(functionNode,globalScope);
+  Node functionBlock=functionNode.getLastChild();
+  Scope functionBlockScope=scopeCreator.createScope(functionBlock,functionScope);
+  assertTrue(functionScope.isDeclared("a",false));
+  assertFalse(functionBlockScope.isDeclared("a",false));
+}

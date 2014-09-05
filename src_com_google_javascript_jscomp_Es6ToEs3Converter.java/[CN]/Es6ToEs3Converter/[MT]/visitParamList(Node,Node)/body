@@ -20,5 +20,31 @@
       block.addChildAfter(newArr.useSourceInfoIfMissingFromForTree(param),insertSpot);
       compiler.reportCodeChange();
     }
+ else     if (param.isObjectPattern()) {
+      Node pattern=param;
+      String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
+      paramList.replaceChild(param,IR.name(tempVarName));
+      for (Node child=pattern.getFirstChild(); child != null; child=child.getNext()) {
+        if (child.isComputedProp()) {
+          cannotConvertYet(child,"computed property in an object pattern");
+          return;
+        }
+        Node newName;
+        if (child.hasChildren()) {
+          if (child.getFirstChild().isDefaultValue()) {
+            cannotConvertYet(child.getFirstChild(),"default value in an object pattern in a param list");
+            return;
+          }
+          newName=child.removeFirstChild();
+        }
+ else {
+          newName=IR.name(child.getString());
+        }
+        Node newDecl=IR.var(newName,IR.getprop(IR.name(tempVarName),IR.string(child.getString())));
+        newDecl.useSourceInfoIfMissingFromForTree(child);
+        block.addChildAfter(newDecl,insertSpot);
+      }
+      compiler.reportCodeChange();
+    }
   }
 }
