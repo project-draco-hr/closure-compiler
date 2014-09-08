@@ -6,5 +6,10 @@
   scanner.loadRefasterJsTemplate(refasterJsTemplate);
   RefactoringDriver driver=new RefactoringDriver.Builder(scanner).addExterns(includeDefaultExterns ? CommandLineRunner.getDefaultExterns() : ImmutableList.<SourceFile>of()).addExternsFromFile(externs).addInputsFromFile(inputs).build();
   List<SuggestedFix> fixes=driver.drive();
-  System.out.println("SuggestedFixes: " + fixes);
+  if (dryRun) {
+    System.out.println("SuggestedFixes: " + fixes);
+  }
+ else {
+    ApplySuggestedFixes.applySuggestedFixesToFiles(fixes);
+  }
 }

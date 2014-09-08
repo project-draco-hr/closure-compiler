@@ -1,0 +1,14 @@
+{
+  Set<String> filenames=new HashSet<>();
+  for (  SuggestedFix fix : fixes) {
+    filenames.addAll(fix.getReplacements().keys());
+  }
+  Map<String,String> filenameToCodeMap=new HashMap<>();
+  for (  String filename : filenames) {
+    filenameToCodeMap.put(filename,Files.toString(new File(filename),UTF_8));
+  }
+  Map<String,String> newCode=applySuggestedFixesToCode(fixes,filenameToCodeMap);
+  for (  Map.Entry<String,String> entry : newCode.entrySet()) {
+    Files.write(entry.getValue(),new File(entry.getKey()),UTF_8);
+  }
+}
