@@ -6,7 +6,7 @@
   if (NodeUtil.isNameDeclaration(parent.getParent()) && node == parent.getLastChild()) {
     return false;
   }
-  if (parent.isDestructuringPattern() || (parent.isStringKey() && parent.getParent().isObjectPattern()) || (parent.isDefaultValue() && node == parent.getFirstChild())) {
+  if (parent.isDestructuringPattern() || (parent.isStringKey() && parent.getParent().isObjectPattern()) || (parent.isComputedProp() && parent.getParent().isObjectPattern() && node == parent.getLastChild())|| (parent.isDefaultValue() && node == parent.getFirstChild())) {
     return isDeclarationHelper(parent);
   }
   return DECLARATION_PARENTS.contains(parent.getType());

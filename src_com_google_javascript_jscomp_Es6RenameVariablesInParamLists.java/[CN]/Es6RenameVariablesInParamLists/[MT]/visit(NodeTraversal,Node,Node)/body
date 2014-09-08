@@ -3,12 +3,20 @@
     return;
   }
   Node paramList=n.getChildAtIndex(1);
-  CollectReferences collector=new CollectReferences();
-  for (  Node child : paramList.children()) {
-    if (child.isDefaultValue()) {
-      NodeTraversal.traverse(compiler,child.getLastChild(),collector);
+  final CollectReferences collector=new CollectReferences();
+  NodeTraversal.traverse(compiler,paramList,new NodeTraversal.AbstractPreOrderCallback(){
+    @Override public final boolean shouldTraverse(    NodeTraversal t,    Node n,    Node parent){
+      if (parent == null) {
+        return true;
+      }
+      if (parent.isDefaultValue() && n == parent.getLastChild() || parent.isComputedProp() && n == parent.getFirstChild()) {
+        NodeTraversal.traverse(compiler,n,collector);
+        return false;
+      }
+      return true;
     }
   }
+);
   Node block=paramList.getNext();
   Es6SyntacticScopeCreator creator=new Es6SyntacticScopeCreator(compiler);
   Scope fScope=creator.createScope(n,t.getScope());

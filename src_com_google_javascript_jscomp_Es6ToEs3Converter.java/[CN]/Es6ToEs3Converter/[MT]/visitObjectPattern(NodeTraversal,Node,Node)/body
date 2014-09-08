@@ -43,12 +43,18 @@
         }
       }
     }
- else {
-      Preconditions.checkState(child.isDefaultValue());
+ else     if (child.isComputedProp()) {
+      newRHS=IR.getelem(IR.name(tempVarName),child.removeFirstChild());
+      newLHS=child.removeFirstChild();
+    }
+ else     if (child.isDefaultValue()) {
       newLHS=child.removeFirstChild();
       Node defaultValue=child.removeFirstChild();
       Node getprop=IR.getprop(IR.name(tempVarName),IR.string(newLHS.getString()));
       newRHS=IR.hook(IR.sheq(getprop.cloneTree(),IR.name("undefined")),defaultValue,getprop);
+    }
+ else {
+      throw new IllegalStateException("Unexpected OBJECT_PATTERN child: " + child);
     }
     Node newNode;
     if (NodeUtil.isNameDeclaration(parent)) {

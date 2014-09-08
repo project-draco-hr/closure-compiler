@@ -25,22 +25,24 @@
       String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
       paramList.replaceChild(param,IR.name(tempVarName));
       for (Node child=pattern.getFirstChild(); child != null; child=child.getNext()) {
+        Node newLHS, newRHS;
         if (child.isComputedProp()) {
-          cannotConvertYet(child,"computed property in an object pattern");
-          return;
+          newRHS=IR.getelem(IR.name(tempVarName),child.removeFirstChild());
+          newLHS=child.removeFirstChild();
         }
-        Node newName;
-        if (child.hasChildren()) {
+ else         if (child.hasChildren()) {
           if (child.getFirstChild().isDefaultValue()) {
             cannotConvertYet(child.getFirstChild(),"default value in an object pattern in a param list");
             return;
           }
-          newName=child.removeFirstChild();
+          newLHS=child.removeFirstChild();
+          newRHS=IR.getprop(IR.name(tempVarName),IR.string(child.getString()));
         }
  else {
-          newName=IR.name(child.getString());
+          newLHS=IR.name(child.getString());
+          newRHS=IR.getprop(IR.name(tempVarName),IR.string(child.getString()));
         }
-        Node newDecl=IR.var(newName,IR.getprop(IR.name(tempVarName),IR.string(child.getString())));
+        Node newDecl=IR.var(newLHS,newRHS);
         newDecl.useSourceInfoIfMissingFromForTree(child);
         block.addChildAfter(newDecl,insertSpot);
       }
