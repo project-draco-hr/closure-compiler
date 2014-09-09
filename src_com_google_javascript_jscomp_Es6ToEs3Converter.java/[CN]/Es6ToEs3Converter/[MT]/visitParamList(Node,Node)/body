@@ -21,32 +21,42 @@
       compiler.reportCodeChange();
     }
  else     if (param.isObjectPattern()) {
-      Node pattern=param;
       String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
       paramList.replaceChild(param,IR.name(tempVarName));
-      for (Node child=pattern.getFirstChild(); child != null; child=child.getNext()) {
+      for (Node child=param.getFirstChild(); child != null; child=child.getNext()) {
         Node newLHS, newRHS;
         if (child.isComputedProp()) {
+          Node getelem=IR.getelem(IR.name(tempVarName),child.removeFirstChild());
           if (child.getLastChild().isDefaultValue()) {
-            cannotConvertYet(child.getLastChild(),"default value in an object pattern in a param list");
-            return;
+            newLHS=child.getFirstChild().removeFirstChild();
+            newRHS=defaultValueHook(getelem,child.getFirstChild().getLastChild().detachFromParent());
           }
-          newRHS=IR.getelem(IR.name(tempVarName),child.removeFirstChild());
-          newLHS=child.removeFirstChild();
+ else {
+            newLHS=child.removeFirstChild();
+            newRHS=getelem;
+          }
         }
  else         if (child.isStringKey()) {
           if (child.hasChildren()) {
+            Node getprop=new Node(child.isQuotedString() ? Token.GETELEM : Token.GETPROP,IR.name(tempVarName),IR.string(child.getString()));
             if (child.getFirstChild().isDefaultValue()) {
-              cannotConvertYet(child.getFirstChild(),"default value in an object pattern in a param list");
-              return;
+              newLHS=child.getFirstChild().removeFirstChild();
+              newRHS=defaultValueHook(getprop,child.getFirstChild().getLastChild().detachFromParent());
             }
-            newLHS=child.removeFirstChild();
-            newRHS=new Node(child.isQuotedString() ? Token.GETELEM : Token.GETPROP,IR.name(tempVarName),IR.string(child.getString()));
+ else {
+              newLHS=child.removeFirstChild();
+              newRHS=getprop;
+            }
           }
  else {
             newLHS=IR.name(child.getString());
             newRHS=IR.getprop(IR.name(tempVarName),IR.string(child.getString()));
           }
+        }
+ else         if (child.isDefaultValue()) {
+          newLHS=child.removeFirstChild();
+          Node getprop=IR.getprop(IR.name(tempVarName),IR.string(newLHS.getString()));
+          newRHS=defaultValueHook(getprop,child.removeFirstChild());
         }
  else {
           Preconditions.checkState(false,"Unexpected object pattern child: %s",child);
