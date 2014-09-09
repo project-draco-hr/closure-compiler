@@ -27,20 +27,30 @@
       for (Node child=pattern.getFirstChild(); child != null; child=child.getNext()) {
         Node newLHS, newRHS;
         if (child.isComputedProp()) {
+          if (child.getLastChild().isDefaultValue()) {
+            cannotConvertYet(child.getLastChild(),"default value in an object pattern in a param list");
+            return;
+          }
           newRHS=IR.getelem(IR.name(tempVarName),child.removeFirstChild());
           newLHS=child.removeFirstChild();
         }
- else         if (child.hasChildren()) {
-          if (child.getFirstChild().isDefaultValue()) {
-            cannotConvertYet(child.getFirstChild(),"default value in an object pattern in a param list");
-            return;
+ else         if (child.isStringKey()) {
+          if (child.hasChildren()) {
+            if (child.getFirstChild().isDefaultValue()) {
+              cannotConvertYet(child.getFirstChild(),"default value in an object pattern in a param list");
+              return;
+            }
+            newLHS=child.removeFirstChild();
+            newRHS=new Node(child.isQuotedString() ? Token.GETELEM : Token.GETPROP,IR.name(tempVarName),IR.string(child.getString()));
           }
-          newLHS=child.removeFirstChild();
-          newRHS=IR.getprop(IR.name(tempVarName),IR.string(child.getString()));
+ else {
+            newLHS=IR.name(child.getString());
+            newRHS=IR.getprop(IR.name(tempVarName),IR.string(child.getString()));
+          }
         }
  else {
-          newLHS=IR.name(child.getString());
-          newRHS=IR.getprop(IR.name(tempVarName),IR.string(child.getString()));
+          Preconditions.checkState(false,"Unexpected object pattern child: %s",child);
+          return;
         }
         Node newDecl=IR.var(newLHS,newRHS);
         newDecl.useSourceInfoIfMissingFromForTree(child);

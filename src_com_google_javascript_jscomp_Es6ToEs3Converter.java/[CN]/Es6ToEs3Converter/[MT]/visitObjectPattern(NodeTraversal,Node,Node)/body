@@ -25,7 +25,7 @@
     next=child.getNext();
     Node newLHS, newRHS;
     if (child.isStringKey()) {
-      Node getprop=IR.getprop(IR.name(tempVarName),IR.string(child.getString()));
+      Node getprop=new Node(child.isQuotedString() ? Token.GETELEM : Token.GETPROP,IR.name(tempVarName),IR.string(child.getString()));
       if (!child.hasChildren()) {
         newLHS=child.detachFromParent();
         newRHS=getprop;
