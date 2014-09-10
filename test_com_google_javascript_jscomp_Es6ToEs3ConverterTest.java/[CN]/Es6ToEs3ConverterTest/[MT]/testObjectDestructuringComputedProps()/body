@@ -1,5 +1,6 @@
 {
   test("var {[a]: b} = foo();",Joiner.on('\n').join("var $jscomp$destructuring$var0 = foo();","var b = $jscomp$destructuring$var0[a];"));
   test("({[a]: b}) = foo();",Joiner.on('\n').join("var $jscomp$destructuring$var0 = foo();","b = $jscomp$destructuring$var0[a];"));
-  test("function f({['KEY']: x}) {}",Joiner.on('\n').join("function f($jscomp$destructuring$var0) {","  var x = $jscomp$destructuring$var0['KEY']","}"));
+  test("var {[foo()]: x = 5} = {};",Joiner.on('\n').join("var $jscomp$destructuring$var0 = {};","var $jscomp$destructuring$var1 = $jscomp$destructuring$var0[foo()];","var x = $jscomp$destructuring$var1 === undefined ?","    5 : $jscomp$destructuring$var1"));
+  test("function f({['KEY']: x}) {}",Joiner.on('\n').join("function f($jscomp$destructuring$var0) {","  var $jscomp$destructuring$var1 = $jscomp$destructuring$var0","  var x = $jscomp$destructuring$var1['KEY']","}"));
 }

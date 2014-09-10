@@ -11,10 +11,8 @@
  else   if (parent.isStringKey() || parent.isArrayPattern() || parent.isDefaultValue()) {
     return;
   }
- else   if (parent.isParamList()) {
-    return;
-  }
  else {
+    Preconditions.checkState(parent.isCatch() || parent.isForOf(),parent);
     cannotConvertYet(objectPattern,"OBJECT_PATTERN that is a child of a " + Token.name(parent.getType()));
     return;
   }
@@ -39,8 +37,19 @@
       }
     }
  else     if (child.isComputedProp()) {
-      newRHS=IR.getelem(IR.name(tempVarName),child.removeFirstChild());
-      newLHS=child.removeFirstChild();
+      if (child.getLastChild().isDefaultValue()) {
+        newLHS=child.getLastChild().removeFirstChild();
+        Node getelem=IR.getelem(IR.name(tempVarName),child.removeFirstChild());
+        String intermediateTempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
+        Node intermediateDecl=IR.var(IR.name(intermediateTempVarName),getelem);
+        intermediateDecl.useSourceInfoIfMissingFromForTree(child);
+        nodeToDetach.getParent().addChildBefore(intermediateDecl,nodeToDetach);
+        newRHS=defaultValueHook(IR.name(intermediateTempVarName),child.getLastChild().removeFirstChild());
+      }
+ else {
+        newRHS=IR.getelem(IR.name(tempVarName),child.removeFirstChild());
+        newLHS=child.removeFirstChild();
+      }
     }
  else     if (child.isDefaultValue()) {
       newLHS=child.removeFirstChild();
