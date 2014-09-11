@@ -10,6 +10,9 @@
       if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
         warnings.add(JSError.make(index,NewTypeInference.NON_NUMERIC_ARRAY_INDEX,pair.type.toString()));
       }
+      pair.type=getArrayElementType(recvType);
+      Preconditions.checkState(pair.type != null,"Array type %s has no element type at node: %s",recvType,expr);
+      return pair;
     }
  else     if (index.isString()) {
       return analyzePropAccessFwd(receiver,index.getString(),inEnv,requiredType,specializedType);

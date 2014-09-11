@@ -1,0 +1,13 @@
+{
+  typeCheck("/** @const */ var x = [];",GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
+  typeCheck("/** @const */ var x = [1, 'str'];",GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n" + "/** @const */ var x = [new Foo, new Bar];",GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
+  typeCheck("var /** Array.<string> */ a = [1, 2];",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  checkNoWarnings("var arr = [];\n" + "var /** Array.<string> */ as = arr;");
+  typeCheck("var arr = [1, 2, 3];\n" + "var /** Array.<string> */ as = arr;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "var /** Array.<string> */ a = [new Foo, new Foo];",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n" + "var /** Array.<Foo> */ a = [new Foo, new Bar];");
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n" + "var /** Array.<Bar> */ a = [new Foo, new Bar];",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @const */ var x = [1, 2, 3];\n" + "function g() { var /** Array.<string> */ a = x; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n" + "/** @const */ var x = [new Foo, new Foo];\n"+ "function g() { var /** Array.<Bar> */ a = x; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

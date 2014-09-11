@@ -3,9 +3,10 @@
   Node index=expr.getLastChild();
   JSType reqObjType=pickReqObjType(expr);
   EnvTypePair pair=analyzeExprBwd(receiver,outEnv,reqObjType);
-  if (isArrayType(pair.type)) {
+  JSType recvType=pair.type;
+  if (isArrayType(recvType)) {
     pair=analyzeExprBwd(index,pair.env,JSType.NUMBER);
-    pair.type=requiredType;
+    pair.type=getArrayElementType(recvType);
     return pair;
   }
   if (index.isString()) {
