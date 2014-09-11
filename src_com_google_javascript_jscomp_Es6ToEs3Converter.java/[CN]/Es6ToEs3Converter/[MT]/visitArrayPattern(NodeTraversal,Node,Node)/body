@@ -33,6 +33,11 @@
       newLHS=child.getFirstChild().detachFromParent();
       newRHS=defaultValueHook(getElem,child.getLastChild().detachFromParent());
     }
+ else     if (child.isRest()) {
+      newLHS=child.detachFromParent();
+      newLHS.setType(Token.NAME);
+      newRHS=IR.call(IR.getprop(IR.getprop(IR.arraylit(),IR.string("slice")),IR.string("call")),IR.name(tempVarName),IR.number(i));
+    }
  else {
       newLHS=child.detachFromParent();
       newRHS=IR.getelem(IR.name(tempVarName),IR.number(i));
