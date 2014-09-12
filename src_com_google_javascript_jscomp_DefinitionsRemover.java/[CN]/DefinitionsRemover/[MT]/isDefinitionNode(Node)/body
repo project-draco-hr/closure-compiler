@@ -23,5 +23,11 @@
  else   if (parent.isParamList()) {
     return true;
   }
+ else   if (parent.getType() == Token.COLON && parent.getFirstChild() == n && n.isFromExterns()) {
+    Node grandparent=parent.getParent();
+    Preconditions.checkState(grandparent.getType() == Token.LB);
+    Preconditions.checkState(grandparent.getParent().getType() == Token.LC);
+    return true;
+  }
   return false;
 }

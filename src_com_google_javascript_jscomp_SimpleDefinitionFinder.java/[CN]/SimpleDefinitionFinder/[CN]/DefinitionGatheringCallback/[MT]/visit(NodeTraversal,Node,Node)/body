@@ -1,6 +1,8 @@
 {
-  if (inExterns && node.isName() && parent.isParamList()) {
-    return;
+  if (inExterns && node.getJSDocInfo() != null) {
+    for (    Node typeRoot : node.getJSDocInfo().getTypeNodes()) {
+      traversal.traverse(typeRoot);
+    }
   }
   Definition def=DefinitionsRemover.getDefinition(node,inExterns);
   if (def != null) {

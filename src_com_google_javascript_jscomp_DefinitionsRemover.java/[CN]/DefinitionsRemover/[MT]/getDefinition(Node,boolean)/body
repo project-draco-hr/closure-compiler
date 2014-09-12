@@ -24,5 +24,11 @@
     Node function=parent.getParent();
     return new FunctionArgumentDefinition(function,n,isExtern);
   }
+ else   if (parent.getType() == Token.COLON && parent.getFirstChild() == n && isExtern) {
+    Node grandparent=parent.getParent();
+    Preconditions.checkState(grandparent.getType() == Token.LB);
+    Preconditions.checkState(grandparent.getParent().getType() == Token.LC);
+    return new RecordTypePropertyDefinition(n);
+  }
   return null;
 }
