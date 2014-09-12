@@ -1,4 +1,9 @@
 {
   args.add("--help");
-  assertFalse(createCommandLineRunner(new String[]{"function f() {}"}).shouldRunCompiler());
+  CommandLineRunner runner=createCommandLineRunner(new String[]{"function f() {}"});
+  assertFalse(runner.shouldRunCompiler());
+  assertFalse(runner.hasErrors());
+  String output=new String(outReader.toByteArray(),UTF_8);
+  assertTrue(output.indexOf(" --help ") >= 0);
+  assertTrue(output.indexOf(" --version ") >= 0);
 }
