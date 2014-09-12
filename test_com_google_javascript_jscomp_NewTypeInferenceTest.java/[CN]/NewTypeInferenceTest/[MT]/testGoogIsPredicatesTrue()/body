@@ -2,7 +2,7 @@
   typeCheck(CLOSURE_BASE + "function f(x) { if (goog.isNull(x)) { var /** undefined */ y = x; } }",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(CLOSURE_BASE + "/** @param {number=} x */\n" + "function f(x) {\n"+ "  if (goog.isDef(x)) {\n"+ "    x - 5;\n"+ "  }\n"+ "  x - 5;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(CLOSURE_BASE + "/** @constructor */\n" + "function Foo() {}\n"+ "/** @param {Foo=} x */\n"+ "function f(x) {\n"+ "  var /** !Foo */ y;\n"+ "  if (goog.isDefAndNotNull(x)) {\n"+ "    y = x;\n"+ "  }\n"+ "  y = x;\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(CLOSURE_BASE + "function f(/** (Array|number) */ x) {\n" + "  var /** Array */ a;\n"+ "  if (goog.isArray(x)) {\n"+ "    a = x;\n"+ "  }\n"+ "  a = x;\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(CLOSURE_BASE + "function f(/** (Array.<number>|number) */ x) {\n" + "  var /** Array.<number> */ a;\n"+ "  if (goog.isArray(x)) {\n"+ "    a = x;\n"+ "  }\n"+ "  a = x;\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(CLOSURE_BASE + "/** @param {null|function(number)} x */ \n" + "function f(x) {\n"+ "  if (goog.isFunction(x)) {\n"+ "    x('str');\n"+ "  }\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(CLOSURE_BASE + "function f(x) {\n" + "  if (goog.isObject(x)) {\n"+ "    var /** null */ y = x;\n"+ "  }\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
   checkNoWarnings(CLOSURE_BASE + "function f(/** (number|string) */ x) {\n" + "  if (goog.isString(x)) {\n"+ "    x < 'str';\n"+ "  }\n"+ "}");

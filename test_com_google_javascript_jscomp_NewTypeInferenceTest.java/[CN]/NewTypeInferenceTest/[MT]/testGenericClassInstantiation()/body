@@ -7,5 +7,5 @@
   checkNoWarnings("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @constructor\n"+ " */\n"+ "function Foo(x) {}\n"+ "/** @param {!Foo.<number>} x */\n"+ "function f(x) {}\n"+ "f(new Foo(7));");
   typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @constructor\n"+ " */\n"+ "function Foo(x) {}\n"+ "/** @param {Foo.<number>} x */\n"+ "function f(x) {}\n"+ "f(new Foo('str'));",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @constructor\n"+ " */\n"+ "function Foo(x) {}\n"+ "/** @param {T} x */\n"+ "Foo.prototype.method = function(x) {};\n"+ "/** @param {!Foo.<number>} x */\n"+ "function f(x) { x.method('asdf'); }",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("/**\n" + " * @constructor\n" + " * @template T\n"+ " */\n"+ "function Foo() {}\n"+ "/** @param {T} x */\n"+ "Foo.prototype.method = function(x) {};\n"+ "var /** @type {Foo} */ foo = null;\n"+ "foo.method('asdf');",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck("/**\n" + " * @constructor\n" + " * @template T\n"+ " */\n"+ "function Foo() {}\n"+ "/** @param {T} x */\n"+ "Foo.prototype.method = function(x) {};\n"+ "var /** @type {Foo.<string>} */ foo = null;\n"+ "foo.method('asdf');",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
 }
