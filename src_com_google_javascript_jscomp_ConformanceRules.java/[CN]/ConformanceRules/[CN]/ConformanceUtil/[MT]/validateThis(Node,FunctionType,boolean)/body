@@ -1,0 +1,12 @@
+{
+  if (callOrNew.isNew()) {
+    return true;
+  }
+  JSType thisType=functionType.getTypeOfThis();
+  if (thisType.isUnknownType()) {
+    return true;
+  }
+  Node thisNode=isCallInvocation ? callOrNew.getFirstChild().getNext() : callOrNew.getFirstChild().getFirstChild();
+  JSType thisNodeType=thisNode.getJSType().restrictByNotNullOrUndefined();
+  return thisNodeType.isSubtype(thisType);
+}
