@@ -1,0 +1,8 @@
+{
+  configuration="requirement: {\n" + "  type: BANNED_CODE_PATTERN\n" + "  value: '/** @param {string|String} a */"+ "function template(a) {a.blink}'\n"+ "  error_message: 'blink is annoying'\n"+ "}";
+  testSame("/** @constructor */ function Foo() { this.blink = 1; }\n" + "var foo = new Foo();\n" + "foo.blink();");
+  testSame(EXTERNS,"'foo'.blink;",CheckConformance.CONFORMANCE_VIOLATION,"Violation: blink is annoying");
+  testSame(EXTERNS,"'foo'.blink();",CheckConformance.CONFORMANCE_VIOLATION,"Violation: blink is annoying");
+  testSame(EXTERNS,"String('foo').blink();",CheckConformance.CONFORMANCE_VIOLATION,"Violation: blink is annoying");
+  testSame(EXTERNS,"foo.blink();",CheckConformance.CONFORMANCE_POSSIBLE_VIOLATION,"Possible violation: blink is annoying");
+}

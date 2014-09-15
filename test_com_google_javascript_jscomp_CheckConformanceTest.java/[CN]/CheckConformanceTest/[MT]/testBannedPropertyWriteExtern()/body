@@ -1,0 +1,7 @@
+{
+  configuration="requirement: {\n" + "  type: BANNED_PROPERTY_WRITE\n" + "  value: 'Element.prototype.innerHTML'\n"+ "  error_message: 'Assignment to Element.innerHTML is not allowed'\n"+ "}";
+  String externs="/** @constructor */ function Element() {}\n" + "/** @type {string} @implicitCast */\n" + "Element.prototype.innerHTML;\n";
+  testSame(externs,"var e = new Element(); e.innerHTML = '<boo>';",CheckConformance.CONFORMANCE_VIOLATION);
+  testSame(externs,"var e = new Element(); e.innerHTML = {'foo': 'bar'};",CheckConformance.CONFORMANCE_VIOLATION);
+  testSame(externs,"var e = new Element(); e['innerHTML'] = 'foo';",CheckConformance.CONFORMANCE_VIOLATION);
+}

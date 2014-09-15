@@ -1,0 +1,8 @@
+{
+  configuration="requirement: {\n" + "  type: RESTRICTED_METHOD_CALL\n" + "  value: 'C.prototype.m:function(number)'\n"+ "  error_message: 'm method param must be number'\n"+ "}";
+  String code="/** @constructor */ function C() {}\n" + "/** @param {*} a */\n" + "C.prototype.m = function(a){}\n";
+  testSame(code + "new C().m(1);");
+  testSame(code + "new C().m('str');",CheckConformance.CONFORMANCE_VIOLATION);
+  testSame(code + "new C().m.call(this, 1);");
+  testSame(code + "new C().m.call(this, 'str');",CheckConformance.CONFORMANCE_VIOLATION);
+}

@@ -1,0 +1,8 @@
+{
+  configuration="requirement: {\n" + "  type: RESTRICTED_NAME_CALL\n" + "  value: 'C.m:function(number)'\n"+ "  error_message: 'C.m method param must be number'\n"+ "}";
+  String code="/** @constructor */ function C() {}\n" + "/** @param {*} a */\n" + "C.m = function(a){}\n";
+  testSame(code + "C.m(1);");
+  testSame(code + "C.m('str');",CheckConformance.CONFORMANCE_VIOLATION);
+  testSame(code + "C.m.call(this, 1);");
+  testSame(code + "C.m.call(this, 'str');",CheckConformance.CONFORMANCE_VIOLATION);
+}

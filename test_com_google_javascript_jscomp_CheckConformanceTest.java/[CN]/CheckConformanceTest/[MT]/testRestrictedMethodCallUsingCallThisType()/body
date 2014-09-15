@@ -1,0 +1,8 @@
+{
+  configuration="" + "requirement: {\n" + "  type: RESTRICTED_METHOD_CALL\n"+ "  value: 'Base.prototype.m:function(this:Sub,number)'\n"+ "  error_message: 'Only call m on the subclass'\n"+ "}";
+  String code="/** @constructor */\n" + "function Base() {}\n" + "/** @constructor @extends {Base} */\n"+ "function Sub() {}\n"+ "var b = new Base();\n"+ "var s = new Sub();\n"+ "var maybeB = cond ? new Base() : null;\n"+ "var maybeS = cond ? new Sub() : null;";
+  testSame(code + "b.m.call(b, 1)",CheckConformance.CONFORMANCE_VIOLATION);
+  testSame(code + "b.m.call(maybeB, 1)",CheckConformance.CONFORMANCE_VIOLATION);
+  testSame(code + "b.m.call(s, 1)");
+  testSame(code + "b.m.call(maybeS, 1)");
+}

@@ -1,0 +1,11 @@
+{
+  configuration="requirement: {\n" + "  type: BANNED_PROPERTY_READ\n" + "  value: 'C.prototype.p'\n"+ "  error_message: 'Use of C.p is not allowed'\n"+ "}";
+  String declarations="/** @constructor */ function C() {}\n" + "/** @type {string} */\n" + "C.prototype.p;\n"+ "/** @constructor */ function D() {}\n"+ "/** @type {string} */\n"+ "D.prototype.p;\n"+ "function use(a) {};";
+  testSame(declarations + "var d = new D(); d.p = 'boo';");
+  testSame(declarations + "var c = new C(); c.p = 'boo';");
+  testSame(declarations + "var c = new C(); use(c.p);",CheckConformance.CONFORMANCE_VIOLATION);
+  testSame(declarations + "var c = new C(); var foo = c.p;",CheckConformance.CONFORMANCE_VIOLATION);
+  testSame(declarations + "var c = new C(); var foo = 'x' + c.p;",CheckConformance.CONFORMANCE_VIOLATION);
+  testSame(declarations + "var c = new C(); c['p'] = 'boo';");
+  testSame(declarations + "var c = new C(); use(c['p']);",CheckConformance.CONFORMANCE_VIOLATION);
+}
