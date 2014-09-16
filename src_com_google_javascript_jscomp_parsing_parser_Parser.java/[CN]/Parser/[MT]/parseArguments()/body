@@ -6,6 +6,9 @@
     arguments.add(parseAssignmentOrSpread());
     if (!peek(TokenType.CLOSE_PAREN)) {
       eat(TokenType.COMMA);
+      if (peek(TokenType.CLOSE_PAREN)) {
+        reportError("Invalid trailing comma in arguments list");
+      }
     }
   }
   eat(TokenType.CLOSE_PAREN);
