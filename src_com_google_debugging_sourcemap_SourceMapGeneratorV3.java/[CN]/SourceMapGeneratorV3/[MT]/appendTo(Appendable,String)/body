@@ -1,14 +1,14 @@
 {
-  int maxLine=prepMappings();
+  int maxLine=prepMappings() + 1;
   out.append("{\n");
   appendFirstField(out,"version","3");
   appendField(out,"file",escapeString(name));
-  appendField(out,"lineCount",String.valueOf(maxLine + 1));
+  appendField(out,"lineCount",String.valueOf(maxLine));
   if (this.sourceRootPath != null && !this.sourceRootPath.isEmpty()) {
     appendField(out,"sourceRoot",escapeString(this.sourceRootPath));
   }
   appendFieldStart(out,"mappings");
-  (new LineMapper(out)).appendLineMappings();
+  (new LineMapper(out,maxLine)).appendLineMappings();
   appendFieldEnd(out);
   appendFieldStart(out,"sources");
   out.append("[");

@@ -3,14 +3,19 @@
     previousColumn=0;
   }
   if (line != nextLine || col != nextCol) {
-    if (previousLine == line) {
-      out.append(',');
+    if (line < maxLine) {
+      if (previousLine == line) {
+        out.append(',');
+      }
+      writeEntry(m,col);
+      previousLine=line;
+      previousColumn=col;
     }
-    writeEntry(m,col);
-    previousLine=line;
-    previousColumn=col;
+ else {
+      Preconditions.checkState(m == null);
+    }
   }
-  for (int i=line; i <= nextLine; i++) {
+  for (int i=line; i <= nextLine && i < maxLine; i++) {
     if (i == nextLine) {
       break;
     }
