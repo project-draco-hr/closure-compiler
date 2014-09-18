@@ -37,7 +37,13 @@
   if (peek(TokenType.SEMI_COLON)) {
     return parseForStatement(start,null);
   }
-  ParseTree initializer=parseExpressionNoIn();
+  Predicate<Token> followPred=new Predicate<Token>(){
+    public boolean apply(    Token t){
+      return EnumSet.of(TokenType.IN,TokenType.EQUAL).contains(t.type) || (t.type == TokenType.IDENTIFIER && t.asIdentifier().value.equals(PredefinedName.OF));
+    }
+  }
+;
+  ParseTree initializer=peekPattern(PatternKind.ANY,followPred) ? parsePattern(PatternKind.ANY) : parseExpressionNoIn();
   if (peek(TokenType.IN) || peekPredefinedString(PredefinedName.OF)) {
     if (initializer.type != ParseTreeType.BINARY_OPERATOR) {
       if (peek(TokenType.IN)) {

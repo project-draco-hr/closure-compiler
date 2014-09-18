@@ -1,3 +1,8 @@
 {
-  return newNode(Token.FOR,transform(loopNode.initializer),transform(loopNode.collection),transformBlock(loopNode.body));
+  Node initializer=transform(loopNode.initializer);
+  ImmutableSet<Integer> invalidInitializers=ImmutableSet.of(Token.ARRAYLIT,Token.OBJECTLIT);
+  if (invalidInitializers.contains(initializer.getType())) {
+    errorReporter.error("Invalid LHS for a for-in loop",sourceName,lineno(loopNode.initializer),charno(loopNode.initializer));
+  }
+  return newNode(Token.FOR,initializer,transform(loopNode.collection),transformBlock(loopNode.body));
 }

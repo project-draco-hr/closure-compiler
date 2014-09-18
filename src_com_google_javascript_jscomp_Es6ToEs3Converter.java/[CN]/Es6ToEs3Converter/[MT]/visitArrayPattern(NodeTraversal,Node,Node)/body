@@ -1,6 +1,6 @@
 {
   Node rhs, nodeToDetach;
-  if (NodeUtil.isNameDeclaration(parent)) {
+  if (NodeUtil.isNameDeclaration(parent) && !NodeUtil.isEnhancedFor(parent.getParent())) {
     Preconditions.checkState(arrayPattern.getNext() == null);
     rhs=arrayPattern.getLastChild();
     nodeToDetach=parent;
@@ -11,6 +11,10 @@
     Preconditions.checkState(nodeToDetach.isExprResult());
   }
  else   if (parent.isArrayPattern() || parent.isDefaultValue() || parent.isStringKey()) {
+    return;
+  }
+ else   if (NodeUtil.isEnhancedFor(parent) || NodeUtil.isEnhancedFor(parent.getParent())) {
+    visitDestructuringPatternInEnhancedFor(arrayPattern);
     return;
   }
  else {
