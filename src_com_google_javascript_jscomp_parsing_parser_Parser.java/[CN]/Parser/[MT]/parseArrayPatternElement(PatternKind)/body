@@ -1,14 +1,17 @@
 {
-  if (peekParenPattern(kind,arraySubPatternFollowSet)) {
-    return parseParenPattern(kind);
-  }
-  boolean rest=false;
   SourcePosition start=getTreeStartLocation();
-  if (peek(TokenType.SPREAD)) {
-    eat(TokenType.SPREAD);
-    rest=true;
+  ParseTree lvalue;
+  boolean rest=false;
+  if (peekParenPattern(kind,arraySubPatternFollowSet)) {
+    lvalue=parseParenPattern(kind);
   }
-  ParseTree lvalue=parseLeftHandSideExpression();
+ else {
+    if (peek(TokenType.SPREAD)) {
+      eat(TokenType.SPREAD);
+      rest=true;
+    }
+    lvalue=parseLeftHandSideExpression();
+  }
   if (rest && lvalue.type != ParseTreeType.IDENTIFIER_EXPRESSION) {
     reportError("lvalues in rest elements must be identifiers");
     return lvalue;
