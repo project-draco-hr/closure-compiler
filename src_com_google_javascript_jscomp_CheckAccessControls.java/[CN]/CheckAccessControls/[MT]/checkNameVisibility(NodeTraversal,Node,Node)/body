@@ -1,31 +1,21 @@
 {
   Var var=t.getScope().getVar(name.getString());
-  if (var != null) {
-    StaticSourceFile varSrc=var.getSourceFile();
-    boolean isPrivateByConvention=isPrivateByConvention(name.getString());
-    boolean isPrivate=isPrivateByConvention;
-    JSDocInfo docInfo=var.getJSDocInfo();
-    Visibility visibility=null;
-    if (docInfo != null) {
-      visibility=docInfo.getVisibility();
-    }
-    if ((visibility == null || visibility == Visibility.INHERITED) && fileOverviewJsDoc != null) {
-      visibility=fileOverviewJsDoc.getVisibility();
-    }
-    if (visibility != null) {
-      if (visibility != Visibility.INHERITED) {
-        isPrivate=visibility == Visibility.PRIVATE;
-        if (isPrivateByConvention && !isPrivate) {
-          compiler.report(t.makeError(name,CONVENTION_MISMATCH));
-          return;
-        }
- else         if (visibility == Visibility.PACKAGE && !isPackageAccessAllowed(var,name)) {
-          compiler.report(t.makeError(name,BAD_PACKAGE_PROPERTY_ACCESS,name.getString(),varSrc.getName()));
-        }
-      }
-    }
-    if (isPrivate && !isPrivateAccessAllowed(var,name,parent)) {
-      compiler.report(t.makeError(name,BAD_PRIVATE_GLOBAL_ACCESS,name.getString(),varSrc.getName()));
-    }
+  if (var == null) {
+    return;
   }
+  Visibility v=getAndCheckEffectiveNameVisibility(t,name,var);
+switch (v) {
+case PACKAGE:
+    if (!isPackageAccessAllowed(var,name)) {
+      compiler.report(t.makeError(name,BAD_PACKAGE_PROPERTY_ACCESS,name.getString(),var.getSourceFile().getName()));
+    }
+  break;
+case PRIVATE:
+if (!isPrivateAccessAllowed(var,name,parent)) {
+  compiler.report(t.makeError(name,BAD_PRIVATE_GLOBAL_ACCESS,name.getString(),var.getSourceFile().getName()));
+}
+break;
+default :
+break;
+}
 }

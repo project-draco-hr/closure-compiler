@@ -1,0 +1,12 @@
+{
+  if (currentClass != null && ownerType.isEquivalentTo(currentClass)) {
+    return;
+  }
+  if (isClassType && isValidPrivateConstructorAccess(parent)) {
+    return;
+  }
+  JSType accessedType=getprop.getFirstChild().getJSType();
+  String propertyName=getprop.getLastChild().getString();
+  String readableTypeName=ownerType.equals(accessedType) ? validator.getReadableJSTypeName(getprop.getFirstChild(),true) : ownerType.toString();
+  compiler.report(t.makeError(getprop,BAD_PRIVATE_PROPERTY_ACCESS,propertyName,readableTypeName));
+}

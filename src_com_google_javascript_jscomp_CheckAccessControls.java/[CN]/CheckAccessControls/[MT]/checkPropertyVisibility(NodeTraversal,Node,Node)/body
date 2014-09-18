@@ -1,101 +1,40 @@
 {
   ObjectType referenceType=ObjectType.cast(dereference(getprop.getFirstChild().getJSType()));
-  ObjectType objectType=referenceType;
   String propertyName=getprop.getLastChild().getString();
   boolean isPrivateByConvention=isPrivateByConvention(propertyName);
-  if (isPrivateByConvention) {
-    JSDocInfo info=NodeUtil.getBestJSDocInfo(getprop);
-    if ((parent.isAssign() || parent.isExprResult()) && parent.getFirstChild() == getprop && info != null) {
-      Visibility declaredVisibility=info.getVisibility();
-      if (declaredVisibility != Visibility.INHERITED && declaredVisibility != Visibility.PRIVATE) {
-        compiler.report(t.makeError(getprop,CONVENTION_MISMATCH));
-        return;
-      }
-    }
+  if (isPrivateByConvention && propertyIsDeclaredButNotPrivate(getprop,parent)) {
+    compiler.report(t.makeError(getprop,CONVENTION_MISMATCH));
+    return;
   }
-  StaticSourceFile definingSource=null;
-  Visibility visibility=Visibility.INHERITED;
+  StaticSourceFile definingSource=getDefiningSource(getprop,referenceType,propertyName);
+  if (definingSource == null) {
+    return;
+  }
   boolean isClassType=false;
-  if (isPrivateByConvention && objectType != null) {
-    Node propDefNode=objectType.getPropertyNode(propertyName);
-    if (propDefNode != null) {
-      definingSource=propDefNode.getStaticSourceFile();
-    }
- else {
-      isPrivateByConvention=false;
-    }
-  }
+  boolean isOverride=parent.getJSDocInfo() != null && parent.isAssign() && parent.getFirstChild() == getprop;
+  ObjectType objectType=getObjectType(referenceType,isOverride,propertyName);
+  Visibility visibility=getEffectivePropertyVisibility(t,getprop,parent,objectType);
+  Visibility fileOverviewVisibility=(fileOverviewJsDoc != null) ? fileOverviewJsDoc.getVisibility() : null;
   if (objectType != null) {
-    boolean isOverride=parent.getJSDocInfo() != null && parent.isAssign() && parent.getFirstChild() == getprop;
-    if (isOverride) {
-      objectType=objectType.getImplicitPrototype();
-    }
-    for (; objectType != null; objectType=objectType.getImplicitPrototype()) {
-      JSDocInfo docInfo=objectType.getOwnPropertyJSDocInfo(propertyName);
-      if (docInfo != null && docInfo.getVisibility() != Visibility.INHERITED) {
-        definingSource=docInfo.getStaticSourceFile();
-        visibility=docInfo.getVisibility();
-        isClassType=docInfo.isConstructor();
-        break;
-      }
-    }
-    Visibility fileOverviewVisibility=(fileOverviewJsDoc != null) ? fileOverviewJsDoc.getVisibility() : null;
-    if (objectType == null) {
-      if (isPrivateByConvention && visibility == Visibility.INHERITED && referenceType != null) {
-        objectType=referenceType;
-        visibility=Visibility.PRIVATE;
-      }
- else       if (fileOverviewVisibility != null) {
-        definingSource=fileOverviewJsDoc.getStaticSourceFile();
-      }
+    JSDocInfo docInfo=objectType.getOwnPropertyJSDocInfo(propertyName);
+    definingSource=docInfo.getStaticSourceFile();
+    isClassType=docInfo.isConstructor();
+  }
+ else   if (isPrivateByConvention) {
+    objectType=referenceType;
+  }
+ else   if (fileOverviewVisibility != null) {
+    definingSource=fileOverviewJsDoc.getStaticSourceFile();
+  }
  else {
-        return;
-      }
-    }
-    StaticSourceFile referenceSource=getprop.getStaticSourceFile();
+    return;
+  }
+  StaticSourceFile referenceSource=getprop.getStaticSourceFile();
+  if (isOverride) {
     boolean sameInput=referenceSource != null && referenceSource.getName().equals(definingSource.getName());
-    JSType ownerType=normalizeClassType(objectType);
-    if (isOverride) {
-      JSDocInfo overridingInfo=parent.getJSDocInfo();
-      Visibility overridingVisibility=overridingInfo == null ? Visibility.INHERITED : overridingInfo.getVisibility();
-      if (visibility == Visibility.PRIVATE && !sameInput) {
-        compiler.report(t.makeError(getprop,PRIVATE_OVERRIDE,objectType.toString()));
-      }
- else       if (overridingVisibility != Visibility.INHERITED && overridingVisibility != visibility && fileOverviewVisibility == null) {
-        compiler.report(t.makeError(getprop,VISIBILITY_MISMATCH,visibility.name(),objectType.toString(),overridingVisibility.name()));
-      }
- else       if (overridingVisibility == Visibility.INHERITED && overridingVisibility != visibility && fileOverviewVisibility != null && fileOverviewVisibility != Visibility.INHERITED) {
-        compiler.report(t.makeError(getprop,BAD_PROPERTY_OVERRIDE_IN_FILE_WITH_FILEOVERVIEW_VISIBILITY,propertyName,fileOverviewVisibility.name()));
-      }
-    }
+    checkOverriddenPropertyVisibility(t,getprop,parent,visibility,fileOverviewVisibility,objectType,sameInput);
+  }
  else {
-      if (fileOverviewVisibility != null && visibility == Visibility.INHERITED) {
-        visibility=fileOverviewVisibility;
-      }
-      if (sameInput) {
-        return;
-      }
- else       if (visibility == Visibility.PRIVATE && (currentClass == null || !ownerType.isEquivalentTo(currentClass))) {
-        if (isClassType && isValidPrivateConstructorAccess(parent)) {
-          return;
-        }
-        JSType accessedType=getprop.getFirstChild().getJSType();
-        String readableTypeName=ownerType.equals(accessedType) ? validator.getReadableJSTypeName(getprop.getFirstChild(),true) : ownerType.toString();
-        compiler.report(t.makeError(getprop,BAD_PRIVATE_PROPERTY_ACCESS,propertyName,readableTypeName));
-      }
- else       if (visibility == Visibility.PROTECTED) {
-        if (currentClass == null || !currentClass.isSubtype(ownerType)) {
-          compiler.report(t.makeError(getprop,BAD_PROTECTED_PROPERTY_ACCESS,propertyName,validator.getReadableJSTypeName(getprop.getFirstChild(),true)));
-        }
-      }
- else       if (visibility == Visibility.PACKAGE) {
-        CodingConvention codingConvention=compiler.getCodingConvention();
-        String refPackage=codingConvention.getPackageName(referenceSource);
-        String defPackage=codingConvention.getPackageName(definingSource);
-        if (refPackage == null || defPackage == null || !refPackage.equals(defPackage)) {
-          compiler.report(t.makeError(getprop,BAD_PACKAGE_PROPERTY_ACCESS,propertyName,validator.getReadableJSTypeName(getprop.getFirstChild(),true)));
-        }
-      }
-    }
+    checkNonOverriddenPropertyVisibility(t,getprop,parent,visibility,isClassType,objectType,referenceSource,definingSource);
   }
 }
