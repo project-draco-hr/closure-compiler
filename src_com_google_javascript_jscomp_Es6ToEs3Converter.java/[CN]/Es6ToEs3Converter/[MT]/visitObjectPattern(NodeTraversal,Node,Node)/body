@@ -15,10 +15,12 @@
     visitDestructuringPatternInEnhancedFor(objectPattern);
     return;
   }
- else {
-    Preconditions.checkState(parent.isCatch(),parent);
-    cannotConvertYet(objectPattern,"OBJECT_PATTERN that is a child of a " + Token.name(parent.getType()));
+ else   if (parent.isCatch()) {
+    visitDestructuringPatternInCatch(objectPattern);
     return;
+  }
+ else {
+    throw new IllegalStateException("Unexpected OBJECT_PATTERN parent: " + parent);
   }
   String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
   Node tempDecl=IR.var(IR.name(tempVarName),rhs.detachFromParent()).useSourceInfoIfMissingFromForTree(objectPattern);
