@@ -1,6 +1,10 @@
 {
   Preconditions.checkState(this.typeParameters == null);
   Preconditions.checkState(this.outerVarPreconditions.isEmpty());
+  if (this == LOOSE_TOP_FUNCTION || other == LOOSE_TOP_FUNCTION) {
+    return true;
+  }
+  Preconditions.checkState(this.requiredFormals != null && other.requiredFormals != null,"Cannot run unification algorithm on %s and %s",this,other);
   if (requiredFormals.size() != other.requiredFormals.size()) {
     return false;
   }
