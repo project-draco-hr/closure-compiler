@@ -10,7 +10,17 @@
   Node expected=compiler.parseTestCode(expectedExtern);
   assertFalse(compiler.hasErrors());
   (getProcessor(compiler)).process(externs,root);
-  String externsCode=compiler.toSource(externs);
-  String expectedCode=compiler.toSource(expected);
-  assertEquals(expectedCode,externsCode);
+  if (compareAsTree) {
+    Preconditions.checkState(externs.isBlock());
+    Preconditions.checkState(compareJsDoc);
+    Preconditions.checkState(externs.hasOneChild(),"Compare as tree only works when output has a single script.");
+    externs=externs.getFirstChild();
+    String explanation=expected.checkTreeEqualsIncludingJsDoc(externs);
+    assertNull("\nExpected: " + compiler.toSource(expected) + "\nResult:   "+ compiler.toSource(externs)+ "\n"+ explanation,explanation);
+  }
+ else {
+    String externsCode=compiler.toSource(externs);
+    String expectedCode=compiler.toSource(expected);
+    assertEquals(expectedCode,externsCode);
+  }
 }
