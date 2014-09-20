@@ -3,12 +3,14 @@
   List<String> processedArgs=processArgs(args);
   Flags.guardLevels.clear();
   List<String> jsFiles=null;
+  List<LocationMapping> mappings=null;
   try {
     flags.parse(processedArgs);
     if (!flags.flagFile.isEmpty()) {
       processFlagFile();
     }
     jsFiles=flags.getJsFiles();
+    mappings=flags.getSourceMapLocationMappings();
   }
  catch (  CmdLineException e) {
     reportError(e.getMessage());
@@ -58,7 +60,7 @@ catch (  IOException ioErr) {
  else {
       conv=new ClosureCodingConvention();
     }
-    getCommandLineConfig().setPrintTree(flags.printTree).setPrintAst(flags.printAst).setPrintPassGraph(flags.printPassGraph).setJscompDevMode(flags.jscompDevMode).setLoggingLevel(flags.loggingLevel).setExterns(flags.externs).setJs(jsFiles).setJsOutputFile(flags.jsOutputFile).setModule(flags.module).setVariableMapOutputFile(flags.variableMapOutputFile).setCreateNameMapFiles(flags.createNameMapFiles).setPropertyMapOutputFile(flags.propertyMapOutputFile).setCodingConvention(conv).setSummaryDetailLevel(flags.summaryDetailLevel).setOutputWrapper(flags.outputWrapper).setModuleWrapper(flags.moduleWrapper).setModuleOutputPathPrefix(flags.moduleOutputPathPrefix).setCreateSourceMap(flags.createSourceMap).setSourceMapFormat(flags.sourceMapFormat).setSourceMapLocationMappings(flags.getSourceMapLocationMappings()).setWarningGuardSpec(Flags.getWarningGuardSpec()).setDefine(flags.define).setCharset(flags.charset).setManageClosureDependencies(flags.manageClosureDependencies).setOnlyClosureDependencies(flags.onlyClosureDependencies).setClosureEntryPoints(flags.closureEntryPoint).setOutputManifest(ImmutableList.of(flags.outputManifest)).setOutputModuleDependencies(flags.outputModuleDependencies).setAcceptConstKeyword(flags.acceptConstKeyword).setLanguageIn(flags.languageIn).setLanguageOut(flags.languageOut).setProcessCommonJSModules(flags.processCommonJsModules).setRewriteEs6Modules(flags.rewriteEs6Modules).setTranspileOnly(flags.transpileOnly).setCommonJSModulePathPrefix(flags.commonJsPathPrefix).setTransformAMDToCJSModules(flags.transformAmdModules).setWarningsWhitelistFile(flags.warningsWhitelistFile).setAngularPass(flags.angularPass).setTracerMode(flags.tracerMode).setNewTypeInference(flags.useNewTypeInference);
+    getCommandLineConfig().setPrintTree(flags.printTree).setPrintAst(flags.printAst).setPrintPassGraph(flags.printPassGraph).setJscompDevMode(flags.jscompDevMode).setLoggingLevel(flags.loggingLevel).setExterns(flags.externs).setJs(jsFiles).setJsOutputFile(flags.jsOutputFile).setModule(flags.module).setVariableMapOutputFile(flags.variableMapOutputFile).setCreateNameMapFiles(flags.createNameMapFiles).setPropertyMapOutputFile(flags.propertyMapOutputFile).setCodingConvention(conv).setSummaryDetailLevel(flags.summaryDetailLevel).setOutputWrapper(flags.outputWrapper).setModuleWrapper(flags.moduleWrapper).setModuleOutputPathPrefix(flags.moduleOutputPathPrefix).setCreateSourceMap(flags.createSourceMap).setSourceMapFormat(flags.sourceMapFormat).setSourceMapLocationMappings(mappings).setWarningGuardSpec(Flags.getWarningGuardSpec()).setDefine(flags.define).setCharset(flags.charset).setManageClosureDependencies(flags.manageClosureDependencies).setOnlyClosureDependencies(flags.onlyClosureDependencies).setClosureEntryPoints(flags.closureEntryPoint).setOutputManifest(ImmutableList.of(flags.outputManifest)).setOutputModuleDependencies(flags.outputModuleDependencies).setAcceptConstKeyword(flags.acceptConstKeyword).setLanguageIn(flags.languageIn).setLanguageOut(flags.languageOut).setProcessCommonJSModules(flags.processCommonJsModules).setRewriteEs6Modules(flags.rewriteEs6Modules).setTranspileOnly(flags.transpileOnly).setCommonJSModulePathPrefix(flags.commonJsPathPrefix).setTransformAMDToCJSModules(flags.transformAmdModules).setWarningsWhitelistFile(flags.warningsWhitelistFile).setAngularPass(flags.angularPass).setTracerMode(flags.tracerMode).setNewTypeInference(flags.useNewTypeInference);
   }
   errorStream=null;
 }

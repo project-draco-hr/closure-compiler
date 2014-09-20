@@ -1,0 +1,9 @@
+{
+  args.add("--js_output_file");
+  args.add("/path/to/out.js");
+  args.add("--create_source_map=%outname%.map");
+  args.add("--source_map_location_mapping=foo/|http://bar");
+  testSame("var x = 3;");
+  List<LocationMapping> mappings=lastCompiler.getOptions().sourceMapLocationMappings;
+  assertEquals(ImmutableSet.of(new LocationMapping("foo/","http://bar")).toString(),ImmutableSet.copyOf(mappings).toString());
+}

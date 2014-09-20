@@ -1,8 +1,12 @@
 {
-  List<SourceMap.LocationMapping> locationMappings=Lists.newArrayListWithCapacity(sourceMapLocationMapping.size());
+  ImmutableList.Builder<LocationMapping> locationMappings=ImmutableList.builder();
+  Splitter splitter=Splitter.on('|').limit(2);
   for (  String locationMapping : sourceMapLocationMapping) {
-    String[] pair=locationMapping.split("\\|",2);
-    locationMappings.add(new SourceMap.LocationMapping(pair[0],pair[1]));
+    List<String> parts=splitter.splitToList(locationMapping);
+    if (parts.size() != 2) {
+      throw new CmdLineException("Bad value for --source_map_location_mapping: " + ImmutableList.of(sourceMapLocationMapping));
+    }
+    locationMappings.add(new SourceMap.LocationMapping(parts.get(0),parts.get(1)));
   }
-  return locationMappings;
+  return locationMappings.build();
 }
