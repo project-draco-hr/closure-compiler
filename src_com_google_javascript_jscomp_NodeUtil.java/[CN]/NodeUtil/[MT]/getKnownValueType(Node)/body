@@ -1,0 +1,82 @@
+{
+switch (n.getType()) {
+case Token.CAST:
+    return getKnownValueType(n.getFirstChild());
+case Token.ASSIGN:
+case Token.COMMA:
+  return getKnownValueType(n.getLastChild());
+case Token.AND:
+case Token.OR:
+return and(getKnownValueType(n.getFirstChild()),getKnownValueType(n.getLastChild()));
+case Token.HOOK:
+return and(getKnownValueType(n.getFirstChild().getNext()),getKnownValueType(n.getLastChild()));
+case Token.ADD:
+{
+ValueType last=getKnownValueType(n.getLastChild());
+if (last == ValueType.STRING) {
+return ValueType.STRING;
+}
+ValueType first=getKnownValueType(n.getFirstChild());
+if (first == ValueType.STRING) {
+return ValueType.STRING;
+}
+if (!mayBeString(first) && !mayBeString(last)) {
+return ValueType.NUMBER;
+}
+return ValueType.UNDETERMINED;
+}
+case Token.NAME:
+String name=n.getString();
+if (name.equals("undefined")) {
+return ValueType.VOID;
+}
+if (name.equals("NaN")) {
+return ValueType.NUMBER;
+}
+if (name.equals("Infinity")) {
+return ValueType.NUMBER;
+}
+return ValueType.UNDETERMINED;
+case Token.BITNOT:
+case Token.BITOR:
+case Token.BITXOR:
+case Token.BITAND:
+case Token.LSH:
+case Token.RSH:
+case Token.URSH:
+case Token.SUB:
+case Token.MUL:
+case Token.MOD:
+case Token.DIV:
+case Token.INC:
+case Token.DEC:
+case Token.POS:
+case Token.NEG:
+case Token.NUMBER:
+return ValueType.NUMBER;
+case Token.TRUE:
+case Token.FALSE:
+case Token.EQ:
+case Token.NE:
+case Token.SHEQ:
+case Token.SHNE:
+case Token.LT:
+case Token.GT:
+case Token.LE:
+case Token.GE:
+case Token.IN:
+case Token.INSTANCEOF:
+case Token.NOT:
+case Token.DELPROP:
+return ValueType.BOOLEAN;
+case Token.TYPEOF:
+case Token.STRING:
+return ValueType.STRING;
+case Token.NULL:
+return ValueType.NULL;
+case Token.VOID:
+return ValueType.VOID;
+default :
+return ValueType.UNDETERMINED;
+}
+}
