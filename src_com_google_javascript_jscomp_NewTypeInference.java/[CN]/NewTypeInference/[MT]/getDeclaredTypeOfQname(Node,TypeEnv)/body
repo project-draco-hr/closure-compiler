@@ -3,7 +3,7 @@ switch (qnameNode.getType()) {
 case Token.NAME:
 {
       JSType result=envGetType(env,qnameNode.getString());
-      Preconditions.checkNotNull(result);
+      Preconditions.checkNotNull(result,"Null declared type@%s",qnameNode);
       return result;
     }
 case Token.GETPROP:
@@ -11,7 +11,7 @@ case Token.GETPROP:
     Preconditions.checkState(qnameNode.isQualifiedName());
     JSType recvType=getDeclaredTypeOfQname(qnameNode.getFirstChild(),env);
     JSType result=recvType.getProp(new QualifiedName(qnameNode.getLastChild().getString()));
-    Preconditions.checkNotNull(result);
+    Preconditions.checkNotNull(result,"Null declared type@%s",qnameNode);
     return result;
   }
 default :
