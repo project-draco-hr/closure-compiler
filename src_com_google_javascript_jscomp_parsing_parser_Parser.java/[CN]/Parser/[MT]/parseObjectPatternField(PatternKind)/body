@@ -3,7 +3,7 @@
   if (peekType() == TokenType.OPEN_SQUARE) {
     ParseTree key=parseComputedPropertyName();
     eat(TokenType.COLON);
-    ParseTree value=parseObjectPatternFieldRHS(kind);
+    ParseTree value=parseObjectPatternFieldTail(kind);
     return new ComputedPropertyDefinitionTree(getTreeLocation(start),key,value);
   }
   Token name;
@@ -27,6 +27,6 @@
     name=parseLiteralExpression().literalToken;
   }
   eat(TokenType.COLON);
-  ParseTree value=parseObjectPatternFieldRHS(kind);
+  ParseTree value=parseObjectPatternFieldTail(kind);
   return new PropertyNameAssignmentTree(getTreeLocation(start),name,value);
 }

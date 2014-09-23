@@ -5,7 +5,10 @@
     value=parsePattern(kind);
   }
  else {
-    value=parseIdentifierExpression();
+    value=(kind == PatternKind.ANY) ? parseLeftHandSideExpression() : parseIdentifierExpression();
+    if (!value.isValidAssignmentTarget()) {
+      reportError("invalid assignment target");
+    }
   }
   if (peek(TokenType.EQUAL)) {
     eat(TokenType.EQUAL);

@@ -8,8 +8,8 @@
   SourcePosition start=getTreeStartLocation();
   ParseTree left=peekParenPatternAssignment() ? parseParenPattern() : parseConditional(expressionIn);
   if (peekAssignmentOperator()) {
-    if (!left.isLeftHandSideExpression() && !left.isPattern()) {
-      reportError("Left hand side of assignment must be new, call, member, " + "function, primary expressions or destructuring pattern");
+    if (!left.isValidAssignmentTarget()) {
+      reportError("invalid assignment target");
     }
     Token operator=nextToken();
     ParseTree right=parseAssignment(expressionIn);

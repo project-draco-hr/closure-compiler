@@ -3,6 +3,11 @@
     return false;
   }
   Parser p=createLookaheadParser();
-  p.parsePattern(kind);
-  return !p.errorReporter.hadError() && follow.contains(p.peekType());
+  try {
+    p.parseParenPattern(kind);
+    return follow.contains(p.peekType());
+  }
+ catch (  ParseException e) {
+    return false;
+  }
 }

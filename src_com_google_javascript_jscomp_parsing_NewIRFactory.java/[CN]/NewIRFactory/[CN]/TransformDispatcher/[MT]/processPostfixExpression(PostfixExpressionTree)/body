@@ -1,11 +1,6 @@
 {
   int type=transformPostfixTokenType(exprNode.operator.type);
-  Node operand=transform(exprNode.operand);
-  if (!operand.isValidAssignmentTarget()) {
-    String msg=(type == Token.INC) ? "invalid increment target" : "invalid decrement target";
-    errorReporter.error(msg,sourceName,operand.getLineno(),0);
-  }
-  Node node=newNode(type,operand);
+  Node node=newNode(type,transform(exprNode.operand));
   node.putBooleanProp(Node.INCRDECR_PROP,true);
   return node;
 }
