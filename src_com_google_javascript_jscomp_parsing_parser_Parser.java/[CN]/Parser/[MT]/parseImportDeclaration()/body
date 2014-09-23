@@ -15,11 +15,12 @@
       identifierSet=parseImportSpecifierSet();
     }
   }
- else   if (peek(TokenType.OPEN_CURLY)) {
+ else {
     identifierSet=parseImportSpecifierSet();
   }
   eatPredefinedString(PredefinedName.FROM);
-  LiteralToken moduleSpecifier=eat(TokenType.STRING).asLiteral();
+  Token moduleStr=eat(TokenType.STRING);
+  LiteralToken moduleSpecifier=(moduleStr == null) ? null : moduleStr.asLiteral();
   eatPossibleImplicitSemiColon();
   return new ImportDeclarationTree(getTreeLocation(start),defaultBindingIdentifier,identifierSet,moduleSpecifier);
 }

@@ -1,15 +1,15 @@
 {
-  String importName=n.getLastChild().getString();
+  String importName=importDecl.getLastChild().getString();
   String loadAddress=loader.locate(importName,t.getInput());
   try {
     loader.load(loadAddress);
   }
  catch (  ES6ModuleLoader.LoadFailedException e) {
-    t.makeError(n,ES6ModuleLoader.LOAD_ERROR,importName);
+    compiler.report(t.makeError(importDecl,ES6ModuleLoader.LOAD_ERROR,importName));
   }
   String moduleName=toModuleName(loadAddress);
   Set<String> namesToRequire=new LinkedHashSet<>();
-  for (  Node child : n.children()) {
+  for (  Node child : importDecl.children()) {
     if (child.isEmpty() || child.isString()) {
       continue;
     }
@@ -33,17 +33,21 @@
   Node script=NodeUtil.getEnclosingType(parent,Token.SCRIPT);
   if (!alreadyRequired.contains(moduleName)) {
     alreadyRequired.add(moduleName);
-    script.addChildToFront(IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.require"),IR.string(moduleName))).copyInformationFromForTree(n));
+    Node require=IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.require"),IR.string(moduleName)));
+    require.copyInformationFromForTree(importDecl);
+    script.addChildToFront(require);
     if (reportDependencies) {
       t.getInput().addRequire(moduleName);
     }
   }
   for (  String name : namesToRequire) {
-    script.addChildToFront(IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.require"),IR.string(moduleName + "." + name))).copyInformationFromForTree(n));
+    Node require=IR.exprResult(IR.call(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),"goog.require"),IR.string(moduleName + "." + name)));
+    require.copyInformationFromForTree(importDecl);
+    script.addChildToFront(require);
     if (reportDependencies) {
       t.getInput().addRequire(moduleName + "." + name);
     }
   }
-  parent.removeChild(n);
+  parent.removeChild(importDecl);
   compiler.reportCodeChange();
 }
