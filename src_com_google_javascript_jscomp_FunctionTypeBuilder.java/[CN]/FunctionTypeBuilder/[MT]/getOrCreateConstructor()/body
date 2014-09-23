@@ -15,7 +15,9 @@
         existingFn.setSource(contents.getSourceNode());
       }
       if (!existingFn.hasEqualCallType(fnType)) {
-        reportWarning(TYPE_REDEFINITION,formatFnName(),fnType.toString(),existingFn.toString());
+        if (existingFn != typeRegistry.getNativeType(OBJECT_FUNCTION_TYPE)) {
+          reportWarning(TYPE_REDEFINITION,formatFnName(),fnType.toString(),existingFn.toString());
+        }
       }
       return existingFn;
     }
