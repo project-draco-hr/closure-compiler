@@ -1,8 +1,9 @@
 {
-  testSame("/** @constructor */ function f() { " + "  /** @const */ this.foo = 'abc' + 'def';" + "}"+ "var x = new f();",TypedScopeCreator.CANNOT_INFER_CONST_TYPE);
+  testSame("/** @constructor */ function f() { " + "  /** @const */ this.foo = 'abc' + 'def';" + "}"+ "var x = new f();");
   ObjectType x=(ObjectType)findNameType("x",globalScope);
   assertEquals("f",x.toString());
   assertTrue(x.hasProperty("foo"));
   assertEquals("string",x.getPropertyType("foo").toString());
-  assertTrue(x.isPropertyTypeInferred("foo"));
+  assertFalse(x.isPropertyTypeInferred("foo"));
+  assertTrue(x.isPropertyTypeDeclared("foo"));
 }
