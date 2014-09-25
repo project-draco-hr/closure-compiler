@@ -1,0 +1,10 @@
+{
+  CompilerOptions options=new CompilerOptions();
+  options.setCodingConvention(new GoogleCodingConvention());
+  Compiler compiler=new Compiler();
+  compiler.init(ImmutableList.<SourceFile>of(),ImmutableList.<SourceFile>of(),options);
+  Node actual=compiler.newQualifiedNameNode("ns.prop");
+  Node expected=IR.getprop(IR.name("ns"),IR.string("prop"));
+  String error=expected.checkTreeEquals(actual);
+  assertNull(error,error);
+}

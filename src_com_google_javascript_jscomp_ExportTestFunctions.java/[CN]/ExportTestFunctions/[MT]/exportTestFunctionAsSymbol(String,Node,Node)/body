@@ -1,11 +1,11 @@
 {
-  Node exportCallTarget=NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),exportSymbolFunction,node,testFunctionName);
+  Node exportCallTarget=compiler.newQualifiedNameNode(exportSymbolFunction,node,testFunctionName);
   Node call=IR.call(exportCallTarget);
   if (exportCallTarget.isName()) {
     call.putBooleanProp(Node.FREE_CALL,true);
   }
   call.addChildToBack(IR.string(testFunctionName));
-  call.addChildToBack(NodeUtil.newQualifiedNameNode(compiler.getCodingConvention(),testFunctionName,node,testFunctionName));
+  call.addChildToBack(compiler.newQualifiedNameNode(testFunctionName,node,testFunctionName));
   Node expression=IR.exprResult(call);
   scriptNode.addChildAfter(expression,node);
   compiler.reportCodeChange();
