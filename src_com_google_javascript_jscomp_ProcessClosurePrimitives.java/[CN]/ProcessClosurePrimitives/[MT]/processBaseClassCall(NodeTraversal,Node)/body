@@ -26,7 +26,7 @@
       reportBadGoogBaseUse(t,n,"Could not find goog.inherits for base class");
       return;
     }
-    n.replaceChild(callee,compiler.newQualifiedNameNode(String.format("%s.call",baseClassNode.getQualifiedName()),callee,"goog.base"));
+    n.replaceChild(callee,NodeUtil.newQName(compiler,String.format("%s.call",baseClassNode.getQualifiedName()),callee,"goog.base"));
     compiler.reportCodeChange();
   }
  else {
@@ -42,7 +42,7 @@
       return;
     }
     Node className=enclosingFnNameNode.getFirstChild().getFirstChild();
-    n.replaceChild(callee,compiler.newQualifiedNameNode(String.format("%s.superClass_.%s.call",className.getQualifiedName(),methodName),callee,"goog.base"));
+    n.replaceChild(callee,NodeUtil.newQName(compiler,String.format("%s.superClass_.%s.call",className.getQualifiedName(),methodName),callee,"goog.base"));
     n.removeChild(methodNameNode);
     compiler.reportCodeChange();
   }

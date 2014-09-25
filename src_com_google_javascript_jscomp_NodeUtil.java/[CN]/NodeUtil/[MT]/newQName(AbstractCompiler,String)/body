@@ -1,7 +1,7 @@
 {
   int endPos=name.indexOf('.');
   if (endPos == -1) {
-    return newName(name);
+    return newName(compiler,name);
   }
   Node node;
   String nodeName=name.substring(0,endPos);
@@ -9,7 +9,7 @@
     node=IR.thisNode();
   }
  else {
-    node=newName(nodeName);
+    node=newName(compiler,nodeName);
   }
   int startPos;
   do {
@@ -17,7 +17,7 @@
     endPos=name.indexOf('.',startPos);
     String part=(endPos == -1 ? name.substring(startPos) : name.substring(startPos,endPos));
     Node propNode=IR.string(part);
-    if (getCodingConvention().isConstantKey(part)) {
+    if (compiler.getCodingConvention().isConstantKey(part)) {
       propNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
     }
     node=IR.getprop(node,propNode);

@@ -46,7 +46,7 @@
       reportBadBaseMethodUse(t,n,baseContainer,"Second argument must be 'constructor'.");
       return;
     }
-    n.replaceChild(callee,compiler.newQualifiedNameNode(String.format("%s.call",baseClassNode.getQualifiedName()),callee,enclosingQname + ".base"));
+    n.replaceChild(callee,NodeUtil.newQName(compiler,String.format("%s.call",baseClassNode.getQualifiedName()),callee,enclosingQname + ".base"));
     n.removeChild(methodNameNode);
     compiler.reportCodeChange();
   }
@@ -77,7 +77,7 @@
       return;
     }
     Node className=enclosingFnNameNode.getFirstChild().getFirstChild();
-    n.replaceChild(callee,compiler.newQualifiedNameNode(String.format("%s.superClass_.%s.call",className.getQualifiedName(),methodName),callee,enclosingQname + ".base"));
+    n.replaceChild(callee,NodeUtil.newQName(compiler,String.format("%s.superClass_.%s.call",className.getQualifiedName(),methodName),callee,enclosingQname + ".base"));
     n.removeChild(methodNameNode);
     compiler.reportCodeChange();
   }

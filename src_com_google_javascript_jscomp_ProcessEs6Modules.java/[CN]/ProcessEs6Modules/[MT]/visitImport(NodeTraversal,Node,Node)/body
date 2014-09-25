@@ -33,7 +33,7 @@
   Node script=NodeUtil.getEnclosingType(parent,Token.SCRIPT);
   if (!alreadyRequired.contains(moduleName)) {
     alreadyRequired.add(moduleName);
-    Node require=IR.exprResult(IR.call(compiler.newQualifiedNameNode("goog.require"),IR.string(moduleName)));
+    Node require=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.require"),IR.string(moduleName)));
     require.copyInformationFromForTree(importDecl);
     script.addChildToFront(require);
     if (reportDependencies) {
@@ -41,7 +41,7 @@
     }
   }
   for (  String name : namesToRequire) {
-    Node require=IR.exprResult(IR.call(compiler.newQualifiedNameNode("goog.require"),IR.string(moduleName + "." + name)));
+    Node require=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.require"),IR.string(moduleName + "." + name)));
     require.copyInformationFromForTree(importDecl);
     script.addChildToFront(require);
     if (reportDependencies) {
