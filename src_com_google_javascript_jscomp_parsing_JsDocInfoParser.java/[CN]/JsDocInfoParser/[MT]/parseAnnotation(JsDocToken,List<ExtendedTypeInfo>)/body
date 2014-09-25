@@ -170,11 +170,6 @@ parser.addTypeWarning("msg.jsdoc.incompat.type",lineno,charno);
 }
 token=eatUntilEOLIfNotAnnotation(token);
 return token;
-case EXPORT:
-if (!jsdocBuilder.recordExport()) {
-parser.addParserWarning("msg.jsdoc.export",stream.getLineno(),stream.getCharno());
-}
-return eatUntilEOLIfNotAnnotation();
 case EXPOSE:
 if (!jsdocBuilder.recordExpose()) {
 parser.addParserWarning("msg.jsdoc.expose",stream.getLineno(),stream.getCharno());
@@ -542,6 +537,7 @@ token=versionInfo.token;
 return token;
 case CONSTANT:
 case DEFINE:
+case EXPORT:
 case RETURN:
 case PACKAGE:
 case PRIVATE:
@@ -554,8 +550,8 @@ lineno=stream.getLineno();
 charno=stream.getCharno();
 Node typeNode=null;
 boolean hasType=lookAheadForType();
-boolean isAlternateTypeAnnotation=(annotation == Annotation.PACKAGE || annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC || annotation == Annotation.CONSTANT);
-boolean canSkipTypeAnnotation=(isAlternateTypeAnnotation || annotation == Annotation.RETURN);
+boolean isAlternateTypeAnnotation=annotation == Annotation.PACKAGE || annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC || annotation == Annotation.CONSTANT || annotation == Annotation.EXPORT;
+boolean canSkipTypeAnnotation=isAlternateTypeAnnotation || annotation == Annotation.RETURN;
 type=null;
 if (hasType || !canSkipTypeAnnotation) {
 skipEOLs();
@@ -588,9 +584,20 @@ if (!isAnnotationNext) {
 return recordDescription(token);
 }
 break;
+case EXPORT:
+if (!jsdocBuilder.recordExport()) {
+parser.addParserWarning("msg.jsdoc.export",lineno,charno);
+}
+ else if (!jsdocBuilder.recordVisibility(Visibility.PUBLIC)) {
+parser.addParserWarning("msg.jsdoc.extra.visibility",lineno,charno);
+}
+if (!isAnnotationNext) {
+return recordDescription(token);
+}
+break;
 case PRIVATE:
 if (!jsdocBuilder.recordVisibility(Visibility.PRIVATE)) {
-parser.addParserWarning("msg.jsdoc.visibility.private",lineno,charno);
+parser.addParserWarning("msg.jsdoc.extra.visibility",lineno,charno);
 }
 if (!isAnnotationNext) {
 return recordDescription(token);
@@ -598,7 +605,7 @@ return recordDescription(token);
 break;
 case PACKAGE:
 if (!jsdocBuilder.recordVisibility(Visibility.PACKAGE)) {
-parser.addParserWarning("msg.jsdoc.visibility.package",lineno,charno);
+parser.addParserWarning("msg.jsdoc.extra.visibility",lineno,charno);
 }
 if (!isAnnotationNext) {
 return recordDescription(token);
@@ -606,7 +613,7 @@ return recordDescription(token);
 break;
 case PROTECTED:
 if (!jsdocBuilder.recordVisibility(Visibility.PROTECTED)) {
-parser.addParserWarning("msg.jsdoc.visibility.protected",lineno,charno);
+parser.addParserWarning("msg.jsdoc.extra.visibility",lineno,charno);
 }
 if (!isAnnotationNext) {
 return recordDescription(token);
@@ -614,7 +621,7 @@ return recordDescription(token);
 break;
 case PUBLIC:
 if (!jsdocBuilder.recordVisibility(Visibility.PUBLIC)) {
-parser.addParserWarning("msg.jsdoc.visibility.public",lineno,charno);
+parser.addParserWarning("msg.jsdoc.extra.visibility",lineno,charno);
 }
 if (!isAnnotationNext) {
 return recordDescription(token);
