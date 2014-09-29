@@ -1,0 +1,14 @@
+{
+  String propertyName=getprop.getLastChild().getString();
+  if (isPrivateByConvention(propertyName)) {
+    return Visibility.PRIVATE;
+  }
+  Visibility raw=Visibility.INHERITED;
+  if (objectType != null) {
+    raw=objectType.getOwnPropertyJSDocInfo(propertyName).getVisibility();
+  }
+  if (raw != Visibility.INHERITED) {
+    return raw;
+  }
+  return (fileOverviewVisibility == null) ? raw : fileOverviewVisibility;
+}

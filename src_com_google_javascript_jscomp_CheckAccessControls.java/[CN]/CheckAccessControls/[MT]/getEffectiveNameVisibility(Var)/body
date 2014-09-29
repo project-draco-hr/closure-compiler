@@ -1,5 +1,9 @@
 {
   JSDocInfo jsDocInfo=var.getJSDocInfo();
   Visibility raw=(jsDocInfo == null || jsDocInfo.getVisibility() == null) ? Visibility.INHERITED : jsDocInfo.getVisibility();
-  return maybeUpgradeToFileOverviewVisibility.apply(raw);
+  if (raw != Visibility.INHERITED) {
+    return raw;
+  }
+  Visibility defaultVisibilityForFile=defaultVisibilityForFiles.get(var.getSourceFile());
+  return (defaultVisibilityForFile == null) ? raw : defaultVisibilityForFile;
 }
