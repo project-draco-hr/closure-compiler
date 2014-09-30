@@ -1,0 +1,22 @@
+{
+  Set<String> values=new HashSet<>();
+  for (  Node child : n.children()) {
+    Node valueNode=child.getFirstChild();
+    String value;
+    if (valueNode.isString()) {
+      value=valueNode.getString();
+    }
+ else     if (valueNode.isNumber()) {
+      value=Double.toString(valueNode.getDouble());
+    }
+ else {
+      return;
+    }
+    if (values.contains(value)) {
+      t.report(valueNode,DUPLICATE_ENUM_VALUE,value);
+    }
+ else {
+      values.add(value);
+    }
+  }
+}
