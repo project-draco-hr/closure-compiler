@@ -1,0 +1,41 @@
+{
+  if (fnDoc != null && (fnDoc.isConstructor() || fnDoc.isInterface())) {
+    QualifiedName qname=QualifiedName.fromNode(nameNode);
+    if (qname == null) {
+      warnings.add(JSError.make(fn,ANONYMOUS_NOMINAL_TYPE));
+      return;
+    }
+    ImmutableList<String> typeParameters=fnDoc.getTemplateTypeNames();
+    RawNominalType rawNominalType;
+    if (fnDoc.isInterface()) {
+      rawNominalType=RawNominalType.makeInterface(qname,typeParameters);
+    }
+ else     if (fnDoc.makesStructs()) {
+      rawNominalType=RawNominalType.makeStructClass(qname,typeParameters);
+    }
+ else     if (fnDoc.makesDicts()) {
+      rawNominalType=RawNominalType.makeDictClass(qname,typeParameters);
+    }
+ else {
+      rawNominalType=RawNominalType.makeUnrestrictedClass(qname,typeParameters);
+    }
+    nominaltypesByNode.put(fn,rawNominalType);
+    if (isRedeclaration) {
+      return;
+    }
+    if (nameNode.isName() || currentScope.isNamespace(nameNode.getFirstChild())) {
+      if (nameNode.isGetProp()) {
+        fn.getParent().getFirstChild().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+      }
+      currentScope.addNominalType(nameNode,rawNominalType);
+    }
+  }
+ else   if (fnDoc != null) {
+    if (fnDoc.makesStructs()) {
+      warnings.add(JSError.make(fn,CONSTRUCTOR_REQUIRED,"@struct"));
+    }
+ else     if (fnDoc.makesDicts()) {
+      warnings.add(JSError.make(fn,CONSTRUCTOR_REQUIRED,"@dict"));
+    }
+  }
+}
