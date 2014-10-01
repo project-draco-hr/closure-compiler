@@ -13,14 +13,14 @@
     }
   }
   Node typeNameNode=newStringNode(typeName,lineno,charno);
-  if (match(JsDocToken.LT)) {
+  if (match(JsDocToken.LEFT_ANGLE)) {
     next();
     skipEOLs();
     Node memberType=parseTypeExpressionList(next());
     if (memberType != null) {
       typeNameNode.addChildToFront(memberType);
       skipEOLs();
-      if (!match(JsDocToken.GT)) {
+      if (!match(JsDocToken.RIGHT_ANGLE)) {
         return reportTypeSyntaxWarning("msg.jsdoc.missing.gt");
       }
       next();

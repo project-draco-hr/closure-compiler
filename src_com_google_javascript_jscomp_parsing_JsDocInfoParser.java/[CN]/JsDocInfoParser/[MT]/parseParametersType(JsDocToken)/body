@@ -2,7 +2,7 @@
   Node paramsType=newNode(Token.PARAM_LIST);
   boolean isVarArgs=false;
   Node paramType=null;
-  if (token != JsDocToken.RP) {
+  if (token != JsDocToken.RIGHT_PAREN) {
     do {
       if (paramType != null) {
         next();
@@ -11,19 +11,19 @@
       }
       if (token == JsDocToken.ELLIPSIS) {
         skipEOLs();
-        if (match(JsDocToken.RP)) {
+        if (match(JsDocToken.RIGHT_PAREN)) {
           paramType=newNode(Token.ELLIPSIS);
         }
  else {
           skipEOLs();
-          if (!match(JsDocToken.LB)) {
+          if (!match(JsDocToken.LEFT_SQUARE)) {
             return reportTypeSyntaxWarning("msg.jsdoc.missing.lb");
           }
           next();
           skipEOLs();
           paramType=wrapNode(Token.ELLIPSIS,parseTypeExpression(next()));
           skipEOLs();
-          if (!match(JsDocToken.RB)) {
+          if (!match(JsDocToken.RIGHT_SQUARE)) {
             return reportTypeSyntaxWarning("msg.jsdoc.missing.rb");
           }
           skipEOLs();
