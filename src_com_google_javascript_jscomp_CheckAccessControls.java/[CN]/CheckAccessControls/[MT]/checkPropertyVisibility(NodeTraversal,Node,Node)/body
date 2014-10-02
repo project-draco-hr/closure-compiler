@@ -7,14 +7,15 @@
     return;
   }
   StaticSourceFile definingSource=getDefiningSource(getprop,referenceType,propertyName);
-  if (definingSource == null) {
-    return;
-  }
   boolean isClassType=false;
   boolean isOverride=parent.getJSDocInfo() != null && parent.isAssign() && parent.getFirstChild() == getprop;
   ObjectType objectType=getObjectType(referenceType,isOverride,propertyName);
   Visibility fileOverviewVisibility=defaultVisibilityForFiles.get(definingSource);
-  Visibility visibility=getEffectivePropertyVisibility(t,getprop,parent,objectType,fileOverviewVisibility);
+  Visibility visibility=AccessControlUtils.getEffectivePropertyVisibility(getprop,referenceType,defaultVisibilityForFiles,enforceCodingConventions ? compiler.getCodingConvention() : null);
+  if (isOverride) {
+    Visibility overriding=getOverridingPropertyVisibility(parent);
+    checkOverriddenPropertyVisibilityMismatch(overriding,visibility,fileOverviewVisibility,t,getprop);
+  }
   if (objectType != null) {
     JSDocInfo docInfo=objectType.getOwnPropertyJSDocInfo(propertyName);
     definingSource=docInfo.getStaticSourceFile();

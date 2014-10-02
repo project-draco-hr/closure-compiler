@@ -1,0 +1,13 @@
+{
+  if (referenceType == null) {
+    return null;
+  }
+  ObjectType objectType=isOverride ? referenceType.getImplicitPrototype() : referenceType;
+  for (; objectType != null; objectType=objectType.getImplicitPrototype()) {
+    JSDocInfo docInfo=objectType.getOwnPropertyJSDocInfo(propertyName);
+    if (docInfo != null && docInfo.getVisibility() != Visibility.INHERITED) {
+      return objectType;
+    }
+  }
+  return null;
+}
