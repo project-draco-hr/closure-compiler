@@ -18,7 +18,7 @@
   FunctionTypeBuilder builder=typeParser.getFunctionType(fnDoc,declNode,ownerType,parentScope);
   RawNominalType ctorType=null;
   if (fnDoc != null) {
-    NominalType parentClass="Object".equals(functionName) ? null : getObjectNominalType();
+    NominalType parentClass=null;
     if (fnDoc.hasBaseType()) {
       if (!fnDoc.isConstructor()) {
         warnings.add(JSError.make(declNode,EXTENDS_NOT_ON_CTOR_OR_INTERF,functionName));
@@ -44,6 +44,9 @@
     }
  else     if (fnDoc.isConstructor()) {
       String className=ctorType.toString();
+      if (parentClass == null && !"Object".equals(functionName)) {
+        parentClass=getObjectNominalType();
+      }
       if (parentClass != null) {
         if (!ctorType.addSuperClass(parentClass)) {
           warnings.add(JSError.make(declNode,INHERITANCE_CYCLE,className));
