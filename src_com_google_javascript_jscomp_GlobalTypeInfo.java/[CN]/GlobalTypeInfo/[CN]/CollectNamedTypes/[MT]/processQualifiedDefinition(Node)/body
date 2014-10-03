@@ -1,7 +1,8 @@
 {
   Preconditions.checkArgument(qnameNode.isGetProp());
   Preconditions.checkArgument(qnameNode.isQualifiedName());
-  if (!currentScope.isNamespace(qnameNode.getFirstChild())) {
+  Node recv=qnameNode.getFirstChild();
+  if (!currentScope.isNamespace(recv)) {
     return;
   }
   if (NodeUtil.isNamespaceDecl(qnameNode)) {
@@ -12,5 +13,10 @@
   }
  else   if (NodeUtil.isEnumDecl(qnameNode)) {
     visitEnum(qnameNode);
+  }
+ else   if (!currentScope.isDefined(qnameNode)) {
+    Namespace ns=currentScope.getNamespace(QualifiedName.fromNode(recv));
+    String pname=qnameNode.getLastChild().getString();
+    ns.addUndeclaredProperty(pname,JSType.UNKNOWN,false);
   }
 }
