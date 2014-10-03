@@ -4,4 +4,5 @@
   typeCheck("/** @constructor */\n" + "function Foo() { /** @type {string} */ this.prop = 'str'; }\n" + "function f(obj) { obj.prop - 5; }\n"+ "f(new Foo);",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @constructor */ function Foo() { /** @type {number} */ this.prop = 1; }\n" + "function g(obj) { var /** string */ s = obj.prop; return obj; }\n" + "var /** !Foo */ x = g({ prop: '' });",NewTypeInference.MISTYPED_ASSIGN_RHS);
   checkNoWarnings("function f(obj) { obj.a.num - 5; }\n" + "function g(obj) {\n" + "  obj.a.str < 'str';\n"+ "  f(obj);\n"+ "}");
+  checkNoWarnings("function f(/** Array<?> */ x) {}\n" + "function g(obj) {\n" + "  obj.x = 123;\n"+ "  f(obj);\n"+ "}");
 }

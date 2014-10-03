@@ -1,5 +1,5 @@
 {
   typeCheck("/** @constructor */ function Foo() {}\n" + "function h(/** function(new:Foo,...[number]):number */ f) {\n" + "  (new f()) - 5;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/**\n" + " * @constructor\n" + " * @template T\n"+ " * @param {T} x\n"+ " */\n"+ "function Foo(x) {}\n"+ "/**\n"+ " * @template T\n"+ " * @param {function(new:Foo.<T>)} fun\n"+ " */\n"+ "function f(fun) { return fun; }\n"+ "/** @type {function(new:Foo.<number>)} */\n"+ "function f2() {}\n"+ "var /** function(new:Foo.<string>) */ x = f(f2);",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/**\n" + " * @constructor\n" + " * @template T\n"+ " * @param {T} x\n"+ " */\n"+ "function Foo(x) {}\n"+ "/**\n"+ " * @template T\n"+ " * @param {function(new:Foo<T>)} fun\n"+ " */\n"+ "function f(fun) { return fun; }\n"+ "/** @type {function(new:Foo<number>)} */\n"+ "function f2() {}\n"+ "var /** function(new:Foo<string>) */ x = f(f2);",NewTypeInference.MISTYPED_ASSIGN_RHS);
   checkNoWarnings("/** @constructor */\n" + "function Foo() {}\n" + "function f(x) {\n"+ "  x();\n"+ "  var /** !Foo */ y = new x();\n"+ "  var /** function(new:Foo, number) */ z = x;\n"+ "}");
 }
