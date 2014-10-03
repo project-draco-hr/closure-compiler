@@ -14,12 +14,12 @@
     checks.add(rewriteLetConst);
     checks.add(rewriteGenerators);
     checks.add(markTranspilationDone);
-    if (options.transpileOnly) {
-      return checks;
-    }
- else {
-      checks.add(es6RuntimeLibrary);
-    }
+  }
+  if (options.transpileOnly) {
+    return checks;
+  }
+  if (options.needsConversion()) {
+    checks.add(es6RuntimeLibrary);
   }
   checks.add(convertStaticInheritance);
   if (options.declaredGlobalExternsOnWindow) {
