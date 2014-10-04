@@ -8,7 +8,7 @@
   typeCheck("/** @const */ var ns = {};\n" + "(/** @lends {ns} */ { /** @type {number} */ prop : 1 });\n" + "function f() { ns.prop = 'str'; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("(/** @lends {ns} */ { /** @type {number} */ prop : 1 });\n" + "/** @const */ var ns = {};\n" + "function f() { ns.prop = 'str'; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @const */ var ns = {};\n" + "(/** @lends {ns} */ { prop : 1 });\n" + "function f() { var /** string */ s = ns.prop; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @const */\n" + "var ns = {};\n" + "ns.subns = {};\n"+ "(/** @lends {ns.subns} */ { prop: 1 });\n"+ "var /** string */ s = ns.subns.prop;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @const */\n"+ "ns.subns = {};\n"+ "(/** @lends {ns.subns} */ { prop: 1 });\n"+ "var /** string */ s = ns.subns.prop;",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "(/** @lends {Foo} */ { prop: 1 });\n"+ "var /** string */ s = Foo.prop;",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "(/** @lends {Foo} */ { prop: 1 });\n"+ "function f() { var /** string */ s = Foo.prop; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @constructor */\n"+ "ns.Foo = function() {};\n"+ "(/** @lends {ns.Foo} */ { prop: 1 });\n"+ "function f() { var /** string */ s = ns.Foo.prop; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
