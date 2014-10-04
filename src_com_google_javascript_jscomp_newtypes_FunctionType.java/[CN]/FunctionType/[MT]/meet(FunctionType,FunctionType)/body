@@ -11,6 +11,14 @@
   if (f1.isLoose() || f2.isLoose()) {
     return FunctionType.looseJoin(f1,f2);
   }
+  if (f1.isGeneric() && f1.isSubtypeOf(f2)) {
+    return f1;
+  }
+ else   if (f2.isGeneric() && f2.isSubtypeOf(f1)) {
+    return f2;
+  }
+  Preconditions.checkState(!f1.isGeneric());
+  Preconditions.checkState(!f2.isGeneric());
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   int minRequiredArity=Math.min(f1.requiredFormals.size(),f2.requiredFormals.size());
   for (int i=0; i < minRequiredArity; i++) {

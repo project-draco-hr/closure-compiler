@@ -3,4 +3,6 @@
   typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @constructor\n"+ " */\n"+ "function Foo(x) {}\n"+ "/** @const */ var foo_str = new Foo('str');\n"+ "function g() { var /** !Foo<number> */ foo_num = foo_str; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function f(x) { return x; }\n"+ "/** @const */ var x = f(f ? 'str' : 5);",GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
   typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @param {T} y\n"+ " * @return {T}\n"+ " */\n"+ "function f(x, y) { return true ? y : x; }\n"+ "/** @const */ var x = f(5, 'str');"+ "function g() { var /** null */ n = x; }",ImmutableList.of(GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE,NewTypeInference.NOT_UNIQUE_INSTANTIATION));
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function f(x) { return x; }\n"+ "/** @const */\n"+ "var y = f(1, 2);",ImmutableList.of(GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE,TypeCheck.WRONG_ARGUMENT_COUNT));
+  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function f(x) { return x; }\n"+ "/** @const */\n"+ "var y = f();",ImmutableList.of(GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE,TypeCheck.WRONG_ARGUMENT_COUNT));
 }
