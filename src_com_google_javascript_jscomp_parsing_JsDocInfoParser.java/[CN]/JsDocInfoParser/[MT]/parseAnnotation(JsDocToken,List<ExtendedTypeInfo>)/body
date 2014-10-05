@@ -192,7 +192,7 @@ token=next();
 lineno=stream.getLineno();
 charno=stream.getCharno();
 boolean matchingRc=false;
-if (token == JsDocToken.LC) {
+if (token == JsDocToken.LEFT_CURLY) {
 token=next();
 matchingRc=true;
 }
@@ -213,7 +213,7 @@ parser.addTypeWarning("msg.jsdoc.implements.duplicate",lineno,charno);
 }
 token=next();
 if (matchingRc) {
-if (token != JsDocToken.RC) {
+if (token != JsDocToken.RIGHT_CURLY) {
 parser.addTypeWarning("msg.jsdoc.missing.rc",stream.getLineno(),stream.getCharno());
 }
  else {
@@ -237,7 +237,7 @@ return eatUntilEOLIfNotAnnotation();
 case LENDS:
 skipEOLs();
 matchingRc=false;
-if (match(JsDocToken.LC)) {
+if (match(JsDocToken.LEFT_CURLY)) {
 token=next();
 matchingRc=true;
 }
@@ -250,7 +250,7 @@ parser.addTypeWarning("msg.jsdoc.lends.incompatible",stream.getLineno(),stream.g
  else {
 parser.addTypeWarning("msg.jsdoc.lends.missing",stream.getLineno(),stream.getCharno());
 }
-if (matchingRc && !match(JsDocToken.RC)) {
+if (matchingRc && !match(JsDocToken.RIGHT_CURLY)) {
 parser.addTypeWarning("msg.jsdoc.missing.rc",stream.getLineno(),stream.getCharno());
 }
 return eatUntilEOLIfNotAnnotation();
@@ -292,7 +292,7 @@ token=next();
 lineno=stream.getLineno();
 charno=stream.getCharno();
 type=null;
-if (token == JsDocToken.LC) {
+if (token == JsDocToken.LEFT_CURLY) {
 type=createJSTypeExpression(parseAndRecordTypeNode(token));
 if (type == null) {
 return eatUntilEOLIfNotAnnotation();
@@ -320,7 +320,7 @@ token=next();
 lineno=stream.getLineno();
 charno=stream.getCharno();
 type=null;
-if (token == JsDocToken.LC) {
+if (token == JsDocToken.LEFT_CURLY) {
 type=createJSTypeExpression(parseAndRecordParamTypeNode(token));
 if (type == null) {
 return eatUntilEOLIfNotAnnotation();
@@ -331,7 +331,7 @@ lineno=stream.getLineno();
 charno=stream.getCharno();
 }
 String name=null;
-boolean isBracketedParam=JsDocToken.LB == token;
+boolean isBracketedParam=JsDocToken.LEFT_SQUARE == token;
 if (isBracketedParam) {
 token=next();
 }
@@ -348,7 +348,7 @@ if (JsDocToken.STRING == token) {
 token=next();
 }
 }
-if (JsDocToken.RB != token) {
+if (JsDocToken.RIGHT_SQUARE != token) {
 reportTypeSyntaxWarning("msg.jsdoc.missing.rb");
 }
  else if (type != null) {

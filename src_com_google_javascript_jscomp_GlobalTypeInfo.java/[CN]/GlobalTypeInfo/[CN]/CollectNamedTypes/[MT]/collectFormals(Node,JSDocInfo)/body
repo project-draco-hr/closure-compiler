@@ -1,0 +1,24 @@
+{
+  Preconditions.checkArgument(fn.isFunction());
+  ArrayList<String> formals=new ArrayList<>();
+  ArrayList<String> tmpRestFormals=new ArrayList<>();
+  Node param=NodeUtil.getFunctionParameters(fn).getFirstChild();
+  while (param != null) {
+    if (JSTypeCreatorFromJSDoc.isRestArg(fnDoc,param.getString()) && param.getNext() == null) {
+      tmpRestFormals.add(param.getString());
+    }
+ else {
+      formals.add(param.getString());
+    }
+    param=param.getNext();
+  }
+  if (fnDoc != null) {
+    for (    String formalInJsdoc : fnDoc.getParameterNames()) {
+      if (!formals.contains(formalInJsdoc) && !tmpRestFormals.contains(formalInJsdoc)) {
+        String functionName=NodeUtil.getFunctionName(fn);
+        warnings.add(JSError.make(fn,INEXISTENT_PARAM,formalInJsdoc,functionName));
+      }
+    }
+  }
+  return formals;
+}

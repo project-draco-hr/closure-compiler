@@ -1,13 +1,11 @@
 {
   String name=node.getString();
   JSDocInfo oldJSDocInfo=NodeUtil.getBestJSDocInfo(node);
-  Node window=IR.name("window");
-  Node string=IR.string(name);
-  Node getprop=IR.getprop(window,string);
+  Node getprop=NodeUtil.newQName(compiler,"Window.prototype." + name);
   Node newNode=getprop;
   if (oldJSDocInfo != null) {
     JSDocInfoBuilder builder;
-    if (oldJSDocInfo.isConstructor() || oldJSDocInfo.isInterface() || oldJSDocInfo.hasEnumParameterType()) {
+    if (oldJSDocInfo.isConstructor() || oldJSDocInfo.isInterface() || oldJSDocInfo.hasEnumParameterType()|| NodeUtil.isNamespaceDecl(node)) {
       Node nameNode=IR.name(name);
       newNode=IR.assign(getprop,nameNode);
       builder=new JSDocInfoBuilder(false);

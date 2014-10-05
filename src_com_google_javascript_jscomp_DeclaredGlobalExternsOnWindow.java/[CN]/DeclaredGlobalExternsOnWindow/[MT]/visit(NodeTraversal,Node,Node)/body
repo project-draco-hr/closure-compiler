@@ -1,14 +1,16 @@
 {
   if (n.isFunction()) {
-    nodes.add(n.getFirstChild());
+    Node name=n.getFirstChild();
+    if (!windowInExterns && name.getString().equals("Window")) {
+      windowInExterns=true;
+      return;
+    }
+    nodes.add(name);
   }
  else   if (n.isVar()) {
     for (    Node c : n.children()) {
       if (!c.getString().equals("location")) {
         nodes.add(c);
-      }
-      if (!windowInExterns && c.getString().equals("window")) {
-        windowInExterns=true;
       }
     }
   }

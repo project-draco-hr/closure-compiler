@@ -1,4 +1,4 @@
 {
-  testSame("var window;\n/** @constructor */ function Foo() {}\n","/** @param {!window.Foo} f*/\n" + "function bar(f) {}\n" + "bar(new Foo());",null);
-  testSame("/** @constructor */ function Foo() {}\n","/** @param {!Foo} f*/\n" + "function bar(f) {}\n" + "bar(new window.Foo());",null);
+  testSame(WINDOW_DEFINITION + "/** @constructor */ function Foo() {}\n","/** @param {!Foo} f*/\n" + "function bar(f) {}\n" + "bar(new window.Foo());\n"+ "bar(7);",TypeValidator.TYPE_MISMATCH_WARNING);
+  testSame(WINDOW_DEFINITION + "/** @constructor */ function Foo() {}\n","/** @param {!Window.prototype.Foo} f*/\n" + "function bar(f) {}\n" + "bar(new Foo());\n"+ "bar(7);",TypeValidator.TYPE_MISMATCH_WARNING);
 }

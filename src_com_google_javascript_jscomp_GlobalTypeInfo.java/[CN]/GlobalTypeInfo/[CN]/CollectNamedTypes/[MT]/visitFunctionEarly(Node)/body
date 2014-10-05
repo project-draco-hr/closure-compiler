@@ -1,6 +1,7 @@
 {
   JSDocInfo fnDoc=NodeUtil.getFunctionJSDocInfo(fn);
   Node nameNode=NodeUtil.getFunctionNameNode(fn);
+  String internalName=createFunctionInternalName(fn,nameNode);
   boolean isRedeclaration;
   if (nameNode == null || !nameNode.isQualifiedName()) {
     isRedeclaration=false;
@@ -11,64 +12,7 @@
  else {
     isRedeclaration=currentScope.isDefined(nameNode);
   }
-  ArrayList<String> formals=new ArrayList<>();
-  ArrayList<String> tmpRestFormals=new ArrayList<>();
-  Node param=NodeUtil.getFunctionParameters(fn).getFirstChild();
-  while (param != null) {
-    if (JSTypeCreatorFromJSDoc.isRestArg(fnDoc,param.getString()) && param.getNext() == null) {
-      tmpRestFormals.add(param.getString());
-    }
- else {
-      formals.add(param.getString());
-    }
-    param=param.getNext();
-  }
-  createFunctionScope(fn,formals,nameNode);
-  if (fnDoc != null) {
-    for (    String formalInJsdoc : fnDoc.getParameterNames()) {
-      if (!formals.contains(formalInJsdoc) && !tmpRestFormals.contains(formalInJsdoc)) {
-        String functionName=getFunInternalName(fn);
-        warnings.add(JSError.make(fn,INEXISTENT_PARAM,formalInJsdoc,functionName));
-      }
-    }
-  }
-  if (fnDoc != null && (fnDoc.isConstructor() || fnDoc.isInterface())) {
-    QualifiedName qname=QualifiedName.fromNode(nameNode);
-    if (qname == null) {
-      warnings.add(JSError.make(fn,ANONYMOUS_NOMINAL_TYPE));
-      return;
-    }
-    ImmutableList<String> typeParameters=fnDoc.getTemplateTypeNames();
-    RawNominalType rawNominalType;
-    if (fnDoc.isInterface()) {
-      rawNominalType=RawNominalType.makeInterface(qname,typeParameters);
-    }
- else     if (fnDoc.makesStructs()) {
-      rawNominalType=RawNominalType.makeStructClass(qname,typeParameters);
-    }
- else     if (fnDoc.makesDicts()) {
-      rawNominalType=RawNominalType.makeDictClass(qname,typeParameters);
-    }
- else {
-      rawNominalType=RawNominalType.makeUnrestrictedClass(qname,typeParameters);
-    }
-    nominaltypesByNode.put(fn,rawNominalType);
-    if (isRedeclaration) {
-      return;
-    }
-    if (nameNode.isName() || currentScope.isNamespace(nameNode.getFirstChild())) {
-      if (nameNode.isGetProp()) {
-        fn.getParent().getFirstChild().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
-      }
-      currentScope.addNominalType(nameNode,rawNominalType);
-    }
-  }
- else   if (fnDoc != null) {
-    if (fnDoc.makesStructs()) {
-      warnings.add(JSError.make(fn,CONSTRUCTOR_REQUIRED,"@struct"));
-    }
- else     if (fnDoc.makesDicts()) {
-      warnings.add(JSError.make(fn,CONSTRUCTOR_REQUIRED,"@dict"));
-    }
-  }
+  ArrayList<String> formals=collectFormals(fn,fnDoc);
+  createFunctionScope(fn,formals,internalName);
+  maybeRecordNominalType(fn,nameNode,fnDoc,isRedeclaration);
 }

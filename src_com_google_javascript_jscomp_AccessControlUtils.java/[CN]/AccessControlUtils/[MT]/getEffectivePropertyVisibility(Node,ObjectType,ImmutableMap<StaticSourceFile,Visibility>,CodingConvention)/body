@@ -1,0 +1,15 @@
+{
+  String propertyName=property.getLastChild().getString();
+  StaticSourceFile definingSource=getDefiningSource(property,referenceType,propertyName);
+  Visibility fileOverviewVisibility=fileVisibilityMap.get(definingSource);
+  Node parent=property.getParent();
+  boolean isOverride=parent.getJSDocInfo() != null && parent.isAssign() && parent.getFirstChild() == property;
+  ObjectType objectType=getObjectType(referenceType,isOverride,propertyName);
+  if (isOverride) {
+    Visibility overridden=getOverriddenPropertyVisibility(objectType,propertyName);
+    return getEffectiveVisibilityForOverriddenProperty(overridden,fileOverviewVisibility,propertyName,codingConvention);
+  }
+ else {
+    return getEffectiveVisibilityForNonOverriddenProperty(property,objectType,fileOverviewVisibility,codingConvention);
+  }
+}

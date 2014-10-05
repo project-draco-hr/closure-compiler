@@ -1,0 +1,19 @@
+{
+  String internalName=null;
+  if (nameNode == null || !nameNode.isName()) {
+    internalName=ANON_FUN_PREFIX + freshId;
+    anonFunNames.put(fn,internalName);
+    freshId++;
+  }
+ else   if (currentScope.isDefinedLocally(nameNode.getString())) {
+    String fnName=nameNode.getString();
+    Preconditions.checkState(!fnName.contains("."));
+    internalName=ANON_FUN_PREFIX + freshId;
+    anonFunNames.put(fn,internalName);
+    freshId++;
+  }
+ else {
+    internalName=nameNode.getString();
+  }
+  return internalName;
+}
