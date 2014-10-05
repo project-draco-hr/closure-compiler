@@ -1,10 +1,6 @@
 {
   Preconditions.checkArgument(scriptNodeCount == 1,"ProcessCommonJSModules supports only one invocation per " + "CompilerInput / script node");
-  String name=loader.getLoadAddress(t.getInput());
-  if (name.endsWith(INDEX_ENDING)) {
-    name=name.substring(0,name.length() - INDEX_ENDING.length());
-  }
-  String moduleName=toModuleName(name);
+  String moduleName=toModuleName(loader.getLoadAddress(t.getInput()));
   NodeTraversal.traverse(compiler,script,new SuffixVarsCallback(moduleName));
   processExports(script,moduleName);
   moduleExportRefs.clear();
