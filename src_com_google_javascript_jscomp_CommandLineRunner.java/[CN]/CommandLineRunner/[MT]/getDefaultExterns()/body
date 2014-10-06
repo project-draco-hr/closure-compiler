@@ -8,7 +8,7 @@
   Map<String,SourceFile> externsMap=new HashMap<>();
   for (ZipEntry entry=null; (entry=zip.getNextEntry()) != null; ) {
     BufferedInputStream entryStream=new BufferedInputStream(ByteStreams.limit(zip,entry.getSize()));
-    externsMap.put(entry.getName(),SourceFile.fromInputStream("externs.zip//" + entry.getName(),entryStream));
+    externsMap.put(entry.getName(),SourceFile.fromInputStream("externs.zip//" + entry.getName(),entryStream,UTF_8));
   }
   Preconditions.checkState(externsMap.keySet().equals(new HashSet<>(DEFAULT_EXTERNS_NAMES)),"Externs zip must match our hard-coded list of externs.");
   List<SourceFile> externs=new ArrayList<>();
