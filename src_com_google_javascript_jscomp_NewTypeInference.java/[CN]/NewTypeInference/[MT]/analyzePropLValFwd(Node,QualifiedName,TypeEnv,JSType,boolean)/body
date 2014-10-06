@@ -1,63 +1,44 @@
 {
-  Preconditions.checkArgument(parent.isGetProp() || parent.isGetElem());
-  Node obj=parent.getFirstChild();
-  Node prop=parent.getLastChild();
-  QualifiedName pname;
-  JSType reqObjType=pickReqObjType(obj).withLoose();
-  if (prop.isString()) {
-    pname=new QualifiedName(prop.getString());
-    reqObjType=reqObjType.withProperty(pname,type);
-  }
- else {
-    pname=NUMERIC_INDEX;
-  }
-  LValueResultFwd lvalue=analyzeLValueFwd(obj,inEnv,reqObjType,true);
-  if (!prop.isString()) {
-    Preconditions.checkState(parent.isGetElem());
-    if (isArrayType(lvalue.type)) {
-      lvalue.env=analyzeExprFwd(prop,lvalue.env,JSType.NUMBER).env;
-    }
- else {
-      EnvTypePair pair=analyzeExprFwd(parent,inEnv,type);
-      return new LValueResultFwd(pair.env,pair.type,null,null);
-    }
-  }
+  Preconditions.checkArgument(pname.isIdentifier());
   String pnameAsString=pname.getLeftmostName();
+  JSType reqObjType=pickReqObjType(obj).withLoose().withProperty(pname,type);
+  LValueResultFwd lvalue=analyzeLValueFwd(obj,inEnv,reqObjType,true);
   TypeEnv lvalueEnv=lvalue.env;
   JSType lvalueType=lvalue.type;
   if (!lvalueType.isSubtypeOf(JSType.TOP_OBJECT)) {
     warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,pnameAsString,lvalueType.toString()));
     return new LValueResultFwd(lvalueEnv,type,null,null);
   }
-  if (parent.isGetProp() && parent.getParent().isAssign() && mayWarnAboutPropCreation(pname,parent,lvalueType)) {
+  Node propAccessNode=obj.getParent();
+  if (propAccessNode.isGetProp() && propAccessNode.getParent().isAssign() && mayWarnAboutPropCreation(pname,propAccessNode,lvalueType)) {
     return new LValueResultFwd(lvalueEnv,type,null,null);
   }
-  if (!insideQualifiedName && mayWarnAboutConstProp(parent,lvalueType,pname)) {
+  if (!insideQualifiedName && mayWarnAboutConstProp(propAccessNode,lvalueType,pname)) {
     return new LValueResultFwd(lvalueEnv,type,null,null);
   }
   if (!lvalueType.mayHaveProp(pname)) {
     if (insideQualifiedName && lvalueType.isLoose()) {
       lvalueType=lvalueType.withProperty(pname,JSType.TOP_OBJECT.withLoose());
-      if (lvalueType.isDict() && parent.isGetProp()) {
+      if (lvalueType.isDict() && propAccessNode.isGetProp()) {
         lvalueType=lvalueType.specialize(JSType.TOP_STRUCT);
       }
- else       if (lvalueType.isStruct() && parent.isGetElem()) {
+ else       if (lvalueType.isStruct() && propAccessNode.isGetElem()) {
         lvalueType=lvalueType.specialize(JSType.TOP_DICT);
       }
       lvalueEnv=updateLvalueTypeInEnv(lvalueEnv,obj,lvalue.ptr,lvalueType);
     }
  else {
-      boolean warnForInexistentProp=insideQualifiedName || parent.getParent().getType() != Token.ASSIGN;
+      boolean warnForInexistentProp=insideQualifiedName || propAccessNode.getParent().getType() != Token.ASSIGN;
       if (warnForInexistentProp && !lvalueType.isUnknown() && !lvalueType.isDict()) {
         warnings.add(JSError.make(obj,TypeCheck.INEXISTENT_PROPERTY,pnameAsString,lvalueType.toString()));
         return new LValueResultFwd(lvalueEnv,type,null,null);
       }
     }
   }
-  if (parent.isGetElem()) {
+  if (propAccessNode.isGetElem()) {
     mayWarnAboutStructPropAccess(obj,lvalueType);
   }
- else   if (parent.isGetProp()) {
+ else   if (propAccessNode.isGetProp()) {
     mayWarnAboutDictPropAccess(obj,lvalueType);
   }
   QualifiedName setterPname=new QualifiedName(SETTER_PREFIX + pnameAsString);

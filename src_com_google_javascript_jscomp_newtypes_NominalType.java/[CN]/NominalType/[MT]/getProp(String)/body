@@ -1,4 +1,12 @@
 {
+  if (rawType.name.equals("Array") && NUMERIC_PATTERN.matcher(pname).matches()) {
+    if (typeMap.isEmpty()) {
+      return Property.make(JSType.UNKNOWN,null);
+    }
+    Preconditions.checkState(typeMap.size() == 1);
+    JSType elmType=Iterables.getOnlyElement(typeMap.values());
+    return Property.make(elmType,null);
+  }
   Property p=rawType.getProp(pname);
   return p == null ? null : p.substituteGenerics(typeMap);
 }

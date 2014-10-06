@@ -1,0 +1,15 @@
+{
+  EnvTypePair pair=analyzeExprFwd(prop,lvalue.env,JSType.NUMBER);
+  if (!pair.type.equals(JSType.NUMBER)) {
+    return new LValueResultFwd(pair.env,JSType.UNKNOWN,null,null);
+  }
+  JSType inferred=getArrayElementType(lvalue.type);
+  JSType declared=null;
+  if (lvalue.declType != null) {
+    JSType receiverAdjustedDeclType=lvalue.declType.removeType(JSType.NULL_OR_UNDEF);
+    if (isArrayType(receiverAdjustedDeclType)) {
+      declared=getArrayElementType(receiverAdjustedDeclType);
+    }
+  }
+  return new LValueResultFwd(pair.env,inferred,declared,null);
+}
