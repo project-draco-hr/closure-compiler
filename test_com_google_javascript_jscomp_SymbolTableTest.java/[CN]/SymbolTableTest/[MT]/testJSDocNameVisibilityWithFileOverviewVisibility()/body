@@ -1,0 +1,9 @@
+{
+  SymbolTable table=createSymbolTable("/** @fileoverview\n @package */\n" + "/** @public */ var foo;\n" + "/** @protected */ var bar;\n"+ "/** @package */ var baz;\n"+ "/** @private */ var quux;\n"+ "var xyzzy;");
+  assertEquals(Visibility.PUBLIC,getGlobalVar(table,"foo").getVisibility());
+  assertEquals(Visibility.PROTECTED,getGlobalVar(table,"bar").getVisibility());
+  assertEquals(Visibility.PACKAGE,getGlobalVar(table,"baz").getVisibility());
+  assertEquals(Visibility.PRIVATE,getGlobalVar(table,"quux").getVisibility());
+  assertEquals(Visibility.PACKAGE,getGlobalVar(table,"xyzzy").getVisibility());
+  assertNull(getGlobalVar(table,"xyzzy").getJSDocInfo());
+}

@@ -1,0 +1,18 @@
+{
+  Symbol symbol=symbols.get(n,n.getString());
+  if (symbol == null) {
+    return;
+  }
+  if (symbol.getVisibility() != null) {
+    return;
+  }
+  Var var=t.getScope().getVar(n.getString());
+  if (var == null) {
+    return;
+  }
+  Visibility v=AccessControlUtils.getEffectiveNameVisibility(var,fileVisibilityMap);
+  if (v == null) {
+    return;
+  }
+  symbol.setVisibility(v);
+}

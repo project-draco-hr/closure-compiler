@@ -1,0 +1,26 @@
+{
+  String propertyName=getprop.getLastChild().getString();
+  Symbol symbol=symbols.get(getprop,propertyName);
+  if (symbol == null) {
+    return;
+  }
+  if (symbol.getVisibility() != null) {
+    return;
+  }
+  JSType jsType=getprop.getFirstChild().getJSType();
+  if (jsType == null) {
+    return;
+  }
+  boolean isOverride=parent.getJSDocInfo() != null && parent.isAssign() && parent.getFirstChild() == getprop;
+  if (isOverride) {
+    symbol.setVisibility(Visibility.INHERITED);
+  }
+ else {
+    ObjectType referenceType=ObjectType.cast(jsType.dereference());
+    Visibility v=AccessControlUtils.getEffectivePropertyVisibility(getprop,referenceType,fileVisibilityMap,codingConvention);
+    if (v == null) {
+      return;
+    }
+    symbol.setVisibility(v);
+  }
+}
