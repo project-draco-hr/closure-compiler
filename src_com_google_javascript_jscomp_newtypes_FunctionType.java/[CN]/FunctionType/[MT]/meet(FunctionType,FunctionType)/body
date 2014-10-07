@@ -17,8 +17,12 @@
  else   if (f2.isGeneric() && f2.isSubtypeOf(f1)) {
     return f2;
   }
-  Preconditions.checkState(!f1.isGeneric());
-  Preconditions.checkState(!f2.isGeneric());
+  if (f1.isGeneric()) {
+    f1=instantiateGenericsWithUnknown(f1);
+  }
+  if (f2.isGeneric()) {
+    f2=instantiateGenericsWithUnknown(f2);
+  }
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   int minRequiredArity=Math.min(f1.requiredFormals.size(),f2.requiredFormals.size());
   for (int i=0; i < minRequiredArity; i++) {
@@ -31,7 +35,11 @@
   if (f1.restFormals != null || f2.restFormals != null) {
     builder.addRestFormals(JSType.nullAcceptingJoin(f1.restFormals,f2.restFormals));
   }
-  builder.addRetType(JSType.meet(f1.returnType,f2.returnType));
+  JSType retType=JSType.meet(f1.returnType,f2.returnType);
+  if (retType.isBottom()) {
+    return BOTTOM_FUNCTION;
+  }
+  builder.addRetType(retType);
   builder.addNominalType(NominalType.pickSubclass(f1.nominalType,f2.nominalType));
   builder.addReceiverType(NominalType.pickSubclass(f1.receiverType,f2.receiverType));
   return builder.buildFunction();
