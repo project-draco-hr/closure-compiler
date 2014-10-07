@@ -14,7 +14,9 @@
   Visibility visibility=AccessControlUtils.getEffectivePropertyVisibility(getprop,referenceType,defaultVisibilityForFiles,enforceCodingConventions ? compiler.getCodingConvention() : null);
   if (isOverride) {
     Visibility overriding=getOverridingPropertyVisibility(parent);
-    checkOverriddenPropertyVisibilityMismatch(overriding,visibility,fileOverviewVisibility,t,getprop);
+    if (overriding != null) {
+      checkOverriddenPropertyVisibilityMismatch(overriding,visibility,fileOverviewVisibility,t,getprop);
+    }
   }
   if (objectType != null) {
     JSDocInfo docInfo=objectType.getOwnPropertyJSDocInfo(propertyName);
