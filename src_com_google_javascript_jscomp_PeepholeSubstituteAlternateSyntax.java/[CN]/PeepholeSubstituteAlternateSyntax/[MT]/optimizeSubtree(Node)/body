@@ -1,12 +1,14 @@
 {
 switch (node.getType()) {
+case Token.ASSIGN_SUB:
+    return reduceSubstractionAssignment(node);
 case Token.TRUE:
 case Token.FALSE:
-    return reduceTrueFalse(node);
+  return reduceTrueFalse(node);
 case Token.NEW:
-  node=tryFoldStandardConstructors(node);
+node=tryFoldStandardConstructors(node);
 if (!node.isCall()) {
-  return node;
+return node;
 }
 case Token.CALL:
 Node result=tryFoldLiteralConstructor(node);
