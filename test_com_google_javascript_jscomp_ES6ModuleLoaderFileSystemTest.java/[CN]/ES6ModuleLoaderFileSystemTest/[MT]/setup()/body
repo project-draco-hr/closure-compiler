@@ -1,0 +1,23 @@
+{
+  final File indexA, indexB, appFile;
+  try {
+    final File tempDirA=tempFolder.newFolder("A");
+    indexA=new File(tempDirA,"index.js");
+    writeFile(indexA,"alert('A');");
+    final File tempDirB=tempFolder.newFolder("B");
+    indexB=new File(tempDirB,"index.js");
+    writeFile(indexB,"alert('B');");
+    appFile=tempFolder.newFile("app.js");
+    writeFile(appFile,"alert('app');");
+  }
+ catch (  IOException e) {
+    throw new RuntimeException(e);
+  }
+  SourceFile in1=SourceFile.fromFile(indexA);
+  SourceFile in2=SourceFile.fromFile(indexB);
+  SourceFile in3=SourceFile.fromFile(appFile);
+  compiler=new Compiler();
+  compiler.init(ImmutableList.<SourceFile>of(),ImmutableList.of(in1,in2,in3),new CompilerOptions());
+  rootPath=tempFolder.getRoot().getPath() + "/";
+  loader=ES6ModuleLoader.createNaiveLoader(compiler,rootPath);
+}
