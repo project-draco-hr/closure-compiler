@@ -5,6 +5,13 @@
     return;
   }
   Node init=NodeUtil.getInitializer(qnameNode);
+  if (init != null && init.isQualifiedName()) {
+    EnumType et=currentScope.getEnum(init.getQualifiedName());
+    if (et != null) {
+      currentScope.addEnum(qnameNode,et);
+      return;
+    }
+  }
   if (init == null || !init.isObjectLit() || init.getFirstChild() == null) {
     warnings.add(JSError.make(qnameNode,MALFORMED_ENUM));
     return;
