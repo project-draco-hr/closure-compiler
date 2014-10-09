@@ -1,6 +1,6 @@
 {
   Preconditions.checkArgument(scriptNodeCount == 1,"ProcessCommonJSModules supports only one invocation per " + "CompilerInput / script node");
-  String moduleName=toModuleName(loader.getLoadAddress(t.getInput()));
+  String moduleName=inputToModuleName(t.getInput());
   NodeTraversal.traverse(compiler,script,new SuffixVarsCallback(moduleName));
   processExports(script,moduleName);
   moduleExportRefs.clear();
@@ -8,9 +8,6 @@
   if (reportDependencies) {
     CompilerInput ci=t.getInput();
     ci.addProvide(moduleName);
-    JSModule m=new JSModule(moduleName);
-    m.addAndOverrideModule(ci);
-    module=m;
   }
   script.addChildToFront(IR.exprResult(IR.call(IR.getprop(IR.name("goog"),IR.string("provide")),IR.string(moduleName))).copyInformationFromForTree(script));
   compiler.reportCodeChange();

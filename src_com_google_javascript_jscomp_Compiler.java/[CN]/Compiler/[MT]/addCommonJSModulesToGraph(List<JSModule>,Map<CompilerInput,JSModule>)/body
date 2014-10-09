@@ -1,0 +1,22 @@
+{
+  List<CompilerInput> inputs=Lists.newArrayList();
+  for (  JSModule module : inputModules) {
+    for (    CompilerInput input : module.getInputs()) {
+      inputs.add(input);
+    }
+  }
+  modules=Lists.newArrayList();
+  DependencyOptions depOptions=options.dependencyOptions;
+  for (  CompilerInput input : this.moduleGraph.manageDependencies(depOptions,inputs)) {
+    modules.add(modulesByInput.get(input));
+  }
+  SortedDependencies<JSModule> sorter=new SortedDependencies<>(modules);
+  modules=sorter.getDependenciesOf(modules,true);
+  JSModule firstModule=modules.size() > 0 ? modules.get(0) : null;
+  for (int i=1; i < modules.size(); i++) {
+    if (!modules.get(i).getDependencies().contains(firstModule)) {
+      modules.get(i).addDependency(firstModule);
+    }
+  }
+  this.moduleGraph=new JSModuleGraph(modules);
+}

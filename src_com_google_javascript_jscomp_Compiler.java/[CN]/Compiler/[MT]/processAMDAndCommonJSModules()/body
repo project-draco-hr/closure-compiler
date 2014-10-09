@@ -1,5 +1,5 @@
 {
-  Map<String,JSModule> modulesByName=Maps.newLinkedHashMap();
+  Map<String,JSModule> modulesByProvide=Maps.newLinkedHashMap();
   Map<CompilerInput,JSModule> modulesByInput=Maps.newLinkedHashMap();
   for (  CompilerInput input : inputs) {
     input.setCompiler(this);
@@ -13,15 +13,16 @@
     if (options.processCommonJSModules) {
       ProcessCommonJSModules cjs=new ProcessCommonJSModules(this,ES6ModuleLoader.createNaiveLoader(this,options.commonJSModulePathPrefix),true);
       cjs.process(null,root);
-      JSModule m=cjs.getModule();
-      if (m != null) {
-        modulesByName.put(m.getName(),m);
-        modulesByInput.put(input,m);
+      JSModule m=new JSModule(cjs.inputToModuleName(input));
+      m.addAndOverrideModule(input);
+      for (      String provide : input.getProvides()) {
+        modulesByProvide.put(provide,m);
       }
+      modulesByInput.put(input,m);
     }
   }
   if (options.processCommonJSModules) {
-    List<JSModule> modules=Lists.newArrayList(modulesByName.values());
+    List<JSModule> modules=Lists.newArrayList(modulesByProvide.values());
     if (!modules.isEmpty()) {
       this.modules=modules;
       this.moduleGraph=new JSModuleGraph(this.modules);
@@ -29,7 +30,7 @@
     for (    JSModule module : modules) {
       for (      CompilerInput input : module.getInputs()) {
         for (        String require : input.getRequires()) {
-          JSModule dependency=modulesByName.get(require);
+          JSModule dependency=modulesByProvide.get(require);
           if (dependency == null) {
             report(JSError.make(MISSING_ENTRY_ERROR,require));
           }
@@ -40,19 +41,7 @@
       }
     }
     try {
-      modules=Lists.newArrayList();
-      for (      CompilerInput input : this.moduleGraph.manageDependencies(options.dependencyOptions,inputs)) {
-        modules.add(modulesByInput.get(input));
-      }
-      JSModule root=new JSModule("root");
-      for (      JSModule m : modules) {
-        m.addDependency(root);
-      }
-      modules.add(0,root);
-      SortedDependencies<JSModule> sorter=new SortedDependencies<>(modules);
-      modules=sorter.getDependenciesOf(modules,true);
-      this.modules=modules;
-      this.moduleGraph=new JSModuleGraph(modules);
+      addCommonJSModulesToGraph(modules,modulesByInput);
     }
  catch (    Exception e) {
       Throwables.propagate(e);
