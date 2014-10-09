@@ -1,6 +1,9 @@
 {
   String textProto=Files.toString(new File(configFile),UTF_8);
   ConformanceConfig.Builder builder=ConformanceConfig.newBuilder();
+  if ((int)textProto.charAt(0) == UTF8_BOM_CODE) {
+    textProto=textProto.substring(1);
+  }
   try {
     TextFormat.merge(textProto,builder);
   }
