@@ -19,6 +19,11 @@
     Preconditions.checkState(!localType.isBottom(),name + " was bottom");
     return localType;
   }
+  JSType externType=externs.get(name);
+  if (externType != null) {
+    Preconditions.checkState(!externType.isBottom());
+    return externType;
+  }
   Scope s=localFunDefs.get(name);
   if (s != null && s.getDeclaredType() != null) {
     return JSType.fromFunctionType(s.getDeclaredType().toFunctionType());

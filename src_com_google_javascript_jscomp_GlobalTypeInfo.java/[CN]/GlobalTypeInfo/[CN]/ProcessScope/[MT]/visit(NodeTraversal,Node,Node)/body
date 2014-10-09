@@ -15,7 +15,7 @@ if (name == null || "undefined".equals(name) || parent.isFunction()) {
 if (parent.isVar() || parent.isCatch()) {
   if (NodeUtil.isNamespaceDecl(n) || NodeUtil.isTypedefDecl(n) || NodeUtil.isEnumDecl(n)) {
     if (!currentScope.isDefinedLocally(name)) {
-      currentScope.addLocal(name,JSType.UNKNOWN,false);
+      currentScope.addLocal(name,JSType.UNKNOWN,false,n.isFromExterns());
     }
     break;
   }
@@ -28,7 +28,7 @@ if (parent.isVar() || parent.isCatch()) {
  else {
     undeclaredVars.removeAll(name);
     if (parent.isCatch()) {
-      currentScope.addLocal(name,JSType.UNKNOWN,false);
+      currentScope.addLocal(name,JSType.UNKNOWN,false,n.isFromExterns());
     }
  else {
       boolean isConst=NodeUtil.hasConstAnnotation(parent);
@@ -36,7 +36,7 @@ if (parent.isVar() || parent.isCatch()) {
       if (isConst && !mayWarnAboutNoInit(n) && declType == null) {
         declType=inferConstTypeFromRhs(n);
       }
-      currentScope.addLocal(name,declType,isConst);
+      currentScope.addLocal(name,declType,isConst,n.isFromExterns());
     }
   }
 }
