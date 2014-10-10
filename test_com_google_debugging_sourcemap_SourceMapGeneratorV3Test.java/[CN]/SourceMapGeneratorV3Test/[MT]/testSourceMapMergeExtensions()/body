@@ -5,10 +5,10 @@
   mapper.addExtension("x_company_baz",new Integer(2));
   mapper.mergeMapSection(0,0,"{\n" + "\"version\":3,\n" + "\"file\":\"testcode2\",\n"+ "\"lineCount\":0,\n"+ "\"mappings\":\"\",\n"+ "\"sources\":[\"testcode2\"],\n"+ "\"names\":[],\n"+ "\"x_company_baz\":3,\n"+ "\"x_company_bar\":false\n"+ "}\n",new ExtensionMergeAction(){
     @Override public Object merge(    String extensionKey,    Object currentValue,    Object newValue){
-      return (Integer)currentValue + (Integer)newValue;
+      return (Integer)currentValue + ((JsonPrimitive)newValue).getAsInt();
     }
   }
 );
   assertEquals(5,mapper.getExtension("x_company_baz"));
-  assertEquals(false,mapper.getExtension("x_company_bar"));
+  assertEquals(false,((JsonPrimitive)mapper.getExtension("x_company_bar")).getAsBoolean());
 }

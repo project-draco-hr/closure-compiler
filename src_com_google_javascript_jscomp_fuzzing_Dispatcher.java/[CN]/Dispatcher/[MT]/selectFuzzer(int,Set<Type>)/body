@@ -7,7 +7,7 @@
       typeCorrectCandidates.add(fuzzer);
     }
   }
-  JSONObject weightConfig=getOwnConfig().optJSONObject("weights");
+  JsonObject weightConfig=getOwnConfig().get("weights").getAsJsonObject();
   ArrayList<AbstractFuzzer> validFuzzers=Lists.newArrayList();
   ArrayList<Double> weights=Lists.newArrayList();
   int stepSize=2;
@@ -18,9 +18,9 @@
       if (fuzzer.isEnough(budget)) {
         validFuzzers.add(fuzzer);
         try {
-          weights.add(weightConfig.getDouble(fuzzer.getConfigName()));
+          weights.add(weightConfig.get(fuzzer.getConfigName()).getAsDouble());
         }
- catch (        JSONException e) {
+ catch (        JsonParseException e) {
           e.printStackTrace();
         }
       }

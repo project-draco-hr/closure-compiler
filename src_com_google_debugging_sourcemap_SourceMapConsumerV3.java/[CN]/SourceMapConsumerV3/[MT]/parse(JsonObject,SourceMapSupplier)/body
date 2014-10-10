@@ -1,0 +1,37 @@
+{
+  try {
+    int version=sourceMapRoot.get("version").getAsInt();
+    if (version != 3) {
+      throw new SourceMapParseException("Unknown version: " + version);
+    }
+    if (sourceMapRoot.has("file") && sourceMapRoot.get("file").getAsString().isEmpty()) {
+      throw new SourceMapParseException("File entry is empty");
+    }
+    if (sourceMapRoot.has("sections")) {
+      parseMetaMap(sourceMapRoot,sectionSupplier);
+      return;
+    }
+    lineCount=sourceMapRoot.has("lineCount") ? sourceMapRoot.get("lineCount").getAsInt() : -1;
+    String lineMap=sourceMapRoot.get("mappings").getAsString();
+    sources=getJavaStringArray(sourceMapRoot.get("sources").getAsJsonArray());
+    names=getJavaStringArray(sourceMapRoot.get("names").getAsJsonArray());
+    if (lineCount >= 0) {
+      lines=Lists.newArrayListWithCapacity(lineCount);
+    }
+ else {
+      lines=Lists.newArrayList();
+    }
+    if (sourceMapRoot.has("sourceRoot")) {
+      sourceRoot=sourceMapRoot.get("sourceRoot").getAsString();
+    }
+    for (    Map.Entry<String,JsonElement> entry : sourceMapRoot.entrySet()) {
+      if (entry.getKey().startsWith("x_")) {
+        extensions.put(entry.getKey(),entry.getValue());
+      }
+    }
+    new MappingBuilder(lineMap).build();
+  }
+ catch (  JsonParseException ex) {
+    throw new SourceMapParseException("JSON parse exception: " + ex);
+  }
+}

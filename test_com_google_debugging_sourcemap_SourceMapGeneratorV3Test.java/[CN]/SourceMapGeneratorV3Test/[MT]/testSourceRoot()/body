@@ -2,17 +2,17 @@
   SourceMapGeneratorV3 mapper=new SourceMapGeneratorV3();
   StringBuilder out=new StringBuilder();
   mapper.appendTo(out,"out.js");
-  JSONObject mapping=new JSONObject(out.toString());
-  assertEquals(3,mapping.getInt("version"));
+  JsonObject mapping=parseJsonObject(out.toString());
+  assertEquals(3,mapping.get("version").getAsInt());
   assertFalse(mapping.has("sourceRoot"));
   out=new StringBuilder();
   mapper.setSourceRoot("");
   mapper.appendTo(out,"out2.js");
-  mapping=new JSONObject(out.toString());
+  mapping=parseJsonObject(out.toString());
   assertFalse(mapping.has("sourceRoot"));
   out=new StringBuilder();
   mapper.setSourceRoot("http://url/path");
   mapper.appendTo(out,"out3.js");
-  mapping=new JSONObject(out.toString());
-  assertEquals("http://url/path",mapping.getString("sourceRoot"));
+  mapping=parseJsonObject(out.toString());
+  assertEquals("http://url/path",mapping.get("sourceRoot").getAsString());
 }

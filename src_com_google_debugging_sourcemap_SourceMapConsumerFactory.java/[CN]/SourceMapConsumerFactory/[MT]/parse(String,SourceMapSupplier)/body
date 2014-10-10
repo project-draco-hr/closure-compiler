@@ -4,8 +4,8 @@
   }
  else   if (contents.startsWith("{")) {
     try {
-      JSONObject sourceMapRoot=new JSONObject(contents);
-      int version=sourceMapRoot.getInt("version");
+      JsonObject sourceMapRoot=new Gson().fromJson(contents,JsonObject.class);
+      int version=sourceMapRoot.get("version").getAsInt();
 switch (version) {
 case 3:
 {
@@ -17,7 +17,7 @@ default :
       throw new SourceMapParseException("Unknown source map version:" + version);
   }
 }
- catch (JSONException ex) {
+ catch (JsonParseException ex) {
   throw new SourceMapParseException("JSON parse exception: " + ex);
 }
 }

@@ -1,19 +1,19 @@
 {
   SourceMapGeneratorV3 mapper=new SourceMapGeneratorV3();
-  mapper.addExtension("x_google_foo",new JSONObject());
-  mapper.addExtension("x_google_test",new JSONObject("{\"number\" : 1}"));
-  mapper.addExtension("x_google_array",new JSONArray("[]"));
+  mapper.addExtension("x_google_foo",new JsonObject());
+  mapper.addExtension("x_google_test",parseJsonObject("{\"number\" : 1}"));
+  mapper.addExtension("x_google_array",new JsonArray());
   mapper.addExtension("x_google_int",new Integer(2));
   mapper.addExtension("x_google_str","Some text");
   mapper.removeExtension("x_google_foo");
   StringBuilder out=new StringBuilder();
   mapper.appendTo(out,"out.js");
   assertTrue(mapper.hasExtension("x_google_test"));
-  JSONObject sourceMap=new JSONObject(out.toString());
+  JsonObject sourceMap=parseJsonObject(out.toString());
   assertFalse(sourceMap.has("x_google_foo"));
   assertFalse(sourceMap.has("google_test"));
-  assertEquals(1,sourceMap.getJSONObject("x_google_test").getInt("number"));
-  assertEquals(0,sourceMap.getJSONArray("x_google_array").length());
-  assertEquals(2,sourceMap.getInt("x_google_int"));
-  assertEquals("Some text",sourceMap.getString("x_google_str"));
+  assertEquals(1,sourceMap.get("x_google_test").getAsJsonObject().get("number").getAsInt());
+  assertEquals(0,sourceMap.get("x_google_array").getAsJsonArray().size());
+  assertEquals(2,sourceMap.get("x_google_int").getAsInt());
+  assertEquals("Some text",sourceMap.get("x_google_str").getAsString());
 }

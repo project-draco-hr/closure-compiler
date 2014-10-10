@@ -3,11 +3,11 @@
     sectionSupplier=new DefaultSourceMapSupplier();
   }
   try {
-    int version=sourceMapRoot.getInt("version");
+    int version=sourceMapRoot.get("version").getAsInt();
     if (version != 3) {
       throw new SourceMapParseException("Unknown version: " + version);
     }
-    String file=sourceMapRoot.getString("file");
+    String file=sourceMapRoot.get("file").getAsString();
     if (file.isEmpty()) {
       throw new SourceMapParseException("File entry is missing or empty");
     }
@@ -15,25 +15,25 @@
       throw new SourceMapParseException("Invalid map format");
     }
     SourceMapGeneratorV3 generator=new SourceMapGeneratorV3();
-    JSONArray sections=sourceMapRoot.getJSONArray("sections");
-    for (int i=0, count=sections.length(); i < count; i++) {
-      JSONObject section=sections.getJSONObject(i);
+    JsonArray sections=sourceMapRoot.get("sections").getAsJsonArray();
+    for (int i=0, count=sections.size(); i < count; i++) {
+      JsonObject section=sections.get(i).getAsJsonObject();
       if (section.has("map") && section.has("url")) {
         throw new SourceMapParseException("Invalid map format: section may not have both 'map' and 'url'");
       }
-      JSONObject offset=section.getJSONObject("offset");
-      int line=offset.getInt("line");
-      int column=offset.getInt("column");
+      JsonObject offset=section.get("offset").getAsJsonObject();
+      int line=offset.get("line").getAsInt();
+      int column=offset.get("column").getAsInt();
       String mapSectionContents;
       if (section.has("url")) {
-        String url=section.getString("url");
+        String url=section.get("url").getAsString();
         mapSectionContents=sectionSupplier.getSourceMap(url);
         if (mapSectionContents == null) {
           throw new SourceMapParseException("Unable to retrieve: " + url);
         }
       }
  else       if (section.has("map")) {
-        mapSectionContents=section.getString("map");
+        mapSectionContents=section.get("map").getAsString();
       }
  else {
         throw new SourceMapParseException("Invalid map format: section must have either 'map' or 'url'");
@@ -52,7 +52,7 @@
  catch (  IOException ex) {
     throw new SourceMapParseException("IO exception: " + ex);
   }
-catch (  JSONException ex) {
+catch (  JsonParseException ex) {
     throw new SourceMapParseException("JSON parse exception: " + ex);
   }
 }
