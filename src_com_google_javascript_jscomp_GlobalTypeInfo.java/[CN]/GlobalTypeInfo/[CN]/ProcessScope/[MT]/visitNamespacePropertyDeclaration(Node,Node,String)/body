@@ -1,6 +1,10 @@
 {
   Preconditions.checkArgument(declNode.isGetProp() || declNode.isStringKey());
   Preconditions.checkArgument(currentScope.isNamespace(recv));
+  EnumType et=currentScope.getEnum(recv.getQualifiedName());
+  if (et != null && et.enumLiteralHasKey(pname)) {
+    return;
+  }
   Namespace ns=currentScope.getNamespace(QualifiedName.fromNode(recv));
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(declNode);
   JSType propDeclType=getTypeAtPropDeclNode(declNode,jsdoc);
@@ -16,6 +20,9 @@
     }
     ns.addProperty(pname,propDeclType,isConst);
     declNode.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+    if (declNode.isGetProp() && isConst) {
+      declNode.putBooleanProp(Node.CONSTANT_PROPERTY_DEF,true);
+    }
   }
  else {
     Node initializer=NodeUtil.getInitializer(declNode);
@@ -23,6 +30,6 @@
     if (t == null) {
       t=JSType.UNKNOWN;
     }
-    ns.addUndeclaredProperty(pname,t,isConst);
+    ns.addUndeclaredProperty(pname,t,false);
   }
 }
