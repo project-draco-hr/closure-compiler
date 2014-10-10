@@ -1,7 +1,16 @@
 {
   CmdLineParser parser=new CmdLineParser(this);
   parser.parseArgument(args);
-  Preconditions.checkArgument(!inputs.isEmpty(),"At least one input must be provided.");
+  if (displayHelp) {
+    CmdLineParser p=new CmdLineParser(this);
+    p.printUsage(System.out);
+    return;
+  }
+  Preconditions.checkArgument(!inputs.isEmpty(),"At least one input must be provided in the --inputs flag.");
+  Preconditions.checkArgument(!Strings.isNullOrEmpty(refasterJsTemplate),"--refasterjs_template must be provided");
+  for (  String input : inputs) {
+    Preconditions.checkArgument(new File(input).exists(),"Input file " + input + " does not exist.");
+  }
   RefasterJsScanner scanner=new RefasterJsScanner();
   scanner.loadRefasterJsTemplate(refasterJsTemplate);
   RefactoringDriver driver=new RefactoringDriver.Builder(scanner).addExterns(includeDefaultExterns ? CommandLineRunner.getDefaultExterns() : ImmutableList.<SourceFile>of()).addExternsFromFile(externs).addInputsFromFile(inputs).build();
