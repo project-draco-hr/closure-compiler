@@ -3,4 +3,6 @@
   typeCheck("function f(/** function(string) : string */ x) {\n" + "  if (x('str') === 5) {\n" + "    x(5);\n"+ "  }\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("function f(/** function(string) */ x, y) {\n" + "  y(1);\n" + "  if (x === y) {\n"+ "    x(5);\n"+ "  }\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("function f(x) {\n" + "  if (x === null) {\n" + "    return 5;\n"+ "  } else {\n"+ "    return x - 43;\n"+ "  }\n"+ "}\n"+ "f('str');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  checkNoWarnings("/** @const */ var goog = {};\n" + "/** @type {!Function} */ goog.abstractMethod = function(){};\n" + "/** @constructor */ function Foo(){};\n"+ "/** @return {!Foo} */ Foo.prototype.clone = goog.abstractMethod;\n"+ "/** @constructor @extends {Foo} */\n"+ "function Bar() {}\n"+ "/** @return {!Bar} */ Bar.prototype.clone = goog.abstractMethod;");
+  typeCheck("/** @const */ var goog = {};\n" + "/** @type {!Function} */ goog.abstractMethod = function(){};\n" + "/** @constructor */ function Foo(){};\n"+ "/** @return {!Foo} */ Foo.prototype.clone = goog.abstractMethod;\n"+ "/** @constructor @extends {Foo} */\n"+ "function Bar() {}\n"+ "/** @return {!Bar} */ Bar.prototype.clone = goog.abstractMethod;\n"+ "var /** null */ n = (new Bar).clone();",NewTypeInference.MISTYPED_ASSIGN_RHS);
 }
