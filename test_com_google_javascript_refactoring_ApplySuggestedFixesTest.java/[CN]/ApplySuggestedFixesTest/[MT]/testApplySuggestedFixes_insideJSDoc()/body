@@ -1,0 +1,13 @@
+{
+  String code="/** @type {Foo} */\nvar foo = new Foo()";
+  Compiler compiler=getCompiler(code);
+  Node root=compileToScriptRoot(compiler);
+  Node varNode=root.getFirstChild();
+  Node jsdocRoot=Iterables.getOnlyElement(varNode.getJSDocInfo().getTypeNodes());
+  SuggestedFix fix=new SuggestedFix.Builder().insertBefore(jsdocRoot,"!").build();
+  List<SuggestedFix> fixes=ImmutableList.of(fix);
+  Map<String,String> codeMap=ImmutableMap.of("test",code);
+  Map<String,String> newCodeMap=ApplySuggestedFixes.applySuggestedFixesToCode(fixes,codeMap);
+  assertEquals(1,newCodeMap.size());
+  assertEquals("/** @type {!Foo} */\nvar foo = new Foo()",newCodeMap.get("test"));
+}
