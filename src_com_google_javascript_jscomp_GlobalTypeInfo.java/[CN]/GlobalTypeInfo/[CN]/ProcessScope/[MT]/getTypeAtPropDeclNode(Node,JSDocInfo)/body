@@ -1,11 +1,8 @@
 {
+  Preconditions.checkArgument(!currentScope.isNamespace(declNode));
   Node initializer=NodeUtil.getInitializer(declNode);
   if (initializer != null && initializer.isFunction()) {
     return JSType.fromFunctionType(currentScope.getScope(getFunInternalName(initializer)).getDeclaredType().toFunctionType());
-  }
-  EnumType et=currentScope.getEnum(declNode.getQualifiedName());
-  if (et != null) {
-    return et.toJSType();
   }
   return getTypeDeclarationFromJsdoc(jsdoc,currentScope);
 }
