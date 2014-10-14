@@ -3,7 +3,10 @@
     preprocessorSymbolTable.addReference(n.getFirstChild());
   }
   if (!parent.isExprResult()) {
-    report(t,n,GOOG_SCOPE_USED_IMPROPERLY);
+    report(t,n,GOOG_SCOPE_MUST_BE_ALONE);
+  }
+  if (t.getScope().isLocal()) {
+    report(t,n,GOOG_SCOPE_MUST_BE_IN_GLOBAL_SCOPE);
   }
   if (n.getChildCount() != 2) {
     report(t,n,GOOG_SCOPE_HAS_BAD_PARAMETERS);
