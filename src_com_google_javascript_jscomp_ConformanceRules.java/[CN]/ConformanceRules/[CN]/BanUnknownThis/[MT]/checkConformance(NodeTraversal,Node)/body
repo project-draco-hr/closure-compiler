@@ -1,0 +1,13 @@
+{
+  if (n.isThis() && !n.getParent().isCast()) {
+    JSType type=n.getJSType();
+    if (type != null && type.isUnknownType()) {
+      Node root=t.getScopeRoot();
+      if (!reports.contains(root)) {
+        reports.add(root);
+        return ConformanceResult.VIOLATION;
+      }
+    }
+  }
+  return ConformanceResult.CONFORMANCE;
+}
