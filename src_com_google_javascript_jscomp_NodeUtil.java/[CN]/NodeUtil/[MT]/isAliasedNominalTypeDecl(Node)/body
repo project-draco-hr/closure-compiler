@@ -1,0 +1,17 @@
+{
+  if (n.isName()) {
+    n=n.getParent();
+  }
+  if (n.isVar() && n.getChildCount() == 1) {
+    Node name=n.getFirstChild();
+    Node init=name.getFirstChild();
+    JSDocInfo jsdoc=getBestJSDocInfo(n);
+    return jsdoc != null && (jsdoc.isConstructor() || jsdoc.isInterface()) && init != null && init.isQualifiedName();
+  }
+  Node parent=n.getParent();
+  if (n.isGetProp() && n.isQualifiedName() && parent.isAssign()&& parent.getParent().isExprResult()) {
+    JSDocInfo jsdoc=getBestJSDocInfo(n);
+    return jsdoc != null && (jsdoc.isConstructor() || jsdoc.isInterface()) && parent.getLastChild().isQualifiedName();
+  }
+  return false;
+}

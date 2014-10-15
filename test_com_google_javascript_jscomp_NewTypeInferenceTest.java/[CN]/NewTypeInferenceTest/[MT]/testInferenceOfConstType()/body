@@ -28,7 +28,7 @@
   typeCheck("/** @const */\n" + "var s = f();\n" + "/** @return {string} */\n"+ "function f() { return ''; }",GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
   typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @constructor */\n"+ "function Bar() {}\n"+ "/** @const */\n"+ "var foo = new Foo;\n"+ "function g() {\n"+ "  var /** Bar */ bar = foo;\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @const */\n" + "var n1 = 1;\n" + "/** @const */\n"+ "var n2 = n1;\n"+ "function g() { n2 < 'str'; }",NewTypeInference.INVALID_OPERAND_TYPE);
-  checkNoWarnings("var Bar;","/**\n" + " * @constructor\n" + " * @final\n"+ " */\n"+ "var Foo = Bar;");
-  checkNoWarnings("var Bar;","/** @const */\n" + "var ns = {};\n" + "/**\n"+ " * @constructor\n"+ " * @final\n"+ " */\n"+ "ns.Foo = Bar;");
+  checkNoWarnings("/** @constructor */ function Bar() {}\n" + "/**\n" + " * @constructor\n"+ " * @final\n"+ " */\n"+ "var Foo = Bar;");
+  checkNoWarnings("/** @constructor */ function Bar() {}\n" + "/** @const */\n" + "var ns = {};\n"+ "/**\n"+ " * @constructor\n"+ " * @final\n"+ " */\n"+ "ns.Foo = Bar;");
   checkNoWarnings("/**\n" + " * @constructor\n" + " * @final\n"+ " */\n"+ "var Foo = function() {};\n"+ "Foo = /** @type {?} */ (function() {});");
 }
