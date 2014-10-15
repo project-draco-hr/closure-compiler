@@ -1,4 +1,14 @@
 {
+  for (  String qnameStr : unknownTypeNames) {
+    if (!qnameStr.contains(".")) {
+      continue;
+    }
+    QualifiedName qname=QualifiedName.fromQname(qnameStr);
+    Namespace ns=getNamespace(qname.getAllButRightmost());
+    String pname=qname.getRightmostName();
+    ns.addUndeclaredProperty(pname,JSType.UNKNOWN,false);
+  }
+  unknownTypeNames=null;
   for (  Map.Entry<String,NamespaceLit> entry : localNamespaces.entrySet()) {
     locals.put(entry.getKey(),entry.getValue().toJSType());
   }

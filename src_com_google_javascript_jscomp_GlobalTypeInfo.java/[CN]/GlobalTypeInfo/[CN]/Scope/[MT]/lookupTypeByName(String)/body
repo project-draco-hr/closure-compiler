@@ -3,11 +3,11 @@
     QualifiedName qname=QualifiedName.fromQname(name);
     Namespace ns=getNamespace(qname.getLeftmostName());
     if (ns == null) {
-      return null;
+      return getUnresolvedTypeByName(name);
     }
     RawNominalType rawType=ns.getNominalType(qname.getAllButLeftmost());
     if (rawType == null) {
-      return null;
+      return getUnresolvedTypeByName(name);
     }
     return rawType.getInstanceAsJSType();
   }
@@ -17,6 +17,10 @@
   RawNominalType rawNominalType=localClassDefs.get(name);
   if (rawNominalType != null) {
     return rawNominalType.getInstanceAsJSType();
+  }
+  JSType t=getUnresolvedTypeByName(name);
+  if (t != null) {
+    return t;
   }
   return parent == null ? null : parent.lookupTypeByName(name);
 }

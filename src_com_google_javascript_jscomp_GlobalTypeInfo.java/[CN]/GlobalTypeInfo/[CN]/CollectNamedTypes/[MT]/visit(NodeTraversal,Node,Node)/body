@@ -25,14 +25,29 @@ case Token.VAR:
 case Token.EXPR_RESULT:
 {
   Node expr=n.getFirstChild();
-  if (expr.isGetProp() || expr.isAssign() && expr.getFirstChild().isGetProp()) {
-    Node getProp=expr.isGetProp() ? expr : expr.getFirstChild();
-    if (isPrototypeProperty(getProp) || NodeUtil.referencesThis(getProp) || !getProp.isQualifiedName()) {
+switch (expr.getType()) {
+case Token.ASSIGN:
+    if (!expr.getFirstChild().isGetProp()) {
       return;
     }
-    processQualifiedDefinition(getProp);
-  }
-  break;
+  expr=expr.getFirstChild();
+case Token.GETPROP:
+if (isPrototypeProperty(expr) || NodeUtil.referencesThis(expr) || !expr.isQualifiedName()) {
+  return;
+}
+processQualifiedDefinition(expr);
+break;
+case Token.CALL:
+{
+List<String> decls=convention.identifyTypeDeclarationCall(expr);
+if (decls == null || decls.isEmpty()) {
+return;
+}
+currentScope.addUnknownTypeNames(decls);
+break;
+}
+}
+break;
 }
 }
 }
