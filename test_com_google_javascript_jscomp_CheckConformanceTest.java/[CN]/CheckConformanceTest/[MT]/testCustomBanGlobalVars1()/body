@@ -1,0 +1,7 @@
+{
+  configuration="requirement: {\n" + "  type: CUSTOM\n" + "  java_class: 'com.google.javascript.jscomp.ConformanceRules$BanGlobalVars'\n"+ "  error_message: 'BanGlobalVars Message'\n"+ "}";
+  testSame(EXTERNS,"var x;",CheckConformance.CONFORMANCE_VIOLATION,"Violation: BanGlobalVars Message");
+  testSame(EXTERNS,"function fn() {}",CheckConformance.CONFORMANCE_VIOLATION,"Violation: BanGlobalVars Message");
+  testSame("goog.provide('x');");
+  testSame(EXTERNS,"goog.provide('x'); var x;",CheckConformance.CONFORMANCE_VIOLATION,"Violation: BanGlobalVars Message");
+}
