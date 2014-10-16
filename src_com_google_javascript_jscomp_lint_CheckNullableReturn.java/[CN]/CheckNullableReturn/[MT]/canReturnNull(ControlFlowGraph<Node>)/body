@@ -1,14 +1,4 @@
 {
-  DiGraph.DiGraphNode<Node,ControlFlowGraph.Branch> ir=graph.getImplicitReturn();
-  for (  DiGraph.DiGraphEdge<Node,ControlFlowGraph.Branch> inEdge : ir.getInEdges()) {
-    DiGraph.DiGraphNode<Node,ControlFlowGraph.Branch> graphNode=inEdge.getSource();
-    Node possibleReturnNode=graphNode.getValue();
-    if (possibleReturnNode.isReturn()) {
-      Node returnValue=possibleReturnNode.getFirstChild();
-      if (returnValue != null && isNullable(returnValue)) {
-        return true;
-      }
-    }
-  }
-  return false;
+  CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch> test=new CheckPathsBetweenNodes<Node,ControlFlowGraph.Branch>(graph,graph.getEntry(),graph.getImplicitReturn(),NULLABLE_RETURN_PREDICATE,Predicates.<DiGraphEdge<Node,ControlFlowGraph.Branch>>alwaysTrue());
+  return test.somePathsSatisfyPredicate();
 }

@@ -1,3 +1,5 @@
 {
-  testSame(externs,"" + "/** @return {SomeType} */\n" + "function f() {\n"+ "  try {\n"+ "    return new SomeType();\n"+ "  } catch (e) {\n"+ "    return new SomeType();\n"+ "  }\n"+ "}",CheckNullableReturn.NULLABLE_RETURN_WITH_NAME);
+  testError("" + "/** @return {SomeType} */\n" + "function f() {\n"+ "  try {\n"+ "    return new SomeType();\n"+ "  } catch (e) {\n"+ "    return new SomeType();\n"+ "  }\n"+ "}");
+  testBodyOk("" + "try {\n" + "  if (a) throw '';\n"+ "} catch (e) {\n"+ "  return null;\n"+ "}\n"+ "return {}");
+  testBodyOk("" + "try {\n" + "  return bar();\n"+ "} catch (e) {\n"+ "} finally { }");
 }
