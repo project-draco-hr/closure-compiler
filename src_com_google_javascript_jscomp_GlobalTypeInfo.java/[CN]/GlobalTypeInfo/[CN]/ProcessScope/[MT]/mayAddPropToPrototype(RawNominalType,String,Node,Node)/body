@@ -3,6 +3,9 @@
   DeclaredFunctionType methodType;
   JSType propDeclType;
   if (initializer != null && initializer.isFunction()) {
+    if (initializer.getLastChild().hasChildren() && rawType.isInterface()) {
+      warnings.add(JSError.make(initializer.getLastChild(),TypeCheck.INTERFACE_METHOD_NOT_EMPTY));
+    }
     methodScope=visitFunctionLate(initializer,rawType);
     methodType=methodScope.getDeclaredType();
     propDeclType=JSType.fromFunctionType(methodType.toFunctionType());
