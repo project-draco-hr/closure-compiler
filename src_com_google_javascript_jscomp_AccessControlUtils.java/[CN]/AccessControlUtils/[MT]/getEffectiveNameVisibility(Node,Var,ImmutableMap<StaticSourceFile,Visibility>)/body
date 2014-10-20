@@ -5,5 +5,7 @@
     return raw;
   }
   Visibility defaultVisibilityForFile=fileVisibilityMap.get(var.getSourceFile());
-  return (defaultVisibilityForFile == null) ? raw : defaultVisibilityForFile;
+  JSType type=name.getJSType();
+  boolean createdFromGoogProvide=(type instanceof PrototypeObjectType && ((PrototypeObjectType)type).isAnonymous());
+  return (createdFromGoogProvide || defaultVisibilityForFile == null) ? raw : defaultVisibilityForFile;
 }
