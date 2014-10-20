@@ -1,0 +1,17 @@
+{
+  Preconditions.checkState(rawType.equals(other.rawType));
+  if (typeMap.isEmpty()) {
+    return other.instantiationIsUnknownOrIdentity();
+  }
+  if (other.typeMap.isEmpty()) {
+    return instantiationIsUnknownOrIdentity();
+  }
+  for (  String typeVar : rawType.getTypeParameters()) {
+    Preconditions.checkState(typeMap.containsKey(typeVar),"Type variable %s not in the domain: %s",typeVar,typeMap.keySet());
+    Preconditions.checkState(other.typeMap.containsKey(typeVar),"Other (%s) doesn't contain mapping (%s->%s) from this (%s)",other,typeVar,typeMap.get(typeVar),this);
+    if (!typeMap.get(typeVar).isSubtypeOf(other.typeMap.get(typeVar))) {
+      return false;
+    }
+  }
+  return true;
+}

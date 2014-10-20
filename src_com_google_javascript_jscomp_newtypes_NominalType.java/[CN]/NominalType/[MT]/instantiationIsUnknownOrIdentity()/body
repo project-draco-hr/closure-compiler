@@ -1,0 +1,13 @@
+{
+  if (this.typeMap.isEmpty()) {
+    return true;
+  }
+  for (  String typeVar : this.rawType.getTypeParameters()) {
+    Preconditions.checkState(this.typeMap.containsKey(typeVar),"Type variable %s not in the domain: %s",typeVar,this.typeMap.keySet());
+    JSType t=this.typeMap.get(typeVar);
+    if (!t.isUnknown() && !t.equals(JSType.fromTypeVar(typeVar))) {
+      return false;
+    }
+  }
+  return true;
+}
