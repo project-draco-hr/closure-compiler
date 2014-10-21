@@ -4,23 +4,34 @@
   if (peek(TokenType.STRING)) {
     LiteralToken moduleSpecifier=eat(TokenType.STRING).asLiteral();
     eatPossibleImplicitSemiColon();
-    return new ImportDeclarationTree(getTreeLocation(start),null,null,moduleSpecifier);
+    return new ImportDeclarationTree(getTreeLocation(start),null,null,null,moduleSpecifier);
   }
   IdentifierToken defaultBindingIdentifier=null;
+  IdentifierToken nameSpaceImportIdentifier=null;
   ImmutableList<ParseTree> identifierSet=null;
+  boolean parseExplicitNames=true;
   if (peekId()) {
     defaultBindingIdentifier=eatId();
     if (peek(TokenType.COMMA)) {
       eat(TokenType.COMMA);
-      identifierSet=parseImportSpecifierSet();
+    }
+ else {
+      parseExplicitNames=false;
     }
   }
+  if (parseExplicitNames) {
+    if (peek(TokenType.STAR)) {
+      eat(TokenType.STAR);
+      eatPredefinedString(PredefinedName.AS);
+      nameSpaceImportIdentifier=eatId();
+    }
  else {
-    identifierSet=parseImportSpecifierSet();
+      identifierSet=parseImportSpecifierSet();
+    }
   }
   eatPredefinedString(PredefinedName.FROM);
   Token moduleStr=eat(TokenType.STRING);
   LiteralToken moduleSpecifier=(moduleStr == null) ? null : moduleStr.asLiteral();
   eatPossibleImplicitSemiColon();
-  return new ImportDeclarationTree(getTreeLocation(start),defaultBindingIdentifier,identifierSet,moduleSpecifier);
+  return new ImportDeclarationTree(getTreeLocation(start),defaultBindingIdentifier,identifierSet,nameSpaceImportIdentifier,moduleSpecifier);
 }
