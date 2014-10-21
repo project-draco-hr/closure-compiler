@@ -20,7 +20,12 @@
         parent.putBooleanProp(Node.FREE_CALL,false);
       }
       ModuleOriginalNamePair pair=importMap.get(name);
-      n.getParent().replaceChild(n,IR.getprop(IR.name(pair.module),IR.string(pair.originalName)).useSourceInfoIfMissingFromForTree(n));
+      if (pair.originalName.equals("")) {
+        n.getParent().replaceChild(n,IR.name(pair.module).useSourceInfoIfMissingFromForTree(n));
+      }
+ else {
+        n.getParent().replaceChild(n,IR.getprop(IR.name(pair.module),IR.string(pair.originalName)).useSourceInfoIfMissingFromForTree(n));
+      }
     }
   }
 }
