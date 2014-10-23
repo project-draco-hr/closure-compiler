@@ -8,11 +8,9 @@
     return false;
   }
   String name=args.getString();
-  for (  String part : name.split("\\.")) {
-    if (!NodeUtil.isValidQualifiedName(part)) {
-      compiler.report(t.makeError(args,INVALID_DEFINE_NAME_ERROR,name));
-      return false;
-    }
+  if (!NodeUtil.isValidQualifiedName(name)) {
+    compiler.report(t.makeError(args,INVALID_DEFINE_NAME_ERROR,name));
+    return false;
   }
   JSDocInfo info=expr.getFirstChild().getJSDocInfo();
   if (info == null || !info.isDefine()) {
