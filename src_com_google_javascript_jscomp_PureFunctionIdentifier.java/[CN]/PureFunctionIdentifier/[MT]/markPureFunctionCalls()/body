@@ -19,11 +19,11 @@
         if (functionInfo.mutatesArguments()) {
           flags.setMutatesArguments();
         }
-        if (functionInfo.functionThrows) {
+        if (functionInfo.functionThrows()) {
           flags.setThrows();
         }
         if (!callNode.isNew()) {
-          if (functionInfo.taintsThis) {
+          if (functionInfo.taintsThis()) {
             if (isCallOrApply(callNode)) {
               flags.setMutatesArguments();
             }
@@ -32,7 +32,7 @@
             }
           }
         }
-        if (functionInfo.taintsReturn) {
+        if (functionInfo.taintsReturn()) {
           flags.setReturnsTainted();
         }
         if (flags.areAllFlagsSet()) {
