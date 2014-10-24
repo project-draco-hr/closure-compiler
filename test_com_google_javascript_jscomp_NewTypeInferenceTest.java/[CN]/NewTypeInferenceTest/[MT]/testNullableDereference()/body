@@ -1,0 +1,5 @@
+{
+  typeCheck("function f(/** ?{ p : number } */ o) { return o.p; }",NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck("/** @constructor */ function Foo() { /** @const */ this.p = 5; }\n" + "function f(/** ?Foo */ f) { return f.p; }",NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "Foo.prototype.p = function(){};\n" + "function f(/** ?Foo */ f) { f.p(); }",NewTypeInference.NULLABLE_DEREFERENCE);
+}
