@@ -2,11 +2,8 @@
   if (!verifyLastArgumentIsString(t,methodName,arg)) {
     return false;
   }
-  for (  String part : Splitter.on('.').split(arg.getString())) {
-    if (!NodeUtil.isValidPropertyName(part)) {
-      compiler.report(t.makeError(arg,INVALID_PROVIDE_ERROR,part));
-      return false;
-    }
+  if (!NodeUtil.isValidQualifiedName(compiler.getLanguageMode(),arg.getString())) {
+    compiler.report(t.makeError(arg,INVALID_PROVIDE_ERROR,arg.getString(),compiler.getLanguageMode().toString()));
   }
   return true;
 }

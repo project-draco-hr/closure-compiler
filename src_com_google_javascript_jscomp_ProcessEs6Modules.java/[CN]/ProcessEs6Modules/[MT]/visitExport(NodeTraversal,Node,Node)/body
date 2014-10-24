@@ -1,6 +1,8 @@
 {
   if (n.getBooleanProp(Node.EXPORT_DEFAULT)) {
-    compiler.report(JSError.make(n,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Default export"));
+    Node var=IR.var(IR.name(DEFAULT_EXPORT_NAME),n.removeFirstChild());
+    n.getParent().replaceChild(n,var);
+    exportMap.put("default",DEFAULT_EXPORT_NAME);
   }
  else   if (n.getBooleanProp(Node.EXPORT_ALL_FROM)) {
     compiler.report(JSError.make(n,Es6ToEs3Converter.CANNOT_CONVERT_YET,"Wildcard export"));

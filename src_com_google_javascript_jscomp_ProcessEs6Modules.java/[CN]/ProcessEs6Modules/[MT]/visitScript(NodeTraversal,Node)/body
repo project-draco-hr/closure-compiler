@@ -33,7 +33,14 @@
   }
   for (  String name : exportMap.keySet()) {
     String qualifiedName=moduleName + "." + name;
-    script.addChildAfter(IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.provide"),IR.string(qualifiedName))).copyInformationFromForTree(script),googProvide);
+    Node newGoogProvide=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.provide"),IR.string(qualifiedName)));
+    newGoogProvide.copyInformationFromForTree(script);
+    if (name.equals("default")) {
+      JSDocInfoBuilder jsDocInfo=script.getJSDocInfo() == null ? new JSDocInfoBuilder(false) : JSDocInfoBuilder.copyFrom(script.getJSDocInfo());
+      jsDocInfo.recordSuppressions(ImmutableSet.of("invalidProvide"));
+      script.setJSDocInfo(jsDocInfo.build(script));
+    }
+    script.addChildAfter(newGoogProvide,googProvide);
     if (reportDependencies) {
       t.getInput().addProvide(qualifiedName);
     }
