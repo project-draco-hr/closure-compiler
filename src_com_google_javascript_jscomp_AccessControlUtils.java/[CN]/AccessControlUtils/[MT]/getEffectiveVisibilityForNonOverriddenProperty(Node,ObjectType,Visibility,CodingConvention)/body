@@ -7,8 +7,7 @@
   if (objectType != null) {
     raw=objectType.getOwnPropertyJSDocInfo(propertyName).getVisibility();
   }
-  if (raw != Visibility.INHERITED) {
-    return raw;
-  }
-  return (fileOverviewVisibility == null) ? raw : fileOverviewVisibility;
+  JSType type=getprop.getJSType();
+  boolean createdFromGoogProvide=(type instanceof PrototypeObjectType && ((PrototypeObjectType)type).isAnonymous());
+  return (raw != Visibility.INHERITED || fileOverviewVisibility == null || createdFromGoogProvide) ? raw : fileOverviewVisibility;
 }
