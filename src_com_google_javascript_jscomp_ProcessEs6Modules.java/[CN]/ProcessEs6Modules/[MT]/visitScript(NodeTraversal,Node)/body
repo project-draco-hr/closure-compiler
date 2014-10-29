@@ -4,16 +4,14 @@
   }
   Preconditions.checkArgument(scriptNodeCount == 1,"ProcessEs6Modules supports only one invocation per " + "CompilerInput / script node");
   String moduleName=toModuleName(loader.getLoadAddress(t.getInput()));
-  NodeTraversal.traverse(compiler,script,new RenameGlobalVars(moduleName));
-  if (exportMap.isEmpty()) {
-    return;
+  if (!exportMap.isEmpty()) {
+    Node objectlit=IR.objectlit();
+    Node varNode=IR.var(IR.name(moduleName),objectlit).useSourceInfoIfMissingFromForTree(script);
+    script.addChildToBack(varNode);
   }
-  Node objectlit=IR.objectlit();
-  Node varNode=IR.var(IR.name(moduleName),objectlit).useSourceInfoIfMissingFromForTree(script);
-  script.addChildToBack(varNode);
   for (  Map.Entry<String,String> entry : exportMap.entrySet()) {
     String exportedName=entry.getKey();
-    String withSuffix=entry.getValue() + "$$" + moduleName;
+    String withSuffix=entry.getValue();
     Node getProp=IR.getprop(IR.name(moduleName),IR.string(exportedName));
     Node exprResult=IR.exprResult(IR.assign(getProp,NodeUtil.newQName(compiler,withSuffix))).useSourceInfoIfMissingFromForTree(script);
     script.addChildToBack(exprResult);
@@ -24,25 +22,28 @@
     builder.recordTypedef(new JSTypeExpression(Node.newString(exportMap.get(name) + "$$" + moduleName),t.getSourceName()));
     JSDocInfo info=builder.build(typedef);
     typedef.setJSDocInfo(info);
-    script.addChildToBack(IR.exprResult(typedef).useSourceInfoIfMissingFromForTree(varNode));
+    script.addChildToBack(IR.exprResult(typedef).useSourceInfoIfMissingFromForTree(script));
   }
-  Node googProvide=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.provide"),IR.string(moduleName)));
-  script.addChildToFront(googProvide.copyInformationFromForTree(script));
-  if (reportDependencies) {
-    t.getInput().addProvide(moduleName);
-  }
-  for (  String name : exportMap.keySet()) {
-    String qualifiedName=moduleName + "." + name;
-    Node newGoogProvide=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.provide"),IR.string(qualifiedName)));
-    newGoogProvide.copyInformationFromForTree(script);
-    if (name.equals("default")) {
-      JSDocInfoBuilder jsDocInfo=script.getJSDocInfo() == null ? new JSDocInfoBuilder(false) : JSDocInfoBuilder.copyFrom(script.getJSDocInfo());
-      jsDocInfo.recordSuppressions(ImmutableSet.of("invalidProvide"));
-      script.setJSDocInfo(jsDocInfo.build(script));
-    }
-    script.addChildAfter(newGoogProvide,googProvide);
+  NodeTraversal.traverse(compiler,script,new RenameGlobalVars(moduleName));
+  if (!exportMap.isEmpty()) {
+    Node googProvide=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.provide"),IR.string(moduleName)));
+    script.addChildToFront(googProvide.copyInformationFromForTree(script));
     if (reportDependencies) {
-      t.getInput().addProvide(qualifiedName);
+      t.getInput().addProvide(moduleName);
+    }
+    for (    String name : exportMap.keySet()) {
+      String qualifiedName=moduleName + "." + name;
+      Node newGoogProvide=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.provide"),IR.string(qualifiedName)));
+      newGoogProvide.copyInformationFromForTree(script);
+      if (name.equals("default")) {
+        JSDocInfoBuilder jsDocInfo=script.getJSDocInfo() == null ? new JSDocInfoBuilder(false) : JSDocInfoBuilder.copyFrom(script.getJSDocInfo());
+        jsDocInfo.recordSuppressions(ImmutableSet.of("invalidProvide"));
+        script.setJSDocInfo(jsDocInfo.build(script));
+      }
+      script.addChildAfter(newGoogProvide,googProvide);
+      if (reportDependencies) {
+        t.getInput().addProvide(qualifiedName);
+      }
     }
   }
   exportMap.clear();
