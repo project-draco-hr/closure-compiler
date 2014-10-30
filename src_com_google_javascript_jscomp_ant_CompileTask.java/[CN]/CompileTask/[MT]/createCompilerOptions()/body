@@ -29,6 +29,11 @@
   if (!Strings.isNullOrEmpty(sourceMapFormat)) {
     options.sourceMapFormat=Format.valueOf(sourceMapFormat);
   }
+  if (!Strings.isNullOrEmpty(sourceMapLocationMapping)) {
+    String tokens[]=sourceMapLocationMapping.split("\\|",-1);
+    LocationMapping lm=new LocationMapping(tokens[0],tokens[1]);
+    options.sourceMapLocationMappings=Arrays.asList(lm);
+  }
   if (sourceMapOutputFile != null) {
     File parentFile=sourceMapOutputFile.getParentFile();
     if (parentFile.mkdirs()) {
