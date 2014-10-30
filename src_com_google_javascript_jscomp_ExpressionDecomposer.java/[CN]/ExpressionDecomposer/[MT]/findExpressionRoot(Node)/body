@@ -7,15 +7,20 @@ case Token.EXPR_RESULT:
 case Token.IF:
 case Token.SWITCH:
 case Token.RETURN:
+case Token.THROW:
 case Token.VAR:
       Preconditions.checkState(child == parent.getFirstChild());
     return parent;
+case Token.FOR:
+  if (!NodeUtil.isForIn(parent) && child == parent.getFirstChild()) {
+    return parent;
+  }
 case Token.SCRIPT:
 case Token.BLOCK:
 case Token.LABEL:
 case Token.CASE:
 case Token.DEFAULT_CASE:
-  return null;
+return null;
 }
 child=parent;
 }
