@@ -6,23 +6,23 @@
   JSTypeExpression texp=e.getTypeExpr();
   JSType enumeratedType;
   if (texp == null) {
-    warn("Circular type definitions are not allowed.",e.getTypeExprForErrorReporting().getRootNode());
+    warn("Circular type definitions are not allowed.",e.getTypeExprForErrorReporting().getRoot());
     enumeratedType=JSType.UNKNOWN;
   }
  else {
     int numTypeVars=howmanyTypeVars;
     enumeratedType=getTypeFromJSTypeExpression(texp,null,registry,null);
     if (howmanyTypeVars > numTypeVars) {
-      warn("An enum type cannot include type variables.",texp.getRootNode());
+      warn("An enum type cannot include type variables.",texp.getRoot());
       enumeratedType=JSType.UNKNOWN;
       howmanyTypeVars=numTypeVars;
     }
  else     if (enumeratedType.isTop()) {
-      warn("An enum type cannot be *. " + "Use ? if you do not want the elements checked.",texp.getRootNode());
+      warn("An enum type cannot be *. " + "Use ? if you do not want the elements checked.",texp.getRoot());
       enumeratedType=JSType.UNKNOWN;
     }
  else     if (enumeratedType.isUnion()) {
-      warn("An enum type cannot be a union type.",texp.getRootNode());
+      warn("An enum type cannot be a union type.",texp.getRoot());
       enumeratedType=JSType.UNKNOWN;
     }
   }
