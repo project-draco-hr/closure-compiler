@@ -1,0 +1,12 @@
+{
+  if (n.getParent().isExprResult()) {
+    return;
+  }
+  if (decomposer.canExposeExpression(n) != ExpressionDecomposer.DecompositionType.UNDECOMPOSABLE) {
+    decomposer.exposeExpression(n);
+    compiler.reportCodeChange();
+  }
+ else {
+    compiler.report(JSError.make(currentStatement,Es6ToEs3Converter.CANNOT_CONVERT,"Undecomposable expression"));
+  }
+}

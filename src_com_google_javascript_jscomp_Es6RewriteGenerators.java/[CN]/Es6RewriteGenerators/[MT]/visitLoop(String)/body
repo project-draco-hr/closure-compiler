@@ -3,10 +3,8 @@
   Node guard;
   Node incr;
   Node body;
-  Node firstEntry;
   if (currentStatement.isWhile()) {
     guard=currentStatement.removeFirstChild();
-    firstEntry=null;
     body=currentStatement.removeFirstChild();
     initializer=IR.empty();
     incr=IR.empty();
@@ -17,15 +15,13 @@
       initializer=IR.exprResult(initializer);
     }
     guard=currentStatement.removeFirstChild();
-    firstEntry=null;
     incr=currentStatement.removeFirstChild();
     body=currentStatement.removeFirstChild();
   }
  else {
     Preconditions.checkState(currentStatement.isDo());
-    firstEntry=IR.name(GENERATOR_DO_WHILE_INITIAL);
-    initializer=IR.var(firstEntry.cloneTree(),IR.trueNode());
-    incr=IR.assign(firstEntry.cloneTree(),IR.falseNode());
+    initializer=IR.empty();
+    incr=IR.assign(IR.name(GENERATOR_DO_WHILE_INITIAL),IR.falseNode());
     body=currentStatement.removeFirstChild();
     guard=currentStatement.removeFirstChild();
   }
@@ -37,9 +33,6 @@
  else {
     prestatement=IR.block();
     condition=guard;
-  }
-  if (currentStatement.isDo()) {
-    condition=IR.or(firstEntry,condition);
   }
   int loopBeginState=generatorCaseCount++;
   int continueState=loopBeginState;

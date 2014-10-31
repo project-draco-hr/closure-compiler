@@ -1,8 +1,9 @@
 {
-  Node enclosing=NodeUtil.getEnclosingFunction(n);
-  if (enclosing == null || !enclosing.isGeneratorFunction() || !NodeUtil.isLoopStructure(n) || NodeUtil.isForIn(n)) {
-    return true;
+  Node enclosingFunc=NodeUtil.getEnclosingFunction(n);
+  if (enclosingFunc == null || !enclosingFunc.isGeneratorFunction() || NodeUtil.isForIn(n)) {
+    return;
   }
+  Node enclosingBlock=NodeUtil.getEnclosingType(n,Token.BLOCK);
   Node guard=null, incr=null;
 switch (n.getType()) {
 case Token.FOR:
@@ -15,11 +16,17 @@ incr=IR.empty();
 break;
 case Token.DO:
 guard=n.getLastChild();
+if (!guard.isEmpty()) {
+Node firstEntry=IR.name(GENERATOR_DO_WHILE_INITIAL);
+enclosingBlock.addChildToFront(IR.var(firstEntry.cloneTree(),IR.trueNode()));
+guard=IR.or(firstEntry,n.getLastChild().detachFromParent());
+n.addChildToBack(guard);
+}
 incr=IR.empty();
 break;
 }
 if (!controlCanExit(guard) && !controlCanExit(incr)) {
-return true;
+return;
 }
 Node guardName=IR.name(GENERATOR_LOOP_GUARD + generatorCounter.get());
 if (!guard.isEmpty()) {
@@ -31,7 +38,6 @@ container.addChildToBack(guardName.cloneTree());
 if (!incr.isEmpty()) {
 n.addChildBefore(IR.block(IR.exprResult(incr.detachFromParent())),n.getLastChild());
 }
-Node block=NodeUtil.getEnclosingType(n,Token.BLOCK);
-block.addChildToFront(IR.var(guardName));
-return true;
+enclosingBlock.addChildToFront(IR.var(guardName));
+compiler.reportCodeChange();
 }
