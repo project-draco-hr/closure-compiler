@@ -1,63 +1,62 @@
 {
 switch (n.getType()) {
 case Token.CALL:
-    boolean isExpr=parent.isExprResult();
-  Node left=n.getFirstChild();
-if (left.isGetProp()) {
-  Node name=left.getFirstChild();
-  if (name.isName() && GOOG.equals(name.getString())) {
-    String methodName=name.getNext().getString();
-    if ("base".equals(methodName)) {
-      processBaseClassCall(t,n);
-    }
- else     if ("define".equals(methodName)) {
-      if (validPrimitiveCall(t,n)) {
-        processDefineCall(t,n,parent);
+    Node left=n.getFirstChild();
+  if (left.isGetProp()) {
+    Node name=left.getFirstChild();
+    if (name.isName() && GOOG.equals(name.getString())) {
+      String methodName=name.getNext().getString();
+      if ("base".equals(methodName)) {
+        processBaseClassCall(t,n);
       }
-    }
- else     if ("require".equals(methodName)) {
-      if (validPrimitiveCall(t,n)) {
-        processRequireCall(t,n,parent);
-      }
-    }
- else     if ("provide".equals(methodName)) {
-      if (validPrimitiveCall(t,n)) {
-        processProvideCall(t,n,parent);
-      }
-    }
- else     if ("inherits".equals(methodName)) {
-      processInheritsCall(t,n);
-    }
- else     if ("exportSymbol".equals(methodName)) {
-      Node arg=left.getNext();
-      if (arg.isString()) {
-        int dot=arg.getString().indexOf('.');
-        if (dot == -1) {
-          exportedVariables.add(arg.getString());
+ else       if ("define".equals(methodName)) {
+        if (validPrimitiveCall(t,n)) {
+          processDefineCall(t,n,parent);
         }
+      }
+ else       if ("require".equals(methodName)) {
+        if (validPrimitiveCall(t,n)) {
+          processRequireCall(t,n,parent);
+        }
+      }
+ else       if ("provide".equals(methodName)) {
+        if (validPrimitiveCall(t,n)) {
+          processProvideCall(t,n,parent);
+        }
+      }
+ else       if ("inherits".equals(methodName)) {
+        processInheritsCall(t,n);
+      }
+ else       if ("exportSymbol".equals(methodName)) {
+        Node arg=left.getNext();
+        if (arg.isString()) {
+          int dot=arg.getString().indexOf('.');
+          if (dot == -1) {
+            exportedVariables.add(arg.getString());
+          }
  else {
-          exportedVariables.add(arg.getString().substring(0,dot));
+            exportedVariables.add(arg.getString().substring(0,dot));
+          }
         }
       }
-    }
- else     if ("forwardDeclare".equals(methodName)) {
-      if (validPrimitiveCall(t,n)) {
-        processForwardDeclare(t,n,parent);
+ else       if ("forwardDeclare".equals(methodName)) {
+        if (validPrimitiveCall(t,n)) {
+          processForwardDeclare(t,n,parent);
+        }
+      }
+ else       if ("addDependency".equals(methodName)) {
+        if (validPrimitiveCall(t,n)) {
+          processAddDependency(n,parent);
+        }
+      }
+ else       if ("setCssNameMapping".equals(methodName)) {
+        processSetCssNameMapping(t,n,parent);
       }
     }
- else     if ("addDependency".equals(methodName)) {
-      if (validPrimitiveCall(t,n)) {
-        processAddDependency(n,parent);
-      }
-    }
- else     if ("setCssNameMapping".equals(methodName)) {
-      processSetCssNameMapping(t,n,parent);
+ else     if (left.getLastChild().getString().equals("base")) {
+      maybeProcessClassBaseCall(t,n);
     }
   }
- else   if (left.getLastChild().getString().equals("base")) {
-    maybeProcessClassBaseCall(t,n);
-  }
-}
 break;
 case Token.ASSIGN:
 case Token.NAME:
