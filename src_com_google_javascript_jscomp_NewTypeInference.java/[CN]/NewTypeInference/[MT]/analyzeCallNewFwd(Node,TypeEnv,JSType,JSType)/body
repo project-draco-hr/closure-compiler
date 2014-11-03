@@ -3,6 +3,10 @@
     return analyzeClosureCallFwd(expr,inEnv,specializedType);
   }
   Node callee=expr.getFirstChild();
+  AssertionFunctionSpec assertionFunctionSpec=assertionFunctionsMap.get(callee.getQualifiedName());
+  if (assertionFunctionSpec != null) {
+    return analyzeAssertionCall(expr,inEnv,assertionFunctionSpec);
+  }
   EnvTypePair calleePair=analyzeExprFwd(callee,inEnv,JSType.topFunction());
   JSType calleeType=calleePair.type;
   if (!calleeType.isSubtypeOf(JSType.topFunction())) {

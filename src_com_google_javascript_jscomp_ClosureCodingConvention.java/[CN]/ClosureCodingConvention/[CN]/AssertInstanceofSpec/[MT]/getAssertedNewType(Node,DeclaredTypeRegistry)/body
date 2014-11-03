@@ -1,0 +1,17 @@
+{
+  if (call.getChildCount() > 2) {
+    Node constructor=call.getFirstChild().getNext().getNext();
+    if (constructor != null && constructor.isQualifiedName()) {
+      QualifiedName qname=QualifiedName.fromNode(constructor);
+      JSType leftmost=scope.getDeclaredTypeOf(qname.getLeftmostName());
+      JSType functionType=leftmost;
+      if (functionType != null && !qname.isIdentifier()) {
+        functionType=functionType.getProp(qname.getAllButLeftmost());
+      }
+      if (functionType != null) {
+        return functionType.getFunTypeIfSingletonObj().getInstanceTypeOfCtor();
+      }
+    }
+  }
+  return JSType.UNKNOWN;
+}

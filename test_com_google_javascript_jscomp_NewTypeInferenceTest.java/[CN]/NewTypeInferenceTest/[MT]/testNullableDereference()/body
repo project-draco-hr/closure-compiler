@@ -1,5 +1,9 @@
 {
   typeCheck("function f(/** ?{ p : number } */ o) { return o.p; }",NewTypeInference.NULLABLE_DEREFERENCE);
-  typeCheck("/** @constructor */ function Foo() { /** @const */ this.p = 5; }\n" + "function f(/** ?Foo */ f) { return f.p; }",NewTypeInference.NULLABLE_DEREFERENCE);
-  typeCheck("/** @constructor */ function Foo() {}\n" + "Foo.prototype.p = function(){};\n" + "function f(/** ?Foo */ f) { f.p(); }",NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck("/** @constructor */ function Foo() { /** @const */ this.p = 5; }\n" + "function g(/** ?Foo */ f) { return f.p; }",NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck("/** @constructor */ function Foo() {}\n" + "Foo.prototype.p = function(){};\n" + "function g(/** ?Foo */ f) { f.p(); }",NewTypeInference.NULLABLE_DEREFERENCE);
+  checkNoWarnings(CLOSURE_BASE + "function f(/** ?{ p : number } */ o) {\n" + "  goog.asserts.assert(o);\n"+ "  return o.p;\n"+ "}");
+  checkNoWarnings(CLOSURE_BASE + "function f(/** ?{ p : number } */ o) {\n" + "  goog.asserts.assertObject(o);\n"+ "  return o.p;\n"+ "}");
+  checkNoWarnings(CLOSURE_BASE + "function f(/** ?Array<string> */ a) {\n" + "  goog.asserts.assertArray(a);\n"+ "  return a.length;\n"+ "}");
+  checkNoWarnings(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "Foo.prototype.p = function(){};\n"+ "function g(/** ?Foo */ f) {\n"+ "  goog.asserts.assertInstanceof(f, Foo);\n"+ "  f.p();\n"+ "}");
 }

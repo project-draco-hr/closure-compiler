@@ -17,14 +17,7 @@
     ctorPair.type=JSType.BOOLEAN;
     return ctorPair;
   }
-  if (ctorFunType.isGeneric()) {
-    ImmutableMap.Builder<String,JSType> builder=ImmutableMap.builder();
-    for (    String typeVar : ctorFunType.getTypeParameters()) {
-      builder.put(typeVar,JSType.UNKNOWN);
-    }
-    ctorFunType=ctorFunType.instantiateGenerics(builder.build());
-  }
-  JSType instanceType=ctorFunType.getTypeOfThis();
+  JSType instanceType=ctorFunType.getInstanceTypeOfCtor();
   objPair=analyzeExprFwd(obj,inEnv,JSType.UNKNOWN,specializedType.isTruthy() ? objPair.type.specialize(instanceType) : objPair.type.removeType(instanceType));
   ctorPair=analyzeExprFwd(ctor,objPair.env,JSType.topFunction());
   ctorPair.type=JSType.BOOLEAN;

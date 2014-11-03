@@ -1,0 +1,19 @@
+{
+  Node left=callNode.getFirstChild();
+  Node firstParam=left.getNext();
+  if (firstParam == null) {
+    return new EnvTypePair(env,JSType.UNKNOWN);
+  }
+  Node assertedNode=assertionFunctionSpec.getAssertedParam(firstParam);
+  if (assertedNode == null) {
+    return new EnvTypePair(env,JSType.UNKNOWN);
+  }
+  JSType assertedType=assertionFunctionSpec.getAssertedNewType(callNode,currentScope);
+  EnvTypePair pair=analyzeExprFwd(assertedNode,env,JSType.UNKNOWN,assertedType);
+  if (pair.type.isBottom()) {
+    warnings.add(JSError.make(assertedNode,NewTypeInference.ASSERT_FALSE));
+    pair.type=JSType.UNKNOWN;
+    pair.env=env;
+  }
+  return pair;
+}

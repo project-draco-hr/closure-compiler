@@ -1,0 +1,5 @@
+{
+  typeCheck(CLOSURE_BASE + "function f(/** ({ p : string }|null|undefined) */ o) {\n" + "  goog.asserts.assert(o);\n"+ "  o.p - 5;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "function f(/** (Array.<string>|Foo) */ o) {\n"+ "  goog.asserts.assert(o instanceof Array);\n"+ "  var /** string */ s = o.length;\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "Foo.prototype.p = function(/** number */ x){};\n"+ "function f(/** (function(new:Foo)) */ ctor,\n"+ "           /** ?Foo */ o) {\n"+ "  goog.asserts.assertInstanceof(o, ctor);\n"+ "  o.p('str');\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
+}
