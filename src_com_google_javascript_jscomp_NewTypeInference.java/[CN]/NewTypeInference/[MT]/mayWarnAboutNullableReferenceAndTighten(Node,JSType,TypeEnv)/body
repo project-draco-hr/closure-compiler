@@ -1,0 +1,12 @@
+{
+  if (!recvType.isUnknown() && (JSType.NULL.isSubtypeOf(recvType) || JSType.UNDEFINED.isSubtypeOf(recvType))) {
+    JSType minusNull=recvType.removeType(JSType.NULL_OR_UNDEF);
+    if (!minusNull.isBottom() && minusNull != recvType && minusNull.isSubtypeOf(JSType.TOP_OBJECT)) {
+      warnings.add(JSError.make(obj,NULLABLE_DEREFERENCE,recvType.toString()));
+      EnvTypePair pair=analyzeExprFwd(obj,inEnv,minusNull);
+      pair.type=minusNull;
+      return pair;
+    }
+  }
+  return new EnvTypePair(inEnv,recvType);
+}

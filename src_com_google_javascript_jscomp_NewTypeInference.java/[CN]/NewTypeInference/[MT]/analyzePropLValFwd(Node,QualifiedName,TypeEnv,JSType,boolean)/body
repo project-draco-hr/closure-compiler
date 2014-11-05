@@ -3,10 +3,11 @@
   String pnameAsString=pname.getLeftmostName();
   JSType reqObjType=pickReqObjType(obj.getParent()).withLoose().withProperty(pname,type);
   LValueResultFwd lvalue=analyzeLValueFwd(obj,inEnv,reqObjType,true);
-  TypeEnv lvalueEnv=lvalue.env;
-  JSType lvalueType=lvalue.type;
+  EnvTypePair pair=mayWarnAboutNullableReferenceAndTighten(obj,lvalue.type,lvalue.env);
+  TypeEnv lvalueEnv=pair.env;
+  JSType lvalueType=pair.type;
   if (!lvalueType.isSubtypeOf(JSType.TOP_OBJECT)) {
-    warnPropAccessOnNonobject(obj,pnameAsString,lvalueType);
+    warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,pnameAsString,lvalueType.toString()));
     return new LValueResultFwd(lvalueEnv,type,null,null);
   }
   Node propAccessNode=obj.getParent();

@@ -3,6 +3,7 @@
   Node index=expr.getLastChild();
   JSType reqObjType=pickReqObjType(expr);
   EnvTypePair pair=analyzeExprFwd(receiver,inEnv,reqObjType);
+  pair=mayWarnAboutNullableReferenceAndTighten(receiver,pair.type,pair.env);
   JSType recvType=pair.type;
   if (!mayWarnAboutNonObject(receiver,"",recvType,specializedType) && !mayWarnAboutStructPropAccess(receiver,recvType)) {
     if (isArrayType(recvType)) {

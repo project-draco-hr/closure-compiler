@@ -6,7 +6,11 @@
   checkNoWarnings("/** @param {*} x */\n" + "function f(x) {\n" + "  if (x.prop) {\n"+ "    var /** { prop: ? } */ y = x;\n"+ "  }\n"+ "}");
   typeCheck("/** @param {number} x */\n" + "function f(x) {\n" + "  if (x.prop) {}\n"+ "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
   typeCheck("null[123];",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
-  checkNoWarnings("function f(/** Object */ x) { if (x[123]) { return 1; } }");
+  checkNoWarnings("function f(/** !Object */ x) { if (x[123]) { return 1; } }");
   typeCheck("function f(/** number */ x) { if (x[123]) { return 1; } }",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
-  typeCheck("/** @constructor */ function Foo(){}\n" + "/** @type {string} */ Foo.prototype.prop1;\n" + "function g(/** Foo */ f) {\n"+ "  f.prop1.prop2 = 'str';\n"+ "};",NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck("function f(/** (number|null) */ n) {\n" + "  n.foo;\n" + "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck("function f(/** (number|null|undefined) */ n) {\n" + "  n.foo;\n" + "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck("function f(/** (!Object|number|null|undefined) */ n) {\n" + "  n.foo;\n" + "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck("/** @constructor */ function Foo(){}\n" + "Foo.prototype.prop;\n" + "function f(/** (!Foo|undefined) */ n) {\n"+ "  n.prop;\n"+ "}",NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck("/** @constructor */ function Foo(){}\n" + "/** @type {string} */ Foo.prototype.prop1;\n" + "function g(/** Foo */ f) {\n"+ "  f.prop1.prop2 = 'str';\n"+ "};",ImmutableList.of(NewTypeInference.NULLABLE_DEREFERENCE,NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT));
 }
