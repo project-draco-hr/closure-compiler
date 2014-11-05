@@ -9,6 +9,9 @@
     return new EnvTypePair(env,JSType.UNKNOWN);
   }
   JSType assertedType=assertionFunctionSpec.getAssertedNewType(callNode,currentScope);
+  if (assertedType.isUnknown()) {
+    warnings.add(JSError.make(callNode,NewTypeInference.UNKNOWN_ASSERTION_TYPE));
+  }
   EnvTypePair pair=analyzeExprFwd(assertedNode,env,JSType.UNKNOWN,assertedType);
   if (pair.type.isBottom()) {
     warnings.add(JSError.make(assertedNode,NewTypeInference.ASSERT_FALSE));
