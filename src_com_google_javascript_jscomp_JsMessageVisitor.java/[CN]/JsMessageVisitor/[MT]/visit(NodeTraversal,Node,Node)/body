@@ -23,6 +23,14 @@ Node propNode=getProp.getLastChild();
 messageKey=propNode.getString();
 msgNode=node.getLastChild();
 break;
+case Token.STRING_KEY:
+if (node.isQuotedString() || node.getFirstChild() == null) {
+return;
+}
+isVar=false;
+messageKey=node.getString();
+msgNode=node.getFirstChild();
+break;
 case Token.CALL:
 if (node.getFirstChild().matchesQualifiedName(MSG_FUNCTION_NAME)) {
 googMsgNodes.add(node);
@@ -46,7 +54,10 @@ if (isNewStyleMessage) {
 googMsgNodes.remove(msgNode);
 }
  else if (style != JsMessage.Style.LEGACY) {
-compiler.report(traversal.makeError(node,checkLevel,MESSAGE_NOT_INITIALIZED_USING_NEW_SYNTAX));
+compiler.report(traversal.makeError(node,MESSAGE_NOT_INITIALIZED_USING_NEW_SYNTAX));
+if (style == JsMessage.Style.CLOSURE) {
+return;
+}
 }
 boolean isUnnamedMsg=isUnnamedMessageName(messageKey);
 Builder builder=new Builder(isUnnamedMsg ? null : messageKey);
