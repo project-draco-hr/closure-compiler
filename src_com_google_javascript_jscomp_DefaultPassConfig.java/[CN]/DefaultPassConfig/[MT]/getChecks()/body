@@ -115,6 +115,9 @@
   if (options.enables(DiagnosticGroups.ES5_STRICT)) {
     checks.add(checkStrictMode);
   }
+  if (!options.getConformanceConfigs().isEmpty()) {
+    checks.add(checkConformance);
+  }
   if (options.closurePass) {
     checks.add(closureReplaceGetCssName);
   }
@@ -136,9 +139,6 @@
   }
   if (options.nameReferenceReportPath != null && !options.nameReferenceReportPath.isEmpty()) {
     checks.add(printNameReferenceReport);
-  }
-  if (!options.getConformanceConfigs().isEmpty()) {
-    checks.add(checkConformance);
   }
   checks.add(createEmptyPass("afterStandardChecks"));
   assertAllOneTimePasses(checks);
