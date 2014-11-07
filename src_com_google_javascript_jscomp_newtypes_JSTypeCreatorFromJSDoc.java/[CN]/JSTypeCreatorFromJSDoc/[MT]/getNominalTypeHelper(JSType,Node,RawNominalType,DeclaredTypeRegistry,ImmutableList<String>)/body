@@ -19,7 +19,7 @@
   if (typeArgsSize != typeParamsSize) {
     String nominalTypeName=uninstantiated.getName();
     if (!nominalTypeName.equals("Object")) {
-      warn("Invalid generics instantiation for " + nominalTypeName + ".\n"+ "Expected "+ typeParamsSize+ " type argument(s), but found "+ typeArgsSize,n);
+      warnings.add(JSError.make(n,INVALID_GENERICS_INSTANTIATION,nominalTypeName,String.valueOf(typeParamsSize),String.valueOf(typeArgsSize)));
     }
     return JSType.join(JSType.NULL,JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated.instantiateGenerics(fixLengthOfTypeList(typeParameters.size(),typeArguments)))));
   }
