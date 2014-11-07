@@ -17,7 +17,7 @@
   if (!insideQualifiedName && mayWarnAboutConstProp(propAccessNode,lvalueType,pname)) {
     return new LValueResultFwd(lvalueEnv,type,null,null);
   }
-  if (!lvalueType.mayHaveProp(pname)) {
+  if (!lvalueType.hasProp(pname)) {
     if (insideQualifiedName && lvalueType.isLoose()) {
       lvalueType=lvalueType.withProperty(pname,JSType.TOP_OBJECT.withLoose());
       if (lvalueType.isDict() && propAccessNode.isGetProp()) {
@@ -31,7 +31,8 @@
  else {
       boolean warnForInexistentProp=insideQualifiedName || propAccessNode.getParent().getType() != Token.ASSIGN;
       if (warnForInexistentProp && !lvalueType.isUnknown() && !lvalueType.isDict()) {
-        warnings.add(JSError.make(obj,TypeCheck.INEXISTENT_PROPERTY,pnameAsString,lvalueType.toString()));
+        boolean mayExist=lvalueType.mayHaveProp(pname);
+        warnings.add(JSError.make(obj,mayExist ? POSSIBLY_INEXISTENT_PROPERTY : TypeCheck.INEXISTENT_PROPERTY,pnameAsString,lvalueType.toString()));
         return new LValueResultFwd(lvalueEnv,type,null,null);
       }
     }
