@@ -2,18 +2,19 @@
   QualifiedName propQname=new QualifiedName(pname);
   Node propAccessNode=receiver.getParent();
   EnvTypePair pair;
-  JSType objWithProp=pickReqObjType(propAccessNode).withLoose().withProperty(propQname,requiredType);
-  JSType recvReqType, recvSpecType, recvType;
+  JSType reqObjType=pickReqObjType(propAccessNode).withLoose();
+  JSType recvReqType, recvSpecType;
   if (specializedType.isTruthy() || specializedType.isFalsy()) {
     recvReqType=JSType.UNKNOWN;
-    recvSpecType=objWithProp;
+    recvSpecType=reqObjType.withProperty(propQname,requiredType);
   }
  else {
-    recvReqType=recvSpecType=objWithProp;
+    recvReqType=reqObjType.withProperty(propQname,requiredType);
+    recvSpecType=reqObjType.withProperty(propQname,specializedType);
   }
   pair=analyzeExprFwd(receiver,inEnv,recvReqType,recvSpecType);
   pair=mayWarnAboutNullableReferenceAndTighten(receiver,pair.type,pair.env);
-  recvType=pair.type;
+  JSType recvType=pair.type;
   if (recvType.isUnknown() || mayWarnAboutNonObject(receiver,pname,recvType,specializedType)) {
     return new EnvTypePair(pair.env,requiredType);
   }
