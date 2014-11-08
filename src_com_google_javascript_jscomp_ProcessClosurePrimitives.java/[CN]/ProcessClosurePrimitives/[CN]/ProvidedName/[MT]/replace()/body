@@ -6,6 +6,25 @@
   if (candidateDefinition != null && explicitNode != null) {
     explicitNode.detachFromParent();
     compiler.reportCodeChange();
+    JSDocInfo info;
+    if (candidateDefinition.isExprResult()) {
+      info=candidateDefinition.getFirstChild().getJSDocInfo();
+    }
+ else {
+      info=candidateDefinition.getJSDocInfo();
+    }
+    if (info != null) {
+      JSTypeExpression expr=info.getType();
+      if (expr != null) {
+        Node n=expr.getRoot();
+        if (n.getType() == Token.BANG) {
+          n=n.getFirstChild();
+        }
+        if (n.getType() == Token.STRING && !n.hasChildren() && n.getString().equals("Object")) {
+          compiler.report(JSError.make(candidateDefinition,WEAK_NAMESPACE_TYPE));
+        }
+      }
+    }
     replacementNode=candidateDefinition;
     if (candidateDefinition.isExprResult() && !candidateDefinition.getFirstChild().isQualifiedName()) {
       candidateDefinition.putBooleanProp(Node.IS_NAMESPACE,true);
