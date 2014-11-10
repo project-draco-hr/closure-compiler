@@ -1,0 +1,10 @@
+{
+  if (NodeUtil.isPrototypePropertyDeclaration(n)) {
+    Node assign=n.getFirstChild();
+    Node rhs=assign.getLastChild();
+    if (rhs.isArrayLit() || rhs.isObjectLit()) {
+      String propName=assign.getFirstChild().getLastChild().getString();
+      compiler.report(t.makeError(assign,ILLEGAL_PROTOTYPE_MEMBER,propName));
+    }
+  }
+}
