@@ -5,22 +5,22 @@
   String name=function.substring(0,first);
   String params=function.substring(first + 1,last);
   int paramCount=0;
-  int replacementParameter=-1;
+  List<Integer> replacementParameters=new ArrayList<>();
   String[] parts=params.split(",");
   for (  String param : parts) {
     paramCount++;
     if (param.equals(REPLACE_ALL_MARKER)) {
       Preconditions.checkState(paramCount == 1 && parts.length == 1);
-      replacementParameter=Config.REPLACE_ALL_VALUE;
+      replacementParameters.add(Config.REPLACE_ALL_VALUE);
     }
  else     if (param.equals(REPLACE_ONE_MARKER)) {
-      Preconditions.checkState(replacementParameter == -1);
-      replacementParameter=paramCount;
+      Preconditions.checkState(!replacementParameters.contains(Config.REPLACE_ALL_VALUE));
+      replacementParameters.add(paramCount);
     }
  else {
       Preconditions.checkState(param.isEmpty(),"Unknown marker",param);
     }
   }
-  Preconditions.checkState(replacementParameter != -1);
-  return new Config(name,replacementParameter);
+  Preconditions.checkState(!replacementParameters.isEmpty());
+  return new Config(name,replacementParameters);
 }

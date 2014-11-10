@@ -1,9 +1,11 @@
 {
   Preconditions.checkState(n.isNew() || n.isCall());
-  if (config.parameter != Config.REPLACE_ALL_VALUE) {
-    Node arg=n.getChildAtIndex(config.parameter);
-    if (arg != null) {
-      replaceExpression(t,arg,n);
+  if (!config.isReplaceAll()) {
+    for (    int parameter : config.parameters) {
+      Node arg=n.getChildAtIndex(parameter);
+      if (arg != null) {
+        replaceExpression(t,arg,n);
+      }
     }
   }
  else {
