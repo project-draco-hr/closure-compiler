@@ -4,7 +4,7 @@
   JSType reqObjType=pickReqObjType(expr);
   EnvTypePair pair=analyzeExprFwd(receiver,inEnv,reqObjType);
   pair=mayWarnAboutNullableReferenceAndTighten(receiver,pair.type,pair.env);
-  JSType recvType=pair.type;
+  JSType recvType=pair.type.autobox(commonTypes);
   if (!mayWarnAboutNonObject(receiver,"",recvType,specializedType) && !mayWarnAboutStructPropAccess(receiver,recvType)) {
     if (isArrayType(recvType)) {
       pair=analyzeExprFwd(index,pair.env,JSType.NUMBER);

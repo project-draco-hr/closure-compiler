@@ -1,0 +1,31 @@
+{
+  if (isTop() || isUnknown()) {
+    return this;
+  }
+  int mask=getMask();
+  if ((mask & (NUMBER_MASK | STRING_MASK | BOOLEAN_MASK)) == BOTTOM_MASK) {
+    return this;
+  }
+switch (mask) {
+case NUMBER_MASK:
+    return commonTypes.getNumberInstance();
+case BOOLEAN_MASK:
+  return commonTypes.getBooleanInstance();
+case STRING_MASK:
+return commonTypes.getStringInstance();
+}
+ImmutableSet.Builder<ObjectType> builder=ImmutableSet.builder();
+if (getObjs() != null) {
+builder.addAll(getObjs());
+}
+if ((mask & NUMBER_MASK) != 0) {
+builder.add(commonTypes.getNumberInstanceObjType());
+}
+if ((mask & STRING_MASK) != 0) {
+builder.add(commonTypes.getStringInstanceObjType());
+}
+if ((mask & BOOLEAN_MASK) != 0) {
+builder.add(commonTypes.getBooleanInstanceObjType());
+}
+return makeType(mask & ~(NUMBER_MASK | STRING_MASK | BOOLEAN_MASK),builder.build(),getTypeVar(),getEnums());
+}
