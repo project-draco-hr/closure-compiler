@@ -8,7 +8,7 @@
   if (!mayWarnAboutNonObject(receiver,"",recvType,specializedType) && !mayWarnAboutStructPropAccess(receiver,recvType)) {
     if (isArrayType(recvType)) {
       pair=analyzeExprFwd(index,pair.env,JSType.NUMBER);
-      if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
+      if (!commonTypes.isNumberScalarOrObj(pair.type)) {
         warnings.add(JSError.make(index,NewTypeInference.NON_NUMERIC_ARRAY_INDEX,pair.type.toString()));
       }
       pair.type=getArrayElementType(recvType);

@@ -1,0 +1,11 @@
+{
+  typeCheck("var /** !Number */ n = 123;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("var /** number */ n = new Number(123);",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  checkNoWarnings("function f(/** !Number */ x, y) {\n" + "  return x - y;\n" + "}");
+  checkNoWarnings("function f(x, /** !Number */ y) {\n" + "  return x - y;\n" + "}");
+  checkNoWarnings("function f(/** !Number */ x) {\n" + "  return x + 'asdf';\n" + "}");
+  checkNoWarnings("function f(/** !Number */ x) {\n" + "  return -x;\n" + "}");
+  checkNoWarnings("function f(/** !Number */ x) {\n" + "  x -= 123;\n" + "}");
+  checkNoWarnings("function f(/** !Number */ x, y) {\n" + "  y -= x;\n" + "}");
+  checkNoWarnings("function f(/** !Number */ x, /** !Array<string>*/ arr) {\n" + "  return arr[x];\n" + "}");
+}

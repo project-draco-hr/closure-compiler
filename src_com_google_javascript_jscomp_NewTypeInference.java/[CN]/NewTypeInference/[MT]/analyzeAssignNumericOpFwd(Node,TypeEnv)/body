@@ -5,12 +5,12 @@
   LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,JSType.NUMBER);
   JSType lhsType=lvalue.type;
   boolean lhsWarned=false;
-  if (!lhsType.isSubtypeOf(JSType.NUMBER)) {
+  if (!commonTypes.isNumberScalarOrObj(lhsType)) {
     warnInvalidOperand(lhs,expr.getType(),JSType.NUMBER,lhsType);
     lhsWarned=true;
   }
   EnvTypePair pair=analyzeExprFwd(rhs,lvalue.env,JSType.NUMBER);
-  if (!pair.type.isSubtypeOf(JSType.NUMBER)) {
+  if (!commonTypes.isNumberScalarOrObj(pair.type)) {
     warnInvalidOperand(rhs,expr.getType(),JSType.NUMBER,pair.type);
   }
   if (!lhsWarned) {
