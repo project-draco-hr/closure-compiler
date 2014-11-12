@@ -1,5 +1,18 @@
 {
   if (n.isClass()) {
+    boolean hasConstructor=false;
+    for (Node member=n.getLastChild().getFirstChild(); member != null; member=member.getNext()) {
+      if (member.isGetterDef() || member.isSetterDef() || member.getBooleanProp(Node.COMPUTED_PROP_GETTER)|| member.getBooleanProp(Node.COMPUTED_PROP_SETTER)) {
+        compiler.report(JSError.make(member,CANNOT_CONVERT,"getters or setters in class definitions"));
+        return false;
+      }
+      if (member.isMemberDef() && member.getString().equals("constructor")) {
+        hasConstructor=true;
+      }
+    }
+    if (!hasConstructor) {
+      addSyntheticConstructor(n);
+    }
     checkClassSuperReferences(n);
   }
   return true;

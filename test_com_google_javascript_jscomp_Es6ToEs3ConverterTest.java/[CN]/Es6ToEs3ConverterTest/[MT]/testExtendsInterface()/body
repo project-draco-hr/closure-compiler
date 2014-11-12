@@ -1,3 +1,3 @@
 {
-  test(Joiner.on('\n').join("/** @interface */","class D {","  f() {}","}","/** @interface */","class C extends D {","  g() {}","}"),Joiner.on('\n').join("/** @interface */","var D = function() {};","D.prototype.f = function() {};","/** @interface @extends{D} */","var C = function() { C.base(this, 'constructor'); };","C.prototype.g = function() {};"));
+  test(Joiner.on('\n').join("/** @interface */","class D {","  f() {}","}","/** @interface */","class C extends D {","  g() {}","}"),Joiner.on('\n').join("/** @interface */","var D = function() {};","D.prototype.f = function() {};","/** @interface @extends{D} */","var C = function(args) {","  args = [].slice.call(arguments, 0);","  C.base.apply(C, [].concat([this, 'constructor'], args));","};","C.prototype.g = function() {};"));
 }
