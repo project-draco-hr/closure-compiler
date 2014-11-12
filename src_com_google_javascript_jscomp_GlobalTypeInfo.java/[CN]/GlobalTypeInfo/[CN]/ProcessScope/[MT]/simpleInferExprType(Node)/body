@@ -48,22 +48,21 @@ return objLitType;
 }
 case Token.GETPROP:
 Node recv=n.getFirstChild();
-JSType recvType=simpleInferExprType(recv);
-if (recvType == null) {
+if (recv.isQualifiedName()) {
 EnumType et=currentScope.getEnum(recv.getQualifiedName());
-if (et == null) {
-return null;
-}
-if (et.enumLiteralHasKey(n.getLastChild().getString())) {
+if (et != null && et.enumLiteralHasKey(n.getLastChild().getString())) {
 return et.getEnumeratedType();
 }
-return null;
+if (currentScope.isNamespace(recv)) {
+return currentScope.lookupTypeByQname(QualifiedName.fromNode(n));
 }
+JSType recvType=simpleInferExprType(recv);
 QualifiedName qname=new QualifiedName(n.getLastChild().getString());
-if (!recvType.mayHaveProp(qname)) {
-return null;
-}
+if (recvType != null && recvType.mayHaveProp(qname)) {
 return recvType.getProp(qname);
+}
+}
+return null;
 case Token.COMMA:
 case Token.ASSIGN:
 return simpleInferExprType(n.getLastChild());

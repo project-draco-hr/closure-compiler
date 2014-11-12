@@ -1,0 +1,12 @@
+{
+  Preconditions.checkArgument(!qname.isIdentifier());
+  Namespace ns=getNamespace(qname.getLeftmostName());
+  if (ns == null) {
+    return null;
+  }
+  RawNominalType rawType=ns.getNominalType(qname.getAllButLeftmost());
+  if (rawType == null) {
+    return null;
+  }
+  return rawType.getInstanceAsJSType();
+}

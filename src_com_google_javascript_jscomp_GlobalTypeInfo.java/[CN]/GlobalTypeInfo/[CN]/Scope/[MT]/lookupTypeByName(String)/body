@@ -1,15 +1,7 @@
 {
   if (name.contains(".")) {
-    QualifiedName qname=QualifiedName.fromQname(name);
-    Namespace ns=getNamespace(qname.getLeftmostName());
-    if (ns == null) {
-      return getUnresolvedTypeByName(name);
-    }
-    RawNominalType rawType=ns.getNominalType(qname.getAllButLeftmost());
-    if (rawType == null) {
-      return getUnresolvedTypeByName(name);
-    }
-    return rawType.getInstanceAsJSType();
+    JSType type=lookupTypeByQname(QualifiedName.fromQname(name));
+    return type != null ? type : getUnresolvedTypeByName(name);
   }
   if (declaredType != null && declaredType.isTypeVariableInScope(name)) {
     return JSType.fromTypeVar(name);
