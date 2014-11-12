@@ -6,7 +6,7 @@
     potentialCallee=parent;
   }
   if (!enclosing.isCall() || enclosing.getFirstChild() != potentialCallee) {
-    cannotConvertYet(node,"Only calls to super or to a method of super are supported.");
+    compiler.report(JSError.make(node,CANNOT_CONVERT_YET,"Only calls to super or to a method of super are supported."));
     return;
   }
   Node clazz=NodeUtil.getEnclosingClass(node);
@@ -47,7 +47,7 @@
  else {
     methodName=callName.getLastChild().getString();
   }
-  Node baseCall=baseCall(clazz,methodName,enclosing.removeChildren()).useSourceInfoIfMissingFromForTree(enclosing);
+  Node baseCall=baseCall(compiler,clazz,methodName,enclosing.removeChildren()).useSourceInfoIfMissingFromForTree(enclosing);
   enclosing.getParent().replaceChild(enclosing,baseCall);
   compiler.reportCodeChange();
 }

@@ -18,7 +18,7 @@
  else   if (parent.isAssign() && parent.getParent().isExprResult()) {
     fullClassName=parent.getFirstChild().getQualifiedName();
     if (fullClassName == null) {
-      cannotConvert(parent,"Can only convert classes that are declarations or the right hand" + " side of a simple assignment.");
+      cannotConvert(classNode,"Can only convert classes that are declarations or the right hand" + " side of a simple assignment.");
       return;
     }
     anonymous=true;
@@ -30,7 +30,7 @@
     insertionPoint=parent.getParent();
   }
  else {
-    cannotConvert(parent,"Can only convert classes that are declarations or the right hand" + " side of a simple assignment.");
+    cannotConvert(classNode,"Can only convert classes that are declarations or the right hand" + " side of a simple assignment.");
     return;
   }
   if (!className.isEmpty() && !className.getString().equals(fullClassName)) {
@@ -104,7 +104,7 @@
   if (constructor == null) {
     Node body=IR.block();
     if (!superClassName.isEmpty()) {
-      Node superCall=baseCall(classNode,"constructor",null);
+      Node superCall=baseCall(this.compiler,classNode,"constructor",null);
       body.addChildToBack(IR.exprResult(superCall));
     }
     Node name=anonymous ? IR.name("").srcref(className) : className.detachFromParent();

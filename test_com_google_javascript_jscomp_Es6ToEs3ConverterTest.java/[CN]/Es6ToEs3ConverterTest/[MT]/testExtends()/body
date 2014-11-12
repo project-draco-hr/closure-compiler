@@ -4,6 +4,4 @@
   test("class D {} class C extends D { constructor() { super(); } }",Joiner.on('\n').join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function() {","  C.base(this, 'constructor');","}","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);"));
   test("class D {} class C extends D { constructor(str) { super(str); } }",Joiner.on('\n').join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function(str) { ","  C.base(this, 'constructor', str); }","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);"));
   test("class C extends ns.D { }",Joiner.on('\n').join("/** @constructor @struct @extends {ns.D} */","var C = function() { C.base(this, 'constructor'); }","$jscomp.copyProperties(C, ns.D);","$jscomp.inherits(C, ns.D);"));
-  test("class C extends foo() {}",null,Es6ToEs3Converter.DYNAMIC_EXTENDS_TYPE);
-  test("class C extends function(){} {}",null,Es6ToEs3Converter.DYNAMIC_EXTENDS_TYPE);
 }
