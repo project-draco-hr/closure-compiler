@@ -1,0 +1,21 @@
+{
+  if (!t.inGlobalScope() || !n.isExprResult() || !n.getFirstChild().isAssign()|| n.getFirstChild().getLastChild() == null || n.getFirstChild().getLastChild().isObjectLit()) {
+    return ConformanceResult.CONFORMANCE;
+  }
+  JSDocInfo ownJsDoc=n.getFirstChild().getJSDocInfo();
+  if (ownJsDoc != null && ownJsDoc.isConstructor()) {
+    FunctionType functionType=n.getFirstChild().getJSType().toMaybeFunctionType();
+    if (functionType == null) {
+      return ConformanceResult.CONFORMANCE;
+    }
+    ObjectType instanceType=functionType.getInstanceType();
+    if (instanceType == null) {
+      return ConformanceResult.CONFORMANCE;
+    }
+    ConformanceResult result=checkCtorProperties(instanceType);
+    if (result != ConformanceResult.CONFORMANCE) {
+      return result;
+    }
+  }
+  return visibilityAtDeclarationOrFileoverview(ownJsDoc,getScriptNode(n));
+}

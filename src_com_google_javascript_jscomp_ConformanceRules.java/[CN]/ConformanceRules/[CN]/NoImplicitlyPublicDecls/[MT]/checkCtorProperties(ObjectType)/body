@@ -1,0 +1,12 @@
+{
+  for (  String propertyName : type.getOwnPropertyNames()) {
+    Property prop=type.getOwnSlot(propertyName);
+    JSDocInfo docInfo=prop.getJSDocInfo();
+    Node scriptNode=getScriptNode(prop.getNode());
+    ConformanceResult result=visibilityAtDeclarationOrFileoverview(docInfo,scriptNode);
+    if (result != ConformanceResult.CONFORMANCE) {
+      return result;
+    }
+  }
+  return ConformanceResult.CONFORMANCE;
+}
