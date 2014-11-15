@@ -1,24 +1,10 @@
 {
-  final Set<String> allJsInputs=new LinkedHashSet<>();
   List<String> patterns=new ArrayList<>();
   patterns.addAll(js);
   patterns.addAll(arguments);
-  for (  String pattern : patterns) {
-    if (!pattern.contains("*") && !pattern.startsWith("!")) {
-      File matchedFile=new File(pattern);
-      if (matchedFile.isDirectory()) {
-        matchPaths(new File(matchedFile,"**.js").toString(),allJsInputs);
-      }
- else {
-        allJsInputs.add(pattern);
-      }
-    }
- else {
-      matchPaths(pattern,allJsInputs);
-    }
-  }
+  List<String> allJsInputs=findJsFiles(patterns);
   if (!patterns.isEmpty() && allJsInputs.isEmpty()) {
     throw new CmdLineException(new CmdLineParser(this),"No inputs matched");
   }
-  return new ArrayList<>(allJsInputs);
+  return allJsInputs;
 }

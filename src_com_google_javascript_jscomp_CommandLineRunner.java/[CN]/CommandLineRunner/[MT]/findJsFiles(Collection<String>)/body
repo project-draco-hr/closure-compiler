@@ -1,0 +1,18 @@
+{
+  Set<String> allJsInputs=new LinkedHashSet<>();
+  for (  String pattern : patterns) {
+    if (!pattern.contains("*") && !pattern.startsWith("!")) {
+      File matchedFile=new File(pattern);
+      if (matchedFile.isDirectory()) {
+        matchPaths(new File(matchedFile,"**.js").toString(),allJsInputs);
+      }
+ else {
+        allJsInputs.add(pattern);
+      }
+    }
+ else {
+      matchPaths(pattern,allJsInputs);
+    }
+  }
+  return new ArrayList<>(allJsInputs);
+}

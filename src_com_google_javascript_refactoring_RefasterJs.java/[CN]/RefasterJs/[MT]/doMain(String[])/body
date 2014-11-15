@@ -1,24 +1,42 @@
 {
   CmdLineParser parser=new CmdLineParser(this);
   parser.parseArgument(args);
-  if (displayHelp) {
+  if (args.length < 1 || displayHelp) {
     CmdLineParser p=new CmdLineParser(this);
     p.printUsage(System.out);
     return;
   }
-  Preconditions.checkArgument(!inputs.isEmpty(),"At least one input must be provided in the --inputs flag.");
   Preconditions.checkArgument(!Strings.isNullOrEmpty(refasterJsTemplate),"--refasterjs_template must be provided");
-  for (  String input : inputs) {
+  List<String> fileInputs=getInputs();
+  Preconditions.checkArgument(!fileInputs.isEmpty(),"At least one input must be provided in the --inputs flag.");
+  for (  String input : fileInputs) {
     Preconditions.checkArgument(new File(input).exists(),"Input file %s does not exist.",input);
+  }
+  if (!verbose) {
+    Logger errorManagerLogger=Logger.getLogger("com.google.javascript.jscomp");
+    errorManagerLogger.setLevel(Level.OFF);
   }
   RefasterJsScanner scanner=new RefasterJsScanner();
   scanner.loadRefasterJsTemplate(refasterJsTemplate);
-  RefactoringDriver driver=new RefactoringDriver.Builder(scanner).addExterns(includeDefaultExterns ? CommandLineRunner.getDefaultExterns() : ImmutableList.<SourceFile>of()).addExternsFromFile(externs).addInputsFromFile(inputs).build();
+  RefactoringDriver driver=new RefactoringDriver.Builder(scanner).addExterns(includeDefaultExterns ? CommandLineRunner.getDefaultExterns() : ImmutableList.<SourceFile>of()).addExternsFromFile(externs).addInputsFromFile(fileInputs).build();
+  System.out.println("Compiling JavaScript code and searching for suggested fixes.");
   List<SuggestedFix> fixes=driver.drive();
+  if (!verbose) {
+    ErrorManager errorManager=driver.getCompiler().getErrorManager();
+    System.out.println("Compiler results: " + errorManager.getErrorCount() + " errors and "+ errorManager.getWarningCount()+ " warnings.");
+  }
+  System.out.println("Found " + fixes.size() + " suggested fixes.");
   if (dryRun) {
-    System.out.println("SuggestedFixes: " + fixes);
+    if (!fixes.isEmpty()) {
+      System.out.println("SuggestedFixes: " + fixes);
+    }
   }
  else {
+    Set<String> affectedFiles=new TreeSet<>();
+    for (    SuggestedFix fix : fixes) {
+      affectedFiles.addAll(fix.getReplacements().keySet());
+    }
+    System.out.println("Modifying affected files: " + affectedFiles);
     ApplySuggestedFixes.applySuggestedFixesToFiles(fixes);
   }
 }
