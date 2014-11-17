@@ -1,0 +1,12 @@
+{
+  if (arrayType == null) {
+    return JSType.UNKNOWN;
+  }
+  ImmutableList<String> typeParams=arrayType.getTypeParameters();
+  JSType result=arrayType.getInstanceAsJSType();
+  if (typeParams.size() == 1) {
+    String typeParam=Iterables.getOnlyElement(typeParams);
+    result=result.substituteGenerics(ImmutableMap.of(typeParam,t));
+  }
+  return result;
+}

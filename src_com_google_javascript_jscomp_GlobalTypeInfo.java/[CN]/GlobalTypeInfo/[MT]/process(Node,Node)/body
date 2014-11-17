@@ -1,7 +1,7 @@
 {
   Preconditions.checkArgument(externs == null || externs.isSyntheticBlock());
   Preconditions.checkArgument(root.isSyntheticBlock());
-  globalScope=new Scope(root,null,ImmutableList.<String>of());
+  globalScope=new Scope(root,null,ImmutableList.<String>of(),commonTypes);
   scopes.add(globalScope);
   CollectNamedTypes rootCnt=new CollectNamedTypes(globalScope);
   if (externs != null) {
@@ -51,8 +51,5 @@
   typeParser=null;
   compiler.setSymbolTable(this);
   warnings=null;
-  commonTypes.setNumberInstance(getInstanceOfBuiltinType("Number"));
-  commonTypes.setStringInstance(getInstanceOfBuiltinType("String"));
-  commonTypes.setBooleanInstance(getInstanceOfBuiltinType("Boolean"));
   Collections.reverse(scopes);
 }

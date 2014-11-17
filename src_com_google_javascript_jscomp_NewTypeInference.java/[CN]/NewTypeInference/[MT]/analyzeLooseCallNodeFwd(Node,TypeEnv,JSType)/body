@@ -9,7 +9,7 @@
     builder.addReqFormal(pair.type);
   }
   JSType looseRetType=retType.isUnknown() ? JSType.BOTTOM : retType;
-  JSType looseFunctionType=builder.addRetType(looseRetType).addLoose().buildType();
-  EnvTypePair calleePair=analyzeExprFwd(callee,tmpEnv,JSType.topFunction(),looseFunctionType);
+  JSType looseFunctionType=commonTypes.fromFunctionType(builder.addRetType(looseRetType).addLoose().buildFunction());
+  EnvTypePair calleePair=analyzeExprFwd(callee,tmpEnv,commonTypes.topFunction(),looseFunctionType);
   return new EnvTypePair(calleePair.env,retType);
 }

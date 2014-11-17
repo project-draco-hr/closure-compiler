@@ -45,13 +45,13 @@
  else     if (fnDoc.isConstructor()) {
       String className=ctorType.toString();
       if (parentClass == null && !"Object".equals(functionName)) {
-        parentClass=getObjectNominalType();
+        parentClass=commonTypes.getObjectType();
       }
       if (parentClass != null) {
         if (!ctorType.addSuperClass(parentClass)) {
           warnings.add(JSError.make(declNode,INHERITANCE_CYCLE,className));
         }
- else         if (parentClass != getObjectNominalType()) {
+ else         if (parentClass != commonTypes.getObjectType()) {
           if (ctorType.isStruct() && !parentClass.isStruct()) {
             warnings.add(JSError.make(declNode,TypeCheck.CONFLICTING_SHAPE_TYPE,"struct",className));
           }

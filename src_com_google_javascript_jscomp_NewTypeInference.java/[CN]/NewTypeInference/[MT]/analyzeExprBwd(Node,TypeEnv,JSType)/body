@@ -41,7 +41,7 @@ return pair;
 }
 case Token.INSTANCEOF:
 {
-TypeEnv env=analyzeExprBwd(expr.getLastChild(),outEnv,JSType.topFunction()).env;
+TypeEnv env=analyzeExprBwd(expr.getLastChild(),outEnv,commonTypes.topFunction()).env;
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),env);
 pair.type=JSType.BOOLEAN;
 return pair;
@@ -136,7 +136,7 @@ Preconditions.checkState(!vdecl.hasChildren());
 return new EnvTypePair(envPutType(outEnv,name,JSType.UNKNOWN),JSType.UNKNOWN);
 }
 case Token.REGEXP:
-return new EnvTypePair(outEnv,symbolTable.getRegexpType());
+return new EnvTypePair(outEnv,commonTypes.getRegexpType());
 case Token.ARRAYLIT:
 return analyzeArrayLitBwd(expr,outEnv);
 case Token.CAST:
