@@ -3,7 +3,14 @@
     throw new InvalidRequirementSpec("missing message");
   }
   this.compiler=compiler;
-  this.whitelist=ImmutableList.copyOf(requirement.getWhitelistList());
-  this.whitelistRegexp=buildPattern(requirement.getWhitelistRegexpList());
-  this.message=requirement.getErrorMessage();
+  message=requirement.getErrorMessage();
+  whitelist=ImmutableList.copyOf(requirement.getWhitelistList());
+  whitelistRegexp=buildPattern(requirement.getWhitelistRegexpList());
+  onlyApplyTo=ImmutableList.copyOf(requirement.getOnlyApplyToList());
+  onlyApplyToRegexp=buildPattern(requirement.getOnlyApplyToRegexpList());
+  boolean hasWhitelist=!whitelist.isEmpty() || whitelistRegexp != null;
+  boolean hasOnlyApplyTo=!onlyApplyTo.isEmpty() || onlyApplyToRegexp != null;
+  if (hasWhitelist && hasOnlyApplyTo) {
+    throw new IllegalArgumentException("It is an error to specify both whitelist and only_apply_to");
+  }
 }
