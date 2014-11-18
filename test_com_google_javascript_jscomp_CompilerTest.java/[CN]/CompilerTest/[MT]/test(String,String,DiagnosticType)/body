@@ -1,0 +1,16 @@
+{
+  Compiler compiler=new Compiler();
+  CompilerOptions options=createNewFlagBasedOptions();
+  List<SourceFile> inputs=ImmutableList.of(SourceFile.fromCode("testcode",js));
+  Result result=compiler.compile(EMPTY_EXTERNS,inputs,options);
+  if (error == null) {
+    assertTrue(Joiner.on(",").join(result.errors),result.success);
+    String outputSource=compiler.toSource();
+    assertEquals(expected,outputSource);
+  }
+ else {
+    assertEquals(1,result.errors.length);
+    assertEquals(error,result.errors[0].getType());
+  }
+  return result;
+}

@@ -1,0 +1,8 @@
+{
+  Compiler compiler=new Compiler();
+  compiler.initCompilerOptionsIfTesting();
+  CompilerInput input=new CompilerInput(SourceFile.fromCode("tmp","function foo() {}"));
+  Node ast=input.getAstRoot(compiler);
+  CompilerInput newInput=(CompilerInput)deserialize(serialize(input));
+  assertTrue(ast.isEquivalentTo(newInput.getAstRoot(compiler)));
+}

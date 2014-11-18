@@ -1,0 +1,9 @@
+{
+  final String badJsDoc="/** @XYZ */\n var x";
+  Compiler compiler=new Compiler();
+  CompilerOptions options=createNewFlagBasedOptions();
+  options.setWarningLevel(DiagnosticGroups.NON_STANDARD_JSDOC,CheckLevel.OFF);
+  compiler.compile(SourceFile.fromCode("extern.js",""),SourceFile.fromCode("test.js",badJsDoc),options);
+  assertEquals(0,compiler.getWarningCount());
+  assertEquals(0,compiler.getErrorCount());
+}

@@ -1,0 +1,11 @@
+{
+  List<JSModule> modules=ImmutableList.of(new JSModule("m1"),new JSModule("m2"));
+  modules.get(0).add(SourceFile.fromCode("in1",""));
+  modules.get(1).add(SourceFile.fromCode("in2",""));
+  Compiler compiler=new Compiler();
+  compiler.initModules(ImmutableList.<SourceFile>of(),modules,new CompilerOptions());
+  modules.get(1).add(SourceFile.fromCode("in3",""));
+  assertNull(compiler.getInput(new InputId("in3")));
+  compiler.rebuildInputsFromModules();
+  assertNotNull(compiler.getInput(new InputId("in3")));
+}

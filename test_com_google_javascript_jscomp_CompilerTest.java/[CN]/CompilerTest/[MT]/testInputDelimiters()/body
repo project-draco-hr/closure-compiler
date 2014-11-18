@@ -1,0 +1,12 @@
+{
+  Compiler compiler=new Compiler();
+  CompilerOptions options=createNewFlagBasedOptions();
+  options.printInputDelimiter=true;
+  String fileOverview="/** @fileoverview Foo */";
+  List<SourceFile> inputs=ImmutableList.of(SourceFile.fromCode("i1",""),SourceFile.fromCode("i2",fileOverview));
+  Result result=compiler.compile(EMPTY_EXTERNS,inputs,options);
+  assertTrue(result.success);
+  String outputSource=compiler.toSource();
+  System.err.println("Output:\n[" + outputSource + "]");
+  assertEquals("// Input 0\n// Input 1\n",outputSource);
+}

@@ -1,0 +1,12 @@
+{
+  Compiler compiler=new Compiler();
+  CompilerOptions options=new CompilerOptions();
+  options.closurePass=true;
+  options.variableRenaming=VariableRenamingPolicy.ALL;
+  options.generateExports=true;
+  String js="var goog; /** @export */ var a={};";
+  List<SourceFile> inputs=ImmutableList.of(SourceFile.fromCode("testcode",js));
+  Result result=compiler.compile(EMPTY_EXTERNS,inputs,options);
+  assertTrue(result.success);
+  assertEquals("var b;var c={};b.exportSymbol(\"a\",c);",compiler.toSource());
+}

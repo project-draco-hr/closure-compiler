@@ -1,0 +1,11 @@
+{
+  TestErrorManager errorManager=new TestErrorManager();
+  Compiler compiler=new Compiler(errorManager);
+  CompilerOptions options=createNewFlagBasedOptions();
+  if (showWarningsOnlyFor != null) {
+    options.addWarningsGuard(new ShowByPathWarningsGuard(showWarningsOnlyFor));
+  }
+  compiler.init(ImmutableList.<SourceFile>of(),ImmutableList.<SourceFile>of(),options);
+  compiler.report(JSError.make(path,1,1,level,TEST_ERROR));
+  return errorManager.output;
+}

@@ -1,0 +1,11 @@
+{
+  CompilerOptions options=new CompilerOptions();
+  AbstractCommandLineRunner.createDefineOrTweakReplacements(defines,options,false);
+  Map<String,Node> actual=options.getDefineReplacements();
+  assertEquals(expected.size(),actual.size());
+  for (  Map.Entry<String,Node> entry : expected.entrySet()) {
+    assertTrue(entry.getKey(),actual.containsKey(entry.getKey()));
+    Node actualNode=actual.get(entry.getKey());
+    assertTrue(entry.toString(),entry.getValue().isEquivalentTo(actualNode));
+  }
+}
