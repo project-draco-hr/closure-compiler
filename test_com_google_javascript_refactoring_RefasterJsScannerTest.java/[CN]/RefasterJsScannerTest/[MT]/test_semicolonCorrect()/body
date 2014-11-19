@@ -1,17 +1,7 @@
 {
-  String externs="" + "/** @constructor */\n" + "function Location() {};\n"+ "/** @type {string} */\n"+ "Location.prototype.href;\n"+ "function foo() {}";
+  String externs="" + "/** @constructor */\n" + "function Location() {};\n"+ "/** @type {string} */\n"+ "Location.prototype.href;\n"+ "function foo() {}\n"+ "/** @type {Location} var loc;";
+  String originalCode="loc.href = 'str';";
+  String expectedCode="foo();";
   String template="" + "/** @param {Location} loc */" + "function before_foo(loc) {\n"+ "  loc.href = 'str';\n"+ "};\n"+ "function after_foo() {\n"+ "  foo();\n"+ "}\n";
-  Compiler compiler=createCompiler();
-  String preamble="var loc = new Location();";
-  String testCode="loc.href = 'str';";
-  compileTestCode(compiler,preamble + testCode,externs);
-  Node root=getScriptRoot(compiler);
-  RefasterJsScanner scanner=createScanner(compiler,template);
-  Match match=new Match(root.getFirstChild().getNext().getFirstChild(),new NodeMetadata(compiler));
-  assertTrue(scanner.matches(match.getNode(),match.getMetadata()));
-  List<SuggestedFix> fixes=scanner.processMatch(match);
-  assertEquals(1,fixes.size());
-  Set<CodeReplacement> replacements=fixes.get(0).getReplacements().get("test");
-  assertEquals(1,replacements.size());
-  assertEquals(new CodeReplacement(preamble.length(),testCode.length(),"foo();\n"),replacements.iterator().next());
+  assertChanges(externs,originalCode,expectedCode,template);
 }

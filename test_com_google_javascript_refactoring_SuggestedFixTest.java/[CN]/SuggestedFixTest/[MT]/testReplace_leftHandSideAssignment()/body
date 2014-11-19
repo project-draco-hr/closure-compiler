@@ -1,0 +1,10 @@
+{
+  String before="var MyClass = function() {};\n";
+  String after="MyClass.prototype.foo = function() {};\n";
+  Compiler compiler=getCompiler(before + after);
+  Node root=compileToScriptRoot(compiler);
+  Node newNode=IR.getprop(IR.getprop(IR.name("MyClass"),IR.string("prototype")),IR.string("bar"));
+  SuggestedFix fix=new SuggestedFix.Builder().replace(root.getLastChild().getFirstChild().getFirstChild(),newNode,compiler).build();
+  CodeReplacement replacement=new CodeReplacement(before.length(),"MyClass.prototype.foo".length(),"MyClass.prototype.bar");
+  assertReplacement(fix,replacement);
+}

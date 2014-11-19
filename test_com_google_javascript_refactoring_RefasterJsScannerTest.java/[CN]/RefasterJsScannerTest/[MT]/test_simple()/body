@@ -1,15 +1,6 @@
 {
+  String originalCode="var loc = 'str';";
+  String expectedCode="'bar';";
   String template="" + "function before_foo() {\n" + "  var a = 'str';\n"+ "};\n"+ "function after_foo() {\n"+ "  'bar';\n"+ "}\n";
-  Compiler compiler=createCompiler();
-  String testCode="var loc = 'str';";
-  compileTestCode(compiler,testCode,"");
-  Node root=getScriptRoot(compiler);
-  RefasterJsScanner scanner=createScanner(compiler,template);
-  Match match=new Match(root.getFirstChild(),new NodeMetadata(compiler));
-  assertTrue(scanner.matches(match.getNode(),match.getMetadata()));
-  List<SuggestedFix> fixes=scanner.processMatch(match);
-  assertEquals(1,fixes.size());
-  Set<CodeReplacement> replacements=fixes.get(0).getReplacements().get("test");
-  assertEquals(1,replacements.size());
-  assertEquals(new CodeReplacement(0,"var loc = 'str';".length(),"'bar';\n"),replacements.iterator().next());
+  assertChanges("",originalCode,expectedCode,template);
 }

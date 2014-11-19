@@ -1,0 +1,18 @@
+{
+  String externs="" + "var obj = {};\n" + "obj.prop = 6;"+ "var CONSTANT = 3;n";
+  String originalCode="for (var i = CONSTANT; i < 5; i++) {}";
+  String expectedCode="for (var i = CONSTANT2; i < 5; i++) {}";
+  String template="" + "function before_template() {\n" + "  CONSTANT\n"+ "}\n"+ "function after_template() {\n"+ "  CONSTANT2\n"+ "}\n";
+  assertChanges(externs,originalCode,expectedCode,template);
+  originalCode="for (var i = 0; i < CONSTANT; i++) {}";
+  expectedCode="for (var i = 0; i < CONSTANT2; i++) {}";
+  assertChanges(externs,originalCode,expectedCode,template);
+  originalCode="for (var i = 0; i < CONSTANT; i++) {}";
+  expectedCode="for (var i = 0; i < obj.prop; i++) {}";
+  template="" + "function before_template() {\n" + "  CONSTANT\n"+ "}\n"+ "function after_template() {\n"+ "  obj.prop\n"+ "}\n";
+  assertChanges(externs,originalCode,expectedCode,template);
+  originalCode="for (var prop in obj) {}";
+  expectedCode="for (var prop in getObj()) {}";
+  template="" + "function before_template() {\n" + "  obj\n"+ "}\n"+ "function after_template() {\n"+ "  getObj()\n"+ "}\n";
+  assertChanges(externs,originalCode,expectedCode,template);
+}

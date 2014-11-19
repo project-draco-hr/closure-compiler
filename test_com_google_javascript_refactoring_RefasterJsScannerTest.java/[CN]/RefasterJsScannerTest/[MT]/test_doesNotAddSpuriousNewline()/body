@@ -1,0 +1,7 @@
+{
+  String externs="" + "/** @constructor */\n" + "function MyClass() {};\n"+ "MyClass.prototype.foo = function() {};\n"+ "MyClass.prototype.bar = function() {};\n"+ "var clazz = new MyClass();\n";
+  String originalCode="clazz.foo();";
+  String expectedCode="clazz.bar();";
+  String template="" + "/** @param {MyClass} clazz */" + "function before_foo(clazz) {\n"+ "  clazz.foo();\n"+ "};\n"+ "/** @param {MyClass} clazz */"+ "function after_foo(clazz) {\n"+ "  clazz.bar();\n"+ "}\n";
+  assertChanges(externs,originalCode,expectedCode,template);
+}

@@ -1,0 +1,10 @@
+{
+  String externs="/** @return {string} */ function getFoo() {return 'foo';}";
+  String originalCode="function() { return getFoo(); }";
+  String expectedCode="function() { return getBar(); }";
+  String template="" + "function before_template() {\n" + "  getFoo();\n"+ "}\n"+ "function after_template() {\n"+ "  getBar();\n"+ "}\n";
+  assertChanges(externs,originalCode,expectedCode,template);
+  originalCode="function() { return getFoo() == 'foo'; }";
+  expectedCode="function() { return getBar() == 'foo'; }";
+  assertChanges(externs,originalCode,expectedCode,template);
+}

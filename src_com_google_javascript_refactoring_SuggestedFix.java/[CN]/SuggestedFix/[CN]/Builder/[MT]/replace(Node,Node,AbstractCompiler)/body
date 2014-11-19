@@ -1,4 +1,16 @@
 {
-  replacements.put(original.getSourceFileName(),new CodeReplacement(original.getSourceOffset(),original.getLength(),generateCode(compiler,newNode)));
+  Node parent=original.getParent();
+  if (original.getParent().isExprResult()) {
+    original=original.getParent();
+  }
+  String newCode=generateCode(compiler,newNode);
+  if (newCode.endsWith("\n")) {
+    newCode=newCode.substring(0,newCode.length() - 1);
+  }
+  boolean needsSemicolon=parent.isExprResult() || parent.isBlock() || parent.isScript();
+  if (newCode.endsWith(";") && !needsSemicolon) {
+    newCode=newCode.substring(0,newCode.length() - 1);
+  }
+  replacements.put(original.getSourceFileName(),new CodeReplacement(original.getSourceOffset(),original.getLength(),newCode));
   return this;
 }

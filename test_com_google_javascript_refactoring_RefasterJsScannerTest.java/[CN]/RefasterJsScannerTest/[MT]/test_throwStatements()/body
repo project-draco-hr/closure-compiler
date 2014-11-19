@@ -1,0 +1,13 @@
+{
+  String externs="";
+  String originalCode="throw Error('foo');";
+  String expectedCode="throw getError();";
+  String template="" + "/** @param {string} msg */\n" + "function before_template(msg) {\n"+ "  throw Error(msg);\n"+ "}\n"+ "/** @param {string} msg */\n"+ "function after_template(msg) {\n"+ "  throw getError();\n"+ "}\n";
+  assertChanges(externs,originalCode,expectedCode,template);
+  originalCode="function f() {throw Error('foo');}";
+  expectedCode="function f() {throw getError();}";
+  assertChanges(externs,originalCode,expectedCode,template);
+  originalCode="" + "if (true) {\n" + "  throw Error('foo');\n"+ "}";
+  expectedCode="" + "if (true) {\n" + "  throw getError();\n"+ "}";
+  assertChanges(externs,originalCode,expectedCode,template);
+}

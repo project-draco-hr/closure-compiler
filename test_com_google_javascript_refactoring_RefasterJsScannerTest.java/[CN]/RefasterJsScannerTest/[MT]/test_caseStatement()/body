@@ -1,0 +1,7 @@
+{
+  String externs="" + "var str = 'foo';\n" + "var CONSTANT = 'bar';n";
+  String originalCode="" + "switch(str) {\n" + "  case CONSTANT:\n"+ "    break;\n"+ "}";
+  String expectedCode="" + "switch(str) {\n" + "  case getValue():\n"+ "    break;\n"+ "}";
+  String template="" + "function before_template() {\n" + "  CONSTANT\n"+ "}\n"+ "function after_template() {\n"+ "  getValue()\n"+ "}\n";
+  assertChanges(externs,originalCode,expectedCode,template);
+}

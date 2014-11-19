@@ -1,0 +1,8 @@
+{
+  RefasterJsScanner scanner=new RefasterJsScanner();
+  scanner.loadRefasterJsTemplateFromCode(refasterJsTemplate);
+  RefactoringDriver driver=new RefactoringDriver.Builder(scanner).addExternsFromCode(externs).addInputsFromCode(originalCode).build();
+  List<SuggestedFix> fixes=driver.drive();
+  String newCode=ApplySuggestedFixes.applySuggestedFixesToCode(fixes,ImmutableMap.of("input",originalCode)).get("input");
+  assertEquals(expectedCode,newCode);
+}

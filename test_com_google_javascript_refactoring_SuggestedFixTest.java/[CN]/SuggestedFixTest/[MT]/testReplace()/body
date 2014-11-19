@@ -1,10 +1,10 @@
 {
   String before="var someRandomCode = {};\n/** some comment */\n";
-  String after="goog.foo()";
+  String after="goog.foo();";
   Compiler compiler=getCompiler(before + after);
   Node root=compileToScriptRoot(compiler);
   Node newNode=IR.exprResult(IR.call(IR.getprop(IR.name("goog2"),IR.string("get")),IR.string("service")));
   SuggestedFix fix=new SuggestedFix.Builder().replace(root.getLastChild().getFirstChild(),newNode,compiler).build();
-  CodeReplacement replacement=new CodeReplacement(before.length(),after.length(),"goog2.get('service');\n");
+  CodeReplacement replacement=new CodeReplacement(before.length(),after.length(),"goog2.get('service');");
   assertReplacement(fix,replacement);
 }
