@@ -3,39 +3,42 @@
   FunctionState fs=getOrCreateFunctionState(name);
   if (fs.hasExistingFunctionDefinition()) {
     fs.setInline(false);
+    return;
   }
- else {
+  Node fnNode=fn.getFunctionNode();
+  if (enforceMaxSizeAfterInlining && !isAlwaysInlinable(fnNode) && maxSizeAfterInlining <= NodeUtil.countAstSizeUpToLimit(fnNode,maxSizeAfterInlining)) {
+    fs.setInline(false);
+    return;
+  }
+  if (fs.canInline()) {
+    fs.setFn(fn);
+    if (FunctionInjector.isDirectCallNodeReplacementPossible(fn.getFunctionNode())) {
+      fs.inlineDirectly(true);
+    }
+    if (!isCandidateFunction(fn)) {
+      fs.setInline(false);
+    }
     if (fs.canInline()) {
-      fs.setFn(fn);
-      if (FunctionInjector.isDirectCallNodeReplacementPossible(fn.getFunctionNode())) {
-        fs.inlineDirectly(true);
+      fs.setModule(module);
+      Set<String> namesToAlias=FunctionArgumentInjector.findModifiedParameters(fnNode);
+      if (!namesToAlias.isEmpty()) {
+        fs.inlineDirectly(false);
+        fs.setNamesToAlias(namesToAlias);
       }
-      if (!isCandidateFunction(fn)) {
-        fs.setInline(false);
+      Node block=NodeUtil.getFunctionBody(fnNode);
+      if (NodeUtil.referencesThis(block)) {
+        fs.setReferencesThis(true);
       }
-      if (fs.canInline()) {
-        fs.setModule(module);
-        Node fnNode=fn.getFunctionNode();
-        Set<String> namesToAlias=FunctionArgumentInjector.findModifiedParameters(fnNode);
-        if (!namesToAlias.isEmpty()) {
-          fs.inlineDirectly(false);
-          fs.setNamesToAlias(namesToAlias);
-        }
-        Node block=NodeUtil.getFunctionBody(fnNode);
-        if (NodeUtil.referencesThis(block)) {
-          fs.setReferencesThis(true);
-        }
-        if (NodeUtil.containsFunction(block)) {
-          fs.setHasInnerFunctions(true);
-          if (!assumeMinimumCapture && hasLocalNames(fnNode)) {
-            fs.setInline(false);
-          }
-        }
-      }
-      if (fs.canInline() && !fs.canInlineDirectly()) {
-        if (!blockFunctionInliningEnabled) {
+      if (NodeUtil.containsFunction(block)) {
+        fs.setHasInnerFunctions(true);
+        if (!assumeMinimumCapture && hasLocalNames(fnNode)) {
           fs.setInline(false);
         }
+      }
+    }
+    if (fs.canInline() && !fs.canInlineDirectly()) {
+      if (!blockFunctionInliningEnabled) {
+        fs.setInline(false);
       }
     }
   }

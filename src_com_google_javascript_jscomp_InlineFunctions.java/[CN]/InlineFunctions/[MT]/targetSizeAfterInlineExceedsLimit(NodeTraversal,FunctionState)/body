@@ -1,0 +1,13 @@
+{
+  Node containingFunction=getContainingFunction(t);
+  if (containingFunction == null) {
+    return false;
+  }
+  Node inlinedFun=fs.getFn().getFunctionNode();
+  if (isAlwaysInlinable(inlinedFun)) {
+    return false;
+  }
+  int inlinedFunSize=NodeUtil.countAstSizeUpToLimit(NodeUtil.getFunctionBody(inlinedFun),maxSizeAfterInlining);
+  int targetFunSize=NodeUtil.countAstSizeUpToLimit(containingFunction,maxSizeAfterInlining);
+  return inlinedFunSize + targetFunSize > maxSizeAfterInlining;
+}
