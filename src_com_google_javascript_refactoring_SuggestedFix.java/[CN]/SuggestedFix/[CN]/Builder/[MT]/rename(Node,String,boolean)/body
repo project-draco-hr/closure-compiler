@@ -18,8 +18,12 @@
  else   if (n.isStringKey()) {
     nodeToRename=n;
   }
+ else   if (n.isString()) {
+    Preconditions.checkState(n.getParent().isGetProp());
+    nodeToRename=n;
+  }
  else {
-    throw new UnsupportedOperationException("Rename is not implemented for node type: " + n.getType());
+    throw new UnsupportedOperationException("Rename is not implemented for this node type: " + n);
   }
   replacements.put(nodeToRename.getSourceFileName(),new CodeReplacement(nodeToRename.getSourceOffset(),nodeToRename.getLength(),name));
   return this;
