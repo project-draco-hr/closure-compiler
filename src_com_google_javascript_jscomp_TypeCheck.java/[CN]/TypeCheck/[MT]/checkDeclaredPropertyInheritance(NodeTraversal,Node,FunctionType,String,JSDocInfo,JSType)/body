@@ -24,7 +24,7 @@
       Preconditions.checkNotNull(interfaceType);
       boolean interfaceHasProperty=interfaceType.getPrototype().hasProperty(propertyName);
       foundInterfaceProperty=foundInterfaceProperty || interfaceHasProperty;
-      if (reportMissingOverride.isOn() && !declaredOverride && interfaceHasProperty) {
+      if (reportMissingOverride.isOn() && !declaredOverride && interfaceHasProperty&& !"__proto__".equals(propertyName)) {
         compiler.report(t.makeError(n,reportMissingOverride,HIDDEN_INTERFACE_PROPERTY,propertyName,interfaceType.getTopMostDefiningType(propertyName).toString()));
       }
     }
@@ -34,7 +34,7 @@
   }
   ObjectType topInstanceType=superClassHasDeclaredProperty ? superClass.getTopMostDefiningType(propertyName) : null;
   boolean declaredLocally=ctorType.isConstructor() && (ctorType.getPrototype().hasOwnProperty(propertyName) || ctorType.getInstanceType().hasOwnProperty(propertyName));
-  if (reportMissingOverride.isOn() && !declaredOverride && superClassHasDeclaredProperty&& declaredLocally) {
+  if (reportMissingOverride.isOn() && !declaredOverride && superClassHasDeclaredProperty&& declaredLocally&& !"__proto__".equals(propertyName)) {
     compiler.report(t.makeError(n,reportMissingOverride,HIDDEN_SUPERCLASS_PROPERTY,propertyName,topInstanceType.toString()));
   }
   if (superClassHasDeclaredProperty) {
