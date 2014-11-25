@@ -3,16 +3,14 @@
   if (!qNameNode.isQualifiedName()) {
     return;
   }
-  Node nameNode=qNameNode;
-  for (; nameNode.hasChildren(); nameNode=nameNode.getFirstChild()) {
-  }
-  if (!nameNode.isName()) {
+  Node root=NodeUtil.getRootOfQualifiedName(qNameNode);
+  if (!root.isName()) {
     return;
   }
-  String name=nameNode.getString();
+  String name=root.getString();
   Scope.Var var=t.getScope().getVar(name);
   if (var == null || var.isLocal() || var.isExtern()) {
     return;
   }
-  newNodes.add(n);
+  newAndImplementsNodes.add(n);
 }

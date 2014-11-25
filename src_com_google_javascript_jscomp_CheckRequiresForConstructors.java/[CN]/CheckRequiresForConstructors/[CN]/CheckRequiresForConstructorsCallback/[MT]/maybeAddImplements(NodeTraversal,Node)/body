@@ -1,0 +1,17 @@
+{
+  JSDocInfo info=NodeUtil.getBestJSDocInfo(n);
+  if (info != null) {
+    for (    JSTypeExpression expr : info.getImplementedInterfaces()) {
+      Node implementsNode=expr.getRoot();
+      Preconditions.checkState(implementsNode.getType() == Token.BANG);
+      Node child=implementsNode.getFirstChild();
+      Preconditions.checkState(child.isString());
+      String rootName=Splitter.on('.').split(child.getString()).iterator().next();
+      Scope.Var var=t.getScope().getVar(rootName);
+      if (var != null && var.isExtern()) {
+        return;
+      }
+      newAndImplementsNodes.add(child);
+    }
+  }
+}

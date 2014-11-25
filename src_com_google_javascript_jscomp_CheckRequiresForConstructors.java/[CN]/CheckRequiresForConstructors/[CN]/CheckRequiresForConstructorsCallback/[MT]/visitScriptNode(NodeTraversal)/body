@@ -1,7 +1,13 @@
 {
   Set<String> classNames=new HashSet<>();
-  for (  Node node : newNodes) {
-    String className=node.getFirstChild().getQualifiedName();
+  for (  Node node : newAndImplementsNodes) {
+    String className;
+    if (node.isNew()) {
+      className=node.getFirstChild().getQualifiedName();
+    }
+ else {
+      className=node.getString();
+    }
     String outermostClassName=getOutermostClassName(className);
     boolean notProvidedByConstructors=(constructors == null || !constructors.contains(className));
     boolean notProvidedByRequires=(requires == null || (!requires.contains(className) && !requires.contains(outermostClassName)));
@@ -10,7 +16,7 @@
       classNames.add(className);
     }
   }
-  this.newNodes.clear();
+  this.newAndImplementsNodes.clear();
   this.requires.clear();
   this.constructors.clear();
 }
