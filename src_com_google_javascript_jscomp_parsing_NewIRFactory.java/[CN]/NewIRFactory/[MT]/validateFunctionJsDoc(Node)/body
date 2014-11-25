@@ -1,0 +1,28 @@
+{
+  JSDocInfo info=n.getJSDocInfo();
+  if (info == null) {
+    return;
+  }
+  if (info.containsFunctionDeclaration() && !info.hasType()) {
+switch (n.getType()) {
+case Token.FUNCTION:
+case Token.VAR:
+case Token.GETTER_DEF:
+case Token.SETTER_DEF:
+case Token.MEMBER_DEF:
+case Token.STRING_KEY:
+      return;
+case Token.GETELEM:
+case Token.GETPROP:
+    if (n.getFirstChild().isQualifiedName()) {
+      return;
+    }
+  break;
+case Token.ASSIGN:
+{
+  return;
+}
+}
+errorReporter.warning(MISPLACED_FUNCTION_ANNOTATION,sourceName,n.getLineno(),n.getCharno());
+}
+}
