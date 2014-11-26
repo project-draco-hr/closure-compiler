@@ -1,4 +1,5 @@
 {
+  Preconditions.checkArgument(expr.isNew() || expr.isCall());
   Node callee=expr.getFirstChild();
   JSType calleeTypeGeneral=analyzeExprBwd(callee,outEnv,commonTypes.topFunction()).type;
   FunctionType funType=calleeTypeGeneral.getFunType();
@@ -37,5 +38,6 @@
   if (callee.isName() && currentScope.isLocalFunDef(callee.getString())) {
     tmpEnv=collectTypesForFreeVarsBwd(callee,tmpEnv);
   }
-  return new EnvTypePair(tmpEnv,funType.getReturnType());
+  JSType retType=expr.isNew() ? funType.getThisType() : funType.getReturnType();
+  return new EnvTypePair(tmpEnv,retType);
 }

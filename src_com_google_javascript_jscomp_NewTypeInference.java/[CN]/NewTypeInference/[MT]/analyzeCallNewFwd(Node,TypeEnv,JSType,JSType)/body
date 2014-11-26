@@ -19,7 +19,7 @@
  else   if (funType.isLoose()) {
     return analyzeLooseCallNodeFwd(expr,inEnv,requiredType);
   }
- else   if (expr.isCall() && funType.isConstructor()) {
+ else   if (expr.isCall() && funType.isConstructor() && funType.getReturnType().isUnknown()) {
     warnings.add(JSError.make(expr,TypeCheck.CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
     return analyzeCallNodeArgumentsFwd(expr,inEnv);
   }
@@ -62,7 +62,6 @@
     tmpEnv=pair.env;
     arg=arg.getNext();
   }
-  JSType retType=funType.getReturnType();
   if (callee.isName()) {
     String calleeName=callee.getQualifiedName();
     if (currentScope.isKnownFunction(calleeName) && !currentScope.isExternalFunction(calleeName)) {
@@ -92,5 +91,6 @@
       }
     }
   }
+  JSType retType=expr.isNew() ? funType.getThisType() : funType.getReturnType();
   return new EnvTypePair(tmpEnv,retType);
 }
