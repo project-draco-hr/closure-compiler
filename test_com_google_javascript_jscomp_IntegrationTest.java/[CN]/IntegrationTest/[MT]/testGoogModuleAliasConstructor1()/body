@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.closurePass=true;
+  options.inferConsts=true;
+  options.collapseProperties=true;
+  options.removeUnusedVars=true;
+  WarningLevel.VERBOSE.setOptionsForWarningLevel(options);
+  test(options,new String[]{"goog.module('a');\n" + "/** @constructor */\n" + "var C = function(){};\n"+ "exports = C;","goog.module('b');\n" + "\n" + "var a = goog.require('a');\n"+ "\n"+ "/** @type {a} */\n"+ "var x = new a"},new String[]{"var $jscomp$scope$C=function(){};var a=$jscomp$scope$C\n","new a"});
+}
