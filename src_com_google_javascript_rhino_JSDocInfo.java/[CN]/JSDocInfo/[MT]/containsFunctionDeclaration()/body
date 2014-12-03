@@ -1,3 +1,4 @@
 {
-  return (hasType() && getType().getRoot().isFunction() || hasReturnType() || hasThisType() || getParameterCount() > 0 || getFlag(MASK_CONSTRUCTOR | MASK_NOSIDEEFFECTS));
+  boolean hasFunctionType=hasType() && getType().getRoot().isFunction();
+  return hasFunctionType || hasReturnType() || hasThisType()|| getParameterCount() > 0 || getFlag(MASK_CONSTRUCTOR) || (getFlag(MASK_NOSIDEEFFECTS) && (!hasType() || hasFunctionType));
 }

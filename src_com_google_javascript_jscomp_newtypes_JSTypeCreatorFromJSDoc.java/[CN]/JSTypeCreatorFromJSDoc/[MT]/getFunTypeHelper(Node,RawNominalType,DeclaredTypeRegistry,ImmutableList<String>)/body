@@ -1,4 +1,8 @@
 {
-  FunctionType funType=getFunTypeBuilder(jsdocNode,ownerType,registry,typeParameters).buildFunction();
-  return registry.getCommonTypes().fromFunctionType(funType);
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  if (ownerType != null) {
+    builder.addReceiverType(ownerType.getAsNominalType());
+  }
+  fillInFunTypeBuilder(jsdocNode,ownerType,registry,typeParameters,builder);
+  return registry.getCommonTypes().fromFunctionType(builder.buildFunction());
 }

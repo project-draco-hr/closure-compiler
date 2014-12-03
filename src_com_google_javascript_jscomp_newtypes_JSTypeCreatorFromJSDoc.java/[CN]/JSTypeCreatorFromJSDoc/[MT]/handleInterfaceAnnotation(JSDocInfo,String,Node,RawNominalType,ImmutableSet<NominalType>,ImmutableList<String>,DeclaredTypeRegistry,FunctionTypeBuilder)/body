@@ -1,0 +1,10 @@
+{
+  if (!implementedIntfs.isEmpty()) {
+    warnings.add(JSError.make(funNode,CONFLICTING_IMPLEMENTED_TYPE,functionName));
+  }
+  boolean noCycles=constructorType.addInterfaces(getExtendedInterfaces(jsdoc,registry,typeParameters));
+  if (!noCycles) {
+    warnings.add(JSError.make(funNode,INHERITANCE_CYCLE,constructorType.toString()));
+  }
+  builder.addNominalType(constructorType.getAsNominalType());
+}

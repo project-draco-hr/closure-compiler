@@ -16,4 +16,5 @@
   typeCheck("/** @template T */\n" + "function /** T */ f(/** T */ x) { return x; }\n" + "f('str') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  /** @constructor */\n"+ "  function Foo() {\n"+ "    /** @type {T} */\n"+ "    this.prop = x;\n"+ "  }\n"+ "  return (new Foo()).prop;\n"+ "}\n"+ "f('asdf') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
   checkNoWarnings("/**\n" + " * @template T\n" + " * @param {*} x\n"+ " */\n"+ "function f(x) {}\n"+ "f(123);");
+  checkNoWarnings("/**\n" + " * @constructor\n" + " * @template T\n"+ " */\n"+ "function Foo() {}\n"+ "/**\n"+ " * @template U\n"+ " * @param {function(U)} x\n"+ " */\n"+ "Foo.prototype.f = function(x) { this.f(x); };");
 }

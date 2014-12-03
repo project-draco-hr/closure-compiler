@@ -1,0 +1,26 @@
+{
+  if (!jsdoc.hasBaseType()) {
+    return null;
+  }
+  if (!jsdoc.isConstructor()) {
+    warnings.add(JSError.make(funNode,EXTENDS_NOT_ON_CTOR_OR_INTERF,functionName));
+    return null;
+  }
+  Node docNode=jsdoc.getBaseType().getRoot();
+  JSType extendedType=getMaybeTypeFromNode(docNode,registry,typeParameters);
+  if (extendedType == null) {
+    return null;
+  }
+  NominalType parentClass=extendedType.getNominalTypeIfUnique();
+  if (parentClass != null && parentClass.isClass()) {
+    return parentClass;
+  }
+  if (parentClass == null) {
+    warnings.add(JSError.make(funNode,EXTENDS_NON_OBJECT,functionName,extendedType.toString()));
+  }
+ else {
+    Preconditions.checkState(parentClass.isInterface());
+    warnings.add(JSError.make(funNode,CONFLICTING_EXTENDED_TYPE,"constructor",functionName));
+  }
+  return null;
+}

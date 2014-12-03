@@ -1,0 +1,18 @@
+{
+  ImmutableSet.Builder<NominalType> builder=ImmutableSet.builder();
+  for (  JSTypeExpression texp : (implementedIntfs ? jsdoc.getImplementedInterfaces() : jsdoc.getExtendedInterfaces())) {
+    Node expRoot=texp.getRoot();
+    JSType interfaceType=getMaybeTypeFromNode(expRoot,registry,typeParameters);
+    if (interfaceType != null) {
+      NominalType nt=interfaceType.getNominalTypeIfUnique();
+      if (nt != null && nt.isInterface()) {
+        builder.add(nt);
+      }
+ else {
+        String errorMsg=implementedIntfs ? "Cannot implement non-interface" : "Cannot extend non-interface";
+        warn(errorMsg,jsdoc.getAssociatedNode());
+      }
+    }
+  }
+  return builder.build();
+}

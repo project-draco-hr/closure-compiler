@@ -1,0 +1,26 @@
+{
+  String className=constructorType.toString();
+  NominalType builtinObject=registry.getCommonTypes().getObjectType();
+  if (parentClass == null && !functionName.equals("Object")) {
+    parentClass=builtinObject;
+  }
+  if (parentClass != null) {
+    if (!constructorType.addSuperClass(parentClass)) {
+      warnings.add(JSError.make(funNode,INHERITANCE_CYCLE,className));
+    }
+ else     if (parentClass != builtinObject) {
+      if (constructorType.isStruct() && !parentClass.isStruct()) {
+        warnings.add(JSError.make(funNode,CONFLICTING_SHAPE_TYPE,"struct",className));
+      }
+ else       if (constructorType.isDict() && !parentClass.isDict()) {
+        warnings.add(JSError.make(funNode,CONFLICTING_SHAPE_TYPE,"dict",className));
+      }
+    }
+  }
+  if (constructorType.isDict() && !implementedIntfs.isEmpty()) {
+    warnings.add(JSError.make(funNode,DICT_IMPLEMENTS_INTERF,className));
+  }
+  boolean noCycles=constructorType.addInterfaces(implementedIntfs);
+  Preconditions.checkState(noCycles);
+  builder.addNominalType(constructorType.getAsNominalType());
+}

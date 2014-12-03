@@ -1,0 +1,51 @@
+{
+  Preconditions.checkArgument(!ignoreJsdoc || jsdoc == null);
+  Preconditions.checkArgument(!ignoreJsdoc || funNode.isFunction());
+  ImmutableList<String> typeParameters=ImmutableList.of();
+  Node parent=funNode.getParent();
+  if (jsdoc != null) {
+    typeParameters=jsdoc.getTemplateTypeNames();
+    if (!typeParameters.isEmpty()) {
+      if (parent.isSetterDef() || parent.isGetterDef()) {
+        ignoreJsdoc=true;
+        jsdoc=null;
+        warn("@template can't be used with getters/setters",funNode);
+      }
+ else {
+        builder.addTypeParameters(typeParameters);
+      }
+    }
+  }
+  if (ownerType != null) {
+    ImmutableList.Builder<String> paramsBuilder=new ImmutableList.Builder<>();
+    paramsBuilder.addAll(typeParameters);
+    paramsBuilder.addAll(ownerType.getTypeParameters());
+    typeParameters=paramsBuilder.build();
+  }
+  fillInFormalParameterTypes(jsdoc,funNode,typeParameters,registry,builder,ignoreJsdoc);
+  fillInReturnType(jsdoc,funNode,parent,typeParameters,registry,builder,ignoreJsdoc);
+  if (jsdoc == null) {
+    return builder.buildDeclaration();
+  }
+  NominalType parentClass=getMaybeParentClass(jsdoc,functionName,funNode,typeParameters,registry);
+  ImmutableSet<NominalType> implementedIntfs=getImplementedInterfaces(jsdoc,registry,typeParameters);
+  if (constructorType == null && (jsdoc.isConstructor() || jsdoc.isInterface())) {
+    return builder.buildDeclaration();
+  }
+ else   if (jsdoc.isConstructor()) {
+    handleConstructorAnnotation(functionName,funNode,constructorType,parentClass,implementedIntfs,registry,builder);
+  }
+ else   if (jsdoc.isInterface()) {
+    handleInterfaceAnnotation(jsdoc,functionName,funNode,constructorType,implementedIntfs,typeParameters,registry,builder);
+  }
+ else   if (!implementedIntfs.isEmpty()) {
+    warnings.add(JSError.make(funNode,IMPLEMENTS_WITHOUT_CONSTRUCTOR,functionName));
+  }
+  if (jsdoc.hasThisType() && ownerType == null) {
+    Node thisNode=jsdoc.getThisType().getRoot();
+    JSType thisType=getMaybeTypeFromNode(thisNode,registry,typeParameters);
+    NominalType thisTypeAsNominal=thisType == null ? null : thisType.getNominalTypeIfUnique();
+    builder.addReceiverType(thisTypeAsNominal);
+  }
+  return builder.buildDeclaration();
+}

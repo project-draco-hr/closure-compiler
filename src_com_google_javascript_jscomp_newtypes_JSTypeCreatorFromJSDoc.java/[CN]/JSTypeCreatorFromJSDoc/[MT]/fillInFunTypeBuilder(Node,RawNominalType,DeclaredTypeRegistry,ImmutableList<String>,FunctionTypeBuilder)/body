@@ -1,0 +1,36 @@
+{
+  Node child=jsdocNode.getFirstChild();
+  if (child.getType() == Token.THIS) {
+    if (ownerType == null) {
+      builder.addReceiverType(getNominalType(child.getFirstChild(),registry,typeParameters));
+    }
+    child=child.getNext();
+  }
+ else   if (child.getType() == Token.NEW) {
+    builder.addNominalType(getNominalType(child.getFirstChild(),registry,typeParameters));
+    child=child.getNext();
+  }
+  if (child.getType() == Token.PARAM_LIST) {
+    for (Node arg=child.getFirstChild(); arg != null; arg=arg.getNext()) {
+      try {
+switch (arg.getType()) {
+case Token.EQUALS:
+          builder.addOptFormal(getTypeFromNodeHelper(arg.getFirstChild(),registry,typeParameters));
+        break;
+case Token.ELLIPSIS:
+      Node restNode=arg.getFirstChild();
+    builder.addRestFormals(restNode == null ? JSType.UNKNOWN : getTypeFromNodeHelper(restNode,registry,typeParameters));
+  break;
+default :
+builder.addReqFormal(getTypeFromNodeHelper(arg,registry,typeParameters));
+break;
+}
+}
+ catch (FunctionTypeBuilder.WrongParameterOrderException e) {
+warn("Wrong parameter order: required parameters are first, " + "then optional, then varargs",jsdocNode);
+}
+}
+child=child.getNext();
+}
+builder.addRetType(getTypeFromNodeHelper(child,registry,typeParameters));
+}

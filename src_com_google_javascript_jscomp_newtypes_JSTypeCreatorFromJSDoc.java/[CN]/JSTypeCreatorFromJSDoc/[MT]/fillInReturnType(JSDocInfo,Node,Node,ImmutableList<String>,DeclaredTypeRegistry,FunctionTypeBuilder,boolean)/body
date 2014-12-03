@@ -1,0 +1,20 @@
+{
+  JSDocInfo inlineRetJsdoc=ignoreJsdoc ? null : funNode.getFirstChild().getJSDocInfo();
+  JSTypeExpression retTypeExp=jsdoc == null ? null : jsdoc.getReturnType();
+  if (parent.isSetterDef()) {
+    inlineRetJsdoc=ignoreJsdoc ? null : funNode.getLastChild().getJSDocInfo();
+    if (retTypeExp != null || inlineRetJsdoc != null) {
+      warn("Cannot declare a return type on a setter",funNode);
+    }
+    builder.addRetType(JSType.UNDEFINED);
+  }
+ else   if (inlineRetJsdoc != null) {
+    builder.addRetType(getNodeTypeDeclaration(inlineRetJsdoc,registry,typeParameters));
+    if (retTypeExp != null) {
+      warn("Found two JsDoc comments for the return type",funNode);
+    }
+  }
+ else {
+    builder.addRetType(getTypeFromJSTypeExpression(retTypeExp,registry,typeParameters));
+  }
+}
