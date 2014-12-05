@@ -1,0 +1,26 @@
+{
+  TypeEnv env=inEnv;
+  Node arg=firstArg;
+  int i=0;
+  while (arg != null) {
+    JSType formalType=funType.getFormalType(i);
+    if (formalType.isBottom()) {
+      warnings.add(JSError.make(call,CALL_FUNCTION_WITH_BOTTOM_FORMAL,Integer.toString(i)));
+      formalType=JSType.UNKNOWN;
+    }
+    EnvTypePair pair=analyzeExprFwd(arg,env,formalType);
+    JSType argTypeForDeferredCheck=pair.type;
+    if (funType.isOptionalArg(i) && pair.type.equals(JSType.UNDEFINED)) {
+      argTypeForDeferredCheck=null;
+    }
+ else     if (!pair.type.isSubtypeOf(formalType)) {
+      warnings.add(JSError.make(arg,INVALID_ARGUMENT_TYPE,Integer.toString(i + 1),"",formalType.toString(),pair.type.toString()));
+      argTypeForDeferredCheck=null;
+    }
+    argTypesForDeferredCheck.add(argTypeForDeferredCheck);
+    env=pair.env;
+    arg=arg.getNext();
+    i++;
+  }
+  return env;
+}

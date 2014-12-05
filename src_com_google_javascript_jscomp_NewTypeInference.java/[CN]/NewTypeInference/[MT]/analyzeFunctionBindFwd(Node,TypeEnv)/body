@@ -1,0 +1,49 @@
+{
+  Preconditions.checkArgument(call.isCall());
+  Node boundFunNode=call.getFirstChild().getFirstChild();
+  EnvTypePair pair=analyzeExprFwd(boundFunNode,inEnv);
+  TypeEnv env=pair.env;
+  FunctionType boundFunType=pair.type.getFunTypeIfSingletonObj();
+  Preconditions.checkNotNull(boundFunType);
+  if (boundFunType.isConstructor()) {
+    warnings.add(JSError.make(call,CANNOT_BIND_CTOR));
+    return new EnvTypePair(env,JSType.UNKNOWN);
+  }
+  int maxArity=boundFunType.hasRestFormals() ? Integer.MAX_VALUE : boundFunType.getMaxArity() + 1;
+  int minArity=1;
+  int numArgs=call.getChildCount() - 1;
+  if (numArgs < minArity || numArgs > maxArity) {
+    warnings.add(JSError.make(call,TypeCheck.WRONG_ARGUMENT_COUNT,getReadableCalleeName(call.getFirstChild()),Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
+    return analyzeCallNodeArgsFwdWhenError(call,inEnv);
+  }
+  if (boundFunType.isGeneric()) {
+    Map<String,JSType> typeMap=calcTypeInstantiationFwd(call,boundFunType,env);
+    boundFunType=boundFunType.instantiateGenerics(typeMap);
+  }
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  Node receiver=call.getChildAtIndex(1);
+  JSType reqThisType=boundFunType.getThisType();
+  if (reqThisType == null || boundFunType.isConstructor()) {
+    reqThisType=JSType.join(JSType.NULL,JSType.TOP_OBJECT);
+  }
+  pair=analyzeExprFwd(receiver,env,reqThisType);
+  env=pair.env;
+  if (!pair.type.isSubtypeOf(reqThisType)) {
+    warnings.add(JSError.make(call,INVALID_THIS_TYPE_IN_BIND,pair.type.toString(),reqThisType.toString()));
+  }
+  env=analyzeCallNodeArgumentsFwd(call,receiver.getNext(),boundFunType,new ArrayList<JSType>(),env);
+  for (int j=numArgs - 1; j < boundFunType.getMaxArity(); j++) {
+    JSType formalType=boundFunType.getFormalType(j);
+    if (boundFunType.isRequiredArg(j)) {
+      builder.addReqFormal(formalType);
+    }
+ else     if (boundFunType.isOptionalArg(j)) {
+      builder.addOptFormal(formalType);
+    }
+ else {
+      builder.addRestFormals(formalType);
+      break;
+    }
+  }
+  return new EnvTypePair(env,commonTypes.fromFunctionType(builder.addRetType(boundFunType.getReturnType()).buildFunction()));
+}

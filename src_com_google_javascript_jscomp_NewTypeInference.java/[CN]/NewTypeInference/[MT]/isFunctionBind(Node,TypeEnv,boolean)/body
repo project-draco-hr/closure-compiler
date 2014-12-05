@@ -1,0 +1,18 @@
+{
+  if (!expr.isGetProp()) {
+    return false;
+  }
+  if (!expr.getLastChild().getString().equals("bind")) {
+    return false;
+  }
+  Node recv=expr.getFirstChild();
+  if (!recv.isFunction() && !recv.isQualifiedName()) {
+    return false;
+  }
+  JSType recvType=isFwd ? analyzeExprFwd(recv,env).type : analyzeExprBwd(recv,env).type;
+  if (recvType.isUnknown() || !recvType.isSubtypeOf(commonTypes.topFunction())) {
+    return false;
+  }
+  FunctionType funType=recvType.getFunTypeIfSingletonObj();
+  return !(funType == null || funType.isTopFunction() || funType.isQmarkFunction() || funType.isLoose());
+}
