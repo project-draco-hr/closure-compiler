@@ -1,0 +1,28 @@
+{
+  if (value.isName()) {
+    Scope currentScope=t.getScope();
+    Var v=t.getScope().getVar(value.getString());
+    if (v != null) {
+      Scope varScope=v.getScope();
+      if (varScope.getDepth() == currentScope.getDepth()) {
+        JSDocInfo info=v.getJSDocInfo();
+        if (info != null && info.hasTypedefType()) {
+          JSDocInfoBuilder builder=JSDocInfoBuilder.copyFrom(info);
+          target.setJSDocInfo(builder.build(target));
+          return;
+        }
+      }
+    }
+  }
+  JSDocInfo info=target.getJSDocInfo();
+  if (info == null) {
+    JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+    builder.recordConstancy();
+    target.setJSDocInfo(builder.build(target));
+  }
+ else   if (!info.isConstant() && !info.hasTypedefType()) {
+    JSDocInfoBuilder builder=JSDocInfoBuilder.copyFrom(info);
+    builder.recordConstancy();
+    target.setJSDocInfo(builder.build(target));
+  }
+}

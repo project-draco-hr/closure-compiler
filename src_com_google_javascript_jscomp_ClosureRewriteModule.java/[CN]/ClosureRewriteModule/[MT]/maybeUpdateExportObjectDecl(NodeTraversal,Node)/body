@@ -1,0 +1,13 @@
+{
+  Node parent=n.getParent();
+  Node rhs=parent.getLastChild();
+  maybeUpdateExportDeclToNode(t,parent,rhs);
+  if (rhs.isObjectLit()) {
+    for (Node c=rhs.getFirstChild(); c != null; c=c.getNext()) {
+      if (c.isStringKey()) {
+        Node value=c.getFirstChild();
+        maybeUpdateExportDeclToNode(t,c,value);
+      }
+    }
+  }
+}

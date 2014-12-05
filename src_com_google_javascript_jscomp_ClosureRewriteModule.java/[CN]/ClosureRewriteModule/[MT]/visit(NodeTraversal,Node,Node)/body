@@ -3,38 +3,37 @@
     return;
   }
 switch (n.getType()) {
-case Token.BLOCK:
-    if (current.moduleScopeRoot == parent && parent.isFunction()) {
-      current.moduleScope=t.getScope();
+case Token.EXPR_RESULT:
+    if (isCallTo(n.getFirstChild(),"goog.module.declareLegacyNamespace")) {
+      n.detachFromParent();
     }
   break;
-case Token.EXPR_RESULT:
-if (n.getFirstChild().isCall()) {
-  Node target=n.getFirstChild().getFirstChild();
-  if (target.matchesQualifiedName("goog.module.declareLegacyNamespace")) {
-    n.detachFromParent();
-  }
-}
-break;
 case Token.CALL:
-Node first=n.getFirstChild();
-if (first.matchesQualifiedName("goog.module")) {
-recordAndUpdateModule(t,n);
+if (isCallTo(n,"goog.module")) {
+  recordAndUpdateModule(t,n);
 }
- else if (first.matchesQualifiedName("goog.require")) {
-recordRequire(t,n);
+ else if (isCallTo(n,"goog.require")) {
+  recordRequire(t,n);
 }
  else if (isLoadModuleCall(n)) {
-rewriteModuleAsScope(n);
+  rewriteModuleAsScope(n);
+}
+break;
+case Token.GETPROP:
+if (isExportPropAssign(n)) {
+Node rhs=parent.getLastChild();
+maybeUpdateExportDeclToNode(t,parent,rhs);
 }
 break;
 case Token.NAME:
 if (n.getString().equals("exports")) {
 current.exports.add(n);
+if (isAssignTarget(n)) {
+maybeUpdateExportObjectDecl(t,n);
+}
 }
 break;
 case Token.SCRIPT:
-current.moduleScope=t.getScope();
 rewriteModuleAsScope(n);
 break;
 case Token.RETURN:

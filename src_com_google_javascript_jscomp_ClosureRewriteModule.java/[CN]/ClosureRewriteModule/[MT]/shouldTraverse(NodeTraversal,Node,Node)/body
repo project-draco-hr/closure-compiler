@@ -5,5 +5,17 @@
   if (isGetModuleCall(n)) {
     rewriteGetModuleCall(t,n);
   }
-  return true;
+  if (inModule()) {
+switch (n.getType()) {
+case Token.BLOCK:
+      if (current.moduleScopeRoot == parent && parent.isFunction()) {
+        current.moduleScope=t.getScope();
+      }
+    break;
+case Token.SCRIPT:
+  current.moduleScope=t.getScope();
+break;
+}
+}
+return true;
 }
