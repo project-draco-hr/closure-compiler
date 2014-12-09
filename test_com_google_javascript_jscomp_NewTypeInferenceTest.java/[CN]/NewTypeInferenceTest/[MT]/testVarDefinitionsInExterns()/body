@@ -1,11 +1,11 @@
 {
-  checkNoWarnings("var undecl = {};","if (undecl) { undecl.x = 7 };");
-  checkNoWarnings("var undecl = {};","function f() { if (undecl) { undecl.x = 7 }; }");
-  checkNoWarnings("var undecl;","undecl(5);");
-  checkNoWarnings("/** @type {number} */ var num;","num - 5;");
-  checkNoWarnings("var maybeStr; /** @type {string} */ var maybeStr;","maybeStr - 5;");
-  typeCheck("/** @type {string} */ var str;","str - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  checkNoWarnings("function f() {/** @type {string} */ var invisible;}","invisible - 5;");
-  typeCheck("/** @type {number} */ var num;","/** @type {undefined} */ var x = num;",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("var untypedNum;","function f(x) {\n" + " x < untypedNum;\n" + " untypedNum - 5;\n"+ "}\n"+ "f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  checkNoWarnings(DEFAULT_EXTERNS + "var undecl = {};","if (undecl) { undecl.x = 7 };");
+  checkNoWarnings(DEFAULT_EXTERNS + "var undecl = {};","function f() { if (undecl) { undecl.x = 7 }; }");
+  checkNoWarnings(DEFAULT_EXTERNS + "var undecl;","undecl(5);");
+  checkNoWarnings(DEFAULT_EXTERNS + "/** @type {number} */ var num;","num - 5;");
+  checkNoWarnings(DEFAULT_EXTERNS + "var maybeStr; /** @type {string} */ var maybeStr;","maybeStr - 5;");
+  typeCheck(DEFAULT_EXTERNS + "/** @type {string} */ var str;","str - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  checkNoWarnings(DEFAULT_EXTERNS + "function f() {/** @type {string} */ var invisible;}","invisible - 5;");
+  typeCheck(DEFAULT_EXTERNS + "/** @type {number} */ var num;","/** @type {undefined} */ var x = num;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(DEFAULT_EXTERNS + "var untypedNum;","function f(x) {\n" + " x < untypedNum;\n" + " untypedNum - 5;\n"+ "}\n"+ "f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
 }

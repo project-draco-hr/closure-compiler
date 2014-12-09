@@ -1,5 +1,5 @@
 {
-  typeCheck("/** @constructor */ function Foo(){};\n" + "/** @type {number} */ Foo.prototype.n;","/** @type {function(this:Foo)} */ function f() { this.n = 'str' };",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @constructor */ function Foo(){};\n" + "/** @type {number} */ Foo.prototype.n;\n" + "/** @type {function(this:Foo)} */ function f() { this.n = 'str' };",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @type {function(this:gibberish)} */ function foo() {}",GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
   checkNoWarnings("/** @constructor */\n" + "function Foo() {}\n" + "var /** function(this:Foo) */ x = function() {};");
   checkNoWarnings("/** @constructor */\n" + "function Foo() {}\n" + "/** @param {function(this:Foo)} x */\n"+ "function f(x) {}\n"+ "f(/** @type {function(this:Foo)} */ (function() {}));");

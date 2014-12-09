@@ -1,9 +1,10 @@
 {
   Preconditions.checkArgument(fn == null || fn.isLoose() == isLoose,"isLoose: %s, fn: %s",isLoose,fn);
   Preconditions.checkArgument(FunctionType.isInhabitable(fn));
+  Preconditions.checkArgument(fn == null || nominalType != null,"Cannot create function %s without nominal type",fn);
   if (nominalType != null) {
-    Preconditions.checkArgument(!nominalType.isClassy() || !isLoose);
-    Preconditions.checkArgument(fn == null || nominalType.isFunction());
+    Preconditions.checkArgument(!nominalType.isClassy() || !isLoose,"Cannot create loose objectType with nominal type %s",nominalType);
+    Preconditions.checkArgument(fn == null || nominalType.isFunction(),"Cannot create objectType of nominal type %s with function (%s)",nominalType,fn);
   }
   this.nominalType=nominalType;
   this.props=props;

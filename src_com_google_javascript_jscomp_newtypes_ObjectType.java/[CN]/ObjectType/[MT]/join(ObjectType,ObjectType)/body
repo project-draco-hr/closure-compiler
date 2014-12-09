@@ -13,5 +13,9 @@
  else {
     props=joinProps(obj1.props,obj2.props);
   }
-  return ObjectType.makeObjectType(NominalType.pickSuperclass(obj1.nominalType,obj2.nominalType),props,fn,isLoose,ObjectKind.join(obj1.objectKind,obj2.objectKind));
+  NominalType nominal=NominalType.pickSuperclass(obj1.nominalType,obj2.nominalType);
+  if (nominal == null || !nominal.isFunction()) {
+    fn=null;
+  }
+  return ObjectType.makeObjectType(nominal,props,fn,isLoose,ObjectKind.join(obj1.objectKind,obj2.objectKind));
 }
