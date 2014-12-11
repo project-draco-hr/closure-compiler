@@ -2,16 +2,15 @@
   Set<JsName> allNamesCopy=Sets.newHashSet(allNames.values());
   for (  JsName name : allNamesCopy) {
     String curName=name.name;
-    JsName curJsName=name;
-    while (curName.indexOf('.') != -1) {
+    if (curName.contains(".")) {
       String parentName=curName.substring(0,curName.lastIndexOf('.'));
       if (!globalNames.contains(parentName)) {
         JsName parentJsName=getName(parentName,true);
-        recordReference(curJsName.name,parentJsName.name,RefType.REGULAR);
-        recordReference(parentJsName.name,curJsName.name,RefType.REGULAR);
-        curJsName=parentJsName;
+        DiGraphNode<JsName,RefType> nameNode=getGraphNode(name);
+        DiGraphNode<JsName,RefType> parentNode=getGraphNode(parentJsName);
+        recordReference(nameNode,parentNode,RefType.REGULAR);
+        recordReference(parentNode,nameNode,RefType.REGULAR);
       }
-      curName=parentName;
     }
   }
 }

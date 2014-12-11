@@ -1,0 +1,19 @@
+{
+  Deque<DiGraphNode<JsName,RefType>> work=new ArrayDeque<>();
+  for (  JsName name : names) {
+    work.push(referenceGraph.createDirectedGraphNode(name));
+  }
+  while (!work.isEmpty()) {
+    DiGraphNode<JsName,RefType> source=work.pop();
+    List<DiGraphEdge<JsName,RefType>> outEdges=source.getOutEdges();
+    int len=outEdges.size();
+    for (int i=0; i < len; i++) {
+      DiGraphNode<JsName,RefType> item=outEdges.get(i).getDestination();
+      JsName destNode=item.getValue();
+      if (!destNode.referenced) {
+        destNode.referenced=true;
+        work.push(item);
+      }
+    }
+  }
+}

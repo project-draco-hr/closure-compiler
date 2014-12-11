@@ -1,9 +1,26 @@
 {
-  for (  Map.Entry<String,AliasSet> entry : aliases.entrySet()) {
-    JsName name=getName(entry.getKey(),false);
-    if (name.hasWrittenDescendants || name.hasInstanceOfReference) {
-      for (      String alias : entry.getValue().names) {
-        recordReference(alias,entry.getKey(),RefType.REGULAR);
+  Set<AliasSet> sets=new HashSet<>(aliases.values());
+  for (  AliasSet set : sets) {
+    DiGraphNode<JsName,RefType> first=null;
+    Set<DiGraphNode<JsName,RefType>> required=new HashSet();
+    for (    String key : set.names) {
+      JsName name=getName(key,false);
+      if (name.hasWrittenDescendants || name.hasInstanceOfReference) {
+        DiGraphNode<JsName,RefType> node=getGraphNode(name);
+        required.add(node);
+        if (first == null) {
+          first=node;
+        }
+      }
+    }
+    if (!required.isEmpty()) {
+      for (      DiGraphNode<JsName,RefType> node : required) {
+        recordReference(node,first,RefType.REGULAR);
+        recordReference(first,node,RefType.REGULAR);
+      }
+      for (      String key : set.names) {
+        DiGraphNode<JsName,RefType> alias=getGraphNode(getName(key,false));
+        recordReference(alias,first,RefType.REGULAR);
       }
     }
   }
