@@ -28,8 +28,10 @@
           reportInvalidRequirement(compiler,requirement,"no requirement with rule_id: " + requirement.getExtends());
           continue;
         }
-        if (requirement.hasErrorMessage() || requirement.hasType() || requirement.getValueCount() != 0 || requirement.hasJavaClass() || requirement.hasRuleId()) {
-          reportInvalidRequirement(compiler,requirement,"extending rules allow only whitelist, whitelist_regexp, only_apply_to and " + "only_apply_to_regexp.");
+        for (        Descriptors.FieldDescriptor field : requirement.getAllFields().keySet()) {
+          if (!EXTENDABLE_FIELDS.contains(field.getName())) {
+            reportInvalidRequirement(compiler,requirement,"extending rules allow only " + EXTENDABLE_FIELDS);
+          }
         }
         existing.addAllWhitelist(requirement.getWhitelistList());
         existing.addAllWhitelistRegexp(requirement.getWhitelistRegexpList());
@@ -38,9 +40,14 @@
       }
     }
   }
-  List<Requirement> requirements=new ArrayList<>();
+  List<Requirement> requirements=new ArrayList<>(builders.size());
   for (  Requirement.Builder builder : builders) {
-    requirements.add(builder.build());
+    Requirement requirement=builder.build();
+    checkRequirementList(compiler,requirement,"whitelist");
+    checkRequirementList(compiler,requirement,"whitelist_regexp");
+    checkRequirementList(compiler,requirement,"only_apply_to");
+    checkRequirementList(compiler,requirement,"only_apply_to_regexp");
+    requirements.add(requirement);
   }
   return requirements;
 }
