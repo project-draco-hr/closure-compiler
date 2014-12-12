@@ -18,10 +18,10 @@
     Node maybeFn=callTarget.getFirstChild();
     JSType maybeFnType=maybeFn.getJSType();
     FunctionType fnType=null;
-    if (useTypeInfo && maybeFnType != null) {
+    if (iCheckTypes && maybeFnType != null) {
       fnType=maybeFnType.restrictByNotNullOrUndefined().toMaybeFunctionType();
     }
-    if (fnType != null || maybeFn.isFunction()) {
+    if (fnType != null || callerChecksTypes || maybeFn.isFunction()) {
       Node thisValue=callTarget.getNext();
       Node parameters=safeNext(thisValue);
       return new Bind(maybeFn,thisValue,parameters);

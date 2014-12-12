@@ -2,9 +2,5 @@
   if (!isClosurePassOn || !expr.isCall()) {
     return false;
   }
-  Node callee=expr.getFirstChild();
-  if (!callee.isGetProp() || !callee.getFirstChild().isName() || !callee.getFirstChild().getString().equals("goog")) {
-    return false;
-  }
-  return googPredicates.contains(callee.getLastChild().getString());
+  return expr.getFirstChild().isQualifiedName() && convention.isPropertyTestFunction(expr);
 }
