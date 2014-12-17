@@ -3,9 +3,17 @@
   if (bind == null) {
     return;
   }
-  FunctionType callTargetFn=getJSType(bind.target).restrictByNotNullOrUndefined().toMaybeFunctionType();
+  Node target=bind.target;
+  FunctionType callTargetFn=getJSType(target).restrictByNotNullOrUndefined().toMaybeFunctionType();
   if (callTargetFn == null) {
     return;
+  }
+  if (bind.thisValue != null && target.isFunction()) {
+    JSType thisType=bind.thisValue.getJSType();
+    if (thisType.toObjectType() != null && !thisType.isUnknownType() && callTargetFn.getTypeOfThis().isUnknownType()) {
+      callTargetFn=new FunctionBuilder(registry).copyFromOtherFunction(callTargetFn).withTypeOfThis(thisType.toObjectType()).build();
+      target.setJSType(callTargetFn);
+    }
   }
   n.setJSType(callTargetFn.getBindReturnType(bind.getBoundParameterCount() + 1));
 }
