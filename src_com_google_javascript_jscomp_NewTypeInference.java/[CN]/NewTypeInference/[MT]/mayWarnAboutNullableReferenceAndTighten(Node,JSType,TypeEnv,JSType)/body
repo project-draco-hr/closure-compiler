@@ -1,7 +1,7 @@
 {
   if (!recvType.isUnknown() && (JSType.NULL.isSubtypeOf(recvType) || JSType.UNDEFINED.isSubtypeOf(recvType))) {
     JSType minusNull=recvType.removeType(JSType.NULL_OR_UNDEF);
-    if (!minusNull.isBottom() && !minusNull.equals(recvType) && minusNull.isSubtypeOf(JSType.TOP_OBJECT)) {
+    if (!minusNull.isBottom() && minusNull.isSubtypeOf(requiredType)) {
       warnings.add(JSError.make(obj,NULLABLE_DEREFERENCE,recvType.toString()));
       TypeEnv outEnv=inEnv;
       if (obj.isQualifiedName()) {

@@ -11,6 +11,7 @@
     return analyzeAssertionCall(expr,inEnv,assertionFunctionSpec);
   }
   EnvTypePair calleePair=analyzeExprFwd(callee,inEnv,commonTypes.topFunction());
+  calleePair=mayWarnAboutNullableReferenceAndTighten(callee,calleePair.type,inEnv,commonTypes.topFunction());
   JSType calleeType=calleePair.type;
   if (!calleeType.isSubtypeOf(commonTypes.topFunction())) {
     warnings.add(JSError.make(expr,TypeCheck.NOT_CALLABLE,calleeType.toString()));
