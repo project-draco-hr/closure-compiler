@@ -10,30 +10,30 @@
       JSModuleGraph graph=compiler.getDegenerateModuleGraph();
       Iterable<JSModule> modules=graph.getAllModules();
       for (      JSModule module : modules) {
-        Writer out=fileNameToOutputWriter2(expandCommandLinePath(output,module));
-        if (isManifest) {
-          printManifestTo(module.getInputs(),out);
-        }
+        try (Writer out=fileNameToOutputWriter2(expandCommandLinePath(output,module))){
+          if (isManifest) {
+            printManifestTo(module.getInputs(),out);
+          }
  else {
-          printBundleTo(module.getInputs(),out);
+            printBundleTo(module.getInputs(),out);
+          }
         }
-        out.close();
-      }
+       }
     }
  else {
-      Writer out=fileNameToOutputWriter2(expandCommandLinePath(output,null));
-      if (config.module.isEmpty()) {
-        if (isManifest) {
-          printManifestTo(compiler.getInputsInOrder(),out);
+      try (Writer out=fileNameToOutputWriter2(expandCommandLinePath(output,null))){
+        if (config.module.isEmpty()) {
+          if (isManifest) {
+            printManifestTo(compiler.getInputsInOrder(),out);
+          }
+ else {
+            printBundleTo(compiler.getInputsInOrder(),out);
+          }
         }
  else {
-          printBundleTo(compiler.getInputsInOrder(),out);
+          printModuleGraphManifestOrBundleTo(compiler.getDegenerateModuleGraph(),out,isManifest);
         }
       }
- else {
-        printModuleGraphManifestOrBundleTo(compiler.getDegenerateModuleGraph(),out,isManifest);
-      }
-      out.close();
-    }
+     }
   }
 }

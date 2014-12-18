@@ -9,16 +9,16 @@
     if (shouldGenerateMapPerModule(options)) {
       mapOut=fileNameToOutputWriter2(expandSourceMapPath(options,m));
     }
-    Writer writer=fileNameToLegacyOutputWriter(getModuleOutputFileName(m));
-    if (options.sourceMapOutputPath != null) {
-      compiler.getSourceMap().reset();
+    try (Writer writer=fileNameToLegacyOutputWriter(getModuleOutputFileName(m))){
+      if (options.sourceMapOutputPath != null) {
+        compiler.getSourceMap().reset();
+      }
+      writeModuleOutput(writer,m);
+      if (options.sourceMapOutputPath != null) {
+        compiler.getSourceMap().appendTo(mapOut,m.getName());
+      }
     }
-    writeModuleOutput(writer,m);
-    if (options.sourceMapOutputPath != null) {
-      compiler.getSourceMap().appendTo(mapOut,m.getName());
-    }
-    writer.close();
-    if (shouldGenerateMapPerModule(options) && mapOut != null) {
+     if (shouldGenerateMapPerModule(options) && mapOut != null) {
       mapOut.close();
       mapOut=null;
     }

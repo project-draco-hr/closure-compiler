@@ -3,7 +3,7 @@
     return;
   }
   String outName=expandSourceMapPath(options,null);
-  Writer out=fileNameToOutputWriter2(outName);
-  compiler.getSourceMap().appendTo(out,associatedName);
-  out.close();
-}
+  try (Writer out=fileNameToOutputWriter2(outName)){
+    compiler.getSourceMap().appendTo(out,associatedName);
+  }
+ }

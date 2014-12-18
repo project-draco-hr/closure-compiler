@@ -54,10 +54,10 @@
       outputModuleBinaryAndSourceMaps(modules,options);
     }
     if (options.externExportsPath != null) {
-      Writer eeOut=openExternExportsStream(options,config.jsOutputFile);
-      eeOut.append(result.externExport);
-      eeOut.close();
-    }
+      try (Writer eeOut=openExternExportsStream(options,config.jsOutputFile)){
+        eeOut.append(result.externExport);
+      }
+     }
     outputNameMaps();
     outputManifest();
     outputBundle();

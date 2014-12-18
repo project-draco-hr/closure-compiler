@@ -32,12 +32,12 @@
   }
   if (functionInformationMapOutputPath != null) {
     if (compiler.getFunctionalInformationMap() != null) {
-      OutputStream file=filenameToOutputStream(functionInformationMapOutputPath);
-      CodedOutputStream outputStream=CodedOutputStream.newInstance(file);
-      compiler.getFunctionalInformationMap().writeTo(outputStream);
-      outputStream.flush();
-      file.flush();
-      file.close();
-    }
+      try (OutputStream file=filenameToOutputStream(functionInformationMapOutputPath)){
+        CodedOutputStream outputStream=CodedOutputStream.newInstance(file);
+        compiler.getFunctionalInformationMap().writeTo(outputStream);
+        outputStream.flush();
+        file.flush();
+      }
+     }
   }
 }
