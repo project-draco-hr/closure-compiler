@@ -5,9 +5,8 @@
     if (isDeprecatedFunction(n)) {
       deprecatedDepth++;
     }
-    if (methodDepth == 0) {
-      currentClass=getClassOfMethod(n,parent);
-    }
-    methodDepth++;
+    JSType prevClass=getCurrentClass();
+    JSType currentClass=prevClass == null ? getClassOfMethod(n,parent) : prevClass;
+    currentClassStack.addFirst(currentClass == null ? noTypeSentinel : currentClass);
   }
 }
