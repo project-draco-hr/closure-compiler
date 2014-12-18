@@ -9,11 +9,8 @@ case Token.NAME:
           initializedConstants.add(var);
         }
  else         if (n.hasChildren()) {
-          if (initializedConstants.contains(var)) {
+          if (!initializedConstants.add(var)) {
             reportError(t,n,var,name);
-          }
- else {
-            initializedConstants.add(var);
           }
         }
       }
@@ -37,11 +34,8 @@ case Token.ASSIGN_MOD:
     String name=lhs.getString();
     Scope.Var var=t.getScope().getVar(name);
     if (isConstant(var)) {
-      if (initializedConstants.contains(var)) {
+      if (!initializedConstants.add(var)) {
         reportError(t,n,var,name);
-      }
- else {
-        initializedConstants.add(var);
       }
     }
   }

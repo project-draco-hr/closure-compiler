@@ -22,7 +22,7 @@
     return getUnknownType();
   }
   Node mapFnBody=getFunctionBody(mapFunction);
-  Map<String,JSType> newProps=new HashMap<String,JSType>();
+  Map<String,JSType> newProps=new HashMap<>();
   for (  String propName : ownPropsNames) {
     JSType propValue=recType.getSlot(propName).getType();
     NameResolver newNameResolver=new NameResolver(addNewEntry(nameResolver.typeVars,paramValue,propValue),addNewEntry(nameResolver.nameVars,paramKey,propName));
@@ -43,5 +43,5 @@
       putNewPropInPropertyMap(newProps,newPropName,newPropValue);
     }
   }
-  return createRecordType(new ImmutableMap.Builder<String,JSType>().putAll(newProps).build());
+  return createRecordType(ImmutableMap.copyOf(newProps));
 }

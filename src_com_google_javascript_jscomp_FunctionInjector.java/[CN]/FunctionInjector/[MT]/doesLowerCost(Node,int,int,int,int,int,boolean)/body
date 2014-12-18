@@ -1,10 +1,7 @@
 {
   int fnInstanceCount=directInlines + blockInlines - (removable ? 1 : 0);
   if (fnInstanceCount == 0) {
-    if (blockInlines > 0 && costDeltaBlock > 0) {
-      return false;
-    }
-    return true;
+    return blockInlines <= 0 || costDeltaBlock <= 0;
   }
   int costDelta=(directInlines * costDeltaDirect) + (blockInlines * costDeltaBlock);
   int threshold=(callCost - costDelta) / fnInstanceCount;

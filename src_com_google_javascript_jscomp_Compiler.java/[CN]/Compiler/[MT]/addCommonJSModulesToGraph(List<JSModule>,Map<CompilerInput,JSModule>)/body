@@ -1,9 +1,7 @@
 {
   List<CompilerInput> inputs=new ArrayList<>();
   for (  JSModule module : inputModules) {
-    for (    CompilerInput input : module.getInputs()) {
-      inputs.add(input);
-    }
+    inputs.addAll(module.getInputs());
   }
   modules=new ArrayList<>();
   DependencyOptions depOptions=options.dependencyOptions;
@@ -12,7 +10,7 @@
   }
   SortedDependencies<JSModule> sorter=new SortedDependencies<>(modules);
   modules=sorter.getDependenciesOf(modules,true);
-  JSModule firstModule=modules.size() > 0 ? modules.get(0) : null;
+  JSModule firstModule=Iterables.getFirst(modules,null);
   for (int i=1; i < modules.size(); i++) {
     if (!modules.get(i).getDependencies().contains(firstModule)) {
       modules.get(i).addDependency(firstModule);

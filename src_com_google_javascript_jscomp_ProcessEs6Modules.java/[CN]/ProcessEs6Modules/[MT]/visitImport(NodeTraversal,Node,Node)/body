@@ -35,8 +35,7 @@
     }
   }
   Node script=NodeUtil.getEnclosingType(parent,Token.SCRIPT);
-  if (!alreadyRequired.contains(moduleName)) {
-    alreadyRequired.add(moduleName);
+  if (alreadyRequired.add(moduleName)) {
     Node require=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.require"),IR.string(moduleName)));
     require.copyInformationFromForTree(importDecl);
     script.addChildToFront(require);

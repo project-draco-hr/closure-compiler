@@ -12,7 +12,7 @@
     if (scopeNode.isFunction()) {
       JSType parentScopeType=t.getScope().getParentScope().getTypeOfThis();
       if (!parentScopeType.isGlobalThisType()) {
-        key=parentScopeType.toString() + "~" + key;
+        key=parentScopeType + "~" + key;
       }
       key=NodeUtil.getFunctionName(scopeNode) + "=" + key;
     }
@@ -25,11 +25,11 @@
     Node base=getBase(n);
     if (base != null && base.isThis()) {
       if (base.getJSType().isUnknownType()) {
-        key=t.getScope().getParentScope().getTypeOfThis().toString() + "~" + key;
+        key=t.getScope().getParentScope().getTypeOfThis() + "~" + key;
       }
  else {
         if (n.getFirstChild() == null) {
-          key=base.getJSType().toString() + "=" + key;
+          key=base.getJSType() + "=" + key;
         }
  else {
           ObjectType objectType=ObjectType.cast(dereference(n.getFirstChild().getJSType()));
@@ -51,7 +51,7 @@
               break;
             }
           }
-          key=hObjT.toString() + "=" + key;
+          key=hObjT + "=" + key;
         }
       }
     }
