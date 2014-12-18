@@ -1,0 +1,6 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.checkTypes=true;
+  String code=Joiner.on('\n').join("/** @constructor @template T */","function F() {}","","/** @return {?T} */","F.prototype.foo = function() {","  return null;","}","","/** @type {F<string>} */","var f = new F;","/** @type {string} */","var s = f.foo(); // Type error: f.foo() has type {?string}.");
+  test(options,code,TYPE_MISMATCH_WARNING);
+}
