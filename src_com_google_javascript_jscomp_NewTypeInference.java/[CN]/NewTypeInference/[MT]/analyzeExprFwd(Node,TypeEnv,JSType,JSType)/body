@@ -36,9 +36,14 @@ case Token.INC:
 case Token.DEC:
 return analyzeIncDecFwd(expr,inEnv,requiredType);
 case Token.BITNOT:
-case Token.POS:
 case Token.NEG:
 return analyzeUnaryNumFwd(expr,inEnv);
+case Token.POS:
+{
+EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
+pair.type=JSType.NUMBER;
+return pair;
+}
 case Token.TYPEOF:
 {
 EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);

@@ -5,6 +5,10 @@
   EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.NUM_OR_STR);
   JSType lhsType=lhsPair.type;
   JSType rhsType=rhsPair.type;
+  if (lhsType.isString() || rhsType.isString()) {
+    rhsPair.type=JSType.STRING;
+    return rhsPair;
+  }
   if (!commonTypes.isNumStrScalarOrObj(lhsType)) {
     warnInvalidOperand(lhs,expr.getType(),JSType.NUM_OR_STR,lhsType);
   }

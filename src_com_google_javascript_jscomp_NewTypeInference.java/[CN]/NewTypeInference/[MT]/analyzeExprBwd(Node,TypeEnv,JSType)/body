@@ -30,9 +30,14 @@ return analyzeNameBwd(expr,outEnv,requiredType);
 case Token.INC:
 case Token.DEC:
 case Token.BITNOT:
-case Token.POS:
 case Token.NEG:
 return analyzeExprBwd(expr.getFirstChild(),outEnv,JSType.NUMBER);
+case Token.POS:
+{
+EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
+pair.type=JSType.NUMBER;
+return pair;
+}
 case Token.TYPEOF:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
