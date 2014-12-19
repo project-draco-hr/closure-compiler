@@ -3,18 +3,18 @@
   ImmutableSet.Builder<String> reservedNames=ImmutableSet.<String>builder().addAll(externedNames).addAll(quotedNames);
   int numRenamedPropertyNames=0;
   int numSkippedPropertyNames=0;
-  Set<Property> propsByFreq=new TreeSet<>(FREQUENCY_COMPARATOR);
-  for (  Property p : propertyMap.values()) {
-    if (p.skipAmbiguating) {
+  ArrayList<PropertyGraphNode> nodes=new ArrayList<>(propertyMap.size());
+  for (  Property prop : propertyMap.values()) {
+    if (prop.skipAmbiguating) {
       ++numSkippedPropertyNames;
-      reservedNames.add(p.oldName);
+      reservedNames.add(prop.oldName);
     }
  else {
       ++numRenamedPropertyNames;
-      propsByFreq.add(p);
+      nodes.add(new PropertyGraphNode(prop));
     }
   }
-  PropertyGraph graph=new PropertyGraph(propsByFreq);
+  PropertyGraph graph=new PropertyGraph(nodes);
   GraphColoring<Property,Void> coloring=new GreedyGraphColoring<>(graph,FREQUENCY_COMPARATOR);
   int numNewPropertyNames=coloring.color();
   NameGenerator nameGen=new NameGenerator(reservedNames.build(),"",reservedCharacters);
@@ -22,7 +22,7 @@
   for (int i=0; i < numNewPropertyNames; ++i) {
     colorMap[i]=nameGen.generateNextName();
   }
-  for (  PropertyGraphNode node : graph.getNodesWithoutCopy()) {
+  for (  PropertyGraphNode node : graph.getNodes()) {
     node.getValue().newName=colorMap[node.getAnnotation().hashCode()];
     if (renamingMap != null) {
       renamingMap.put(node.getValue().oldName,node.getValue().newName);
