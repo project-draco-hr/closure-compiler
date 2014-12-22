@@ -3,7 +3,11 @@
   if (superCtor == null) {
     return implementedInterfaces;
   }
- else {
-    return Iterables.concat(implementedInterfaces,superCtor.getImplementedInterfaces());
+  ImmutableList.Builder<ObjectType> builder=ImmutableList.builder();
+  builder.addAll(implementedInterfaces);
+  while (superCtor != null) {
+    builder.addAll(superCtor.implementedInterfaces);
+    superCtor=superCtor.getSuperClassConstructor();
   }
+  return builder.build();
 }

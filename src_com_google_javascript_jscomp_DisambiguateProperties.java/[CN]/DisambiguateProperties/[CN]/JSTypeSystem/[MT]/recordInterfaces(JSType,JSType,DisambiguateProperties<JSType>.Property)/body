@@ -1,35 +1,36 @@
 {
   ObjectType objType=ObjectType.cast(type);
-  if (objType != null) {
-    FunctionType constructor;
-    if (objType.isFunctionType()) {
-      constructor=objType.toMaybeFunctionType();
-    }
- else     if (objType.isFunctionPrototypeType()) {
-      constructor=objType.getOwnerFunction();
+  if (objType == null) {
+    return;
+  }
+  FunctionType constructor;
+  if (objType.isFunctionType()) {
+    constructor=objType.toMaybeFunctionType();
+  }
+ else   if (objType.isFunctionPrototypeType()) {
+    constructor=objType.getOwnerFunction();
+  }
+ else {
+    constructor=objType.getConstructor();
+  }
+  if (constructor == null) {
+    return;
+  }
+  Iterable<ObjectType> interfaces=implementedInterfaces.get(constructor);
+  if (interfaces == null) {
+    interfaces=constructor.getImplementedInterfaces();
+    implementedInterfaces.put(constructor,interfaces);
+  }
+  for (  ObjectType itype : interfaces) {
+    JSType top=getTypeWithProperty(p.name,itype);
+    if (top != null) {
+      p.addType(itype,top,relatedType);
     }
  else {
-      constructor=objType.getConstructor();
+      recordInterfaces(itype,relatedType,p);
     }
-    while (constructor != null) {
-      for (      ObjectType itype : constructor.getImplementedInterfaces()) {
-        JSType top=getTypeWithProperty(p.name,itype);
-        if (top != null) {
-          p.addType(itype,top,relatedType);
-        }
- else {
-          recordInterfaces(itype,relatedType,p);
-        }
-        if (p.skipRenaming) {
-          return;
-        }
-      }
-      if (constructor.isInterface() || constructor.isConstructor()) {
-        constructor=constructor.getSuperClassConstructor();
-      }
- else {
-        constructor=null;
-      }
+    if (p.skipRenaming) {
+      return;
     }
   }
 }
