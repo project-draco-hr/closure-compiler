@@ -17,7 +17,12 @@ case Token.PIPE:
 {
 JSType union=JSType.BOTTOM;
 for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-union=JSType.join(union,getTypeFromNodeHelper(child,registry,typeParameters));
+JSType nextType=getTypeFromNodeHelper(child,registry,typeParameters);
+if (nextType.isUnknown()) {
+warn("This union type is equivalent to '?'.",n);
+return JSType.UNKNOWN;
+}
+union=JSType.join(union,nextType);
 }
 return union;
 }
