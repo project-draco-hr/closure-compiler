@@ -34,7 +34,7 @@
         Node ancestorClone=ancestor.cloneTree();
         peepholePasses.process(null,ancestorClone.getChildAtIndex(1));
         Node prop=ancestorClone.getChildAtIndex(1);
-        if (prop.isString() && NodeUtil.isValidPropertyName(prop.getString())) {
+        if (prop.isString() && NodeUtil.isValidPropertyName(LanguageMode.ECMASCRIPT3,prop.getString())) {
           Node target=ancestorClone.getFirstChild();
           Node newGetProp=IR.getprop(target.detachFromParent(),prop.detachFromParent());
           newGetProps.add(newGetProp);
@@ -42,7 +42,7 @@
           ancestor.getParent().replaceChild(ancestor,newGetProp);
         }
  else {
-          if (prop.isString() && !NodeUtil.isValidPropertyName(prop.getString())) {
+          if (prop.isString() && !NodeUtil.isValidPropertyName(LanguageMode.ECMASCRIPT3,prop.getString())) {
             t.report(n,JQUERY_UNABLE_TO_EXPAND_INVALID_NAME_ERROR,prop.getString());
           }
           isValidExpansion=false;
