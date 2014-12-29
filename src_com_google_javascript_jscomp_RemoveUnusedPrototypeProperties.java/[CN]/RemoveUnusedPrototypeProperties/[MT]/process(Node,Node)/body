@@ -1,5 +1,12 @@
 {
   AnalyzePrototypeProperties analyzer=new AnalyzePrototypeProperties(compiler,null,canModifyExterns,anchorUnusedVars);
   analyzer.process(externRoot,root);
-  removeUnusedSymbols(analyzer.getAllNameInfo());
+  for (  NameInfo nameInfo : analyzer.getAllNameInfo()) {
+    if (!nameInfo.isReferenced()) {
+      for (      Symbol declaration : nameInfo.getDeclarations()) {
+        declaration.remove(compiler);
+      }
+      logger.fine("Removed unused prototype property: " + nameInfo.name);
+    }
+  }
 }

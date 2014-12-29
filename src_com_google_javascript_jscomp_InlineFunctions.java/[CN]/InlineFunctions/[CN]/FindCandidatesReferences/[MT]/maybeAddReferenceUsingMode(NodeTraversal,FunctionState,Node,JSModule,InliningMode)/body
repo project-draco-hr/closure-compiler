@@ -2,12 +2,6 @@
   if (enforceMaxSizeAfterInlining && targetSizeAfterInlineExceedsLimit(t,fs)) {
     return false;
   }
-  if (specializationState != null) {
-    Node containingFunction=getContainingFunction(t);
-    if (containingFunction != null && !specializationState.canFixupFunction(containingFunction)) {
-      return false;
-    }
-  }
   Reference candidate=new Reference(callNode,t.getScope(),module,mode);
   CanInlineResult result=injector.canInlineReferenceToFunction(candidate,fs.getFn().getFunctionNode(),fs.getNamesToAlias(),fs.getReferencesThis(),fs.hasInnerFunctions());
   if (result != CanInlineResult.NO) {
