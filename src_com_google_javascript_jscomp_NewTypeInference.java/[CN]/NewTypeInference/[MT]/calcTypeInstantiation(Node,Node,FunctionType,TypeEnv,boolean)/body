@@ -8,11 +8,7 @@
     JSType unifTarget=funType.getFormalType(i);
     JSType unifSource=pair.type;
     if (!unifTarget.unifyWith(unifSource,typeParameters,typeMultimap)) {
-      HashMap<String,JSType> tmpTypeMap=new HashMap<>();
-      for (      String typeParam : typeParameters) {
-        tmpTypeMap.put(typeParam,JSType.UNKNOWN);
-      }
-      JSType targetAfterInstantiation=unifTarget.substituteGenerics(tmpTypeMap);
+      JSType targetAfterInstantiation=unifTarget.substituteGenericsWithUnknown();
       if (!unifTarget.equals(targetAfterInstantiation) && unifSource.isSubtypeOf(targetAfterInstantiation)) {
         warnings.add(JSError.make(arg,FAILED_TO_UNIFY,unifTarget.toString(),unifSource.toString()));
       }
