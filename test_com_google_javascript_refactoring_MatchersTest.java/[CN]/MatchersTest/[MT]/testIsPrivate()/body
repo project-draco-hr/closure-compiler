@@ -1,0 +1,13 @@
+{
+  String externs="";
+  String input="" + "/** @private */\n" + "var foo = 3;";
+  Compiler compiler=getCompiler(externs,input);
+  Node root=compileToScriptRoot(compiler);
+  Node node=root.getFirstChild();
+  assertTrue(Matchers.isPrivate().matches(node,new NodeMetadata(compiler)));
+  input="" + "/** @package */\n" + "var foo = 3;";
+  compiler=getCompiler(externs,input);
+  root=compileToScriptRoot(compiler);
+  node=root.getFirstChild();
+  assertFalse(Matchers.isPrivate().matches(node,new NodeMetadata(compiler)));
+}

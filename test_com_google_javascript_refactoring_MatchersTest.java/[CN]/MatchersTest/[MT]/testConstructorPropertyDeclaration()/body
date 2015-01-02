@@ -1,0 +1,10 @@
+{
+  String externs="";
+  String input="" + "/** @constructor */\n" + "function MyClass() {\n"+ "  this.foo = 5;\n"+ "  var bar = 10;\n"+ "}";
+  Compiler compiler=getCompiler(externs,input);
+  Node root=compileToScriptRoot(compiler);
+  Node node=root.getFirstChild().getLastChild().getFirstChild().getFirstChild();
+  assertTrue(Matchers.constructorPropertyDeclaration().matches(node,new NodeMetadata(compiler)));
+  node=root.getFirstChild().getLastChild().getLastChild().getFirstChild();
+  assertFalse(Matchers.constructorPropertyDeclaration().matches(node,new NodeMetadata(compiler)));
+}
