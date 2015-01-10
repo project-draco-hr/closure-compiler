@@ -1,6 +1,11 @@
 {
+  Node propAccessNode=receiver.getParent();
   QualifiedName qname=new QualifiedName(pname);
-  EnvTypePair pair=analyzeExprBwd(receiver,outEnv,pickReqObjType(receiver.getParent()).withLoose().withProperty(qname,requiredType));
+  JSType reqObjType=pickReqObjType(propAccessNode).withLoose();
+  if (!NodeUtil.isPropertyTest(compiler,propAccessNode)) {
+    reqObjType=reqObjType.withProperty(qname,requiredType);
+  }
+  EnvTypePair pair=analyzeExprBwd(receiver,outEnv,reqObjType);
   JSType receiverType=pair.type;
   JSType propAccessType=receiverType.mayHaveProp(qname) ? receiverType.getProp(qname) : requiredType;
   pair.type=propAccessType;

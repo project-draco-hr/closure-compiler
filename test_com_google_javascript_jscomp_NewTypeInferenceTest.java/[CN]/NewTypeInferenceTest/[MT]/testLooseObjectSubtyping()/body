@@ -5,4 +5,7 @@
   typeCheck("/** @constructor */ function Foo() { /** @type {number} */ this.prop = 1; }\n" + "function g(obj) { var /** string */ s = obj.prop; return obj; }\n" + "var /** !Foo */ x = g({ prop: '' });",NewTypeInference.MISTYPED_ASSIGN_RHS);
   checkNoWarnings("function f(obj) { obj.a.num - 5; }\n" + "function g(obj) {\n" + "  obj.a.str < 'str';\n"+ "  f(obj);\n"+ "}");
   checkNoWarnings("function f(/** Array<?> */ x) {}\n" + "function g(obj) {\n" + "  obj.x = 123;\n"+ "  f(obj);\n"+ "}");
+  checkNoWarnings("function f(g) {\n" + "  if (g.randomName) {\n" + "  } else {\n"+ "    return g();\n"+ "  }\n"+ "}");
+  checkNoWarnings("function f(x) {\n" + "  if (x.a) {} else {}\n" + "}\n"+ "f({ b: 123 }); ");
+  checkNoWarnings("function f(x) {\n" + "  if (x.randomName) {\n" + "  } else {\n"+ "    return x();\n"+ "  }\n"+ "}\n"+ "f({ abc: 123 }); ");
 }
