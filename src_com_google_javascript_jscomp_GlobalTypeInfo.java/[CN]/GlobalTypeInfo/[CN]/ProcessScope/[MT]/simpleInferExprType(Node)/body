@@ -69,11 +69,15 @@ return simpleInferExprType(n.getLastChild());
 case Token.CALL:
 case Token.NEW:
 {
-JSType ratorType=simpleInferExprType(n.getFirstChild());
-if (ratorType == null) {
+Node callee=n.getFirstChild();
+if (callee.matchesQualifiedName("goog.getMsg")) {
+return JSType.STRING;
+}
+JSType calleeType=simpleInferExprType(callee);
+if (calleeType == null) {
 return null;
 }
-FunctionType funType=ratorType.getFunType();
+FunctionType funType=calleeType.getFunType();
 if (funType == null) {
 return null;
 }
