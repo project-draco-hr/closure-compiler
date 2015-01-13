@@ -1,4 +1,4 @@
 {
-  typeCheck("/**\n" + " * @constructor\n" + " * @template T, U\n"+ " * @param {T} x\n"+ " */\n"+ "function Foo(x) {}\n"+ "/**\n"+ " * @template T\n"+ " * @param {!Foo<T>} x\n"+ " */\n"+ "function fn(x) {}\n"+ "fn(new Foo('asdf'));",JSTypeCreatorFromJSDoc.INVALID_GENERICS_INSTANTIATION);
-  typeCheck("/**\n" + " * @constructor\n" + " * @template S, T\n"+ " * @param {S} x\n"+ " */\n"+ "function Foo(x) {\n"+ "  /** @type {S} */ this.prop = x;\n"+ "}\n"+ "/**\n"+ " * @template T\n"+ " * @param {!Foo<T>} x\n"+ " * @return {T}\n"+ " */\n"+ "function fn(x) { return x.prop; }\n"+ "fn(new Foo('asdf')) - 5;",ImmutableList.of(JSTypeCreatorFromJSDoc.INVALID_GENERICS_INSTANTIATION,NewTypeInference.INVALID_OPERAND_TYPE));
+  checkNoWarnings("/**\n" + " * @constructor\n" + " * @template T, U\n"+ " * @param {T} x\n"+ " */\n"+ "function Foo(x) {}\n"+ "/**\n"+ " * @template T\n"+ " * @param {!Foo<T>} x\n"+ " */\n"+ "function fn(x) {}\n"+ "fn(new Foo('asdf'));");
+  typeCheck("/**\n" + " * @constructor\n" + " * @template S, T\n"+ " * @param {S} x\n"+ " */\n"+ "function Foo(x) {\n"+ "  /** @type {S} */ this.prop = x;\n"+ "}\n"+ "/**\n"+ " * @template T\n"+ " * @param {!Foo<T>} x\n"+ " * @return {T}\n"+ " */\n"+ "function fn(x) { return x.prop; }\n"+ "fn(new Foo('asdf')) - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
 }

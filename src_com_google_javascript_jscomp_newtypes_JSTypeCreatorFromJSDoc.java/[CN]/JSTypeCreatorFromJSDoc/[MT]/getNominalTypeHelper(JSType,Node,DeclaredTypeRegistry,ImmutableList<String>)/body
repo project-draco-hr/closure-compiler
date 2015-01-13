@@ -16,9 +16,8 @@
   int typeArgsSize=typeArguments.size();
   int typeParamsSize=typeParameters.size();
   if (typeArgsSize != typeParamsSize) {
-    String nominalTypeName=uninstantiated.getName();
-    if (!nominalTypeName.equals("Object")) {
-      warnings.add(JSError.make(n,INVALID_GENERICS_INSTANTIATION,nominalTypeName,String.valueOf(typeParamsSize),String.valueOf(typeArgsSize)));
+    if (typeArgsSize > typeParamsSize) {
+      warnings.add(JSError.make(n,INVALID_GENERICS_INSTANTIATION,uninstantiated.getName(),String.valueOf(typeParamsSize),String.valueOf(typeArgsSize)));
     }
     return JSType.join(JSType.NULL,JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated.instantiateGenerics(fixLengthOfTypeList(typeParameters.size(),typeArguments)))));
   }
