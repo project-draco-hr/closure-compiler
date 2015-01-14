@@ -10,8 +10,15 @@
       break;
     }
     ParseTree parameter;
+    ParseTree typeAnnotation=null;
+    SourceRange typeLocation=null;
     if (peekId()) {
       parameter=parseIdentifierExpression();
+      if (peek(TokenType.COLON)) {
+        SourcePosition typeStart=getTreeStartLocation();
+        typeAnnotation=parseTypeAnnotation();
+        typeLocation=getTreeLocation(typeStart);
+      }
     }
  else     if (peek(TokenType.OPEN_SQUARE)) {
       parameter=parseArrayPattern(PatternKind.INITIALIZER);
@@ -23,6 +30,9 @@
       eat(TokenType.EQUAL);
       ParseTree defaultValue=parseAssignmentExpression();
       parameter=new DefaultParameterTree(getTreeLocation(start),parameter,defaultValue);
+    }
+    if (typeAnnotation != null) {
+      parameter=new TypedParameterTree(typeLocation,parameter,typeAnnotation);
     }
     result.add(parameter);
     if (!peek(TokenType.CLOSE_PAREN)) {

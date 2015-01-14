@@ -43,6 +43,15 @@
     node.addChildToBack(emptyName);
   }
   node.addChildToBack(transform(functionTree.formalParameterList));
+  if (functionTree.returnType != null) {
+    JSTypeExpression returnType=convertTypeTree(functionTree.returnType);
+    JSDocInfoBuilder jsdocBuilder=JSDocInfoBuilder.maybeCopyFrom(node.getJSDocInfo());
+    if (!jsdocBuilder.recordReturnType(returnType)) {
+      reportJsDocTypeSyntaxConflict(functionTree.returnType);
+    }
+    JSDocInfo info=jsdocBuilder.build(node);
+    node.setJSDocInfo(info);
+  }
   Node bodyNode=transform(functionTree.functionBody);
   if (!isArrow && !bodyNode.isBlock()) {
     Preconditions.checkState(config.isIdeMode);

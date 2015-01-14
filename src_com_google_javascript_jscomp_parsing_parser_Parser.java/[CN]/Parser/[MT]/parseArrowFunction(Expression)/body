@@ -9,6 +9,10 @@
  else {
     formalParameterList=parseFormalParameterList();
   }
+  ParseTree returnType=null;
+  if (peek(TokenType.COLON)) {
+    returnType=parseTypeAnnotation();
+  }
   if (peekImplicitSemiColon()) {
     reportError("No newline allowed before '=>'");
   }
@@ -20,7 +24,7 @@
  else {
     functionBody=parseAssignment(expressionIn);
   }
-  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),null,false,false,FunctionDeclarationTree.Kind.ARROW,formalParameterList,functionBody);
+  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),null,false,false,FunctionDeclarationTree.Kind.ARROW,formalParameterList,returnType,functionBody);
   inGeneratorContext.removeLast();
   return declaration;
 }

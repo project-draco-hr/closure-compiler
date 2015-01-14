@@ -1,11 +1,15 @@
 {
   SourcePosition start=getTreeStartLocation();
   ParseTree lvalue;
+  ParseTree typeAnnotation=null;
   if (peekPatternStart()) {
     lvalue=parsePattern(PatternKind.INITIALIZER);
   }
  else {
     lvalue=parseIdentifierExpression();
+    if (peek(TokenType.COLON)) {
+      typeAnnotation=parseTypeAnnotation();
+    }
   }
   ParseTree initializer=null;
   if (peek(TokenType.EQUAL)) {
@@ -19,5 +23,5 @@
       reportError("destructuring must have an initializer");
     }
   }
-  return new VariableDeclarationTree(getTreeLocation(start),lvalue,initializer);
+  return new VariableDeclarationTree(getTreeLocation(start),lvalue,typeAnnotation,initializer);
 }

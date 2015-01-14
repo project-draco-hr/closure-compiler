@@ -1,8 +1,12 @@
 {
   inGeneratorContext.addLast(isGenerator);
   FormalParameterListTree formalParameterList=parseFormalParameterList();
+  ParseTree returnType=null;
+  if (peek(TokenType.COLON)) {
+    returnType=parseTypeAnnotation();
+  }
   BlockTree functionBody=parseFunctionBody();
-  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),name,isStatic,isGenerator,kind,formalParameterList,functionBody);
+  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),name,isStatic,isGenerator,kind,formalParameterList,returnType,functionBody);
   inGeneratorContext.removeLast();
   return declaration;
 }
