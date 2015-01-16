@@ -20,13 +20,15 @@
     builder.addNominalType(nominalType.instantiateGenerics(typeMap));
   }
   if (receiverType != null) {
-    builder.addReceiverType(receiverType.instantiateGenerics(typeMap));
+    if (receiverType.isUninstantiatedGenericType()) {
+      builder.addReceiverType(receiverType);
+    }
+ else {
+      builder.addReceiverType(receiverType.instantiateGenerics(typeMap));
+    }
   }
   for (  String var : outerVarPreconditions.keySet()) {
     builder.addOuterVarPrecondition(var,outerVarPreconditions.get(var));
-  }
-  if (keepTypeParams) {
-    builder.addTypeParameters(this.typeParameters);
   }
   return builder.buildFunction();
 }
