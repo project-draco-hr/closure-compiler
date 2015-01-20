@@ -1,4 +1,20 @@
 {
-  assertEquals(expectedWithoutBreakAtEnd,parsePrint(js,false,false,false,30));
-  assertEquals(expectedWithBreakAtEnd,parsePrint(js,false,false,true,30));
+  assertEquals(expectedWithoutBreakAtEnd,parsePrint(js,newCompilerOptions(new CompilerOptionBuilder(){
+    @Override void setOptions(    CompilerOptions options){
+      options.setPrettyPrint(false);
+      options.setLineBreak(false);
+      options.setLineLengthThreshold(30);
+      options.setPreferLineBreakAtEndOfFile(false);
+    }
+  }
+)));
+  assertEquals(expectedWithBreakAtEnd,parsePrint(js,newCompilerOptions(new CompilerOptionBuilder(){
+    @Override void setOptions(    CompilerOptions options){
+      options.setPrettyPrint(false);
+      options.setLineBreak(false);
+      options.setLineLengthThreshold(30);
+      options.setPreferLineBreakAtEndOfFile(true);
+    }
+  }
+)));
 }
