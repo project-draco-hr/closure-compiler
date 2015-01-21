@@ -18,14 +18,7 @@
   }
 ;
   FixedPointGraphTraversal.newTraversal(edgeCallback).computeFixedPoint(callgraph.getForwardDirectedGraph());
-  assertEquals(7,reachableFunctions.size());
-  assertTrue(reachableFunctions.contains(callgraph.getUniqueFunctionWithName("B")));
-  assertTrue(reachableFunctions.contains(callgraph.getUniqueFunctionWithName("C")));
-  assertTrue(reachableFunctions.contains(callgraph.getUniqueFunctionWithName("D")));
-  assertTrue(reachableFunctions.contains(callgraph.getUniqueFunctionWithName("X")));
-  assertTrue(reachableFunctions.contains(callgraph.getUniqueFunctionWithName("Y")));
-  assertTrue(reachableFunctions.contains(callgraph.getUniqueFunctionWithName("Z")));
-  assertTrue(reachableFunctions.contains(callgraph.getMainFunction()));
-  assertFalse(reachableFunctions.contains(callgraph.getUniqueFunctionWithName("A")));
-  assertFalse(reachableFunctions.contains(callgraph.getUniqueFunctionWithName("E")));
+  assertThat(reachableFunctions).containsExactly(callgraph.getUniqueFunctionWithName("B"),callgraph.getUniqueFunctionWithName("C"),callgraph.getUniqueFunctionWithName("D"),callgraph.getUniqueFunctionWithName("X"),callgraph.getUniqueFunctionWithName("Y"),callgraph.getUniqueFunctionWithName("Z"),callgraph.getMainFunction());
+  assertThat(reachableFunctions).doesNotContain(callgraph.getUniqueFunctionWithName("A"));
+  assertThat(reachableFunctions).doesNotContain(callgraph.getUniqueFunctionWithName("E"));
 }

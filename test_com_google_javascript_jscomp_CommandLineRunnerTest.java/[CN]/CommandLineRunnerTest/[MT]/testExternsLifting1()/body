@@ -1,14 +1,14 @@
 {
   String code="/** @externs */ function f() {}";
   test(new String[]{code},new String[]{});
-  assertEquals(2,lastCompiler.getExternsForTesting().size());
+  assertThat(lastCompiler.getExternsForTesting()).hasSize(2);
   CompilerInput extern=lastCompiler.getExternsForTesting().get(1);
   assertNull(extern.getModule());
   assertTrue(extern.isExtern());
   assertEquals(code,extern.getCode());
-  assertEquals(1,lastCompiler.getInputsForTesting().size());
+  assertThat(lastCompiler.getInputsForTesting()).hasSize(1);
   CompilerInput input=lastCompiler.getInputsForTesting().get(0);
   assertNotNull(input.getModule());
   assertFalse(input.isExtern());
-  assertEquals("",input.getCode());
+  assertThat(input.getCode()).isEmpty();
 }

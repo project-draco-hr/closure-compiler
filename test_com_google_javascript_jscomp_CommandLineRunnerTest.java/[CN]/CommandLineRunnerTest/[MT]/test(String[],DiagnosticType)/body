@@ -1,15 +1,15 @@
 {
   Compiler compiler=compile(original);
   assertEquals("Expected exactly one warning or error " + "\nErrors: \n" + Joiner.on("\n").join(compiler.getErrors()) + "\nWarnings: \n"+ Joiner.on("\n").join(compiler.getWarnings()),1,compiler.getErrors().length + compiler.getWarnings().length);
-  assertFalse(exitCodes.isEmpty());
+  assertThat(exitCodes).isNotEmpty();
   int lastExitCode=exitCodes.get(exitCodes.size() - 1);
   if (compiler.getErrors().length > 0) {
-    assertEquals(1,compiler.getErrors().length);
+    assertThat(compiler.getErrors()).hasLength(1);
     assertEquals(warning,compiler.getErrors()[0].getType());
     assertEquals(1,lastExitCode);
   }
  else {
-    assertEquals(1,compiler.getWarnings().length);
+    assertThat(compiler.getWarnings()).hasLength(1);
     assertEquals(warning,compiler.getWarnings()[0].getType());
     assertEquals(0,lastExitCode);
   }

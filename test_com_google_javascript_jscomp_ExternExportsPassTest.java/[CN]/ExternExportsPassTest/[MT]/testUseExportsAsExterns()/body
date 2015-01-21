@@ -2,10 +2,10 @@
   String librarySource="/**\n" + " * @param {number} a\n" + " * @constructor\n"+ " */\n"+ "var InternalName = function(a) {"+ "};"+ "goog.exportSymbol('ExternalName', InternalName)";
   String clientSource="var a = new ExternalName(6);\n" + "/**\n" + " * @param {ExternalName} x\n"+ " */\n"+ "var b = function(x) {};";
   Result libraryCompileResult=compileAndExportExterns(librarySource);
-  assertEquals(0,libraryCompileResult.warnings.length);
-  assertEquals(0,libraryCompileResult.errors.length);
+  assertThat(libraryCompileResult.warnings).isEmpty();
+  assertThat(libraryCompileResult.errors).isEmpty();
   String generatedExterns=libraryCompileResult.externExport;
   Result clientCompileResult=compileAndExportExterns(clientSource,generatedExterns);
-  assertEquals(0,clientCompileResult.warnings.length);
-  assertEquals(0,clientCompileResult.errors.length);
+  assertThat(clientCompileResult.warnings).isEmpty();
+  assertThat(clientCompileResult.errors).isEmpty();
 }

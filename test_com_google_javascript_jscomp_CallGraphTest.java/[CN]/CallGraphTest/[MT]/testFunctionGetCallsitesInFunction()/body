@@ -3,13 +3,10 @@
   CallGraph callgraph=compileAndRunForward(source);
   CallGraph.Function mainFunction=callgraph.getMainFunction();
   List<String> callsiteNamesInMain=getCallsiteTargetNames(mainFunction.getCallsitesInFunction());
-  assertEquals(2,callsiteNamesInMain.size());
-  assertTrue(callsiteNamesInMain.contains("A"));
-  assertTrue(callsiteNamesInMain.contains("B"));
+  assertThat(callsiteNamesInMain).containsExactly("A","B");
   CallGraph.Function functionA=callgraph.getUniqueFunctionWithName("A");
-  assertEquals(0,functionA.getCallsitesInFunction().size());
+  assertThat(functionA.getCallsitesInFunction()).isEmpty();
   CallGraph.Function functionB=callgraph.getUniqueFunctionWithName("B");
   List<String> callsiteNamesInB=getCallsiteTargetNames(functionB.getCallsitesInFunction());
-  assertEquals(1,callsiteNamesInB.size());
-  assertTrue(callsiteNamesInMain.contains("A"));
+  assertThat(callsiteNamesInB).containsExactly("A");
 }

@@ -3,8 +3,8 @@
   SourceMapConsumerV3 consumer=new SourceMapConsumerV3();
   consumer.parse(sourceMap);
   Map<String,Object> exts=consumer.getExtensions();
-  assertEquals(2,exts.size());
-  assertFalse(exts.containsKey("org_int"));
+  assertThat(exts).hasSize(2);
+  assertThat(exts).doesNotContainKey("org_int");
   assertEquals(2,((JsonElement)exts.get("x_org_int")).getAsInt());
   assertEquals(0,((JsonArray)exts.get("x_org_array")).size());
 }

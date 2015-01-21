@@ -5,14 +5,14 @@
   TransformationHandlerSpy spy=new TransformationHandlerSpy();
   transformationHandler=spy;
   test(fullJsCode,expectedJsCode);
-  assertTrue(spy.observedPositions.containsKey("testcode"));
+  assertThat(spy.observedPositions).containsKey("testcode");
   List<SourcePosition<AliasTransformation>> positions=spy.observedPositions.get("testcode");
-  assertEquals(2,positions.size());
+  assertThat(positions).hasSize(2);
   verifyAliasTransformationPosition(1,0,6,0,positions.get(0));
   verifyAliasTransformationPosition(8,0,11,4,positions.get(1));
-  assertEquals(2,spy.constructedAliases.size());
+  assertThat(spy.constructedAliases).hasSize(2);
   AliasSpy aliasSpy=(AliasSpy)spy.constructedAliases.get(0);
-  assertEquals("goog",aliasSpy.observedDefinitions.get("g"));
+  assertThat(aliasSpy.observedDefinitions).containsEntry("g","goog");
   aliasSpy=(AliasSpy)spy.constructedAliases.get(1);
-  assertEquals("namespace.Zoo",aliasSpy.observedDefinitions.get("z"));
+  assertThat(aliasSpy.observedDefinitions).containsEntry("z","namespace.Zoo");
 }
