@@ -1,18 +1,18 @@
 {
   CompilerOptions options=createCompilerOptions();
   options.setWarningLevel(DiagnosticGroups.CHECK_USELESS_CODE,CheckLevel.OFF);
-  options.foldConstants=false;
-  options.coalesceVariableNames=true;
+  options.setFoldConstants(false);
+  options.setCoalesceVariableNames(true);
   String code="function f(a) {" + "  if (a) {" + "    return a;"+ "  } else {"+ "    var b = a;"+ "    return b;"+ "  }"+ "  return a;"+ "}";
   String expected="function f(a) {" + "  if (a) {" + "    return a;"+ "  } else {"+ "    a = a;"+ "    return a;"+ "  }"+ "  return a;"+ "}";
   test(options,code,expected);
-  options.foldConstants=true;
-  options.coalesceVariableNames=false;
+  options.setFoldConstants(true);
+  options.setCoalesceVariableNames(false);
   code="function f(a) {" + "  if (a) {" + "    return a;"+ "  } else {"+ "    var b = a;"+ "    return b;"+ "  }"+ "  return a;"+ "}";
   expected="function f(a) {" + "  if (!a) {" + "    var b = a;"+ "    return b;"+ "  }"+ "  return a;"+ "}";
   test(options,code,expected);
-  options.foldConstants=true;
-  options.coalesceVariableNames=true;
+  options.setFoldConstants(true);
+  options.setCoalesceVariableNames(true);
   expected="function f(a) {" + "  return a;" + "}";
   test(options,code,expected);
 }

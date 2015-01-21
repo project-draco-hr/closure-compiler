@@ -1,7 +1,7 @@
 {
   CompilerOptions options=createCompilerOptions();
-  options.checkTypes=true;
-  options.ambiguateProperties=true;
-  options.propertyRenaming=PropertyRenamingPolicy.ALL_UNQUOTED;
+  options.setCheckTypes(true);
+  options.setAmbiguateProperties(true);
+  options.setPropertyRenaming(PropertyRenamingPolicy.ALL_UNQUOTED);
   test(options,"function someTest() {\n" + "  /** @constructor */\n" + "  function Foo() { this.instProp = 3; }\n"+ "  Foo.prototype.protoProp = function(a, b) {};\n"+ "  /** @constructor\n @extends Foo */\n"+ "  function Bar() {}\n"+ "  goog.inherits(Bar, Foo);\n"+ "  var o = new Bar();\n"+ "  o.protoProp(o.protoProp, o.instProp);\n"+ "}","function someTest() {\n" + "  function Foo() { this.b = 3; }\n" + "  function Bar() {}\n"+ "  Foo.prototype.a = function(a, b) {};\n"+ "  goog.c(Bar, Foo);\n"+ "  var o = new Bar();\n"+ "  o.a(o.a, o.b);\n"+ "}");
 }

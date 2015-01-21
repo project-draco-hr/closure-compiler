@@ -3,11 +3,11 @@
   CompilerOptions options=new CompilerOptions();
   options.externExportsPath="externs.js";
   options.declaredGlobalExternsOnWindow=false;
-  options.ideMode=false;
-  options.checkSymbols=true;
-  options.checkTypes=runCheckTypes;
-  List<SourceFile> inputs=Lists.newArrayList(SourceFile.fromCode("testcode","var goog = {};" + "goog.exportSymbol = function(a, b) {}; " + "goog.exportProperty = function(a, b, c) {}; "+ js));
-  List<SourceFile> externFiles=Lists.newArrayList(SourceFile.fromCode("externs",externs));
+  options.setIdeMode(false);
+  options.setCheckSymbols(true);
+  options.setCheckTypes(runCheckTypes);
+  List<SourceFile> inputs=ImmutableList.of(SourceFile.fromCode("testcode","var goog = {};" + "goog.exportSymbol = function(a, b) {}; " + "goog.exportProperty = function(a, b, c) {}; "+ js));
+  List<SourceFile> externFiles=ImmutableList.of(SourceFile.fromCode("externs",externs));
   Result result=compiler.compile(externFiles,inputs,options);
   if (!result.success) {
     String msg="Errors:";

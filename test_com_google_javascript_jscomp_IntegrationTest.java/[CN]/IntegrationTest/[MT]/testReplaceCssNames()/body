@@ -1,7 +1,7 @@
 {
   CompilerOptions options=createCompilerOptions();
-  options.closurePass=true;
-  options.gatherCssNames=true;
+  options.setClosurePass(true);
+  options.setGatherCssNames(true);
   test(options,"/** @define {boolean} */\n" + "var COMPILED = false;\n" + "goog.setCssNameMapping({'foo':'bar'});\n"+ "function getCss() {\n"+ "  return goog.getCssName('foo');\n"+ "}","var COMPILED = true;\n" + "function getCss() {\n" + "  return \"bar\";"+ "}");
   assertEquals(ImmutableMap.of("foo",new Integer(1)),lastCompiler.getPassConfig().getIntermediateState().cssNames);
 }
