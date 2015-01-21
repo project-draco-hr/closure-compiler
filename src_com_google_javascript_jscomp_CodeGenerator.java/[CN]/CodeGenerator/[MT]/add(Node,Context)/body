@@ -90,12 +90,9 @@ Preconditions.checkState(!n.getString().isEmpty());
 addIdentifier(n.getString());
 break;
 case Token.NAME:
-if (first == null || first.isEmpty()) {
 addIdentifier(n.getString());
-}
- else {
+if (first != null && !first.isEmpty()) {
 Preconditions.checkState(childCount == 1);
-addIdentifier(n.getString());
 cc.addOp("=",true);
 if (first.isComma()) {
 addExpr(first,NodeUtil.precedence(Token.ASSIGN),Context.OTHER);
@@ -120,7 +117,7 @@ add(")");
 break;
 case Token.DEFAULT_VALUE:
 add(first);
-add("=");
+cc.addOp("=",true);
 add(first.getNext());
 break;
 case Token.COMMA:
@@ -185,7 +182,8 @@ throw new Error("Unexpected Node subclass.");
 }
 Preconditions.checkState(childCount == 3);
 boolean isArrow=n.isArrowFunction();
-boolean funcNeedsParens=(context == Context.START_OF_EXPR) || isArrow;
+boolean notSingleExpr=n.getParent() == null || !n.getParent().isExprResult();
+boolean funcNeedsParens=(context == Context.START_OF_EXPR) && (!isArrow || notSingleExpr);
 if (funcNeedsParens) {
 add("(");
 }
@@ -198,7 +196,7 @@ add("*");
 add(first);
 add(first.getNext());
 if (isArrow) {
-add("=>");
+cc.addOp("=>",true);
 }
 add(last,Context.PRESERVE_BLOCK);
 cc.endFunction(context == Context.STATEMENT);
