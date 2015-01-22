@@ -7,7 +7,7 @@
       Base64VLQ.encode(sb,i);
       ci.set(sb);
       int result=Base64VLQ.decode(ci);
-      assertEquals(i,result);
+      assertThat(result).isEqualTo(i);
       sb.setLength(0);
     }
   }
@@ -15,5 +15,5 @@
     throw new RuntimeException("failed.",e);
   }
   long end=System.currentTimeMillis();
-  assertTrue("too slow",end - start < 1000);
+  assertThat(end - start).named("encode+decode time").isLessThan(1000L);
 }

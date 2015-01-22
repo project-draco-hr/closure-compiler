@@ -2,6 +2,6 @@
   Set<String> seen=Sets.newHashSet();
   Collection<String> deps=resolver.getDependencies("goog.require('f');goog.require('c');",seen,false);
   Collection<String> depsLater=resolver.getDependencies("goog.require('g');goog.require('c');",seen,false);
-  assertEquals("b.js,a.js,c.js,f.js",Joiner.on(",").useForNull("null").join(deps));
-  assertEquals("g.js",Joiner.on(",").useForNull("null").join(depsLater));
+  assertThat(Joiner.on(",").useForNull("null").join(deps)).isEqualTo("b.js,a.js,c.js,f.js");
+  assertThat(Joiner.on(",").useForNull("null").join(depsLater)).isEqualTo("g.js");
 }

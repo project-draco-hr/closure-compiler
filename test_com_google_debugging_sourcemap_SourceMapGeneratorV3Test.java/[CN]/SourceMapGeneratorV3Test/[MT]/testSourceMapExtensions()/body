@@ -8,12 +8,12 @@
   mapper.removeExtension("x_google_foo");
   StringBuilder out=new StringBuilder();
   mapper.appendTo(out,"out.js");
-  assertTrue(mapper.hasExtension("x_google_test"));
+  assertThat(mapper.hasExtension("x_google_test")).isTrue();
   JsonObject sourceMap=parseJsonObject(out.toString());
-  assertFalse(sourceMap.has("x_google_foo"));
-  assertFalse(sourceMap.has("google_test"));
-  assertEquals(1,sourceMap.get("x_google_test").getAsJsonObject().get("number").getAsInt());
-  assertEquals(0,sourceMap.get("x_google_array").getAsJsonArray().size());
-  assertEquals(2,sourceMap.get("x_google_int").getAsInt());
-  assertEquals("Some text",sourceMap.get("x_google_str").getAsString());
+  assertThat(sourceMap.has("x_google_foo")).isFalse();
+  assertThat(sourceMap.has("google_test")).isFalse();
+  assertThat(sourceMap.get("x_google_test").getAsJsonObject().get("number").getAsInt()).isEqualTo(1);
+  assertThat(sourceMap.get("x_google_array").getAsJsonArray().size()).isEqualTo(0);
+  assertThat(sourceMap.get("x_google_int").getAsInt()).isEqualTo(2);
+  assertThat(sourceMap.get("x_google_str").getAsString()).isEqualTo("Some text");
 }

@@ -3,16 +3,16 @@
   StringBuilder out=new StringBuilder();
   mapper.appendTo(out,"out.js");
   JsonObject mapping=parseJsonObject(out.toString());
-  assertEquals(3,mapping.get("version").getAsInt());
-  assertFalse(mapping.has("sourceRoot"));
+  assertThat(mapping.get("version").getAsInt()).isEqualTo(3);
+  assertThat(mapping.has("sourceRoot")).isFalse();
   out=new StringBuilder();
   mapper.setSourceRoot("");
   mapper.appendTo(out,"out2.js");
   mapping=parseJsonObject(out.toString());
-  assertFalse(mapping.has("sourceRoot"));
+  assertThat(mapping.has("sourceRoot")).isFalse();
   out=new StringBuilder();
   mapper.setSourceRoot("http://url/path");
   mapper.appendTo(out,"out3.js");
   mapping=parseJsonObject(out.toString());
-  assertEquals("http://url/path",mapping.get("sourceRoot").getAsString());
+  assertThat(mapping.get("sourceRoot").getAsString()).isEqualTo("http://url/path");
 }

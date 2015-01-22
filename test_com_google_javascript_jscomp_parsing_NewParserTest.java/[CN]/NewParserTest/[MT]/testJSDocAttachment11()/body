@@ -1,10 +1,10 @@
 {
   Node varNode=parse("/** @type {{x : number, 'y' : string, z}} */var a;").getFirstChild();
-  assertEquals(Token.VAR,varNode.getType());
+  assertThat(varNode.getType()).isEqualTo(Token.VAR);
   JSDocInfo info=varNode.getJSDocInfo();
-  assertNotNull(info);
+  assertThat(info).isNotNull();
   assertTypeEquals(createRecordTypeBuilder().addProperty("x",NUMBER_TYPE,null).addProperty("y",STRING_TYPE,null).addProperty("z",UNKNOWN_TYPE,null).build(),info.getType());
   Node nameNode=varNode.getFirstChild();
-  assertEquals(Token.NAME,nameNode.getType());
-  assertNull(nameNode.getJSDocInfo());
+  assertThat(nameNode.getType()).isEqualTo(Token.NAME);
+  assertThat(nameNode.getJSDocInfo()).isNull();
 }

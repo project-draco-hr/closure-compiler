@@ -1,9 +1,9 @@
 {
   Node functionNode=parseWarning("var a = /** @param {number} index */5;" + "/** @return boolean */function f(index){}",MISPLACED_FUNCTION_ANNOTATION).getFirstChild().getNext();
-  assertEquals(Token.FUNCTION,functionNode.getType());
+  assertThat(functionNode.getType()).isEqualTo(Token.FUNCTION);
   JSDocInfo info=functionNode.getJSDocInfo();
-  assertNotNull(info);
-  assertFalse(info.hasParameter("index"));
-  assertTrue(info.hasReturnType());
+  assertThat(info).isNotNull();
+  assertThat(info.hasParameter("index")).isFalse();
+  assertThat(info.hasReturnType()).isTrue();
   assertTypeEquals(UNKNOWN_TYPE,info.getReturnType());
 }
