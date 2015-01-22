@@ -1,5 +1,7 @@
 {
   JsFlumeCallback callback=new JsFlumeCallback(scanner,null);
   NodeTraversal.traverse(compiler,rootNode,callback);
-  return callback.getFixes();
+  List<SuggestedFix> fixes=callback.getFixes();
+  fixes.addAll(scanner.processAllMatches(callback.getMatches()));
+  return fixes;
 }
