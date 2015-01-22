@@ -1,0 +1,20 @@
+{
+  CompilerOptions options=new CompilerOptions();
+  options.setLanguageIn(LanguageMode.ECMASCRIPT6_TYPED);
+  options.setLanguageOut(LanguageMode.ECMASCRIPT6_TYPED);
+  options.setPreserveTypeAnnotations(true);
+  options.setPrettyPrint(true);
+  options.setLineLengthThreshold(80);
+  options.setPreferSingleQuotes(true);
+  Compiler compiler=new Compiler();
+  compiler.setErrorManager(testErrorManager);
+  compiler.initOptions(options);
+  Node script=compiler.parse(SourceFile.fromCode("[test]",source));
+  assertTrue("Missing an error",testErrorManager.hasEncounteredAllErrors());
+  assertTrue("Missing a warning",testErrorManager.hasEncounteredAllWarnings());
+  if (script != null && testErrorManager.getErrorCount() == 0) {
+    String actual=new CodePrinter.Builder(script).setCompilerOptions(options).setTypeRegistry(compiler.getTypeRegistry()).build().trim();
+    assertEquals(expected,actual);
+  }
+  return script;
+}

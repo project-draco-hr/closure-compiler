@@ -91,6 +91,7 @@ addIdentifier(n.getString());
 break;
 case Token.NAME:
 addIdentifier(n.getString());
+maybeAddTypeDecl(n);
 if (first != null && !first.isEmpty()) {
 Preconditions.checkState(childCount == 1);
 cc.addOp("=",true);
@@ -117,6 +118,7 @@ add(")");
 break;
 case Token.DEFAULT_VALUE:
 add(first);
+maybeAddTypeDecl(n);
 cc.addOp("=",true);
 add(first.getNext());
 break;
@@ -195,6 +197,7 @@ add("*");
 }
 add(first);
 add(first.getNext());
+maybeAddTypeDecl(n);
 if (isArrow) {
 cc.addOp("=>",true);
 }

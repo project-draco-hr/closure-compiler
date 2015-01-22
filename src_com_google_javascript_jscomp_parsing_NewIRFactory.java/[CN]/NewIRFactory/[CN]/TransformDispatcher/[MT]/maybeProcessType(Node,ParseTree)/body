@@ -2,11 +2,7 @@
   if (typeTree == null) {
     return;
   }
+  recordJsDoc(typeTree.location,typeTarget.getJSDocInfo());
   JSTypeExpression typeExpression=convertTypeTree(typeTree);
-  JSDocInfoBuilder jsdocBuilder=JSDocInfoBuilder.maybeCopyFrom(typeTarget.getJSDocInfo());
-  if (!jsdocBuilder.recordType(typeExpression)) {
-    reportJsDocTypeSyntaxConflict(typeTree);
-  }
-  JSDocInfo info=jsdocBuilder.build(typeTarget);
-  typeTarget.setJSDocInfo(info);
+  typeTarget.setJsTypeExpression(typeExpression);
 }
