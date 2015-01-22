@@ -4,9 +4,9 @@
   if (this.debugOptions) {
     this.compilationLevel.setDebugOptionsForCompilationLevel(options);
   }
-  options.prettyPrint=this.prettyPrint;
-  options.printInputDelimiter=this.printInputDelimiter;
-  options.generateExports=this.generateExports;
+  options.setPrettyPrint(this.prettyPrint);
+  options.setPrintInputDelimiter(this.printInputDelimiter);
+  options.setGenerateExports(this.generateExports);
   options.setLanguageIn(this.languageIn);
   options.setOutputCharset(this.outputEncoding);
   this.warningLevel.setOptionsForWarningLevel(options);
@@ -27,19 +27,19 @@
     options.setWarningLevel(group,level);
   }
   if (!Strings.isNullOrEmpty(sourceMapFormat)) {
-    options.sourceMapFormat=Format.valueOf(sourceMapFormat);
+    options.setSourceMapFormat(Format.valueOf(sourceMapFormat));
   }
   if (!Strings.isNullOrEmpty(sourceMapLocationMapping)) {
     String tokens[]=sourceMapLocationMapping.split("\\|",-1);
     LocationMapping lm=new LocationMapping(tokens[0],tokens[1]);
-    options.sourceMapLocationMappings=Arrays.asList(lm);
+    options.setSourceMapLocationMappings(Arrays.asList(lm));
   }
   if (sourceMapOutputFile != null) {
     File parentFile=sourceMapOutputFile.getParentFile();
     if (parentFile.mkdirs()) {
       log("Created missing parent directory " + parentFile,Project.MSG_DEBUG);
     }
-    options.sourceMapOutputPath=parentFile.getAbsolutePath();
+    options.setSourceMapOutputPath(parentFile.getAbsolutePath());
   }
   return options;
 }
