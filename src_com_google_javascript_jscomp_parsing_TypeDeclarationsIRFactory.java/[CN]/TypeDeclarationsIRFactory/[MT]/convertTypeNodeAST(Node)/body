@@ -1,0 +1,77 @@
+{
+  int token=n.getType();
+switch (token) {
+case Token.STAR:
+    return unionType(namedType("Object"),numberType(),stringType(),booleanType(),nullType(),undefinedType());
+case Token.VOID:
+  return undefinedType();
+case Token.EMPTY:
+return anyType();
+case Token.BANG:
+return convertTypeNodeAST(n.getFirstChild());
+case Token.STRING:
+String typeName=n.getString();
+switch (typeName) {
+case "boolean":
+return booleanType();
+case "null":
+return nullType();
+case "number":
+return numberType();
+case "string":
+return stringType();
+case "undefined":
+case "void":
+return undefinedType();
+default :
+TypeDeclarationNode root=namedType(typeName);
+if (n.getChildCount() > 0 && n.getFirstChild().isBlock()) {
+return parameterizedType(root,Iterables.transform(n.getFirstChild().children(),CONVERT_TYPE_NODE));
+}
+return root;
+}
+case Token.QMARK:
+Node child=n.getFirstChild();
+return child == null ? anyType() : unionType(nullType(),convertTypeNodeAST(child));
+case Token.LC:
+LinkedHashMap<String,TypeDeclarationNode> properties=new LinkedHashMap<>();
+for (Node field : n.getFirstChild().children()) {
+boolean isFieldTypeDeclared=field.getType() == Token.COLON;
+Node fieldNameNode=isFieldTypeDeclared ? field.getFirstChild() : field;
+String fieldName=fieldNameNode.getString();
+if (fieldName.startsWith("'") || fieldName.startsWith("\"")) {
+fieldName=fieldName.substring(1,fieldName.length() - 1);
+}
+TypeDeclarationNode fieldType=isFieldTypeDeclared ? convertTypeNodeAST(field.getLastChild()) : anyType();
+properties.put(fieldName,fieldType);
+}
+return recordType(properties);
+case Token.PIPE:
+return unionType(Iterables.transform(n.children(),CONVERT_TYPE_NODE));
+case Token.ELLIPSIS:
+return restParams(convertTypeNodeAST(n.getFirstChild()));
+case Token.FUNCTION:
+Node returnType=anyType();
+LinkedHashMap<String,TypeDeclarationNode> parameters=new LinkedHashMap<>();
+for (Node child2 : n.children()) {
+if (child2.isParamList()) {
+int paramIdx=1;
+for (Node param : child2.children()) {
+parameters.put("p" + paramIdx++,convertTypeNodeAST(param));
+}
+}
+ else if (child2.isNew()) {
+}
+ else if (child2.isThis()) {
+}
+ else {
+returnType=convertTypeNodeAST(child2);
+}
+}
+return functionType(returnType,parameters);
+case Token.EQUALS:
+return optionalParameter(convertTypeNodeAST(n.getFirstChild()));
+default :
+throw new IllegalArgumentException("Unsupported node type: " + Token.name(n.getType()) + " "+ n.toStringTree());
+}
+}
