@@ -1,11 +1,10 @@
 {
   LinkedHashMap<String,TypeDeclarationNode> properties=new LinkedHashMap<>();
   properties.put("myNum",numberType());
-  properties.put("myObject",anyType());
+  properties.put("myObject",null);
   TypeDeclarationNode node=recordType(properties);
-  Node key1=IR.stringKey("myNum");
-  key1.addChildToFront(new TypeDeclarationNode(NUMBER_TYPE));
-  Node key2=IR.stringKey("myObject");
-  key2.addChildToFront(new TypeDeclarationNode(ANY_TYPE));
-  assertNode(node).isEqualTo(new TypeDeclarationNode(RECORD_TYPE,key1,key2));
+  Node prop1=IR.stringKey("myNum");
+  prop1.addChildToFront(new TypeDeclarationNode(NUMBER_TYPE));
+  Node prop2=IR.string("myObject");
+  assertNode(node).isEqualTo(new TypeDeclarationNode(RECORD_TYPE,prop1,prop2));
 }
