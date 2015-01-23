@@ -11,23 +11,23 @@
   }
   for (  Token token : resultTokens.values()) {
     OriginalMapping mapping=reader.getMappingForLine(token.position.getLine() + 1,token.position.getColumn() + 1);
-    assertNotNull(mapping);
+    assertThat(mapping).isNotNull();
     Token inputToken=originalTokens.get(token.tokenName);
-    assertNotNull(inputToken);
-    assertEquals(mapping.getOriginalFile(),inputToken.inputName);
-    assertEquals(mapping.getLineNumber(),inputToken.position.getLine() + 1);
+    assertThat(inputToken).isNotNull();
+    assertThat(inputToken.inputName).isEqualTo(mapping.getOriginalFile());
+    assertThat(inputToken.position.getLine() + 1).isEqualTo(mapping.getLineNumber());
     int start=inputToken.position.getColumn() + 1;
     if (inputToken.tokenName.startsWith("STR")) {
       start--;
     }
     if (validateColumns) {
-      assertEquals(start,mapping.getColumnPosition());
+      assertThat(mapping.getColumnPosition()).isEqualTo(start);
     }
     if (!inputToken.tokenName.startsWith("STR")) {
       assertFalse("missing name for " + inputToken.tokenName,mapping.getIdentifier().isEmpty());
     }
     if (!mapping.getIdentifier().isEmpty()) {
-      assertEquals(mapping.getIdentifier(),"__" + inputToken.tokenName + "__");
+      assertThat("__" + inputToken.tokenName + "__").isEqualTo(mapping.getIdentifier());
     }
   }
 }

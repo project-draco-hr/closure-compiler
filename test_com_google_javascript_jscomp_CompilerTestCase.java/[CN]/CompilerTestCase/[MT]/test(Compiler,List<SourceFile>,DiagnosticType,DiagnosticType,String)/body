@@ -82,7 +82,7 @@
     JSError[] stErrors=symbolTableErrorManager.getErrors();
     if (expectedSymbolTableError != null) {
       assertEquals("There should be one error.",1,stErrors.length);
-      assertEquals(expectedSymbolTableError,stErrors[0].getType());
+      assertThat(stErrors[0].getType()).isEqualTo(expectedSymbolTableError);
     }
  else {
       assertEquals("Unexpected symbol table error(s): " + Joiner.on("\n").join(stErrors),0,stErrors.length);
@@ -95,14 +95,14 @@
       for (int i=0; i < numRepetitions; ++i) {
         JSError[] warnings=errorManagers[i].getWarnings();
         JSError actual=warnings[0];
-        assertEquals(warning,actual.getType());
+        assertThat(actual.getType()).isEqualTo(warning);
         if (!allowSourcelessWarnings) {
           assertTrue("Missing source file name in warning",actual.sourceName != null && !actual.sourceName.isEmpty());
           assertTrue("Missing line number in warning",-1 != actual.lineNumber);
           assertTrue("Missing char number in warning",-1 != actual.getCharno());
         }
         if (description != null) {
-          assertEquals(description,actual.description);
+          assertThat(actual.description).isEqualTo(description);
         }
       }
     }
@@ -143,7 +143,7 @@
             throw new RuntimeException("failed to get source code",e);
           }
         }
-        assertEquals(Joiner.on("").join(expectedSources),compiler.toSource(mainRoot));
+        assertThat(compiler.toSource(mainRoot)).isEqualTo(Joiner.on("").join(expectedSources));
       }
     }
     Node normalizeCheckRootClone=root.cloneTree();

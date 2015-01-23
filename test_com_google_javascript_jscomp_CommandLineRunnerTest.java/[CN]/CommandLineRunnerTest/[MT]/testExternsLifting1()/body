@@ -3,12 +3,12 @@
   test(new String[]{code},new String[]{});
   assertThat(lastCompiler.getExternsForTesting()).hasSize(2);
   CompilerInput extern=lastCompiler.getExternsForTesting().get(1);
-  assertNull(extern.getModule());
-  assertTrue(extern.isExtern());
-  assertEquals(code,extern.getCode());
+  assertThat(extern.getModule()).isNull();
+  assertThat(extern.isExtern()).isTrue();
+  assertThat(extern.getCode()).isEqualTo(code);
   assertThat(lastCompiler.getInputsForTesting()).hasSize(1);
   CompilerInput input=lastCompiler.getInputsForTesting().get(0);
-  assertNotNull(input.getModule());
-  assertFalse(input.isExtern());
+  assertThat(input.getModule()).isNotNull();
+  assertThat(input.isExtern()).isFalse();
   assertThat(input.getCode()).isEmpty();
 }

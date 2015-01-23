@@ -3,12 +3,12 @@
   CompilerOptions options=getOptions();
   compiler.init(ImmutableList.of(SourceFile.fromCode("extern",extern)),ImmutableList.of(SourceFile.fromCode("input",input)),options);
   compiler.parseInputs();
-  assertFalse(compiler.hasErrors());
+  assertThat(compiler.hasErrors()).isFalse();
   Node externsAndJs=compiler.getRoot();
   Node root=externsAndJs.getLastChild();
   Node externs=externsAndJs.getFirstChild();
   Node expected=compiler.parseTestCode(expectedExtern);
-  assertFalse(compiler.hasErrors());
+  assertThat(compiler.hasErrors()).isFalse();
   (getProcessor(compiler)).process(externs,root);
   if (compareAsTree) {
     Preconditions.checkState(externs.isBlock());
@@ -21,6 +21,6 @@
  else {
     String externsCode=compiler.toSource(externs);
     String expectedCode=compiler.toSource(expected);
-    assertEquals(expectedCode,externsCode);
+    assertThat(externsCode).isEqualTo(expectedCode);
   }
 }
