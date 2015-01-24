@@ -12,12 +12,12 @@
           }
         }
  else         if (ref.type == Ref.Type.SET_FROM_GLOBAL || ref.type == Ref.Type.SET_FROM_LOCAL) {
-          if (initialized && !isSafeNamespaceReinit(ref)) {
+          if (initialized && !isSafeNamespaceReinit(ref) && !ref.name.inExterns) {
             warnAboutNamespaceRedefinition(name,ref);
           }
           initialized=true;
         }
- else         if (ref.type == Ref.Type.ALIASING_GET) {
+ else         if (ref.type == Ref.Type.ALIASING_GET && (!ref.name.extendsExterns && !ref.name.inExterns)) {
           warnAboutNamespaceAliasing(name,ref);
         }
       }
