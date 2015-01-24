@@ -1,0 +1,35 @@
+{
+  final JSDocInfo info=n.getJSDocInfo();
+  if (info == null) {
+    return;
+  }
+  final JSTypeRegistry registry=compiler.getTypeRegistry();
+  for (  Node typeRoot : info.getTypeNodes()) {
+    NodeUtil.visitPreOrder(typeRoot,new NodeUtil.Visitor(){
+      public void visit(      Node node){
+        if (!node.isString()) {
+          return;
+        }
+        Node parent=node.getParent();
+        if (parent != null) {
+switch (parent.getType()) {
+case Token.BANG:
+case Token.QMARK:
+case Token.THIS:
+case Token.NEW:
+            return;
+        }
+      }
+      String typeName=node.getString();
+      if (typeName.equals("null") || registry.getType(typeName) == null) {
+        return;
+      }
+      JSType type=registry.createFromTypeNodes(node,"[internal]",null);
+      if (type.isNullable()) {
+        reportWarning(t,node,typeName);
+      }
+    }
+  }
+,Predicates.<Node>alwaysTrue());
+}
+}
