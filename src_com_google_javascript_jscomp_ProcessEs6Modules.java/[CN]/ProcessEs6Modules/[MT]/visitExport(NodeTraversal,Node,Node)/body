@@ -1,6 +1,8 @@
 {
   if (n.getBooleanProp(Node.EXPORT_DEFAULT)) {
     Node var=IR.var(IR.name(DEFAULT_EXPORT_NAME),n.removeFirstChild());
+    var.setJSDocInfo(n.getJSDocInfo());
+    n.setJSDocInfo(null);
     n.getParent().replaceChild(n,var);
     exportMap.put("default",DEFAULT_EXPORT_NAME);
   }
@@ -37,7 +39,7 @@
         if (!maybeName.isName()) {
           break;
         }
-        if (n.getFirstChild().isClass() && i > 0) {
+        if (declaration.isClass() && i > 0) {
           break;
         }
         String name=maybeName.getString();
@@ -49,7 +51,9 @@
           types.add(name);
         }
       }
-      parent.replaceChild(n,n.removeFirstChild());
+      declaration.setJSDocInfo(n.getJSDocInfo());
+      n.setJSDocInfo(null);
+      parent.replaceChild(n,declaration.detachFromParent());
     }
     compiler.reportCodeChange();
   }
