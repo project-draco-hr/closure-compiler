@@ -1,15 +1,10 @@
 {
-  FunctionType type=JSType.toMaybeFunctionType(functionNode.getJSType());
-  if (type != null) {
-    JSTypeRegistry typeRegistry=compiler.getTypeRegistry();
-    List<JSType> parameterTypes=Lists.newArrayList();
-    parameterTypes.add(type.getTypeOfThis());
-    for (    Node param : type.getParameters()) {
-      parameterTypes.add(param.getJSType());
-    }
-    ObjectType thisType=typeRegistry.getNativeObjectType(JSTypeNative.UNKNOWN_TYPE);
-    JSType returnType=type.getReturnType();
-    JSType newType=typeRegistry.createFunctionType(thisType,returnType,parameterTypes);
-    functionNode.setJSType(newType);
+  TypeI t=functionNode.getTypeI();
+  if (t == null) {
+    return;
+  }
+  FunctionTypeI ft=t.toMaybeFunctionType();
+  if (ft != null) {
+    functionNode.setTypeI(ft.convertMethodToFunction());
   }
 }
