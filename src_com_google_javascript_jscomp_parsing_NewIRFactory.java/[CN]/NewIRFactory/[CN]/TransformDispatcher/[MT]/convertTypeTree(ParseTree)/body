@@ -1,6 +1,20 @@
 {
   maybeWarnTypeSyntax(typeTree);
   IdentifierExpressionTree typeName=typeTree.asIdentifierExpression();
-  Node typeExpr=Node.newString(Token.NAME,typeName.identifierToken.value);
-  return new JSTypeExpression(typeExpr,sourceName);
+switch (typeName.identifierToken.value) {
+case "any":
+    return TypeDeclarationsIRFactory.anyType();
+case "number":
+  return TypeDeclarationsIRFactory.numberType();
+case "boolean":
+return TypeDeclarationsIRFactory.booleanType();
+case "string":
+return TypeDeclarationsIRFactory.stringType();
+case "void":
+return TypeDeclarationsIRFactory.voidType();
+case "undefined":
+return TypeDeclarationsIRFactory.undefinedType();
+default :
+return TypeDeclarationsIRFactory.namedType(typeName.identifierToken.value);
+}
 }

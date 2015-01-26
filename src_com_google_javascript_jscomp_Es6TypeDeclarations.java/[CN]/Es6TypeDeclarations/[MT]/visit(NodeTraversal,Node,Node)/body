@@ -1,0 +1,33 @@
+{
+switch (n.getType()) {
+case Token.FUNCTION:
+    JSDocInfo bestJSDocInfo=NodeUtil.getBestJSDocInfo(n);
+  if (bestJSDocInfo != null) {
+    n.setDeclaredTypeExpression(convert(bestJSDocInfo.getReturnType()));
+    compiler.reportCodeChange();
+  }
+break;
+case Token.NAME:
+if (parent == null) {
+break;
+}
+JSDocInfo parentJSDoc=NodeUtil.getBestJSDocInfo(parent);
+if (parentJSDoc == null) {
+break;
+}
+if (parent.isVar()) {
+n.setDeclaredTypeExpression(convert(parentJSDoc.getType()));
+compiler.reportCodeChange();
+}
+ else if (parent.isParamList()) {
+JSTypeExpression parameterType=parentJSDoc.getParameterType(n.getString());
+if (parameterType != null) {
+n.setDeclaredTypeExpression(convert(parameterType));
+compiler.reportCodeChange();
+}
+}
+break;
+default :
+break;
+}
+}

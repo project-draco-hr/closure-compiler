@@ -1,0 +1,8 @@
+{
+  FindNode visitor=new FindNode(identifier);
+  NodeTraversal.traverse(compiler,root,visitor);
+  assertNotNull("Did not find a node named " + identifier + " in "+ root.toStringTree(),visitor.foundNode);
+  TypeDeclarationNode actualType=visitor.foundNode.getDeclaredTypeExpression();
+  assertNotNull(identifier + " missing DECLARED_TYPE_EXPR in " + root.toStringTree(),actualType);
+  assertTrue(visitor.foundNode + " is of type " + actualType+ " not of type "+ expectedType,expectedType.isEquivalentTo(actualType));
+}

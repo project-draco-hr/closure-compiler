@@ -1,5 +1,6 @@
 {
   Node fn=parse("(): string => 'hello';").getFirstChild().getFirstChild();
-  JSTypeExpression returnType=fn.getJSTypeExpression();
-  assertTypeEquals(STRING_TYPE,returnType);
+  TypeDeclarationNode returnType=fn.getDeclaredTypeExpression();
+  String treeDelta=TypeDeclarationsIRFactory.stringType().checkTreeEquals(returnType);
+  assertNull(treeDelta);
 }
