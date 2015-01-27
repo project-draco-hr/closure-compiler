@@ -1,5 +1,8 @@
 {
-  Node varDecl=parse("var foo: string = 'hello';").getFirstChild();
-  String treeDelta=TypeDeclarationsIRFactory.stringType().checkTreeEquals(varDecl.getFirstChild().getDeclaredTypeExpression());
-  assertNull(treeDelta);
+  assertVarType("any",TypeDeclarationsIRFactory.anyType(),"var foo: any = 'hello';");
+  assertVarType("number",TypeDeclarationsIRFactory.numberType(),"var foo: number = 'hello';");
+  assertVarType("boolean",TypeDeclarationsIRFactory.booleanType(),"var foo: boolean = 'hello';");
+  assertVarType("string",TypeDeclarationsIRFactory.stringType(),"var foo: string = 'hello';");
+  assertVarType("void",TypeDeclarationsIRFactory.voidType(),"var foo: void = 'hello';");
+  assertVarType("named type",TypeDeclarationsIRFactory.namedType("hello"),"var foo: hello = 'hello';");
 }

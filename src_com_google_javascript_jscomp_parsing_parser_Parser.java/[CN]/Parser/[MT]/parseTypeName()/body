@@ -1,0 +1,15 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  IdentifierToken token=eatIdOrKeywordAsId();
+  ImmutableList.Builder<String> identifiers=ImmutableList.builder();
+  identifiers.add(token != null ? token.value : "");
+  while (peek(TokenType.PERIOD)) {
+    eat(TokenType.PERIOD);
+    token=eatId();
+    if (token == null) {
+      break;
+    }
+    identifiers.add(token.value);
+  }
+  return new TypeNameTree(getTreeLocation(start),identifiers.build());
+}
