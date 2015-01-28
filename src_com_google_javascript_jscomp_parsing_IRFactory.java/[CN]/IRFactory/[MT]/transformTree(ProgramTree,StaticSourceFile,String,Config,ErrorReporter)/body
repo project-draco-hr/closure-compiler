@@ -1,0 +1,18 @@
+{
+  IRFactory irFactory=new IRFactory(sourceString,sourceFile,config,errorReporter,tree.sourceComments);
+  Node n=irFactory.justTransform(tree);
+  irFactory.setSourceInfo(n,tree);
+  if (tree.sourceComments != null) {
+    for (    Comment comment : tree.sourceComments) {
+      if (comment.type == Comment.Type.JSDOC && !irFactory.parsedComments.contains(comment)) {
+        irFactory.handlePossibleFileOverviewJsDoc(comment);
+      }
+ else       if (comment.type == Comment.Type.BLOCK) {
+        irFactory.handleBlockComment(comment);
+      }
+    }
+  }
+  irFactory.setFileOverviewJsDoc(n);
+  irFactory.validateAll(n);
+  return n;
+}
