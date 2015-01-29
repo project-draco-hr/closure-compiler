@@ -1,34 +1,3 @@
 {
-  int startPosition=n.getSourceOffset();
-  int length=n.getLength();
-  JSDocInfo jsDoc=n.isExprResult() ? n.getFirstChild().getJSDocInfo() : n.getJSDocInfo();
-  if (jsDoc != null) {
-    length=n.getLength() + (startPosition - jsDoc.getOriginalCommentPosition());
-    startPosition=jsDoc.getOriginalCommentPosition();
-  }
-  if (n.isName() && n.getParent().isVar()) {
-    if (n.getNext() != null) {
-      length=n.getNext().getSourceOffset() - startPosition;
-    }
- else     if (n.hasChildren()) {
-      Node child=n.getFirstChild();
-      length=(child.getSourceOffset() + child.getLength()) - startPosition;
-    }
-    if (n.getParent().getLastChild() == n && n != n.getParent().getFirstChild()) {
-      Node previousSibling=n.getParent().getChildBefore(n);
-      if (previousSibling.hasChildren()) {
-        Node child=previousSibling.getFirstChild();
-        int startPositionDiff=startPosition - (child.getSourceOffset() + child.getLength());
-        startPosition-=startPositionDiff;
-        length+=startPositionDiff;
-      }
- else {
-        int startPositionDiff=startPosition - (previousSibling.getSourceOffset() + previousSibling.getLength());
-        startPosition-=startPositionDiff;
-        length+=startPositionDiff;
-      }
-    }
-  }
-  replacements.put(n.getSourceFileName(),new CodeReplacement(startPosition,length,""));
-  return this;
+  return delete(n,true);
 }

@@ -1,0 +1,10 @@
+{
+  String before="var foo = new Bar();";
+  String after="\n\nvar baz = new Baz();";
+  String input=before + after;
+  Compiler compiler=getCompiler(input);
+  Node root=compileToScriptRoot(compiler);
+  SuggestedFix fix=new SuggestedFix.Builder().delete(root.getLastChild()).build();
+  CodeReplacement replacement=new CodeReplacement(before.length(),after.length(),"");
+  assertReplacement(fix,replacement);
+}
