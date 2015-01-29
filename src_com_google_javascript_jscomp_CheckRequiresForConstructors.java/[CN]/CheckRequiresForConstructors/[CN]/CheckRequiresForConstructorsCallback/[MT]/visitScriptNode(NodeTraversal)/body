@@ -1,13 +1,8 @@
 {
   Set<String> classNames=new HashSet<>();
-  for (  Node node : newAndImplementsNodes) {
-    String className;
-    if (node.isNew()) {
-      className=node.getFirstChild().getQualifiedName();
-    }
- else {
-      className=node.getString();
-    }
+  for (  Map.Entry<String,Node> entry : usages.entrySet()) {
+    String className=entry.getKey();
+    Node node=entry.getValue();
     String outermostClassName=getOutermostClassName(className);
     String nonNullClassName=outermostClassName != null ? outermostClassName : className;
     String parentNamespace=null;
@@ -22,7 +17,7 @@
       classNames.add(className);
     }
   }
-  this.newAndImplementsNodes.clear();
+  this.usages.clear();
   this.requires.clear();
   this.constructors.clear();
 }
