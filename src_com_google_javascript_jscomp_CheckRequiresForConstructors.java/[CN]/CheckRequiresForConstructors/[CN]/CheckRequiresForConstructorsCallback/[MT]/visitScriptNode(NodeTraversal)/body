@@ -9,8 +9,14 @@
       className=node.getString();
     }
     String outermostClassName=getOutermostClassName(className);
-    boolean notProvidedByConstructors=(constructors == null || !constructors.contains(className));
-    boolean notProvidedByRequires=(requires == null || (!requires.contains(className) && !requires.contains(outermostClassName)));
+    String nonNullClassName=outermostClassName != null ? outermostClassName : className;
+    String parentNamespace=null;
+    int separatorIndex=nonNullClassName.lastIndexOf('.');
+    if (separatorIndex > 0) {
+      parentNamespace=nonNullClassName.substring(0,separatorIndex);
+    }
+    boolean notProvidedByConstructors=(constructors == null || (!constructors.contains(className) && !constructors.contains(outermostClassName)));
+    boolean notProvidedByRequires=(requires == null || (!requires.contains(className) && !requires.contains(outermostClassName) && !requires.contains(parentNamespace)));
     if (notProvidedByConstructors && notProvidedByRequires && !classNames.contains(className)) {
       compiler.report(t.makeError(node,level,MISSING_REQUIRE_WARNING,className));
       classNames.add(className);
