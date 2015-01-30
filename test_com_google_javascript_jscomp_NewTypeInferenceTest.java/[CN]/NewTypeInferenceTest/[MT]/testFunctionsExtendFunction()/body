@@ -1,11 +1,11 @@
 {
-  checkNoWarnings("function f(x) {\n" + "  if (x instanceof Function) { x(); }\n" + "}");
-  checkNoWarnings("function f(x) {\n" + "  if (x instanceof Function) { x(1); x('str') }\n" + "}");
-  checkNoWarnings("function f(/** (null|function()) */ x) {\n" + "  if (x instanceof Function) { x(); }\n" + "}");
+  typeCheck("function f(x) {\n" + "  if (x instanceof Function) { x(); }\n" + "}");
+  typeCheck("function f(x) {\n" + "  if (x instanceof Function) { x(1); x('str') }\n" + "}");
+  typeCheck("function f(/** (null|function()) */ x) {\n" + "  if (x instanceof Function) { x(); }\n" + "}");
   typeCheck("function f(/** (null|function()) */ x) {\n" + "  if (x instanceof Function) {} else { x(); }\n" + "}",TypeCheck.NOT_CALLABLE);
-  checkNoWarnings("(function(){}).call(null);");
-  checkNoWarnings("function greet(name) {}\n" + "greet.call(null, 'bob');\n" + "greet.apply(null, ['bob']);");
-  checkNoWarnings("/** @constructor */ function Foo(){}\n" + "Foo.prototype.greet = function(name){};\n" + "Foo.prototype.greet.call(new Foo, 'bob');");
+  typeCheck("(function(){}).call(null);");
+  typeCheck("function greet(name) {}\n" + "greet.call(null, 'bob');\n" + "greet.apply(null, ['bob']);");
+  typeCheck("/** @constructor */ function Foo(){}\n" + "Foo.prototype.greet = function(name){};\n" + "Foo.prototype.greet.call(new Foo, 'bob');");
   typeCheck("Function.prototype.method = function(/** string */ x){};\n" + "(function(){}).method(5);",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  checkNoWarnings("function f(value) {\n" + "  if (value instanceof Function) {} else if (value instanceof Object) {\n" + "    return value.displayName || value.name || '';\n"+ "  }\n"+ "};");
+  typeCheck("function f(value) {\n" + "  if (value instanceof Function) {} else if (value instanceof Object) {\n" + "    return value.displayName || value.name || '';\n"+ "  }\n"+ "};");
 }

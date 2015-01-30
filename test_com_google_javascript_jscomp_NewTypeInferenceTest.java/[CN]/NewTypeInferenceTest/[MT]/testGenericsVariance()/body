@@ -1,6 +1,6 @@
 {
-  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n" + "var /** Array<Foo> */ a = [new Bar];");
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n" + "var /** Array<Foo> */ a = [new Bar];");
   typeCheck("/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n" + "var /** Array<Bar> */ a = [new Foo];",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  checkNoWarnings("/** @constructor @param {T} x @template T */ function Gen(x){}\n" + "/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n"+ "var /** Gen<Foo> */ a = new Gen(new Bar);");
+  typeCheck("/** @constructor @param {T} x @template T */ function Gen(x){}\n" + "/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n"+ "var /** Gen<Foo> */ a = new Gen(new Bar);");
   typeCheck("/** @constructor @param {T} x @template T */ function Gen(x){}\n" + "/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n"+ "var /** Gen<Bar> */ a = new Gen(new Foo);",NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

@@ -17,7 +17,7 @@ case Token.PIPE:
 {
 JSType union=JSType.BOTTOM;
 for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-JSType nextType=getTypeFromNodeHelper(child,registry,typeParameters);
+JSType nextType=getTypeFromCommentHelper(child,registry,typeParameters);
 if (nextType.isUnknown()) {
 warn("This union type is equivalent to '?'.",n);
 return JSType.UNKNOWN;
@@ -28,7 +28,7 @@ return union;
 }
 case Token.BANG:
 {
-JSType nullableType=getTypeFromNodeHelper(n.getFirstChild(),registry,typeParameters);
+JSType nullableType=getTypeFromCommentHelper(n.getFirstChild(),registry,typeParameters);
 if (nullableType.isTypeVariable()) {
 warn("Cannot use ! to restrict type variable type.\n" + "Prefer to make type argument non-nullable and add " + "null explicitly where needed (e.g. through ?T or T|null)",n);
 }
@@ -41,7 +41,7 @@ if (child == null) {
 return JSType.UNKNOWN;
 }
  else {
-return JSType.join(JSType.NULL,getTypeFromNodeHelper(child,registry,typeParameters));
+return JSType.join(JSType.NULL,getTypeFromCommentHelper(child,registry,typeParameters));
 }
 }
 case Token.STAR:

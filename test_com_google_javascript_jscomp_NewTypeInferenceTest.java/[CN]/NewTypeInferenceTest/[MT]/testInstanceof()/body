@@ -3,12 +3,12 @@
   typeCheck("({} instanceof function(){});",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("/** @constructor */ function Foo() {}\n" + "(123 instanceof Foo);",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("/** @constructor */ function Foo() {}\n" + "function takesFoos(/** Foo */ afoo) {}\n" + "function f(/** boolean */ cond, /** (number|Foo) */ x) {\n"+ "  if (x instanceof (cond || Foo)) { takesFoos(x); }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
-  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "function f(/** (number|!Foo) */ x) {\n" + "  if (x instanceof Foo) {} else { x - 5; }\n"+ "}");
-  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "function f(/** (number|!Foo) */ x) {\n" + "  if (!(x instanceof Foo)) { x - 5; }\n"+ "}");
-  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "/** @constructor */ function Bar() {}\n" + "function takesFoos(/** Foo */ afoo) {}\n"+ "function f(/** Foo */ x) {\n"+ "  if (x instanceof Bar) {} else { takesFoos(x); }\n"+ "}");
+  typeCheck("/** @constructor */ function Foo() {}\n" + "function f(/** (number|!Foo) */ x) {\n" + "  if (x instanceof Foo) {} else { x - 5; }\n"+ "}");
+  typeCheck("/** @constructor */ function Foo() {}\n" + "function f(/** (number|!Foo) */ x) {\n" + "  if (!(x instanceof Foo)) { x - 5; }\n"+ "}");
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @constructor */ function Bar() {}\n" + "function takesFoos(/** Foo */ afoo) {}\n"+ "function f(/** Foo */ x) {\n"+ "  if (x instanceof Bar) {} else { takesFoos(x); }\n"+ "}");
   typeCheck("/** @constructor */ function Foo() {}\n" + "function takesFoos(/** Foo */ afoo) {}\n" + "/** @param {*} x */ function f(x) {\n"+ "  takesFoos(x);\n"+ "  if (x instanceof Foo) { takesFoos(x); }\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @constructor */ function Foo() {}\n" + "var x = new Foo();\n" + "x.bar = 'asdf';\n"+ "if (x instanceof Foo) { x.bar - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("/** @constructor */ function Foo() { this.prop = 123; }\n" + "function f(x) { x = 123; if (x instanceof Foo) { x.prop; } }",NewTypeInference.INVALID_OPERAND_TYPE);
-  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n" + "/** @param {(number|!Bar)} x */\n"+ "function f(x) {\n"+ "  if (!(x instanceof Foo)) {\n"+ "    var /** number */ n = x;\n"+ "  }\n"+ "}");
-  checkNoWarnings("/** @constructor */ function Foo() {}\n" + "/** @enum {!Foo} */\n" + "var E = { ONE: new Foo };\n"+ "/** @param {(number|E)} x */\n"+ "function f(x) {\n"+ "  if (!(x instanceof Foo)) {\n"+ "    var /** number */ n = x;\n"+ "  }\n"+ "}");
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}\n" + "/** @param {(number|!Bar)} x */\n"+ "function f(x) {\n"+ "  if (!(x instanceof Foo)) {\n"+ "    var /** number */ n = x;\n"+ "  }\n"+ "}");
+  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @enum {!Foo} */\n" + "var E = { ONE: new Foo };\n"+ "/** @param {(number|E)} x */\n"+ "function f(x) {\n"+ "  if (!(x instanceof Foo)) {\n"+ "    var /** number */ n = x;\n"+ "  }\n"+ "}");
 }

@@ -1,16 +1,16 @@
 {
-  checkNoWarnings("function f(x) {\n" + "  x(1);\n" + "}");
+  typeCheck("function f(x) {\n" + "  x(1);\n" + "}");
   typeCheck("function f(x) {\n" + "  x(1);\n" + "}\n"+ "function g(/** string */ y) {}\n"+ "f(g);",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  checkNoWarnings("function f(x) {\n" + "  x(1);\n" + "}\n"+ "function g(/** number */ y) {}\n"+ "f(g);");
-  checkNoWarnings("function f(x) {\n" + "  x(1);\n" + "}\n"+ "function g(/** (number|string) */ y) {}\n"+ "f(g);");
+  typeCheck("function f(x) {\n" + "  x(1);\n" + "}\n"+ "function g(/** number */ y) {}\n"+ "f(g);");
+  typeCheck("function f(x) {\n" + "  x(1);\n" + "}\n"+ "function g(/** (number|string) */ y) {}\n"+ "f(g);");
   typeCheck("function f(x) {\n" + "  5 - x(1);\n" + "}\n"+ "/** @return {string} */\n"+ "function g(/** number */ y) { return ''; }\n"+ "f(g);",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  checkNoWarnings("function f(x) {\n" + "  5 - x(1);\n" + "}\n"+ "/** @return {(number|string)} */\n"+ "function g(/** number */ y) { return 5; }\n"+ "f(g);");
-  checkNoWarnings("function f(x, y) {\n" + "  x(5);\n" + "  y(5);\n"+ "  return x(y);\n"+ "}");
+  typeCheck("function f(x) {\n" + "  5 - x(1);\n" + "}\n"+ "/** @return {(number|string)} */\n"+ "function g(/** number */ y) { return 5; }\n"+ "f(g);");
+  typeCheck("function f(x, y) {\n" + "  x(5);\n" + "  y(5);\n"+ "  return x(y);\n"+ "}");
   typeCheck("function f(x) {\n" + "  x();\n" + "  return x;\n"+ "}\n"+ "function g() {}\n"+ "function h() { f(g) - 5; }",NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
   typeCheck("function f(x, cond) {\n" + "  x();\n" + "  return cond ? 5 : x;\n"+ "}\n"+ "function g() {}\n"+ "function h() { f(g, true) - 5; }",NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
-  checkNoWarnings("function f(x) {\n" + "  x(5);\n" + "  return x;\n"+ "}\n"+ "function g(x) {}\n"+ "function h() {\n"+ "  var /** function((number|string)) */ fun = f(g);\n"+ "}");
+  typeCheck("function f(x) {\n" + "  x(5);\n" + "  return x;\n"+ "}\n"+ "function g(x) {}\n"+ "function h() {\n"+ "  var /** function((number|string)) */ fun = f(g);\n"+ "}");
   typeCheck("function g(/** string */ x) {}\n" + "function f(x, y) {\n" + "  y - 5;\n"+ "  x(y);\n"+ "  y + y;\n"+ "}"+ "f(g, 5)",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @return {string} */\n" + "function g(/** number */ x) { return 'str'; }\n" + "/** @return {number} */\n"+ "function f(x) {\n"+ "  var y = 5;\n"+ "  var z = x(y);\n"+ "  return z;\n"+ "}"+ "f(g)",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  checkNoWarnings("/** @return {number} */\n" + "function g(/** number */ y) { return 6; }\n" + "function f(x, cond) {\n"+ "  if (cond) {\n"+ "    5 - x(1);\n"+ "  } else {\n"+ "    x('str') < 'str';\n"+ "  }\n"+ "}\n"+ "f(g, true)\n");
-  checkNoWarnings("function f(g, cond) {\n" + "  if (cond) {\n" + "    g(5, cond);\n"+ "  }\n"+ "}");
+  typeCheck("/** @return {number} */\n" + "function g(/** number */ y) { return 6; }\n" + "function f(x, cond) {\n"+ "  if (cond) {\n"+ "    5 - x(1);\n"+ "  } else {\n"+ "    x('str') < 'str';\n"+ "  }\n"+ "}\n"+ "f(g, true)\n");
+  typeCheck("function f(g, cond) {\n" + "  if (cond) {\n" + "    g(5, cond);\n"+ "  }\n"+ "}");
 }

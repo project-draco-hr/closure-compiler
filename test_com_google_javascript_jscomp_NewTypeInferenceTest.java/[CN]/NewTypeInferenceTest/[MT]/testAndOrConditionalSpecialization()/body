@@ -1,12 +1,12 @@
 {
-  checkNoWarnings("var x, y = 5;\n" + "if (true) {\n" + "  x = 5;\n"+ "} else if (true) {\n"+ "  x = null;\n"+ "}\n"+ "if (x !== null && x !== undefined) {\n"+ "  y = x;\n"+ "}\n"+ "y - 5");
-  checkNoWarnings("var x, y;\n" + "if (true) {\n" + "  x = 5;\n"+ "} else if (true) {\n"+ "  x = null;\n"+ "}\n"+ "if (x === null || x === void 0) {\n"+ "  y = 5;\n"+ "} else {\n"+ "  y = x;\n"+ "}\n"+ "y - 5");
+  typeCheck("var x, y = 5;\n" + "if (true) {\n" + "  x = 5;\n"+ "} else if (true) {\n"+ "  x = null;\n"+ "}\n"+ "if (x !== null && x !== undefined) {\n"+ "  y = x;\n"+ "}\n"+ "y - 5");
+  typeCheck("var x, y;\n" + "if (true) {\n" + "  x = 5;\n"+ "} else if (true) {\n"+ "  x = null;\n"+ "}\n"+ "if (x === null || x === void 0) {\n"+ "  y = 5;\n"+ "} else {\n"+ "  y = x;\n"+ "}\n"+ "y - 5");
   typeCheck("var x, y = 5;\n" + "if (true) {\n" + "  x = 5;\n"+ "} else if (true) {\n"+ "  x = null;\n"+ "}\n"+ "if (x === null || x === undefined) {\n"+ "  y = x;\n"+ "}\n"+ "var /** (number|null|undefined) **/ z = y;\n"+ "(function(/** (number|null) */ x){})(y);",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("var x, y;\n" + "if (true) {\n" + "  x = 5;\n"+ "} else if (true) {\n"+ "  x = null;\n"+ "}\n"+ "if (x !== null && x !== undefined) {\n"+ "  y = 5;\n"+ "} else {\n"+ "  y = x;\n"+ "}\n"+ "var /** (number|null|undefined) **/ z = y;\n"+ "(function(/** (number|null) */ x){})(y);",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  checkNoWarnings("var x, y = 5;\n" + "if (true) {\n" + "  x = 5;\n"+ "} else {\n"+ "  x = 'str';\n"+ "}\n"+ "if (x === 7 || x === 8) {\n"+ "  y = x;\n"+ "}\n"+ "y - 5");
+  typeCheck("var x, y = 5;\n" + "if (true) {\n" + "  x = 5;\n"+ "} else {\n"+ "  x = 'str';\n"+ "}\n"+ "if (x === 7 || x === 8) {\n"+ "  y = x;\n"+ "}\n"+ "y - 5");
   typeCheck("/** @constructor */ function C(){}\n" + "var obj = new C;\n" + "if (obj || false) { 123, obj.asdf; }",TypeCheck.INEXISTENT_PROPERTY);
-  checkNoWarnings("function f(/** (number|string) */ x) {\n" + "  (typeof x === 'number') && (x - 5);\n" + "}");
-  checkNoWarnings("function f(/** (number|string|null) */ x) {\n" + "  (x && (typeof x === 'number')) && (x - 5);\n" + "}");
+  typeCheck("function f(/** (number|string) */ x) {\n" + "  (typeof x === 'number') && (x - 5);\n" + "}");
+  typeCheck("function f(/** (number|string|null) */ x) {\n" + "  (x && (typeof x === 'number')) && (x - 5);\n" + "}");
   typeCheck("function f(/** (number|string|null) */ x) {\n" + "  (x && (typeof x === 'string')) && (x - 5);\n" + "}",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("function f(/** (number|string|null) */ x) {\n" + "  typeof x === 'string' && x;\n" + "  x < 'asdf';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
 }

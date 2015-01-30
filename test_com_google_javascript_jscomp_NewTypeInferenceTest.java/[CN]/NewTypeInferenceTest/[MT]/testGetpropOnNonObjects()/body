@@ -3,10 +3,10 @@
   typeCheck("var /** undefined */ n;\n" + "n.foo;",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
   typeCheck("var x = {}; x.foo.bar = 1;",TypeCheck.INEXISTENT_PROPERTY);
   typeCheck("var /** undefined */ n;\n" + "n.foo = 5;",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
-  checkNoWarnings("/** @param {*} x */\n" + "function f(x) {\n" + "  if (x.prop) {\n"+ "    var /** { prop: ? } */ y = x;\n"+ "  }\n"+ "}");
+  typeCheck("/** @param {*} x */\n" + "function f(x) {\n" + "  if (x.prop) {\n"+ "    var /** { prop: ? } */ y = x;\n"+ "  }\n"+ "}");
   typeCheck("/** @param {undefined} x */\n" + "function f(x) {\n" + "  if (x.prop) {}\n"+ "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
   typeCheck("null[123];",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
-  checkNoWarnings("function f(/** !Object */ x) { if (x[123]) { return 1; } }");
+  typeCheck("function f(/** !Object */ x) { if (x[123]) { return 1; } }");
   typeCheck("function f(/** undefined */ x) { if (x[123]) { return 1; } }",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
   typeCheck("function f(/** (number|null) */ n) {\n" + "  n.foo;\n" + "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
   typeCheck("function f(/** (number|null|undefined) */ n) {\n" + "  n.foo;\n" + "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);

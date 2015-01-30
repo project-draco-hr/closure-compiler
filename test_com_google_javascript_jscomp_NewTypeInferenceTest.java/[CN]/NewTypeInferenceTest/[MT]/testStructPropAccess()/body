@@ -1,5 +1,5 @@
 {
-  checkNoWarnings("/** @constructor @struct */ function Foo() { this.prop = 123; }\n" + "(new Foo).prop;");
+  typeCheck("/** @constructor @struct */ function Foo() { this.prop = 123; }\n" + "(new Foo).prop;");
   typeCheck("/** @constructor @struct */ function Foo() { this.prop = 123; }\n" + "(new Foo)['prop'];",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
   typeCheck("/** @interface */ function Foo() {}\n" + "/** @type {number} */ Foo.prototype.prop;\n" + "function f(/** !Foo */ x) { x['prop']; }",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
   typeCheck("/** @constructor @struct */ function Foo() {\n" + "  this.prop = 123;\n" + "  this['prop'] - 123;\n"+ "}",TypeValidator.ILLEGAL_PROPERTY_ACCESS);

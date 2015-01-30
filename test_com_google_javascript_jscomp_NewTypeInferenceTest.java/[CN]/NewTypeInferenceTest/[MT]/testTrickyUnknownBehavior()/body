@@ -1,8 +1,8 @@
 {
-  checkNoWarnings("function f(/** function() */ x, cond) {\n" + "  var y = cond ? x() : 5;\n" + "  y < 'str';\n"+ "}");
-  checkNoWarnings("/** @param {function() : ?} x */ function f(x, cond) {\n" + "  var y = cond ? x() : 5;\n" + "  y < 'str';\n"+ "}");
-  checkNoWarnings("function f(/** function() */ x) {\n" + "  x() < 'str';\n" + "}");
+  typeCheck("function f(/** function() */ x, cond) {\n" + "  var y = cond ? x() : 5;\n" + "  y < 'str';\n"+ "}");
+  typeCheck("/** @param {function() : ?} x */ function f(x, cond) {\n" + "  var y = cond ? x() : 5;\n" + "  y < 'str';\n"+ "}");
+  typeCheck("function f(/** function() */ x) {\n" + "  x() < 'str';\n" + "}");
   typeCheck("function g() { return {}; }\n" + "function f() {\n" + "  var /** ? */ x = g();\n"+ "  return x.y;\n"+ "}",NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
-  checkNoWarnings("function g() { return {}; }\n" + "function f() {\n" + "  var /** ? */ x = g()\n"+ "  x.y = 5;\n"+ "}");
-  checkNoWarnings("function g(x) { return x; }\n" + "function f(z) {\n" + "  var /** ? */ x = g(z);\n"+ "  x.y2 = 123;\n"+ "  return x.y1 - 5;\n"+ "}");
+  typeCheck("function g() { return {}; }\n" + "function f() {\n" + "  var /** ? */ x = g()\n"+ "  x.y = 5;\n"+ "}");
+  typeCheck("function g(x) { return x; }\n" + "function f(z) {\n" + "  var /** ? */ x = g(z);\n"+ "  x.y2 = 123;\n"+ "  return x.y1 - 5;\n"+ "}");
 }

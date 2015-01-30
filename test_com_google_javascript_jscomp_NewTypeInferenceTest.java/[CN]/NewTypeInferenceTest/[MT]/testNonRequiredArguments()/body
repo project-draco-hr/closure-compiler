@@ -1,5 +1,5 @@
 {
-  checkNoWarnings("function f(f1, /** function(string=) */ f2, cond) {\n" + "  var y;\n" + "  if (cond) {\n"+ "    f1();"+ "    y = f1;\n"+ "  } else {\n"+ "    y = f2;\n"+ "  }\n"+ "  return y;\n"+ "}");
+  typeCheck("function f(f1, /** function(string=) */ f2, cond) {\n" + "  var y;\n" + "  if (cond) {\n"+ "    f1();"+ "    y = f1;\n"+ "  } else {\n"+ "    y = f2;\n"+ "  }\n"+ "  return y;\n"+ "}");
   typeCheck("/** @param {function(number=)} fnum */\n" + "function f(fnum) {\n" + "  fnum(); fnum('asdf');\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @param {function(...number)} fnum */\n" + "function f(fnum) {\n" + "  fnum(); fnum(1, 2, 3, 'asdf');\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @param {function(number=, number)} g */\n" + "function f(g) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
@@ -24,15 +24,15 @@
   typeCheck("function f(\n" + "  /** function() */ f1, /** function(string=) */ f2, cond) {\n" + "  var y;\n"+ "  if (cond) {\n"+ "    y = f1;\n"+ "  } else {\n"+ "    y = f2;\n"+ "  }\n"+ "  y(123);\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @param {function(string): *} x */ function g(x) {}\n" + "/** @param {function(...number): string} x */ function f(x) {\n" + "  g(x);\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/**\n" + " * @param {number=} x\n" + " * @param {number=} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(undefined, 123);\n"+ "f('str')",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  checkNoWarnings("function f(/** function(...) */ fun) {}\n" + "f(function() {});");
+  typeCheck("function f(/** function(...) */ fun) {}\n" + "f(function() {});");
   typeCheck("/** @param {number=} x */ function f(x) { x - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
-  checkNoWarnings("/** @param {number=} x */ function f(x) { if (x) { x - 5; } }");
-  checkNoWarnings("function f(/** function(...number) */ x) {}\n" + "f(function() {});");
-  checkNoWarnings("function f(/** function() */ x) {}\n" + "f(/** @type {function(...number)} */ (function(nums) {}));");
+  typeCheck("/** @param {number=} x */ function f(x) { if (x) { x - 5; } }");
+  typeCheck("function f(/** function(...number) */ x) {}\n" + "f(function() {});");
+  typeCheck("function f(/** function() */ x) {}\n" + "f(/** @type {function(...number)} */ (function(nums) {}));");
   typeCheck("function f(/** function(string=) */ x) {}\n" + "f(/** @type {function(...number)} */ (function(nums) {}));",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("function f(/** function(...number) */ x) {}\n" + "f(/** @type {function(string=)} */ (function(x) {}));",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  checkNoWarnings("/** @param {number} opt_num */ function f(opt_num) {}\n" + "f();");
+  typeCheck("/** @param {number} opt_num */ function f(opt_num) {}\n" + "f();");
   typeCheck("function f(opt_num, x) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
-  checkNoWarnings("function f(var_args) {} f(1, 2, 3);");
+  typeCheck("function f(var_args) {} f(1, 2, 3);");
   typeCheck("function f(var_args, x) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
 }

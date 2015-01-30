@@ -1,6 +1,6 @@
 {
-  checkNoWarnings("function f(b) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({p:5, r:'str'}, {p:20, r:b});\n"+ "}");
-  checkNoWarnings("function f(b) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({p:20, r:b}, {p:5, r:'str'});\n"+ "}");
+  typeCheck("function f(b) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({p:5, r:'str'}, {p:20, r:b});\n"+ "}");
+  typeCheck("function f(b) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({p:20, r:b}, {p:5, r:'str'});\n"+ "}");
   typeCheck("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({prop: x}, {prop: 5});\n"+ "}\n"+ "g('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("function g(x, cond) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  var y = cond ? {prop: 'str'} : {prop: 5};\n"+ "  f({prop: x}, y);\n"+ "}\n"+ "g({}, true);",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("function g(x, cond) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  /** @type {{prop : (string | number)}} */\n"+ "  var y = cond ? {prop: 'str'} : {prop: 5};\n"+ "  f({prop: x}, y);\n"+ "}\n"+ "g({}, true);",NewTypeInference.INVALID_ARGUMENT_TYPE);

@@ -7,8 +7,8 @@
   typeCheck("/** @return {number} */ function f(x) { return x; }\n" + "f('str');",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("function f(/** number */ x) { return x; }\n" + "function g(x) {\n" + "  var /** string */ s = f(x);\n"+ "};",NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
   typeCheck("function f() { new Foo('asdf'); }\n" + "/** @constructor */ function Foo(x) { x - 5; }",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  checkNoWarnings("/** @constructor */\n" + "function Arr() {}\n" + "/**\n"+ " * @template T\n"+ " * @param {...T} var_args\n"+ " */\n"+ "Arr.prototype.push = function(var_args) {};\n"+ "function f(x) {}\n"+ "var renameByParts = function(parts) {\n"+ "  var mapped = new Arr();\n"+ "  mapped.push(f(parts));\n"+ "};");
+  typeCheck("/** @constructor */\n" + "function Arr() {}\n" + "/**\n"+ " * @template T\n"+ " * @param {...T} var_args\n"+ " */\n"+ "Arr.prototype.push = function(var_args) {};\n"+ "function f(x) {}\n"+ "var renameByParts = function(parts) {\n"+ "  var mapped = new Arr();\n"+ "  mapped.push(f(parts));\n"+ "};");
   typeCheck("/** @return {string} */ function foo(){ return 'str'; }\n" + "function g() { foo() - 123; }",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("function f() {" + " function x() {};\n" + " function g() { x(1); }"+ " g();"+ "}",TypeCheck.WRONG_ARGUMENT_COUNT);
-  checkNoWarnings("function f() { return 123; }\n" + "var outer = 123;\n" + "function g(/** function(number) */ f) {\n"+ "  f(123) < 'str';\n"+ "  return outer;\n"+ "}");
+  typeCheck("function f() { return 123; }\n" + "var outer = 123;\n" + "function g(/** function(number) */ f) {\n"+ "  f(123) < 'str';\n"+ "  return outer;\n"+ "}");
 }

@@ -5,7 +5,7 @@
   while (iterator.hasNext()) {
     String pname=iterator.nextString();
     Node param=iterator.getNode();
-    JSType inlineParamType=(ignoreJsdoc || ignoreFunNode) ? null : getNodeTypeDeclaration(param.getJSDocInfo(),registry,typeParameters);
+    JSType inlineParamType=(ignoreJsdoc || ignoreFunNode) ? null : getDeclaredTypeOfNode(param.getJSDocInfo(),registry,typeParameters);
     boolean isRequired=true;
     boolean isRestFormals=false;
     JSTypeExpression texp=jsdoc == null ? null : jsdoc.getParameterType(pname);
@@ -30,7 +30,7 @@
         isRestFormals=true;
         jsdocNode=jsdocNode.getFirstChild();
       }
-      fnParamType=getTypeFromNode(jsdocNode,registry,typeParameters);
+      fnParamType=getTypeFromComment(jsdocNode,registry,typeParameters);
     }
     if (inlineParamType != null) {
       builder.addReqFormal(inlineParamType);

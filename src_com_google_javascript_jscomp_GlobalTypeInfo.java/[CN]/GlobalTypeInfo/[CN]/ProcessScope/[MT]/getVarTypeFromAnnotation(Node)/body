@@ -1,12 +1,12 @@
 {
   Preconditions.checkArgument(nameNode.getParent().isVar());
   Node varNode=nameNode.getParent();
-  JSType varType=getTypeDeclarationFromJsdoc(varNode.getJSDocInfo(),currentScope);
+  JSType varType=getDeclaredTypeOfNode(varNode.getJSDocInfo(),currentScope);
   if (varNode.getChildCount() > 1 && varType != null) {
     warnings.add(JSError.make(varNode,TypeCheck.MULTIPLE_VAR_DEF));
   }
   String varName=nameNode.getString();
-  JSType nameNodeType=getTypeDeclarationFromJsdoc(nameNode.getJSDocInfo(),currentScope);
+  JSType nameNodeType=getDeclaredTypeOfNode(nameNode.getJSDocInfo(),currentScope);
   if (nameNodeType != null) {
     if (varType != null) {
       warnings.add(JSError.make(nameNode,DUPLICATE_JSDOC,varName));

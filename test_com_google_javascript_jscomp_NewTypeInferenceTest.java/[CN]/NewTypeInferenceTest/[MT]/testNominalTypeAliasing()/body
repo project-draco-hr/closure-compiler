@@ -1,9 +1,9 @@
 {
-  checkNoWarnings("/** @constructor */\n" + "function Foo() {}\n" + "/** @constructor */\n"+ "var Bar = Foo;\n"+ "var /** !Bar */ x = new Foo();");
-  checkNoWarnings("/** @const */\n" + "var ns = {};\n" + "/** @constructor */\n"+ "ns.Foo = function() {};\n"+ "/** @constructor */\n"+ "ns.Bar = ns.Foo;\n"+ "function g() {\n"+ "  var /** !ns.Bar */ x = new ns.Foo();\n"+ "  var /** !ns.Bar */ y = new ns.Bar();\n"+ "}");
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @constructor */\n"+ "var Bar = Foo;\n"+ "var /** !Bar */ x = new Foo();");
+  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @constructor */\n"+ "ns.Foo = function() {};\n"+ "/** @constructor */\n"+ "ns.Bar = ns.Foo;\n"+ "function g() {\n"+ "  var /** !ns.Bar */ x = new ns.Foo();\n"+ "  var /** !ns.Bar */ y = new ns.Bar();\n"+ "}");
   typeCheck("/** @type {number} */\n" + "var n = 123;\n" + "/** @constructor */\n"+ "var Foo = n;",GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
   typeCheck("/** @type {number} */\n" + "var n = 123;\n" + "/** @interface */\n"+ "var Foo = n;",GlobalTypeInfo.EXPECTED_INTERFACE);
   typeCheck("/** @interface */\n" + "function Foo() {}\n" + "/** @constructor */\n"+ "var Bar = Foo;",GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
   typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @interface */\n"+ "var Bar = Foo;",GlobalTypeInfo.EXPECTED_INTERFACE);
-  typeCheck("var Bar;","/**\n" + " * @constructor\n" + " * @final\n"+ " */\n"+ "var Foo = Bar;\n"+ "var /** !Foo */ x;",ImmutableList.of(GlobalTypeInfo.EXPECTED_CONSTRUCTOR,GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME));
+  typeCheckCustomExterns("var Bar;","/**\n" + " * @constructor\n" + " * @final\n"+ " */\n"+ "var Foo = Bar;\n"+ "var /** !Foo */ x;",GlobalTypeInfo.EXPECTED_CONSTRUCTOR,GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
 }

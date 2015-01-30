@@ -62,7 +62,7 @@ visitPropertyDeclaration(lvalue);
 break;
 }
 case Token.CAST:
-castTypes.put(n,getTypeDeclarationFromJsdoc(n.getJSDocInfo(),currentScope));
+castTypes.put(n,getDeclaredTypeOfNode(n.getJSDocInfo(),currentScope));
 break;
 case Token.OBJECTLIT:
 {
@@ -79,7 +79,7 @@ visitNamespacePropertyDeclaration(prop,receiver,prop.getString());
  else {
 for (Node prop : n.children()) {
 if (prop.getJSDocInfo() != null) {
-declaredObjLitProps.put(prop,getTypeDeclarationFromJsdoc(prop.getJSDocInfo(),currentScope));
+declaredObjLitProps.put(prop,getDeclaredTypeOfNode(prop.getJSDocInfo(),currentScope));
 }
 if (isAnnotatedAsConst(prop)) {
 warnings.add(JSError.make(prop,MISPLACED_CONST_ANNOTATION));

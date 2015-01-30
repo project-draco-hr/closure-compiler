@@ -1,8 +1,8 @@
 {
-  checkNoWarnings("/** @constructor @extends {Bar}*/ function Foo() {}\n" + "/** @constructor */ function Bar() {}");
-  checkNoWarnings("/** @param {Foo} x */ function f(x) {}\n" + "/** @constructor */ function Foo() {}");
+  typeCheck("/** @constructor @extends {Bar}*/ function Foo() {}\n" + "/** @constructor */ function Bar() {}");
+  typeCheck("/** @param {Foo} x */ function f(x) {}\n" + "/** @constructor */ function Foo() {}");
   typeCheck("f(new Bar)\n" + "/** @param {Foo} x */ function f(x) {}\n" + "/** @constructor */ function Foo() {}\n"+ "/** @constructor */ function Bar() {}",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  checkNoWarnings("/** @constructor @param {Foo} x */ function Bar(x) {}\n" + "/** @constructor @param {Bar} x */ function Foo(x) {}\n" + "new Bar(new Foo(null));");
+  typeCheck("/** @constructor @param {Foo} x */ function Bar(x) {}\n" + "/** @constructor @param {Bar} x */ function Foo(x) {}\n" + "new Bar(new Foo(null));");
   typeCheck("/** @constructor @param {Foo} x */ function Bar(x) {}\n" + "/** @constructor @param {Bar} x */ function Foo(x) {}\n" + "new Bar(new Foo(undefined));",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @constructor @extends {Bar} */ function Foo() {}\n" + "/** @constructor @extends {Foo} */ function Bar() {}",JSTypeCreatorFromJSDoc.INHERITANCE_CYCLE);
   typeCheck("/** @interface @extends {Bar} */ function Foo() {}\n" + "/** @interface @extends {Foo} */ function Bar() {}",JSTypeCreatorFromJSDoc.INHERITANCE_CYCLE);

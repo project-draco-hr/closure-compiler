@@ -1,10 +1,10 @@
 {
-  checkNoWarnings("var /** number */ n = 123;\n" + "n.toString();");
-  checkNoWarnings("var /** boolean */ b = true;\n" + "b.toString();");
-  checkNoWarnings("var /** string */ s = '';\n" + "s.toString();");
+  typeCheck("var /** number */ n = 123;\n" + "n.toString();");
+  typeCheck("var /** boolean */ b = true;\n" + "b.toString();");
+  typeCheck("var /** string */ s = '';\n" + "s.toString();");
   typeCheck("var /** number */ n = 123;\n" + "n.prop = 0;\n" + "n.prop - 5;",TypeCheck.INEXISTENT_PROPERTY);
-  checkNoWarnings("var /** number */ n = 123;\n" + "n['to' + 'String'];");
-  checkNoWarnings("/** @constructor */\n" + "function Foo() {\n" + "  /** @type {number} */\n"+ "  this.prop = 123;\n"+ "}\n"+ "(new Foo).prop.newprop = 5;");
+  typeCheck("var /** number */ n = 123;\n" + "n['to' + 'String'];");
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @type {number} */\n"+ "  this.prop = 123;\n"+ "}\n"+ "(new Foo).prop.newprop = 5;");
   typeCheck("/** @enum */\n" + "var E = { A: 1 };\n" + "function f(/** E */ x) {\n"+ "  return x.toString();\n"+ "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
-  checkNoWarnings("/** @constructor */\n" + "function Foo() {}\n" + "Foo.prototype.toString = function() {};\n"+ "function f(/** (number|!Foo) */ x) {\n"+ "  return x.toString();\n"+ "}");
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "Foo.prototype.toString = function() {};\n"+ "function f(/** (number|!Foo) */ x) {\n"+ "  return x.toString();\n"+ "}");
 }

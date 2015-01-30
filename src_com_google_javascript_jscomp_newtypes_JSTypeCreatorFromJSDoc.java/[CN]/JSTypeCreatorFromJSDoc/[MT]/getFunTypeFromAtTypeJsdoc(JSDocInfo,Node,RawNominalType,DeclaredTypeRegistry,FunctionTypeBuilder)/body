@@ -38,7 +38,7 @@
       }
 switch (paramType.getType()) {
 case Token.EQUALS:
-        builder.addOptFormal(getTypeFromNode(paramType.getFirstChild(),registry,typeParameters));
+        builder.addOptFormal(getTypeFromComment(paramType.getFirstChild(),registry,typeParameters));
       break;
 case Token.ELLIPSIS:
     if (!warnedForMissingTypes) {
@@ -48,7 +48,7 @@ case Token.ELLIPSIS:
     }
   break;
 default :
-builder.addReqFormal(getTypeFromNode(paramType,registry,typeParameters));
+builder.addReqFormal(getTypeFromComment(paramType,registry,typeParameters));
 break;
 }
 paramType=paramType.getNext();
@@ -57,7 +57,7 @@ param=param.getNext();
 }
 if (paramType != null) {
 if (paramType.getType() == Token.ELLIPSIS) {
-builder.addRestFormals(getTypeFromNode(paramType.getFirstChild(),registry,typeParameters));
+builder.addRestFormals(getTypeFromComment(paramType.getFirstChild(),registry,typeParameters));
 }
  else {
 warn("The function has fewer formal parameters than the types " + "declared in the JSDoc",funNode);
@@ -76,7 +76,7 @@ warn("Cannot declare a return type on a setter",funNode);
 builder.addRetType(JSType.UNDEFINED);
 }
  else {
-builder.addRetType(getTypeFromNode(childJsdoc,registry,typeParameters));
+builder.addRetType(getTypeFromComment(childJsdoc,registry,typeParameters));
 }
 return builder.buildDeclaration();
 }

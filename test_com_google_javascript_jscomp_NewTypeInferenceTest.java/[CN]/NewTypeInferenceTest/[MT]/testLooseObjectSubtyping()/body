@@ -1,11 +1,11 @@
 {
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @constructor */\n"+ "function Bar() {}\n"+ "function f(obj) { obj.prop - 5; }\n"+ "var /** !Foo */ x = new Foo;\n"+ "f(x);\n"+ "var /** !Bar */ y = x;",ImmutableList.of(NewTypeInference.INVALID_ARGUMENT_TYPE,NewTypeInference.MISTYPED_ASSIGN_RHS));
+  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @constructor */\n"+ "function Bar() {}\n"+ "function f(obj) { obj.prop - 5; }\n"+ "var /** !Foo */ x = new Foo;\n"+ "f(x);\n"+ "var /** !Bar */ y = x;",NewTypeInference.INVALID_ARGUMENT_TYPE,NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @constructor */ function Foo() {}\n" + "function f(obj) { obj.prop - 5; }\n" + "f(new Foo);",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @constructor */\n" + "function Foo() { /** @type {string} */ this.prop = 'str'; }\n" + "function f(obj) { obj.prop - 5; }\n"+ "f(new Foo);",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @constructor */ function Foo() { /** @type {number} */ this.prop = 1; }\n" + "function g(obj) { var /** string */ s = obj.prop; return obj; }\n" + "var /** !Foo */ x = g({ prop: '' });",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  checkNoWarnings("function f(obj) { obj.a.num - 5; }\n" + "function g(obj) {\n" + "  obj.a.str < 'str';\n"+ "  f(obj);\n"+ "}");
-  checkNoWarnings("function f(/** Array<?> */ x) {}\n" + "function g(obj) {\n" + "  obj.x = 123;\n"+ "  f(obj);\n"+ "}");
-  checkNoWarnings("function f(g) {\n" + "  if (g.randomName) {\n" + "  } else {\n"+ "    return g();\n"+ "  }\n"+ "}");
-  checkNoWarnings("function f(x) {\n" + "  if (x.a) {} else {}\n" + "}\n"+ "f({ b: 123 }); ");
-  checkNoWarnings("function f(x) {\n" + "  if (x.randomName) {\n" + "  } else {\n"+ "    return x();\n"+ "  }\n"+ "}\n"+ "f({ abc: 123 }); ");
+  typeCheck("function f(obj) { obj.a.num - 5; }\n" + "function g(obj) {\n" + "  obj.a.str < 'str';\n"+ "  f(obj);\n"+ "}");
+  typeCheck("function f(/** Array<?> */ x) {}\n" + "function g(obj) {\n" + "  obj.x = 123;\n"+ "  f(obj);\n"+ "}");
+  typeCheck("function f(g) {\n" + "  if (g.randomName) {\n" + "  } else {\n"+ "    return g();\n"+ "  }\n"+ "}");
+  typeCheck("function f(x) {\n" + "  if (x.a) {} else {}\n" + "}\n"+ "f({ b: 123 }); ");
+  typeCheck("function f(x) {\n" + "  if (x.randomName) {\n" + "  } else {\n"+ "    return x();\n"+ "  }\n"+ "}\n"+ "f({ abc: 123 }); ");
 }

@@ -15,14 +15,14 @@
       try {
 switch (arg.getType()) {
 case Token.EQUALS:
-          builder.addOptFormal(getTypeFromNodeHelper(arg.getFirstChild(),registry,typeParameters));
+          builder.addOptFormal(getTypeFromCommentHelper(arg.getFirstChild(),registry,typeParameters));
         break;
 case Token.ELLIPSIS:
       Node restNode=arg.getFirstChild();
-    builder.addRestFormals(restNode == null ? JSType.UNKNOWN : getTypeFromNodeHelper(restNode,registry,typeParameters));
+    builder.addRestFormals(restNode == null ? JSType.UNKNOWN : getTypeFromCommentHelper(restNode,registry,typeParameters));
   break;
 default :
-builder.addReqFormal(getTypeFromNodeHelper(arg,registry,typeParameters));
+builder.addReqFormal(getTypeFromCommentHelper(arg,registry,typeParameters));
 break;
 }
 }
@@ -32,5 +32,5 @@ warn("Wrong parameter order: required parameters are first, " + "then optional, 
 }
 child=child.getNext();
 }
-builder.addRetType(getTypeFromNodeHelper(child,registry,typeParameters));
+builder.addRetType(getTypeFromCommentHelper(child,registry,typeParameters));
 }
