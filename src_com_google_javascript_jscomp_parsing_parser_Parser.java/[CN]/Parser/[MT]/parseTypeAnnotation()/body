@@ -1,15 +1,4 @@
 {
-  SourcePosition start=getTreeStartLocation();
   eat(TokenType.COLON);
-  if (peekId() || peek(TokenType.VOID)) {
-    ParseTree typeReference=parseTypeReference();
-    if (!peekImplicitSemiColon() && peek(TokenType.OPEN_SQUARE)) {
-      eat(TokenType.OPEN_SQUARE);
-      eat(TokenType.CLOSE_SQUARE);
-      typeReference=new ArrayTypeTree(getTreeLocation(typeReference.location.start),typeReference);
-    }
-    return typeReference;
-  }
-  reportError("Unexpected token '%s' in type expression",peekType());
-  return new TypeNameTree(getTreeLocation(start),ImmutableList.of("error"));
+  return parseType();
 }

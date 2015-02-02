@@ -1,3 +1,8 @@
 {
-  return parseTypeName();
+  SourcePosition start=getTreeStartLocation();
+  TypeNameTree typeName=parseTypeName();
+  if (!peek(TokenType.OPEN_ANGLE)) {
+    return typeName;
+  }
+  return parseTypeArgumentList(start,typeName);
 }

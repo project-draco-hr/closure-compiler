@@ -1,0 +1,15 @@
+{
+  eat(TokenType.OPEN_ANGLE);
+  ImmutableList.Builder<ParseTree> typeArguments=ImmutableList.builder();
+  ParseTree type=parseType();
+  typeArguments.add(type);
+  while (peek(TokenType.COMMA)) {
+    eat(TokenType.COMMA);
+    type=parseType();
+    if (type != null) {
+      typeArguments.add(type);
+    }
+  }
+  eat(TokenType.CLOSE_ANGLE);
+  return new ParameterizedTypeTree(getTreeLocation(start),typeName,typeArguments.build());
+}
