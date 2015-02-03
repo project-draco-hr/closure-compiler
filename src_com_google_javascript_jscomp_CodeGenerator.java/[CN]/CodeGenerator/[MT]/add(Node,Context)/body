@@ -76,16 +76,16 @@ break;
 case Token.VAR:
 if (first != null) {
 add("var ");
-addList(first,false,getContextForNoInOperator(context));
+addList(first,false,getContextForNoInOperator(context),",");
 }
 break;
 case Token.CONST:
 add("const ");
-addList(first,false,getContextForNoInOperator(context));
+addList(first,false,getContextForNoInOperator(context),",");
 break;
 case Token.LET:
 add("let ");
-addList(first,false,getContextForNoInOperator(context));
+addList(first,false,getContextForNoInOperator(context),",");
 break;
 case Token.LABEL_NAME:
 Preconditions.checkState(!n.getString().isEmpty());
@@ -212,6 +212,7 @@ break;
 case Token.REST:
 add("...");
 add(n.getString());
+maybeAddTypeDecl(n);
 break;
 case Token.SPREAD:
 add("...");
@@ -761,14 +762,8 @@ break;
 case Token.ANY_TYPE:
 add("any");
 break;
-case Token.NULL_TYPE:
-add("null");
-break;
 case Token.VOID_TYPE:
 add("void");
-break;
-case Token.UNDEFINED_TYPE:
-add("undefined");
 break;
 case Token.NAMED_TYPE:
 add(first);
@@ -776,6 +771,29 @@ break;
 case Token.ARRAY_TYPE:
 add(first);
 add("[]");
+break;
+case Token.FUNCTION_TYPE:
+Node returnType=first;
+add("(");
+addList(first.getNext());
+add(")");
+cc.addOp("=>",true);
+add(returnType);
+break;
+case Token.OPTIONAL_PARAMETER:
+add(first);
+break;
+case Token.REST_PARAMETER_TYPE:
+add("...");
+add(first);
+break;
+case Token.UNION_TYPE:
+addList(first,"|");
+break;
+case Token.RECORD_TYPE:
+add("{");
+addList(first,false,Context.STATEMENT,";");
+add("}");
 break;
 case Token.PARAMETERIZED_TYPE:
 add(first);

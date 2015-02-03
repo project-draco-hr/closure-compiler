@@ -3,8 +3,7 @@ switch (n.getType()) {
 case Token.FUNCTION:
     JSDocInfo bestJSDocInfo=NodeUtil.getBestJSDocInfo(n);
   if (bestJSDocInfo != null) {
-    n.setDeclaredTypeExpression(convert(bestJSDocInfo.getReturnType()));
-    compiler.reportCodeChange();
+    setTypeExpression(n,bestJSDocInfo.getReturnType());
   }
 break;
 case Token.NAME:
@@ -16,14 +15,18 @@ if (parentJSDoc == null) {
 break;
 }
 if (parent.isVar()) {
-n.setDeclaredTypeExpression(convert(parentJSDoc.getType()));
-compiler.reportCodeChange();
+setTypeExpression(n,parentJSDoc.getType());
 }
  else if (parent.isParamList()) {
 JSTypeExpression parameterType=parentJSDoc.getParameterType(n.getString());
 if (parameterType != null) {
-n.setDeclaredTypeExpression(convert(parameterType));
+Node attachTypeExpr=n;
+if (parameterType.getRoot().getType() == Token.ELLIPSIS) {
+attachTypeExpr=Node.newString(Token.REST,n.getString());
+n.getParent().replaceChild(n,attachTypeExpr);
 compiler.reportCodeChange();
+}
+setTypeExpression(attachTypeExpr,parameterType);
 }
 }
 break;
