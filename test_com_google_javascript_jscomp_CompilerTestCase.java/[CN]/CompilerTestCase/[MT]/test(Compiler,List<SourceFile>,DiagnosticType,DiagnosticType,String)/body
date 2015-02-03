@@ -23,7 +23,8 @@
   assertFalse("Code should not change before processing",recentChange.hasCodeChanged());
   for (int i=0; i < numRepetitions; ++i) {
     if (compiler.getErrorCount() == 0) {
-      errorManagers[i]=new BlackHoleErrorManager(compiler);
+      errorManagers[i]=new BlackHoleErrorManager();
+      compiler.setErrorManager(errorManagers[i]);
       if (closurePassEnabled && i == 0) {
         recentChange.reset();
         new ProcessClosurePrimitives(compiler,null,CheckLevel.ERROR,false).process(null,mainRoot);
@@ -79,7 +80,8 @@
   }
   if (error == null) {
     assertEquals("Unexpected error(s): " + Joiner.on("\n").join(compiler.getErrors()),0,compiler.getErrorCount());
-    ErrorManager symbolTableErrorManager=new BlackHoleErrorManager(compiler);
+    ErrorManager symbolTableErrorManager=new BlackHoleErrorManager();
+    compiler.setErrorManager(symbolTableErrorManager);
     Node expectedRoot=null;
     if (expected != null) {
       expectedRoot=parseExpectedJs(expected);
