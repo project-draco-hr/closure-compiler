@@ -1,0 +1,9 @@
+{
+  typeCheck("1 < 0; 'a' < 'b'; true < false; null < null; undefined < undefined;");
+  typeCheck("/** @param {{ p1: ?, p2: ? }} x */ function f(x) { x.p1 < x.p2; }");
+  typeCheck("function f(x, y) { x < y; }");
+  typeCheck("var x = 1; var y = true ? 1 : 'str'; x < y;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("var x = 'str'; var y = 1; x < y;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("function f(x) {\n" + "  var y = 1;\n" + "  x < y;\n"+ "  return x;\n"+ "}"+ "var /** undefined */ x = f(1);"+ "var /** number */ y = f(2);",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("function f(x) {\n" + "  var y = x, z = 7;\n" + "  y < z;\n"+ "}");
+}

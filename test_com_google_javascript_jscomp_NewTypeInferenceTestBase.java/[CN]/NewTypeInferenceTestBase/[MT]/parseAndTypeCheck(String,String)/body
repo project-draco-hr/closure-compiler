@@ -1,0 +1,22 @@
+{
+  setUp();
+  final CompilerOptions options=compiler.getOptions();
+  options.setClosurePass(true);
+  compiler.init(Lists.newArrayList(SourceFile.fromCode("[externs]",externs)),Lists.newArrayList(SourceFile.fromCode("[testcode]",js)),options);
+  Node externsRoot=IR.block();
+  externsRoot.setIsSyntheticBlock(true);
+  externsRoot.addChildToFront(compiler.getInput(new InputId("[externs]")).getAstRoot(compiler));
+  Node astRoot=IR.block();
+  astRoot.setIsSyntheticBlock(true);
+  astRoot.addChildToFront(compiler.getInput(new InputId("[testcode]")).getAstRoot(compiler));
+  assertEquals("parsing error: " + Joiner.on(", ").join(compiler.getErrors()),0,compiler.getErrorCount());
+  assertEquals("parsing warning: " + Joiner.on(", ").join(compiler.getWarnings()),0,compiler.getWarningCount());
+  IR.block(externsRoot,astRoot).setIsSyntheticBlock(true);
+  GlobalTypeInfo symbolTable=new GlobalTypeInfo(compiler);
+  passes.add(makePassFactory("GlobalTypeInfo",symbolTable));
+  compiler.setSymbolTable(symbolTable);
+  passes.add(makePassFactory("NewTypeInference",new NewTypeInference(compiler,options.closurePass)));
+  PhaseOptimizer phaseopt=new PhaseOptimizer(compiler,null,null);
+  phaseopt.consume(passes);
+  phaseopt.process(externsRoot,astRoot);
+}
