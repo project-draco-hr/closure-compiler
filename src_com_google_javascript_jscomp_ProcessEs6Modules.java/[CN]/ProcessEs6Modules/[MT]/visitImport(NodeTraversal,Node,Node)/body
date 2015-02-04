@@ -43,14 +43,6 @@
       t.getInput().addRequire(moduleName);
     }
   }
-  for (  String name : namesToRequire) {
-    Node require=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.require"),IR.string(moduleName + "." + name)));
-    require.copyInformationFromForTree(importDecl);
-    script.addChildToFront(require);
-    if (reportDependencies) {
-      t.getInput().addRequire(moduleName + "." + name);
-    }
-  }
   parent.removeChild(importDecl);
   compiler.reportCodeChange();
 }
