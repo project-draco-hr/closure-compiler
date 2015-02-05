@@ -1,0 +1,17 @@
+{
+  NodeTraversal.traverse(compiler,script,new NodeTraversal.AbstractShallowCallback(){
+    public void visit(    NodeTraversal t,    Node n,    Node parent){
+      if (n.isCall() && n.getFirstChild().matchesQualifiedName("goog.require") && parent.isName()) {
+        visitRequire(n,parent);
+      }
+    }
+    private void visitRequire(    Node requireCall,    Node parent){
+      String namespace=requireCall.getLastChild().getString();
+      Node replacement=NodeUtil.newQName(compiler,namespace).srcrefTree(requireCall);
+      parent.replaceChild(requireCall,replacement);
+      Node varNode=parent.getParent();
+      varNode.getParent().addChildBefore(IR.exprResult(requireCall).srcrefTree(requireCall),varNode);
+    }
+  }
+);
+}

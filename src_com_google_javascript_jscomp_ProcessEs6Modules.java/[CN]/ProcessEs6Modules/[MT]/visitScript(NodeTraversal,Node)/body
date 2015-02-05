@@ -3,6 +3,7 @@
     return;
   }
   Preconditions.checkArgument(scriptNodeCount == 1,"ProcessEs6Modules supports only one invocation per " + "CompilerInput / script node");
+  rewriteRequires(script);
   String moduleName=toModuleName(loader.getLoadAddress(t.getInput()));
   if (!exportMap.isEmpty()) {
     Node objectlit=IR.objectlit();
@@ -31,6 +32,12 @@
       t.getInput().addProvide(moduleName);
     }
   }
+  JSDocInfoBuilder jsDocInfo=script.getJSDocInfo() == null ? new JSDocInfoBuilder(false) : JSDocInfoBuilder.copyFrom(script.getJSDocInfo());
+  if (!jsDocInfo.isPopulatedWithFileOverview()) {
+    jsDocInfo.recordFileOverview("");
+  }
+  jsDocInfo.recordSuppressions(ImmutableSet.of("missingProvide","missingRequire"));
+  script.setJSDocInfo(jsDocInfo.build(script));
   exportMap.clear();
   compiler.reportCodeChange();
 }
