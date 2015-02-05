@@ -1,0 +1,11 @@
+{
+  args.add("--js_output_file");
+  args.add("/path/to/out.js");
+  args.add("--source_map_input=input1|input1.sourcemap");
+  args.add("--source_map_input=input2|input2.sourcemap");
+  testSame("var x = 3;");
+  Map<String,SourceMapInput> inputMaps=lastCompiler.getOptions().inputSourceMaps;
+  assertThat(inputMaps).hasSize(2);
+  assertThat(inputMaps.get("input1").getOriginalPath()).isEqualTo("input1.sourcemap");
+  assertThat(inputMaps.get("input2").getOriginalPath()).isEqualTo("input2.sourcemap");
+}
