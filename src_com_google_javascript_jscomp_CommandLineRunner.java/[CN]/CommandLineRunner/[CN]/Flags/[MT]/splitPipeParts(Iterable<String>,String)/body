@@ -1,0 +1,13 @@
+{
+  ImmutableMap.Builder<String,String> result=new ImmutableMap.Builder<>();
+  ;
+  Splitter splitter=Splitter.on('|').limit(2);
+  for (  String inputSourceMap : input) {
+    List<String> parts=splitter.splitToList(inputSourceMap);
+    if (parts.size() != 2) {
+      throw new CmdLineException(parser,"Bad value for " + flagName + " (duplicate key): "+ input);
+    }
+    result.put(parts.get(0),parts.get(1));
+  }
+  return result.build();
+}
