@@ -1,5 +1,7 @@
 {
-  Multimap<CustomPassExecutionTime,CompilerPass> custom=ImmutableMultimap.<CustomPassExecutionTime,CompilerPass>of(CustomPassExecutionTime.BEFORE_OPTIMIZATIONS,new CompilerPass(){
+  CompilerOptions options=createCompilerOptions();
+  options.setCheckSymbols(false);
+  options.addCustomPass(CustomPassExecutionTime.BEFORE_OPTIMIZATIONS,new CompilerPass(){
     @Override public void process(    Node externs,    Node root){
       Node var=root.getLastChild().getFirstChild();
       assertEquals(Token.VAR,var.getType());
@@ -7,9 +9,6 @@
     }
   }
 );
-  CompilerOptions options=createCompilerOptions();
-  options.setCheckSymbols(false);
-  options.setCustomPasses(custom);
   try {
     test(options,"var x = 3; function f() { return x + z; }","function f() { return x + z; }");
     fail("Expected run-time exception");
