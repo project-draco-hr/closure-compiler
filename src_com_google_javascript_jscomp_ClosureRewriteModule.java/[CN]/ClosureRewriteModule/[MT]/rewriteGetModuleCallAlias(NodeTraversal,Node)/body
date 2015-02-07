@@ -1,0 +1,27 @@
+{
+  Preconditions.checkArgument(NodeUtil.isExprAssign(n.getParent()));
+  Preconditions.checkArgument(n.getFirstChild().isName());
+  Preconditions.checkArgument(isGetModuleCall(n.getLastChild()));
+  rewriteGetModuleCall(t,n.getLastChild());
+  String aliasName=n.getFirstChild().getQualifiedName();
+  Var alias=t.getScope().getVar(aliasName);
+  if (alias == null) {
+    t.report(n,INVALID_GET_ALIAS);
+    return;
+  }
+  Node forwardDeclareCall=NodeUtil.getRValueOfLValue(alias.getNode());
+  if (forwardDeclareCall == null || !isCallTo(forwardDeclareCall,"goog.forwardDeclare") || forwardDeclareCall.getChildCount() != 2) {
+    t.report(n,INVALID_GET_ALIAS);
+    return;
+  }
+  Node argument=forwardDeclareCall.getLastChild();
+  if (!argument.isString() || !n.getLastChild().matchesQualifiedName(argument.getString())) {
+    t.report(n,INVALID_GET_ALIAS);
+    return;
+  }
+  Node replacement=NodeUtil.newQName(compiler,argument.getString());
+  replacement.srcrefTree(forwardDeclareCall);
+  forwardDeclareCall.getParent().replaceChild(forwardDeclareCall,replacement);
+  n.getParent().detachFromParent();
+  compiler.reportCodeChange();
+}
