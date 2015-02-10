@@ -1,0 +1,11 @@
+{
+  Node jsDocAst=JsDocInfoParser.parseTypeString(expected);
+  Node block=parseAndProcess("var x: " + typeSyntax + ";");
+  Node script=block.getFirstChild();
+  Node var=script.getFirstChild();
+  Node name=var.getFirstChild();
+  JSTypeExpression typeAst=name.getJSDocInfo().getType();
+  assertNotNull(typeSyntax + " should produce a type AST",typeAst);
+  NodeSubject.assertNode(typeAst.getRoot()).isEqualTo(jsDocAst);
+  assertNoDeclaredTypes(block);
+}

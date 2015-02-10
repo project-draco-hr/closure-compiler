@@ -1,0 +1,21 @@
+{
+  TypeDeclarationNode type=n.getDeclaredTypeExpression();
+  if (type == null) {
+    return;
+  }
+  JSDocInfo info=n.getJSDocInfo();
+  Preconditions.checkState(info == null || info.getType() == null,"Nodes must not have both type declarations and JSDoc types");
+  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(info);
+  Node typeRoot=convertWithLocation(type);
+  JSTypeExpression typeExpression=new JSTypeExpression(typeRoot,n.getSourceFileName());
+  if (n.isFunction()) {
+    builder.recordReturnType(typeExpression);
+  }
+ else {
+    builder.recordType(typeExpression);
+    builder.recordInlineType();
+  }
+  info=builder.build(n);
+  n.setJSDocInfo(info);
+  n.setDeclaredTypeExpression(null);
+}

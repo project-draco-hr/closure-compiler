@@ -1,0 +1,41 @@
+{
+switch (type.getType()) {
+case Token.STRING_TYPE:
+    return IR.string("string");
+case Token.BOOLEAN_TYPE:
+  return IR.string("boolean");
+case Token.NUMBER_TYPE:
+return IR.string("number");
+case Token.VOID_TYPE:
+return IR.string("void");
+case Token.ANY_TYPE:
+return new Node(Token.QMARK);
+case Token.NAMED_TYPE:
+return convertNamedType(type);
+case Token.ARRAY_TYPE:
+{
+Node arrayType=IR.string("Array");
+Node memberType=convertWithLocation(type.getFirstChild());
+arrayType.addChildToFront(new Node(Token.BLOCK,memberType).copyInformationFrom(type));
+return arrayType;
+}
+case Token.PARAMETERIZED_TYPE:
+{
+Node namedType=type.getFirstChild();
+Node result=convertWithLocation(namedType);
+Node parameters=IR.block().copyInformationFrom(type);
+result.addChildToFront(parameters);
+for (Node param=namedType.getNext(); param != null; param=param.getNext()) {
+parameters.addChildToBack(convertWithLocation(param));
+}
+return result;
+}
+case Token.FUNCTION_TYPE:
+case Token.UNION_TYPE:
+case Token.OPTIONAL_PARAMETER:
+case Token.RECORD_TYPE:
+default :
+break;
+}
+throw new IllegalArgumentException("Unexpected node type for type conversion: " + type.getType());
+}
