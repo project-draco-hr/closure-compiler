@@ -1,6 +1,6 @@
 {
-  String input="var x = /** @type {string} */ (y);";
-  String expectedCode="var x = y;";
+  String input="" + "var x = /** @type {string} */ (function() {\n" + "  // Inline comment that should be preserved.\n"+ "  var blah = bleh;\n"+ "});";
+  String expectedCode="" + "var x = function() {\n" + "  // Inline comment that should be preserved.\n"+ "  var blah = bleh;\n"+ "};";
   Compiler compiler=getCompiler(input);
   Node root=compileToScriptRoot(compiler);
   Node castNode=root.getFirstChild().getFirstChild().getFirstChild();
