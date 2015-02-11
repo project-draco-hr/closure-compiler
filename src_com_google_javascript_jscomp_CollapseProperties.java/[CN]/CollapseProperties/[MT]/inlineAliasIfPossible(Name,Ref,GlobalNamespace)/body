@@ -2,12 +2,28 @@
   Node aliasParent=alias.node.getParent();
   if (aliasParent.isName()) {
     Scope scope=alias.scope;
-    Var aliasVar=scope.getVar(aliasParent.getString());
+    String aliasVarName=aliasParent.getString();
+    Var aliasVar=scope.getVar(aliasVarName);
     ReferenceCollectingCallback collector=new ReferenceCollectingCallback(compiler,ReferenceCollectingCallback.DO_NOTHING_BEHAVIOR,Predicates.equalTo(aliasVar));
     collector.processScope(scope);
     ReferenceCollection aliasRefs=collector.getReferences(aliasVar);
     List<AstChange> newNodes=Lists.newArrayList();
-    if (aliasRefs.isWellDefined() && aliasRefs.firstReferenceIsAssigningDeclaration() && aliasRefs.isAssignedOnceInLifetime()) {
+    if (aliasRefs.isWellDefined() && aliasRefs.firstReferenceIsAssigningDeclaration()) {
+      if (!aliasRefs.isAssignedOnceInLifetime()) {
+        if (name.isConstructor()) {
+          boolean accessPropsAfterAliasing=false;
+          for (          Reference ref : aliasRefs.references) {
+            if (ref.getNode().getParent().isGetProp()) {
+              accessPropsAfterAliasing=true;
+              break;
+            }
+          }
+          if (accessPropsAfterAliasing) {
+            compiler.report(JSError.make(aliasParent,UNSAFE_CTOR_ALIASING,aliasVarName));
+          }
+        }
+        return false;
+      }
       int size=aliasRefs.references.size();
       for (int i=1; i < size; i++) {
         ReferenceCollectingCallback.Reference aliasRef=aliasRefs.references.get(i);
