@@ -4,10 +4,10 @@
   test("class D {} class C extends D { constructor(str) { super(str); } }",Joiner.on('\n').join("/** @constructor @struct */","var D = function() {}","/** @constructor @struct @extends {D} */","var C = function(str) {","  C.base(this, 'constructor', str);","}","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);"));
   test(Joiner.on('\n').join("class D {}","class C extends D {","  constructor() { }","  foo() { return super.foo(); }","}"),Joiner.on('\n').join("/** @constructor @struct */","var D = function() {}","/** @constructor @struct @extends {D} */","var C = function() { }","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);","C.prototype.foo = function() ","{return C.base(this, 'foo');}"));
   test(Joiner.on('\n').join("class D {}","class C extends D {","  constructor() {}","  foo(bar) { return super.foo(bar); }","}"),Joiner.on('\n').join("/** @constructor @struct */","var D = function() {}","/** @constructor @struct @extends {D} */","var C = function() {};","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);","C.prototype.foo = function(bar)","{return C.base(this, 'foo', bar);}"));
-  test("class C { constructor() { super(); } }",null,Es6ConvertSuper.NO_SUPERTYPE);
-  test("class C { f() { super(); } }",null,Es6ConvertSuper.NO_SUPERTYPE);
-  test("class C { static f() { super(); } }",null,Es6ConvertSuper.NO_SUPERTYPE);
+  testError("class C { constructor() { super(); } }",Es6ConvertSuper.NO_SUPERTYPE);
+  testError("class C { f() { super(); } }",Es6ConvertSuper.NO_SUPERTYPE);
+  testError("class C { static f() { super(); } }",Es6ConvertSuper.NO_SUPERTYPE);
   test("class C { method() { class D extends C { constructor() { super(); }}}}",Joiner.on('\n').join("/** @constructor @struct */","var C = function() {}","C.prototype.method = function() {","  /** @constructor @struct @extends{C} */","  var D = function() {","    D.base(this, 'constructor');","  }","  $jscomp.copyProperties(D, C);","  $jscomp.inherits(D, C);","};"));
-  test("var i = super();",null,Es6ConvertSuper.NO_SUPERTYPE);
+  testError("var i = super();",Es6ConvertSuper.NO_SUPERTYPE);
   test(Joiner.on('\n').join("class D {}","class C extends D {","  constructor() {}","  f() {super();}","}"),Joiner.on('\n').join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function() {}","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);","C.prototype.f = function() {C.base(this, 'f');}"));
 }
