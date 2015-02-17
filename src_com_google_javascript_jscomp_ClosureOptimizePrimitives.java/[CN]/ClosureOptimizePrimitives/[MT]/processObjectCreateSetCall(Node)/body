@@ -1,0 +1,20 @@
+{
+  Node curParam=callNode.getFirstChild().getNext();
+  if (canOptimizeObjectCreateSet(curParam)) {
+    Node objNode=IR.objectlit().srcref(callNode);
+    while (curParam != null) {
+      Node keyNode=curParam;
+      Node valueNode=IR.trueNode().srcref(keyNode);
+      curParam=curParam.getNext();
+      callNode.removeChild(keyNode);
+      if (!keyNode.isString()) {
+        keyNode=IR.string(NodeUtil.getStringValue(keyNode)).srcref(keyNode);
+      }
+      keyNode.setType(Token.STRING_KEY);
+      keyNode.setQuotedString();
+      objNode.addChildToBack(IR.propdef(keyNode,valueNode));
+    }
+    callNode.getParent().replaceChild(callNode,objNode);
+    compiler.reportCodeChange();
+  }
+}
