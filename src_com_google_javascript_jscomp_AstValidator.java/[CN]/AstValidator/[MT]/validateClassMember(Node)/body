@@ -1,7 +1,10 @@
 {
-  if (n.getType() == Token.MEMBER_DEF || n.getType() == Token.GETTER_DEF || n.getType() == Token.SETTER_DEF) {
-    validateChildCount(n,Token.arity(n.getType()));
+  if (n.getType() == Token.MEMBER_FUNCTION_DEF || n.getType() == Token.GETTER_DEF || n.getType() == Token.SETTER_DEF) {
+    validateChildCount(n);
     validateFunctionExpression(n.getFirstChild());
+  }
+ else   if (n.getType() == Token.MEMBER_VARIABLE_DEF) {
+    validateChildless(n);
   }
  else   if (n.isComputedProp()) {
     validateComputedPropClassMethod(n);

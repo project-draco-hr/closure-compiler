@@ -1,80 +1,38 @@
 {
   checkClassReassignment(classNode);
-  Node className=classNode.getFirstChild();
-  Node superClassName=className.getNext();
-  Node classMembers=classNode.getLastChild();
-  Node insertionPoint;
-  if (!superClassName.isEmpty() && !superClassName.isQualifiedName()) {
-    compiler.report(JSError.make(superClassName,DYNAMIC_EXTENDS_TYPE));
-    return;
-  }
-  String fullClassName=null;
-  boolean anonymous;
-  if (NodeUtil.isStatement(classNode)) {
-    fullClassName=className.getString();
-    anonymous=false;
-    insertionPoint=classNode;
-  }
- else   if (parent.isAssign() && parent.getParent().isExprResult()) {
-    fullClassName=parent.getFirstChild().getQualifiedName();
-    if (fullClassName == null) {
-      cannotConvert(parent,"Can only convert classes that are declarations or the right hand" + " side of a simple assignment.");
-      return;
-    }
-    anonymous=true;
-    insertionPoint=parent.getParent();
-  }
- else   if (parent.isName()) {
-    fullClassName=parent.getString();
-    anonymous=true;
-    insertionPoint=parent.getParent();
-  }
- else {
+  ClassDeclarationMetadata metadata=ClassDeclarationMetadata.create(classNode,parent);
+  if (metadata == null || metadata.fullClassName == null) {
     cannotConvert(parent,"Can only convert classes that are declarations or the right hand" + " side of a simple assignment.");
     return;
   }
+  if (metadata.hasSuperClass() && !metadata.superClassNameNode.isQualifiedName()) {
+    compiler.report(JSError.make(metadata.superClassNameNode,DYNAMIC_EXTENDS_TYPE));
+    return;
+  }
   boolean useUnique=NodeUtil.isStatement(classNode) && !NodeUtil.isInFunction(classNode);
-  String uniqueFullClassName=useUnique ? getUniqueClassName(fullClassName) : fullClassName;
-  String superClassString=superClassName.getQualifiedName();
-  Preconditions.checkState(NodeUtil.isStatement(insertionPoint),"insertion point must be a statement: %s",insertionPoint);
+  String uniqueFullClassName=useUnique ? getUniqueClassName(metadata.fullClassName) : metadata.fullClassName;
+  Node classNameAccess=NodeUtil.newQName(compiler,uniqueFullClassName);
+  Node prototypeAccess=NodeUtil.newPropertyAccess(compiler,classNameAccess,"prototype");
+  Preconditions.checkState(NodeUtil.isStatement(metadata.insertionPoint),"insertion point must be a statement: %s",metadata.insertionPoint);
   Node constructor=null;
   JSDocInfo ctorJSDocInfo=null;
+  Node classMembers=classNode.getLastChild();
   for (  Node member : classMembers.children()) {
     if (member.isEmpty()) {
       continue;
     }
-    if (member.isMemberDef() && member.getString().equals("constructor")) {
+    Preconditions.checkState(member.isMemberFunctionDef() || (member.isComputedProp() && !member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)),"Member variables should have been transpiled earlier.");
+    if (member.isMemberFunctionDef() && member.getString().equals("constructor")) {
       ctorJSDocInfo=member.getJSDocInfo();
       constructor=member.getFirstChild().detachFromParent();
-      if (!anonymous) {
-        constructor.replaceChild(constructor.getFirstChild(),className.cloneNode());
+      if (!metadata.anonymous) {
+        constructor.replaceChild(constructor.getFirstChild(),metadata.classNameNode.cloneNode());
       }
     }
  else {
-      Node qualifiedMemberName;
-      Node method;
-      if (member.isMemberDef()) {
-        if (member.isStaticMember()) {
-          qualifiedMemberName=NodeUtil.newQName(compiler,Joiner.on(".").join(uniqueFullClassName,member.getString()));
-        }
- else {
-          qualifiedMemberName=NodeUtil.newQName(compiler,Joiner.on(".").join(uniqueFullClassName,"prototype",member.getString()));
-        }
-        method=member.getFirstChild().detachFromParent();
-      }
- else       if (member.isComputedProp()) {
-        if (member.isStaticMember()) {
-          qualifiedMemberName=IR.getelem(NodeUtil.newQName(compiler,uniqueFullClassName),member.removeFirstChild());
-        }
- else {
-          qualifiedMemberName=IR.getelem(NodeUtil.newQName(compiler,Joiner.on('.').join(uniqueFullClassName,"prototype")),member.removeFirstChild());
-        }
-        method=member.getLastChild().detachFromParent();
-      }
- else {
-        throw new IllegalStateException("Unexpected class member: " + member);
-      }
-      Node assign=IR.assign(qualifiedMemberName,method);
+      Node qualifiedMemberAccess=getQualifiedMemberAccess(compiler,member,classNameAccess,prototypeAccess);
+      Node method=member.getLastChild().detachFromParent();
+      Node assign=IR.assign(qualifiedMemberAccess,method);
       assign.useSourceInfoIfMissingFromForTree(member);
       JSDocInfo info=member.getJSDocInfo();
       if (member.isStaticMember() && NodeUtil.referencesThis(assign.getLastChild())) {
@@ -93,27 +51,27 @@
         assign.setJSDocInfo(info);
       }
       Node newNode=NodeUtil.newExpr(assign);
-      insertionPoint.getParent().addChildAfter(newNode,insertionPoint);
-      insertionPoint=newNode;
+      metadata.insertStaticMember(newNode);
     }
   }
   Preconditions.checkNotNull(constructor);
   JSDocInfo classJSDoc=classNode.getJSDocInfo();
   JSDocInfoBuilder newInfo=(classJSDoc != null) ? JSDocInfoBuilder.copyFrom(classJSDoc) : new JSDocInfoBuilder(true);
   newInfo.recordConstructor();
-  if (!superClassName.isEmpty()) {
+  if (metadata.hasSuperClass()) {
+    String superClassString=metadata.superClassNameNode.getQualifiedName();
     if (newInfo.isInterfaceRecorded()) {
-      newInfo.recordExtendedInterface(new JSTypeExpression(new Node(Token.BANG,IR.string(superClassString)),superClassName.getSourceFileName()));
+      newInfo.recordExtendedInterface(new JSTypeExpression(new Node(Token.BANG,IR.string(superClassString)),metadata.superClassNameNode.getSourceFileName()));
     }
  else {
-      Node inherits=IR.call(NodeUtil.newQName(compiler,INHERITS),NodeUtil.newQName(compiler,fullClassName),NodeUtil.newQName(compiler,superClassString));
+      Node inherits=IR.call(NodeUtil.newQName(compiler,INHERITS),NodeUtil.newQName(compiler,metadata.fullClassName),NodeUtil.newQName(compiler,superClassString));
       Node inheritsCall=IR.exprResult(inherits);
       compiler.needsEs6Runtime=true;
       inheritsCall.useSourceInfoIfMissingFromForTree(classNode);
       Node enclosingStatement=NodeUtil.getEnclosingStatement(classNode);
       enclosingStatement.getParent().addChildAfter(inheritsCall,enclosingStatement);
-      newInfo.recordBaseType(new JSTypeExpression(new Node(Token.BANG,IR.string(superClassString)),superClassName.getSourceFileName()));
-      Node copyProps=IR.call(NodeUtil.newQName(compiler,COPY_PROP),NodeUtil.newQName(compiler,fullClassName),NodeUtil.newQName(compiler,superClassString));
+      newInfo.recordBaseType(new JSTypeExpression(new Node(Token.BANG,IR.string(superClassString)),metadata.superClassNameNode.getSourceFileName()));
+      Node copyProps=IR.call(NodeUtil.newQName(compiler,COPY_PROP),NodeUtil.newQName(compiler,metadata.fullClassName),NodeUtil.newQName(compiler,superClassString));
       compiler.needsEs6Runtime=true;
       copyProps.useSourceInfoIfMissingFromForTree(classNode);
       enclosingStatement.getParent().addChildAfter(IR.exprResult(copyProps).srcref(classNode),enclosingStatement);
@@ -128,10 +86,9 @@
       newInfo.recordParameter(param,ctorJSDocInfo.getParameterType(param));
     }
   }
-  insertionPoint=constructor;
   if (NodeUtil.isStatement(classNode)) {
     constructor.getFirstChild().setString("");
-    Node ctorVar=IR.var(IR.name(fullClassName),constructor);
+    Node ctorVar=IR.var(IR.name(metadata.fullClassName),constructor);
     ctorVar.useSourceInfoIfMissingFromForTree(classNode);
     parent.replaceChild(classNode,ctorVar);
   }
@@ -139,7 +96,7 @@
     parent.replaceChild(classNode,constructor);
   }
   if (NodeUtil.isStatement(constructor)) {
-    insertionPoint.setJSDocInfo(newInfo.build(insertionPoint));
+    constructor.setJSDocInfo(newInfo.build(constructor));
   }
  else   if (parent.isName()) {
     Node var=parent.getParent();

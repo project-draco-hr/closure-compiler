@@ -1,6 +1,11 @@
 {
   validateNodeType(Token.COMPUTED_PROP,n);
-  validateChildCount(n,Token.arity(Token.COMPUTED_PROP));
   validateExpression(n.getFirstChild());
-  validateFunctionExpression(n.getLastChild());
+  if (n.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)) {
+    validateChildCount(n,1);
+  }
+ else {
+    validateChildCount(n,2);
+    validateFunctionExpression(n.getLastChild());
+  }
 }

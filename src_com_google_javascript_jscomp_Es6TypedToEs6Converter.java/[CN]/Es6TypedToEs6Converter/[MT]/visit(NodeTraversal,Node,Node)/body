@@ -1,0 +1,49 @@
+{
+  if (n.getType() != Token.CLASS) {
+    return;
+  }
+  Node classNode=n;
+  Node classMembers=classNode.getLastChild();
+  Node constructor=null;
+  boolean hasMemberVariable=false;
+  for (  Node member : classMembers.children()) {
+    if (member.isMemberFunctionDef() && member.getString().equals("constructor")) {
+      constructor=member.getFirstChild();
+    }
+ else {
+      hasMemberVariable|=member.isMemberVariableDef() || (member.isComputedProp() && member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE));
+    }
+    if (constructor != null && hasMemberVariable) {
+      break;
+    }
+  }
+  if (!hasMemberVariable) {
+    return;
+  }
+  Preconditions.checkNotNull(constructor,"Constructor should be added by Es6ConvertSuper");
+  ClassDeclarationMetadata metadata=ClassDeclarationMetadata.create(n,parent);
+  if (metadata == null) {
+    compiler.report(JSError.make(n,CANNOT_CONVERT_MEMBER_VARIABLES));
+    return;
+  }
+  Node classNameAccess=NodeUtil.newQName(compiler,metadata.fullClassName);
+  Node memberVarInsertionPoint=null;
+  for (  Node member : classMembers.children()) {
+    if (!member.isMemberVariableDef() && !member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)) {
+      continue;
+    }
+    compiler.reportCodeChange();
+    member.getParent().removeChild(member);
+    Node qualifiedMemberAccess=Es6ToEs3Converter.getQualifiedMemberAccess(compiler,member,classNameAccess,IR.thisNode());
+    qualifiedMemberAccess.setJSDocInfo(member.getJSDocInfo());
+    Node newNode=NodeUtil.newExpr(qualifiedMemberAccess);
+    newNode.useSourceInfoIfMissingFromForTree(member);
+    if (member.isStaticMember()) {
+      metadata.insertStaticMember(newNode);
+    }
+ else {
+      constructor.getLastChild().addChildAfter(newNode,memberVarInsertionPoint);
+      memberVarInsertionPoint=newNode;
+    }
+  }
+}

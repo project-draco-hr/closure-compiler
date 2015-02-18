@@ -1,0 +1,20 @@
+{
+  Node classNameNode=classNode.getFirstChild();
+  Node superClassNameNode=classNameNode.getNext();
+  if (NodeUtil.isStatement(classNode)) {
+    return new ClassDeclarationMetadata(classNode,classNameNode.getString(),false,classNameNode,superClassNameNode);
+  }
+ else   if (parent.isAssign() && parent.getParent().isExprResult()) {
+    String fullClassName=parent.getFirstChild().getQualifiedName();
+    if (fullClassName == null) {
+      return null;
+    }
+    return new ClassDeclarationMetadata(parent.getParent(),fullClassName,true,classNameNode,superClassNameNode);
+  }
+ else   if (parent.isName()) {
+    return new ClassDeclarationMetadata(parent.getParent(),parent.getString(),true,classNameNode,superClassNameNode);
+  }
+ else {
+    return null;
+  }
+}

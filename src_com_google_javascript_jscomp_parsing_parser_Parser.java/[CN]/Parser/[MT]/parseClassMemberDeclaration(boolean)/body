@@ -1,0 +1,49 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  boolean isStatic=false;
+  if (allowStatic && peek(TokenType.STATIC) && peekType(1) != TokenType.OPEN_PAREN) {
+    eat(TokenType.STATIC);
+    isStatic=true;
+  }
+  boolean isGenerator=eatOpt(TokenType.STAR) != null;
+  ParseTree nameExpr;
+  IdentifierToken name;
+  TokenType type=peekType();
+  if (type == TokenType.IDENTIFIER || Keywords.isKeyword(type)) {
+    nameExpr=null;
+    name=eatIdOrKeywordAsId();
+  }
+ else {
+    nameExpr=parseComputedPropertyName();
+    name=null;
+  }
+  if (peek(TokenType.OPEN_PAREN)) {
+    FunctionDeclarationTree.Kind kind=nameExpr == null ? FunctionDeclarationTree.Kind.MEMBER : FunctionDeclarationTree.Kind.EXPRESSION;
+    ParseTree function=parseFunctionTail(start,name,isStatic,isGenerator,kind);
+    if (kind == FunctionDeclarationTree.Kind.MEMBER) {
+      return function;
+    }
+ else {
+      return new ComputedPropertyMethodTree(getTreeLocation(start),nameExpr,function);
+    }
+  }
+ else {
+    if (isGenerator) {
+      reportError("Member variable cannot be prefixed by '*' (generator function)");
+    }
+    ParseTree declaredType=null;
+    if (peek(TokenType.COLON)) {
+      declaredType=parseTypeAnnotation();
+    }
+    if (peek(TokenType.EQUAL)) {
+      reportError("Member variable initializers ('=') are not supported");
+    }
+    eat(TokenType.SEMI_COLON);
+    if (nameExpr == null) {
+      return new MemberVariableTree(getTreeLocation(start),name,isStatic,declaredType);
+    }
+ else {
+      return new ComputedPropertyMemberVariableTree(getTreeLocation(start),nameExpr,isStatic,declaredType);
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  Node context=member.isStaticMember() ? staticAccess : instanceAccess;
+  context=context.cloneTree();
+  if (member.isComputedProp()) {
+    return IR.getelem(context,member.removeFirstChild());
+  }
+ else {
+    return NodeUtil.newPropertyAccess(compiler,context,member.getString());
+  }
+}

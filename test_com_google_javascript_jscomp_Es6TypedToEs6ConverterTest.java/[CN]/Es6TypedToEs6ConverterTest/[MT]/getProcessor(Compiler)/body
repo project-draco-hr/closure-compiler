@@ -1,0 +1,22 @@
+{
+  PhaseOptimizer optimizer=new PhaseOptimizer(compiler,null,null);
+  optimizer.addOneTimePass(new PassFactory("convertDeclaredTypesToJSDoc",true){
+    @Override CompilerPass create(    AbstractCompiler compiler){
+      return new ConvertDeclaredTypesToJSDoc(compiler);
+    }
+  }
+);
+  optimizer.addOneTimePass(new PassFactory("es6ConvertSuper",true){
+    @Override CompilerPass create(    AbstractCompiler compiler){
+      return new Es6ConvertSuper(compiler);
+    }
+  }
+);
+  optimizer.addOneTimePass(new PassFactory("convertEs6TypedToEs6",true){
+    @Override CompilerPass create(    AbstractCompiler compiler){
+      return new Es6TypedToEs6Converter(compiler);
+    }
+  }
+);
+  return optimizer;
+}

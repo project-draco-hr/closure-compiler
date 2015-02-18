@@ -314,24 +314,22 @@ case Token.CLASS_MEMBERS:
 cc.beginBlock();
 for (Node c=first; c != null; c=c.getNext()) {
 add(c);
-cc.maybeLineBreak();
+cc.endLine();
 }
 cc.endBlock(false);
 break;
 case Token.GETTER_DEF:
 case Token.SETTER_DEF:
-case Token.MEMBER_DEF:
+case Token.MEMBER_FUNCTION_DEF:
+case Token.MEMBER_VARIABLE_DEF:
 {
 n.getParent().toStringTree();
 Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers());
-Preconditions.checkState(childCount == 1);
-Preconditions.checkState(first.isFunction());
-Preconditions.checkState(first.getFirstChild().getString().isEmpty());
 if (n.isStaticMember()) {
 add("static ");
 }
-if (n.getFirstChild().isGeneratorFunction()) {
-Preconditions.checkState(type == Token.MEMBER_DEF);
+if (!n.isMemberVariableDef() && n.getFirstChild().isGeneratorFunction()) {
+Preconditions.checkState(type == Token.MEMBER_FUNCTION_DEF);
 add("*");
 }
 switch (type) {
@@ -343,10 +341,20 @@ case Token.SETTER_DEF:
 Preconditions.checkState(first.getChildAtIndex(1).hasOneChild());
 add("set ");
 break;
-case Token.MEMBER_DEF:
+case Token.MEMBER_FUNCTION_DEF:
+case Token.MEMBER_VARIABLE_DEF:
 break;
 }
 String name=n.getString();
+if (n.isMemberVariableDef()) {
+add(n.getString());
+maybeAddTypeDecl(n);
+add(";");
+}
+ else {
+Preconditions.checkState(childCount == 1);
+Preconditions.checkState(first.isFunction());
+Preconditions.checkState(first.getFirstChild().getString().isEmpty());
 Node fn=first;
 Node parameters=fn.getChildAtIndex(1);
 Node body=fn.getLastChild();
@@ -363,7 +371,9 @@ addJsString(n);
 }
 }
 add(parameters);
+maybeAddTypeDecl(fn);
 add(body,Context.PRESERVE_BLOCK);
+}
 break;
 }
 case Token.SCRIPT:
@@ -659,7 +669,7 @@ for (Node c=first; c != null; c=c.getNext()) {
 if (c != first) {
 cc.listSeparator();
 }
-Preconditions.checkState(c.isComputedProp() || c.isGetterDef() || c.isSetterDef()|| c.isStringKey()|| c.isMemberDef());
+Preconditions.checkState(c.isComputedProp() || c.isGetterDef() || c.isSetterDef()|| c.isStringKey()|| c.isMemberFunctionDef());
 add(c);
 }
 add("}");
@@ -681,6 +691,7 @@ add("*");
 add("[");
 add(first);
 add("]");
+maybeAddTypeDecl(n);
 if (n.getBooleanProp(Node.COMPUTED_PROP_METHOD) || n.getBooleanProp(Node.COMPUTED_PROP_GETTER) || n.getBooleanProp(Node.COMPUTED_PROP_SETTER)) {
 Node function=first.getNext();
 Node params=function.getFirstChild().getNext();
@@ -689,8 +700,19 @@ add(params);
 add(body,Context.PRESERVE_BLOCK);
 }
  else {
-add(":");
-add(first.getNext());
+boolean isInClass=n.getParent().getType() == Token.CLASS_MEMBERS;
+Node initializer=first.getNext();
+if (initializer != null) {
+Preconditions.checkState(!isInClass,"initializers should only exist in object literals, not classes");
+cc.addOp(":",false);
+add(initializer);
+}
+ else {
+Preconditions.checkState(n.getBooleanProp(Node.COMPUTED_PROP_VARIABLE));
+}
+if (isInClass) {
+add(";");
+}
 }
 break;
 case Token.OBJECT_PATTERN:

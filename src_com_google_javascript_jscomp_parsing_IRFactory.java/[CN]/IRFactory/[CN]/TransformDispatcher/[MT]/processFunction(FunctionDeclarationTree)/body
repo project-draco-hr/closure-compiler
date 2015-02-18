@@ -27,9 +27,7 @@
  else {
       newName=newStringNode(Token.NAME,"");
     }
-    newName.setLineno(lineno(functionTree));
-    newName.setCharno(charno(functionTree));
-    maybeSetLength(newName,0);
+    setSourceInfo(newName,functionTree);
   }
   Node node=newNode(Token.FUNCTION);
   if (!isMember) {
@@ -37,9 +35,7 @@
   }
  else {
     Node emptyName=newStringNode(Token.NAME,"");
-    emptyName.setLineno(lineno(functionTree));
-    emptyName.setCharno(charno(functionTree));
-    maybeSetLength(emptyName,0);
+    setSourceInfo(emptyName,functionTree);
     node.addChildToBack(emptyName);
   }
   node.addChildToBack(transform(functionTree.formalParameterList));
@@ -59,7 +55,7 @@
   Node result;
   if (functionTree.kind == FunctionDeclarationTree.Kind.MEMBER) {
     setSourceInfo(node,functionTree);
-    Node member=newStringNode(Token.MEMBER_DEF,name.value);
+    Node member=newStringNode(Token.MEMBER_FUNCTION_DEF,name.value);
     member.addChildToBack(node);
     member.setStaticMember(functionTree.isStatic);
     result=member;
