@@ -1,32 +1,35 @@
 {
+  JSDocInfo bestJSDocInfo=NodeUtil.getBestJSDocInfo(n);
 switch (n.getType()) {
 case Token.FUNCTION:
-    JSDocInfo bestJSDocInfo=NodeUtil.getBestJSDocInfo(n);
-  if (bestJSDocInfo != null) {
-    setTypeExpression(n,bestJSDocInfo.getReturnType());
-  }
-break;
+    if (bestJSDocInfo != null) {
+      setTypeExpression(n,bestJSDocInfo.getReturnType());
+    }
+  break;
 case Token.NAME:
+case Token.GETPROP:
 if (parent == null) {
-break;
+  break;
 }
-JSDocInfo parentJSDoc=NodeUtil.getBestJSDocInfo(parent);
-if (parentJSDoc == null) {
-break;
+if (parent.isVar() || parent.isAssign() || parent.isExprResult()) {
+if (bestJSDocInfo != null) {
+  setTypeExpression(n,bestJSDocInfo.getType());
 }
-if (parent.isVar()) {
-setTypeExpression(n,parentJSDoc.getType());
 }
  else if (parent.isParamList()) {
-JSTypeExpression parameterType=parentJSDoc.getParameterType(n.getString());
-if (parameterType != null) {
-Node attachTypeExpr=n;
-if (parameterType.getRoot().getType() == Token.ELLIPSIS) {
-attachTypeExpr=Node.newString(Token.REST,n.getString());
-n.getParent().replaceChild(n,attachTypeExpr);
-compiler.reportCodeChange();
+JSDocInfo parentDocInfo=NodeUtil.getBestJSDocInfo(parent);
+if (parentDocInfo == null) {
+  break;
 }
-setTypeExpression(attachTypeExpr,parameterType);
+JSTypeExpression parameterType=parentDocInfo.getParameterType(n.getString());
+if (parameterType != null) {
+  Node attachTypeExpr=n;
+  if (parameterType.getRoot().getType() == Token.ELLIPSIS) {
+    attachTypeExpr=Node.newString(Token.REST,n.getString());
+    n.getParent().replaceChild(n,attachTypeExpr);
+    compiler.reportCodeChange();
+  }
+  setTypeExpression(attachTypeExpr,parameterType);
 }
 }
 break;
