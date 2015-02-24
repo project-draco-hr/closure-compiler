@@ -33,18 +33,28 @@
         Node valueParent=value.getParent();
         Node proto=prop.getPrototype();
         int stubId=idGenerator.newId();
-        Node stubCall=IR.call(IR.name(STUB_METHOD_NAME),IR.number(stubId)).copyInformationFromForTree(value);
-        stubCall.putBooleanProp(Node.FREE_CALL,true);
-        valueParent.replaceChild(value,stubCall);
-        Node unstubParent=compiler.getNodeForCodeInsertion(deepestCommonModuleRef);
-        Node unstubCall=IR.call(IR.name(UNSTUB_METHOD_NAME),IR.number(stubId),value);
-        unstubCall.putBooleanProp(Node.FREE_CALL,true);
-        unstubParent.addChildToFront(IR.exprResult(IR.assign(IR.getprop(proto.cloneTree(),IR.string(nameInfo.name)),unstubCall)).copyInformationFromForTree(value));
-        compiler.reportCodeChange();
+        if (!noStubFunctions) {
+          Node stubCall=IR.call(IR.name(STUB_METHOD_NAME),IR.number(stubId)).copyInformationFromForTree(value);
+          stubCall.putBooleanProp(Node.FREE_CALL,true);
+          valueParent.replaceChild(value,stubCall);
+          Node unstubParent=compiler.getNodeForCodeInsertion(deepestCommonModuleRef);
+          Node unstubCall=IR.call(IR.name(UNSTUB_METHOD_NAME),IR.number(stubId),value);
+          unstubCall.putBooleanProp(Node.FREE_CALL,true);
+          unstubParent.addChildToFront(IR.exprResult(IR.assign(IR.getprop(proto.cloneTree(),IR.string(nameInfo.name)),unstubCall)).copyInformationFromForTree(value));
+          compiler.reportCodeChange();
+        }
+ else {
+          Node assignmentParent=valueParent.getParent();
+          valueParent.removeChild(value);
+          assignmentParent.getParent().removeChild(assignmentParent);
+          Node destParent=compiler.getNodeForCodeInsertion(deepestCommonModuleRef);
+          destParent.addChildToFront(IR.exprResult(IR.assign(IR.getprop(proto.cloneTree(),IR.string(nameInfo.name)),value)).copyInformationFromForTree(value));
+          compiler.reportCodeChange();
+        }
       }
     }
   }
-  if (!hasStubDeclaration && idGenerator.hasGeneratedAnyIds()) {
+  if (!noStubFunctions && !hasStubDeclaration && idGenerator.hasGeneratedAnyIds()) {
     Node declarations=compiler.parseSyntheticCode(STUB_DECLARATIONS);
     compiler.getNodeForCodeInsertion(null).addChildrenToFront(declarations.removeChildren());
   }
