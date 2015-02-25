@@ -3,7 +3,7 @@ switch (n.getType()) {
 case Token.NAME:
     if (parent != null && parent.isVar()) {
       String name=n.getString();
-      Scope.Var var=t.getScope().getVar(name);
+      Var var=t.getScope().getVar(name);
       if (isConstant(var)) {
         if (n.isFromExterns()) {
           initializedConstants.add(var);
@@ -32,7 +32,7 @@ case Token.ASSIGN_MOD:
   Node lhs=n.getFirstChild();
   if (lhs.isName()) {
     String name=lhs.getString();
-    Scope.Var var=t.getScope().getVar(name);
+    Var var=t.getScope().getVar(name);
     if (isConstant(var)) {
       if (!initializedConstants.add(var)) {
         reportError(t,n,var,name);
@@ -47,7 +47,7 @@ case Token.DEC:
 Node lhs=n.getFirstChild();
 if (lhs.isName()) {
   String name=lhs.getString();
-  Scope.Var var=t.getScope().getVar(name);
+  Var var=t.getScope().getVar(name);
   if (isConstant(var)) {
     reportError(t,n,var,name);
   }
