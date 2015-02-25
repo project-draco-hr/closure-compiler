@@ -1,10 +1,10 @@
 {
-  NodeTraversal.traverseRoots(compiler,Lists.newArrayList(externs,root),new CollectUndeclaredNames());
-  NodeTraversal.traverseRoots(compiler,Lists.newArrayList(externs,root),this);
-  NodeTraversal.traverseRoots(compiler,Lists.newArrayList(externs,root),new RenameReferences());
+  NodeTraversal.traverseRoots(compiler,new CollectUndeclaredNames(),externs,root);
+  NodeTraversal.traverseRoots(compiler,this,externs,root);
+  NodeTraversal.traverseRoots(compiler,new RenameReferences(),externs,root);
   LoopClosureTransformer transformer=new LoopClosureTransformer();
-  NodeTraversal.traverseRoots(compiler,Lists.newArrayList(externs,root),transformer);
+  NodeTraversal.traverseRoots(compiler,transformer,externs,root);
   transformer.transformLoopClosure();
   varify();
-  NodeTraversal.traverseRoots(compiler,Lists.newArrayList(externs,root),new RewriteBlockScopedFunctionDeclaration());
+  NodeTraversal.traverseRoots(compiler,new RewriteBlockScopedFunctionDeclaration(),externs,root);
 }

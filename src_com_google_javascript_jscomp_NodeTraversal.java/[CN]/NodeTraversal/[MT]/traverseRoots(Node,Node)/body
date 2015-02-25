@@ -1,18 +1,14 @@
 {
-  if (roots.isEmpty()) {
-    return;
-  }
   try {
-    Node scopeRoot=roots.get(0).getParent();
+    Node scopeRoot=externs.getParent();
     Preconditions.checkState(scopeRoot != null);
     inputId=NodeUtil.getInputId(scopeRoot);
     sourceName="";
     curNode=scopeRoot;
     pushScope(scopeRoot);
-    for (    Node root : roots) {
-      Preconditions.checkState(root.getParent() == scopeRoot);
-      traverseBranch(root,scopeRoot);
-    }
+    traverseBranch(externs,scopeRoot);
+    Preconditions.checkState(root.getParent() == scopeRoot);
+    traverseBranch(root,scopeRoot);
     popScope();
   }
  catch (  Exception unexpectedException) {
