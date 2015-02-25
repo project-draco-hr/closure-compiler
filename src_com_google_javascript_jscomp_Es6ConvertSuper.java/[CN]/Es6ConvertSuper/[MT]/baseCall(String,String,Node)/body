@@ -1,0 +1,10 @@
+{
+  Preconditions.checkNotNull(baseClass);
+  Preconditions.checkNotNull(methodName);
+  Node methodCall=NodeUtil.newQName(compiler,Joiner.on('.').join(baseClass,"prototype",methodName,"call"));
+  Node callNode=IR.call(methodCall,IR.thisNode());
+  if (arguments != null) {
+    callNode.addChildrenToBack(arguments);
+  }
+  return callNode;
+}

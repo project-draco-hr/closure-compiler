@@ -1,11 +1,11 @@
 {
-  Node enclosing=parent;
+  Node enclosingCall=parent;
   Node potentialCallee=node;
   if (!parent.isCall()) {
-    enclosing=parent.getParent();
+    enclosingCall=parent.getParent();
     potentialCallee=parent;
   }
-  if (!enclosing.isCall() || enclosing.getFirstChild() != potentialCallee) {
+  if (!enclosingCall.isCall() || enclosingCall.getFirstChild() != potentialCallee) {
     compiler.report(JSError.make(node,CANNOT_CONVERT_YET,"Only calls to super or to a method of super are supported."));
     return;
   }
@@ -17,37 +17,38 @@
   if (NodeUtil.getClassNameNode(clazz) == null) {
     return;
   }
+  Node superName=clazz.getFirstChild().getNext();
+  if (!superName.isQualifiedName()) {
+    return;
+  }
   Node enclosingMemberDef=NodeUtil.getEnclosingClassMemberFunction(node);
   if (enclosingMemberDef.isStaticMember()) {
-    Node superName=clazz.getFirstChild().getNext();
-    if (!superName.isQualifiedName()) {
-      return;
-    }
     Node callTarget;
     potentialCallee.detachFromParent();
     if (potentialCallee == node) {
       potentialCallee=IR.getprop(superName.cloneTree(),IR.string(enclosingMemberDef.getString()));
-      enclosing.putBooleanProp(Node.FREE_CALL,false);
+      enclosingCall.putBooleanProp(Node.FREE_CALL,false);
     }
  else {
       potentialCallee.replaceChild(node,superName.cloneTree());
     }
     callTarget=IR.getprop(potentialCallee,IR.string("call"));
-    enclosing.addChildToFront(callTarget);
-    enclosing.addChildAfter(IR.thisNode(),callTarget);
-    enclosing.useSourceInfoIfMissingFromForTree(enclosing);
+    enclosingCall.addChildToFront(callTarget);
+    enclosingCall.addChildAfter(IR.thisNode(),callTarget);
+    enclosingCall.useSourceInfoIfMissingFromForTree(enclosingCall);
     compiler.reportCodeChange();
     return;
   }
   String methodName;
-  Node callName=enclosing.removeFirstChild();
+  Node callName=enclosingCall.removeFirstChild();
   if (callName.isSuper()) {
     methodName=enclosingMemberDef.getString();
   }
  else {
     methodName=callName.getLastChild().getString();
   }
-  Node baseCall=baseCall(clazz,methodName,enclosing.removeChildren()).useSourceInfoIfMissingFromForTree(enclosing);
-  enclosing.getParent().replaceChild(enclosing,baseCall);
+  Node baseCall=baseCall(superName.getQualifiedName(),methodName,enclosingCall.removeChildren());
+  baseCall.useSourceInfoIfMissingFromForTree(enclosingCall);
+  enclosingCall.getParent().replaceChild(enclosingCall,baseCall);
   compiler.reportCodeChange();
 }

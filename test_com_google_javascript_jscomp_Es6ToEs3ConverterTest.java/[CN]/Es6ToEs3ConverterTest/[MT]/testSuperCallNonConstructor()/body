@@ -1,5 +1,5 @@
 {
   compareJsDoc=false;
-  test("class S extends B { static f() { super(); } }",Joiner.on('\n').join("/** @constructor @struct @extends {B} */","var S = function(args) {","  args = [].slice.call(arguments, 0);","  S.base.apply(S, [].concat([this,'constructor'],args));","};","$jscomp.copyProperties(S, B);","$jscomp.inherits(S, B);","/** @this {?} */","S.f=function() { B.f.call(this) }"));
-  test("class S extends B { f() { super(); } }",Joiner.on('\n').join("/** @constructor @struct @extends {B} */","var S = function(args) {","  args = [].slice.call(arguments, 0);","  S.base.apply(S, [].concat([this,'constructor'],args));","};","$jscomp.copyProperties(S, B);","$jscomp.inherits(S, B);","S.prototype.f=function() { S.base(this, 'f') }"));
+  test("class S extends B { static f() { super(); } }",Joiner.on('\n').join("/** @constructor @struct @extends {B} */","var S = function(args) {","  args = [].slice.call(arguments, 0);","  B.prototype.constructor.call.apply(B.prototype.constructor,[].concat([this],args));","};","$jscomp.copyProperties(S, B);","$jscomp.inherits(S, B);","/** @this {?} */","S.f=function() { B.f.call(this) }"));
+  test("class S extends B { f() { super(); } }",Joiner.on('\n').join("/** @constructor @struct @extends {B} */","var S = function(args) {","  args = [].slice.call(arguments, 0);","  B.prototype.constructor.call.apply(B.prototype.constructor, [].concat([this], args));","};","$jscomp.copyProperties(S, B);","$jscomp.inherits(S, B);","S.prototype.f=function() {","  B.prototype.f.call(this);","}"));
 }

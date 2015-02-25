@@ -1,5 +1,5 @@
 {
   test("class C { f() { class D {} } }",Joiner.on('\n').join("/** @constructor @struct */","var C = function() {};","C.prototype.f = function() {","  /** @constructor @struct */","  var D = function() {}","};"));
   compareJsDoc=false;
-  test("class C { f() { class D extends C {} } }",Joiner.on('\n').join("/** @constructor @struct */","var C = function() {};","C.prototype.f = function() {","  /** @constructor @struct @extends{C} */","  var D = function(args) {","    args = [].slice.call(arguments, 0);","    D.base.apply(D, [].concat([this, 'constructor'], args));","  };","  $jscomp.copyProperties(D, C);","  $jscomp.inherits(D, C);","};"));
+  test("class C { f() { class D extends C {} } }",Joiner.on('\n').join("/** @constructor @struct */","var C = function() {};","C.prototype.f = function() {","  /** @constructor @struct @extends{C} */","  var D = function(args) {","    args = [].slice.call(arguments, 0);","    C.prototype.constructor.call.apply(C.prototype.constructor,[].concat([this],args));","  };","  $jscomp.copyProperties(D, C);","  $jscomp.inherits(D, C);","};"));
 }
