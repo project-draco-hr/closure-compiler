@@ -1,7 +1,7 @@
 {
   compareJsDoc=false;
-  test("class D {} class C extends D {}",Joiner.on('\n').join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function(args) {","  args=[].slice.call(arguments, 0);","  D.prototype.constructor.call.apply(D.prototype.constructor, [].concat([this], args));","};","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);"));
+  test("class D {} class C extends D {}",Joiner.on('\n').join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function(var_args) { D.apply(this, arguments); };","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);"));
   test("class D {} class C extends D { constructor() { super(); } }",Joiner.on('\n').join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function() {","  D.prototype.constructor.call(this);","}","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);"));
   test("class D {} class C extends D { constructor(str) { super(str); } }",Joiner.on('\n').join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function(str) { ","  D.prototype.constructor.call(this, str);","}","$jscomp.copyProperties(C, D);","$jscomp.inherits(C, D);"));
-  test("class C extends ns.D { }",Joiner.on('\n').join("/** @constructor @struct @extends {ns.D} */","var C = function(args) {","  args=[].slice.call(arguments, 0);","  ns.D.prototype.constructor.call.apply(","      ns.D.prototype.constructor, [].concat([this], args));","};","$jscomp.copyProperties(C, ns.D);","$jscomp.inherits(C, ns.D);"));
+  test("class C extends ns.D { }",Joiner.on('\n').join("/** @constructor @struct @extends {ns.D} */","var C = function(var_args) { ns.D.apply(this, arguments); };","$jscomp.copyProperties(C, ns.D);","$jscomp.inherits(C, ns.D);"));
 }
