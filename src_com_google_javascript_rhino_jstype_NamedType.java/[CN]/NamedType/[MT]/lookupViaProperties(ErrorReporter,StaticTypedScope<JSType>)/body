@@ -1,0 +1,29 @@
+{
+  String[] componentNames=reference.split("\\.",-1);
+  if (componentNames[0].length() == 0) {
+    return null;
+  }
+  StaticTypedSlot<JSType> slot=enclosing.getSlot(componentNames[0]);
+  if (slot == null) {
+    return null;
+  }
+  JSType slotType=slot.getType();
+  if (slotType == null || slotType.isAllType() || slotType.isNoType()) {
+    return null;
+  }
+  JSType value=getTypedefType(reporter,slot);
+  if (value == null) {
+    return null;
+  }
+  for (int i=1; i < componentNames.length; i++) {
+    ObjectType parentClass=ObjectType.cast(value);
+    if (parentClass == null) {
+      return null;
+    }
+    if (componentNames[i].length() == 0) {
+      return null;
+    }
+    value=parentClass.getPropertyType(componentNames[i]);
+  }
+  return value;
+}

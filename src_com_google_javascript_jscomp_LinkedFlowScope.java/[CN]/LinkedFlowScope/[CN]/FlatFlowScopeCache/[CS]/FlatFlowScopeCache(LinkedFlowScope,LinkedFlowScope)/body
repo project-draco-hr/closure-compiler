@@ -1,17 +1,17 @@
 {
   linkedEquivalent=null;
   functionScope=joinedScopeA.flowsFromBottom() ? joinedScopeB.getFunctionScope() : joinedScopeA.getFunctionScope();
-  Map<String,StaticSlot<JSType>> slotsA=joinedScopeA.allFlowSlots();
-  Map<String,StaticSlot<JSType>> slotsB=joinedScopeB.allFlowSlots();
+  Map<String,StaticTypedSlot<JSType>> slotsA=joinedScopeA.allFlowSlots();
+  Map<String,StaticTypedSlot<JSType>> slotsB=joinedScopeB.allFlowSlots();
   symbols=slotsA;
   Set<String> symbolNames=Sets.newHashSet(symbols.keySet());
   symbolNames.addAll(slotsB.keySet());
   for (  String name : symbolNames) {
-    StaticSlot<JSType> slotA=slotsA.get(name);
-    StaticSlot<JSType> slotB=slotsB.get(name);
+    StaticTypedSlot<JSType> slotA=slotsA.get(name);
+    StaticTypedSlot<JSType> slotB=slotsB.get(name);
     JSType joinedType=null;
     if (slotB == null || slotB.getType() == null) {
-      StaticSlot<JSType> fnSlot=joinedScopeB.getFunctionScope().getSlot(name);
+      StaticTypedSlot<JSType> fnSlot=joinedScopeB.getFunctionScope().getSlot(name);
       JSType fnSlotType=fnSlot == null ? null : fnSlot.getType();
       if (fnSlotType == null) {
       }
@@ -20,7 +20,7 @@
       }
     }
  else     if (slotA == null || slotA.getType() == null) {
-      StaticSlot<JSType> fnSlot=joinedScopeA.getFunctionScope().getSlot(name);
+      StaticTypedSlot<JSType> fnSlot=joinedScopeA.getFunctionScope().getSlot(name);
       JSType fnSlotType=fnSlot == null ? null : fnSlot.getType();
       if (fnSlotType == null) {
         symbols.put(name,slotB);
