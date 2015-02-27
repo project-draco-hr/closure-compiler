@@ -28,7 +28,7 @@ Node block=n.getFirstChild();
 if ("Array".equals(typeName)) {
 return arrayType(convertTypeNodeAST(block.getFirstChild()));
 }
-return parameterizedType(root,Iterables.transform(block.children(),CONVERT_TYPE_NODE));
+return parameterizedType(root,Iterables.filter(Iterables.transform(block.children(),CONVERT_TYPE_NODE),Predicates.notNull()));
 }
 return root;
 }
@@ -91,7 +91,8 @@ returnType=convertTypeNodeAST(child2);
 }
 return functionType(returnType,parameters,restName,restType);
 case Token.EQUALS:
-return optionalParameter(convertTypeNodeAST(n.getFirstChild()));
+TypeDeclarationNode optionalParam=convertTypeNodeAST(n.getFirstChild());
+return optionalParam == null ? null : optionalParameter(optionalParam);
 default :
 throw new IllegalArgumentException("Unsupported node type: " + Token.name(n.getType()) + " "+ n.toStringTree());
 }
