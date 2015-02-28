@@ -2,7 +2,7 @@
   Preconditions.checkState(options.sourceMapDetailLevel != null);
   boolean createSourceMap=(sourceMap != null);
   MappedCodePrinter mcp=outputFormat == Format.COMPACT ? new CompactCodePrinter(options.lineBreak,options.preferLineBreakAtEndOfFile,options.lineLengthThreshold,createSourceMap,options.sourceMapDetailLevel) : new PrettyCodePrinter(options.lineLengthThreshold,createSourceMap,options.sourceMapDetailLevel);
-  CodeGenerator cg=outputFormat == Format.TYPED ? new TypedCodeGenerator(mcp,options,registry) : new CodeGenerator(mcp,options);
+  CodeGenerator cg=codeGeneratorFactory.getCodeGenerator(outputFormat,mcp);
   if (tagAsStrict) {
     cg.tagAsStrict();
   }
