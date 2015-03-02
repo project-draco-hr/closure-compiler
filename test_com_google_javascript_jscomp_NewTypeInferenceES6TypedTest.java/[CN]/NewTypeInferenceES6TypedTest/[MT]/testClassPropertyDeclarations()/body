@@ -1,0 +1,6 @@
+{
+  typeCheck("class Foo {\n" + "  prop: number;\n" + "  constructor() { this.prop = 'asdf'; }\n"+ "}\n",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("class Foo {\n" + "  prop: string;\n" + "}\n"+ "(new Foo).prop - 5;\n",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("class Foo {\n" + "  static prop: number;\n" + "}\n"+ "Foo.prop = 'asdf';\n",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @unrestricted */ class Foo {\n" + "  ['prop']: string;\n" + "}\n"+ "(new Foo).prop - 5;\n",TypeCheck.INEXISTENT_PROPERTY);
+}
