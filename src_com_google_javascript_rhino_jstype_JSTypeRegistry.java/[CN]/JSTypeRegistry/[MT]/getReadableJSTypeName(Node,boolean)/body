@@ -1,5 +1,5 @@
 {
-  JSType type=getJSType(n);
+  JSType type=getJSTypeOrUnknown(n);
   if (dereference) {
     ObjectType dereferenced=type.dereference();
     if (dereferenced != null) {
@@ -10,7 +10,7 @@
     return type.toString();
   }
   if (n.isGetProp()) {
-    ObjectType objectType=getJSType(n.getFirstChild()).dereference();
+    ObjectType objectType=getJSTypeOrUnknown(n.getFirstChild()).dereference();
     if (objectType != null) {
       String propName=n.getLastChild().getString();
       if (objectType.getConstructor() != null && objectType.getConstructor().isInterface()) {
