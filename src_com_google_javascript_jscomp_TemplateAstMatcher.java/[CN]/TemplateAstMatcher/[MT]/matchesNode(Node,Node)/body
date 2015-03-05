@@ -10,15 +10,9 @@
     if (templateType.isNoResolvedType()) {
       return false;
     }
-    boolean isMatch=false;
-    JSType astType=ast.getJSType();
-    if (astType == null || astType.isUnknownType() || astType.isAllType()) {
-      isMatch=true;
-      isLooseMatch=true;
-    }
- else {
-      isMatch=astType.isSubtype(templateType);
-    }
+    MatchResult matchResult=typeMatchingStrategy.match(templateType,ast.getJSType());
+    isLooseMatch=matchResult.isLooseMatch();
+    boolean isMatch=matchResult.isMatch();
     if (isMatch && previousMatch == null) {
       paramNodeMatches.set(paramIndex,ast);
     }

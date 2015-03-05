@@ -1,0 +1,9 @@
+{
+  Compiler compiler=new Compiler();
+  compiler.disableThreads();
+  CompilerOptions options=new CompilerOptions();
+  options.setCheckTypes(true);
+  compiler.compile(ImmutableList.of(SourceFile.fromCode("externs",EXTERNS)),ImmutableList.of(SourceFile.fromCode("test",String.format("/** @type {%s} */ var x;",jsType))),options);
+  Node node=compiler.getRoot().getLastChild();
+  return node.getFirstChild().getFirstChild().getFirstChild().getJSType();
+}
