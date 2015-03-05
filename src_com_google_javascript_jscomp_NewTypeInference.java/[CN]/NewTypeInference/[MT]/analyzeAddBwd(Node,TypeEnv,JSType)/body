@@ -1,0 +1,9 @@
+{
+  Node lhs=expr.getFirstChild();
+  Node rhs=expr.getLastChild();
+  JSType randType=requiredType.isNumber() ? JSType.NUMBER : JSType.NUM_OR_STR;
+  EnvTypePair rhsPair=analyzeExprBwd(rhs,outEnv,randType);
+  EnvTypePair lhsPair=analyzeExprBwd(lhs,rhsPair.env,randType);
+  lhsPair.type=JSType.plus(lhsPair.type,rhsPair.type);
+  return lhsPair;
+}
