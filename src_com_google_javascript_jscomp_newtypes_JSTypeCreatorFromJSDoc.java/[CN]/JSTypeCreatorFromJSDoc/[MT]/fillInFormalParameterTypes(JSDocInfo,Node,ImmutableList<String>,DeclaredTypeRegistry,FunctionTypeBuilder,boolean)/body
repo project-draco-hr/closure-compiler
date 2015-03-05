@@ -8,13 +8,7 @@
     JSType inlineParamType=(ignoreJsdoc || ignoreFunNode) ? null : getDeclaredTypeOfNode(param.getJSDocInfo(),registry,typeParameters);
     boolean isRequired=true;
     boolean isRestFormals=false;
-    JSTypeExpression texp=null;
-    if (jsdoc != null) {
-      texp=jsdoc.getParameterType(pname);
-      if (texp == null) {
-        warnings.add(JSError.make(param,MISSING_PARAM_JSDOC));
-      }
-    }
+    JSTypeExpression texp=jsdoc == null ? null : jsdoc.getParameterType(pname);
     Node jsdocNode=texp == null ? null : texp.getRoot();
     if (param != null) {
       if (convention.isOptionalParameter(param)) {

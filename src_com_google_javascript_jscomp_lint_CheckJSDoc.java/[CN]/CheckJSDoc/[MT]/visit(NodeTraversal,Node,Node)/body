@@ -1,0 +1,12 @@
+{
+  if (n.isFunction()) {
+    JSDocInfo jsDoc=NodeUtil.getBestJSDocInfo(n);
+    if (jsDoc != null) {
+      for (      Node param : n.getFirstChild().getNext().children()) {
+        if (!jsDoc.hasParameterType(param.getString())) {
+          t.report(param,MISSING_PARAM_JSDOC,param.getString());
+        }
+      }
+    }
+  }
+}
