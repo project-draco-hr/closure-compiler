@@ -1,0 +1,6 @@
+{
+  Node root=parseAndTypeCheck("/** @constructor */function base() {}\n" + "/** @constructor\n * @extends {base} */function derived() {}\n" + "/** @type {!derived} */ var baz = "+ "/** @type {!derived} */(new base());\n");
+  Node castedExprNode=root.getLastChild().getFirstChild().getFirstChild().getFirstChild();
+  assertEquals("derived",castedExprNode.getJSType().toString());
+  assertEquals("base",castedExprNode.getJSTypeBeforeCast().toString());
+}
