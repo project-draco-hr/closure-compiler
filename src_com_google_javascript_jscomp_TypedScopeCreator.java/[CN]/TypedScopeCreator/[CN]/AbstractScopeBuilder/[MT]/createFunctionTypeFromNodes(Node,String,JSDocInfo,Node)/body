@@ -1,7 +1,7 @@
 {
   FunctionType functionType=null;
   if (rValue != null && rValue.isQualifiedName() && scope.isGlobal()) {
-    Var var=scope.getVar(rValue.getQualifiedName());
+    TypedVar var=scope.getVar(rValue.getQualifiedName());
     if (var != null && var.getType() != null && var.getType().isFunctionType()) {
       FunctionType aliasedType=var.getType().toMaybeFunctionType();
       if ((aliasedType.isConstructor() || aliasedType.isInterface()) && !isGoogAbstractMethod(rValue)) {
@@ -28,7 +28,7 @@
     if (functionType == null) {
       Node ownerNode=NodeUtil.getBestLValueOwner(lvalueNode);
       String ownerName=NodeUtil.getBestLValueName(ownerNode);
-      Var ownerVar=null;
+      TypedVar ownerVar=null;
       String propName=null;
       ObjectType ownerType=null;
       if (ownerName != null) {

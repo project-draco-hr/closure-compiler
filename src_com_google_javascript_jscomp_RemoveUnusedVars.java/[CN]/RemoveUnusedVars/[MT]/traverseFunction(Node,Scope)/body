@@ -3,7 +3,7 @@
   Preconditions.checkState(n.isFunction());
   final Node body=n.getLastChild();
   Preconditions.checkState(body.getNext() == null && body.isBlock());
-  Scope fnScope=new SyntacticScopeCreator(compiler).createScope(n,parentScope);
+  Scope fnScope=SyntacticScopeCreator.makeUntyped(compiler).createScope(n,parentScope);
   traverseNode(body,n,fnScope);
   collectMaybeUnreferencedVars(fnScope);
   allFunctionScopes.add(fnScope);

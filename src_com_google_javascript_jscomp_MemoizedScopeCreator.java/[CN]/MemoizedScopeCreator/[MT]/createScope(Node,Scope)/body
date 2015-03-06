@@ -1,11 +1,13 @@
 {
-  Scope scope=scopes.get(n);
+  Preconditions.checkArgument(parent == null || parent instanceof TypedScope);
+  TypedScope typedParent=(TypedScope)parent;
+  TypedScope scope=scopes.get(n);
   if (scope == null) {
-    scope=delegate.createScope(n,parent);
+    scope=(TypedScope)delegate.createScope(n,typedParent);
     scopes.put(n,scope);
   }
  else {
-    Preconditions.checkState(parent == scope.getParent());
+    Preconditions.checkState(typedParent == scope.getParent());
   }
   return scope;
 }

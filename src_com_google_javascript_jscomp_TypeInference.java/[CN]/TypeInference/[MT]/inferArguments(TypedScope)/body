@@ -1,0 +1,38 @@
+{
+  Node functionNode=functionScope.getRootNode();
+  Node astParameters=functionNode.getFirstChild().getNext();
+  Node iifeArgumentNode=null;
+  if (NodeUtil.isCallOrNewTarget(functionNode)) {
+    iifeArgumentNode=functionNode.getNext();
+  }
+  FunctionType functionType=JSType.toMaybeFunctionType(functionNode.getJSType());
+  if (functionType != null) {
+    Node parameterTypes=functionType.getParametersNode();
+    if (parameterTypes != null) {
+      Node parameterTypeNode=parameterTypes.getFirstChild();
+      for (      Node astParameter : astParameters.children()) {
+        TypedVar var=functionScope.getVar(astParameter.getString());
+        Preconditions.checkNotNull(var);
+        if (var.isTypeInferred() && var.getType() == unknownType) {
+          JSType newType=null;
+          if (iifeArgumentNode != null) {
+            newType=iifeArgumentNode.getJSType();
+          }
+ else           if (parameterTypeNode != null) {
+            newType=parameterTypeNode.getJSType();
+          }
+          if (newType != null) {
+            var.setType(newType);
+            astParameter.setJSType(newType);
+          }
+        }
+        if (parameterTypeNode != null) {
+          parameterTypeNode=parameterTypeNode.getNext();
+        }
+        if (iifeArgumentNode != null) {
+          iifeArgumentNode=iifeArgumentNode.getNext();
+        }
+      }
+    }
+  }
+}

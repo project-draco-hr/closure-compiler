@@ -2,17 +2,17 @@
   Preconditions.checkArgument(!variableName.isEmpty());
   boolean isGlobalVar=n.isName() && scope.isGlobal();
   boolean shouldDeclareOnGlobalThis=isGlobalVar && (parent.isVar() || parent.isFunction());
-  Scope scopeToDeclareIn=scope;
+  TypedScope scopeToDeclareIn=scope;
   if (n.isGetProp() && !scope.isGlobal() && isQnameRootedInGlobalScope(n)) {
-    Scope globalScope=scope.getGlobalScope();
+    TypedScope globalScope=scope.getGlobalScope();
     if (!globalScope.isDeclared(variableName,false)) {
       scopeToDeclareIn=scope.getGlobalScope();
     }
   }
-  Var newVar=null;
+  TypedVar newVar=null;
   CompilerInput input=compiler.getInput(inputId);
   if (scopeToDeclareIn.isDeclared(variableName,false)) {
-    Var oldVar=scopeToDeclareIn.getVar(variableName);
+    TypedVar oldVar=scopeToDeclareIn.getVar(variableName);
     newVar=validator.expectUndeclaredVariable(sourceName,input,n,parent,oldVar,variableName,type);
   }
  else {

@@ -1,0 +1,20 @@
+{
+  super(cfg,new LinkedFlowScope.FlowScopeJoinOp());
+  this.compiler=compiler;
+  this.registry=compiler.getTypeRegistry();
+  this.reverseInterpreter=reverseInterpreter;
+  this.unknownType=registry.getNativeObjectType(UNKNOWN_TYPE);
+  this.syntacticScope=functionScope;
+  inferArguments(functionScope);
+  this.functionScope=LinkedFlowScope.createEntryLattice(functionScope);
+  this.assertionFunctionsMap=assertionFunctionsMap;
+  Iterator<TypedVar> varIt=functionScope.getDeclarativelyUnboundVarsWithoutTypes();
+  while (varIt.hasNext()) {
+    TypedVar var=varIt.next();
+    if (isUnflowable(var)) {
+      continue;
+    }
+    this.functionScope.inferSlotType(var.getName(),getNativeType(VOID_TYPE));
+  }
+  this.bottomScope=LinkedFlowScope.createEntryLattice(TypedScope.createLatticeBottom(functionScope.getRootNode()));
+}

@@ -8,7 +8,7 @@
     newVar.getFirstChild().addChildToFront(rhsValue);
     newVar.setJSDocInfo(NodeUtil.createConstantJsDoc());
     if (rhsValue.isObjectLit()) {
-      Scope globalScope=new SyntacticScopeCreator(compiler).createScope(script,null);
+      Scope globalScope=SyntacticScopeCreator.makeUntyped(compiler).createScope(script,null);
       for (Node key=rhsValue.getFirstChild(); key != null; key=key.getNext()) {
         if (key.getJSDocInfo() == null && key.getFirstChild().isName()) {
           Var aliasedVar=globalScope.getVar(key.getFirstChild().getString());

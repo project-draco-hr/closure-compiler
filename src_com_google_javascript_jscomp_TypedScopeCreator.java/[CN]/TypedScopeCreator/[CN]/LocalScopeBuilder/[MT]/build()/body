@@ -1,14 +1,14 @@
 {
-  NodeTraversal.traverse(compiler,scope.getRootNode(),this);
+  NodeTraversal.traverseTyped(compiler,scope.getRootNode(),this);
   AstFunctionContents contents=getFunctionAnalysisResults(scope.getRootNode());
   if (contents != null) {
     for (    String varName : contents.getEscapedVarNames()) {
-      Var v=scope.getVar(varName);
+      TypedVar v=scope.getVar(varName);
       Preconditions.checkState(v.getScope() == scope);
       v.markEscaped();
     }
     for (    Multiset.Entry<String> entry : contents.getAssignedNameCounts().entrySet()) {
-      Var v=scope.getVar(entry.getElement());
+      TypedVar v=scope.getVar(entry.getElement());
       Preconditions.checkState(v.getScope() == scope);
       if (entry.getCount() == 1) {
         v.markAssignedExactlyOnce();

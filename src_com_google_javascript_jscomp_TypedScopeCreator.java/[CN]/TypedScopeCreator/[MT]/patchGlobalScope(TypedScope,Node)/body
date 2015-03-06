@@ -1,0 +1,27 @@
+{
+  Preconditions.checkState(scriptRoot.isScript());
+  Preconditions.checkNotNull(globalScope);
+  Preconditions.checkState(globalScope.isGlobal());
+  String scriptName=NodeUtil.getSourceName(scriptRoot);
+  Preconditions.checkNotNull(scriptName);
+  for (  Node node : ImmutableList.copyOf(functionAnalysisResults.keySet())) {
+    if (scriptName.equals(NodeUtil.getSourceName(node))) {
+      functionAnalysisResults.remove(node);
+    }
+  }
+  (new FirstOrderFunctionAnalyzer(compiler,functionAnalysisResults)).process(null,scriptRoot);
+  Iterator<TypedVar> varIter=globalScope.getVars();
+  List<TypedVar> varsToRemove=Lists.newArrayList();
+  while (varIter.hasNext()) {
+    TypedVar oldVar=varIter.next();
+    if (scriptName.equals(oldVar.getInputName())) {
+      varsToRemove.add(oldVar);
+    }
+  }
+  for (  TypedVar var : varsToRemove) {
+    globalScope.undeclare(var);
+    globalScope.getTypeOfThis().toObjectType().removeProperty(var.getName());
+  }
+  GlobalScopeBuilder scopeBuilder=new GlobalScopeBuilder(globalScope);
+  NodeTraversal.traverseTyped(compiler,scriptRoot,scopeBuilder);
+}

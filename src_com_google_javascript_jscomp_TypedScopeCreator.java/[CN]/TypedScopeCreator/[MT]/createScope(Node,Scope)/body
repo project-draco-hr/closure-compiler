@@ -1,7 +1,9 @@
 {
-  Scope newScope=null;
+  Preconditions.checkArgument(parent == null || parent instanceof TypedScope);
+  TypedScope typedParent=(TypedScope)parent;
+  TypedScope newScope=null;
   AbstractScopeBuilder scopeBuilder=null;
-  if (parent == null) {
+  if (typedParent == null) {
     JSType globalThis=typeRegistry.getNativeObjectType(JSTypeNative.GLOBAL_THIS);
     root.setJSType(globalThis);
     root.getFirstChild().setJSType(globalThis);
@@ -10,16 +12,16 @@
     newScope=createInitialScope(root);
     GlobalScopeBuilder globalScopeBuilder=new GlobalScopeBuilder(newScope);
     scopeBuilder=globalScopeBuilder;
-    NodeTraversal.traverse(compiler,root,scopeBuilder);
+    NodeTraversal.traverseTyped(compiler,root,scopeBuilder);
   }
  else {
-    newScope=new Scope(parent,root);
+    newScope=new TypedScope(typedParent,root);
     LocalScopeBuilder localScopeBuilder=new LocalScopeBuilder(newScope);
     scopeBuilder=localScopeBuilder;
     localScopeBuilder.build();
   }
   scopeBuilder.resolveStubDeclarations();
-  if (parent == null) {
+  if (typedParent == null) {
     codingConvention.defineDelegateProxyPrototypeProperties(typeRegistry,newScope,delegateProxyPrototypes,delegateCallingConventions);
   }
   newScope.setTypeResolver(scopeBuilder);

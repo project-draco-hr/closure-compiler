@@ -9,7 +9,7 @@
     liveness.markAllParametersEscaped();
   }
   liveness.analyze();
-  UndiGraph<Var,Void> interferenceGraph=computeVariableNamesInterferenceGraph(t,cfg,liveness.getEscapedLocals());
+  UndiGraph<Var,Void> interferenceGraph=computeVariableNamesInterferenceGraph(t,cfg,(Set<Var>)liveness.getEscapedLocals());
   GraphColoring<Var,Void> coloring=new GreedyGraphColoring<>(interferenceGraph,coloringTieBreaker);
   coloring.color();
   colorings.push(coloring);
