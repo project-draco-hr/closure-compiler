@@ -1,16 +1,12 @@
 {
-  if (isTop() || isUnknown() || getObjs() == null && getTypeVar() == null || concreteTypes.isEmpty()) {
+  if (isTop() || isUnknown() || getObjs().isEmpty() && getTypeVar() == null || concreteTypes.isEmpty()) {
     return this;
   }
-  ImmutableSet<ObjectType> newObjs=null;
-  if (getObjs() != null) {
-    ImmutableSet.Builder<ObjectType> builder=ImmutableSet.builder();
-    for (    ObjectType obj : getObjs()) {
-      builder.add(obj.substituteGenerics(concreteTypes));
-    }
-    newObjs=builder.build();
+  ImmutableSet.Builder<ObjectType> builder=ImmutableSet.builder();
+  for (  ObjectType obj : getObjs()) {
+    builder.add(obj.substituteGenerics(concreteTypes));
   }
-  JSType current=makeType(getMask() & ~TYPEVAR_MASK,newObjs,null,getEnums());
+  JSType current=makeType(getMask() & ~TYPEVAR_MASK,builder.build(),null,getEnums());
   if ((getMask() & TYPEVAR_MASK) != 0) {
     current=JSType.join(current,concreteTypes.containsKey(getTypeVar()) ? concreteTypes.get(getTypeVar()) : fromTypeVar(getTypeVar()));
   }

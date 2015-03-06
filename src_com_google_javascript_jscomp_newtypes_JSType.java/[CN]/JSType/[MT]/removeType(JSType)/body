@@ -13,17 +13,13 @@
   }
   Preconditions.checkState(other.getObjs().size() == 1,"Invalid type to remove: %s",other);
   ObjectType otherObj=Iterables.getOnlyElement(other.getObjs());
-  ImmutableSet<ObjectType> newObjs=null;
-  ImmutableSet<EnumType> newEnums=null;
-  if (getObjs() != null) {
-    ImmutableSet.Builder<ObjectType> builder=ImmutableSet.builder();
-    for (    ObjectType obj : getObjs()) {
-      if (!obj.isSubtypeOf(otherObj)) {
-        builder.add(obj);
-      }
+  ImmutableSet.Builder<ObjectType> objsBuilder=ImmutableSet.builder();
+  for (  ObjectType obj : getObjs()) {
+    if (!obj.isSubtypeOf(otherObj)) {
+      objsBuilder.add(obj);
     }
-    newObjs=builder.build();
   }
+  ImmutableSet<EnumType> newEnums=null;
   if (getEnums() != null) {
     ImmutableSet.Builder<EnumType> builder=ImmutableSet.builder();
     for (    EnumType e : getEnums()) {
@@ -33,5 +29,5 @@
     }
     newEnums=builder.build();
   }
-  return makeType(newMask,newObjs,getTypeVar(),newEnums);
+  return makeType(newMask,objsBuilder.build(),getTypeVar(),newEnums);
 }
