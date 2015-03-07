@@ -15,11 +15,11 @@
  else   if (other.isUnknown()) {
     return true;
   }
-  Set<EnumType> ununifiedEnums=null;
-  if (getEnums() == null) {
+  Set<EnumType> ununifiedEnums=ImmutableSet.of();
+  if (getEnums().isEmpty()) {
     ununifiedEnums=other.getEnums();
   }
- else   if (other.getEnums() == null) {
+ else   if (other.getEnums().isEmpty()) {
     return false;
   }
  else {
@@ -34,29 +34,18 @@
         ununifiedEnums.add(e);
       }
     }
-    if (ununifiedEnums.isEmpty()) {
-      ununifiedEnums=null;
+  }
+  Set<ObjectType> ununified=new LinkedHashSet<>(other.getObjs());
+  for (  ObjectType targetObj : getObjs()) {
+    boolean hasUnified=false;
+    for (    ObjectType sourceObj : other.getObjs()) {
+      if (targetObj.unifyWith(sourceObj,typeParameters,typeMultimap)) {
+        ununified.remove(sourceObj);
+        hasUnified=true;
+      }
     }
-  }
-  Set<ObjectType> ununified=ImmutableSet.of();
-  if (other.getObjs() != null) {
-    ununified=new LinkedHashSet<>(other.getObjs());
-  }
-  if (getObjs() != null) {
-    if (other.getObjs() == null) {
+    if (!hasUnified) {
       return false;
-    }
-    for (    ObjectType targetObj : getObjs()) {
-      boolean hasUnified=false;
-      for (      ObjectType sourceObj : other.getObjs()) {
-        if (targetObj.unifyWith(sourceObj,typeParameters,typeMultimap)) {
-          ununified.remove(sourceObj);
-          hasUnified=true;
-        }
-      }
-      if (!hasUnified) {
-        return false;
-      }
     }
   }
   String thisTypevar=getTypeVar();
@@ -72,7 +61,7 @@
     if (templateMask == BOTTOM_MASK) {
       return false;
     }
-    JSType templateType=makeType(promoteBoolean(templateMask),ImmutableSet.copyOf(ununified),otherTypevar,ununifiedEnums == null ? null : ImmutableSet.copyOf(ununifiedEnums));
+    JSType templateType=makeType(promoteBoolean(templateMask),ImmutableSet.copyOf(ununified),otherTypevar,ImmutableSet.copyOf(ununifiedEnums));
     updateTypemap(typeMultimap,getTypeVar(),templateType);
     return true;
   }

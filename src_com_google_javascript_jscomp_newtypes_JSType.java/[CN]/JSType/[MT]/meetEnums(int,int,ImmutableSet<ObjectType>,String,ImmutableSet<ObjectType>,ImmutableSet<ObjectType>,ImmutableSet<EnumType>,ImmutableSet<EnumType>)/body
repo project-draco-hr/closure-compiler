@@ -20,26 +20,22 @@
         newMask&=~enumeratedType.getMask();
       }
     }
- else     if (objs1 != null || objs2 != null) {
+ else     if (!objs1.isEmpty() || !objs2.isEmpty()) {
       Set<ObjectType> objsToRemove=new LinkedHashSet<>();
       ObjectType enumObj=Iterables.getOnlyElement(enumeratedType.getObjs());
-      if (objs1 != null) {
-        for (        ObjectType obj1 : objs1) {
-          if (enumObj.isSubtypeOf(obj1)) {
-            enumBuilder.add(e);
-            objsToRemove.add(obj1);
-          }
+      for (      ObjectType obj1 : objs1) {
+        if (enumObj.isSubtypeOf(obj1)) {
+          enumBuilder.add(e);
+          objsToRemove.add(obj1);
         }
       }
-      if (objs2 != null) {
-        for (        ObjectType obj2 : objs2) {
-          if (enumObj.isSubtypeOf(obj2)) {
-            enumBuilder.add(e);
-            objsToRemove.add(obj2);
-          }
+      for (      ObjectType obj2 : objs2) {
+        if (enumObj.isSubtypeOf(obj2)) {
+          enumBuilder.add(e);
+          objsToRemove.add(obj2);
         }
       }
-      if (!objsToRemove.isEmpty() && newObjs != null) {
+      if (!objsToRemove.isEmpty()) {
         newObjs=Sets.difference(newObjs,objsToRemove).immutableCopy();
       }
     }

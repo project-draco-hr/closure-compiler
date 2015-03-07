@@ -19,15 +19,11 @@
       objsBuilder.add(obj);
     }
   }
-  ImmutableSet<EnumType> newEnums=null;
-  if (getEnums() != null) {
-    ImmutableSet.Builder<EnumType> builder=ImmutableSet.builder();
-    for (    EnumType e : getEnums()) {
-      if (!e.getEnumeratedType().isSubtypeOf(other)) {
-        builder.add(e);
-      }
+  ImmutableSet.Builder<EnumType> enumBuilder=ImmutableSet.builder();
+  for (  EnumType e : getEnums()) {
+    if (!e.getEnumeratedType().isSubtypeOf(other)) {
+      enumBuilder.add(e);
     }
-    newEnums=builder.build();
   }
-  return makeType(newMask,objsBuilder.build(),getTypeVar(),newEnums);
+  return makeType(newMask,objsBuilder.build(),getTypeVar(),enumBuilder.build());
 }

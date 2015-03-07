@@ -1,21 +1,17 @@
 {
-  if (enums != null) {
-    if (enums.isEmpty()) {
-      mask&=~ENUM_MASK;
-    }
- else {
-      mask|=ENUM_MASK;
-    }
+  if (Preconditions.checkNotNull(enums).isEmpty()) {
+    mask&=~ENUM_MASK;
   }
-  if (objs != null) {
-    if (objs.isEmpty()) {
-      mask&=~NON_SCALAR_MASK;
-    }
  else {
-      mask|=NON_SCALAR_MASK;
-    }
+    mask|=ENUM_MASK;
   }
-  if (objs == null && typeVar == null && enums == null) {
+  if (Preconditions.checkNotNull(objs).isEmpty()) {
+    mask&=~NON_SCALAR_MASK;
+  }
+ else {
+    mask|=NON_SCALAR_MASK;
+  }
+  if (objs.isEmpty() && typeVar == null && enums.isEmpty()) {
     return MaskType.make(mask);
   }
   if (!JSType.isInhabitable(objs)) {

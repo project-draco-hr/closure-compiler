@@ -18,9 +18,9 @@
   ImmutableSet<ObjectType> newObjs=ObjectType.joinSets(lhs.getObjs(),rhs.getObjs());
   String newTypevar=lhs.getTypeVar() != null ? lhs.getTypeVar() : rhs.getTypeVar();
   ImmutableSet<EnumType> newEnums=EnumType.union(lhs.getEnums(),rhs.getEnums());
-  if (newEnums == null) {
-    return makeType(newMask,newObjs,newTypevar,null);
+  if (newEnums.isEmpty()) {
+    return makeType(newMask,newObjs,newTypevar,ImmutableSet.<EnumType>of());
   }
-  JSType tmpJoin=makeType(newMask & ~ENUM_MASK,newObjs,newTypevar,null);
+  JSType tmpJoin=makeType(newMask & ~ENUM_MASK,newObjs,newTypevar,ImmutableSet.<EnumType>of());
   return makeType(newMask,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
 }

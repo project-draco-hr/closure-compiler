@@ -11,22 +11,10 @@
  else   if (t1.isTop() || t2.isTop()) {
     return null;
   }
-  ImmutableSet<EnumType> newEnums=null;
-  if (t1.getEnums() == null) {
-    if (t2.getEnums() != null) {
-      return null;
-    }
-    newEnums=null;
-  }
- else   if (t2.getEnums() == null) {
+  if (!t1.getEnums().equals(t2.getEnums())) {
     return null;
   }
- else   if (!t1.getEnums().equals(t2.getEnums())) {
-    return null;
-  }
- else {
-    newEnums=t1.getEnums();
-  }
+  ImmutableSet<EnumType> newEnums=t1.getEnums();
   int t1Mask=promoteBoolean(t1.getMask());
   int t2Mask=promoteBoolean(t2.getMask());
   if (t1Mask != t2Mask || !Objects.equals(t1.getTypeVar(),t2.getTypeVar())) {
