@@ -1,0 +1,9 @@
+{
+  if (n.isCall()) {
+    Node target=n.getFirstChild();
+    if (target.isGetProp() && target.getLastChild().getString().equals("then") && !NodeUtil.isExpressionResultUsed(n)&& isGoogPromiseMethodCall(target)) {
+      target.getLastChild().setString("thenVoid");
+      compiler.reportCodeChange();
+    }
+  }
+}
