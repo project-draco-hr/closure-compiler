@@ -1,17 +1,10 @@
 {
   List<Callback> passes=Lists.newArrayList();
-  this.promiseInstanceType=compiler.getTypeRegistry().getType("goog.Promise");
-  if (promiseInstanceType != null) {
-    passes.add(new ReplaceThenCalls());
-  }
   if (removeAbstractMethods) {
     passes.add(new FindAbstractMethods());
   }
   if (removeAssertionCalls) {
     passes.add(new FindAssertionCalls());
-  }
-  if (passes.isEmpty()) {
-    return;
   }
   CombinedCompilerPass.traverse(compiler,root,passes);
   for (  RemovableAssignment assignment : abstractMethodAssignmentNodes) {
