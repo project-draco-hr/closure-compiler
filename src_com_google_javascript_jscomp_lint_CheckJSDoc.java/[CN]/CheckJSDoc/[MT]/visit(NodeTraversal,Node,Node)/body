@@ -1,6 +1,5 @@
 {
   if (n.isFunction()) {
-    String name=NodeUtil.getFunctionName(n);
     JSDocInfo jsDoc=NodeUtil.getBestJSDocInfo(n);
     if (jsDoc != null) {
       for (      Node param : n.getFirstChild().getNext().children()) {
@@ -18,9 +17,16 @@
           }
         }
       }
+      String name=NodeUtil.getFunctionName(n);
       if (name != null && compiler.getCodingConvention().isPrivate(name) && !jsDoc.getVisibility().equals(Visibility.PRIVATE)) {
         t.report(n,MUST_BE_PRIVATE,name);
       }
+    }
+  }
+ else   if (n.isMemberFunctionDef()) {
+    JSDocInfo jsDoc=NodeUtil.getBestJSDocInfo(n);
+    if (jsDoc != null && (jsDoc.isConstructor() || jsDoc.isInterface() || jsDoc.hasBaseType()|| jsDoc.getImplementedInterfaceCount() != 0 || jsDoc.getExtendedInterfacesCount() != 0)) {
+      t.report(n,DISALLOWED_MEMBER_JSDOC);
     }
   }
 }
