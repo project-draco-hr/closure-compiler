@@ -476,10 +476,8 @@ parser.addTypeWarning("msg.jsdoc.typetransformation.expression.missing",template
 }
 if (validTypeTransformation) {
 TypeTransformationParser ttlParser=new TypeTransformationParser(typeTransformationExpr,sourceFile,errorReporter,templateLineno,templateCharno);
-if (ttlParser.parseTypeTransformation()) {
-if (!jsdocBuilder.recordTypeTransformation(names.get(0),ttlParser.getTypeTransformationAst())) {
+if (ttlParser.parseTypeTransformation() && !jsdocBuilder.recordTypeTransformation(names.get(0),ttlParser.getTypeTransformationAst())) {
 parser.addTypeWarning("msg.jsdoc.template.name.declared.twice",templateLineno,templateCharno);
-}
 }
 }
 }
@@ -549,10 +547,8 @@ type=createJSTypeExpression(typeNode);
 }
 boolean hasError=type == null && !canSkipTypeAnnotation;
 if (!hasError) {
-if ((type != null && isAlternateTypeAnnotation) || annotation == Annotation.TYPE) {
-if (!jsdocBuilder.recordType(type)) {
+if (((type != null && isAlternateTypeAnnotation) || annotation == Annotation.TYPE) && !jsdocBuilder.recordType(type)) {
 parser.addTypeWarning("msg.jsdoc.incompat.type",lineno,charno);
-}
 }
 boolean isAnnotationNext=lookAheadForAnnotation();
 switch (annotation) {

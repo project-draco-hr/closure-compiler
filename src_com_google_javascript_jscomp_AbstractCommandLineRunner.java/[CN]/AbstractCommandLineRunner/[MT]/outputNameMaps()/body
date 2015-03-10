@@ -20,23 +20,17 @@
     }
     propertyMapOutputPath=config.propertyMapOutputFile;
   }
-  if (variableMapOutputPath != null) {
-    if (compiler.getVariableMap() != null) {
-      compiler.getVariableMap().save(variableMapOutputPath);
+  if (variableMapOutputPath != null && compiler.getVariableMap() != null) {
+    compiler.getVariableMap().save(variableMapOutputPath);
+  }
+  if (propertyMapOutputPath != null && compiler.getPropertyMap() != null) {
+    compiler.getPropertyMap().save(propertyMapOutputPath);
+  }
+  if (functionInformationMapOutputPath != null && compiler.getFunctionalInformationMap() != null) {
+    try (final OutputStream file=filenameToOutputStream(functionInformationMapOutputPath)){
+      CodedOutputStream outputStream=CodedOutputStream.newInstance(file);
+      compiler.getFunctionalInformationMap().writeTo(outputStream);
+      outputStream.flush();
     }
-  }
-  if (propertyMapOutputPath != null) {
-    if (compiler.getPropertyMap() != null) {
-      compiler.getPropertyMap().save(propertyMapOutputPath);
-    }
-  }
-  if (functionInformationMapOutputPath != null) {
-    if (compiler.getFunctionalInformationMap() != null) {
-      try (final OutputStream file=filenameToOutputStream(functionInformationMapOutputPath)){
-        CodedOutputStream outputStream=CodedOutputStream.newInstance(file);
-        compiler.getFunctionalInformationMap().writeTo(outputStream);
-        outputStream.flush();
-      }
-     }
-  }
+   }
 }

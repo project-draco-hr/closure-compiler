@@ -1,11 +1,9 @@
 {
   Preconditions.checkState(!n.isFunction() || type.isFunctionType() || type.isUnknownType());
   JSDocInfo info=n.getJSDocInfo();
-  if (info != null) {
-    if (info.isImplicitCast() && !inExterns) {
-      String propName=n.isGetProp() ? n.getLastChild().getString() : "(missing)";
-      compiler.report(t.makeError(n,ILLEGAL_IMPLICIT_CAST,propName));
-    }
+  if (info != null && (info.isImplicitCast() && !inExterns)) {
+    String propName=n.isGetProp() ? n.getLastChild().getString() : "(missing)";
+    compiler.report(t.makeError(n,ILLEGAL_IMPLICIT_CAST,propName));
   }
   if (n.getJSType() == null) {
     n.setJSType(type);

@@ -11,15 +11,13 @@
       reportWarning(CONSTRUCTOR_REQUIRED,"@dict",formatFnName());
     }
     ImmutableList<String> typeParameters=info.getTemplateTypeNames();
-    if (!typeParameters.isEmpty()) {
-      if (isConstructor || isInterface) {
-        ImmutableList.Builder<TemplateType> builder=ImmutableList.builder();
-        for (        String typeParameter : typeParameters) {
-          builder.add(typeRegistry.createTemplateType(typeParameter));
-        }
-        classTemplateTypeNames=builder.build();
-        typeRegistry.setTemplateTypeNames(classTemplateTypeNames);
+    if (!typeParameters.isEmpty() && (isConstructor || isInterface)) {
+      ImmutableList.Builder<TemplateType> builder=ImmutableList.builder();
+      for (      String typeParameter : typeParameters) {
+        builder.add(typeRegistry.createTemplateType(typeParameter));
       }
+      classTemplateTypeNames=builder.build();
+      typeRegistry.setTemplateTypeNames(classTemplateTypeNames);
     }
     if (info.hasBaseType()) {
       if (isConstructor) {
