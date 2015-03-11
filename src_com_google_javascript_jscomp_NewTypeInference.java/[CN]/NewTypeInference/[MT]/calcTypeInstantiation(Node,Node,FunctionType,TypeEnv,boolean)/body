@@ -7,7 +7,7 @@
     EnvTypePair pair=isFwd ? analyzeExprFwd(arg,typeEnv) : analyzeExprBwd(arg,typeEnv);
     JSType unifTarget=funType.getFormalType(i);
     JSType unifSource=pair.type;
-    if (!unifTarget.unifyWith(unifSource,typeParameters,typeMultimap)) {
+    if (!unifTarget.unifyWithSubtype(unifSource,typeParameters,typeMultimap)) {
       JSType targetAfterInstantiation=unifTarget.substituteGenericsWithUnknown();
       if (!unifTarget.equals(targetAfterInstantiation) && unifSource.isSubtypeOf(targetAfterInstantiation)) {
         warnings.add(JSError.make(arg,FAILED_TO_UNIFY,unifTarget.toString(),unifSource.toString()));

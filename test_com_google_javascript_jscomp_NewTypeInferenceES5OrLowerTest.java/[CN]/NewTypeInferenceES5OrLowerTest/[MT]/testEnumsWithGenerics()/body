@@ -1,4 +1,4 @@
 {
-  typeCheck("/** @enum */ var E1 = { A: 1};\n" + "/** @enum */ var E2 = { A: 2};\n" + "/**\n"+ " * @template T\n"+ " * @param {(T|E1)} x\n"+ " */\n"+ "function f(x) {}\n"+ "f(/** @type {(string|E1)} */ ('str'));");
-  typeCheck("/** @enum */ var E1 = { A: 1};\n" + "/** @enum */ var E2 = { A: 2};\n" + "/**\n"+ " * @template T\n"+ " * @param {(T|E1)} x\n"+ " */\n"+ "function f(x) {}\n"+ "f(/** @type {(string|E2)} */ ('str'));",NewTypeInference.FAILED_TO_UNIFY);
+  typeCheck("/** @enum */ var E1 = { A: 1};\n" + "/**\n" + " * @template T\n"+ " * @param {(T|E1)} x\n"+ " * @return {(T|E1)}\n"+ " */\n"+ "function f(x) { return x; }\n"+ "var /** string */ n = f('str');",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @enum */ var E1 = { A: 1};\n" + "/** @enum */ var E2 = { A: 2};\n" + "/**\n"+ " * @template T\n"+ " * @param {(T|E1)} x\n"+ " * @return {(T|E1)}\n"+ " */\n"+ "function f(x) { return x; }\n"+ "var /** (E2|string) */ x = f('str');",NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

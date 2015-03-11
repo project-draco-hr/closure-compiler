@@ -8,9 +8,9 @@
   typeCheck("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f(x, 5);\n"+ "}\n"+ "g('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("function g(/** ? */ x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {(T|number)} x\n"+ "   */\n"+ "  function f(x) {}\n"+ "  f(x)\n"+ "}");
   typeCheck("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @return {T}\n"+ "   */\n"+ "  function f(x) { return x; }\n"+ "  f(x) - 5;\n"+ "  x = 'asdf';\n"+ "}\n"+ "g('asdf');");
-  typeCheck("/**\n" + " * @template T\n" + " * @param {(T|number)} x\n"+ " */\n"+ "function f(x) {}\n"+ "f(123);",NewTypeInference.FAILED_TO_UNIFY);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {(T|null)} x\n"+ " * @param {(T|number)} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(null, 'str');",NewTypeInference.FAILED_TO_UNIFY);
-  typeCheck("/** @constructor */ function Foo(){};\n" + "/**\n" + " * @template T\n"+ " * @param {(T|Foo)} x\n"+ " * @param {(T|number)} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(new Foo(), 'str');",NewTypeInference.FAILED_TO_UNIFY);
+  typeCheck("/**\n" + " * @template T\n" + " * @param {(T|number)} x\n"+ " */\n"+ "function f(x) {}\n"+ "f(123);");
+  typeCheck("/**\n" + " * @template T\n" + " * @param {(T|null)} x\n"+ " * @param {(T|number)} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(null, 'str');");
+  typeCheck("/** @constructor */ function Foo(){};\n" + "/**\n" + " * @template T\n"+ " * @param {(T|Foo)} x\n"+ " * @param {(T|number)} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(new Foo(), 'str');");
   typeCheck("/**\n" + " * @template T\n" + " * @param {function(T):T} f\n"+ " * @param {T} x\n"+ " */\n"+ "function apply(f, x) { return f(x); }\n"+ "/** @type {string} */"+ "var out;"+ "var result = apply(function(x){ out = x; return x; }, 0);",NewTypeInference.NOT_UNIQUE_INSTANTIATION,NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @template T */\n" + "function f(/** T */ x, /** T */ y) {}\n" + "f(1, 'str');",NewTypeInference.NOT_UNIQUE_INSTANTIATION);
   typeCheck("/** @template T */\n" + "function /** T */ f(/** T */ x) { return x; }\n" + "f('str') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);

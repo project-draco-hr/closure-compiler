@@ -1,57 +1,41 @@
 {
-  if (this.isUnknown()) {
+  if (this.isUnknown() || this.isTop()) {
     return true;
-  }
- else   if (this.isTop()) {
-    return other.isTop();
   }
  else   if (getMask() == TYPEVAR_MASK && typeParameters.contains(getTypeVar())) {
     updateTypemap(typeMultimap,getTypeVar(),other);
     return true;
   }
- else   if (other.isTop()) {
-    return false;
-  }
  else   if (other.isUnknown()) {
     return true;
+  }
+ else   if (other.isTop()) {
+    return false;
   }
   Set<EnumType> ununifiedEnums=ImmutableSet.of();
   if (getEnums().isEmpty()) {
     ununifiedEnums=other.getEnums();
   }
  else   if (other.getEnums().isEmpty()) {
-    return false;
-  }
- else {
     ununifiedEnums=new LinkedHashSet<>();
-    for (    EnumType e : getEnums()) {
-      if (!other.getEnums().contains(e)) {
-        return false;
-      }
-    }
     for (    EnumType e : other.getEnums()) {
       if (!getEnums().contains(e)) {
         ununifiedEnums.add(e);
       }
     }
   }
-  Set<ObjectType> ununified=new LinkedHashSet<>(other.getObjs());
+  Set<ObjectType> ununifiedObjs=new LinkedHashSet<>(other.getObjs());
   for (  ObjectType targetObj : getObjs()) {
-    boolean hasUnified=false;
     for (    ObjectType sourceObj : other.getObjs()) {
-      if (targetObj.unifyWith(sourceObj,typeParameters,typeMultimap)) {
-        ununified.remove(sourceObj);
-        hasUnified=true;
+      if (targetObj.unifyWithSubtype(sourceObj,typeParameters,typeMultimap)) {
+        ununifiedObjs.remove(sourceObj);
       }
-    }
-    if (!hasUnified) {
-      return false;
     }
   }
   String thisTypevar=getTypeVar();
   String otherTypevar=other.getTypeVar();
   if (thisTypevar == null || !typeParameters.contains(thisTypevar)) {
-    return Objects.equals(thisTypevar,otherTypevar) && getMask() == other.getMask();
+    return ununifiedObjs.isEmpty() && ununifiedEnums.isEmpty() && (otherTypevar == null || otherTypevar.equals(thisTypevar))&& getMask() == (getMask() | other.getMask());
   }
  else {
     int templateMask=BOTTOM_MASK;
@@ -59,9 +43,9 @@
     int otherScalarBits=other.getMask() & ~NON_SCALAR_MASK;
     templateMask|=otherScalarBits & ~thisScalarBits;
     if (templateMask == BOTTOM_MASK) {
-      return false;
+      return ununifiedObjs.isEmpty() && ununifiedEnums.isEmpty();
     }
-    JSType templateType=makeType(promoteBoolean(templateMask),ImmutableSet.copyOf(ununified),otherTypevar,ImmutableSet.copyOf(ununifiedEnums));
+    JSType templateType=makeType(promoteBoolean(templateMask),ImmutableSet.copyOf(ununifiedObjs),otherTypevar,ImmutableSet.copyOf(ununifiedEnums));
     updateTypemap(typeMultimap,getTypeVar(),templateType);
     return true;
   }

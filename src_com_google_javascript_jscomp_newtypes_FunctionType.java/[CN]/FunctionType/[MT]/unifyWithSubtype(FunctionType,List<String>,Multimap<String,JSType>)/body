@@ -13,7 +13,7 @@
   while (thisReqFormals.hasNext()) {
     JSType reqFormal=thisReqFormals.next();
     JSType otherReqFormal=otherReqFormals.next();
-    if (!reqFormal.unifyWith(otherReqFormal,typeParameters,typeMultimap)) {
+    if (!reqFormal.unifyWithSubtype(otherReqFormal,typeParameters,typeMultimap)) {
       return false;
     }
   }
@@ -25,24 +25,24 @@
   while (thisOptFormals.hasNext()) {
     JSType optFormal=thisOptFormals.next();
     JSType otherOptFormal=otherOptFormals.next();
-    if (!optFormal.unifyWith(otherOptFormal,typeParameters,typeMultimap)) {
+    if (!optFormal.unifyWithSubtype(otherOptFormal,typeParameters,typeMultimap)) {
       return false;
     }
   }
   if (restFormals == null && other.restFormals != null || restFormals != null && other.restFormals == null) {
     return false;
   }
-  if (restFormals != null && !restFormals.unifyWith(other.restFormals,typeParameters,typeMultimap)) {
+  if (restFormals != null && !restFormals.unifyWithSubtype(other.restFormals,typeParameters,typeMultimap)) {
     return false;
   }
   if (nominalType == null && other.nominalType != null || nominalType != null && other.nominalType == null) {
     return false;
   }
-  if (nominalType != null && !nominalType.unifyWith(other.nominalType,typeParameters,typeMultimap)) {
+  if (nominalType != null && !nominalType.unifyWithSubtype(other.nominalType,typeParameters,typeMultimap)) {
     return false;
   }
-  if (this.receiverType != null && other.receiverType != null && !this.receiverType.unifyWith(other.receiverType,typeParameters,typeMultimap)) {
+  if (this.receiverType != null && other.receiverType != null && !this.receiverType.unifyWithSubtype(other.receiverType,typeParameters,typeMultimap)) {
     return false;
   }
-  return returnType.unifyWith(other.returnType,typeParameters,typeMultimap);
+  return returnType.unifyWithSubtype(other.returnType,typeParameters,typeMultimap);
 }
