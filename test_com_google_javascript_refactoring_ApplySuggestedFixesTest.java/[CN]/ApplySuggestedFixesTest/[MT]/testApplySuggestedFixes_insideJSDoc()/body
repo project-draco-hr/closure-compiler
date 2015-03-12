@@ -8,6 +8,6 @@
   List<SuggestedFix> fixes=ImmutableList.of(fix);
   Map<String,String> codeMap=ImmutableMap.of("test",code);
   Map<String,String> newCodeMap=ApplySuggestedFixes.applySuggestedFixesToCode(fixes,codeMap);
-  assertEquals(1,newCodeMap.size());
-  assertEquals("/** @type {!Foo} */\nvar foo = new Foo()",newCodeMap.get("test"));
+  assertThat(newCodeMap).hasSize(1);
+  assertThat(newCodeMap).containsEntry("test","/** @type {!Foo} */\nvar foo = new Foo()");
 }
