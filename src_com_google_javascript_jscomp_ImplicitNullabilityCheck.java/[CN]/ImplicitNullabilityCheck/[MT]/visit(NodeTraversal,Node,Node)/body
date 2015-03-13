@@ -3,7 +3,7 @@
   if (info == null) {
     return;
   }
-  final JSTypeRegistry registry=compiler.getTypeRegistry();
+  final TypeIRegistry registry=compiler.getTypeIRegistry();
   for (  Node typeRoot : info.getTypeNodes()) {
     NodeUtil.visitPreOrder(typeRoot,new NodeUtil.Visitor(){
       public void visit(      Node node){
@@ -24,7 +24,7 @@ case Token.NEW:
       if (typeName.equals("null") || registry.getType(typeName) == null) {
         return;
       }
-      JSType type=registry.createFromTypeNodes(node,"[internal]",null);
+      JSType type=(JSType)registry.createTypeFromCommentNode(node,"[internal]",null);
       if (type.isNullable()) {
         reportWarning(t,node,typeName);
       }
