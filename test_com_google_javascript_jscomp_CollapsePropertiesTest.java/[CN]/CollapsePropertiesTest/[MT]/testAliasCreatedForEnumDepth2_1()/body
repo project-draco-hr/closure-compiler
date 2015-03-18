@@ -1,3 +1,5 @@
 {
   test("var a = {}; /** @enum */ a.b = {c: 0};" + "var d = a.b; d.c = 1; a.b.c != d.c;","var a$b$c = 0; var a$b = {c: a$b$c};" + "var d = a$b; d.c = 1; a$b$c != d.c;");
+  testSame("var a = {}; /** @nocollapse @enum */ a.b = {c: 0};" + "var d = a.b; d.c = 1; a.b.c == d.c;");
+  test("var a = {}; /** @enum */ a.b = {/** @nocollapse */ c: 0};" + "var d = a.b; d.c = 1; a.b.c != d.c;","var a$b$c = 0; var a$b = {c: a$b$c};" + "var d = a$b; d.c = 1; a$b$c != d.c;",null,CollapseProperties.INVALID_NOCOLLAPSE);
 }
