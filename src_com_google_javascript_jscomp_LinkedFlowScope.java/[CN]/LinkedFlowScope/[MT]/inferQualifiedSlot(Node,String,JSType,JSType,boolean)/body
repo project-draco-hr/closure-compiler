@@ -3,11 +3,11 @@
   if (functionScope.isLocal()) {
     TypedVar v=functionScope.getVar(symbol);
     if (v == null && !functionScope.isBottom()) {
-      functionScope.declare(symbol,node,bottomType,null);
+      v=functionScope.declare(symbol,node,bottomType,null,!declared);
     }
     if (v != null && !v.isTypeInferred()) {
       JSType declaredType=v.getType();
-      if (declaredType != null && inferredType.isSubtype(declaredType) && !declaredType.isSubtype(inferredType)) {
+      if (declaredType != null && inferredType.isSubtype(declaredType) && !declaredType.isSubtype(inferredType) && !inferredType.isEquivalentTo(declaredType)) {
         inferSlotType(symbol,inferredType);
       }
     }

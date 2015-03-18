@@ -26,7 +26,17 @@ break;
 case Token.GETPROP:
 String qualifiedName=left.getQualifiedName();
 if (qualifiedName != null) {
-scope.inferQualifiedSlot(left,qualifiedName,leftType == null ? unknownType : leftType,resultType);
+boolean declaredSlotType=false;
+JSType rawObjType=left.getFirstChild().getJSType();
+if (rawObjType != null) {
+ObjectType objType=ObjectType.cast(rawObjType.restrictByNotNullOrUndefined());
+if (objType != null) {
+String propName=left.getLastChild().getString();
+declaredSlotType=objType.isPropertyTypeDeclared(propName);
+}
+}
+JSType safeLeftType=leftType == null ? unknownType : leftType;
+scope.inferQualifiedSlot(left,qualifiedName,safeLeftType,resultType,declaredSlotType);
 }
 left.setJSType(resultType);
 ensurePropertyDefined(left,resultType);
