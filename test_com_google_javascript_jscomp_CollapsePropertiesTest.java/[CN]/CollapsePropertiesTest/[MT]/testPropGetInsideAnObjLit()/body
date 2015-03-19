@@ -1,3 +1,6 @@
 {
   test("var x = {}; x.y = 1; var a = {}; a.b = {c: x.y}","var x$y = 1; var a$b$c = x$y;");
+  test("var x = {}; /** @nocollapse */ x.y = 1; var a = {}; a.b = {c: x.y}","var x = {}; x.y = 1; var a$b$c = x.y;");
+  test("var x = {}; x.y = 1; var a = {}; a.b = { /** @nocollapse */ c: x.y}","var x$y = 1; var a$b = {c: x$y};");
+  testSame("var x = {}; /** @nocollapse */ x.y = 1; var a = {};" + "/** @nocollapse */ a.b = {c: x.y}");
 }

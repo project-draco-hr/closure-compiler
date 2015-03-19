@@ -1,5 +1,6 @@
 {
   addRefInternal(ref);
+  JSDocInfo info;
 switch (ref.type) {
 case SET_FROM_GLOBAL:
     if (declaration == null) {
@@ -10,6 +11,10 @@ case SET_FROM_GLOBAL:
 break;
 case SET_FROM_LOCAL:
 localSets++;
+info=ref.getNode() == null ? null : NodeUtil.getBestJSDocInfo(ref.getNode());
+if (info != null && info.isNoCollapse()) {
+localSetsWithNoCollapse++;
+}
 break;
 case PROTOTYPE_GET:
 case DIRECT_GET:

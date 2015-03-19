@@ -1,6 +1,9 @@
 {
   boolean canCollapseChildNames=n.canCollapseUnannotatedChildNames();
   if (n.canCollapse()) {
+    if (n.docInfo != null && n.docInfo.isNoCollapse() && n.isDescendantOfEnum()) {
+      compiler.report(JSError.make(n.docInfo.getAssociatedNode(),INVALID_NOCOLLAPSE));
+    }
     updateObjLitOrFunctionDeclaration(n,alias,canCollapseChildNames);
   }
   if (n.props != null) {

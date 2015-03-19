@@ -11,12 +11,17 @@
         }
       }
     }
+    JSDocInfo info;
 switch (ref.type) {
 case SET_FROM_GLOBAL:
       globalSets--;
     break;
 case SET_FROM_LOCAL:
   localSets--;
+info=ref.getNode() == null ? null : NodeUtil.getBestJSDocInfo(ref.getNode());
+if (info != null && info.isNoCollapse()) {
+localSetsWithNoCollapse--;
+}
 break;
 case PROTOTYPE_GET:
 case DIRECT_GET:
