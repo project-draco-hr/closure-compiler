@@ -6,39 +6,22 @@
     }
     return getDeclaredType().getThisType().getInstanceAsJSType();
   }
-  int formalIndex=formals.indexOf(name);
-  if (formalIndex != -1) {
-    JSType formalType=declaredType.getFormalType(formalIndex);
-    if (formalType == null || formalType.isBottom()) {
-      return null;
+  Declaration decl=getLocalDeclaration(name);
+  if (decl != null) {
+    if (decl.getTypeOfSimpleDecl() != null) {
+      Preconditions.checkState(!decl.getTypeOfSimpleDecl().isBottom(),"%s was bottom",name);
+      return decl.getTypeOfSimpleDecl();
     }
-    return formalType;
-  }
-  JSType localType=locals.get(name);
-  if (localType != null) {
-    Preconditions.checkState(!localType.isBottom(),"%s was bottom",name);
-    return localType;
-  }
-  JSType externType=externs.get(name);
-  if (externType != null) {
-    Preconditions.checkState(!externType.isBottom());
-    return externType;
-  }
-  Scope s=localFunDefs.get(name);
-  if (s != null && s.getDeclaredType() != null) {
-    return getCommonTypes().fromFunctionType(s.getDeclaredType().toFunctionType());
+ else     if (decl.getFunctionScope() != null && decl.getFunctionScope().getDeclaredType() != null) {
+      return getCommonTypes().fromFunctionType(decl.getFunctionScope().getDeclaredType().toFunctionType());
+    }
+ else     if (decl.getNamespace() != null) {
+      return decl.getNamespace().toJSType();
+    }
+    return null;
   }
   if (name.equals(this.name)) {
     return getCommonTypes().fromFunctionType(getDeclaredType().toFunctionType());
-  }
-  if (localNamespaces != null) {
-    Namespace ns=localNamespaces.get(name);
-    if (ns != null) {
-      return ns.toJSType();
-    }
-  }
-  if (isDefinedLocally(name)) {
-    return null;
   }
   if (parent != null) {
     return parent.getDeclaredTypeOf(name);

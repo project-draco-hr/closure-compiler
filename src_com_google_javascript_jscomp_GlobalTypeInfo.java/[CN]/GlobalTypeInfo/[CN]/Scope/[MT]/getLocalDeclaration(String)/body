@@ -1,0 +1,27 @@
+{
+  Preconditions.checkArgument(!name.contains("."));
+  if (!isDefinedLocally(name)) {
+    return null;
+  }
+  JSType type=null;
+  boolean isFormal=false;
+  boolean isFromExterns=false;
+  if (locals.containsKey(name)) {
+    type=locals.get(name);
+  }
+ else   if (formals.contains(name)) {
+    isFormal=true;
+    int formalIndex=formals.indexOf(name);
+    if (declaredType != null && formalIndex != -1) {
+      JSType formalType=declaredType.getFormalType(formalIndex);
+      if (formalType != null && !formalType.isBottom()) {
+        type=formalType;
+      }
+    }
+  }
+ else   if (externs.containsKey(name)) {
+    isFromExterns=true;
+    type=externs.get(name);
+  }
+  return new Declaration(type,localTypedefs.get(name),localNamespaces.get(name),localEnums.get(name),localFunDefs.get(name),localClassDefs.get(name),isFormal,constVars.contains(name),isFromExterns);
+}

@@ -3,9 +3,8 @@
     return null;
   }
   if (!name.contains(".")) {
-    if (isDefinedLocally(name)) {
-      return localEnums.get(name);
-    }
+    Declaration decl=getDeclaration(name);
+    return decl == null ? null : decl.getEnum();
   }
  else {
     QualifiedName qname=QualifiedName.fromQname(name);
@@ -13,9 +12,6 @@
     if (ns != null) {
       return ns.getEnumType(qname.getAllButLeftmost());
     }
-  }
-  if (parent != null) {
-    return parent.getEnum(name);
   }
   return null;
 }
