@@ -21,8 +21,11 @@
     if (member.isEmpty()) {
       continue;
     }
-    Preconditions.checkState(member.isMemberFunctionDef() || (member.isComputedProp() && !member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)),"Member variables should have been transpiled earlier.");
-    if (member.isMemberFunctionDef() && member.getString().equals("constructor")) {
+    Preconditions.checkState(member.isMemberFunctionDef() || member.isGetterDef() || member.isSetterDef()|| (member.isComputedProp() && !member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)),"Member variables should have been transpiled earlier: ",member);
+    if (member.isGetterDef() || member.isSetterDef()) {
+      cannotConvertYet(member,"getter/setter in a class definition");
+    }
+ else     if (member.isMemberFunctionDef() && member.getString().equals("constructor")) {
       ctorJSDocInfo=member.getJSDocInfo();
       constructor=member.getFirstChild().detachFromParent();
       if (!metadata.anonymous) {
