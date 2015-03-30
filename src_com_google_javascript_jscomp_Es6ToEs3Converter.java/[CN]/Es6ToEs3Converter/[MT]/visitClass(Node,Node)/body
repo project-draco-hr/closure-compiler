@@ -39,13 +39,7 @@
       assign.useSourceInfoIfMissingFromForTree(member);
       JSDocInfo info=member.getJSDocInfo();
       if (member.isStaticMember() && NodeUtil.referencesThis(assign.getLastChild())) {
-        JSDocInfoBuilder memberDoc;
-        if (info == null) {
-          memberDoc=new JSDocInfoBuilder(true);
-        }
- else {
-          memberDoc=JSDocInfoBuilder.copyFrom(info);
-        }
+        JSDocInfoBuilder memberDoc=JSDocInfoBuilder.maybeCopyFrom(info);
         memberDoc.recordThisType(new JSTypeExpression(new Node(Token.BANG,new Node(Token.QMARK)),member.getSourceFileName()));
         info=memberDoc.build(assign);
       }
@@ -59,7 +53,7 @@
   }
   Preconditions.checkNotNull(constructor);
   JSDocInfo classJSDoc=classNode.getJSDocInfo();
-  JSDocInfoBuilder newInfo=(classJSDoc != null) ? JSDocInfoBuilder.copyFrom(classJSDoc) : new JSDocInfoBuilder(true);
+  JSDocInfoBuilder newInfo=JSDocInfoBuilder.maybeCopyFrom(classJSDoc);
   newInfo.recordConstructor();
   if (metadata.hasSuperClass()) {
     String superClassString=metadata.superClassNameNode.getQualifiedName();

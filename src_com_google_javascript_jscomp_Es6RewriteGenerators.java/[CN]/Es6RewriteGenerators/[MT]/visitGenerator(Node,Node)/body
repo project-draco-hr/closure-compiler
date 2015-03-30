@@ -5,13 +5,7 @@
   originalGeneratorBody=n.getLastChild();
   n.replaceChild(originalGeneratorBody,genBlock);
   n.setIsGeneratorFunction(false);
-  JSDocInfoBuilder builder;
-  if (n.getJSDocInfo() == null) {
-    builder=new JSDocInfoBuilder(true);
-  }
- else {
-    builder=JSDocInfoBuilder.copyFrom(n.getJSDocInfo());
-  }
+  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
   builder.recordSuppressions(ImmutableSet.of("uselessCode"));
   JSDocInfo info=builder.build(n);
   n.setJSDocInfo(info);
