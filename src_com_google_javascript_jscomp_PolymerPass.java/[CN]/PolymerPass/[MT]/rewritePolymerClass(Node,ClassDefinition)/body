@@ -1,0 +1,38 @@
+{
+  Node call=exprRoot.getFirstChild();
+  if (call.isAssign()) {
+    call=call.getChildAtIndex(1);
+  }
+ else   if (call.isName()) {
+    call=call.getFirstChild();
+  }
+  Node objLit=NodeUtil.getArgumentForCallOrNew(call,0);
+  JSDocInfoBuilder objLitDoc=new JSDocInfoBuilder(true);
+  objLitDoc.recordLends(cls.target.getQualifiedName() + ".prototype");
+  objLit.setJSDocInfo(objLitDoc.build(objLit));
+  Node block=IR.block();
+  JSDocInfoBuilder constructorDoc=new JSDocInfoBuilder(true);
+  constructorDoc.recordConstructor();
+  JSTypeExpression baseType=new JSTypeExpression(new Node(Token.BANG,IR.string("PolymerBase")),VIRTUAL_FILE);
+  constructorDoc.recordBaseType(baseType);
+  if (cls.target.isGetProp()) {
+    Node assign=IR.assign(cls.target.cloneTree(),cls.constructor.value.cloneTree());
+    assign.setJSDocInfo(constructorDoc.build(assign));
+    Node exprResult=IR.exprResult(assign);
+    block.addChildToBack(exprResult);
+  }
+ else {
+    Node var=IR.var(cls.target.cloneTree(),cls.constructor.value.cloneTree());
+    var.setJSDocInfo(constructorDoc.build(var));
+    block.addChildToBack(var);
+  }
+  block.useSourceInfoFromForTree(exprRoot);
+  Node parent=exprRoot.getParent();
+  Node stmts=block.removeChildren();
+  parent.addChildBefore(stmts,exprRoot);
+  if (exprRoot.isVar()) {
+    Node assignExpr=varToAssign(exprRoot);
+    parent.replaceChild(exprRoot,assignExpr);
+  }
+  compiler.reportCodeChange();
+}
