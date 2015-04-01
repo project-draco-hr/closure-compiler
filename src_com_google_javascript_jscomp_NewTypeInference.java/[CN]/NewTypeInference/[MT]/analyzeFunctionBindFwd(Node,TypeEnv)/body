@@ -42,18 +42,17 @@
     }
   }
   env=analyzeCallNodeArgumentsFwd(call,bindComponents.parameters,boundFunType,new ArrayList<JSType>(),env);
-  for (int j=numArgs; j < boundFunType.getMaxArity(); j++) {
+  for (int j=numArgs; j < boundFunType.getMaxArityWithoutRestFormals(); j++) {
     JSType formalType=boundFunType.getFormalType(j);
     if (boundFunType.isRequiredArg(j)) {
       builder.addReqFormal(formalType);
     }
- else     if (boundFunType.isOptionalArg(j)) {
+ else {
       builder.addOptFormal(formalType);
     }
- else {
-      builder.addRestFormals(formalType);
-      break;
-    }
+  }
+  if (boundFunType.hasRestFormals()) {
+    builder.addRestFormals(boundFunType.getRestFormalsType());
   }
   return new EnvTypePair(env,commonTypes.fromFunctionType(builder.addRetType(boundFunType.getReturnType()).buildFunction()));
 }

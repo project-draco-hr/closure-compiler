@@ -2,6 +2,7 @@
   TypeEnv entryEnv=getEntryTypeEnv();
   TypeEnv exitEnv=getFinalTypeEnv();
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  Node fnRoot=fn.getRoot();
   DeclaredFunctionType declType=fn.getDeclaredType();
   int reqArity=declType.getRequiredArity();
   int optArity=declType.getOptionalArity();
@@ -51,7 +52,7 @@
   if (declRetType != null) {
     builder.addRetType(declRetType);
     if (!isAllowedToNotReturn(fn) && !JSType.UNDEFINED.isSubtypeOf(declRetType) && hasPathWithNoReturn(cfg)) {
-      warnings.add(JSError.make(fn.getRoot(),CheckMissingReturn.MISSING_RETURN_STATEMENT,declRetType.toString()));
+      warnings.add(JSError.make(fnRoot,CheckMissingReturn.MISSING_RETURN_STATEMENT,declRetType.toString()));
     }
   }
  else   if (declType.getNominalType() == null) {
@@ -64,4 +65,9 @@
   println("Function summary for ",fn.getReadableName());
   println("\t",summary);
   summaries.put(fn,summary);
+  fnRoot.setTypeI(summary);
+  Node fnNameNode=NodeUtil.getFunctionNameNode(fnRoot);
+  if (fnNameNode != null) {
+    fnNameNode.setTypeI(summary);
+  }
 }

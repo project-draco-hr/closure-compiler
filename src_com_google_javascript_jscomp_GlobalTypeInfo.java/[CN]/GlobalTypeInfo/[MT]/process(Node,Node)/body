@@ -5,15 +5,15 @@
   scopes.add(globalScope);
   CollectNamedTypes rootCnt=new CollectNamedTypes(globalScope);
   if (externs != null) {
-    new NodeTraversal(compiler,rootCnt).traverse(externs);
+    NodeTraversal.traverse(compiler,externs,rootCnt);
   }
-  new NodeTraversal(compiler,rootCnt).traverse(root);
+  NodeTraversal.traverse(compiler,root,rootCnt);
   globalScope.resolveTypedefs(typeParser);
   globalScope.resolveEnums(typeParser);
   for (int i=1; i < scopes.size(); i++) {
     Scope s=scopes.get(i);
     CollectNamedTypes cnt=new CollectNamedTypes(s);
-    new NodeTraversal(compiler,cnt).traverse(s.getBody());
+    NodeTraversal.traverse(compiler,s.getBody(),cnt);
     s.resolveTypedefs(typeParser);
     s.resolveEnums(typeParser);
     if (NewTypeInference.measureMem) {
@@ -22,14 +22,14 @@
   }
   ProcessScope rootPs=new ProcessScope(globalScope);
   if (externs != null) {
-    new NodeTraversal(compiler,rootPs).traverse(externs);
+    NodeTraversal.traverse(compiler,externs,rootPs);
   }
-  new NodeTraversal(compiler,rootPs).traverse(root);
+  NodeTraversal.traverse(compiler,root,rootPs);
   rootPs.finishProcessingScope();
   for (int i=1; i < scopes.size(); i++) {
     Scope s=scopes.get(i);
     ProcessScope ps=new ProcessScope(s);
-    new NodeTraversal(compiler,ps).traverse(s.getBody());
+    NodeTraversal.traverse(compiler,s.getBody(),ps);
     ps.finishProcessingScope();
     if (NewTypeInference.measureMem) {
       NewTypeInference.updatePeakMem();
