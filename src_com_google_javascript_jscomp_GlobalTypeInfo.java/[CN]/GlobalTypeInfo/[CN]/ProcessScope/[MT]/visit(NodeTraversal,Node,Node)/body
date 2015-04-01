@@ -70,13 +70,13 @@ JSDocInfo jsdoc=n.getJSDocInfo();
 if (jsdoc != null && jsdoc.getLendsName() != null) {
 lendsObjlits.add(n);
 }
-Node receiver=parent.isAssign() ? parent.getFirstChild() : parent;
-if (NodeUtil.isNamespaceDecl(receiver) && currentScope.isNamespace(receiver)) {
+Node maybeLvalue=parent.isAssign() ? parent.getFirstChild() : parent;
+if (NodeUtil.isNamespaceDecl(maybeLvalue) && currentScope.isNamespace(maybeLvalue)) {
 for (Node prop : n.children()) {
-visitNamespacePropertyDeclaration(prop,receiver,prop.getString());
+visitNamespacePropertyDeclaration(prop,maybeLvalue,prop.getString());
 }
 }
- else {
+ else if (!NodeUtil.isPrototypeAssignment(maybeLvalue)) {
 for (Node prop : n.children()) {
 if (prop.getJSDocInfo() != null) {
 declaredObjLitProps.put(prop,getDeclaredTypeOfNode(prop.getJSDocInfo(),currentScope));

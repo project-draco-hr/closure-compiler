@@ -4,21 +4,20 @@
       warnings.add(JSError.make(getProp,MISPLACED_CONST_ANNOTATION));
     }
     visitClassPropertyDeclaration(getProp);
-    return;
   }
-  if (isPropertyDeclaration(getProp) && isPrototypeProperty(getProp)) {
+ else   if (isPropertyDeclaration(getProp) && isPrototypeProperty(getProp)) {
     visitPrototypePropertyDeclaration(getProp);
-    return;
   }
-  if (isPropertyDeclaration(getProp) && isStaticCtorProp(getProp,currentScope)) {
+ else   if (isPropertyDeclaration(getProp) && NodeUtil.isPrototypeAssignment(getProp)) {
+    visitPrototypeAssignment(getProp);
+  }
+ else   if (isPropertyDeclaration(getProp) && isStaticCtorProp(getProp,currentScope)) {
     visitConstructorPropertyDeclaration(getProp);
-    return;
   }
-  if (isPropertyDeclaration(getProp) && currentScope.isNamespace(getProp.getFirstChild())) {
+ else   if (isPropertyDeclaration(getProp) && currentScope.isNamespace(getProp.getFirstChild())) {
     visitNamespacePropertyDeclaration(getProp);
-    return;
   }
-  if (isAnnotatedAsConst(getProp)) {
+ else   if (isAnnotatedAsConst(getProp)) {
     warnings.add(JSError.make(getProp,MISPLACED_CONST_ANNOTATION));
   }
 }
