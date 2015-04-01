@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.setLanguageIn(LanguageMode.ECMASCRIPT6_STRICT);
+  options.setLanguageOut(LanguageMode.ECMASCRIPT3);
+  CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
+  Compiler compiler=compile(options,Joiner.on('\n').join("class Base {}","class Sub extends Base {}","alert(1);"));
+  String result=compiler.toSource(compiler.getJsRoot());
+  assertThat(result).isEqualTo("alert(1)");
+}
