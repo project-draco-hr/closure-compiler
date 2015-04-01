@@ -17,13 +17,15 @@
   Node constructor=null;
   JSDocInfo ctorJSDocInfo=null;
   Node classMembers=classNode.getLastChild();
+  ImmutableSet.Builder<String> membersToDeclare=ImmutableSet.builder();
   for (  Node member : classMembers.children()) {
     if (member.isEmpty()) {
       continue;
     }
     Preconditions.checkState(member.isMemberFunctionDef() || member.isGetterDef() || member.isSetterDef()|| (member.isComputedProp() && !member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)),"Member variables should have been transpiled earlier: ",member);
     if (member.isGetterDef() || member.isSetterDef()) {
-      cannotConvertYet(member,"getter/setter in a class definition");
+      addToDefinePropertiesObject(metadata,member);
+      membersToDeclare.add(member.getString());
     }
  else     if (member.isMemberFunctionDef() && member.getString().equals("constructor")) {
       ctorJSDocInfo=member.getJSDocInfo();
@@ -50,6 +52,18 @@
       Node newNode=NodeUtil.newExpr(assign);
       metadata.insertStaticMember(newNode);
     }
+  }
+  for (  String declaredMember : membersToDeclare.build()) {
+    Node declaration=IR.getprop(prototypeAccess.cloneTree(),IR.string(declaredMember));
+    JSDocInfoBuilder declInfo=new JSDocInfoBuilder(true);
+    declInfo.recordType(new JSTypeExpression(new Node(Token.QMARK),classNode.getSourceFileName()));
+    declaration.setJSDocInfo(declInfo.build(declaration));
+    metadata.insertStaticMember(IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(classNode));
+  }
+  if (metadata.defineProperties.hasChildren()) {
+    Node definePropsCall=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"Object.defineProperties"),prototypeAccess.cloneTree(),metadata.defineProperties));
+    definePropsCall.useSourceInfoIfMissingFromForTree(classNode);
+    metadata.insertStaticMember(definePropsCall);
   }
   Preconditions.checkNotNull(constructor);
   JSDocInfo classJSDoc=classNode.getJSDocInfo();

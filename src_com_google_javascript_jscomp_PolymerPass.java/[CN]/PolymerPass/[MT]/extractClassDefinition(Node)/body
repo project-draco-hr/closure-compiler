@@ -9,7 +9,7 @@
     compiler.report(JSError.make(callNode,POLYMER_UNEXPECTED_PARAMS));
     return null;
   }
-  Node elName=extractProperty(description,"is");
+  Node elName=NodeUtil.getFirstPropMatchingKey(description,"is");
   if (elName == null) {
     compiler.report(JSError.make(callNode,POLYMER_MISSING_IS));
     return null;
@@ -28,7 +28,7 @@
   }
   target.useSourceInfoIfMissingFrom(callNode);
   JSDocInfo classInfo=NodeUtil.getBestJSDocInfo(target);
-  Node constructor=extractProperty(description,"constructor");
+  Node constructor=NodeUtil.getFirstPropMatchingKey(description,"constructor");
   if (constructor == null) {
     constructor=IR.function(IR.name(""),IR.paramList(),IR.block());
     constructor.useSourceInfoFromForTree(callNode);
