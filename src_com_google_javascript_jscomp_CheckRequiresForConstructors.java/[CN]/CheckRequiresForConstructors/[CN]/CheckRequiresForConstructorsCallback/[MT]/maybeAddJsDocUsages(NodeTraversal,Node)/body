@@ -1,11 +1,17 @@
 {
-  JSDocInfo info=NodeUtil.getBestJSDocInfo(n);
-  if (info != null) {
+  JSDocInfo info=n.getJSDocInfo();
+  if (info == null) {
+    return;
+  }
+  if (declaresFunction(n)) {
     for (    JSTypeExpression expr : info.getImplementedInterfaces()) {
-      maybeAddJsDocUsage(t,n,expr);
+      maybeAddUsage(t,n,expr);
     }
     if (info.getBaseType() != null) {
-      maybeAddJsDocUsage(t,n,info.getBaseType());
+      maybeAddUsage(t,n,info.getBaseType());
     }
+  }
+  for (  Node typeNode : info.getTypeNodes()) {
+    maybeAddWeakUsage(t,n,typeNode);
   }
 }

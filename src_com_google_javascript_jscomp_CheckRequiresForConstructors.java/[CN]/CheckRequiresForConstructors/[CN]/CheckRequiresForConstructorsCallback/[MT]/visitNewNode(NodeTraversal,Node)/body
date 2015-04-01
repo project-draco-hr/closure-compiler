@@ -1,5 +1,5 @@
 {
-  Node qNameNode=n.getFirstChild();
+  Node qNameNode=newNode.getFirstChild();
   if (!qNameNode.isQualifiedName()) {
     return;
   }
@@ -12,5 +12,8 @@
   if (var != null && (var.isLocal() || var.isExtern())) {
     return;
   }
-  usages.put(n.getFirstChild().getQualifiedName(),n);
+  usages.put(qNameNode.getQualifiedName(),newNode);
+  for (; qNameNode != null; qNameNode=qNameNode.getFirstChild()) {
+    weakUsages.put(qNameNode.getQualifiedName(),qNameNode);
+  }
 }

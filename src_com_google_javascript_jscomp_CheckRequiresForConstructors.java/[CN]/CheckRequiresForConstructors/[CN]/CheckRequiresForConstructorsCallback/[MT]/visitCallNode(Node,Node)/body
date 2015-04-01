@@ -1,6 +1,9 @@
 {
-  String required=codingConvention.extractClassNameIfRequire(n,parent);
+  String required=codingConvention.extractClassNameIfRequire(call,parent);
   if (required != null) {
-    requires.add(required);
+    requires.put(required,call);
+  }
+  for (Node qNameNode=call.getFirstChild(); qNameNode != null; qNameNode=qNameNode.getFirstChild()) {
+    weakUsages.put(qNameNode.getQualifiedName(),qNameNode);
   }
 }

@@ -1,0 +1,15 @@
+{
+  Visitor visitor=new Visitor(){
+    public void visit(    Node typeNode){
+      if (typeNode.isString()) {
+        String rootName=Splitter.on('.').split(typeNode.getString()).iterator().next();
+        TypedVar var=t.getTypedScope().getVar(rootName);
+        if (var == null || !var.isExtern()) {
+          usagesMap.put(typeNode.getString(),n);
+        }
+      }
+    }
+  }
+;
+  NodeUtil.visitPreOrder(rootTypeNode,visitor,pred);
+}

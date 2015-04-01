@@ -11,13 +11,25 @@
       parentNamespace=nonNullClassName.substring(0,separatorIndex);
     }
     boolean notProvidedByConstructors=(constructors == null || (!constructors.contains(className) && !constructors.contains(outermostClassName)));
-    boolean notProvidedByRequires=(requires == null || (!requires.contains(className) && !requires.contains(outermostClassName) && !requires.contains(parentNamespace)));
+    boolean notProvidedByRequires=(requires == null || (!requires.containsKey(className) && !requires.containsKey(outermostClassName) && !requires.containsKey(parentNamespace)));
     if (notProvidedByConstructors && notProvidedByRequires && !classNames.contains(className)) {
       compiler.report(t.makeError(node,MISSING_REQUIRE_WARNING,className));
       classNames.add(className);
     }
   }
+  for (  Map.Entry<String,Node> entry : requires.entrySet()) {
+    String require=entry.getKey();
+    Node call=entry.getValue();
+    Node parent=call.getParent();
+    if (parent.isAssign()) {
+      continue;
+    }
+    if (!usages.containsKey(require) && !weakUsages.containsKey(require)) {
+      compiler.report(t.makeError(call,EXTRA_REQUIRE_WARNING,require));
+    }
+  }
   this.usages.clear();
+  this.weakUsages.clear();
   this.requires.clear();
   this.constructors.clear();
 }
