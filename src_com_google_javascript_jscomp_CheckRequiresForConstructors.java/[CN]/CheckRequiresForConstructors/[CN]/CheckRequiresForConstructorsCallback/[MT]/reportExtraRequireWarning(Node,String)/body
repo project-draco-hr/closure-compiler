@@ -1,0 +1,10 @@
+{
+  if (DEFAULT_EXTRA_NAMESPACES.contains(require)) {
+    return;
+  }
+  JSDocInfo jsDoc=call.getJSDocInfo();
+  if (jsDoc != null && jsDoc.getSuppressions().contains("extraRequire")) {
+    return;
+  }
+  compiler.report(JSError.make(call,EXTRA_REQUIRE_WARNING,require));
+}
