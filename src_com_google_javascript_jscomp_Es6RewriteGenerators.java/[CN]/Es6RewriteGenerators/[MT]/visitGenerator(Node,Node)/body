@@ -1,6 +1,7 @@
 {
+  compiler.needsEs6Runtime=true;
   hasTranslatedTry=false;
-  Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("function generatorBody() {","  var " + GENERATOR_STATE + " = "+ generatorCaseCount+ ";","  function $jscomp$generator$impl(" + GENERATOR_NEXT_ARG + ", ","      " + GENERATOR_THROW_ARG + ") {","    while (1) switch (" + GENERATOR_STATE + ") {","      case " + generatorCaseCount + ":","      default:","        return {value: undefined, done: true};","    }","  }","  return {","    " + ITER_KEY + ": function() { return this; },","    next: function(arg){ return $jscomp$generator$impl(arg, undefined); },","    throw: function(arg){ return $jscomp$generator$impl(undefined, arg); },","  }","}")).getFirstChild().getLastChild().detachFromParent();
+  Node genBlock=compiler.parseSyntheticCode(Joiner.on('\n').join("function generatorBody() {","  var " + GENERATOR_STATE + " = "+ generatorCaseCount+ ";","  function $jscomp$generator$impl(" + GENERATOR_NEXT_ARG + ", ","      " + GENERATOR_THROW_ARG + ") {","    while (1) switch (" + GENERATOR_STATE + ") {","      case " + generatorCaseCount + ":","      default:","        return {value: undefined, done: true};","    }","  }","  var iterator = {","    next: function(arg){ return $jscomp$generator$impl(arg, undefined); },","    throw: function(arg){ return $jscomp$generator$impl(undefined, arg); },","  };","  $jscomp.initSymbolIterator();","  iterator[Symbol.iterator] = function() {return this;};","  return iterator;","}")).getFirstChild().getLastChild().detachFromParent();
   generatorCaseCount++;
   originalGeneratorBody=n.getLastChild();
   n.replaceChild(originalGeneratorBody,genBlock);
@@ -11,7 +12,7 @@
   n.setJSDocInfo(info);
   originalGeneratorBody.addChildToBack(IR.exprResult(IR.assign(IR.name(GENERATOR_STATE),IR.number(-1))));
   enclosingBlock=getUnique(genBlock,Token.CASE).getLastChild();
-  hoistRoot=getUnique(genBlock,Token.VAR);
+  hoistRoot=genBlock.getFirstChild();
   if (NodeUtil.isNameReferenced(originalGeneratorBody,GENERATOR_ARGUMENTS)) {
     hoistRoot.getParent().addChildAfter(IR.var(IR.name(GENERATOR_ARGUMENTS),IR.name("arguments")),hoistRoot);
   }
