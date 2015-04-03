@@ -1,3 +1,11 @@
 {
+  FindPolymerExterns externsCallback=new FindPolymerExterns();
+  NodeTraversal.traverse(compiler,externs,externsCallback);
+  polymerElementExterns=externsCallback.polymerElementExterns;
+  polymerElementProps=externsCallback.getpolymerElementProps();
+  if (polymerElementExterns == null) {
+    compiler.report(JSError.make(externs,POLYMER_MISSING_EXTERNS));
+    return;
+  }
   hotSwapScript(root,null);
 }

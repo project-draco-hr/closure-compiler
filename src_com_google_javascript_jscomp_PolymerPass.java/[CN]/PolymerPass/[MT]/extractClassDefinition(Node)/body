@@ -33,7 +33,9 @@
     constructor=IR.function(IR.name(""),IR.paramList(),IR.block());
     constructor.useSourceInfoFromForTree(callNode);
   }
+  Node baseClass=NodeUtil.getFirstPropMatchingKey(description,"extends");
+  String nativeBaseElement=baseClass == null ? null : baseClass.getString();
   JSDocInfo info=NodeUtil.getBestJSDocInfo(constructor);
-  ClassDefinition def=new ClassDefinition(target,classInfo,new MemberDefinition(info,null,constructor),objectLitToList(description));
+  ClassDefinition def=new ClassDefinition(target,classInfo,new MemberDefinition(info,null,constructor),nativeBaseElement,objectLitToList(description));
   return def;
 }

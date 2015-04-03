@@ -11,10 +11,8 @@
   objLitDoc.recordLends(cls.target.getQualifiedName() + ".prototype");
   objLit.setJSDocInfo(objLitDoc.build(objLit));
   Node block=IR.block();
-  JSDocInfoBuilder constructorDoc=new JSDocInfoBuilder(true);
-  constructorDoc.recordConstructor();
-  JSTypeExpression baseType=new JSTypeExpression(new Node(Token.BANG,IR.string("PolymerBase")),VIRTUAL_FILE);
-  constructorDoc.recordBaseType(baseType);
+  this.appendPolymerElementExterns(cls);
+  JSDocInfoBuilder constructorDoc=this.getConstructorDoc(cls);
   if (cls.target.isGetProp()) {
     Node assign=IR.assign(cls.target.cloneTree(),cls.constructor.value.cloneTree());
     assign.setJSDocInfo(constructorDoc.build(assign));

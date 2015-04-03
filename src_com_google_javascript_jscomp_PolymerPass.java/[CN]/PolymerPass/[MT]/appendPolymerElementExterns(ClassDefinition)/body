@@ -1,0 +1,25 @@
+{
+  if (cls.nativeBaseElement == null) {
+    return;
+  }
+  Node block=IR.block();
+  Node baseExterns=polymerElementExterns.cloneTree();
+  String polymerElementType=this.getPolymerElementType(cls);
+  baseExterns.getFirstChild().setString(polymerElementType);
+  String elementType=tagNameMap.get(cls.nativeBaseElement);
+  JSTypeExpression elementBaseType=new JSTypeExpression(new Node(Token.BANG,IR.string(elementType)),VIRTUAL_FILE);
+  JSDocInfoBuilder baseDocs=JSDocInfoBuilder.copyFrom(baseExterns.getJSDocInfo());
+  baseDocs.changeBaseType(elementBaseType);
+  baseExterns.setJSDocInfo(baseDocs.build(baseExterns));
+  block.addChildToBack(baseExterns);
+  for (  Node baseProp : polymerElementProps) {
+    Node newProp=baseProp.cloneTree();
+    Node newPropRootName=NodeUtil.getRootOfQualifiedName(newProp.getFirstChild().getFirstChild());
+    newPropRootName.setString(polymerElementType);
+    block.addChildToBack(newProp);
+  }
+  Node parent=polymerElementExterns.getParent();
+  Node stmts=block.removeChildren();
+  parent.addChildrenAfter(stmts,polymerElementExterns);
+  compiler.reportCodeChange();
+}
