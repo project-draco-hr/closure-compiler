@@ -1,6 +1,10 @@
 {
+  Node properties=NodeUtil.getFirstPropMatchingKey(descriptor,"properties");
+  if (properties == null) {
+    return ImmutableList.of();
+  }
   ImmutableList.Builder<MemberDefinition> members=ImmutableList.builder();
-  for (  Node keyNode : objlit.children()) {
+  for (  Node keyNode : properties.children()) {
     members.add(new MemberDefinition(NodeUtil.getBestJSDocInfo(keyNode),keyNode,keyNode.getFirstChild()));
   }
   return members.build();

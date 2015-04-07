@@ -1,6 +1,6 @@
 {
-  Node description=NodeUtil.getArgumentForCallOrNew(callNode,0);
-  if (description == null || !description.isObjectLit()) {
+  Node descriptor=NodeUtil.getArgumentForCallOrNew(callNode,0);
+  if (descriptor == null || !descriptor.isObjectLit()) {
     compiler.report(JSError.make(callNode,POLYMER_DESCRIPTOR_NOT_VALID));
     return null;
   }
@@ -9,7 +9,7 @@
     compiler.report(JSError.make(callNode,POLYMER_UNEXPECTED_PARAMS));
     return null;
   }
-  Node elName=NodeUtil.getFirstPropMatchingKey(description,"is");
+  Node elName=NodeUtil.getFirstPropMatchingKey(descriptor,"is");
   if (elName == null) {
     compiler.report(JSError.make(callNode,POLYMER_MISSING_IS));
     return null;
@@ -28,14 +28,18 @@
   }
   target.useSourceInfoIfMissingFrom(callNode);
   JSDocInfo classInfo=NodeUtil.getBestJSDocInfo(target);
-  Node constructor=NodeUtil.getFirstPropMatchingKey(description,"constructor");
+  JSDocInfo ctorInfo=null;
+  Node constructor=NodeUtil.getFirstPropMatchingKey(descriptor,"constructor");
   if (constructor == null) {
     constructor=IR.function(IR.name(""),IR.paramList(),IR.block());
     constructor.useSourceInfoFromForTree(callNode);
   }
-  Node baseClass=NodeUtil.getFirstPropMatchingKey(description,"extends");
+ else {
+    ctorInfo=NodeUtil.getBestJSDocInfo(constructor);
+    constructor.removeProp(Node.JSDOC_INFO_PROP);
+  }
+  Node baseClass=NodeUtil.getFirstPropMatchingKey(descriptor,"extends");
   String nativeBaseElement=baseClass == null ? null : baseClass.getString();
-  JSDocInfo info=NodeUtil.getBestJSDocInfo(constructor);
-  ClassDefinition def=new ClassDefinition(target,classInfo,new MemberDefinition(info,null,constructor),nativeBaseElement,objectLitToList(description));
+  ClassDefinition def=new ClassDefinition(target,classInfo,new MemberDefinition(ctorInfo,null,constructor),nativeBaseElement,extractProperties(descriptor));
   return def;
 }

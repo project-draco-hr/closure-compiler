@@ -1,0 +1,15 @@
+{
+  String path=cls.target.getQualifiedName() + ".prototype.";
+  for (  MemberDefinition prop : cls.props) {
+    Node propertyNode=IR.exprResult(NodeUtil.newQName(compiler,path + prop.name.getString()));
+    JSDocInfoBuilder docs=JSDocInfoBuilder.maybeCopyFrom(prop.info);
+    prop.name.removeProp(Node.JSDOC_INFO_PROP);
+    JSTypeExpression propType=getTypeFromProperty(prop);
+    if (propType == null) {
+      return;
+    }
+    docs.recordType(propType);
+    propertyNode.getFirstChild().setJSDocInfo(docs.build(propertyNode.getFirstChild()));
+    block.addChildToBack(propertyNode);
+  }
+}

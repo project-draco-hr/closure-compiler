@@ -13,6 +13,10 @@
   Node block=IR.block();
   this.appendPolymerElementExterns(cls);
   JSDocInfoBuilder constructorDoc=this.getConstructorDoc(cls);
+  Node ctorKey=cls.constructor.value.getParent();
+  if (ctorKey != null) {
+    ctorKey.removeProp(Node.JSDOC_INFO_PROP);
+  }
   if (cls.target.isGetProp()) {
     Node assign=IR.assign(cls.target.cloneTree(),cls.constructor.value.cloneTree());
     assign.setJSDocInfo(constructorDoc.build(assign));
@@ -24,10 +28,17 @@
     var.setJSDocInfo(constructorDoc.build(var));
     block.addChildToBack(var);
   }
+  appendPropertiesToBlock(cls,block);
   block.useSourceInfoFromForTree(exprRoot);
   Node parent=exprRoot.getParent();
   Node stmts=block.removeChildren();
-  parent.addChildBefore(stmts,exprRoot);
+  Node beforeRoot=parent.getChildBefore(exprRoot);
+  if (beforeRoot == null) {
+    parent.addChildrenToFront(stmts);
+  }
+ else {
+    parent.addChildrenAfter(stmts,beforeRoot);
+  }
   if (exprRoot.isVar()) {
     Node assignExpr=varToAssign(exprRoot);
     parent.replaceChild(exprRoot,assignExpr);

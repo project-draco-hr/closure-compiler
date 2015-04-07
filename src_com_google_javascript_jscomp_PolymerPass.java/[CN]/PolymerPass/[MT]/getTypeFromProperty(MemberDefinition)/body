@@ -1,0 +1,31 @@
+{
+  String typeString="";
+  if (property.value.isObjectLit()) {
+    Node typeValue=NodeUtil.getFirstPropMatchingKey(property.value,"type");
+    if (typeValue == null) {
+      compiler.report(JSError.make(property.name,POLYMER_INVALID_PROPERTY));
+      return null;
+    }
+    typeString=typeValue.getString();
+  }
+ else   if (property.value.isName()) {
+    typeString=property.value.getString();
+  }
+  Node typeNode=null;
+switch (typeString) {
+case "Boolean":
+case "String":
+case "Number":
+    typeNode=IR.string(typeString.toLowerCase());
+  break;
+case "Array":
+case "Object":
+case "Date":
+typeNode=new Node(Token.BANG,IR.string(typeString));
+break;
+default :
+compiler.report(JSError.make(property.name,POLYMER_INVALID_PROPERTY));
+return null;
+}
+return new JSTypeExpression(typeNode,VIRTUAL_FILE);
+}
