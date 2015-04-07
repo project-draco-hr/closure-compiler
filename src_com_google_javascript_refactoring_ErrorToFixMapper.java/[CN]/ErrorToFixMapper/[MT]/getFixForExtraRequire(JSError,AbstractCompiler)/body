@@ -1,0 +1,8 @@
+{
+  Matcher regexMatcher=EXTRA_REQUIRE.matcher(error.description);
+  Preconditions.checkState(regexMatcher.matches(),"Unexpected error description: %s",error.description);
+  String namespace=regexMatcher.group(1);
+  NodeMetadata metadata=new NodeMetadata(compiler);
+  Match match=new Match(error.node,metadata);
+  return new SuggestedFix.Builder().setOriginalMatchedNode(error.node).removeGoogRequire(match,namespace).build();
+}
