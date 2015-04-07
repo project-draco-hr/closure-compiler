@@ -1,0 +1,30 @@
+{
+switch (qnameNode.getType()) {
+case Token.NAME:
+{
+      JSType result=envGetType(env,qnameNode.getString());
+      Preconditions.checkNotNull(result,"Null declared type@%s",qnameNode);
+      if (isFwd) {
+        maybeSetTypeI(qnameNode,result);
+      }
+      return result;
+    }
+case Token.GETPROP:
+{
+    JSType recvType=markAndGetTypeOfPreanalyzedNode(qnameNode.getFirstChild(),env,isFwd);
+    String pname=qnameNode.getLastChild().getString();
+    JSType result=recvType.getProp(new QualifiedName(pname));
+    if (pname.equals("prototype") && (recvType.isConstructor() || recvType.isInterfaceDefinition())) {
+      FunctionType ft=recvType.getFunTypeIfSingletonObj();
+      result=ft.getInstanceTypeOfCtor();
+    }
+    Preconditions.checkNotNull(result,"Null declared type@%s",qnameNode);
+    if (isFwd) {
+      maybeSetTypeI(qnameNode,result);
+    }
+    return result;
+  }
+default :
+throw new RuntimeException("markAndGetTypeOfPreanalyzedNode: unexpected node " + Token.name(qnameNode.getType()));
+}
+}

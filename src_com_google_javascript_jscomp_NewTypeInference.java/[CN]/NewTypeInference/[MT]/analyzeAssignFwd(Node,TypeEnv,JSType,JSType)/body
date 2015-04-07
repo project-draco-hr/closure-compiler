@@ -8,10 +8,11 @@
   Node rhs=expr.getLastChild();
   if (lhs.getBooleanProp(Node.ANALYZED_DURING_GTI)) {
     lhs.removeProp(Node.ANALYZED_DURING_GTI);
+    JSType declType=markAndGetTypeOfPreanalyzedNode(lhs,inEnv,true);
+    maybeSetTypeI(lhs,declType);
     if (rhs.matchesQualifiedName(ABSTRACT_METHOD_NAME)) {
       return new EnvTypePair(inEnv,requiredType);
     }
-    JSType declType=getDeclaredTypeOfQname(lhs,inEnv);
     EnvTypePair rhsPair=analyzeExprFwd(rhs,inEnv,declType);
     if (!rhsPair.type.isSubtypeOf(declType) && !NodeUtil.isPrototypeAssignment(lhs)) {
       warnings.add(JSError.make(expr,MISTYPED_ASSIGN_RHS,declType.toString(),rhsPair.type.toString()));

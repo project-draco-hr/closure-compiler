@@ -5,7 +5,7 @@
     return inEnv;
   }
   if (NodeUtil.isNamespaceDecl(nameNode)) {
-    nameNode.setTypeI(declType);
+    maybeSetTypeI(nameNode,declType);
     return envPutType(inEnv,varName,declType);
   }
   Node rhs=nameNode.getFirstChild();
@@ -28,6 +28,6 @@
       rhsType=declType.specialize(rhsType);
     }
   }
-  nameNode.setTypeI(rhsType);
+  maybeSetTypeI(nameNode,rhsType);
   return envPutType(outEnv,varName,rhsType);
 }

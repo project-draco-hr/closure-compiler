@@ -22,7 +22,7 @@
       newProps=newProps.without(pname);
     }
  else {
-      newProps=newProps.with(pname,isConstant ? Property.makeConstant(type,declType) : Property.make(type,isDeclared ? declType : null));
+      newProps=newProps.with(pname,isConstant ? Property.makeConstant(null,type,declType) : Property.make(type,isDeclared ? declType : null));
     }
   }
  else {
@@ -36,7 +36,7 @@
     Property objProp=getLeftmostProp(objQname);
     JSType inferred=type == null ? objProp.getType().withoutProperty(innerProps) : objProp.getType().withProperty(innerProps,type);
     JSType declared=objProp.getDeclaredType();
-    newProps=newProps.with(objName,objProp.isOptional() ? Property.makeOptional(inferred,declared) : Property.make(inferred,declared));
+    newProps=newProps.with(objName,objProp.isOptional() ? Property.makeOptional(null,inferred,declared) : Property.make(inferred,declared));
   }
   return ObjectType.makeObjectType(nominalType,newProps,fn,isLoose,objectKind);
 }
