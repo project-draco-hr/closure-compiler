@@ -18,18 +18,31 @@ case Token.QMARK:
 case Token.THIS:
 case Token.NEW:
             return;
-        }
-      }
-      String typeName=node.getString();
-      if (typeName.equals("null") || registry.getType(typeName) == null) {
-        return;
-      }
-      JSType type=(JSType)registry.createTypeFromCommentNode(node,"[internal]",null);
-      if (type.isNullable()) {
-        reportWarning(t,node,typeName);
+case Token.PIPE:
+{
+            Node gp=parent.getParent();
+            if (gp != null && gp.getType() == Token.QMARK) {
+              return;
+            }
+            for (            Node child : parent.children()) {
+              if (child.isString() && child.getString().equals("null")) {
+                return;
+              }
+            }
+            break;
+          }
       }
     }
+    String typeName=node.getString();
+    if (typeName.equals("null") || registry.getType(typeName) == null) {
+      return;
+    }
+    JSType type=(JSType)registry.createTypeFromCommentNode(node,"[internal]",null);
+    if (type.isNullable()) {
+      reportWarning(t,node,typeName);
+    }
   }
+}
 ,Predicates.<Node>alwaysTrue());
 }
 }
