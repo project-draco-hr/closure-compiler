@@ -10,7 +10,9 @@
   }
   if ((parent.isVar() || NodeUtil.isFunctionDeclaration(parent)) && varsToDeclareInExterns.contains(varName)) {
     createSynthesizedExternVar(varName);
-    n.addSuppression("duplicate");
+    JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
+    builder.addSuppression("duplicate");
+    n.setJSDocInfo(builder.build());
   }
   Scope scope=t.getScope();
   Var var=scope.getVar(varName);
