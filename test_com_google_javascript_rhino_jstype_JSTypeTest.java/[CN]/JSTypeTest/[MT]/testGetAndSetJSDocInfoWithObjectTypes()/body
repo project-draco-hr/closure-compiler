@@ -1,10 +1,12 @@
 {
   ObjectType sup=registry.createObjectType(null,registry.createAnonymousObjectType(null));
   ObjectType sub=registry.createObjectType(null,sup);
-  JSDocInfo deprecated=new JSDocInfo();
-  deprecated.setDeprecated(true);
-  JSDocInfo privateInfo=new JSDocInfo();
-  privateInfo.setVisibility(Visibility.PRIVATE);
+  JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+  builder.recordDeprecated();
+  JSDocInfo deprecated=builder.build(null);
+  builder=new JSDocInfoBuilder(false);
+  builder.recordVisibility(Visibility.PRIVATE);
+  JSDocInfo privateInfo=builder.build(null);
   sup.defineProperty("X",NUMBER_TYPE,true,null);
   sup.setPropertyJSDocInfo("X",privateInfo);
   sub.defineProperty("X",NUMBER_TYPE,true,null);
@@ -13,6 +15,6 @@
   assertEquals(Visibility.PRIVATE,sup.getOwnPropertyJSDocInfo("X").getVisibility());
   assertTypeEquals(NUMBER_TYPE,sup.getPropertyType("X"));
   assertTrue(sub.getOwnPropertyJSDocInfo("X").isDeprecated());
-  assertNull(sub.getOwnPropertyJSDocInfo("X").getVisibility());
+  assertEquals(Visibility.INHERITED,sub.getOwnPropertyJSDocInfo("X").getVisibility());
   assertTypeEquals(NUMBER_TYPE,sub.getPropertyType("X"));
 }
