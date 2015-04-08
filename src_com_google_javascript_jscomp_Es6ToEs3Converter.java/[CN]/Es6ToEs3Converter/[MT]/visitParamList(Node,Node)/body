@@ -6,13 +6,28 @@
     if (param.isDefaultValue()) {
       Node nameOrPattern=param.removeFirstChild();
       Node defaultValue=param.removeFirstChild();
-      Node newParam=nameOrPattern.isName() ? nameOrPattern : IR.name(DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++));
-      Node lhs=nameOrPattern.cloneTree();
-      Node rhs=defaultValueHook(newParam.cloneTree(),defaultValue);
-      Node newStatement=nameOrPattern.isName() ? IR.exprResult(IR.assign(lhs,rhs)) : IR.var(lhs,rhs);
-      newStatement.useSourceInfoIfMissingFromForTree(param);
-      block.addChildAfter(newStatement,insertSpot);
-      insertSpot=newStatement;
+      Node newParam;
+      boolean isNoop=false;
+      if (!nameOrPattern.isName()) {
+      }
+ else       if (defaultValue.isName()) {
+        isNoop="undefined".equals(defaultValue.getString());
+      }
+ else       if (defaultValue.isVoid()) {
+        isNoop=NodeUtil.isImmutableValue(defaultValue.getFirstChild());
+      }
+      if (isNoop) {
+        newParam=nameOrPattern.cloneTree();
+      }
+ else {
+        newParam=nameOrPattern.isName() ? nameOrPattern : IR.name(DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++));
+        Node lhs=nameOrPattern.cloneTree();
+        Node rhs=defaultValueHook(newParam.cloneTree(),defaultValue);
+        Node newStatement=nameOrPattern.isName() ? IR.exprResult(IR.assign(lhs,rhs)) : IR.var(lhs,rhs);
+        newStatement.useSourceInfoIfMissingFromForTree(param);
+        block.addChildAfter(newStatement,insertSpot);
+        insertSpot=newStatement;
+      }
       paramList.replaceChild(param,newParam);
       newParam.setOptionalArg(true);
       compiler.reportCodeChange();
