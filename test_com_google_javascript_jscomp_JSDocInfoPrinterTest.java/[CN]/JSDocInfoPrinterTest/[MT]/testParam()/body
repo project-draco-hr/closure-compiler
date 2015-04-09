@@ -1,12 +1,12 @@
 {
   builder.recordParameter("foo",new JSTypeExpression(JsDocInfoParser.parseTypeString("number"),""));
   builder.recordParameter("bar",new JSTypeExpression(JsDocInfoParser.parseTypeString("string"),""));
-  JSDocInfo info=builder.build(null);
+  JSDocInfo info=builder.buildAndReset();
   assertEquals("/**@param {number} foo @param {string} bar */",JSDocInfoPrinter.print(info));
   builder.recordParameter("foo",new JSTypeExpression(new Node(Token.EQUALS,IR.string("number")),""));
-  info=builder.build(null);
+  info=builder.buildAndReset();
   assertEquals("/**@param {number=} foo */",JSDocInfoPrinter.print(info));
   builder.recordParameter("foo",new JSTypeExpression(new Node(Token.ELLIPSIS,IR.string("number")),""));
-  info=builder.build(null);
+  info=builder.buildAndReset();
   assertEquals("/**@param {...number} foo */",JSDocInfoPrinter.print(info));
 }

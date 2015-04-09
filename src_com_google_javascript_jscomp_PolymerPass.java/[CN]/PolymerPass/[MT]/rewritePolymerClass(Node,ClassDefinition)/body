@@ -9,7 +9,7 @@
   Node objLit=NodeUtil.getArgumentForCallOrNew(call,0);
   JSDocInfoBuilder objLitDoc=new JSDocInfoBuilder(true);
   objLitDoc.recordLends(cls.target.getQualifiedName() + ".prototype");
-  objLit.setJSDocInfo(objLitDoc.build(objLit));
+  objLit.setJSDocInfo(objLitDoc.build());
   Node block=IR.block();
   this.appendPolymerElementExterns(cls);
   JSDocInfoBuilder constructorDoc=this.getConstructorDoc(cls);
@@ -19,13 +19,13 @@
   }
   if (cls.target.isGetProp()) {
     Node assign=IR.assign(cls.target.cloneTree(),cls.constructor.value.cloneTree());
-    assign.setJSDocInfo(constructorDoc.build(assign));
+    assign.setJSDocInfo(constructorDoc.build());
     Node exprResult=IR.exprResult(assign);
     block.addChildToBack(exprResult);
   }
  else {
     Node var=IR.var(cls.target.cloneTree(),cls.constructor.value.cloneTree());
-    var.setJSDocInfo(constructorDoc.build(var));
+    var.setJSDocInfo(constructorDoc.build());
     block.addChildToBack(var);
   }
   appendPropertiesToBlock(cls,block);
