@@ -12,20 +12,20 @@ case ANNOTATION:
     break;
 case EOC:
   boolean success=true;
+checkExtendedTypes(extendedTypes);
 if (hasParsedFileOverviewDocInfo()) {
-  fileOverviewJSDocInfo=retrieveAndResetParsedJSDocInfo();
-  Visibility visibility=fileOverviewJSDocInfo.getVisibility();
+fileOverviewJSDocInfo=retrieveAndResetParsedJSDocInfo();
+Visibility visibility=fileOverviewJSDocInfo.getVisibility();
 switch (visibility) {
 case PRIVATE:
 case PROTECTED:
-    parser.addParserWarning("msg.bad.fileoverview.visibility.annotation",visibility.toString().toLowerCase(),stream.getLineno(),stream.getCharno());
-  success=false;
+  parser.addParserWarning("msg.bad.fileoverview.visibility.annotation",visibility.toString().toLowerCase(),stream.getLineno(),stream.getCharno());
+success=false;
 break;
 default :
 break;
 }
 }
-checkExtendedTypes(extendedTypes);
 return success;
 case EOF:
 jsdocBuilder.build();
