@@ -37,8 +37,18 @@
         hasCodeChanged=hasCodeChanged || recentChange.hasCodeChanged();
       }
       if (!runTypeCheckAfterProcessing && typeCheckEnabled && i == 0) {
-        TypeCheck check=createTypeCheck(compiler,typeCheckLevel);
-        check.processForTesting(externsRoot,mainRoot);
+        if (runNewTypeInference) {
+          GlobalTypeInfo symbolTable=new GlobalTypeInfo(compiler);
+          compiler.setSymbolTable(symbolTable);
+          symbolTable.process(externsRoot,mainRoot);
+          (new NewTypeInference(compiler,rewriteClosureCode)).process(externsRoot,mainRoot);
+          (new ConvertNewTypesToOld(compiler)).process(externsRoot,mainRoot);
+          (new InferJSDocInfo(compiler)).process(externsRoot,mainRoot);
+        }
+ else {
+          TypeCheck check=createTypeCheck(compiler,typeCheckLevel);
+          check.processForTesting(externsRoot,mainRoot);
+        }
       }
       if (normalizeEnabled && i == 0) {
         normalizeActualCode(compiler,externsRoot,mainRoot);

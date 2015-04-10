@@ -1,0 +1,28 @@
+{
+  if (newType == null) {
+    return null;
+  }
+  com.google.javascript.rhino.jstype.JSType oldType=(com.google.javascript.rhino.jstype.JSType)newType.getOldType();
+  if (cachedTypes.containsKey(newType)) {
+    return cachedTypes.get(newType);
+  }
+  if (newType.isUnion()) {
+    oldType=convertUnionType(newType);
+  }
+ else {
+    FunctionType ft=newType.getFunTypeIfSingletonObj();
+    if (ft != null) {
+      oldType=convertFunctionType(ft);
+    }
+ else     if (newType.isTypeVariable() || newType.isEnumElement()) {
+      return OLD_UNKNOWN_TYPE;
+    }
+ else {
+      ObjectType ot=newType.getObjectTypeIfSingletonObj();
+      Preconditions.checkNotNull(ot,"Null object type for JSType: %s",newType);
+      oldType=convertObjectType(ot);
+    }
+  }
+  newType.setOldType(oldType);
+  return oldType;
+}

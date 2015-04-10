@@ -1,0 +1,17 @@
+{
+  com.google.javascript.rhino.jstype.ObjectType oldInstance=oldCtor.getInstanceType();
+  for (  String pname : nt.getAllOwnProps()) {
+    JSType ptype=nt.getPropDeclaredType(pname);
+    if (ptype == null) {
+      oldInstance.defineInferredProperty(pname,OLD_UNKNOWN_TYPE,null);
+    }
+ else {
+      oldInstance.defineDeclaredProperty(pname,convertNewTypeToOld(ptype),null);
+    }
+    Node defSite=nt.getPropDefsite(pname);
+    if (defSite != null) {
+      oldInstance.setPropertyNode(pname,defSite);
+      oldInstance.setPropertyJSDocInfo(pname,NodeUtil.getBestJSDocInfo(defSite));
+    }
+  }
+}

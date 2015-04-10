@@ -1,0 +1,21 @@
+{
+  FunctionParamBuilder paramBuilder=new FunctionParamBuilder(this.registry);
+  int minArity=ft.getMinArity();
+  com.google.javascript.rhino.jstype.JSType[] requiredFormals=new com.google.javascript.rhino.jstype.JSType[minArity];
+  for (int i=0; i < minArity; i++) {
+    requiredFormals[i]=convertNewTypeToOld(ft.getFormalType(i));
+  }
+  paramBuilder.addRequiredParams(requiredFormals);
+  int maxArity=ft.getMaxArityWithoutRestFormals();
+  if (maxArity > minArity) {
+    com.google.javascript.rhino.jstype.JSType[] optionalFormals=new com.google.javascript.rhino.jstype.JSType[maxArity - minArity];
+    for (int i=minArity; i < maxArity; i++) {
+      optionalFormals[i - minArity]=convertNewTypeToOld(ft.getFormalType(i));
+    }
+    paramBuilder.addOptionalParams(optionalFormals);
+  }
+  if (ft.hasRestFormals()) {
+    paramBuilder.addVarArgs(convertNewTypeToOld(ft.getRestFormalsType()));
+  }
+  return paramBuilder.build();
+}

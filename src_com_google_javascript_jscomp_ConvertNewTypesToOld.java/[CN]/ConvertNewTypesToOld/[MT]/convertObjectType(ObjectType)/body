@@ -1,0 +1,28 @@
+{
+  NominalType nt=ot.getNominalType();
+  if (nt == null) {
+    com.google.javascript.rhino.jstype.ObjectType oldObject=this.registry.createAnonymousObjectType(NodeUtil.getBestJSDocInfo(currentNode));
+    for (    String pname : ot.getAllOwnProps()) {
+      QualifiedName qname=new QualifiedName(pname);
+      JSType ptype=ot.getDeclaredProp(qname);
+      if (ptype == null) {
+        ptype=ot.getProp(qname);
+        Preconditions.checkNotNull(ptype);
+        oldObject.defineInferredProperty(pname,convertNewTypeToOld(ptype),null);
+      }
+ else {
+        oldObject.defineDeclaredProperty(pname,convertNewTypeToOld(ptype),null);
+      }
+      Node defSite=ot.getPropDefsite(qname);
+      if (defSite != null) {
+        oldObject.setPropertyNode(pname,defSite);
+        oldObject.setPropertyJSDocInfo(pname,NodeUtil.getBestJSDocInfo(defSite));
+      }
+    }
+    return oldObject;
+  }
+  if (cachedNomTypes.containsKey(nt)) {
+    return cachedNomTypes.get(nt).getTypeOfThis();
+  }
+  return OLD_UNKNOWN_TYPE;
+}
