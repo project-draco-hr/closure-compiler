@@ -1,7 +1,7 @@
 {
   add("[");
   for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-    if (child == n.getLastChild() && (n.getParent().isVar() || n.getParent().isLet() || n.getParent().isConst())) {
+    if (child == n.getLastChild() && NodeUtil.isNameDeclaration(n.getParent())) {
       add("]");
       add("=");
     }
@@ -10,7 +10,7 @@
     }
     add(child);
   }
-  if (!(n.getParent().isVar() || n.getParent().isLet() || n.getParent().isConst())) {
+  if (!NodeUtil.isNameDeclaration(n.getParent())) {
     add("]");
   }
 }

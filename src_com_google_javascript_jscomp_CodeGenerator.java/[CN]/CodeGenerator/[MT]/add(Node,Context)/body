@@ -387,7 +387,7 @@ cc.beginBlock();
 boolean preferLineBreaks=type == Token.SCRIPT || (type == Token.BLOCK && !preserveBlock && n.getParent() != null && n.getParent().isScript());
 for (Node c=first; c != null; c=c.getNext()) {
 add(c,Context.STATEMENT);
-if (c.isVar() || c.isLet() || c.isConst()) {
+if (NodeUtil.isNameDeclaration(c)) {
 cc.endStatement();
 }
 if (c.isFunction() || c.isClass()) {
@@ -407,7 +407,7 @@ if (childCount == 4) {
 add("for");
 cc.maybeInsertSpace();
 add("(");
-if (first.isVar() || first.isLet() || first.isConst()) {
+if (NodeUtil.isNameDeclaration(first)) {
 add(first,Context.IN_FOR_INIT_CLAUSE);
 }
  else {
