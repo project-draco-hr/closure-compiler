@@ -1,0 +1,11 @@
+{
+  Preconditions.checkState(objLit.isObjectLit());
+  for (  Node keyNode : objLit.children()) {
+    Node value=keyNode.getFirstChild();
+    if (value != null && value.isFunction()) {
+      JSDocInfoBuilder fnDoc=JSDocInfoBuilder.maybeCopyFrom(keyNode.getJSDocInfo());
+      fnDoc.recordThisType(new JSTypeExpression(new Node(Token.BANG,IR.string(thisType)),VIRTUAL_FILE));
+      keyNode.setJSDocInfo(fnDoc.build());
+    }
+  }
+}
