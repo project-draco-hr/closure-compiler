@@ -1,11 +1,13 @@
 {
+  boolean hasInitializer=false;
   boolean needsParens=(context == Context.START_OF_EXPR);
   if (needsParens) {
     add("(");
   }
   add("{");
   for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-    if (child == n.getLastChild() && NodeUtil.isNameDeclaration(n.getParent())) {
+    if (isPatternInitializer(child)) {
+      hasInitializer=true;
       add("}");
       add("=");
     }
@@ -14,7 +16,7 @@
     }
     add(child);
   }
-  if (!NodeUtil.isNameDeclaration(n.getParent())) {
+  if (!hasInitializer) {
     add("}");
   }
   if (needsParens) {

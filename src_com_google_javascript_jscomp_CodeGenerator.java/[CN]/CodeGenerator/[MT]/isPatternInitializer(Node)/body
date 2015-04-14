@@ -1,0 +1,15 @@
+{
+  Node parent=n.getParent();
+  Preconditions.checkState(parent.isDestructuringPattern());
+  if (n != parent.getLastChild()) {
+    return false;
+  }
+  Node decl=parent.getParent();
+  if (!NodeUtil.isNameDeclaration(decl)) {
+    return false;
+  }
+  if (NodeUtil.isEnhancedFor(decl.getParent()) && decl == decl.getParent().getFirstChild()) {
+    return false;
+  }
+  return true;
+}

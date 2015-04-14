@@ -1,7 +1,9 @@
 {
+  boolean hasInitializer=false;
   add("[");
   for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
-    if (child == n.getLastChild() && NodeUtil.isNameDeclaration(n.getParent())) {
+    if (isPatternInitializer(child)) {
+      hasInitializer=true;
       add("]");
       add("=");
     }
@@ -10,7 +12,7 @@
     }
     add(child);
   }
-  if (!NodeUtil.isNameDeclaration(n.getParent())) {
+  if (!hasInitializer) {
     add("]");
   }
 }
