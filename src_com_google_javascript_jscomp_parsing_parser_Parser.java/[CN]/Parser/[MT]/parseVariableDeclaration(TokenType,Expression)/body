@@ -16,12 +16,7 @@
     initializer=parseInitializer(expressionIn);
   }
  else   if (expressionIn != Expression.NO_IN) {
-    if (binding == TokenType.CONST) {
-      reportError("const variables must have an initializer");
-    }
- else     if (lvalue.isPattern()) {
-      reportError("destructuring must have an initializer");
-    }
+    maybeReportNoInitializer(binding,lvalue);
   }
   return new VariableDeclarationTree(getTreeLocation(start),lvalue,typeAnnotation,initializer);
 }

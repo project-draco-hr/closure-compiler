@@ -30,7 +30,7 @@
       return parseForOfStatement(start,variables);
     }
  else {
-      checkInitializers(variables);
+      checkVanillaForInitializers(variables);
       return parseForStatement(start,variables);
     }
   }
@@ -45,7 +45,7 @@
 ;
   ParseTree initializer=peekPattern(PatternKind.ANY,followPred) ? parsePattern(PatternKind.ANY) : parseExpressionNoIn();
   if (peek(TokenType.IN) || peekPredefinedString(PredefinedName.OF)) {
-    if (initializer.type != ParseTreeType.BINARY_OPERATOR) {
+    if (initializer.type != ParseTreeType.BINARY_OPERATOR && initializer.type != ParseTreeType.COMMA_EXPRESSION) {
       if (peek(TokenType.IN)) {
         return parseForInStatement(start,initializer);
       }
