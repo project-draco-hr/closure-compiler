@@ -17,22 +17,15 @@
   Node constructor=null;
   JSDocInfo ctorJSDocInfo=null;
   Node classMembers=classNode.getLastChild();
-  Map<String,JSTypeExpression> membersToDeclare=new LinkedHashMap<>();
+  ImmutableSet.Builder<String> membersToDeclare=ImmutableSet.builder();
   for (  Node member : classMembers.children()) {
     if (member.isEmpty()) {
       continue;
     }
     Preconditions.checkState(member.isMemberFunctionDef() || member.isGetterDef() || member.isSetterDef()|| (member.isComputedProp() && !member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)),"Member variables should have been transpiled earlier: ",member);
     if (member.isGetterDef() || member.isSetterDef()) {
-      JSTypeExpression typeExpr=getTypeFromGetterOrSetter(member);
       addToDefinePropertiesObject(metadata,member);
-      JSTypeExpression existingType=membersToDeclare.get(member.getString());
-      if (existingType != null && !existingType.equals(typeExpr)) {
-        compiler.report(JSError.make(member,CONFLICTING_GETTER_SETTER_TYPE));
-      }
- else {
-        membersToDeclare.put(member.getString(),typeExpr);
-      }
+      membersToDeclare.add(member.getString());
     }
  else     if (member.isMemberFunctionDef() && member.getString().equals("constructor")) {
       ctorJSDocInfo=member.getJSDocInfo();
@@ -59,11 +52,10 @@
       metadata.insertStaticMember(newNode);
     }
   }
-  for (  Map.Entry<String,JSTypeExpression> entry : membersToDeclare.entrySet()) {
-    String declaredMember=entry.getKey();
+  for (  String declaredMember : membersToDeclare.build()) {
     Node declaration=IR.getprop(prototypeAccess.cloneTree(),IR.string(declaredMember));
     JSDocInfoBuilder declInfo=new JSDocInfoBuilder(true);
-    declInfo.recordType(entry.getValue());
+    declInfo.recordType(new JSTypeExpression(new Node(Token.QMARK),classNode.getSourceFileName()));
     declaration.setJSDocInfo(declInfo.build());
     metadata.insertStaticMember(IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(classNode));
   }
