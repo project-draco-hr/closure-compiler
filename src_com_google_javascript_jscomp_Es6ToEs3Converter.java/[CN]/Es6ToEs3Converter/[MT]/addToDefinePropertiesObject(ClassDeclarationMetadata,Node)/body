@@ -4,12 +4,11 @@
     prop=IR.objectlit();
     metadata.defineProperties.addChildToBack(IR.stringKey(member.getString(),prop));
   }
-  Node function=member.getLastChild().detachFromParent();
-  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(NodeUtil.getBestJSDocInfo(function));
-  builder.recordThisType(new JSTypeExpression(new Node(Token.BANG,IR.string(metadata.fullClassName)),member.getSourceFileName()));
-  Node stringKey=IR.stringKey(member.isGetterDef() ? "get" : "set",function);
-  JSDocInfo info=builder.build();
-  stringKey.setJSDocInfo(info);
+  Node function=member.getLastChild();
+  JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(NodeUtil.getBestJSDocInfo(function));
+  info.recordThisType(new JSTypeExpression(new Node(Token.BANG,IR.string(metadata.fullClassName)),member.getSourceFileName()));
+  Node stringKey=IR.stringKey(member.isGetterDef() ? "get" : "set",function.detachFromParent());
+  stringKey.setJSDocInfo(info.build());
   prop.addChildToBack(stringKey);
   prop.useSourceInfoIfMissingFromForTree(member);
 }
