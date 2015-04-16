@@ -1,3 +1,11 @@
 {
-  return null;
+  Node callName=callNode.getFirstChild();
+  if ((callName.matchesQualifiedName("$jscomp.inherits") || callName.matchesQualifiedName("$jscomp$inherits")) && callNode.getChildCount() == 3) {
+    Node subclass=callName.getNext();
+    Node superclass=subclass.getNext();
+    return new SubclassRelationship(SubclassType.INHERITS,subclass,superclass);
+  }
+ else {
+    return null;
+  }
 }
