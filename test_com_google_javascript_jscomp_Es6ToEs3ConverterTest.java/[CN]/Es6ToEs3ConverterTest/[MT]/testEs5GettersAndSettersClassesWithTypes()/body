@@ -1,0 +1,6 @@
+{
+  languageOut=LanguageMode.ECMASCRIPT5;
+  test(Joiner.on('\n').join("class C {","  /** @return {number} */","  get value() { return 0; }","}"),Joiner.on('\n').join("/** @constructor @struct */","var C = function() {};","/** @type {number} */","C.prototype.value;","Object.defineProperties(C.prototype, {","  value: {","    /**","     * @return {number}","     * @this {C}","     */","    get: function() {","      return 0;","    }","  }","});"));
+  test(Joiner.on('\n').join("class C {","  /** @param {string} v */","  set value(v) { }","}"),Joiner.on('\n').join("/** @constructor @struct */","var C = function() {};","/** @type {string} */","C.prototype.value;","Object.defineProperties(C.prototype, {","  value: {","    /**","     * @this {C}","     * @param {string} v","     */","    set: function(v) {}","  }","});"));
+  testError(Joiner.on('\n').join("class C {","  /** @return {string} */","  get value() { }","","  /** @param {number} v */","  set value(v) { }","}"),Es6ToEs3Converter.CONFLICTING_GETTER_SETTER_TYPE);
+}
