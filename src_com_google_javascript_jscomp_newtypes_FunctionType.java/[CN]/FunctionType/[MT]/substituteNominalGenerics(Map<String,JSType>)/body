@@ -3,23 +3,21 @@
     return this;
   }
   Map<String,JSType> reducedMap=typeMap;
-  if (typeParameters != null) {
-    boolean foundShadowedTypeParam=false;
-    for (    String typeParam : typeParameters) {
-      if (typeMap.containsKey(typeParam)) {
-        foundShadowedTypeParam=true;
-        break;
+  boolean foundShadowedTypeParam=false;
+  for (  String typeParam : typeParameters) {
+    if (typeMap.containsKey(typeParam)) {
+      foundShadowedTypeParam=true;
+      break;
+    }
+  }
+  if (foundShadowedTypeParam) {
+    ImmutableMap.Builder<String,JSType> builder=ImmutableMap.builder();
+    for (    Map.Entry<String,JSType> entry : typeMap.entrySet()) {
+      if (!typeParameters.contains(entry.getKey())) {
+        builder.put(entry);
       }
     }
-    if (foundShadowedTypeParam) {
-      ImmutableMap.Builder<String,JSType> builder=ImmutableMap.builder();
-      for (      Map.Entry<String,JSType> entry : typeMap.entrySet()) {
-        if (!typeParameters.contains(entry.getKey())) {
-          builder.put(entry);
-        }
-      }
-      reducedMap=builder.build();
-    }
+    reducedMap=builder.build();
   }
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   for (  JSType reqFormal : requiredFormals) {
