@@ -33,14 +33,20 @@
   }
   appendPropertiesToBlock(cls,block);
   block.useSourceInfoFromForTree(exprRoot);
-  Node parent=exprRoot.getParent();
   Node stmts=block.removeChildren();
-  Node beforeRoot=parent.getChildBefore(exprRoot);
-  if (beforeRoot == null) {
-    parent.addChildrenToFront(stmts);
+  Node parent=exprRoot.getParent();
+  if (!t.getScope().isGlobal() && !cls.target.isGetProp()) {
+    Node scriptNode=NodeUtil.getEnclosingScript(exprRoot);
+    scriptNode.addChildrenToFront(stmts);
   }
  else {
-    parent.addChildrenAfter(stmts,beforeRoot);
+    Node beforeRoot=parent.getChildBefore(exprRoot);
+    if (beforeRoot == null) {
+      parent.addChildrenToFront(stmts);
+    }
+ else {
+      parent.addChildrenAfter(stmts,beforeRoot);
+    }
   }
   if (exprRoot.isVar()) {
     Node assignExpr=varToAssign(exprRoot);
