@@ -1,0 +1,24 @@
+{
+  boolean restArg=false;
+  if (token == JsDocToken.ELLIPSIS) {
+    token=next();
+    if (token == JsDocToken.RIGHT_CURLY) {
+      restoreLookAhead(token);
+      return wrapNode(Token.ELLIPSIS,IR.empty());
+    }
+    restArg=true;
+  }
+  Node typeNode=parseTopLevelTypeExpression(token);
+  if (typeNode != null) {
+    skipEOLs();
+    if (restArg) {
+      typeNode=wrapNode(Token.ELLIPSIS,typeNode);
+    }
+ else     if (match(JsDocToken.EQUALS)) {
+      next();
+      skipEOLs();
+      typeNode=wrapNode(Token.EQUALS,typeNode);
+    }
+  }
+  return typeNode;
+}
