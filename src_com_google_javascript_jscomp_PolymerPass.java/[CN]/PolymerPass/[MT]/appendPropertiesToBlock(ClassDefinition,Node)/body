@@ -1,7 +1,7 @@
 {
-  String path=cls.target.getQualifiedName() + ".prototype.";
+  String qualifiedPath=cls.target.getQualifiedName() + ".prototype.";
   for (  MemberDefinition prop : cls.props) {
-    Node propertyNode=IR.exprResult(NodeUtil.newQName(compiler,path + prop.name.getString()));
+    Node propertyNode=IR.exprResult(NodeUtil.newQName(compiler,qualifiedPath + prop.name.getString()));
     JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(prop.info);
     prop.name.removeProp(Node.JSDOC_INFO_PROP);
     JSTypeExpression propType=getTypeFromProperty(prop);
@@ -13,5 +13,11 @@
     info.recordVisibility(Visibility.PUBLIC);
     propertyNode.getFirstChild().setJSDocInfo(info.build());
     block.addChildToBack(propertyNode);
+    if (prop.value.isObjectLit()) {
+      Node readOnlyValue=NodeUtil.getFirstPropMatchingKey(prop.value,"readOnly");
+      if (readOnlyValue != null && readOnlyValue.isTrue()) {
+        block.addChildToBack(makeReadOnlySetter(prop.name.getString(),propType,qualifiedPath));
+      }
+    }
   }
 }
