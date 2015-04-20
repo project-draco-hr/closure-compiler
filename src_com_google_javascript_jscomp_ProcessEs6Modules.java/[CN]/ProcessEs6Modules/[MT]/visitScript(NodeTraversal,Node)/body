@@ -14,15 +14,26 @@
     String exportedName=entry.getKey();
     String withSuffix=entry.getValue();
     Node getProp=IR.getprop(IR.name(moduleName),IR.string(exportedName));
-    Node assign=IR.assign(getProp,NodeUtil.newQName(compiler,withSuffix));
-    Node exprResult=IR.exprResult(assign).useSourceInfoIfMissingFromForTree(script);
-    if (types.contains(exportedName)) {
+    if (typedefs.contains(exportedName)) {
       JSDocInfoBuilder builder=new JSDocInfoBuilder(true);
-      builder.recordConstancy();
+      JSTypeExpression typeExpr=new JSTypeExpression(IR.string(exportedName),script.getSourceFileName());
+      builder.recordTypedef(typeExpr);
       JSDocInfo info=builder.build();
-      assign.setJSDocInfo(info);
+      getProp.setJSDocInfo(info);
+      Node exprResult=IR.exprResult(getProp).useSourceInfoIfMissingFromForTree(script);
+      script.addChildToBack(exprResult);
     }
-    script.addChildToBack(exprResult);
+ else {
+      Node assign=IR.assign(getProp,NodeUtil.newQName(compiler,withSuffix));
+      Node exprResult=IR.exprResult(assign).useSourceInfoIfMissingFromForTree(script);
+      if (classes.contains(exportedName)) {
+        JSDocInfoBuilder builder=new JSDocInfoBuilder(true);
+        builder.recordConstancy();
+        JSDocInfo info=builder.build();
+        assign.setJSDocInfo(info);
+      }
+      script.addChildToBack(exprResult);
+    }
   }
   NodeTraversal.traverse(compiler,script,new RenameGlobalVars(moduleName));
   if (!exportMap.isEmpty()) {

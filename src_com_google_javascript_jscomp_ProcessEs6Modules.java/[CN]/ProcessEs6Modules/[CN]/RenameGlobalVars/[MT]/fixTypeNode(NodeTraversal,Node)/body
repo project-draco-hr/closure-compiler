@@ -33,7 +33,12 @@
       }
  else       if (var == null && importMap.containsKey(baseName)) {
         ModuleOriginalNamePair pair=importMap.get(baseName);
-        typeNode.setString(baseName + "$$" + pair.module+ rest);
+        if (pair.originalName.isEmpty()) {
+          typeNode.setString(pair.module + rest);
+        }
+ else {
+          typeNode.setString(baseName + "$$" + pair.module+ rest);
+        }
       }
       typeNode.putProp(Node.ORIGINALNAME_PROP,name);
     }
