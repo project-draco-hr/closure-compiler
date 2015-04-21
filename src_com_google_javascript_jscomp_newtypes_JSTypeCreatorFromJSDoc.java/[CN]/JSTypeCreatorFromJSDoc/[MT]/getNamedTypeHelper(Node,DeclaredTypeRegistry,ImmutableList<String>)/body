@@ -17,33 +17,6 @@ return getQmarkFunctionOrNull(registry.getCommonTypes());
 case "Object":
 return objectOrNull;
 default :
-{
-if (outerTypeParameters.contains(typeName)) {
-return JSType.fromTypeVar(typeName);
-}
- else {
-Typedef td=registry.getTypedef(typeName);
-if (td != null) {
-return getTypedefType(td,registry);
-}
-EnumType e=registry.getEnum(typeName);
-if (e != null) {
-return getEnumPropType(e,registry);
-}
-JSType namedType=registry.lookupTypeByName(typeName);
-if (namedType == null) {
-unknownTypeNames.put(n,typeName);
-throw new UnknownTypeException("Unhandled type: " + typeName);
-}
-if (namedType.isTypeVariable()) {
-howmanyTypeVars++;
-return namedType;
-}
-if (namedType.isUnknown()) {
-return namedType;
-}
-return getNominalTypeHelper(namedType,n,registry,outerTypeParameters);
-}
-}
+return lookupTypeByName(typeName,n,registry,outerTypeParameters);
 }
 }

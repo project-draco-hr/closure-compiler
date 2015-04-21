@@ -1,0 +1,11 @@
+{
+  Preconditions.checkNotNull(name);
+  Preconditions.checkState(!name.contains("."));
+  if (locals.containsKey(name) || formals.contains(name) || localFunDefs.containsKey(name)|| "this".equals(name)|| externs.containsKey(name)|| localNamespaces.containsKey(name)|| localTypedefs.containsKey(name)|| localEnums.containsKey(name)) {
+    return true;
+  }
+  if (includeTypes) {
+    return unknownTypeNames.contains(name) || declaredType != null && declaredType.isTypeVariableInScope(name);
+  }
+  return false;
+}

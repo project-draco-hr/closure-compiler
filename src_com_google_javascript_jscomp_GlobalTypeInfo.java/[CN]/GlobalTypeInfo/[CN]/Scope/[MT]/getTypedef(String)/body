@@ -1,14 +1,5 @@
 {
-  if (!name.contains(".")) {
-    Declaration decl=getDeclaration(name);
-    return decl == null ? null : decl.getTypedef();
-  }
- else {
-    QualifiedName qname=QualifiedName.fromQname(name);
-    Namespace ns=getNamespace(qname.getLeftmostName());
-    if (ns != null) {
-      return ns.getTypedef(qname.getAllButLeftmost());
-    }
-  }
-  return null;
+  Preconditions.checkState(!name.contains("."));
+  Declaration decl=getDeclaration(name,false);
+  return decl == null ? null : decl.getTypedef();
 }

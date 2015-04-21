@@ -1,0 +1,14 @@
+{
+  if (qname.isIdentifier()) {
+    return getDeclaration(qname.getLeftmostName(),includeTypes);
+  }
+  Namespace ns=getNamespace(qname.getLeftmostName());
+  if (ns == null) {
+    return null;
+  }
+  QualifiedName props=qname.getAllButLeftmost();
+  Typedef typedef=ns.getTypedef(props);
+  EnumType enumType=ns.getEnumType(props);
+  RawNominalType rawType=ns.getNominalType(props);
+  return new Declaration(null,typedef,null,enumType,null,rawType,false,false,false,false,false);
+}

@@ -1,0 +1,24 @@
+{
+  if (outerTypeParameters.contains(name)) {
+    return JSType.fromTypeVar(name);
+  }
+  Declaration decl=registry.getDeclaration(QualifiedName.fromQname(name),true);
+  if (decl == null) {
+    unknownTypeNames.put(n,name);
+    throw new UnknownTypeException("Unhandled type: " + name);
+  }
+  if (decl.getTypedef() != null) {
+    return getTypedefType(decl.getTypedef(),registry);
+  }
+  if (decl.getEnum() != null) {
+    return getEnumPropType(decl.getEnum(),registry);
+  }
+  if (decl.isTypeVar()) {
+    howmanyTypeVars++;
+    return decl.getTypeOfSimpleDecl();
+  }
+  if (decl.getNominal() != null) {
+    return getNominalTypeHelper(decl.getNominal(),n,registry,outerTypeParameters);
+  }
+  return JSType.UNKNOWN;
+}

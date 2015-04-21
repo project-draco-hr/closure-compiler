@@ -1,0 +1,38 @@
+{
+  Preconditions.checkArgument(!name.contains("."));
+  if (!isDefinedLocally(name,includeTypes)) {
+    return null;
+  }
+  JSType type=null;
+  boolean isFormal=false;
+  boolean isFromExterns=false;
+  boolean isForwardDeclaration=false;
+  boolean isTypeVar=false;
+  if (locals.containsKey(name)) {
+    type=locals.get(name);
+  }
+ else   if (formals.contains(name)) {
+    isFormal=true;
+    int formalIndex=formals.indexOf(name);
+    if (declaredType != null && formalIndex != -1) {
+      JSType formalType=declaredType.getFormalType(formalIndex);
+      if (formalType != null && !formalType.isBottom()) {
+        type=formalType;
+      }
+    }
+  }
+ else   if (localTypedefs.containsKey(name) || localNamespaces.containsKey(name) || localEnums.containsKey(name)|| localFunDefs.containsKey(name)|| localClassDefs.containsKey(name)) {
+  }
+ else   if (declaredType != null && declaredType.isTypeVariableInScope(name)) {
+    isTypeVar=true;
+    type=JSType.fromTypeVar(name);
+  }
+ else   if (externs.containsKey(name)) {
+    isFromExterns=true;
+    type=externs.get(name);
+  }
+ else   if (unknownTypeNames.contains(name)) {
+    isForwardDeclaration=true;
+  }
+  return new Declaration(type,localTypedefs.get(name),localNamespaces.get(name),localEnums.get(name),localFunDefs.get(name),localClassDefs.get(name),isFormal,isTypeVar,constVars.contains(name),isFromExterns,isForwardDeclaration);
+}

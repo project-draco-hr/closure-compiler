@@ -6,14 +6,17 @@
     }
     return getDeclaredType().getThisType().getInstanceAsJSType();
   }
-  Declaration decl=getLocalDeclaration(name);
+  Declaration decl=getLocalDeclaration(name,false);
   if (decl != null) {
     if (decl.getTypeOfSimpleDecl() != null) {
       Preconditions.checkState(!decl.getTypeOfSimpleDecl().isBottom(),"%s was bottom",name);
       return decl.getTypeOfSimpleDecl();
     }
- else     if (decl.getFunctionScope() != null && decl.getFunctionScope().getDeclaredType() != null) {
-      return getCommonTypes().fromFunctionType(decl.getFunctionScope().getDeclaredType().toFunctionType());
+ else     if (decl.getFunctionScope() != null) {
+      DeclaredFunctionType scopeType=((Scope)decl.getFunctionScope()).getDeclaredType();
+      if (scopeType != null) {
+        return getCommonTypes().fromFunctionType(scopeType.toFunctionType());
+      }
     }
  else     if (decl.getNamespace() != null) {
       return decl.getNamespace().toJSType();

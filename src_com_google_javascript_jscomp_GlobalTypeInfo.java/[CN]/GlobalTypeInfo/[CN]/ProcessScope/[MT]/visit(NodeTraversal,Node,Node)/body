@@ -14,7 +14,7 @@ if (name == null || "undefined".equals(name) || parent.isFunction()) {
 }
 if (parent.isVar() || parent.isCatch()) {
   if (NodeUtil.isNamespaceDecl(n) || NodeUtil.isTypedefDecl(n) || NodeUtil.isEnumDecl(n)) {
-    if (!currentScope.isDefinedLocally(name)) {
+    if (!currentScope.isDefinedLocally(name,false)) {
       currentScope.addLocal(name,JSType.UNKNOWN,false,n.isFromExterns());
     }
     break;
@@ -23,7 +23,7 @@ if (parent.isVar() || parent.isCatch()) {
   if (initializer != null && initializer.isFunction()) {
     break;
   }
- else   if (currentScope.isDefinedLocally(name)) {
+ else   if (currentScope.isDefinedLocally(name,false)) {
   }
  else {
     undeclaredVars.removeAll(name);
@@ -43,7 +43,7 @@ if (parent.isVar() || parent.isCatch()) {
  else if (currentScope.isOuterVarEarly(name)) {
   currentScope.addOuterVar(name);
 }
- else if (currentScope.getTypedef(name) != null || !name.equals(currentScope.getName()) && !currentScope.isDefinedLocally(name)) {
+ else if (currentScope.getTypedef(name) != null || !name.equals(currentScope.getName()) && !currentScope.isDefinedLocally(name,false)) {
   undeclaredVars.put(name,n);
 }
 break;
