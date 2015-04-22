@@ -3,7 +3,16 @@ switch (n.getType()) {
 case Token.FUNCTION:
     Node grandparent=parent.getParent();
   if (grandparent == null || !isPrototypePropertyDeclaration(grandparent)) {
-    visitFunctionLate(n,null);
+    Scope s=visitFunctionLate(n,null);
+    Node name=NodeUtil.getFunctionNameNode(n);
+    if (name != null && name.isGetProp() && name.isQualifiedName()) {
+      QualifiedName recv=QualifiedName.fromNode(name.getFirstChild());
+      String pname=name.getLastChild().getString();
+      if (currentScope.isNamespace(recv)) {
+        Namespace ns=currentScope.getNamespace(recv);
+        ns.addScope(new QualifiedName(pname),s);
+      }
+    }
   }
 break;
 case Token.NAME:
