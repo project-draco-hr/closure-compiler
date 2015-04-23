@@ -19,6 +19,9 @@
   Node ctorKey=cls.constructor.value.getParent();
   if (ctorKey != null) {
     ctorKey.removeProp(Node.JSDOC_INFO_PROP);
+    JSDocInfoBuilder suppressInfo=new JSDocInfoBuilder(true);
+    suppressInfo.recordSuppressions(ImmutableSet.of("hiddenProperty"));
+    ctorKey.setJSDocInfo(suppressInfo.build());
   }
   if (cls.target.isGetProp()) {
     Node assign=IR.assign(cls.target.cloneTree(),cls.constructor.value.cloneTree());
@@ -32,6 +35,8 @@
     block.addChildToBack(var);
   }
   appendPropertiesToBlock(cls,block);
+  List<MemberDefinition> readOnlyProps=parseReadOnlyProperties(cls,block);
+  addInterfaceExterns(cls,readOnlyProps);
   block.useSourceInfoFromForTree(exprRoot);
   Node stmts=block.removeChildren();
   Node parent=exprRoot.getParent();

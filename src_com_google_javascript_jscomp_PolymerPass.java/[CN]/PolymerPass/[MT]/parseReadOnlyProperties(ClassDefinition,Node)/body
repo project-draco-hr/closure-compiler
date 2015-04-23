@@ -1,0 +1,14 @@
+{
+  String qualifiedPath=cls.target.getQualifiedName() + ".prototype.";
+  ImmutableList.Builder<MemberDefinition> readOnlyProps=ImmutableList.builder();
+  for (  MemberDefinition prop : cls.props) {
+    if (prop.value.isObjectLit()) {
+      Node readOnlyValue=NodeUtil.getFirstPropMatchingKey(prop.value,"readOnly");
+      if (readOnlyValue != null && readOnlyValue.isTrue()) {
+        block.addChildToBack(makeReadOnlySetter(prop.name.getString(),qualifiedPath));
+        readOnlyProps.add(prop);
+      }
+    }
+  }
+  return readOnlyProps.build();
+}
