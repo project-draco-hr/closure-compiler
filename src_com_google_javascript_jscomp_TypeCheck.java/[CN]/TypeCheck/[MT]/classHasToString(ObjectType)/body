@@ -1,0 +1,11 @@
+{
+  Property toStringProperty=type.getOwnSlot("toString");
+  if (toStringProperty != null) {
+    return toStringProperty.getType().isFunctionType();
+  }
+  ObjectType parent=type.getParentScope();
+  if (!parent.isNativeObjectType()) {
+    return classHasToString(parent);
+  }
+  return false;
+}

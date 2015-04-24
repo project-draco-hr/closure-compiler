@@ -1,0 +1,12 @@
+{
+  if (!type.isTemplatizedType()) {
+    return false;
+  }
+  TemplatizedType templatizedType=type.toMaybeTemplatizedType();
+  if (templatizedType.getReferencedType().isNativeObjectType() && templatizedType.getTemplateTypes().size() > 1) {
+    return !isStringifiable(templatizedType.getTemplateTypes().get(0));
+  }
+ else {
+    return false;
+  }
+}

@@ -1,0 +1,34 @@
+{
+  if (type.isUnknownType() || type.isNumber() || type.isString()|| type.isBooleanObjectType()|| type.isBooleanValueType()|| type.isDateType()|| type.isRegexpType()|| type.isInterface()|| type.isRecordType()|| type.isNullType()|| type.isVoidType()) {
+    return true;
+  }
+  if (type.toMaybeEnumElementType() != null) {
+    return isStringifiable(type.toMaybeEnumElementType().getPrimitiveType());
+  }
+  if (type.isArrayType()) {
+    return true;
+  }
+  if (type.isTemplatizedType()) {
+    TemplatizedType templatizedType=type.toMaybeTemplatizedType();
+    if (templatizedType.getReferencedType().isArrayType()) {
+      return isStringifiable(templatizedType.getTemplateTypes().get(0));
+    }
+  }
+  if (type.isObject()) {
+    ObjectType objectType=type.toMaybeObjectType();
+    JSType constructor=objectType.getConstructor();
+    if (constructor != null && constructor.isInterface()) {
+      return true;
+    }
+    return classHasToString(objectType);
+  }
+  if (type.isUnionType()) {
+    for (    JSType alternateType : type.toMaybeUnionType().getAlternates()) {
+      if (!isStringifiable(alternateType)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
+}

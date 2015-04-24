@@ -1,0 +1,22 @@
+{
+  if (isObjectTypeWithNonStringifiableKey(type)) {
+    return type;
+  }
+  if (type.isUnionType()) {
+    for (    JSType alternateType : type.toMaybeUnionType().getAlternates()) {
+      JSType result=findObjectWithNonStringifiableKey(alternateType);
+      if (result != null) {
+        return result;
+      }
+    }
+  }
+  if (type.isTemplatizedType()) {
+    for (    JSType templateType : type.toMaybeTemplatizedType().getTemplateTypes()) {
+      JSType result=findObjectWithNonStringifiableKey(templateType);
+      if (result != null) {
+        return result;
+      }
+    }
+  }
+  return null;
+}
