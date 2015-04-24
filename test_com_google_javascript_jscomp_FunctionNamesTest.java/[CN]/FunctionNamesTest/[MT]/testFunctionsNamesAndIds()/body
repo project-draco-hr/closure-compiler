@@ -1,7 +1,7 @@
 {
   final String jsSource="goog.widget = function(str) {\n" + "  this.member_fn = function() {};\n" + "  local_fn = function() {};\n"+ "  (function(a){})(1);\n"+ "}\n"+ "function foo() {\n"+ "  function bar() {}\n"+ "}\n"+ "literal = {f1 : function(){}, f2 : function(){}};\n"+ "goog.array.map(arr, function named(){});\n"+ "goog.array.map(arr, function(){});\n"+ "named_twice = function quax(){};\n"+ "recliteral = {l1 : {l2 : function(){}}};\n"+ "namedliteral = {n1 : function litnamed(){}};\n"+ "namedrecliteral = {n1 : {n2 : function reclitnamed(){}}};\n"+ "numliteral = {1 : function(){}};\n"+ "recnumliteral = {1 : {a : function(){}}};\n";
   testSame(jsSource);
-  final Map<Integer,String> idNameMap=Maps.newLinkedHashMap();
+  final Map<Integer,String> idNameMap=new LinkedHashMap<>();
   int count=0;
   for (  Node f : functionNames.getFunctionNodeList()) {
     int id=functionNames.getFunctionId(f);
@@ -10,7 +10,7 @@
     count++;
   }
   assertEquals("Unexpected number of functions",16,count);
-  final Map<Integer,String> expectedMap=Maps.newLinkedHashMap();
+  final Map<Integer,String> expectedMap=new LinkedHashMap<>();
   expectedMap.put(0,"goog.widget.member_fn");
   expectedMap.put(1,"goog.widget::local_fn");
   expectedMap.put(2,"goog.widget::<anonymous>");

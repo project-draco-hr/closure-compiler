@@ -1,7 +1,7 @@
 {
   String source="function A(){B()};\n" + "function B(){C();D()}\n" + "function C(){B()};\n"+ "function D(){};\n"+ "function E(){C()};\n"+ "function X(){Y()};\n"+ "function Y(){Z()};\n"+ "function Z(){};"+ "B();\n";
   CallGraph callgraph=compileAndRunForward(source);
-  final Set<Function> reachableFunctions=Sets.newHashSet();
+  final Set<Function> reachableFunctions=new HashSet<>();
   reachableFunctions.add(callgraph.getMainFunction());
   reachableFunctions.add(callgraph.getUniqueFunctionWithName("X"));
   EdgeCallback<CallGraph.Function,CallGraph.Callsite> edgeCallback=new EdgeCallback<CallGraph.Function,CallGraph.Callsite>(){

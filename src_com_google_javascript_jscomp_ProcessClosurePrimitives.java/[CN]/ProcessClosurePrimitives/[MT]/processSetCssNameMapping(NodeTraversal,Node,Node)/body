@@ -2,7 +2,7 @@
   Node left=n.getFirstChild();
   Node arg=left.getNext();
   if (verifySetCssNameMapping(t,left,arg)) {
-    final Map<String,String> cssNames=Maps.newHashMap();
+    final Map<String,String> cssNames=new HashMap<>();
     for (Node key=arg.getFirstChild(); key != null; key=key.getNext()) {
       Node value=key.getFirstChild();
       if (!key.isStringKey() || value == null || !value.isString()) {
@@ -24,7 +24,7 @@
       return;
     }
     if (style == CssRenamingMap.Style.BY_PART) {
-      List<String> errors=Lists.newArrayList();
+      List<String> errors=new ArrayList<>();
       for (      String key : cssNames.keySet()) {
         if (key.contains("-")) {
           errors.add(key);
@@ -35,7 +35,7 @@
       }
     }
  else     if (style == CssRenamingMap.Style.BY_WHOLE) {
-      List<String> errors=Lists.newArrayList();
+      List<String> errors=new ArrayList<>();
       for (      Map.Entry<String,String> b : cssNames.entrySet()) {
         if (b.getKey().length() > 10) {
           continue;

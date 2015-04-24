@@ -1,6 +1,6 @@
 {
-  this.inputs=Lists.newArrayList(inputs);
-  noProvides=Lists.newArrayList();
+  this.inputs=new ArrayList<>(inputs);
+  noProvides=new ArrayList<>();
   for (  INPUT input : inputs) {
     Collection<String> currentProvides=input.getProvides();
     if (currentProvides.isEmpty()) {
@@ -21,7 +21,7 @@
   }
   sortedList=topologicalStableSort(inputs,deps);
   if (sortedList.size() < inputs.size()) {
-    List<INPUT> subGraph=Lists.newArrayList(inputs);
+    List<INPUT> subGraph=new ArrayList<>(inputs);
     subGraph.removeAll(sortedList);
     throw new CircularDependencyException(cycleToString(findCycle(subGraph,deps)));
   }
