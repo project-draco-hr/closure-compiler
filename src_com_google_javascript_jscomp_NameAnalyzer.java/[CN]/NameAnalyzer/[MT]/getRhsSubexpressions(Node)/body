@@ -3,30 +3,30 @@ switch (n.getType()) {
 case Token.EXPR_RESULT:
     return getRhsSubexpressions(n.getFirstChild());
 case Token.FUNCTION:
-  return Collections.emptyList();
+  return ImmutableList.of();
 case Token.NAME:
 {
   Node rhs=n.getFirstChild();
   if (rhs != null) {
-    return Lists.newArrayList(rhs);
+    return ImmutableList.of(rhs);
   }
  else {
-    return Collections.emptyList();
+    return ImmutableList.of();
   }
 }
 case Token.ASSIGN:
 {
 Node lhs=n.getFirstChild();
 Node rhs=lhs.getNext();
-return Lists.newArrayList(lhs,rhs);
+return ImmutableList.of(lhs,rhs);
 }
 case Token.VAR:
 {
-List<Node> nodes=new ArrayList<>();
+ImmutableList.Builder<Node> nodes=ImmutableList.builder();
 for (Node child : n.children()) {
 nodes.addAll(getRhsSubexpressions(child));
 }
-return nodes;
+return nodes.build();
 }
 default :
 throw new IllegalArgumentException("AstChangeProxy::getRhs " + n);

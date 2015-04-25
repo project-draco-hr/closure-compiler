@@ -1,10 +1,10 @@
 {
   final Compiler compiler=new Compiler();
   final FunctionInjector injector=new FunctionInjector(compiler,compiler.getUniqueNameIdSupplier(),decompose,assumeStrictThis,assumeMinimumCapture);
-  List<SourceFile> externsInputs=Lists.newArrayList(SourceFile.fromCode("externs",""));
+  List<SourceFile> externsInputs=ImmutableList.of(SourceFile.fromCode("externs",""));
   CompilerOptions options=new CompilerOptions();
   options.setCodingConvention(new GoogleCodingConvention());
-  compiler.init(externsInputs,Lists.newArrayList(SourceFile.fromCode("code",code)),options);
+  compiler.init(externsInputs,ImmutableList.of(SourceFile.fromCode("code",code)),options);
   Node parseRoot=compiler.parseInputs();
   Node externsRoot=parseRoot.getFirstChild();
   final Node tree=parseRoot.getLastChild();
