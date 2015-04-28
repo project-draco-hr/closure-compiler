@@ -1,0 +1,29 @@
+{
+  if (behaviorArray == null) {
+    return ImmutableList.of();
+  }
+  if (!behaviorArray.isArrayLit()) {
+    compiler.report(JSError.make(behaviorArray,POLYMER_INVALID_BEHAVIOR_ARRAY));
+    return ImmutableList.of();
+  }
+  ImmutableList.Builder<BehaviorDefinition> behaviors=ImmutableList.builder();
+  for (  Node behaviorName : behaviorArray.children()) {
+    Name behaviorGlobalName=globalNames.getSlot(behaviorName.getQualifiedName());
+    if (behaviorGlobalName == null) {
+      compiler.report(JSError.make(behaviorName,POLYMER_UNQUALIFIED_BEHAVIOR));
+      continue;
+    }
+    Node behaviorDeclaration=behaviorGlobalName.getDeclaration().getNode();
+    Node behaviorValue=NodeUtil.getRValueOfLValue(behaviorDeclaration);
+    if (behaviorValue.isArrayLit()) {
+      behaviors.addAll(extractBehaviors(behaviorValue));
+      continue;
+    }
+    if (behaviorValue == null || !behaviorValue.isObjectLit()) {
+      compiler.report(JSError.make(behaviorName,POLYMER_UNQUALIFIED_BEHAVIOR));
+      continue;
+    }
+    behaviors.add(new BehaviorDefinition(extractProperties(behaviorValue),getBehaviorFunctionsToCopy(behaviorValue)));
+  }
+  return behaviors.build();
+}

@@ -1,0 +1,11 @@
+{
+  String qualifiedPath=cls.target.getQualifiedName() + ".prototype.";
+  for (  BehaviorDefinition behavior : cls.behaviors) {
+    for (    MemberDefinition behaviorFunction : behavior.functionsToCopy) {
+      Node exprResult=IR.exprResult(IR.assign(NodeUtil.newQName(compiler,qualifiedPath + behaviorFunction.name.getString()),behaviorFunction.value.cloneTree()));
+      JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(behaviorFunction.info);
+      exprResult.getFirstChild().setJSDocInfo(info.build());
+      block.addChildToBack(exprResult);
+    }
+  }
+}

@@ -39,6 +39,13 @@
   }
   Node baseClass=NodeUtil.getFirstPropMatchingKey(descriptor,"extends");
   String nativeBaseElement=baseClass == null ? null : baseClass.getString();
-  ClassDefinition def=new ClassDefinition(target,classInfo,new MemberDefinition(ctorInfo,null,constructor),nativeBaseElement,extractProperties(descriptor));
+  Node behaviorArray=NodeUtil.getFirstPropMatchingKey(descriptor,"behaviors");
+  List<BehaviorDefinition> behaviors=extractBehaviors(behaviorArray);
+  ImmutableList.Builder<MemberDefinition> allProperties=ImmutableList.builder();
+  allProperties.addAll(extractProperties(descriptor));
+  for (  BehaviorDefinition behavior : behaviors) {
+    allProperties.addAll(behavior.props);
+  }
+  ClassDefinition def=new ClassDefinition(target,classInfo,new MemberDefinition(ctorInfo,null,constructor),nativeBaseElement,allProperties.build(),behaviors);
   return def;
 }
