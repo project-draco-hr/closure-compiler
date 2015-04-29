@@ -26,4 +26,12 @@
       }
     }
   }
+ else   if (n.isObjectLit() && isCallTargetQName(n.getParent(),"goog.testing.testSuite")) {
+    for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+      if (c.isStringKey() && !c.isQuotedString()) {
+        c.setQuotedString();
+        compiler.reportCodeChange();
+      }
+    }
+  }
 }

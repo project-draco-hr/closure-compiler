@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=createCompilerOptions();
+  options.setExportTestFunctions(true);
+  options.setClosurePass(true);
+  options.setRenamingPolicy(VariableRenamingPolicy.ALL,PropertyRenamingPolicy.ALL_UNQUOTED);
+  options.setGeneratePseudoNames(true);
+  options.setCollapseProperties(true);
+  test(options,new String[]{"var goog = {};","goog.provide('goog.testing.testSuite');\n" + "goog.testing.testSuite = function(a) {};\n"," goog.module('testing');\n" + "var testSuite = goog.require('goog.testing.testSuite');\n" + "testSuite({testMethod:function(){}});\n"},new String[]{"","var $goog$testing$testSuite$$=function($a$$){};","$goog$testing$testSuite$$({\"testMethod\":function(){}})"});
+}
