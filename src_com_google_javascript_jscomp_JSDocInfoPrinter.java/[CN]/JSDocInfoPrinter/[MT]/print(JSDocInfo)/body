@@ -76,6 +76,17 @@
     }
     sb.append("} ");
   }
+  for (  JSTypeExpression type : info.getImplementedInterfaces()) {
+    sb.append("@implements {");
+    Node typeNode=type.getRoot();
+    if (typeNode.getType() == Token.BANG) {
+      appendTypeNode(sb,typeNode.getFirstChild());
+    }
+ else {
+      appendTypeNode(sb,typeNode);
+    }
+    sb.append("} ");
+  }
   if (info.hasTypedefType()) {
     sb.append("@typedef {");
     appendTypeNode(sb,info.getTypedefType().getRoot());
