@@ -14,7 +14,11 @@
       }
     }
   }
-  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(target.getJSDocInfo());
+  JSDocInfo info=target.getJSDocInfo();
+  if ((info != null && (info.isConstructor() || info.isInterface()) || isCallTo(value,"goog.defineClass"))) {
+    return;
+  }
+  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(info);
   builder.recordConstancy();
   target.setJSDocInfo(builder.build());
 }
