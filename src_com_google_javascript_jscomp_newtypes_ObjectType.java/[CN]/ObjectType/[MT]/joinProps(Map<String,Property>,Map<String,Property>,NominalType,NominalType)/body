@@ -1,0 +1,19 @@
+{
+  PersistentMap<String,Property> newProps=PersistentMap.create();
+  for (  String pname : Sets.union(props1.keySet(),props2.keySet())) {
+    Property prop1=getProp(props1,nom1,pname);
+    Property prop2=getProp(props2,nom2,pname);
+    Property newProp=null;
+    if (prop1 == null) {
+      newProp=prop2.withOptional();
+    }
+ else     if (prop2 == null) {
+      newProp=prop1.withOptional();
+    }
+ else {
+      newProp=Property.join(prop1,prop2);
+    }
+    newProps=newProps.with(pname,newProp);
+  }
+  return newProps;
+}

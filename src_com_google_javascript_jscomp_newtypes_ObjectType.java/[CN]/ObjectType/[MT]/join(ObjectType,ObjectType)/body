@@ -1,5 +1,7 @@
 {
-  Preconditions.checkState(areRelatedClasses(obj1.nominalType,obj2.nominalType));
+  NominalType nom1=obj1.nominalType;
+  NominalType nom2=obj2.nominalType;
+  Preconditions.checkState(areRelatedClasses(nom1,nom2));
   if (obj1.equals(obj2)) {
     return obj1;
   }
@@ -11,9 +13,9 @@
     props=joinPropsLoosely(obj1.props,obj2.props);
   }
  else {
-    props=joinProps(obj1.props,obj2.props);
+    props=joinProps(obj1.props,obj2.props,nom1,nom2);
   }
-  NominalType nominal=NominalType.pickSuperclass(obj1.nominalType,obj2.nominalType);
+  NominalType nominal=NominalType.pickSuperclass(nom1,nom2);
   if (nominal == null || !nominal.isFunction()) {
     fn=null;
   }
