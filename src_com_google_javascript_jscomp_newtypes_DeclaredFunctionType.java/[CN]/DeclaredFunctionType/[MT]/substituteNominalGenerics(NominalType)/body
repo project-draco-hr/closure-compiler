@@ -1,0 +1,39 @@
+{
+  if (!nt.isGeneric()) {
+    return this;
+  }
+  Map<String,JSType> typeMap=nt.getTypeMap();
+  Preconditions.checkState(!typeMap.isEmpty());
+  Map<String,JSType> reducedMap=typeMap;
+  boolean foundShadowedTypeParam=false;
+  for (  String typeParam : typeParameters) {
+    if (typeMap.containsKey(typeParam)) {
+      foundShadowedTypeParam=true;
+      break;
+    }
+  }
+  if (foundShadowedTypeParam) {
+    ImmutableMap.Builder<String,JSType> builder=ImmutableMap.builder();
+    for (    Map.Entry<String,JSType> entry : typeMap.entrySet()) {
+      if (!typeParameters.contains(entry.getKey())) {
+        builder.put(entry);
+      }
+    }
+    reducedMap=builder.build();
+  }
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  for (  JSType reqFormal : requiredFormals) {
+    builder.addReqFormal(reqFormal == null ? null : reqFormal.substituteGenerics(reducedMap));
+  }
+  for (  JSType optFormal : optionalFormals) {
+    builder.addOptFormal(optFormal == null ? null : optFormal.substituteGenerics(reducedMap));
+  }
+  if (restFormals != null) {
+    builder.addRestFormals(restFormals.substituteGenerics(reducedMap));
+  }
+  if (returnType != null) {
+    builder.addRetType(returnType.substituteGenerics(reducedMap));
+  }
+  builder.addTypeParameters(this.typeParameters);
+  return builder.buildDeclaration();
+}
