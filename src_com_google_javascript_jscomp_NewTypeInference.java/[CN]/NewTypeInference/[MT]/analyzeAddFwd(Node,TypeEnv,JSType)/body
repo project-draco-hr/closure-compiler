@@ -1,8 +1,9 @@
 {
   Node lhs=expr.getFirstChild();
   Node rhs=expr.getLastChild();
-  EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,JSType.NUM_OR_STR);
-  EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.NUM_OR_STR);
+  JSType operandType=requiredType.isNumber() ? JSType.NUMBER : JSType.UNKNOWN;
+  EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,operandType);
+  EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,operandType);
   JSType lhsType=lhsPair.type;
   JSType rhsType=rhsPair.type;
   if (lhsType.isString() || rhsType.isString()) {
