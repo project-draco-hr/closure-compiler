@@ -1,16 +1,16 @@
 {
   builder.recordImplementedInterface(new JSTypeExpression(JsDocInfoParser.parseTypeString("Foo"),""));
   JSDocInfo info=builder.buildAndReset();
-  assertEquals("/**@implements {Foo} */",JSDocInfoPrinter.print(info));
+  assertEquals("/**@implements {Foo}\n*/",JSDocInfoPrinter.print(info));
   builder.recordImplementedInterface(new JSTypeExpression(JsDocInfoParser.parseTypeString("!Foo"),""));
   info=builder.buildAndReset();
-  assertEquals("/**@implements {Foo} */",JSDocInfoPrinter.print(info));
+  assertEquals("/**@implements {Foo}\n*/",JSDocInfoPrinter.print(info));
   builder.recordBaseType(new JSTypeExpression(JsDocInfoParser.parseTypeString("Foo"),""));
   info=builder.buildAndReset();
-  assertEquals("/**@extends {Foo} */",JSDocInfoPrinter.print(info));
+  assertEquals("/**@extends {Foo}\n*/",JSDocInfoPrinter.print(info));
   builder.recordBaseType(new JSTypeExpression(JsDocInfoParser.parseTypeString("!Foo"),""));
   builder.recordImplementedInterface(new JSTypeExpression(JsDocInfoParser.parseTypeString("Bar"),""));
   builder.recordImplementedInterface(new JSTypeExpression(JsDocInfoParser.parseTypeString("Bar.Baz"),""));
   info=builder.buildAndReset();
-  assertEquals("/**@extends {Foo} @implements {Bar} @implements {Bar.Baz} */",JSDocInfoPrinter.print(info));
+  assertEquals("/**@extends {Foo}\n@implements {Bar}\n@implements {Bar.Baz}\n*/",JSDocInfoPrinter.print(info));
 }
