@@ -2,7 +2,7 @@
   if (this.rawType != other.rawType) {
     return false;
   }
-  if (this.rawType.typeParameters.isEmpty()) {
+  if (!isGeneric()) {
     return true;
   }
   Preconditions.checkState(!typeMap.isEmpty());
@@ -13,5 +13,5 @@
   for (  String typeParam : rawType.typeParameters) {
     hasUnified=hasUnified && typeMap.get(typeParam).unifyWithSubtype(other.typeMap.get(typeParam),typeParameters,typeMultimap);
   }
-  return hasUnified;
+  return hasUnified && isInvariantWith(typeMultimap,other);
 }
