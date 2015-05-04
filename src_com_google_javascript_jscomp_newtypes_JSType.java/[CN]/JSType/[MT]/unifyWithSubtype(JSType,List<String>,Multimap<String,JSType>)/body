@@ -1,4 +1,5 @@
 {
+  Preconditions.checkNotNull(other);
   if (this.isUnknown() || this.isTop()) {
     return true;
   }
@@ -13,13 +14,10 @@
     return false;
   }
   Set<EnumType> ununifiedEnums=ImmutableSet.of();
-  if (getEnums().isEmpty()) {
-    ununifiedEnums=other.getEnums();
-  }
- else   if (other.getEnums().isEmpty()) {
+  if (!other.getEnums().isEmpty()) {
     ununifiedEnums=new LinkedHashSet<>();
     for (    EnumType e : other.getEnums()) {
-      if (!getEnums().contains(e)) {
+      if (!fromEnum(e).isSubtypeOf(this)) {
         ununifiedEnums.add(e);
       }
     }
@@ -35,7 +33,7 @@
   String thisTypevar=getTypeVar();
   String otherTypevar=other.getTypeVar();
   if (thisTypevar == null || !typeParameters.contains(thisTypevar)) {
-    return ununifiedObjs.isEmpty() && ununifiedEnums.isEmpty() && (otherTypevar == null || otherTypevar.equals(thisTypevar))&& getMask() == (getMask() | other.getMask());
+    return ununifiedObjs.isEmpty() && ununifiedEnums.isEmpty() && (otherTypevar == null || otherTypevar.equals(thisTypevar))&& getMask() == (getMask() | (other.getMask() & ~ENUM_MASK));
   }
  else {
     int templateMask=BOTTOM_MASK;

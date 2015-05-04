@@ -1,12 +1,13 @@
 {
   Preconditions.checkState(isGeneric());
+  Preconditions.checkState(this.rawType == other.rawType);
   Map<String,JSType> newTypeMap=new LinkedHashMap<>();
   for (  String typeVar : typeMultimap.keySet()) {
     Collection<JSType> c=typeMultimap.get(typeVar);
     if (c.size() != 1) {
       return false;
     }
-    newTypeMap.put(typeVar,Iterables.getOnlyElement(c));
+    newTypeMap.put(typeVar,Preconditions.checkNotNull(Iterables.getOnlyElement(c)));
   }
   NominalType instantiated=instantiateGenerics(newTypeMap);
   return Objects.equals(instantiated.typeMap,other.typeMap);

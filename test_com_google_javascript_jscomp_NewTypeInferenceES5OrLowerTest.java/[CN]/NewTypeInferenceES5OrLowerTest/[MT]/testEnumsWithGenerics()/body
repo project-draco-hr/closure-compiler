@@ -1,4 +1,6 @@
 {
   typeCheck("/** @enum */ var E1 = { A: 1};\n" + "/**\n" + " * @template T\n"+ " * @param {(T|E1)} x\n"+ " * @return {(T|E1)}\n"+ " */\n"+ "function f(x) { return x; }\n"+ "var /** string */ n = f('str');",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @enum */ var E1 = { A: 1};\n" + "/** @enum */ var E2 = { A: 2};\n" + "/**\n"+ " * @template T\n"+ " * @param {(T|E1)} x\n"+ " * @return {(T|E1)}\n"+ " */\n"+ "function f(x) { return x; }\n"+ "var /** (E2|string) */ x = f('str');",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @enum */\n" + "var E = { A: 1 };\n" + "/**\n"+ " * @template T\n"+ " * @param {number|!Array<T>} x\n"+ " */\n"+ "function f(x) {}\n"+ "f(E.A);\n"+ "f(123);\n");
+  typeCheck("/** @enum {string} */\n" + "var e1 = { A: '' };\n" + "/** @enum {string} */\n"+ "var e2 = { B: '' };\n"+ "/**\n"+ " * @template T\n"+ " * @param {T|e1} x\n"+ " * @return {T}\n"+ " */\n"+ "function f(x) { return /** @type {T} */ (x); }\n"+ "/** @param {number|e2} x */\n"+ "function g(x) { f(x) - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
 }
