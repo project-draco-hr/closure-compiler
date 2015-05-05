@@ -1,0 +1,12 @@
+{
+  StringBuilder mapping=new StringBuilder();
+  mapping.append("[gen1]").append(NEW_LINE).append("id1:data1").append(NEW_LINE).append("id2:data2:data22").append(NEW_LINE).append(NEW_LINE).append("[gen2]");
+  Map<String,BiMap<String,String>> result=IdMappingUtil.parseSerializedIdMappings(mapping.toString());
+  assertThat(result).hasSize(2);
+  assertThat(result).containsKey("gen1");
+  assertThat(result.get("gen1")).hasSize(2);
+  assertThat(result.get("gen1")).containsEntry("id1","data1");
+  assertThat(result.get("gen1")).containsEntry("id2","data2:data22");
+  assertThat(result).containsKey("gen2");
+  assertThat(result.get("gen2")).hasSize(0);
+}
