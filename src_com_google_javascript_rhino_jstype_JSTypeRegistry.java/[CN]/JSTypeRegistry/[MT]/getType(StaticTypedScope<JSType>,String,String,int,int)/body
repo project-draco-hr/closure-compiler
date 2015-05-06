@@ -1,21 +1,32 @@
 {
-  JSType type=null;
-  JSType thisType=null;
-  if (scope != null && scope.getTypeOfThis() != null) {
-    thisType=scope.getTypeOfThis().toObjectType();
-  }
-  if (thisType != null) {
-    type=thisType.getTemplateTypeMap().getTemplateTypeKeyByName(jsTypeName);
-    if (type != null) {
-      Preconditions.checkState(type.isTemplateType(),"expected:%s",type);
-      return type;
-    }
-  }
-  type=getType(jsTypeName);
-  if (type == null) {
-    NamedType namedType=createNamedType(jsTypeName,sourceName,lineno,charno);
-    unresolvedNamedTypes.put(scope,namedType);
-    type=namedType;
-  }
-  return type;
+switch (jsTypeName) {
+case "boolean":
+    return getNativeType(JSTypeNative.BOOLEAN_TYPE);
+case "number":
+  return getNativeType(JSTypeNative.NUMBER_TYPE);
+case "string":
+return getNativeType(JSTypeNative.STRING_TYPE);
+case "undefined":
+case "void":
+return getNativeType(JSTypeNative.VOID_TYPE);
+}
+JSType type=null;
+JSType thisType=null;
+if (scope != null && scope.getTypeOfThis() != null) {
+thisType=scope.getTypeOfThis().toObjectType();
+}
+if (thisType != null) {
+type=thisType.getTemplateTypeMap().getTemplateTypeKeyByName(jsTypeName);
+if (type != null) {
+Preconditions.checkState(type.isTemplateType(),"expected:%s",type);
+return type;
+}
+}
+type=getType(jsTypeName);
+if (type == null) {
+NamedType namedType=createNamedType(jsTypeName,sourceName,lineno,charno);
+unresolvedNamedTypes.put(scope,namedType);
+type=namedType;
+}
+return type;
 }
