@@ -48,7 +48,7 @@
   builder.addNominalType(declType.getNominalType());
   builder.addReceiverType(declType.getReceiverType());
   JSType declRetType=declType.getReturnType();
-  JSType actualRetType=envGetType(exitEnv,RETVAL_ID);
+  JSType actualRetType=Preconditions.checkNotNull(envGetType(exitEnv,RETVAL_ID));
   if (declRetType != null) {
     builder.addRetType(declRetType);
     if (!isAllowedToNotReturn(fn) && !JSType.UNDEFINED.isSubtypeOf(declRetType) && hasPathWithNoReturn(cfg)) {

@@ -6,13 +6,18 @@
   pair=mayWarnAboutNullableReferenceAndTighten(receiver,pair.type,pair.env,JSType.TOP_OBJECT);
   JSType recvType=pair.type.autobox(commonTypes);
   if (!mayWarnAboutNonObject(receiver,"",recvType,specializedType) && !mayWarnAboutStructPropAccess(receiver,recvType)) {
-    if (isArrayType(recvType)) {
+    if (isArrayType(recvType) || recvType.equals(commonTypes.getArgumentsArrayType())) {
       pair=analyzeExprFwd(index,pair.env,JSType.NUMBER);
       if (!commonTypes.isNumberScalarOrObj(pair.type)) {
         warnings.add(JSError.make(index,NewTypeInference.NON_NUMERIC_ARRAY_INDEX,pair.type.toString()));
       }
-      pair.type=getArrayElementType(recvType);
-      Preconditions.checkState(pair.type != null,"Array type %s has no element type at node: %s",recvType,expr);
+      if (isArrayType(recvType)) {
+        pair.type=getArrayElementType(recvType);
+        Preconditions.checkState(pair.type != null,"Array type %s has no element type at node: %s",recvType,expr);
+      }
+ else {
+        pair.type=envGetType(pair.env,ARGSARRAYELM_ID);
+      }
       return pair;
     }
  else     if (index.isString()) {

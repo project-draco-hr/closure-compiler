@@ -11,6 +11,12 @@
     if (currentScope.hasThis()) {
       varNames.add("this");
     }
+    env=envPutType(env,"arguments",commonTypes.getArgumentsArrayType());
+    JSType argsArrayElmType=JSType.UNKNOWN;
+    if (currentScope.getDeclaredType().hasRestFormals()) {
+      argsArrayElmType=currentScope.getDeclaredType().getRestFormalsType();
+    }
+    env=envPutType(env,ARGSARRAYELM_ID,argsArrayElmType);
   }
   for (  String varName : varNames) {
     JSType declType=currentScope.getDeclaredTypeOf(varName);
