@@ -1,7 +1,14 @@
 {
   unknownTypeNames=ImmutableSet.of();
   for (  Map.Entry<String,NamespaceLit> entry : localNamespaces.entrySet()) {
-    locals.put(entry.getKey(),entry.getValue().toJSType());
+    String name=entry.getKey();
+    JSType t=entry.getValue().toJSType();
+    if (externs.containsKey(name)) {
+      externs.put(name,t);
+    }
+ else {
+      locals.put(name,t);
+    }
   }
   for (  Map.Entry<String,EnumType> entry : localEnums.entrySet()) {
     locals.put(entry.getKey(),entry.getValue().toJSType());
