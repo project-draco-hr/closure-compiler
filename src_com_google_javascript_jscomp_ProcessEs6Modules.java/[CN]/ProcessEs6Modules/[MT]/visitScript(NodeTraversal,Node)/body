@@ -10,9 +10,10 @@
     Node varNode=IR.var(IR.name(moduleName),objectlit).useSourceInfoIfMissingFromForTree(script);
     script.addChildToBack(varNode);
   }
-  for (  Map.Entry<String,String> entry : exportMap.entrySet()) {
+  for (  Map.Entry<String,NameNodePair> entry : exportMap.entrySet()) {
     String exportedName=entry.getKey();
-    String withSuffix=entry.getValue();
+    String withSuffix=entry.getValue().name;
+    Node nodeForSourceInfo=entry.getValue().nodeForSourceInfo;
     Node getProp=IR.getprop(IR.name(moduleName),IR.string(exportedName));
     if (typedefs.contains(exportedName)) {
       JSDocInfoBuilder builder=new JSDocInfoBuilder(true);
@@ -20,12 +21,12 @@
       builder.recordTypedef(typeExpr);
       JSDocInfo info=builder.build();
       getProp.setJSDocInfo(info);
-      Node exprResult=IR.exprResult(getProp).useSourceInfoIfMissingFromForTree(script);
+      Node exprResult=IR.exprResult(getProp).useSourceInfoIfMissingFromForTree(nodeForSourceInfo);
       script.addChildToBack(exprResult);
     }
  else {
       Node assign=IR.assign(getProp,NodeUtil.newQName(compiler,withSuffix));
-      Node exprResult=IR.exprResult(assign).useSourceInfoIfMissingFromForTree(script);
+      Node exprResult=IR.exprResult(assign).useSourceInfoIfMissingFromForTree(nodeForSourceInfo);
       if (classes.contains(exportedName)) {
         JSDocInfoBuilder builder=new JSDocInfoBuilder(true);
         builder.recordConstancy();

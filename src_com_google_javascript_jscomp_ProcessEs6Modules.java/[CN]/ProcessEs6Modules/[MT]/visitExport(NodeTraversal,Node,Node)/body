@@ -12,13 +12,13 @@
       Node decl=child.cloneTree();
       decl.setJSDocInfo(export.getJSDocInfo());
       parent.replaceChild(export,decl);
-      exportMap.put("default",name);
+      exportMap.put("default",new NameNodePair(name,child));
     }
  else {
       Node var=IR.var(IR.name(DEFAULT_EXPORT_NAME),export.removeFirstChild());
       var.useSourceInfoIfMissingFromForTree(export);
       parent.replaceChild(export,var);
-      exportMap.put("default",DEFAULT_EXPORT_NAME);
+      exportMap.put("default",new NameNodePair(DEFAULT_EXPORT_NAME,child));
     }
   }
  else   if (export.getBooleanProp(Node.EXPORT_ALL_FROM)) {
@@ -35,7 +35,7 @@
     for (    Node exportSpec : export.getFirstChild().children()) {
       String nameFromOtherModule=exportSpec.getFirstChild().getString();
       String exportedName=exportSpec.getLastChild().getString();
-      exportMap.put(exportedName,moduleName + "." + nameFromOtherModule);
+      exportMap.put(exportedName,new NameNodePair(moduleName + "." + nameFromOtherModule,exportSpec));
     }
     parent.removeChild(export);
   }
@@ -43,7 +43,7 @@
     if (export.getFirstChild().getType() == Token.EXPORT_SPECS) {
       for (      Node exportSpec : export.getFirstChild().children()) {
         Node origName=exportSpec.getFirstChild();
-        exportMap.put(exportSpec.getChildCount() == 2 ? exportSpec.getLastChild().getString() : origName.getString(),origName.getString());
+        exportMap.put(exportSpec.getChildCount() == 2 ? exportSpec.getLastChild().getString() : origName.getString(),new NameNodePair(origName.getString(),exportSpec));
       }
       parent.removeChild(export);
     }
@@ -60,7 +60,7 @@
         String name=maybeName.getString();
         Var v=t.getScope().getVar(name);
         if (v == null || v.isGlobal()) {
-          exportMap.put(name,name);
+          exportMap.put(name,new NameNodePair(name,maybeName));
         }
         if (declaration.isClass()) {
           classes.add(name);
