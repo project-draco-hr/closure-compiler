@@ -1,0 +1,5 @@
+{
+  typeCheck("/** @interface */\n" + "function High() {}\n" + "/** @type {number} */\n"+ "High.prototype.p = 123;\n"+ "/** @constructor @implements {High} */\n"+ "function Mid() {}\n"+ "Mid.prototype.p = 123;\n"+ "/** @constructor @extends {Mid} */\n"+ "function Low() {}");
+  typeCheck("/** @interface */\n" + "function High() {}\n" + "/** @constructor @implements {High} */\n"+ "function Mid() {}\n"+ "/** @constructor @extends {Mid} */\n"+ "function Low() {}"+ "var /** !High */ x = new Low();");
+  typeCheck("/**\n" + " * @interface\n" + " * @template T\n"+ " */\n"+ "function High() {}\n"+ "/**\n"+ " * @constructor\n"+ " * @template T\n"+ " * @implements {High<T>}\n"+ " */\n"+ "function Mid() {}\n"+ "/** @constructor @extends {Mid<number>} */\n"+ "function Low() {}\n"+ "var /** !High<string> */ x = new Low;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

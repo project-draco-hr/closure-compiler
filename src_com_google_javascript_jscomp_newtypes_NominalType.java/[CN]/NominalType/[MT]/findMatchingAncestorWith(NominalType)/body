@@ -3,20 +3,16 @@
   if (thisRaw == other.rawType) {
     return this;
   }
-  if (isInterface() && other.isClass()) {
-    return null;
-  }
-  if (other.isClass()) {
-    if (thisRaw.superClass == null) {
-      return null;
+  if (other.isInterface()) {
+    for (    NominalType i : thisRaw.interfaces) {
+      NominalType nt=i.instantiateGenerics(this.typeMap).findMatchingAncestorWith(other);
+      if (nt != null) {
+        return nt;
+      }
     }
-    return getInstantiatedSuperclass().findMatchingAncestorWith(other);
   }
-  for (  NominalType interf : getInstantiatedInterfaces()) {
-    NominalType nt=interf.findMatchingAncestorWith(other);
-    if (nt != null) {
-      return nt;
-    }
+  if (isClass() && thisRaw.superClass != null) {
+    return thisRaw.superClass.instantiateGenerics(this.typeMap).findMatchingAncestorWith(other);
   }
   return null;
 }

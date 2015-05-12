@@ -1,42 +1,14 @@
 {
-  RawNominalType otherRawType=other.rawType;
-  if (rawType.isInterface && !otherRawType.isInterface) {
-    return false;
+  RawNominalType thisRaw=this.rawType;
+  if (thisRaw == other.rawType) {
+    return areTypeParametersSubtypes(other);
   }
-  if (!rawType.isInterface && otherRawType.isInterface) {
-    if (rawType.interfaces == null) {
-      return false;
-    }
-    for (    NominalType i : rawType.interfaces) {
-      if (i.instantiateGenerics(typeMap).isSubtypeOf(other)) {
+  if (other.isInterface()) {
+    for (    NominalType i : thisRaw.getInterfaces()) {
+      if (i.instantiateGenerics(this.typeMap).isSubtypeOf(other)) {
         return true;
       }
     }
-    return false;
   }
-  if (rawType.isInterface && otherRawType.isInterface) {
-    if (rawType.equals(otherRawType)) {
-      return areTypeParametersSubtypes(other);
-    }
- else     if (rawType.interfaces == null) {
-      return false;
-    }
- else {
-      for (      NominalType i : rawType.interfaces) {
-        if (i.instantiateGenerics(typeMap).isSubtypeOf(other)) {
-          return true;
-        }
-      }
-      return false;
-    }
-  }
-  if (rawType.equals(otherRawType)) {
-    return areTypeParametersSubtypes(other);
-  }
- else   if (rawType.superClass == null) {
-    return false;
-  }
- else {
-    return rawType.superClass.instantiateGenerics(typeMap).isSubtypeOf(other);
-  }
+  return isClass() && thisRaw.superClass != null && thisRaw.superClass.instantiateGenerics(this.typeMap).isSubtypeOf(other);
 }
