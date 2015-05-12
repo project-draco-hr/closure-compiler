@@ -2,10 +2,14 @@
   Visitor visitor=new Visitor(){
     public void visit(    Node typeNode){
       if (typeNode.isString()) {
-        String rootName=Splitter.on('.').split(typeNode.getString()).iterator().next();
+        String typeString=typeNode.getString();
+        String rootName=Splitter.on('.').split(typeString).iterator().next();
         TypedVar var=t.getTypedScope().getVar(rootName);
         if (var == null || !var.isExtern()) {
-          usagesMap.put(typeNode.getString(),n);
+          usagesMap.put(typeString,n);
+          Node getprop=NodeUtil.newQName(compiler,typeString);
+          getprop.useSourceInfoIfMissingFromForTree(typeNode);
+          visitGetProp(getprop);
         }
       }
     }
