@@ -4,6 +4,11 @@
   if (options.closurePass) {
     checks.add(closureRewriteModule);
   }
+  if (!options.transpileOnly) {
+    if (options.declaredGlobalExternsOnWindow) {
+      checks.add(declaredGlobalExternsOnWindow);
+    }
+  }
   if (options.lowerFromEs6() || options.aggressiveVarCheck.isOn()) {
     checks.add(checkVariableReferences);
   }
@@ -34,9 +39,6 @@
     checks.add(es6RuntimeLibrary);
   }
   checks.add(convertStaticInheritance);
-  if (options.declaredGlobalExternsOnWindow) {
-    checks.add(declaredGlobalExternsOnWindow);
-  }
   if (options.closurePass) {
     checks.add(closureGoogScopeAliases);
     checks.add(closureRewriteClass);
