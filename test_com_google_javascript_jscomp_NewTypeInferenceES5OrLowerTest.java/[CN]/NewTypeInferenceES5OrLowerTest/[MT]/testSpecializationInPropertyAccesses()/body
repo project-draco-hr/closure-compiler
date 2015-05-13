@@ -3,4 +3,5 @@
   typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @type {?number} */ ns.n = 123;\n"+ "if (ns.n !== null) {\n"+ "  ns.n - 5;\n"+ "}");
   typeCheck("var obj = { n: (1 < 2 ? null : 123) };\n" + "if (obj.n !== null) {\n" + "  obj.n - 123;\n"+ "}");
   typeCheck("var obj = { n: (1 < 2 ? null : 123) };\n" + "if (obj.n !== null) {\n" + "  obj.n - 123;\n"+ "}\n"+ "obj.n - 123;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  this.a = 123;\n"+ "}\n"+ "/** @constructor */\n"+ "function Bar(x) {\n"+ "  /** @type {Foo} */\n"+ "  this.b = x;\n"+ "  if (this.b != null) {\n"+ "    return this.b.a;\n"+ "  }\n"+ "}");
 }

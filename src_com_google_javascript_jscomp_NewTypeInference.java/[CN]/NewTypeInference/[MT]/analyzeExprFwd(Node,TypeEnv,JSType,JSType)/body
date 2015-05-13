@@ -30,8 +30,12 @@ warnings.add(JSError.make(expr,CheckGlobalThis.GLOBAL_THIS));
 resultPair=new EnvTypePair(inEnv,JSType.UNKNOWN);
 }
  else {
-JSType thisType=currentScope.getDeclaredTypeOf("this");
-resultPair=new EnvTypePair(inEnv,thisType);
+JSType inferredType=envGetType(inEnv,THIS_ID);
+if (!inferredType.isSubtypeOf(requiredType)) {
+return new EnvTypePair(inEnv,inferredType);
+}
+JSType preciseType=inferredType.specialize(specializedType);
+resultPair=EnvTypePair.addBinding(inEnv,THIS_ID,preciseType);
 }
 break;
 }
