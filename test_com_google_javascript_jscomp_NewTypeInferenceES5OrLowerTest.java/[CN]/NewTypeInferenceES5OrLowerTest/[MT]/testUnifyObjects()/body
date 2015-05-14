@@ -1,9 +1,9 @@
 {
-  typeCheck("function f(b) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({p:5, r:'str'}, {p:20, r:b});\n"+ "}");
-  typeCheck("function f(b) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({p:20, r:b}, {p:5, r:'str'});\n"+ "}");
-  typeCheck("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f({prop: x}, {prop: 5});\n"+ "}\n"+ "g('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function g(x, cond) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  var y = cond ? {prop: 'str'} : {prop: 5};\n"+ "  f({prop: x}, y);\n"+ "}\n"+ "g({}, true);",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function g(x, cond) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  /** @type {{prop : (string | number)}} */\n"+ "  var y = cond ? {prop: 'str'} : {prop: 5};\n"+ "  f({prop: x}, y);\n"+ "}\n"+ "g({}, true);",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {{a: number, b: T}} x\n"+ " * @return {T}\n"+ " */\n"+ "function f(x) { return x.b; }\n"+ "f({a: 1, b: 'asdf'}) - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/**\n" + " * @template T\n" + " * @return {T}\n"+ " */\n"+ "function f(x) { return x.b; }\n"+ "f({b: 'asdf'}) - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(b) {","  /**","   * @template T","   * @param {T} x","   * @param {T} y","   */","  function f(x, y) {}","  f({p:5, r:'str'}, {p:20, r:b});","}"));
+  typeCheck(Joiner.on('\n').join("function f(b) {","  /**","   * @template T","   * @param {T} x","   * @param {T} y","   */","  function f(x, y) {}","  f({p:20, r:b}, {p:5, r:'str'});","}"));
+  typeCheck(Joiner.on('\n').join("function g(x) {","  /**","   * @template T","   * @param {T} x","   * @param {T} y","   */","  function f(x, y) {}","  f({prop: x}, {prop: 5});","}","g('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function g(x, cond) {","  /**","   * @template T","   * @param {T} x","   * @param {T} y","   */","  function f(x, y) {}","  var y = cond ? {prop: 'str'} : {prop: 5};","  f({prop: x}, y);","}","g({}, true);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function g(x, cond) {","  /**","   * @template T","   * @param {T} x","   * @param {T} y","   */","  function f(x, y) {}","  /** @type {{prop : (string | number)}} */","  var y = cond ? {prop: 'str'} : {prop: 5};","  f({prop: x}, y);","}","g({}, true);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {{a: number, b: T}} x"," * @return {T}"," */","function f(x) { return x.b; }","f({a: 1, b: 'asdf'}) - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @return {T}"," */","function f(x) { return x.b; }","f({b: 'asdf'}) - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

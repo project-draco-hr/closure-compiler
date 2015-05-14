@@ -1,7 +1,7 @@
 {
-  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @type {?number} */ ns.n = 123;\n"+ "if (ns.n === null) {\n"+ "} else {\n"+ "  ns.n - 5;\n"+ "}");
-  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @type {?number} */ ns.n = 123;\n"+ "if (ns.n !== null) {\n"+ "  ns.n - 5;\n"+ "}");
-  typeCheck("var obj = { n: (1 < 2 ? null : 123) };\n" + "if (obj.n !== null) {\n" + "  obj.n - 123;\n"+ "}");
-  typeCheck("var obj = { n: (1 < 2 ? null : 123) };\n" + "if (obj.n !== null) {\n" + "  obj.n - 123;\n"+ "}\n"+ "obj.n - 123;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  this.a = 123;\n"+ "}\n"+ "/** @constructor */\n"+ "function Bar(x) {\n"+ "  /** @type {Foo} */\n"+ "  this.b = x;\n"+ "  if (this.b != null) {\n"+ "    return this.b.a;\n"+ "  }\n"+ "}");
+  typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @type {?number} */ ns.n = 123;","if (ns.n === null) {","} else {","  ns.n - 5;","}"));
+  typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @type {?number} */ ns.n = 123;","if (ns.n !== null) {","  ns.n - 5;","}"));
+  typeCheck(Joiner.on('\n').join("var obj = { n: (1 < 2 ? null : 123) };","if (obj.n !== null) {","  obj.n - 123;","}"));
+  typeCheck(Joiner.on('\n').join("var obj = { n: (1 < 2 ? null : 123) };","if (obj.n !== null) {","  obj.n - 123;","}","obj.n - 123;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  this.a = 123;","}","/** @constructor */","function Bar(x) {","  /** @type {Foo} */","  this.b = x;","  if (this.b != null) {","    return this.b.a;","  }","}"));
 }

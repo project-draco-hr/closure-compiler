@@ -1,17 +1,17 @@
 {
-  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  return x.p - 3;\n" + "}");
-  typeCheck("/** @param {{ p: string }} x */ function f(x) {\n" + "  return x.p - 3;\n" + "}",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/** @param {{ 'p': string }} x */ function f(x) {\n" + "  return x.p - 3;\n" + "}",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  return x.q;\n" + "}",TypeCheck.INEXISTENT_PROPERTY);
-  typeCheck("/** @param {{ p: string }} obj */ function f(obj, x, y) {\n" + "  x < y;\n" + "  x - 5;\n"+ "  obj.p < y;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.p = 3;\n" + "}");
-  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.p = 'str';\n" + "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.q = 'str';\n" + "}");
-  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.q = 'str';\n" + "}\n"+ "/** @param {{ p: number }} x */ function g(x) {\n"+ "  f(x);\n"+ "}");
-  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.q = 'str';\n" + "  return x.q;\n"+ "}\n"+ "/** @param {{ p: number }} x */ function g(x) {\n"+ "  f(x) - 5;\n"+ "}",NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
-  typeCheck("/** @param {{ p: number }} x */ function f(x) {\n" + "  x.q = 'str';\n" + "  x.q = 7;\n"+ "}");
-  typeCheck("function f(/** { prop: number} */ obj) {\n" + "  obj.prop = 'asdf';\n" + "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("function f(/** { prop: number} */ obj, cond) {\n" + "  if (cond) { obj.prop = 123; } else { obj.prop = 234; }\n" + "  obj.prop = 'asdf';\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("function f(/** {p: number} */ x, /** {p: (number|null)} */ y) {\n" + "  var z;\n" + "  if (true) { z = x; } else { z = y; }\n"+ "}");
-  typeCheck("var /** { a: number } */ obj1 = { a: 321};\n" + "var /** { a: number, b: number } */ obj2 = obj1;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  return x.p - 3;","}"));
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: string }} x */ function f(x) {","  return x.p - 3;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @param {{ 'p': string }} x */ function f(x) {","  return x.p - 3;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  return x.q;","}"),TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: string }} obj */ function f(obj, x, y) {","  x < y;","  x - 5;","  obj.p < y;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.p = 3;","}"));
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.p = 'str';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","}"));
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","}","/** @param {{ p: number }} x */ function g(x) {","  f(x);","}"));
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","  return x.q;","}","/** @param {{ p: number }} x */ function g(x) {","  f(x) - 5;","}"),NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","  x.q = 7;","}"));
+  typeCheck(Joiner.on('\n').join("function f(/** { prop: number} */ obj) {","  obj.prop = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("function f(/** { prop: number} */ obj, cond) {","  if (cond) { obj.prop = 123; } else { obj.prop = 234; }","  obj.prop = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("function f(/** {p: number} */ x, /** {p: (number|null)} */ y) {","  var z;","  if (true) { z = x; } else { z = y; }","}"));
+  typeCheck(Joiner.on('\n').join("var /** { a: number } */ obj1 = { a: 321};","var /** { a: number, b: number } */ obj2 = obj1;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

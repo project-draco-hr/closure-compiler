@@ -1,8 +1,8 @@
 {
-  final String DEFINITIONS="/** @const */ var goog = {};\n" + "goog.addDependency = function(file, provides, requires){};\n" + "goog.forwardDeclare = function(name){};";
-  typeCheck(DEFINITIONS + "goog.addDependency('', ['Foo'], []);\n" + "goog.forwardDeclare('Bar');\n"+ "function f(/** !Foo */ x) {}\n"+ "function g(/** !Bar */ y) {}");
-  typeCheck(DEFINITIONS + "/** @const */ var ns = {};\n" + "goog.addDependency('', ['ns.Foo'], []);\n"+ "goog.forwardDeclare('ns.Bar');\n"+ "function f(/** !ns.Foo */ x) {}\n"+ "function g(/** !ns.Bar */ y) {}");
-  typeCheck(DEFINITIONS + "goog.addDependency('', ['Foo'], []);\n" + "goog.forwardDeclare('Bar');\n"+ "var f = new Foo;\n"+ "var b = new Bar;");
-  typeCheck(DEFINITIONS + "goog.forwardDeclare('Foo');\n" + "function f(/** !Foo */ x) {}\n"+ "/** @constructor */ function Bar(){}\n"+ "f(new Bar);");
-  typeCheck(DEFINITIONS + "/** @const */ var ns = {};\n" + "goog.forwardDeclare('ns.Foo');\n"+ "function f(/** !ns.Foo */ x) {}\n"+ "/** @constructor */ function Bar(){}\n"+ "f(new Bar);");
+  final String DEFINITIONS=Joiner.on('\n').join("/** @const */ var goog = {};","goog.addDependency = function(file, provides, requires){};","goog.forwardDeclare = function(name){};");
+  typeCheck(DEFINITIONS + Joiner.on('\n').join("goog.addDependency('', ['Foo'], []);","goog.forwardDeclare('Bar');","function f(/** !Foo */ x) {}","function g(/** !Bar */ y) {}"));
+  typeCheck(DEFINITIONS + Joiner.on('\n').join("/** @const */ var ns = {};","goog.addDependency('', ['ns.Foo'], []);","goog.forwardDeclare('ns.Bar');","function f(/** !ns.Foo */ x) {}","function g(/** !ns.Bar */ y) {}"));
+  typeCheck(DEFINITIONS + Joiner.on('\n').join("goog.addDependency('', ['Foo'], []);","goog.forwardDeclare('Bar');","var f = new Foo;","var b = new Bar;"));
+  typeCheck(DEFINITIONS + Joiner.on('\n').join("goog.forwardDeclare('Foo');","function f(/** !Foo */ x) {}","/** @constructor */ function Bar(){}","f(new Bar);"));
+  typeCheck(DEFINITIONS + Joiner.on('\n').join("/** @const */ var ns = {};","goog.forwardDeclare('ns.Foo');","function f(/** !ns.Foo */ x) {}","/** @constructor */ function Bar(){}","f(new Bar);"));
 }

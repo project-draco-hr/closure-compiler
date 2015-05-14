@@ -1,6 +1,6 @@
 {
-  typeCheck("/** @param {{ n: number }} x */ function f(x) {\n" + "  if (x.p) {\n" + "    return x.p;\n"+ "  }\n"+ "}");
-  typeCheck("/** @param {{ p : string }} x */ function reqHasPropP(x){}\n" + "/** @param {{ n: number }} x */ function f(x, cond) {\n" + "  if (cond) {\n"+ "    x.p = 'str';\n"+ "  }\n"+ "  reqHasPropP(x);\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("/** @param {{ n: number }} x */ function f(x, cond) {\n" + "  if (cond) { x.p = 'str'; }\n" + "  if (x.p) {\n"+ "    x.p - 5;\n"+ "  }\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("function f(/** { n : number } */ x) {\n" + "  x.s = 'str';\n" + "  return x.inexistentProp;\n"+ "}",TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @param {{ n: number }} x */ function f(x) {","  if (x.p) {","    return x.p;","  }","}"));
+  typeCheck(Joiner.on('\n').join("/** @param {{ p : string }} x */ function reqHasPropP(x){}","/** @param {{ n: number }} x */ function f(x, cond) {","  if (cond) {","    x.p = 'str';","  }","  reqHasPropP(x);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @param {{ n: number }} x */ function f(x, cond) {","  if (cond) { x.p = 'str'; }","  if (x.p) {","    x.p - 5;","  }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(/** { n : number } */ x) {","  x.s = 'str';","  return x.inexistentProp;","}"),TypeCheck.INEXISTENT_PROPERTY);
 }

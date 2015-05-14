@@ -1,18 +1,18 @@
 {
   typeCheck("(/** @lends {InexistentType} */ { a: 1 });",GlobalTypeInfo.LENDS_ON_BAD_TYPE);
   typeCheck("(/** @lends {number} */ { a: 1 });",GlobalTypeInfo.LENDS_ON_BAD_TYPE);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "(/** @lends {Foo.badname} */ { a: 1 });",GlobalTypeInfo.LENDS_ON_BAD_TYPE);
-  typeCheck("/** @interface */\n" + "function Foo() {}\n" + "(/** @lends {Foo} */ { a: 1 });",GlobalTypeInfo.LENDS_ON_BAD_TYPE);
-  typeCheck("/** @interface */\n" + "function Foo() {}\n" + "(/** @lends {Foo.prototype} */ { a: 1 });",GlobalTypeInfo.LENDS_ON_BAD_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","(/** @lends {Foo.badname} */ { a: 1 });"),GlobalTypeInfo.LENDS_ON_BAD_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @interface */","function Foo() {}","(/** @lends {Foo} */ { a: 1 });"),GlobalTypeInfo.LENDS_ON_BAD_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @interface */","function Foo() {}","(/** @lends {Foo.prototype} */ { a: 1 });"),GlobalTypeInfo.LENDS_ON_BAD_TYPE);
   typeCheck("(/** @lends {Inexistent.Type} */ { a: 1 });",GlobalTypeInfo.LENDS_ON_BAD_TYPE);
-  typeCheck("/** @const */ var ns = {};\n" + "(/** @lends {ns} */ { /** @type {number} */ prop : 1 });\n" + "function f() { ns.prop = 'str'; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("(/** @lends {ns} */ { /** @type {number} */ prop : 1 });\n" + "/** @const */ var ns = {};\n" + "function f() { ns.prop = 'str'; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @const */ var ns = {};\n" + "(/** @lends {ns} */ { prop : 1 });\n" + "function f() { var /** string */ s = ns.prop; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @const */\n"+ "ns.subns = {};\n"+ "(/** @lends {ns.subns} */ { prop: 1 });\n"+ "var /** string */ s = ns.subns.prop;",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "(/** @lends {Foo} */ { prop: 1 });\n"+ "var /** string */ s = Foo.prop;",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "(/** @lends {Foo} */ { prop: 1 });\n"+ "function f() { var /** string */ s = Foo.prop; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @constructor */\n"+ "ns.Foo = function() {};\n"+ "(/** @lends {ns.Foo} */ { prop: 1 });\n"+ "function f() { var /** string */ s = ns.Foo.prop; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "(/** @lends {Foo.prototype} */ { /** @type {number} */ a: 1 });\n"+ "var /** string */ s = Foo.prototype.a;",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "(/** @lends {Foo.prototype} */ { /** @type {number} */ a: 1 });\n"+ "var /** string */ s = (new Foo).a;",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {number} */ this.prop = 1; }\n" + "(/** @lends {Foo.prototype} */\n"+ " { /** @return {number} */ m: function() { return this.prop; } });\n"+ "var /** string */ s = (new Foo).m();",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","(/** @lends {ns} */ { /** @type {number} */ prop : 1 });","function f() { ns.prop = 'str'; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("(/** @lends {ns} */ { /** @type {number} */ prop : 1 });","/** @const */ var ns = {};","function f() { ns.prop = 'str'; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","(/** @lends {ns} */ { prop : 1 });","function f() { var /** string */ s = ns.prop; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @const */","ns.subns = {};","(/** @lends {ns.subns} */ { prop: 1 });","var /** string */ s = ns.subns.prop;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","(/** @lends {Foo} */ { prop: 1 });","var /** string */ s = Foo.prop;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","(/** @lends {Foo} */ { prop: 1 });","function f() { var /** string */ s = Foo.prop; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @constructor */","ns.Foo = function() {};","(/** @lends {ns.Foo} */ { prop: 1 });","function f() { var /** string */ s = ns.Foo.prop; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","(/** @lends {Foo.prototype} */ { /** @type {number} */ a: 1 });","var /** string */ s = Foo.prototype.a;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","(/** @lends {Foo.prototype} */ { /** @type {number} */ a: 1 });","var /** string */ s = (new Foo).a;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() { /** @type {number} */ this.prop = 1; }","(/** @lends {Foo.prototype} */"," { /** @return {number} */ m: function() { return this.prop; } });","var /** string */ s = (new Foo).m();"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

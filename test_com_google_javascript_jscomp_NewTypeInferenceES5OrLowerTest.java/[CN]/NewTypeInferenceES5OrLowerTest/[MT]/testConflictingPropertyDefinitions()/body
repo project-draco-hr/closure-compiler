@@ -1,10 +1,10 @@
 {
-  typeCheck("/** @constructor */ function Foo() { this.x = 'str1'; };\n" + "/** @type {string} */ Foo.prototype.x = 'str2';\n" + "(new Foo).x - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @type {string} */ Foo.prototype.x = 'str1';\n" + "Foo.prototype.x = 'str2';\n"+ "(new Foo).x - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/** @constructor */ function Foo() {}\n" + "Foo.prototype.x = 'str2';\n" + "/** @type {string} */ Foo.prototype.x = 'str1';\n"+ "(new Foo).x - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {string} */ this.x = 'str1'; };\n" + "Foo.prototype.x = 'str2';\n"+ "(new Foo).x - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/** @constructor */ function Foo() { this.x = 5; };\n" + "/** @type {string} */ Foo.prototype.x = 'str';",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {string} */ this.x = 'str1'; };\n" + "Foo.prototype.x = 5;",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {string} */ this.x = 'str'; };\n" + "/** @type {number} */ Foo.prototype.x = 'str';",GlobalTypeInfo.REDECLARED_PROPERTY);
-  typeCheck("/** @constructor */ function Foo() {}\n" + "/** @type {number} */ Foo.prototype.x = 1;\n" + "/** @type {number} */ Foo.prototype.x = 2;",GlobalTypeInfo.REDECLARED_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() { this.x = 'str1'; };","/** @type {string} */ Foo.prototype.x = 'str2';","(new Foo).x - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @type {string} */ Foo.prototype.x = 'str1';","Foo.prototype.x = 'str2';","(new Foo).x - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","Foo.prototype.x = 'str2';","/** @type {string} */ Foo.prototype.x = 'str1';","(new Foo).x - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() { /** @type {string} */ this.x = 'str1'; };","Foo.prototype.x = 'str2';","(new Foo).x - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() { this.x = 5; };","/** @type {string} */ Foo.prototype.x = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() { /** @type {string} */ this.x = 'str1'; };","Foo.prototype.x = 5;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() { /** @type {string} */ this.x = 'str'; };","/** @type {number} */ Foo.prototype.x = 'str';"),GlobalTypeInfo.REDECLARED_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @type {number} */ Foo.prototype.x = 1;","/** @type {number} */ Foo.prototype.x = 2;"),GlobalTypeInfo.REDECLARED_PROPERTY);
 }

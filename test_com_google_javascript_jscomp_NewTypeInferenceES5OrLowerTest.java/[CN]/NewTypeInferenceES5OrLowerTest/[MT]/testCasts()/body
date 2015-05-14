@@ -1,7 +1,7 @@
 {
   typeCheck("(/** @type {number} */ ('asdf'));",TypeValidator.INVALID_CAST);
-  typeCheck("function f(/** (number|string) */ x) {\n" + "  var y = /** @type {number} */ (x);\n" + "}");
+  typeCheck(Joiner.on('\n').join("function f(/** (number|string) */ x) {","  var y = /** @type {number} */ (x);","}"));
   typeCheck("(/** @type {(number|string)} */ (1));");
   typeCheck("(/** @type {number} */ (/** @type {?} */ ('asdf')))");
-  typeCheck("/** @constructor */\n" + "function Parent() {}\n" + "/** @constructor @extends {Parent} */\n"+ "function Child() {}\n"+ "/** @type {Child|null} */ (new Parent);\n");
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Parent() {}","/** @constructor @extends {Parent} */","function Child() {}","/** @type {Child|null} */ (new Parent);"));
 }

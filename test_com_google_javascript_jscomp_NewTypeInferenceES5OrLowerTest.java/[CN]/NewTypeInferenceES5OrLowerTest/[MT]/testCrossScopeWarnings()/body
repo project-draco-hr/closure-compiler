@@ -1,5 +1,5 @@
 {
-  typeCheck("function f() {\n" + "  x < 'str';\n" + "}"+ "var x = 5;\n"+ "f()",NewTypeInference.CROSS_SCOPE_GOTCHA);
-  typeCheck("/** @type {string} */ var s;\n" + "function f() {\n" + "  s = 123;\n"+ "}\n"+ "f();",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("function g(x) {\n" + "  function f() { x < 'str'; z < 'str'; x = 5; }\n" + "  var z = x;\n"+ "  f();\n"+ "  x - 5;\n"+ "  z < 'str';\n"+ "}");
+  typeCheck(Joiner.on('\n').join("function f() {","  x < 'str';","}","var x = 5;","f()"),NewTypeInference.CROSS_SCOPE_GOTCHA);
+  typeCheck(Joiner.on('\n').join("/** @type {string} */ var s;","function f() {","  s = 123;","}","f();"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("function g(x) {","  function f() { x < 'str'; z < 'str'; x = 5; }","  var z = x;","  f();","  x - 5;","  z < 'str';","}"));
 }

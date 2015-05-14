@@ -1,10 +1,10 @@
 {
-  typeCheck("/** @enum {InexistentType} */\n" + "var E = { ONE : null };",GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
-  typeCheck("/** @enum {*} */\n" + "var E = { ONE: 1, STR: '' };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  /** @enum {function(T):number} */\n"+ "  var E = { ONE: x };\n"+ "}",GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  /** @enum {T} */\n"+ "  var E1 = { ONE: 1 };\n"+ "  /** @enum {function(E1):E1} */\n"+ "  var E2 = { ONE: function(x) { return x; } };\n"+ "}",GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  /** @typedef {T} */ var AliasT;\n"+ "  /** @enum {T} */\n"+ "  var E1 = { ONE: 1 };\n"+ "  /** @enum {function(E1):T} */\n"+ "  var E2 = { ONE: function(x) { return x; } };\n"+ "}",GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME,GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME,GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
-  typeCheck("/** @enum {number|string} */\n" + "var E = { ONE: 1, STR: '' };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @enum {Foo} */\n"+ "var E = { ONE: new Foo, TWO: null };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
-  typeCheck("/** @typedef {number|string} */\n" + "var NOS;\n" + "/** @enum {NOS} */\n"+ "var E = { ONE: 1, STR: '' };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("/** @enum {InexistentType} */","var E = { ONE : null };"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
+  typeCheck(Joiner.on('\n').join("/** @enum {*} */","var E = { ONE: 1, STR: '' };"),RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," */","function f(x) {","  /** @enum {function(T):number} */","  var E = { ONE: x };","}"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," */","function f(x) {","  /** @enum {T} */","  var E1 = { ONE: 1 };","  /** @enum {function(E1):E1} */","  var E2 = { ONE: function(x) { return x; } };","}"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," */","function f(x) {","  /** @typedef {T} */ var AliasT;","  /** @enum {T} */","  var E1 = { ONE: 1 };","  /** @enum {function(E1):T} */","  var E2 = { ONE: function(x) { return x; } };","}"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME,GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME,GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
+  typeCheck(Joiner.on('\n').join("/** @enum {number|string} */","var E = { ONE: 1, STR: '' };"),RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @enum {Foo} */","var E = { ONE: new Foo, TWO: null };"),RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("/** @typedef {number|string} */","var NOS;","/** @enum {NOS} */","var E = { ONE: 1, STR: '' };"),RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
 }

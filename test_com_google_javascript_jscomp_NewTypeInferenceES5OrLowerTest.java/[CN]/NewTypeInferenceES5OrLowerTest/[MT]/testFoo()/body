@@ -1,8 +1,8 @@
 {
   typeCheck("/** @constructor */ function Foo() {}; Foo();",TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
   typeCheck("function Foo() {}; new Foo();",NewTypeInference.NOT_A_CONSTRUCTOR);
-  typeCheck("/** @constructor */ function Foo() {};\n" + "function reqFoo(/** Foo */ f) {};\n" + "reqFoo(new Foo());");
-  typeCheck("/** @constructor */ function Foo() {};\n" + "/** @constructor */ function Bar() {};\n" + "function reqFoo(/** Foo */ f) {};\n"+ "reqFoo(new Bar());",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("/** @constructor */ function Foo() {};\n" + "function reqFoo(/** Foo */ f) {};\n" + "function g() {\n"+ "  /** @constructor */ function Foo() {};\n"+ "  reqFoo(new Foo());\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @param {number} x */\n"+ "Foo.prototype.method = function(x) {};\n"+ "/** @param {!Foo} x */\n"+ "function f(x) { x.method('asdf'); }",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {};","function reqFoo(/** Foo */ f) {};","reqFoo(new Foo());"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {};","/** @constructor */ function Bar() {};","function reqFoo(/** Foo */ f) {};","reqFoo(new Bar());"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {};","function reqFoo(/** Foo */ f) {};","function g() {","  /** @constructor */ function Foo() {};","  reqFoo(new Foo());","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @param {number} x */","Foo.prototype.method = function(x) {};","/** @param {!Foo} x */","function f(x) { x.method('asdf'); }"),NewTypeInference.INVALID_ARGUMENT_TYPE);
 }

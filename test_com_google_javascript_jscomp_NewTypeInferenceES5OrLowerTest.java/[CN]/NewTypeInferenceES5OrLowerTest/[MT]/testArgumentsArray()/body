@@ -3,9 +3,9 @@
   typeCheck("function f(x, i) { return arguments[i]; }");
   typeCheck("function f(x) { return arguments['asdf']; }",NewTypeInference.NON_NUMERIC_ARRAY_INDEX);
   typeCheck("function f() { return arguments.splice(); }",TypeCheck.INEXISTENT_PROPERTY);
-  typeCheck("function f(x, i) { return arguments[i]; }\n" + "f(123, 'asdf')",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function f() {\n" + "  var arguments = 1;\n" + "  return arguments - 1;\n"+ "}");
-  typeCheck("/** @param {string} var_args */\n" + "function f(var_args) {\n" + "  return arguments[0];\n"+ "}\n"+ "f('asdf') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/** @param {string} var_args */\n" + "function f(var_args) {\n" + "  var x = arguments;\n"+ "  return x[0];\n"+ "}\n"+ "f('asdf') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("function f(x, i) {\n" + "  x < i;\n" + "  arguments[i];\n"+ "}\n"+ "f('asdf', 0);",NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(x, i) { return arguments[i]; }","f(123, 'asdf')"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function f() {","  var arguments = 1;","  return arguments - 1;","}"));
+  typeCheck(Joiner.on('\n').join("/** @param {string} var_args */","function f(var_args) {","  return arguments[0];","}","f('asdf') - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @param {string} var_args */","function f(var_args) {","  var x = arguments;","  return x[0];","}","f('asdf') - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(x, i) {","  x < i;","  arguments[i];","}","f('asdf', 0);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
 }

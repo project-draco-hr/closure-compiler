@@ -1,5 +1,5 @@
 {
-  typeCheck("/** @interface */\n" + "function High() {}\n" + "/** @type {number} */\n"+ "High.prototype.p = 123;\n"+ "/** @constructor @implements {High} */\n"+ "function Mid() {}\n"+ "Mid.prototype.p = 123;\n"+ "/** @constructor @extends {Mid} */\n"+ "function Low() {}");
-  typeCheck("/** @interface */\n" + "function High() {}\n" + "/** @constructor @implements {High} */\n"+ "function Mid() {}\n"+ "/** @constructor @extends {Mid} */\n"+ "function Low() {}"+ "var /** !High */ x = new Low();");
-  typeCheck("/**\n" + " * @interface\n" + " * @template T\n"+ " */\n"+ "function High() {}\n"+ "/**\n"+ " * @constructor\n"+ " * @template T\n"+ " * @implements {High<T>}\n"+ " */\n"+ "function Mid() {}\n"+ "/** @constructor @extends {Mid<number>} */\n"+ "function Low() {}\n"+ "var /** !High<string> */ x = new Low;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @interface */","function High() {}","/** @type {number} */","High.prototype.p = 123;","/** @constructor @implements {High} */","function Mid() {}","Mid.prototype.p = 123;","/** @constructor @extends {Mid} */","function Low() {}"));
+  typeCheck(Joiner.on('\n').join("/** @interface */","function High() {}","/** @constructor @implements {High} */","function Mid() {}","/** @constructor @extends {Mid} */","function Low() {}","var /** !High */ x = new Low();"));
+  typeCheck(Joiner.on('\n').join("/**"," * @interface"," * @template T"," */","function High() {}","/**"," * @constructor"," * @template T"," * @implements {High<T>}"," */","function Mid() {}","/** @constructor @extends {Mid<number>} */","function Low() {}","var /** !High<string> */ x = new Low;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

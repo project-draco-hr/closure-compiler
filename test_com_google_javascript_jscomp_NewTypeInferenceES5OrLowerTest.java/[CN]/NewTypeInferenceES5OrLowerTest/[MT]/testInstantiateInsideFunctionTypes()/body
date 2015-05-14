@@ -1,6 +1,6 @@
 {
-  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @param {function(T):T} fun\n"+ " */\n"+ "function f(x, fun) {}\n"+ "function g(x) { return x - 5; }\n"+ "f('asdf', g);",NewTypeInference.NOT_UNIQUE_INSTANTIATION);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {function(T):number} fun\n"+ " */\n"+ "function f(fun) {}\n"+ "function g(x) { return 'asdf'; }\n"+ "f(g);",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {function(T=)} fun\n"+ " */\n"+ "function f(fun) {}\n"+ "/** @param{string=} x */ function g(x) {}\n"+ "f(g);");
-  typeCheck("/**\n" + " * @template T\n" + " * @param {function(...T)} fun\n"+ " */\n"+ "function f(fun) {}\n"+ "/** @param {...number} var_args */ function g(var_args) {}\n"+ "f(g);");
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @param {function(T):T} fun"," */","function f(x, fun) {}","function g(x) { return x - 5; }","f('asdf', g);"),NewTypeInference.NOT_UNIQUE_INSTANTIATION);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(T):number} fun"," */","function f(fun) {}","function g(x) { return 'asdf'; }","f(g);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(T=)} fun"," */","function f(fun) {}","/** @param{string=} x */ function g(x) {}","f(g);"));
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(...T)} fun"," */","function f(fun) {}","/** @param {...number} var_args */ function g(var_args) {}","f(g);"));
 }

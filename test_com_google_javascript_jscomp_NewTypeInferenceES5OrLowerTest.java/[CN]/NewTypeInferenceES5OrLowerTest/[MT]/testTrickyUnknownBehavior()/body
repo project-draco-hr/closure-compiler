@@ -1,8 +1,8 @@
 {
-  typeCheck("function f(/** function() */ x, cond) {\n" + "  var y = cond ? x() : 5;\n" + "  y < 'str';\n"+ "}");
-  typeCheck("/** @param {function() : ?} x */ function f(x, cond) {\n" + "  var y = cond ? x() : 5;\n" + "  y < 'str';\n"+ "}");
-  typeCheck("function f(/** function() */ x) {\n" + "  x() < 'str';\n" + "}");
-  typeCheck("function g() { return {}; }\n" + "function f() {\n" + "  var /** ? */ x = g();\n"+ "  return x.y;\n"+ "}",NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
-  typeCheck("function g() { return {}; }\n" + "function f() {\n" + "  var /** ? */ x = g()\n"+ "  x.y = 5;\n"+ "}");
-  typeCheck("function g(x) { return x; }\n" + "function f(z) {\n" + "  var /** ? */ x = g(z);\n"+ "  x.y2 = 123;\n"+ "  return x.y1 - 5;\n"+ "}");
+  typeCheck(Joiner.on('\n').join("function f(/** function() */ x, cond) {","  var y = cond ? x() : 5;","  y < 'str';","}"));
+  typeCheck(Joiner.on('\n').join("/** @param {function() : ?} x */ function f(x, cond) {","  var y = cond ? x() : 5;","  y < 'str';","}"));
+  typeCheck(Joiner.on('\n').join("function f(/** function() */ x) {","  x() < 'str';","}"));
+  typeCheck(Joiner.on('\n').join("function g() { return {}; }","function f() {","  var /** ? */ x = g();","  return x.y;","}"),NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
+  typeCheck(Joiner.on('\n').join("function g() { return {}; }","function f() {","  var /** ? */ x = g()","  x.y = 5;","}"));
+  typeCheck(Joiner.on('\n').join("function g(x) { return x; }","function f(z) {","  var /** ? */ x = g(z);","  x.y2 = 123;","  return x.y1 - 5;","}"));
 }

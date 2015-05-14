@@ -1,15 +1,15 @@
 {
   typeCheck("function f(/** ?{ p : number } */ o) { return o.p; }",NewTypeInference.NULLABLE_DEREFERENCE);
-  typeCheck("/** @constructor */ function Foo() { /** @const */ this.p = 5; }\n" + "function g(/** ?Foo */ f) { return f.p; }",NewTypeInference.NULLABLE_DEREFERENCE);
-  typeCheck("/** @constructor */ function Foo() {}\n" + "Foo.prototype.p = function(){};\n" + "function g(/** ?Foo */ f) { f.p(); }",NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() { /** @const */ this.p = 5; }","function g(/** ?Foo */ f) { return f.p; }"),NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","Foo.prototype.p = function(){};","function g(/** ?Foo */ f) { f.p(); }"),NewTypeInference.NULLABLE_DEREFERENCE);
   typeCheck("var f = 5 ? function() {} : null; f();",NewTypeInference.NULLABLE_DEREFERENCE);
   typeCheck("var f = 5 ? function(/** number */ n) {} : null; f('str');",NewTypeInference.NULLABLE_DEREFERENCE,NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(CLOSURE_BASE + "function f(/** ?{ p : number } */ o) {\n" + "  goog.asserts.assert(o);\n"+ "  return o.p;\n"+ "}");
-  typeCheck(CLOSURE_BASE + "function f(/** ?{ p : number } */ o) {\n" + "  goog.asserts.assertObject(o);\n"+ "  return o.p;\n"+ "}");
-  typeCheck(CLOSURE_BASE + "function f(/** ?Array<string> */ a) {\n" + "  goog.asserts.assertArray(a);\n"+ "  return a.length;\n"+ "}");
-  typeCheck(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "Foo.prototype.p = function(){};\n"+ "function g(/** ?Foo */ f) {\n"+ "  goog.asserts.assertInstanceof(f, Foo);\n"+ "  f.p();\n"+ "}");
-  typeCheck(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "/** @constructor */ function Bar() {}\n"+ "function g(/** !Bar */ o) {\n"+ "  goog.asserts.assertInstanceof(o, Foo);\n"+ "}",NewTypeInference.ASSERT_FALSE);
-  typeCheck(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "function g(/** !Foo */ o) {\n"+ "  goog.asserts.assertInstanceof(o, 42);\n"+ "}",NewTypeInference.UNKNOWN_ASSERTION_TYPE);
-  typeCheck(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "function Bar() {}\n"+ "function g(/** !Foo */ o) {\n"+ "  goog.asserts.assertInstanceof(o, Bar);\n"+ "}",NewTypeInference.UNKNOWN_ASSERTION_TYPE);
-  typeCheck(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "/** @interface */ function Bar() {}\n"+ "function g(/** !Foo */ o) {\n"+ "  goog.asserts.assertInstanceof(o, Bar);\n"+ "}",NewTypeInference.UNKNOWN_ASSERTION_TYPE);
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** ?{ p : number } */ o) {","  goog.asserts.assert(o);","  return o.p;","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** ?{ p : number } */ o) {","  goog.asserts.assertObject(o);","  return o.p;","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** ?Array<string> */ a) {","  goog.asserts.assertArray(a);","  return a.length;","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","Foo.prototype.p = function(){};","function g(/** ?Foo */ f) {","  goog.asserts.assertInstanceof(f, Foo);","  f.p();","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @constructor */ function Bar() {}","function g(/** !Bar */ o) {","  goog.asserts.assertInstanceof(o, Foo);","}"),NewTypeInference.ASSERT_FALSE);
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","function g(/** !Foo */ o) {","  goog.asserts.assertInstanceof(o, 42);","}"),NewTypeInference.UNKNOWN_ASSERTION_TYPE);
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","function Bar() {}","function g(/** !Foo */ o) {","  goog.asserts.assertInstanceof(o, Bar);","}"),NewTypeInference.UNKNOWN_ASSERTION_TYPE);
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @interface */ function Bar() {}","function g(/** !Foo */ o) {","  goog.asserts.assertInstanceof(o, Bar);","}"),NewTypeInference.UNKNOWN_ASSERTION_TYPE);
 }

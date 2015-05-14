@@ -1,6 +1,6 @@
 {
-  typeCheck(CLOSURE_BASE + "function f(/** ({ p : string }|null|undefined) */ o) {\n" + "  goog.asserts.assert(o);\n"+ "  o.p - 5;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "function f(/** (Array<string>|Foo) */ o) {\n"+ "  goog.asserts.assert(o instanceof Array);\n"+ "  var /** string */ s = o.length;\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(CLOSURE_BASE + "/** @constructor */ function Foo() {}\n" + "Foo.prototype.p = function(/** number */ x){};\n"+ "function f(/** (function(new:Foo)) */ ctor,\n"+ "           /** ?Foo */ o) {\n"+ "  goog.asserts.assertInstanceof(o, ctor);\n"+ "  o.p('str');\n"+ "}",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/**\n"+ " * @template T\n"+ " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  var y = x;\n"+ "  goog.asserts.assertInstanceof(y, Foo);\n"+ "}");
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** ({ p : string }|null|undefined) */ o) {","  goog.asserts.assert(o);","  o.p - 5;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","function f(/** (Array<string>|Foo) */ o) {","  goog.asserts.assert(o instanceof Array);","  var /** string */ s = o.length;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","Foo.prototype.p = function(/** number */ x){};","function f(/** (function(new:Foo)) */ ctor,","           /** ?Foo */ o) {","  goog.asserts.assertInstanceof(o, ctor);","  o.p('str');","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/**"," * @template T"," * @param {T} x"," */","function f(x) {","  var y = x;","  goog.asserts.assertInstanceof(y, Foo);","}"));
 }

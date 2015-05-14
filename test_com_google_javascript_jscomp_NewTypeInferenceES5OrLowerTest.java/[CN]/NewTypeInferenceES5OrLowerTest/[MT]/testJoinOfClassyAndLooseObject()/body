@@ -1,4 +1,4 @@
 {
-  typeCheck("/** @constructor */\n" + "function Foo(){}\n" + "/** @type {number} */\n"+ "Foo.prototype.p = 5;\n"+ "function f(o) {\n"+ "  if (o.p == 5) {\n"+ "    (function(/** !Foo */ x){})(o);\n"+ "  }\n"+ "}");
-  typeCheck("/** @constructor */\n" + "function Foo() { this.p = 123; }\n" + "function f(x) {\n"+ "  var y;\n"+ "  if (x.p) {\n"+ "    y = x;\n"+ "  } else {\n"+ "    y = new Foo;\n"+ "    y.prop = 'asdf';\n"+ "  }\n"+ "  y.p -123;\n"+ "}");
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo(){}","/** @type {number} */","Foo.prototype.p = 5;","function f(o) {","  if (o.p == 5) {","    (function(/** !Foo */ x){})(o);","  }","}"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() { this.p = 123; }","function f(x) {","  var y;","  if (x.p) {","    y = x;","  } else {","    y = new Foo;","    y.prop = 'asdf';","  }","  y.p -123;","}"));
 }

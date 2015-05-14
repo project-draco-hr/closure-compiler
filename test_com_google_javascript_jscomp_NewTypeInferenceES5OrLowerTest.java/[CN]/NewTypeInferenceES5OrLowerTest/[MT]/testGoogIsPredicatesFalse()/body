@@ -1,12 +1,12 @@
 {
-  typeCheck(CLOSURE_BASE + "/** @constructor */\n" + "function Foo() {}\n"+ "function f(/** Foo */ x) {\n"+ "  var /** !Foo */ y;\n"+ "  if (!goog.isNull(x)) {\n"+ "    y = x;\n"+ "  }\n"+ "  y = x;\n"+ "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(CLOSURE_BASE + "/** @param {number=} x */\n" + "function f(x) {\n"+ "  if (!goog.isDef(x)) {\n"+ "    var /** undefined */ u = x;\n"+ "  }\n"+ "}");
-  typeCheck(CLOSURE_BASE + "/** @constructor */\n" + "function Foo() {}\n"+ "/** @param {Foo=} x */\n"+ "function f(x) {\n"+ "  if (!goog.isDefAndNotNull(x)) {\n"+ "    var /** (null|undefined) */ y = x;\n"+ "  }\n"+ "}");
-  typeCheck(CLOSURE_BASE + "function f(/** (number|string) */ x) {\n" + "  if (!goog.isString(x)) {\n"+ "    x - 5;\n"+ "  }\n"+ "}");
-  typeCheck(CLOSURE_BASE + "function f(/** (number|string) */ x) {\n" + "  if (!goog.isNumber(x)) {\n"+ "    x < 'str';\n"+ "  }\n"+ "}");
-  typeCheck(CLOSURE_BASE + "function f(/** (number|boolean) */ x) {\n" + "  if (!goog.isBoolean(x)) {\n"+ "    x - 5;\n"+ "  }\n"+ "}");
-  typeCheck(CLOSURE_BASE + "function f(/** (number|!Array<number>) */ x) {\n" + "  if (!goog.isArray(x)) {\n"+ "    x - 5;\n"+ "  }\n"+ "}");
-  typeCheck(CLOSURE_BASE + "function f(x) {\n" + "  if (goog.isArray(x)) {\n"+ "    return x[0] - 5;\n"+ "  }\n"+ "}");
-  typeCheck(CLOSURE_BASE + "function f(/** (number|function(number)) */ x) {\n" + "  if (!goog.isFunction(x)) {\n"+ "    x - 5;\n"+ "  }\n"+ "}");
-  typeCheck(CLOSURE_BASE + "/** @constructor */\n" + "function Foo() {}\n"+ "/** @param {?Foo} x */\n"+ "function f(x) {\n"+ "  if (!goog.isObject(x)) {\n"+ "    var /** null */ y = x;\n"+ "  }\n"+ "}");
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f(/** Foo */ x) {","  var /** !Foo */ y;","  if (!goog.isNull(x)) {","    y = x;","  }","  y = x;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @param {number=} x */","function f(x) {","  if (!goog.isDef(x)) {","    var /** undefined */ u = x;","  }","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @param {Foo=} x */","function f(x) {","  if (!goog.isDefAndNotNull(x)) {","    var /** (null|undefined) */ y = x;","  }","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** (number|string) */ x) {","  if (!goog.isString(x)) {","    x - 5;","  }","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** (number|string) */ x) {","  if (!goog.isNumber(x)) {","    x < 'str';","  }","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** (number|boolean) */ x) {","  if (!goog.isBoolean(x)) {","    x - 5;","  }","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** (number|!Array<number>) */ x) {","  if (!goog.isArray(x)) {","    x - 5;","  }","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(x) {","  if (goog.isArray(x)) {","    return x[0] - 5;","  }","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** (number|function(number)) */ x) {","  if (!goog.isFunction(x)) {","    x - 5;","  }","}"));
+  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @param {?Foo} x */","function f(x) {","  if (!goog.isObject(x)) {","    var /** null */ y = x;","  }","}"));
 }

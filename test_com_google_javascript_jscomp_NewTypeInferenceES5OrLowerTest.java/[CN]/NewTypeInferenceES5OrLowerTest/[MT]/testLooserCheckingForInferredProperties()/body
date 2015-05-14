@@ -1,6 +1,6 @@
 {
-  typeCheck("/** @constructor */\n" + "function Foo(x) { this.prop = x; }\n" + "function f(/** !Foo */ obj) {\n"+ "  obj.prop = true ? 1 : 'asdf';\n"+ "  obj.prop - 5;\n"+ "}");
-  typeCheck("/** @constructor */\n" + "function Foo(x) { this.prop = x; }\n" + "function f(/** !Foo */ obj) {\n"+ "  if (!(typeof obj.prop == 'number')) {\n"+ "    obj.prop < 'asdf';\n"+ "  }\n"+ "}");
-  typeCheck("/** @constructor */\n" + "function Foo(x) { this.prop = x; }\n" + "function f(/** !Foo */ obj) {\n"+ "  obj.prop = true ? 1 : 'asdf';\n"+ "  obj.prop - 5;\n"+ "  obj.prop < 'asdf';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("function /** string */ f(/** ?number */ x) {\n" + "  var o = { prop: 'str' };\n" + "  if (x) {\n"+ "    o.prop = x;\n"+ "  }\n"+ "  return o.prop;\n"+ "}",NewTypeInference.RETURN_NONDECLARED_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo(x) { this.prop = x; }","function f(/** !Foo */ obj) {","  obj.prop = true ? 1 : 'asdf';","  obj.prop - 5;","}"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo(x) { this.prop = x; }","function f(/** !Foo */ obj) {","  if (!(typeof obj.prop == 'number')) {","    obj.prop < 'asdf';","  }","}"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo(x) { this.prop = x; }","function f(/** !Foo */ obj) {","  obj.prop = true ? 1 : 'asdf';","  obj.prop - 5;","  obj.prop < 'asdf';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("function /** string */ f(/** ?number */ x) {","  var o = { prop: 'str' };","  if (x) {","    o.prop = x;","  }","  return o.prop;","}"),NewTypeInference.RETURN_NONDECLARED_TYPE);
 }

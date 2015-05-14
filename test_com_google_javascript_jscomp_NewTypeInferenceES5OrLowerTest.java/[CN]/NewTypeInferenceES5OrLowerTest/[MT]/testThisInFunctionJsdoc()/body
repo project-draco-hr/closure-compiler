@@ -1,5 +1,5 @@
 {
-  typeCheck("/** @constructor */ function Foo() {};\n" + "/** @type {number} */ Foo.prototype.n;\n" + "/** @this {Foo} */\n"+ "function f() { this.n = 'str'; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {};","/** @type {number} */ Foo.prototype.n;","/** @this {Foo} */","function f() { this.n = 'str'; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("/** @this {gibberish} */ function foo() {}",GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
-  typeCheck("/** @constructor */\n" + "function Foo() { /** @type {number} */ this.prop = 1; }\n" + "/** @this {Foo} */\n"+ "function f() { this.prop = 'asdf'; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() { /** @type {number} */ this.prop = 1; }","/** @this {Foo} */","function f() { this.prop = 'asdf'; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

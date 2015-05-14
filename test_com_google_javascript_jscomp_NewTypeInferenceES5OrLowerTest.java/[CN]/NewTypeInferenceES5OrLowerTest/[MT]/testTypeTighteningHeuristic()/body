@@ -1,6 +1,6 @@
 {
   typeCheck("/** @param {*} x */ function f(x) { var /** ? */ y = x; x - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("function f(/** ? */ x) {\n" + "  if (!(typeof x == 'number')) {\n" + "    x < 'asdf';\n"+ "  }\n"+ "}");
-  typeCheck("function f(/** { prop: ? } */ x) {\n" + "  var /** (number|string) */ y = x.prop;\n" + "  x.prop < 5;\n"+ "}");
-  typeCheck("function f(/** (number|string) */ x, /** (number|string) */ y) {\n" + "  var z;\n" + "  if (1 < 2) {\n"+ "    z = x;\n"+ "  } else {\n"+ "    z = y;\n"+ "  }\n"+ "  z - 5;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(/** ? */ x) {","  if (!(typeof x == 'number')) {","    x < 'asdf';","  }","}"));
+  typeCheck(Joiner.on('\n').join("function f(/** { prop: ? } */ x) {","  var /** (number|string) */ y = x.prop;","  x.prop < 5;","}"));
+  typeCheck(Joiner.on('\n').join("function f(/** (number|string) */ x, /** (number|string) */ y) {","  var z;","  if (1 < 2) {","    z = x;","  } else {","    z = y;","  }","  z - 5;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

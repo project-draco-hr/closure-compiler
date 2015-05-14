@@ -2,8 +2,8 @@
   typeCheck("/** @const */ var x;",GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
   typeCheck("/** @final */ var x;",GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
   typeCheckCustomExterns(DEFAULT_EXTERNS + "/** @const {number} */ var x;","");
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @const */\n"+ "Foo.prop;",GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
-  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @const */ this.prop;\n"+ "}",GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @const */\n"+ "Foo.prototype.prop;",GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
-  typeCheck("/** @const */\n" + "var ns = {};\n" + "/** @const */\n"+ "ns.prop;",GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","Foo.prop;"),GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @const */ this.prop;","}"),GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","Foo.prototype.prop;"),GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
+  typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @const */","ns.prop;"),GlobalTypeInfo.CONST_WITHOUT_INITIALIZER);
 }

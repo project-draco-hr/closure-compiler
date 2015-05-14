@@ -1,7 +1,7 @@
 {
-  typeCheck("var n = new Number();\n" + "n.prop = 0;\n" + "n.prop - 5;");
-  typeCheck("var n = Number();\n" + "n.prop = 0;\n" + "n.prop - 5;",TypeCheck.INEXISTENT_PROPERTY);
-  typeCheck("/** @constructor @return {number} */ function Foo(){ return 5; }\n" + "var /** !Foo */ f = new Foo;\n" + "var /** number */ n = Foo();");
-  typeCheck("/** @constructor */ function Foo(){ return 5; }\n" + "var /** !Foo */ f = new Foo;\n" + "var n = Foo();",TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
-  typeCheck("/** @constructor @return {?} */ function Foo(){}\n" + "var /** !Foo */ f = new Foo;\n" + "var n = Foo();",TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("var n = new Number();","n.prop = 0;","n.prop - 5;"));
+  typeCheck(Joiner.on('\n').join("var n = Number();","n.prop = 0;","n.prop - 5;"),TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor @return {number} */ function Foo(){ return 5; }","var /** !Foo */ f = new Foo;","var /** number */ n = Foo();"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){ return 5; }","var /** !Foo */ f = new Foo;","var n = Foo();"),TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("/** @constructor @return {?} */ function Foo(){}","var /** !Foo */ f = new Foo;","var n = Foo();"),TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
 }

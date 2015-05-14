@@ -1,6 +1,6 @@
 {
-  typeCheck("(function() {\n" + "  function f() {}; f(5);\n" + "})();",TypeCheck.WRONG_ARGUMENT_COUNT);
-  typeCheck("(function() {\n" + "  function f() { return 'str'; }\n" + "  function g() { f() - 5; }\n"+ "})();",NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
-  typeCheck("var /** number */ x;\n" + "function f() { x = 'str'; }",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("var x;\n" + "function f() { x - 5; x < 'str'; }",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("(function() {","  function f() {}; f(5);","})();"),TypeCheck.WRONG_ARGUMENT_COUNT);
+  typeCheck(Joiner.on('\n').join("(function() {","  function f() { return 'str'; }","  function g() { f() - 5; }","})();"),NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
+  typeCheck(Joiner.on('\n').join("var /** number */ x;","function f() { x = 'str'; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("var x;","function f() { x - 5; x < 'str'; }"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

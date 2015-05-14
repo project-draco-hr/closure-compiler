@@ -1,10 +1,10 @@
 {
-  typeCheck("var /** number */ n = 123;\n" + "n.toString();");
-  typeCheck("var /** boolean */ b = true;\n" + "b.toString();");
-  typeCheck("var /** string */ s = '';\n" + "s.toString();");
-  typeCheck("var /** number */ n = 123;\n" + "n.prop = 0;\n" + "n.prop - 5;",TypeCheck.INEXISTENT_PROPERTY);
-  typeCheck("var /** number */ n = 123;\n" + "n['to' + 'String'];");
-  typeCheck("/** @constructor */\n" + "function Foo() {\n" + "  /** @type {number} */\n"+ "  this.prop = 123;\n"+ "}\n"+ "(new Foo).prop.newprop = 5;");
-  typeCheck("/** @enum */\n" + "var E = { A: 1 };\n" + "function f(/** E */ x) {\n"+ "  return x.toString();\n"+ "}",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "Foo.prototype.toString = function() {};\n"+ "function f(/** (number|!Foo) */ x) {\n"+ "  return x.toString();\n"+ "}");
+  typeCheck(Joiner.on('\n').join("var /** number */ n = 123;","n.toString();"));
+  typeCheck(Joiner.on('\n').join("var /** boolean */ b = true;","b.toString();"));
+  typeCheck(Joiner.on('\n').join("var /** string */ s = '';","s.toString();"));
+  typeCheck(Joiner.on('\n').join("var /** number */ n = 123;","n.prop = 0;","n.prop - 5;"),TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("var /** number */ n = 123;","n['to' + 'String'];"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.prop = 123;","}","(new Foo).prop.newprop = 5;"));
+  typeCheck(Joiner.on('\n').join("/** @enum */","var E = { A: 1 };","function f(/** E */ x) {","  return x.toString();","}"),NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype.toString = function() {};","function f(/** (number|!Foo) */ x) {","  return x.toString();","}"));
 }

@@ -1,11 +1,11 @@
 {
-  typeCheck("/** @constructor */\n" + "function Foo() {}\n" + "/** @param {!Foo} x */\n"+ "function f(x, i) {\n"+ "  var /** string */ s = x[i];\n"+ "  var /** number */ y = x[i] + 123;\n"+ "}");
-  typeCheck("function f(/** ? */ x) {\n" + "  var /** string */ s = '' + x;\n" + "}");
-  typeCheck("function f(/** ? */ x) {\n" + "  var /** number */ s = '' + x;\n" + "}",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("function f(/** ? */ x, /** ? */ y) {\n" + "  var /** number */ s = x + y;\n" + "}");
-  typeCheck("function f(/** * */ x) {\n" + "  var /** number */ n = x + 1;\n" + "  var /** string */ s = 1 + x;\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("var /** number */ n = 1 + null;\n" + "var /** string */ s = 1 + null;",NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("var /** number */ n = undefined + 2;\n" + "var /** string */ s = undefined + 2;",NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("var /** number */ n = 3 + true;\n" + "var /** string */ s = 3 + true;",NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheckCustomExterns(DEFAULT_EXTERNS + "/** @type {number} */ var NaN;","var /** number */ n = NaN + 1;\n" + "var /** string */ s = NaN + 1;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @param {!Foo} x */","function f(x, i) {","  var /** string */ s = x[i];","  var /** number */ y = x[i] + 123;","}"));
+  typeCheck(Joiner.on('\n').join("function f(/** ? */ x) {","  var /** string */ s = '' + x;","}"));
+  typeCheck(Joiner.on('\n').join("function f(/** ? */ x) {","  var /** number */ s = '' + x;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("function f(/** ? */ x, /** ? */ y) {","  var /** number */ s = x + y;","}"));
+  typeCheck(Joiner.on('\n').join("function f(/** * */ x) {","  var /** number */ n = x + 1;","  var /** string */ s = 1 + x;","}"),NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("var /** number */ n = 1 + null;","var /** string */ s = 1 + null;"),NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("var /** number */ n = undefined + 2;","var /** string */ s = undefined + 2;"),NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("var /** number */ n = 3 + true;","var /** string */ s = 3 + true;"),NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.INVALID_OPERAND_TYPE,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheckCustomExterns(DEFAULT_EXTERNS + "/** @type {number} */ var NaN;",Joiner.on('\n').join("var /** number */ n = NaN + 1;","var /** string */ s = NaN + 1;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

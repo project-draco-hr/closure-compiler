@@ -1,12 +1,12 @@
 {
-  typeCheck("function f(obj) {\n" + "  obj.a.b = 123;\n" + "}");
-  typeCheck("function f(obj) {\n" + "  obj.a.b = 123;\n" + "  obj.a.b < 'str';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("function f(obj, cond) {\n" + "  (cond ? obj : obj).x - 1;\n" + "  return obj.x;\n"+ "}\n"+ "f({x: 'str'}, true);",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function f(obj) {\n" + "  obj.a.b - 123;\n" + "}\n"+ "f({a: {b: 'str'}})",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function f(obj) {\n" + "  obj.a.b = 123;\n" + "}\n"+ "f({a: {b: 'str'}})");
-  typeCheck("function f(obj) {\n" + "  var o;\n" + "  (o = obj).x - 1;\n"+ "  return o.x;\n"+ "}\n"+ "f({x: 'str'});",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function f(obj) {\n" + "  ({x: obj.foo}).x - 1;\n" + "}\n"+ "f({foo: 'str'});",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function f(x) {\n" + "  ({p: x++}).p = 'str';\n" + "}\n"+ "f('str');",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function f(x) {\n" + "  ({p: 'str'}).p = x++;\n" + "}\n"+ "f('str');",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function f(x, y, z) {\n" + "  ({p: (y = x++), q: 'str'}).p = z = y;\n" + "  z < 'str';\n"+ "}",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(obj) {","  obj.a.b = 123;","}"));
+  typeCheck(Joiner.on('\n').join("function f(obj) {","  obj.a.b = 123;","  obj.a.b < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(obj, cond) {","  (cond ? obj : obj).x - 1;","  return obj.x;","}","f({x: 'str'}, true);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(obj) {","  obj.a.b - 123;","}","f({a: {b: 'str'}})"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(obj) {","  obj.a.b = 123;","}","f({a: {b: 'str'}})"));
+  typeCheck(Joiner.on('\n').join("function f(obj) {","  var o;","  (o = obj).x - 1;","  return o.x;","}","f({x: 'str'});"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(obj) {","  ({x: obj.foo}).x - 1;","}","f({foo: 'str'});"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(x) {","  ({p: x++}).p = 'str';","}","f('str');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(x) {","  ({p: 'str'}).p = x++;","}","f('str');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(x, y, z) {","  ({p: (y = x++), q: 'str'}).p = z = y;","  z < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

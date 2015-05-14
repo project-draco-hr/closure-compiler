@@ -1,20 +1,20 @@
 {
-  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function id(x) { return x; }\n"+ "id('str') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @param {T} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(123, 'asdf');",NewTypeInference.NOT_UNIQUE_INSTANTIATION);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {(T|null)} x\n"+ " * @return {(T|number)}\n"+ " */\n"+ "function f(x) { return x === null ? 123 : x; }\n"+ "/** @return {(null|undefined)} */ function g() { return null; }\n"+ "var /** (number|undefined) */ y = f(g());");
-  typeCheck("/**\n" + " * @template T\n" + " * @param {(T|number)} x\n"+ " */\n"+ "function f(x) {}\n"+ "/** @return {*} */ function g() { return 1; }\n"+ "f(g());",NewTypeInference.FAILED_TO_UNIFY);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " * @return {T}\n"+ " */\n"+ "function id(x) { return x; }\n"+ "/** @return {*} */ function g() { return 1; }\n"+ "id(g()) - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/**\n" + " * @template T, U\n" + " * @param {T} x\n"+ " * @param {U} y\n"+ " * @return {U}\n"+ " */\n"+ "function f(x, y) { return y; }\n"+ "f(10, 'asdf') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @param {T} y\n"+ "   */\n"+ "  function f(x, y) {}\n"+ "  f(x, 5);\n"+ "}\n"+ "g('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function g(/** ? */ x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {(T|number)} x\n"+ "   */\n"+ "  function f(x) {}\n"+ "  f(x)\n"+ "}");
-  typeCheck("function g(x) {\n" + "  /**\n" + "   * @template T\n"+ "   * @param {T} x\n"+ "   * @return {T}\n"+ "   */\n"+ "  function f(x) { return x; }\n"+ "  f(x) - 5;\n"+ "  x = 'asdf';\n"+ "}\n"+ "g('asdf');");
-  typeCheck("/**\n" + " * @template T\n" + " * @param {(T|number)} x\n"+ " */\n"+ "function f(x) {}\n"+ "f(123);");
-  typeCheck("/**\n" + " * @template T\n" + " * @param {(T|null)} x\n"+ " * @param {(T|number)} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(null, 'str');");
-  typeCheck("/** @constructor */ function Foo(){};\n" + "/**\n" + " * @template T\n"+ " * @param {(T|Foo)} x\n"+ " * @param {(T|number)} y\n"+ " */\n"+ "function f(x, y) {}\n"+ "f(new Foo(), 'str');");
-  typeCheck("/**\n" + " * @template T\n" + " * @param {function(T):T} f\n"+ " * @param {T} x\n"+ " */\n"+ "function apply(f, x) { return f(x); }\n"+ "/** @type {string} */"+ "var out;"+ "var result = apply(function(x){ out = x; return x; }, 0);",NewTypeInference.NOT_UNIQUE_INSTANTIATION,NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @template T */\n" + "function f(/** T */ x, /** T */ y) {}\n" + "f(1, 'str');",NewTypeInference.NOT_UNIQUE_INSTANTIATION);
-  typeCheck("/** @template T */\n" + "function /** T */ f(/** T */ x) { return x; }\n" + "f('str') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {T} x\n"+ " */\n"+ "function f(x) {\n"+ "  /** @constructor */\n"+ "  function Foo() {\n"+ "    /** @type {T} */\n"+ "    this.prop = x;\n"+ "  }\n"+ "  return (new Foo()).prop;\n"+ "}\n"+ "f('asdf') - 5;",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("/**\n" + " * @template T\n" + " * @param {*} x\n"+ " */\n"+ "function f(x) {}\n"+ "f(123);");
-  typeCheck("/**\n" + " * @constructor\n" + " * @template T\n"+ " */\n"+ "function Foo() {}\n"+ "/**\n"+ " * @template U\n"+ " * @param {function(U)} x\n"+ " */\n"+ "Foo.prototype.f = function(x) { this.f(x); };");
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @return {T}"," */","function id(x) { return x; }","id('str') - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @param {T} y"," */","function f(x, y) {}","f(123, 'asdf');"),NewTypeInference.NOT_UNIQUE_INSTANTIATION);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {(T|null)} x"," * @return {(T|number)}"," */","function f(x) { return x === null ? 123 : x; }","/** @return {(null|undefined)} */ function g() { return null; }","var /** (number|undefined) */ y = f(g());"));
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {(T|number)} x"," */","function f(x) {}","/** @return {*} */ function g() { return 1; }","f(g());"),NewTypeInference.FAILED_TO_UNIFY);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @return {T}"," */","function id(x) { return x; }","/** @return {*} */ function g() { return 1; }","id(g()) - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T, U"," * @param {T} x"," * @param {U} y"," * @return {U}"," */","function f(x, y) { return y; }","f(10, 'asdf') - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("function g(x) {","  /**","   * @template T","   * @param {T} x","   * @param {T} y","   */","  function f(x, y) {}","  f(x, 5);","}","g('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function g(/** ? */ x) {","  /**","   * @template T","   * @param {(T|number)} x","   */","  function f(x) {}","  f(x)","}"));
+  typeCheck(Joiner.on('\n').join("function g(x) {","  /**","   * @template T","   * @param {T} x","   * @return {T}","   */","  function f(x) { return x; }","  f(x) - 5;","  x = 'asdf';","}","g('asdf');"));
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {(T|number)} x"," */","function f(x) {}","f(123);"));
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {(T|null)} x"," * @param {(T|number)} y"," */","function f(x, y) {}","f(null, 'str');"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){};","/**"," * @template T"," * @param {(T|Foo)} x"," * @param {(T|number)} y"," */","function f(x, y) {}","f(new Foo(), 'str');"));
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(T):T} f"," * @param {T} x"," */","function apply(f, x) { return f(x); }","/** @type {string} */","var out;","var result = apply(function(x){ out = x; return x; }, 0);"),NewTypeInference.NOT_UNIQUE_INSTANTIATION,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @template T */","function f(/** T */ x, /** T */ y) {}","f(1, 'str');"),NewTypeInference.NOT_UNIQUE_INSTANTIATION);
+  typeCheck(Joiner.on('\n').join("/** @template T */","function /** T */ f(/** T */ x) { return x; }","f('str') - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," */","function f(x) {","  /** @constructor */","  function Foo() {","    /** @type {T} */","    this.prop = x;","  }","  return (new Foo()).prop;","}","f('asdf') - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {*} x"," */","function f(x) {}","f(123);"));
+  typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @template T"," */","function Foo() {}","/**"," * @template U"," * @param {function(U)} x"," */","Foo.prototype.f = function(x) { this.f(x); };"));
 }

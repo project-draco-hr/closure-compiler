@@ -1,9 +1,9 @@
 {
-  typeCheck("/** @interface */ function Foo(){}\n" + "/** @type {function(number)} */ Foo.prototype.bar;\n" + "/** @constructor @implements {Foo} */ function Bar(){}\n"+ "Bar.prototype.bar = function(x){}");
-  typeCheck("/** @type {!Function} */\n" + "var g = function() { throw 0; };\n" + "/** @constructor */ function Foo(){}\n"+ "/** @type {function(number)} */ Foo.prototype.bar = g;\n"+ "/** @constructor @extends {Foo} */ function Bar(){}\n"+ "Bar.prototype.bar = function(x){}");
-  typeCheck("/** @param {string} s */\n" + "var reqString = function(s) {};\n" + "/** @constructor */ function Foo(){}\n"+ "/** @type {function(string)} */ Foo.prototype.bar = reqString;\n"+ "/** @constructor @extends {Foo} */ function Bar(){}\n"+ "Bar.prototype.bar = function(x){}");
-  typeCheck("/** @param {string} s */\n" + "var reqString = function(s) {};\n" + "/** @constructor */ function Foo(){}\n"+ "/** @type {function(number)} */ Foo.prototype.bar = reqString;\n"+ "/** @constructor @extends {Foo} */ function Bar(){}\n"+ "Bar.prototype.bar = function(x){}",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @constructor */ function Foo(){}\n" + "/** @type {Function} */ Foo.prototype.bar = null;\n" + "/** @constructor @extends {Foo} */ function Bar(){}\n"+ "Bar.prototype.bar = function(){}");
-  typeCheck("/** @constructor */ function Foo(){}\n" + "/** @type {!Function} */ Foo.prototype.bar = null;\n" + "/** @constructor @extends {Foo} */ function Bar(){}\n"+ "Bar.prototype.bar = function(){}",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("/** @interface */ function I(){}\n" + "/** @return {void} */\n" + "I.prototype.method;");
+  typeCheck(Joiner.on('\n').join("/** @interface */ function Foo(){}","/** @type {function(number)} */ Foo.prototype.bar;","/** @constructor @implements {Foo} */ function Bar(){}","Bar.prototype.bar = function(x){}"));
+  typeCheck(Joiner.on('\n').join("/** @type {!Function} */","var g = function() { throw 0; };","/** @constructor */ function Foo(){}","/** @type {function(number)} */ Foo.prototype.bar = g;","/** @constructor @extends {Foo} */ function Bar(){}","Bar.prototype.bar = function(x){}"));
+  typeCheck(Joiner.on('\n').join("/** @param {string} s */","var reqString = function(s) {};","/** @constructor */ function Foo(){}","/** @type {function(string)} */ Foo.prototype.bar = reqString;","/** @constructor @extends {Foo} */ function Bar(){}","Bar.prototype.bar = function(x){}"));
+  typeCheck(Joiner.on('\n').join("/** @param {string} s */","var reqString = function(s) {};","/** @constructor */ function Foo(){}","/** @type {function(number)} */ Foo.prototype.bar = reqString;","/** @constructor @extends {Foo} */ function Bar(){}","Bar.prototype.bar = function(x){}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","/** @type {Function} */ Foo.prototype.bar = null;","/** @constructor @extends {Foo} */ function Bar(){}","Bar.prototype.bar = function(){}"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","/** @type {!Function} */ Foo.prototype.bar = null;","/** @constructor @extends {Foo} */ function Bar(){}","Bar.prototype.bar = function(){}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @interface */ function I(){}","/** @return {void} */","I.prototype.method;"));
 }
