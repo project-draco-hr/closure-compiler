@@ -1,0 +1,18 @@
+{
+  Preconditions.checkState(objLit.isObjectLit());
+  for (  Node keyNode : objLit.children()) {
+    Node value=keyNode.getFirstChild();
+    if (value != null && value.isFunction()) {
+      NodeUtil.visitPostOrder(value.getLastChild(),new NodeUtil.Visitor(){
+        @Override public void visit(        Node n){
+          if (n.isString() && n.getString().equals("$") && n.getParent().isGetProp()&& n.getParent().getParent().isGetProp()) {
+            Node dollarChildProp=n.getParent().getParent();
+            dollarChildProp.setType(Token.GETELEM);
+            compiler.reportCodeChange();
+          }
+        }
+      }
+,Predicates.<Node>alwaysTrue());
+    }
+  }
+}
