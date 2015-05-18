@@ -18,6 +18,10 @@
       continue;
     }
     Node behaviorDeclaration=behaviorGlobalName.getDeclaration().getNode();
+    JSDocInfo behaviorInfo=NodeUtil.getBestJSDocInfo(behaviorDeclaration);
+    if (behaviorInfo == null || !behaviorInfo.isPolymerBehavior()) {
+      compiler.report(JSError.make(behaviorDeclaration,POLYMER_UNANNOTATED_BEHAVIOR));
+    }
     Node behaviorValue=NodeUtil.getRValueOfLValue(behaviorDeclaration);
     if (behaviorValue.isArrayLit()) {
       behaviors.addAll(extractBehaviors(behaviorValue));

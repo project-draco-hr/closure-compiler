@@ -1,0 +1,13 @@
+{
+  if (isBehavior(n)) {
+    if (!n.isVar() && !n.isAssign()) {
+      compiler.report(JSError.make(n,POLYMER_UNQUALIFIED_BEHAVIOR));
+      return;
+    }
+    Node behaviorValue=n.getChildAtIndex(1);
+    if (n.isVar()) {
+      behaviorValue=n.getFirstChild().getFirstChild();
+    }
+    suppressBehavior(behaviorValue);
+  }
+}
