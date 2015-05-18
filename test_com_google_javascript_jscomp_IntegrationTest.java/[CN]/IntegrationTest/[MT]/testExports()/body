@@ -10,7 +10,6 @@
   options.setGenerateExports(true);
   test(options,"/** @constructor */ var X = function() {" + "/** @export */ this.abc = 1;};\n",FindExportableNodes.NON_GLOBAL_ERROR);
   options.exportLocalPropertyDefinitions=true;
-  test(options,code,DefaultPassConfig.CANNOT_USE_EXPORT_LOCALS_AND_EXTERN_PROP_REMOVAL);
   options.setRemoveUnusedPrototypePropertiesInExterns(false);
   test(options,code,"alert((new function(){this.abc = 1}).abc + " + "(new function(){this.abc = 1}).abc);");
   test(options,"" + "/** @constructor */ var X = function() {" + "/** @export */ this.abc = 1;};\n"+ "/** @constructor */ var Y = function() {"+ "/** @export */ this.abc = 1;};\n"+ "alert(new X() + new Y());","alert((new function(){this.abc = 1}) + " + "(new function(){this.abc = 1}));");
