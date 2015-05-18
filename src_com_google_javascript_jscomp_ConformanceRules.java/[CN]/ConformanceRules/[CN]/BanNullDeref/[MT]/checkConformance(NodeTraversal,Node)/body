@@ -1,0 +1,9 @@
+{
+  if (n.isGetProp() || n.isGetElem() || n.isNew()|| n.isCall()) {
+    JSType targetType=n.getFirstChild().getJSType();
+    if (targetType != null && !(targetType.isUnknownType() || targetType.isEmptyType()) && (targetType.isNullable() || targetType.isVoidable())) {
+      return ConformanceResult.VIOLATION;
+    }
+  }
+  return ConformanceResult.CONFORMANCE;
+}
