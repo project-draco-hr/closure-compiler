@@ -1,0 +1,11 @@
+{
+  if (rawType.isInterface() && initializer != null) {
+    String abstractMethodName=convention.getAbstractMethodName();
+    if (initializer.isFunction() && !NodeUtil.isEmptyFunctionExpression(initializer)) {
+      warnings.add(JSError.make(initializer,TypeCheck.INTERFACE_METHOD_NOT_EMPTY));
+    }
+ else     if (!initializer.isFunction() && !initializer.matchesQualifiedName(abstractMethodName)) {
+      warnings.add(JSError.make(initializer,INVALID_INTERFACE_PROP_INITIALIZER));
+    }
+  }
+}
