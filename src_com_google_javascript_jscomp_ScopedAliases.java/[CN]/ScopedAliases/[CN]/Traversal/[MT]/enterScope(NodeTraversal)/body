@@ -1,7 +1,10 @@
 {
-  Node n=t.getCurrentNode().getParent();
-  if (n != null && isCallToScopeMethod(n)) {
-    transformation=transformationHandler.logAliasTransformation(n.getSourceFileName(),getSourceRegion(n));
+  if (t.getScope().isGlobal()) {
+    return;
+  }
+  Node scopeMethodCall=findScopeMethodCall(t.getScope().getRootNode());
+  if (scopeMethodCall != null) {
+    transformation=transformationHandler.logAliasTransformation(scopeMethodCall.getSourceFileName(),getSourceRegion(scopeMethodCall));
     findAliases(t);
   }
 }

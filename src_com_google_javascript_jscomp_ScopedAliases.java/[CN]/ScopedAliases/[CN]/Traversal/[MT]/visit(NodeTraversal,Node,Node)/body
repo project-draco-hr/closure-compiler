@@ -2,19 +2,19 @@
   if (isCallToScopeMethod(n)) {
     validateScopeCall(t,n,n.getParent());
   }
-  if (t.getScopeDepth() < 2) {
+  if (t.getScopeDepth() < scopeFunctionDepth) {
     return;
   }
   int type=n.getType();
   Var aliasVar=null;
   if (type == Token.NAME) {
     String name=n.getString();
-    Var lexicalVar=t.getScope().getVar(n.getString());
+    Var lexicalVar=t.getScope().getVar(name);
     if (lexicalVar != null && lexicalVar == aliases.get(name)) {
       aliasVar=lexicalVar;
     }
   }
-  if (t.getScopeDepth() == 2 && isCallToScopeMethod(t.getScope().getRootNode().getParent())) {
+  if (t.getScopeDepth() == scopeFunctionDepth && findScopeMethodCall(t.getScope().getRootNode()) != null) {
     if (aliasVar != null && NodeUtil.isLValue(n)) {
       if (aliasVar.getNode() == n) {
         aliasDefinitionsInOrder.add(n);
@@ -34,7 +34,7 @@
       report(t,n,GOOG_SCOPE_USES_THROW);
     }
   }
-  if (t.getScopeDepth() >= 2) {
+  if (t.getScopeDepth() >= scopeFunctionDepth) {
     if (aliasVar != null) {
       aliasUsages.add(new AliasedNode(aliasVar,n));
     }
