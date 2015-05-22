@@ -32,10 +32,11 @@
     var.setJSDocInfo(constructorDoc.build());
     block.addChildToBack(var);
   }
-  appendPropertiesToBlock(cls,block);
+  appendPropertiesToBlock(cls,block,cls.target.getQualifiedName() + ".prototype.");
   appendBehaviorFunctionsToBlock(cls,block);
   List<MemberDefinition> readOnlyProps=parseReadOnlyProperties(cls,block);
   addInterfaceExterns(cls,readOnlyProps);
+  removePropertyDocs(cls);
   block.useSourceInfoFromForTree(exprRoot);
   Node stmts=block.removeChildren();
   Node parent=exprRoot.getParent();
