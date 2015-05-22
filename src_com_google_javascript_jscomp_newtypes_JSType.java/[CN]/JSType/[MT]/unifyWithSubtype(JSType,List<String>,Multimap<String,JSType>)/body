@@ -36,10 +36,11 @@
     return ununifiedObjs.isEmpty() && ununifiedEnums.isEmpty() && (otherTypevar == null || otherTypevar.equals(thisTypevar))&& getMask() == (getMask() | (other.getMask() & ~ENUM_MASK));
   }
  else {
-    int templateMask=BOTTOM_MASK;
     int thisScalarBits=getMask() & ~NON_SCALAR_MASK & ~TYPEVAR_MASK;
-    int otherScalarBits=other.getMask() & ~NON_SCALAR_MASK;
-    templateMask|=otherScalarBits & ~thisScalarBits;
+    int templateMask=other.getMask() & ~thisScalarBits;
+    if (ununifiedObjs.isEmpty()) {
+      templateMask&=~NON_SCALAR_MASK;
+    }
     if (templateMask == BOTTOM_MASK) {
       return ununifiedObjs.isEmpty() && ununifiedEnums.isEmpty();
     }
