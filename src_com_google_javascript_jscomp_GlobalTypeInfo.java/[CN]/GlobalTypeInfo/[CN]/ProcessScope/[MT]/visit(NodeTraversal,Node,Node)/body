@@ -33,11 +33,11 @@ if (parent.isVar() || parent.isCatch()) {
     break;
   }
  else   if (currentScope.isDefinedLocally(name,false)) {
+    break;
   }
  else {
-    undeclaredVars.removeAll(name);
     if (parent.isCatch()) {
-      currentScope.addLocal(name,JSType.UNKNOWN,false,n.isFromExterns());
+      currentScope.addLocal(name,JSType.UNKNOWN,false,false);
     }
  else {
       boolean isConst=isConst(parent);
@@ -53,7 +53,6 @@ if (parent.isVar() || parent.isCatch()) {
   currentScope.addOuterVar(name);
 }
  else if (currentScope.getTypedef(name) != null || !name.equals(currentScope.getName()) && !currentScope.isDefinedLocally(name,false)) {
-  undeclaredVars.put(name,n);
 }
 break;
 }

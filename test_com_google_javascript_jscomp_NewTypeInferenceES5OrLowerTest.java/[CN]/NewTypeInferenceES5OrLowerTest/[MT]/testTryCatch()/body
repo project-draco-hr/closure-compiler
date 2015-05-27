@@ -3,5 +3,8 @@
   typeCheck("try {} catch (e) { 1 - 'asdf'; }");
   typeCheck("try { throw 123; } catch (e) { 1 - 'asdf'; }",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("try { throw 123; } catch (e) {} finally { 1 - 'asdf'; }",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("try {} catch (e) {} e;");
+  typeCheck(Joiner.on('\n').join("try {","  throw new Error();","} catch (e) {}","var /** number */ n = e;"));
+  typeCheck(Joiner.on('\n').join("function f() {","  try {","  } catch (e) {","    return e.stack;","  }","}"));
+  typeCheck(Joiner.on('\n').join("function f() {","  try {","    throw new Error();","  } catch (e) {","    var /** Error */ x = e;","  }","}"));
+  typeCheck(Joiner.on('\n').join("function f() {","  try {","    throw new Error();","  } catch (e) {","    var /** number */ x = e;","    var /** string */ y = e;","  }","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

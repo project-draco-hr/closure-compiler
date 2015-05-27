@@ -3,11 +3,11 @@
   if (varName.equals("undefined")) {
     return new EnvTypePair(inEnv,JSType.UNDEFINED);
   }
-  if (!currentScope.isDefinedLocally(varName,false) && !varName.equals(currentScope.getName()) && !currentScope.isOuterVar(varName)) {
+  JSType inferredType=envGetType(inEnv,varName);
+  if (inferredType == null) {
     println("Found global variable ",varName);
     return new EnvTypePair(inEnv,JSType.UNKNOWN);
   }
-  JSType inferredType=envGetType(inEnv,varName);
   println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType," specializedType:  ",specializedType);
   if (!inferredType.isSubtypeOf(requiredType)) {
     JSType declType=currentScope.getDeclaredTypeOf(varName);

@@ -14,7 +14,6 @@
 switch (n.getType()) {
 case Token.BLOCK:
 case Token.BREAK:
-case Token.CATCH:
 case Token.CONTINUE:
 case Token.DEFAULT_CASE:
 case Token.DEBUGGER:
@@ -24,8 +23,12 @@ case Token.SCRIPT:
 case Token.TRY:
       outEnv=inEnv;
     break;
+case Token.CATCH:
+  String catchVarname=n.getFirstChild().getString();
+outEnv=envPutType(inEnv,catchVarname,JSType.UNKNOWN);
+break;
 case Token.EXPR_RESULT:
-  println("\tsemi ",Token.name(n.getFirstChild().getType()));
+println("\tsemi ",Token.name(n.getFirstChild().getType()));
 outEnv=analyzeExprFwd(n.getFirstChild(),inEnv,JSType.UNKNOWN).env;
 break;
 case Token.RETURN:
