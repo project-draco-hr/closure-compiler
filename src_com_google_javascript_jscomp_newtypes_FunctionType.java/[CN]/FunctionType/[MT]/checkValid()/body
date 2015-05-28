@@ -5,10 +5,13 @@
   Preconditions.checkNotNull(requiredFormals,"null required formals for function: %s",this);
   for (  JSType formal : requiredFormals) {
     Preconditions.checkNotNull(formal);
+    Preconditions.checkState(isLoose || !formal.isBottom());
   }
-  Preconditions.checkNotNull(requiredFormals,"null optional formals for function: %s",this);
+  Preconditions.checkNotNull(optionalFormals,"null optional formals for function: %s",this);
   for (  JSType formal : optionalFormals) {
     Preconditions.checkNotNull(formal);
+    Preconditions.checkState(!formal.isBottom());
   }
+  Preconditions.checkState(restFormals == null || !restFormals.isBottom());
   Preconditions.checkNotNull(returnType);
 }

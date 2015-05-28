@@ -4,10 +4,7 @@
   int i=0;
   while (arg != null) {
     JSType formalType=funType.getFormalType(i);
-    if (formalType.isBottom()) {
-      warnings.add(JSError.make(call,CALL_FUNCTION_WITH_BOTTOM_FORMAL,Integer.toString(i)));
-      formalType=JSType.UNKNOWN;
-    }
+    Preconditions.checkState(!formalType.isBottom());
     EnvTypePair pair=analyzeExprFwd(arg,env,formalType);
     JSType argTypeForDeferredCheck=pair.type;
     if (funType.isOptionalArg(i) && pair.type.equals(JSType.UNDEFINED)) {
