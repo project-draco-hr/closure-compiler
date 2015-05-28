@@ -1,0 +1,17 @@
+{
+  if (isTopFunction() || isQmarkFunction() || isLoose) {
+    return QMARK_FUNCTION;
+  }
+  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  builder.addReqFormal(receiverCallApply(receiverType));
+  for (  JSType type : requiredFormals) {
+    builder.addReqFormal(type);
+  }
+  for (  JSType type : optionalFormals) {
+    builder.addOptFormal(type);
+  }
+  builder.addRestFormals(restFormals);
+  builder.addRetType(returnType);
+  builder.addTypeParameters(typeParameters);
+  return builder.buildFunction();
+}
