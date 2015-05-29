@@ -104,11 +104,7 @@
         JSError[] warnings=errorManagers[i].getWarnings();
         JSError actual=warnings[0];
         assertThat(actual.getType()).isEqualTo(warning);
-        if (!allowSourcelessWarnings) {
-          assertTrue("Missing source file name in warning",actual.sourceName != null && !actual.sourceName.isEmpty());
-          assertTrue("Missing line number in warning",-1 != actual.lineNumber);
-          assertTrue("Missing char number in warning",-1 != actual.getCharno());
-        }
+        validateSourceLocation(actual);
         if (description != null) {
           assertThat(actual.description).isEqualTo(description);
         }
@@ -173,11 +169,13 @@
       errors+=actualError.description + "\n";
     }
     assertEquals("There should be one error. " + errors,1,compiler.getErrorCount());
-    assertEquals(errors,error,compiler.getErrors()[0].getType());
+    JSError actualError=compiler.getErrors()[0];
+    assertEquals(errors,error,actualError.getType());
+    validateSourceLocation(actualError);
     if (warning != null) {
       String warnings="";
-      for (      JSError actualError : compiler.getWarnings()) {
-        warnings+=actualError.description + "\n";
+      for (      JSError actualWarning : compiler.getWarnings()) {
+        warnings+=actualWarning.description + "\n";
       }
       assertEquals("There should be one warning. " + warnings,1,compiler.getWarningCount());
       assertEquals(warnings,warning,compiler.getWarnings()[0].getType());
