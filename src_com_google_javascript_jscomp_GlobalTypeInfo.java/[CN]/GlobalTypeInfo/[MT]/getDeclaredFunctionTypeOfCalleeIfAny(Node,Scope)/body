@@ -1,22 +1,23 @@
 {
   Preconditions.checkArgument(fn.getParent().isCall());
-  if (!fn.isFunction() && (!fn.isQualifiedName() || fn.isThis())) {
+  if (fn.isThis() || !fn.isFunction() && !fn.isQualifiedName()) {
     return null;
   }
   if (fn.isFunction()) {
-    return currentScope.getScope(getFunInternalName(fn)).getDeclaredType().toFunctionType();
+    return currentScope.getScope(getFunInternalName(fn)).getDeclaredType();
   }
-  if (fn.isName()) {
-    JSType type=currentScope.getDeclaredTypeOf(fn.getString());
-    return type == null ? null : type.getFunType();
+  Preconditions.checkState(fn.isQualifiedName());
+  Declaration decl=currentScope.getDeclaration(QualifiedName.fromNode(fn),false);
+  if (decl != null) {
+    if (decl.getFunctionScope() != null) {
+      return ((Scope)decl.getFunctionScope()).getDeclaredType();
+    }
+    if (decl.getTypeOfSimpleDecl() != null) {
+      FunctionType funType=decl.getTypeOfSimpleDecl().getFunType();
+      if (funType != null) {
+        return funType.toDeclaredFunctionType();
+      }
+    }
   }
-  Preconditions.checkState(fn.isGetProp());
-  Node recv=fn.getFirstChild();
-  QualifiedName recvQname=QualifiedName.fromNode(recv);
-  Preconditions.checkNotNull(recvQname);
-  if (!currentScope.isNamespace(recvQname)) {
-    return null;
-  }
-  JSType type=currentScope.getNamespace(recvQname).getPropDeclaredType(fn.getLastChild().getString());
-  return type == null ? null : type.getFunType();
+  return null;
 }

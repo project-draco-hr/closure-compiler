@@ -2,14 +2,12 @@
   if (qname.isIdentifier()) {
     return getDeclaration(qname.getLeftmostName(),includeTypes);
   }
+  if (unknownTypeNames.contains(qname.toString())) {
+    return new Declaration(JSType.UNKNOWN,null,null,null,null,null,false,false,false,false,true);
+  }
   Namespace ns=getNamespace(qname.getLeftmostName());
   if (ns == null) {
     return null;
   }
-  QualifiedName props=qname.getAllButLeftmost();
-  Typedef typedef=ns.getTypedef(props);
-  EnumType enumType=ns.getEnumType(props);
-  RawNominalType rawType=ns.getNominalType(props);
-  Scope scope=(Scope)ns.getScope(props);
-  return new Declaration(null,typedef,null,enumType,scope,rawType,false,false,false,false,false);
+  return ns.getDeclaration(qname.getAllButLeftmost());
 }

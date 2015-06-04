@@ -1,0 +1,16 @@
+{
+  Namespace recv=getReceiverNamespace(qname);
+  if (recv == null) {
+    return null;
+  }
+  String name=qname.getRightmostName();
+  if (!recv.isDefined(name)) {
+    return null;
+  }
+  Typedef typedef=recv.typedefs.get(name);
+  EnumType enumType=recv.enums.get(name);
+  RawNominalType rawType=recv.nominals.get(name);
+  DeclaredTypeRegistry scope=recv.scopes.get(name);
+  NamespaceLit ns=recv.namespaces.get(name);
+  return new Declaration(null,typedef,ns,enumType,scope,rawType,false,false,false,false,false);
+}
