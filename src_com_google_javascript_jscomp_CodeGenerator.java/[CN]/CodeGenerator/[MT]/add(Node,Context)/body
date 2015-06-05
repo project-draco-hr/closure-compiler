@@ -309,6 +309,7 @@ add(")");
 }
 break;
 case Token.CLASS_MEMBERS:
+case Token.INTERFACE_MEMBERS:
 cc.beginBlock();
 for (Node c=first; c != null; c=c.getNext()) {
 add(c);
@@ -322,7 +323,7 @@ case Token.MEMBER_FUNCTION_DEF:
 case Token.MEMBER_VARIABLE_DEF:
 {
 n.getParent().toStringTree();
-Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers());
+Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers() || n.getParent().isInterfaceMembers());
 if (n.isStaticMember()) {
 add("static ");
 }
@@ -820,6 +821,26 @@ add(first);
 add("<");
 addList(first.getNext());
 add(">");
+break;
+case Token.INTERFACE:
+{
+Preconditions.checkState(childCount == 3);
+Node name=first;
+Node superTypes=first.getNext();
+Node members=last;
+add("interface");
+add(name);
+if (!superTypes.isEmpty()) {
+add("extends");
+for (Node child=superTypes.getFirstChild(); child != null; child=child.getNext()) {
+if (child != n.getFirstChild()) {
+add(",");
+}
+add(child);
+}
+}
+add(members);
+}
 break;
 default :
 throw new RuntimeException("Unknown type " + Token.name(type) + "\n"+ n.toStringTree());

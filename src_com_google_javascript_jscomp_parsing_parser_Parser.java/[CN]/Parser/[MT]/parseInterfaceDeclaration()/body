@@ -1,0 +1,22 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.INTERFACE);
+  IdentifierToken name=eatId();
+  ImmutableList.Builder<ParseTree> superTypes=ImmutableList.builder();
+  if (peek(TokenType.EXTENDS)) {
+    eat(TokenType.EXTENDS);
+    ParseTree type=parseType();
+    superTypes.add(type);
+    while (peek(TokenType.COMMA)) {
+      eat(TokenType.COMMA);
+      type=parseType();
+      if (type != null) {
+        superTypes.add(type);
+      }
+    }
+  }
+  eat(TokenType.OPEN_CURLY);
+  ImmutableList<ParseTree> elements=parseClassElements();
+  eat(TokenType.CLOSE_CURLY);
+  return new InterfaceDeclarationTree(getTreeLocation(start),name,superTypes.build(),elements);
+}

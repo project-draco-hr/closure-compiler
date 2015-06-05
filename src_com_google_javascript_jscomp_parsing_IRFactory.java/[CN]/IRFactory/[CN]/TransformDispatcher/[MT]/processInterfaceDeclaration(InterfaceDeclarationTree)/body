@@ -1,0 +1,11 @@
+{
+  maybeWarnEs6Feature(tree,"interface");
+  Node name=transformOrEmpty(tree.name,tree);
+  Node superInterfaces=transformListOrEmpty(Token.INTERFACE_EXTENDS,tree.superInterfaces);
+  Node body=newNode(Token.INTERFACE_MEMBERS);
+  setSourceInfo(body,tree);
+  for (  ParseTree child : tree.elements) {
+    body.addChildToBack(transform(child));
+  }
+  return newNode(Token.INTERFACE,name,superInterfaces,body);
+}
