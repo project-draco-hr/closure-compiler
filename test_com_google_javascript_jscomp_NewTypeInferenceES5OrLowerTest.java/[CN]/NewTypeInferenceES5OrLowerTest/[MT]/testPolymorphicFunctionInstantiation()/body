@@ -11,10 +11,16 @@
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {(T|number)} x"," */","function f(x) {}","f(123);"));
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {(T|null)} x"," * @param {(T|number)} y"," */","function f(x, y) {}","f(null, 'str');"));
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){};","/**"," * @template T"," * @param {(T|Foo)} x"," * @param {(T|number)} y"," */","function f(x, y) {}","f(new Foo(), 'str');"));
-  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(T):T} f"," * @param {T} x"," */","function apply(f, x) { return f(x); }","/** @type {string} */","var out;","var result = apply(function(x){ out = x; return x; }, 0);"),NewTypeInference.NOT_UNIQUE_INSTANTIATION,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(T):T} f"," * @param {T} x"," */","function apply(f, x) { return f(x); }","/** @type {string} */","var out;","var result = apply(function(x){ out = x; return x; }, 0);"),NewTypeInference.NOT_UNIQUE_INSTANTIATION);
   typeCheck(Joiner.on('\n').join("/** @template T */","function f(/** T */ x, /** T */ y) {}","f(1, 'str');"),NewTypeInference.NOT_UNIQUE_INSTANTIATION);
   typeCheck(Joiner.on('\n').join("/** @template T */","function /** T */ f(/** T */ x) { return x; }","f('str') - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," */","function f(x) {","  /** @constructor */","  function Foo() {","    /** @type {T} */","    this.prop = x;","  }","  return (new Foo()).prop;","}","f('asdf') - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {*} x"," */","function f(x) {}","f(123);"));
   typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @template T"," */","function Foo() {}","/**"," * @template U"," * @param {function(U)} x"," */","Foo.prototype.f = function(x) { this.f(x); };"));
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(T)} x"," */","function f(x) {}","function g(x) {}","f(g);"));
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(T=)} x"," */","function f(x) {}","function g(/** (number|undefined) */ x) {}","f(g);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(...T)} x"," */","function f(x) {}","function g() {}","f(g);"));
+  typeCheck(Joiner.on('\n').join("/**"," * @param {!Array<T>} arr"," * @param {?function(this:S, T, number, ?) : boolean} f"," * @param {S=} opt_obj"," * @return {T|null}"," * @template T,S"," */","function gaf(arr, f, opt_obj) {","  return null;","};","/** @type {number|null} */","var x = gaf([1, 2, 3], function(x, y, z) { return true; });"));
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(T):boolean} x"," */","function f(x) {}","f(function(x) { return 'asdf'; });"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @param {function(T)} y"," */","function f(x, y) {}","f(123, function(x) { var /** string */ s = x; });"),NewTypeInference.NOT_UNIQUE_INSTANTIATION);
 }
