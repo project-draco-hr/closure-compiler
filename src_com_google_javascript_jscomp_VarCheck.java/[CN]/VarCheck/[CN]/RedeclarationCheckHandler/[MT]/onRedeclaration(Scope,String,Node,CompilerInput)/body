@@ -11,6 +11,11 @@
       return;
     }
     boolean allowDupe=hasDuplicateDeclarationSuppression(n,origVar);
+    if (isExternNamespace(n)) {
+      parent.getParent().removeChild(parent);
+      compiler.reportCodeChange();
+      return;
+    }
     if (!allowDupe) {
       compiler.report(JSError.make(n,VAR_MULTIPLY_DECLARED_ERROR,name,(origVar.input != null ? origVar.input.getName() : "??")));
     }
