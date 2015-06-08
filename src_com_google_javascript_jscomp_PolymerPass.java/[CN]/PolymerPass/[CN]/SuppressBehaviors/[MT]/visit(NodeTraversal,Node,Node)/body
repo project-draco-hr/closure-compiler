@@ -4,6 +4,9 @@
       compiler.report(JSError.make(n,POLYMER_UNQUALIFIED_BEHAVIOR));
       return;
     }
+    JSDocInfoBuilder newDocs=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
+    newDocs.recordNoCollapse();
+    n.setJSDocInfo(newDocs.build());
     Node behaviorValue=n.getChildAtIndex(1);
     if (n.isVar()) {
       behaviorValue=n.getFirstChild().getFirstChild();
