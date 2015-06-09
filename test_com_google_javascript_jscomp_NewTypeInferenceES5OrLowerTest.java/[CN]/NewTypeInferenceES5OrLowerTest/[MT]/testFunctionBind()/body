@@ -19,4 +19,6 @@
   typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @template T"," * @param {T} x"," */"," function Foo(x) {}","/**"," * @template T"," * @param {T} x"," * @param {T} y"," */","Foo.prototype.f = function(x, y) {};","Foo.prototype.f.bind(new Foo('asdf'), 1, 2);"),NewTypeInference.INVALID_THIS_TYPE_IN_BIND);
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.bind(new Foo);"),NewTypeInference.CANNOT_BIND_CTOR);
   typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @template T"," * @param {T} x"," */","function Foo(x) {}","/**"," * @template T"," * @this {Foo<T>}"," * @param {T} x"," */","function poly(x) {}","function f(x) {","  poly.bind(new Foo('asdf'), x);","}","f(123);"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {string} */","  this.p = 'asdf';","}","(function() { this.p - 5; }).bind(new Foo);"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.p = 123;","}","(function(x) { this.p - x; }).bind(new Foo, 321);"));
 }

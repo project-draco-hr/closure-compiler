@@ -29,10 +29,10 @@ String varName=n.getString();
 if (varName.equals("undefined")) {
 return JSType.UNDEFINED;
 }
- else if (currentScope.isNamespace(varName)) {
+ else if (this.currentScope.isNamespace(varName)) {
 return null;
 }
-return currentScope.getDeclaredTypeOf(varName);
+return this.currentScope.getDeclaredTypeOf(varName);
 }
 case Token.OBJECTLIT:
 {
@@ -49,11 +49,11 @@ return objLitType;
 case Token.GETPROP:
 Node recv=n.getFirstChild();
 if (recv.isQualifiedName()) {
-EnumType et=currentScope.getEnum(QualifiedName.fromNode(recv));
+EnumType et=this.currentScope.getEnum(QualifiedName.fromNode(recv));
 if (et != null && et.enumLiteralHasKey(n.getLastChild().getString())) {
 return et.getEnumeratedType();
 }
-if (currentScope.isNamespace(recv)) {
+if (this.currentScope.isNamespace(recv)) {
 return null;
 }
 JSType recvType=simpleInferExprType(recv);

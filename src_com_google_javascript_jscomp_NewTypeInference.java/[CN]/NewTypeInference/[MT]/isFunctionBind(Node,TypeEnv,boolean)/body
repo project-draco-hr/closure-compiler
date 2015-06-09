@@ -1,17 +1,11 @@
 {
-  if (!expr.isGetProp()) {
+  if (NodeUtil.isFunctionBind(expr)) {
+    return true;
+  }
+  if (!expr.isGetProp() || !expr.getLastChild().getString().equals("bind")) {
     return false;
   }
   Node recv=expr.getFirstChild();
-  if (!recv.isFunction() && !recv.isQualifiedName()) {
-    return false;
-  }
-  if (isGoogBind(expr.getParent()) || isGoogPartial(expr.getParent())) {
-    return true;
-  }
-  if (!expr.getLastChild().getString().equals("bind")) {
-    return false;
-  }
   JSType recvType=isFwd ? analyzeExprFwd(recv,env).type : analyzeExprBwd(recv,env).type;
   return !recvType.isUnknown() && recvType.isSubtypeOf(commonTypes.topFunction());
 }

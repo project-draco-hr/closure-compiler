@@ -7,4 +7,6 @@
   typeCheck(Joiner.on('\n').join("function f(/** number */ x) { return x - 1; }","var g = goog.partial(f, 'asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("function f(/** number */ x) { return x - 1; }","var g = goog.partial(f, 'asdf');","g() - 3;"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("function f(x) {","  if (typeof x == 'function') {","    goog.bind(x, {}, 1, 2);","  }","}"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {string} */","  this.p = 'asdf';","}","goog.bind(function() { this.p - 5; }, new Foo);"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("goog.partial(function(x) {}, 123)");
 }
