@@ -4,7 +4,7 @@
     if (!hasThis()) {
       return null;
     }
-    return getDeclaredType().getThisType().getInstanceAsJSType();
+    return getDeclaredFunctionType().getThisType().getInstanceAsJSType();
   }
   Declaration decl=getLocalDeclaration(name,false);
   if (decl != null) {
@@ -13,7 +13,7 @@
       return decl.getTypeOfSimpleDecl();
     }
  else     if (decl.getFunctionScope() != null) {
-      DeclaredFunctionType scopeType=((Scope)decl.getFunctionScope()).getDeclaredType();
+      DeclaredFunctionType scopeType=decl.getFunctionScope().getDeclaredFunctionType();
       if (scopeType != null) {
         return getCommonTypes().fromFunctionType(scopeType.toFunctionType());
       }
@@ -24,7 +24,7 @@
     return null;
   }
   if (name.equals(this.name)) {
-    return getCommonTypes().fromFunctionType(getDeclaredType().toFunctionType());
+    return getCommonTypes().fromFunctionType(getDeclaredFunctionType().toFunctionType());
   }
   if (parent != null) {
     return parent.getDeclaredTypeOf(name);

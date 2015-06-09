@@ -4,19 +4,20 @@
     return null;
   }
   if (fn.isFunction()) {
-    return currentScope.getScope(getFunInternalName(fn)).getDeclaredType();
+    return currentScope.getScope(getFunInternalName(fn)).getDeclaredFunctionType();
   }
   Preconditions.checkState(fn.isQualifiedName());
   Declaration decl=currentScope.getDeclaration(QualifiedName.fromNode(fn),false);
-  if (decl != null) {
-    if (decl.getFunctionScope() != null) {
-      return ((Scope)decl.getFunctionScope()).getDeclaredType();
-    }
-    if (decl.getTypeOfSimpleDecl() != null) {
-      FunctionType funType=decl.getTypeOfSimpleDecl().getFunType();
-      if (funType != null) {
-        return funType.toDeclaredFunctionType();
-      }
+  if (decl == null) {
+    return null;
+  }
+  if (decl.getFunctionScope() != null) {
+    return decl.getFunctionScope().getDeclaredFunctionType();
+  }
+  if (decl.getTypeOfSimpleDecl() != null) {
+    FunctionType funType=decl.getTypeOfSimpleDecl().getFunType();
+    if (funType != null) {
+      return funType.toDeclaredFunctionType();
     }
   }
   return null;

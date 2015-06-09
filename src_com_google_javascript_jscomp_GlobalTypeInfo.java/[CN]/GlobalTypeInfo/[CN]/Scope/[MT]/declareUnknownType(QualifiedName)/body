@@ -1,0 +1,16 @@
+{
+  if (qname.isIdentifier() || null == getNamespace(qname.getLeftmostName())) {
+    String name=qname.getLeftmostName();
+    Preconditions.checkState(!locals.containsKey(name));
+    externs.put(name,JSType.UNKNOWN);
+    return;
+  }
+  Namespace leftmost=getNamespace(qname.getLeftmostName());
+  QualifiedName props=qname.getAllButLeftmost();
+  while (!props.isIdentifier() && !leftmost.hasSubnamespace(props.getAllButRightmost())) {
+    props=props.getAllButRightmost();
+  }
+  Namespace ns=props.isIdentifier() ? leftmost : leftmost.getSubnamespace(props.getAllButRightmost());
+  String pname=props.getRightmostName();
+  ns.addUndeclaredProperty(pname,null,JSType.UNKNOWN,false);
+}
