@@ -23,15 +23,18 @@
       compiler.report(JSError.make(behaviorDeclaration,POLYMER_UNANNOTATED_BEHAVIOR));
     }
     Node behaviorValue=NodeUtil.getRValueOfLValue(behaviorDeclaration);
-    if (behaviorValue.isArrayLit()) {
-      behaviors.addAll(extractBehaviors(behaviorValue));
-      continue;
-    }
-    if (behaviorValue == null || !behaviorValue.isObjectLit()) {
+    if (behaviorValue == null) {
       compiler.report(JSError.make(behaviorName,POLYMER_UNQUALIFIED_BEHAVIOR));
-      continue;
     }
-    behaviors.add(new BehaviorDefinition(extractProperties(behaviorValue),getBehaviorFunctionsToCopy(behaviorValue)));
+ else     if (behaviorValue.isArrayLit()) {
+      behaviors.addAll(extractBehaviors(behaviorValue));
+    }
+ else     if (behaviorValue.isObjectLit()) {
+      behaviors.add(new BehaviorDefinition(extractProperties(behaviorValue),getBehaviorFunctionsToCopy(behaviorValue)));
+    }
+ else {
+      compiler.report(JSError.make(behaviorName,POLYMER_UNQUALIFIED_BEHAVIOR));
+    }
   }
   return behaviors.build();
 }
