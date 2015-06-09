@@ -1,0 +1,15 @@
+{
+  SourceRange range=getTreeLocation(getTreeStartLocation());
+  IdentifierToken propertyName;
+  ParseTree member=null;
+  ImmutableList.Builder<ParseTree> result=ImmutableList.builder();
+  while (peekId()) {
+    propertyName=parseIdentifierExpression().identifierToken;
+    member=new PropertyNameAssignmentTree(range,propertyName,null);
+    result.add(member);
+    if (!peek(TokenType.CLOSE_CURLY)) {
+      eat(TokenType.COMMA);
+    }
+  }
+  return result.build();
+}
