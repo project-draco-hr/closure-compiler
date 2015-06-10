@@ -12,7 +12,13 @@
     startPosition=n.getSourceOffset() + n.getLength() - 1;
   }
  else {
-    startPosition=argument.getSourceOffset();
+    JSDocInfo jsDoc=argument.getJSDocInfo();
+    if (jsDoc != null) {
+      startPosition=jsDoc.getOriginalCommentPosition();
+    }
+ else {
+      startPosition=argument.getSourceOffset();
+    }
   }
   String newContent=Joiner.on(", ").join(args);
   if (argument != null) {
