@@ -1,8 +1,11 @@
 {
   String objName=qname.getLeftmostName();
   Property p=props.get(objName);
-  if (p == null && nominalType != null) {
-    p=nominalType.getProp(objName);
+  if (p != null) {
+    return p;
   }
-  return p;
+  if (nominalType != null) {
+    return nominalType.getProp(objName);
+  }
+  return builtinObject == null ? null : builtinObject.getProp(objName);
 }
