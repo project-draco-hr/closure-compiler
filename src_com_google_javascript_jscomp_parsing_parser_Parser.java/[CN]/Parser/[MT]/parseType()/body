@@ -1,14 +1,19 @@
 {
   SourcePosition start=getTreeStartLocation();
-  if (peekId() || peek(TokenType.VOID)) {
-    ParseTree typeReference=parseTypeReference();
-    if (!peekImplicitSemiColon() && peek(TokenType.OPEN_SQUARE)) {
-      eat(TokenType.OPEN_SQUARE);
-      eat(TokenType.CLOSE_SQUARE);
-      typeReference=new ArrayTypeTree(getTreeLocation(typeReference.location.start),typeReference);
-    }
+  if (!peekId() && !peek(TokenType.VOID) && !peek(TokenType.OPEN_PAREN)) {
+    reportError("Unexpected token '%s' in type expression",peekType());
+    return new TypeNameTree(getTreeLocation(start),ImmutableList.of("error"));
+  }
+  ParseTree typeReference=parseArrayTypeExpression();
+  if (!peek(TokenType.BAR)) {
     return typeReference;
   }
-  reportError("Unexpected token '%s' in type expression",peekType());
-  return new TypeNameTree(getTreeLocation(start),ImmutableList.of("error"));
+  ImmutableList.Builder<ParseTree> unionType=ImmutableList.builder();
+  unionType.add(typeReference);
+  do {
+    eat(TokenType.BAR);
+    unionType.add(parseArrayTypeExpression());
+  }
+ while (peek(TokenType.BAR));
+  return new UnionTypeTree(getTreeLocation(start),unionType.build());
 }
