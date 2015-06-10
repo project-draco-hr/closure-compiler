@@ -1,0 +1,17 @@
+{
+  Preconditions.checkState(staticMember.isAssign(),staticMember);
+  String memberName=staticMember.getFirstChild().getLastChild().getString();
+  for (  Node subclassMember : staticMembers.get(subclassNameNode.getQualifiedName())) {
+    Preconditions.checkState(subclassMember.isAssign(),subclassMember);
+    if (subclassMember.getFirstChild().getLastChild().getString().equals(memberName)) {
+      return;
+    }
+  }
+  JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(staticMember.getJSDocInfo());
+  Node assign=IR.assign(IR.getprop(subclassNameNode.cloneTree(),IR.string(memberName)),IR.getprop(superclassNameNode.cloneTree(),IR.string(memberName)));
+  assign.setJSDocInfo(info.build());
+  Node exprResult=IR.exprResult(assign);
+  exprResult.useSourceInfoIfMissingFromForTree(superclassNameNode);
+  insertionPoint.getParent().addChildAfter(exprResult,insertionPoint);
+  staticMembers.put(subclassNameNode.getQualifiedName(),assign);
+}

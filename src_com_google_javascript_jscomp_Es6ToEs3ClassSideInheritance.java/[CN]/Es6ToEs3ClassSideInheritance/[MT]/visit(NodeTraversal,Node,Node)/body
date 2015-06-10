@@ -3,20 +3,14 @@
     return;
   }
   if (n.getFirstChild().matchesQualifiedName(Es6ToEs3Converter.COPY_PROP)) {
-    Node superClassName=n.getLastChild();
-    Node subClassName=n.getChildBefore(superClassName);
-    String key=superClassName.getQualifiedName();
-    if (multiplyDefinedClasses.contains(key)) {
+    Node superclassNameNode=n.getLastChild();
+    Node subclassNameNode=n.getChildBefore(superclassNameNode);
+    if (multiplyDefinedClasses.contains(superclassNameNode.getQualifiedName())) {
       compiler.report(JSError.make(n,DUPLICATE_CLASS));
       return;
     }
-    if (staticMembers.containsKey(key)) {
-      for (      String staticMember : staticMembers.get(key)) {
-        Node sAssign=IR.exprResult(IR.assign(IR.getprop(subClassName.cloneTree(),IR.string(staticMember)),IR.getprop(superClassName.cloneTree(),IR.string(staticMember))));
-        sAssign.useSourceInfoIfMissingFromForTree(n);
-        parent.getParent().addChildAfter(sAssign,parent);
-        staticMembers.put(subClassName.getQualifiedName(),staticMember);
-      }
+    for (    Node staticMember : staticMembers.get(superclassNameNode.getQualifiedName())) {
+      copyStaticMember(staticMember,superclassNameNode,subclassNameNode,parent);
     }
     parent.detachFromParent();
     compiler.reportCodeChange();
