@@ -7,8 +7,12 @@
       if (nameToExprResult.containsKey(fnName)) {
         block.removeChild(nameToExprResult.get(fnName));
       }
-      Node exprResult=IR.exprResult(IR.assign(NodeUtil.newQName(compiler,qualifiedPath + fnName),behaviorFunction.value.cloneTree()));
+      Node fnValue=behaviorFunction.value.cloneTree();
+      Node exprResult=IR.exprResult(IR.assign(NodeUtil.newQName(compiler,qualifiedPath + fnName),fnValue));
       JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(behaviorFunction.info);
+      if (!behavior.isGlobalDeclaration) {
+        NodeUtil.getFunctionBody(fnValue).removeChildren();
+      }
       exprResult.getFirstChild().setJSDocInfo(info.build());
       block.addChildToBack(exprResult);
       nameToExprResult.put(fnName,exprResult);

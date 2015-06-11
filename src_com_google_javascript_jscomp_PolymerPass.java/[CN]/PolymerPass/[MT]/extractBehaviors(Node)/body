@@ -9,20 +9,37 @@
   ImmutableList.Builder<BehaviorDefinition> behaviors=ImmutableList.builder();
   for (  Node behaviorName : behaviorArray.children()) {
     if (behaviorName.isObjectLit()) {
-      behaviors.add(new BehaviorDefinition(extractProperties(behaviorName),getBehaviorFunctionsToCopy(behaviorName),getNonPropertyMembersToCopy(behaviorName)));
+      this.switchDollarSignPropsToBrackets(behaviorName);
+      behaviors.add(new BehaviorDefinition(extractProperties(behaviorName),getBehaviorFunctionsToCopy(behaviorName),getNonPropertyMembersToCopy(behaviorName),!NodeUtil.isInFunction(behaviorName)));
       continue;
     }
     Name behaviorGlobalName=globalNames.getSlot(behaviorName.getQualifiedName());
-    if (behaviorGlobalName == null || behaviorGlobalName.getDeclaration() == null) {
+    boolean isGlobalDeclaration=true;
+    if (behaviorGlobalName == null) {
       compiler.report(JSError.make(behaviorName,POLYMER_UNQUALIFIED_BEHAVIOR));
       continue;
     }
-    Node behaviorDeclaration=behaviorGlobalName.getDeclaration().getNode();
-    JSDocInfo behaviorInfo=NodeUtil.getBestJSDocInfo(behaviorDeclaration);
-    if (behaviorInfo == null || !behaviorInfo.isPolymerBehavior()) {
-      compiler.report(JSError.make(behaviorDeclaration,POLYMER_UNANNOTATED_BEHAVIOR));
+    Ref behaviorDeclaration=behaviorGlobalName.getDeclaration();
+    if (behaviorDeclaration == null) {
+      List<Ref> behaviorRefs=behaviorGlobalName.getRefs();
+      for (      Ref ref : behaviorRefs) {
+        if (ref.isSet()) {
+          isGlobalDeclaration=false;
+          behaviorDeclaration=ref;
+          break;
+        }
+      }
     }
-    Node behaviorValue=NodeUtil.getRValueOfLValue(behaviorDeclaration);
+    if (behaviorDeclaration == null) {
+      compiler.report(JSError.make(behaviorName,POLYMER_UNQUALIFIED_BEHAVIOR));
+      continue;
+    }
+    Node behaviorDeclarationNode=behaviorDeclaration.getNode();
+    JSDocInfo behaviorInfo=NodeUtil.getBestJSDocInfo(behaviorDeclarationNode);
+    if (behaviorInfo == null || !behaviorInfo.isPolymerBehavior()) {
+      compiler.report(JSError.make(behaviorDeclarationNode,POLYMER_UNANNOTATED_BEHAVIOR));
+    }
+    Node behaviorValue=NodeUtil.getRValueOfLValue(behaviorDeclarationNode);
     if (behaviorValue == null) {
       compiler.report(JSError.make(behaviorName,POLYMER_UNQUALIFIED_BEHAVIOR));
     }
@@ -30,7 +47,8 @@
       behaviors.addAll(extractBehaviors(behaviorValue));
     }
  else     if (behaviorValue.isObjectLit()) {
-      behaviors.add(new BehaviorDefinition(extractProperties(behaviorValue),getBehaviorFunctionsToCopy(behaviorValue),getNonPropertyMembersToCopy(behaviorValue)));
+      this.switchDollarSignPropsToBrackets(behaviorValue);
+      behaviors.add(new BehaviorDefinition(extractProperties(behaviorValue),getBehaviorFunctionsToCopy(behaviorValue),getNonPropertyMembersToCopy(behaviorValue),isGlobalDeclaration));
     }
  else {
       compiler.report(JSError.make(behaviorName,POLYMER_UNQUALIFIED_BEHAVIOR));
