@@ -1,0 +1,22 @@
+{
+  Preconditions.checkArgument(getProp.isGetProp());
+  if (isAnnotatedAsConst(getProp)) {
+    warnings.add(JSError.make(getProp,MISPLACED_CONST_ANNOTATION));
+  }
+  RawNominalType rawType=getRawTypeFromJSType(simpleInferExprType(getProp.getFirstChild()));
+  if (rawType == null) {
+    return;
+  }
+  String pname=getProp.getLastChild().getString();
+  JSType declType=getDeclaredTypeOfNode(NodeUtil.getBestJSDocInfo(getProp),currentScope);
+  if (declType != null) {
+    declType=declType.substituteGenericsWithUnknown();
+    if (mayWarnAboutExistingProp(rawType,pname,getProp,declType)) {
+      return;
+    }
+    rawType.addPropertyWhichMayNotBeOnAllInstances(pname,declType);
+  }
+ else   if (!rawType.mayHaveProp(pname)) {
+    rawType.addPropertyWhichMayNotBeOnAllInstances(pname,null);
+  }
+}

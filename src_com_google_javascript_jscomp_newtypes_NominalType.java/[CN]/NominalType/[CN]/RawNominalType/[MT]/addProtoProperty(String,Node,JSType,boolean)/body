@@ -3,8 +3,11 @@
   if (type == null && isConstant) {
     type=JSType.UNKNOWN;
   }
-  if (classProps.containsKey(pname) && classProps.get(pname).getDeclaredType() == null) {
-    classProps=classProps.without(pname);
+  if (this.classProps.containsKey(pname) && this.classProps.get(pname).getDeclaredType() == null) {
+    this.classProps=this.classProps.without(pname);
   }
-  protoProps=protoProps.with(pname,isConstant ? Property.makeConstant(defSite,type,type) : Property.makeWithDefsite(defSite,type,type));
+  if (this.randomProps.containsKey(pname)) {
+    this.randomProps=this.randomProps.without(pname);
+  }
+  this.protoProps=this.protoProps.with(pname,isConstant ? Property.makeConstant(defSite,type,type) : Property.makeWithDefsite(defSite,type,type));
 }
