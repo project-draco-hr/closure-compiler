@@ -2,11 +2,8 @@
   parse("var x: string | number[];");
   parse("var x: number[] | string;");
   parse("var x: Array<Foo> | number[];");
+  parse("var x: (string | number)[];");
   Node ast=parse("var x: string | number[] | Array<Foo>;");
-  TypeDeclarationNode actualUnion=(TypeDeclarationNode)(ast.getFirstChild().getFirstChild().getProp(Node.DECLARED_TYPE_EXPR));
-  assertEquals(3,actualUnion.getChildCount());
-  Node ast2=parse("var x: (string | number)[];");
-  TypeDeclarationNode actualArray2=(TypeDeclarationNode)(ast2.getFirstChild().getFirstChild().getProp(Node.DECLARED_TYPE_EXPR));
-  assertEquals(Token.ARRAY_TYPE,actualArray2.getType());
-  assertEquals(Token.UNION_TYPE,actualArray2.getFirstChild().getType());
+  TypeDeclarationNode union=(TypeDeclarationNode)(ast.getFirstChild().getFirstChild().getProp(Node.DECLARED_TYPE_EXPR));
+  assertEquals(3,union.getChildCount());
 }

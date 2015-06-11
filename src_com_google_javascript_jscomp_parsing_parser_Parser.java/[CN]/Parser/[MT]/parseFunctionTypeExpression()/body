@@ -1,0 +1,15 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ParseTree typeExpression=null;
+  if (peekArrowFunctionWithParenthesizedParameterList()) {
+    FormalParameterListTree formalParameterList;
+    formalParameterList=parseFormalParameterList();
+    eat(TokenType.ARROW);
+    ParseTree returnType=parseType();
+    typeExpression=new FunctionTypeTree(getTreeLocation(start),formalParameterList,returnType);
+  }
+ else {
+    typeExpression=parseArrayTypeExpression();
+  }
+  return typeExpression;
+}

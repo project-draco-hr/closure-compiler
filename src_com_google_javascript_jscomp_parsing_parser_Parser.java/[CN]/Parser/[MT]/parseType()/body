@@ -4,12 +4,12 @@
     reportError("Unexpected token '%s' in type expression",peekType());
     return new TypeNameTree(getTreeLocation(start),ImmutableList.of("error"));
   }
-  ParseTree typeReference=parseArrayTypeExpression();
+  ParseTree typeExpression=parseFunctionTypeExpression();
   if (!peek(TokenType.BAR)) {
-    return typeReference;
+    return typeExpression;
   }
   ImmutableList.Builder<ParseTree> unionType=ImmutableList.builder();
-  unionType.add(typeReference);
+  unionType.add(typeExpression);
   do {
     eat(TokenType.BAR);
     unionType.add(parseArrayTypeExpression());

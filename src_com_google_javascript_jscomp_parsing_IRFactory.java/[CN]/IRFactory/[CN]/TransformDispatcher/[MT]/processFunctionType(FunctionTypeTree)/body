@@ -1,0 +1,8 @@
+{
+  LinkedHashMap<String,TypeDeclarationNode> parameters=new LinkedHashMap<>();
+  for (  ParseTree param : tree.formalParameterList.parameters) {
+    TypedParameterTree typedParam=param.asTypedParameter();
+    parameters.put(typedParam.param.asIdentifierExpression().identifierToken.toString(),(TypeDeclarationNode)process(typedParam.typeAnnotation));
+  }
+  return functionType(process(tree.returnType),parameters,null,null);
+}
