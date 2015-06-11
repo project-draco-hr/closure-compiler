@@ -2,8 +2,7 @@
   int jumpPoint=generatorCaseCount++;
   Node setReturnState=IR.exprResult(IR.assign(finallyName.cloneTree(),IR.number(jumpPoint)));
   Node toFinally=createStateUpdate(finallyStartState);
-  Node returnPoint=IR.number(jumpPoint);
-  returnPoint.setGeneratorMarker(true);
+  Node returnPoint=makeGeneratorMarker(jumpPoint);
   Node returnBlock=IR.block(setReturnState,toFinally,createSafeBreak());
   returnBlock.addChildToBack(returnPoint);
   return returnBlock;

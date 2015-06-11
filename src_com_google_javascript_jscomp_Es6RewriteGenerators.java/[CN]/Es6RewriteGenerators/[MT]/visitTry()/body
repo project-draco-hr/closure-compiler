@@ -14,8 +14,7 @@
   }
   Node finallyBody=catchBlock.getNext();
   int catchStartState=generatorCaseCount++;
-  Node catchStart=IR.number(catchStartState);
-  catchStart.setGeneratorMarker(true);
+  Node catchStart=makeGeneratorMarker(catchStartState);
   Node errorNameGenerated=IR.name("$jscomp$generator$" + caughtError.getString());
   originalGeneratorBody.addChildToFront(catchStart);
   originalGeneratorBody.addChildAfter(catchBody,catchStart);
@@ -26,11 +25,9 @@
   if (finallyBody != null) {
     Node finallyName=IR.name(GENERATOR_FINALLY_JUMP + generatorCounter.get());
     int finallyStartState=generatorCaseCount++;
-    Node finallyStart=IR.number(finallyStartState);
-    finallyStart.setGeneratorMarker(true);
+    Node finallyStart=makeGeneratorMarker(finallyStartState);
     int finallyEndState=generatorCaseCount++;
-    Node finallyEnd=IR.number(finallyEndState);
-    finallyEnd.setGeneratorMarker(true);
+    Node finallyEnd=makeGeneratorMarker(finallyEndState);
     NodeTraversal.traverse(compiler,tryBody,new ControlExitsCheck(finallyName,finallyStartState));
     NodeTraversal.traverse(compiler,catchBody,new ControlExitsCheck(finallyName,finallyStartState));
     originalGeneratorBody.addChildToFront(tryBody.detachFromParent());
@@ -47,8 +44,7 @@
   }
  else {
     int catchEndState=generatorCaseCount++;
-    Node catchEnd=IR.number(catchEndState);
-    catchEnd.setGeneratorMarker(true);
+    Node catchEnd=makeGeneratorMarker(catchEndState);
     originalGeneratorBody.addChildAfter(catchEnd,catchBody);
     tryBody.addChildToBack(createStateUpdate(catchEndState));
     tryBody.addChildToBack(createSafeBreak());

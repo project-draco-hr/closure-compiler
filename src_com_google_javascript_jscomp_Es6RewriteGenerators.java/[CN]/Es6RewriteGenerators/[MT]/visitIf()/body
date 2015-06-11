@@ -5,16 +5,14 @@
   int ifEndState=generatorCaseCount++;
   Node invertedConditional=IR.ifNode(IR.not(condition),IR.block(createStateUpdate(ifEndState),createSafeBreak()));
   invertedConditional.setGeneratorSafe(true);
-  Node endIf=IR.number(ifEndState);
-  endIf.setGeneratorMarker(true);
+  Node endIf=makeGeneratorMarker(ifEndState);
   originalGeneratorBody.addChildToFront(invertedConditional);
   originalGeneratorBody.addChildAfter(ifBody,invertedConditional);
   originalGeneratorBody.addChildAfter(endIf,ifBody);
   if (hasElse) {
     Node elseBlock=currentStatement.removeFirstChild();
     int elseEndState=generatorCaseCount++;
-    Node endElse=IR.number(elseEndState);
-    endElse.setGeneratorMarker(true);
+    Node endElse=makeGeneratorMarker(elseEndState);
     ifBody.addChildToBack(createStateUpdate(elseEndState));
     ifBody.addChildToBack(createSafeBreak());
     originalGeneratorBody.addChildAfter(elseBlock,endIf);

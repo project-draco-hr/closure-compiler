@@ -38,14 +38,12 @@
   int continueState=loopBeginState;
   if (!incr.isEmpty()) {
     continueState=generatorCaseCount++;
-    Node continueCase=IR.number(continueState);
-    continueCase.setGeneratorMarker(true);
+    Node continueCase=makeGeneratorMarker(continueState);
     body.addChildToBack(continueCase);
     body.addChildToBack(incr.isBlock() ? incr : IR.exprResult(incr));
   }
   currentLoopContext.add(0,new LoopContext(generatorCaseCount,continueState,label));
-  Node beginCase=IR.number(loopBeginState);
-  beginCase.setGeneratorMarker(true);
+  Node beginCase=makeGeneratorMarker(loopBeginState);
   Node conditionalBranch=IR.ifNode(condition.isEmpty() ? IR.trueNode() : condition,body);
   Node setStateLoopStart=createStateUpdate(loopBeginState);
   Node breakToStart=createSafeBreak();
