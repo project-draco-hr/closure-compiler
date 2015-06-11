@@ -1,0 +1,34 @@
+{
+  String qualifiedPath=cls.target.getQualifiedName() + ".prototype.";
+  Map<String,Node> nameToExprResult=new HashMap<>();
+  for (  BehaviorDefinition behavior : cls.behaviors) {
+    for (    MemberDefinition behaviorFunction : behavior.functionsToCopy) {
+      String fnName=behaviorFunction.name.getString();
+      if (nameToExprResult.containsKey(fnName)) {
+        block.removeChild(nameToExprResult.get(fnName));
+      }
+      Node exprResult=IR.exprResult(IR.assign(NodeUtil.newQName(compiler,qualifiedPath + fnName),behaviorFunction.value.cloneTree()));
+      JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(behaviorFunction.info);
+      exprResult.getFirstChild().setJSDocInfo(info.build());
+      block.addChildToBack(exprResult);
+      nameToExprResult.put(fnName,exprResult);
+    }
+    for (    MemberDefinition behaviorProp : behavior.nonPropertyMembersToCopy) {
+      String propName=behaviorProp.name.getString();
+      if (nameToExprResult.containsKey(propName)) {
+        block.removeChild(nameToExprResult.get(propName));
+      }
+      Node exprResult=IR.exprResult(NodeUtil.newQName(compiler,qualifiedPath + propName));
+      JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(behaviorProp.info);
+      if (behaviorProp.name.isGetterDef()) {
+        info=new JSDocInfoBuilder(true);
+        if (behaviorProp.info != null && behaviorProp.info.getReturnType() != null) {
+          info.recordType(behaviorProp.info.getReturnType());
+        }
+      }
+      exprResult.getFirstChild().setJSDocInfo(info.build());
+      block.addChildToBack(exprResult);
+      nameToExprResult.put(propName,exprResult);
+    }
+  }
+}

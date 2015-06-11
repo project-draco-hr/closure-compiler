@@ -9,7 +9,7 @@
   ImmutableList.Builder<BehaviorDefinition> behaviors=ImmutableList.builder();
   for (  Node behaviorName : behaviorArray.children()) {
     if (behaviorName.isObjectLit()) {
-      behaviors.add(new BehaviorDefinition(extractProperties(behaviorName),getBehaviorFunctionsToCopy(behaviorName)));
+      behaviors.add(new BehaviorDefinition(extractProperties(behaviorName),getBehaviorFunctionsToCopy(behaviorName),getNonPropertyMembersToCopy(behaviorName)));
       continue;
     }
     Name behaviorGlobalName=globalNames.getSlot(behaviorName.getQualifiedName());
@@ -30,7 +30,7 @@
       behaviors.addAll(extractBehaviors(behaviorValue));
     }
  else     if (behaviorValue.isObjectLit()) {
-      behaviors.add(new BehaviorDefinition(extractProperties(behaviorValue),getBehaviorFunctionsToCopy(behaviorValue)));
+      behaviors.add(new BehaviorDefinition(extractProperties(behaviorValue),getBehaviorFunctionsToCopy(behaviorValue),getNonPropertyMembersToCopy(behaviorValue)));
     }
  else {
       compiler.report(JSError.make(behaviorName,POLYMER_UNQUALIFIED_BEHAVIOR));
