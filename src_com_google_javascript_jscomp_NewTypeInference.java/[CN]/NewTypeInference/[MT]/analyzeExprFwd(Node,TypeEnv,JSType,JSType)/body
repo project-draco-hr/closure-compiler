@@ -26,7 +26,9 @@ break;
 case Token.THIS:
 {
 if (!currentScope.hasThis()) {
+if (expr.getParent().isGetProp() || expr.getParent().isGetElem()) {
 warnings.add(JSError.make(expr,CheckGlobalThis.GLOBAL_THIS));
+}
 resultPair=new EnvTypePair(inEnv,JSType.UNKNOWN);
 }
  else {

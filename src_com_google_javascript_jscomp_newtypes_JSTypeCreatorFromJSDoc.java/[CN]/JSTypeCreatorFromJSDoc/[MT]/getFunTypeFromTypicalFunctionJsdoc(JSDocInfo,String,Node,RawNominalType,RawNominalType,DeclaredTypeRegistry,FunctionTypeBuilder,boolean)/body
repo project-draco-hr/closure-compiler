@@ -42,8 +42,13 @@
     warnings.add(JSError.make(funNode,IMPLEMENTS_WITHOUT_CONSTRUCTOR,functionName));
   }
   if (jsdoc.hasThisType() && ownerType == null) {
-    Node thisNode=jsdoc.getThisType().getRoot();
+    Node thisRoot=jsdoc.getThisType().getRoot();
+    Preconditions.checkState(thisRoot.getType() == Token.BANG);
+    Node thisNode=thisRoot.getFirstChild();
     JSType thisType=getMaybeTypeFromComment(thisNode,registry,typeParameters);
+    if (thisType != null) {
+      thisType=thisType.removeType(JSType.NULL);
+    }
     NominalType thisTypeAsNominal=thisType == null ? null : thisType.getNominalTypeIfSingletonObj();
     builder.addReceiverType(thisTypeAsNominal);
   }
