@@ -10,4 +10,6 @@
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @type {number} */","Foo.prototype.prop = 123;","function f(/** !Foo */ x) {","  x.prop = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @template T"," */","function Foo() {}","function f(/** !Foo<string> */ x) {","  x.prop = 123;","}","(new Foo).prop - 1;"));
   typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @template T"," */","function Foo(/** T */ x) {}","/** @template U */","function addProp(/** !Foo<U> */ x, /** U */ y) {","  /** @type {U} */ x.prop = y;","  return x;","}","addProp(new Foo(1), 5).prop - 1;"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype.m = function() {","  this.prop = 123;","}","function f(/** !Foo */ x) {","  /** @type {number} */","  x.prop = 123;","}"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype.prop = 123;","/** @type {!Foo} */","var x = new Foo;","/** @type {number} */","x.prop = 123;"));
 }

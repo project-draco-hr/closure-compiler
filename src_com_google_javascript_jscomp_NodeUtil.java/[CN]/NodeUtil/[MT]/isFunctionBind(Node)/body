@@ -1,11 +1,8 @@
 {
-  if (expr.isCall()) {
-    expr=expr.getFirstChild();
-  }
   if (!expr.isGetProp()) {
     return false;
   }
-  if (isGoogBind(expr.getParent()) || isGoogPartial(expr.getParent())) {
+  if (isGoogBind(expr) || isGoogPartial(expr)) {
     return true;
   }
   return expr.getFirstChild().isFunction() && expr.getLastChild().getString().equals("bind");

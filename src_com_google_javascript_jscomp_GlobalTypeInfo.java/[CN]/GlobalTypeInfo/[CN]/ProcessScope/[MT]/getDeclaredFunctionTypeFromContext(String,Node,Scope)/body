@@ -1,7 +1,8 @@
 {
   Node parent=declNode.getParent();
-  if (NodeUtil.isFunctionBind(parent) && !NodeUtil.isGoogPartial(parent)) {
-    Node call=parent.isCall() ? parent : parent.getParent();
+  Node maybeBind=parent.isCall() ? parent.getFirstChild() : parent;
+  if (NodeUtil.isFunctionBind(maybeBind) && !NodeUtil.isGoogPartial(maybeBind)) {
+    Node call=maybeBind.getParent();
     Bind bindComponents=convention.describeFunctionBind(call,true,false);
     JSType recvType=simpleInferExprType(bindComponents.thisValue);
     if (recvType == null) {
