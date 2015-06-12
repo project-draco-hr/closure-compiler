@@ -1,11 +1,11 @@
 {
   Preconditions.checkNotNull(name);
   Preconditions.checkState(!name.contains("."));
-  if (locals.containsKey(name) || formals.contains(name) || localFunDefs.containsKey(name)|| "this".equals(name)|| externs.containsKey(name)|| localNamespaces.containsKey(name)|| localTypedefs.containsKey(name)|| localEnums.containsKey(name)|| unknownTypeNames.contains(name)) {
+  if (locals.containsKey(name) || formals.contains(name) || localFunDefs.containsKey(name)|| "this".equals(name)|| externs.containsKey(name)|| localNamespaces.containsKey(name)|| localTypedefs.containsKey(name)|| localEnums.containsKey(name)) {
     return true;
   }
   if (includeTypes) {
-    return declaredType != null && declaredType.isTypeVariableDefinedLocally(name);
+    return unknownTypeNames.contains(name) || declaredType != null && declaredType.isTypeVariableDefinedLocally(name);
   }
   return false;
 }

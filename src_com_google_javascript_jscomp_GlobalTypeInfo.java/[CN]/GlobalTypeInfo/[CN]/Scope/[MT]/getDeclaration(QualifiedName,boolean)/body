@@ -2,12 +2,13 @@
   if (qname.isIdentifier()) {
     return getDeclaration(qname.getLeftmostName(),includeTypes);
   }
-  if (unknownTypeNames.contains(qname.toString())) {
-    return new Declaration(JSType.UNKNOWN,null,null,null,null,null,false,false,false,false,true);
-  }
   Namespace ns=getNamespace(qname.getLeftmostName());
   if (ns == null) {
     return null;
   }
-  return ns.getDeclaration(qname.getAllButLeftmost());
+  Declaration decl=ns.getDeclaration(qname.getAllButLeftmost());
+  if (decl == null && unknownTypeNames.contains(qname.toString())) {
+    return new Declaration(JSType.UNKNOWN,null,null,null,null,null,false,false,false,false,true);
+  }
+  return decl;
 }
