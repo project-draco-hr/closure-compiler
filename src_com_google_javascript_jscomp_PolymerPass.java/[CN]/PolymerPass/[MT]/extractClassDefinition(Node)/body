@@ -41,11 +41,11 @@
   String nativeBaseElement=baseClass == null ? null : baseClass.getString();
   Node behaviorArray=NodeUtil.getFirstPropMatchingKey(descriptor,"behaviors");
   List<BehaviorDefinition> behaviors=extractBehaviors(behaviorArray);
-  ImmutableList.Builder<MemberDefinition> allProperties=ImmutableList.builder();
-  allProperties.addAll(extractProperties(descriptor));
+  List<MemberDefinition> allProperties=new LinkedList<>();
   for (  BehaviorDefinition behavior : behaviors) {
-    allProperties.addAll(behavior.props);
+    overwriteMembersIfPresent(allProperties,behavior.props);
   }
-  ClassDefinition def=new ClassDefinition(target,classInfo,new MemberDefinition(ctorInfo,null,constructor),nativeBaseElement,allProperties.build(),behaviors);
+  overwriteMembersIfPresent(allProperties,extractProperties(descriptor));
+  ClassDefinition def=new ClassDefinition(target,classInfo,new MemberDefinition(ctorInfo,null,constructor),nativeBaseElement,allProperties,behaviors);
   return def;
 }
