@@ -43,6 +43,10 @@
     return new EnvTypePair(pair.env,recvType.getProp(getterPname));
   }
   JSType resultType=recvType.getProp(propQname);
+  if (resultType != null && resultType.isBottom()) {
+    warnings.add(JSError.make(propAccessNode,BOTTOM_PROP,pname,recvType.toString()));
+    return new EnvTypePair(pair.env,JSType.UNKNOWN);
+  }
   if (!propAccessNode.getParent().isExprResult() && !specializedType.isTruthy() && !specializedType.isFalsy()&& !recvType.isDict()) {
     if (!recvType.mayHaveProp(propQname)) {
       warnings.add(JSError.make(propAccessNode,TypeCheck.INEXISTENT_PROPERTY,pname,recvType.toString()));

@@ -23,4 +23,5 @@
   typeCheck(Joiner.on('\n').join("/**"," * @param {!Array<T>} arr"," * @param {?function(this:S, T, number, ?) : boolean} f"," * @param {S=} opt_obj"," * @return {T|null}"," * @template T,S"," */","function gaf(arr, f, opt_obj) {","  return null;","};","/** @type {number|null} */","var x = gaf([1, 2, 3], function(x, y, z) { return true; });"));
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {function(T):boolean} x"," */","function f(x) {}","f(function(x) { return 'asdf'; });"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @param {function(T)} y"," */","function f(x, y) {}","f(123, function(x) { var /** string */ s = x; });"),NewTypeInference.NOT_UNIQUE_INSTANTIATION);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," */","function f(x) {}","var y = null;","if (!y) {","} else {","  f(y)","}"));
 }
