@@ -3,10 +3,15 @@
   if (isAnnotatedAsConst(getProp)) {
     warnings.add(JSError.make(getProp,MISPLACED_CONST_ANNOTATION));
   }
-  RawNominalType rawType=getRawTypeFromJSType(simpleInferExprType(getProp.getFirstChild()));
-  if (rawType == null) {
+  JSType recvType=simpleInferExprType(getProp.getFirstChild());
+  if (recvType == null) {
     return;
   }
+  NominalType nt=recvType.getNominalTypeIfSingletonObj();
+  if (nt == null || nt.equals(commonTypes.getObjectType())) {
+    return;
+  }
+  RawNominalType rawType=nt.getRawNominalType();
   String pname=getProp.getLastChild().getString();
   JSType declType=getDeclaredTypeOfNode(NodeUtil.getBestJSDocInfo(getProp),currentScope);
   if (declType != null) {
