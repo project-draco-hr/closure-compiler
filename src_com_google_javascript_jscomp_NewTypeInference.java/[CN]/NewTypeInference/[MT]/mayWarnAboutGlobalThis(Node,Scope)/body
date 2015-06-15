@@ -1,0 +1,11 @@
+{
+  Preconditions.checkArgument(thisExpr.isThis());
+  Preconditions.checkState(!currentScope.hasThis());
+  Node parent=thisExpr.getParent();
+  Node scopeParent=currentScope.getRoot().getParent();
+  if ((parent.isGetProp() || parent.isGetElem()) && !scopeParent.isCall() && !scopeParent.isNew()) {
+    warnings.add(JSError.make(thisExpr,CheckGlobalThis.GLOBAL_THIS));
+    return true;
+  }
+  return false;
+}
