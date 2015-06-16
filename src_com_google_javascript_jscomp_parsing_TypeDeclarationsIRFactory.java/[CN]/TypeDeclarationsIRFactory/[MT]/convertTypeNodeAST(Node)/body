@@ -62,7 +62,8 @@ return unionType(types);
 }
 case Token.FUNCTION:
 Node returnType=anyType();
-LinkedHashMap<String,TypeDeclarationNode> parameters=new LinkedHashMap<>();
+LinkedHashMap<String,TypeDeclarationNode> requiredParams=new LinkedHashMap<>();
+LinkedHashMap<String,TypeDeclarationNode> optionalParams=new LinkedHashMap<>();
 String restName=null;
 TypeDeclarationNode restType=null;
 for (Node child2 : n.children()) {
@@ -71,13 +72,19 @@ int paramIdx=1;
 for (Node param : child2.children()) {
 String paramName="p" + paramIdx++;
 if (param.getType() == Token.ELLIPSIS) {
-restName=paramName;
 if (param.getFirstChild() != null) {
-restType=convertTypeNodeAST(param.getFirstChild());
+restType=arrayType(convertTypeNodeAST(param.getFirstChild()));
 }
+restName=paramName;
 }
  else {
-parameters.put(paramName,convertTypeNodeAST(param));
+TypeDeclarationNode paramNode=convertTypeNodeAST(param);
+if (paramNode.getType() == Token.OPTIONAL_PARAMETER) {
+optionalParams.put(paramName,(TypeDeclarationNode)paramNode.removeFirstChild());
+}
+ else {
+requiredParams.put(paramName,convertTypeNodeAST(param));
+}
 }
 }
 }
@@ -89,7 +96,7 @@ parameters.put(paramName,convertTypeNodeAST(param));
 returnType=convertTypeNodeAST(child2);
 }
 }
-return functionType(returnType,parameters,restName,restType);
+return functionType(returnType,requiredParams,optionalParams,restName,restType);
 case Token.EQUALS:
 TypeDeclarationNode optionalParam=convertTypeNodeAST(n.getFirstChild());
 return optionalParam == null ? null : optionalParameter(optionalParam);

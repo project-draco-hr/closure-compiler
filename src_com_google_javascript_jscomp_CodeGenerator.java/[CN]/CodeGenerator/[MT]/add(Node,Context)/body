@@ -91,6 +91,9 @@ addIdentifier(n.getString());
 break;
 case Token.NAME:
 addIdentifier(n.getString());
+if (n.getBooleanProp(Node.OPT_PARAM_ES6_TYPED)) {
+add("?");
+}
 maybeAddTypeDecl(n);
 if (first != null && !first.isEmpty()) {
 Preconditions.checkState(childCount == 1);
@@ -110,6 +113,7 @@ add("]");
 break;
 case Token.ARRAY_PATTERN:
 addArrayPattern(n);
+maybeAddTypeDecl(n);
 break;
 case Token.PARAM_LIST:
 add("(");
@@ -727,6 +731,7 @@ add(";");
 break;
 case Token.OBJECT_PATTERN:
 addObjectPattern(n,context);
+maybeAddTypeDecl(n);
 break;
 case Token.SWITCH:
 add("switch(");
@@ -811,13 +816,6 @@ addList(first.getNext());
 add(")");
 cc.addOp("=>",true);
 add(returnType);
-break;
-case Token.OPTIONAL_PARAMETER:
-add(first);
-break;
-case Token.REST_PARAMETER_TYPE:
-add("...");
-add(first);
 break;
 case Token.UNION_TYPE:
 addList(first,"|");

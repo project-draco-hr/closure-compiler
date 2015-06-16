@@ -1,0 +1,16 @@
+{
+  SourcePosition listStart=getTreeStartLocation();
+  eat(TokenType.OPEN_PAREN);
+  ImmutableList.Builder<ParseTree> result=ImmutableList.builder();
+  while (peekParameter(inTypeExpression)) {
+    result.add(parseParameter(inTypeExpression));
+    if (!peek(TokenType.CLOSE_PAREN)) {
+      Token comma=eat(TokenType.COMMA);
+      if (peek(TokenType.CLOSE_PAREN)) {
+        reportError(comma,"Invalid trailing comma in formal parameter list");
+      }
+    }
+  }
+  eat(TokenType.CLOSE_PAREN);
+  return new FormalParameterListTree(getTreeLocation(listStart),result.build());
+}

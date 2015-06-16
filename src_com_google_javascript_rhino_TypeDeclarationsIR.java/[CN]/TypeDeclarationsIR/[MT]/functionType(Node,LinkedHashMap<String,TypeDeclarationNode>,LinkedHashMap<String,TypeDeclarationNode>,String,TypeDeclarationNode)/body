@@ -1,0 +1,19 @@
+{
+  TypeDeclarationNode node=new TypeDeclarationNode(Token.FUNCTION_TYPE,returnType);
+  Preconditions.checkNotNull(requiredParams);
+  Preconditions.checkNotNull(optionalParams);
+  for (  Map.Entry<String,TypeDeclarationNode> param : requiredParams.entrySet()) {
+    Node name=IR.name(param.getKey());
+    node.addChildToBack(maybeAddType(name,param.getValue()));
+  }
+  for (  Map.Entry<String,TypeDeclarationNode> param : optionalParams.entrySet()) {
+    Node name=IR.name(param.getKey());
+    name.putBooleanProp(Node.OPT_PARAM_ES6_TYPED,true);
+    node.addChildToBack(maybeAddType(name,param.getValue()));
+  }
+  if (restName != null) {
+    Node rest=Node.newString(Token.REST,restName);
+    node.addChildrenToBack(maybeAddType(rest,restType));
+  }
+  return node;
+}
