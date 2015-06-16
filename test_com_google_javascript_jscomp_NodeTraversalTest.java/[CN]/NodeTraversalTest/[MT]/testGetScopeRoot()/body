@@ -4,7 +4,7 @@
     @Override public void enterScope(    NodeTraversal t){
       Node root1=t.getScopeRoot();
       Node root2=t.getScope().getRootNode();
-      assertEquals(root1,root2);
+      assertNode(root2).isEqualTo(root1);
     }
     @Override public void exitScope(    NodeTraversal t){
     }
@@ -15,7 +15,7 @@
     }
   }
 );
-  String code="" + "var a; " + "function foo() {"+ "  var b"+ "}";
+  String code=Joiner.on('\n').join("var a;","function foo() {","  var b","}");
   Node tree=parse(compiler,code);
   t.traverse(tree);
 }

@@ -3,7 +3,7 @@
   ScopeCreator creator=SyntacticScopeCreator.makeUntyped(compiler);
   ExpectNodeOnEnterScope callback=new ExpectNodeOnEnterScope();
   NodeTraversal t=new NodeTraversal(compiler,callback,creator);
-  String code="" + "var a; " + "function foo() {"+ "  var b;"+ "}";
+  String code=Joiner.on('\n').join("var a;","function foo() {","  var b;","}");
   Node tree=parse(compiler,code);
   Scope topScope=creator.createScope(tree,null);
   callback.expect(tree.getFirstChild(),tree);
