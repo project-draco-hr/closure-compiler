@@ -2,9 +2,9 @@
   RecentChange recentChange=new RecentChange();
   compiler.addChangeHandler(recentChange);
   Node root=compiler.parseInputs();
-  assertNotNull("Unexpected parse error(s): " + Joiner.on("\n").join(compiler.getErrors()),root);
+  assertNotNull("Unexpected parse error(s): " + LINE_JOINER.join(compiler.getErrors()),root);
   if (!expectParseWarningsThisTest) {
-    assertEquals("Unexpected parse warnings(s): " + Joiner.on("\n").join(compiler.getWarnings()),0,compiler.getWarnings().length);
+    assertEquals("Unexpected parse warnings(s): " + LINE_JOINER.join(compiler.getWarnings()),0,compiler.getWarnings().length);
   }
   if (astValidationEnabled) {
     (new AstValidator(compiler)).validateRoot(root);
@@ -79,7 +79,7 @@
     }
   }
   if (error == null) {
-    assertEquals("Unexpected error(s): " + Joiner.on("\n").join(compiler.getErrors()),0,compiler.getErrorCount());
+    assertEquals("Unexpected error(s): " + LINE_JOINER.join(compiler.getErrors()),0,compiler.getErrorCount());
     ErrorManager symbolTableErrorManager=new BlackHoleErrorManager();
     compiler.setErrorManager(symbolTableErrorManager);
     Node expectedRoot=null;
@@ -93,10 +93,10 @@
       assertThat(stErrors[0].getType()).isEqualTo(expectedSymbolTableError);
     }
  else {
-      assertEquals("Unexpected symbol table error(s): " + Joiner.on("\n").join(stErrors),0,stErrors.length);
+      assertEquals("Unexpected symbol table error(s): " + LINE_JOINER.join(stErrors),0,stErrors.length);
     }
     if (warning == null) {
-      assertEquals("Unexpected warning(s): " + Joiner.on("\n").join(aggregateWarnings),0,aggregateWarningCount);
+      assertEquals("Unexpected warning(s): " + LINE_JOINER.join(aggregateWarnings),0,aggregateWarningCount);
     }
  else {
       assertEquals("There should be one warning, repeated " + numRepetitions + " time(s). Warnings: "+ aggregateWarnings,numRepetitions,aggregateWarningCount);

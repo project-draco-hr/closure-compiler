@@ -1,5 +1,5 @@
 {
-  test(Joiner.on('\n').join("class C {","  static foo() {}","}"),Joiner.on('\n').join("/** @constructor @struct */","var C = function() {};","C.foo = function() {};"));
-  test(Joiner.on('\n').join("class C {","  static foo() {}","","  foo() {}","}"),Joiner.on('\n').join("/** @constructor @struct */","var C = function() {};","","C.foo = function() {};","","C.prototype.foo = function() {};"));
-  test(Joiner.on('\n').join("class C {","  static foo() {}","","  bar() { C.foo(); }","}"),Joiner.on('\n').join("/** @constructor @struct */","var C = function() {};","","C.foo = function() {};","","C.prototype.bar = function() { C.foo(); };"));
+  test("class C { static foo() {} }","/** @constructor @struct */ var C = function() {}; C.foo = function() {};");
+  test("class C { static foo() {}; foo() {} }",LINE_JOINER.join("/** @constructor @struct */","var C = function() {};","","C.foo = function() {};","","C.prototype.foo = function() {};"));
+  test("class C { static foo() {}; bar() { C.foo(); } }",LINE_JOINER.join("/** @constructor @struct */","var C = function() {};","","C.foo = function() {};","","C.prototype.bar = function() { C.foo(); };"));
 }
