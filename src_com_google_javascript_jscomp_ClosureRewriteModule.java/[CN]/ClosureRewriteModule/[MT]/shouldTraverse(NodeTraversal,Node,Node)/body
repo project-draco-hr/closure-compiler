@@ -7,13 +7,18 @@
   }
   if (inModule()) {
 switch (n.getType()) {
-case Token.BLOCK:
-      if (current.moduleScopeRoot == parent && parent.isFunction()) {
-        current.moduleScope=t.getScope();
-      }
-    break;
 case Token.SCRIPT:
-  current.moduleScope=t.getScope();
+      current.moduleScope=t.getScope();
+    break;
+case Token.BLOCK:
+  if (current.moduleScopeRoot == parent && parent.isFunction()) {
+    current.moduleScope=t.getScope();
+  }
+break;
+default :
+if (current.moduleScopeRoot == parent && parent.isBlock()) {
+current.moduleScope=t.getScope();
+}
 break;
 }
 }

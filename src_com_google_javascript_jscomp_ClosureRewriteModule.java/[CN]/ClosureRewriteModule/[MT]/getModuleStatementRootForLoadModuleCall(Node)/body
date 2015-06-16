@@ -1,6 +1,9 @@
 {
-  Node fn=getModuleScopeRootForLoadModuleCall(n);
-  Node block=fn.getLastChild();
-  Preconditions.checkState(block.isBlock());
-  return block;
+  Node scopeRoot=getModuleScopeRootForLoadModuleCall(n);
+  if (scopeRoot.isFunction()) {
+    return scopeRoot.getLastChild();
+  }
+ else {
+    return scopeRoot;
+  }
 }
