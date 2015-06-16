@@ -57,14 +57,14 @@ if (parent.isVar() || parent.isCatch()) {
 break;
 }
 case Token.GETPROP:
-if (parent.isExprResult()) {
+if (parent.isExprResult() && n.isQualifiedName()) {
 visitPropertyDeclaration(n);
 }
 break;
 case Token.ASSIGN:
 {
 Node lvalue=n.getFirstChild();
-if (lvalue.isGetProp() && parent.isExprResult()) {
+if (lvalue.isGetProp() && lvalue.isQualifiedName() && parent.isExprResult()) {
 visitPropertyDeclaration(lvalue);
 }
 break;

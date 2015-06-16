@@ -1,6 +1,7 @@
 {
   Preconditions.checkArgument(expr.isCall());
-  String calleeName=expr.getFirstChild().getQualifiedName();
+  Preconditions.checkArgument(expr.getFirstChild().isName());
+  String calleeName=expr.getFirstChild().getString();
   if (currentScope.isKnownFunction(calleeName) && !currentScope.isLocalFunDef(calleeName) && !currentScope.isExternalFunction(calleeName)) {
     Scope s=currentScope.getScope(calleeName);
     JSType expectedRetType;

@@ -1,9 +1,12 @@
 {
   Preconditions.checkArgument(getProp.isGetProp());
+  Preconditions.checkArgument(getProp.isQualifiedName());
   if (isAnnotatedAsConst(getProp)) {
     warnings.add(JSError.make(getProp,MISPLACED_CONST_ANNOTATION));
   }
-  JSType recvType=simpleInferExprType(getProp.getFirstChild());
+  QualifiedName recvQname=QualifiedName.fromNode(getProp.getFirstChild());
+  Declaration d=this.currentScope.getDeclaration(recvQname,false);
+  JSType recvType=d == null ? null : d.getTypeOfSimpleDecl();
   if (recvType == null) {
     return;
   }
