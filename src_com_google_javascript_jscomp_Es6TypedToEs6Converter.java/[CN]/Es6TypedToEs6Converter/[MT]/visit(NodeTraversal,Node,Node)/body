@@ -1,0 +1,47 @@
+{
+  if (n.getType() == Token.CLASS) {
+    Node classNode=n;
+    Node classMembers=classNode.getLastChild();
+    ClassDeclarationMetadata metadata=ClassDeclarationMetadata.create(n,parent);
+    for (    Node member : classMembers.children()) {
+      if (!member.isMemberVariableDef() && !member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)) {
+        continue;
+      }
+      if (metadata == null) {
+        compiler.report(JSError.make(n,CANNOT_CONVERT_MEMBER_VARIABLES));
+        return;
+      }
+      member.getParent().removeChild(member);
+      Node classNameAccess=NodeUtil.newQName(compiler,metadata.fullClassName);
+      Node prototypeAcess=NodeUtil.newPropertyAccess(compiler,classNameAccess,"prototype");
+      Node qualifiedMemberAccess=Es6ToEs3Converter.getQualifiedMemberAccess(compiler,member,classNameAccess,prototypeAcess);
+      qualifiedMemberAccess.setJSDocInfo(member.getJSDocInfo());
+      Node newNode=NodeUtil.newExpr(qualifiedMemberAccess);
+      newNode.useSourceInfoIfMissingFromForTree(member);
+      metadata.insertNodeAndAdvance(newNode);
+      compiler.reportCodeChange();
+    }
+  }
+  TypeDeclarationNode type=n.getDeclaredTypeExpression();
+  if (type == null) {
+    return;
+  }
+  JSDocInfo info=n.getJSDocInfo();
+  Preconditions.checkState(info == null || info.getType() == null,"Nodes must not have both type declarations and JSDoc types");
+  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(info);
+  Node typeRoot=convertWithLocation(type);
+  JSTypeExpression typeExpression=new JSTypeExpression(typeRoot,n.getSourceFileName());
+  if (n.isFunction()) {
+    builder.recordReturnType(typeExpression);
+  }
+ else   if (n.getType() == Token.MEMBER_VARIABLE_DEF) {
+    builder.recordType(typeExpression);
+  }
+ else {
+    builder.recordType(typeExpression);
+    builder.recordInlineType();
+  }
+  info=builder.build();
+  n.setJSDocInfo(info);
+  n.setDeclaredTypeExpression(null);
+}
