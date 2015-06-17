@@ -1,7 +1,12 @@
 {
   String typeString=super.toStringHelper(forAnnotations);
   if (!templateTypes.isEmpty()) {
-    typeString+="<" + Joiner.on(",").join(templateTypes) + ">";
+    typeString+="<" + Joiner.on(",").join(Lists.transform(templateTypes,new Function<JSType,String>(){
+      @Override public String apply(      JSType type){
+        return type.toStringHelper(forAnnotations);
+      }
+    }
+)) + ">";
   }
   return typeString;
 }
