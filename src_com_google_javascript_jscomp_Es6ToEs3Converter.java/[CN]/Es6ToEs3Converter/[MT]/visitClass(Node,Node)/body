@@ -59,7 +59,7 @@
         assign.setJSDocInfo(info);
       }
       Node newNode=NodeUtil.newExpr(assign);
-      metadata.insertStaticMember(newNode);
+      metadata.insertNodeAndAdvance(newNode);
     }
   }
   for (  Map.Entry<String,JSTypeExpression> entry : membersToDeclare.entrySet()) {
@@ -68,12 +68,12 @@
     JSDocInfoBuilder declInfo=new JSDocInfoBuilder(true);
     declInfo.recordType(entry.getValue());
     declaration.setJSDocInfo(declInfo.build());
-    metadata.insertStaticMember(IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(classNode));
+    metadata.insertNodeAndAdvance(IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(classNode));
   }
   if (metadata.defineProperties.hasChildren()) {
     Node definePropsCall=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"Object.defineProperties"),prototypeAccess.cloneTree(),metadata.defineProperties));
     definePropsCall.useSourceInfoIfMissingFromForTree(classNode);
-    metadata.insertStaticMember(definePropsCall);
+    metadata.insertNodeAndAdvance(definePropsCall);
   }
   Preconditions.checkNotNull(constructor);
   JSDocInfo classJSDoc=NodeUtil.getBestJSDocInfo(classNode);

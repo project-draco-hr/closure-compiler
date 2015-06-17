@@ -12,7 +12,9 @@
   astRoot.addChildToFront(compiler.getInput(new InputId("[testcode]")).getAstRoot(compiler));
   assertEquals("parsing error: " + Joiner.on(", ").join(compiler.getErrors()),0,compiler.getErrorCount());
   assertEquals("parsing warning: " + Joiner.on(", ").join(compiler.getWarnings()),0,compiler.getWarningCount());
-  IR.block(externsRoot,astRoot).setIsSyntheticBlock(true);
+  Node block=IR.block(externsRoot,astRoot);
+  block.setIsSyntheticBlock(true);
+  (new AstValidator(compiler)).validateRoot(block);
   GlobalTypeInfo symbolTable=new GlobalTypeInfo(compiler);
   passes.add(makePassFactory("GlobalTypeInfo",symbolTable));
   compiler.setSymbolTable(symbolTable);
