@@ -1,4 +1,5 @@
 {
-  test("/** @enum { { a: { b: number}} } */" + "var e = { KEY1: { a: { /** @nocollapse */ b: 123}},\n" + "  KEY2: { a: { b: 456}}\n"+ "}",null,null,CollapseProperties.INVALID_NOCOLLAPSE);
-  test("/** @enum */ var e = { A: 1, B: 2 };\n" + "/** @type {{ c: { d: number } }} */ e.name1 = {" + "  c: { /** @nocollapse */ d: 123 } };",null,null,CollapseProperties.INVALID_NOCOLLAPSE);
+  test("/** @enum { { a: { b: number}} } */" + "var e = { KEY1: { a: { /** @nocollapse */ b: 123}},\n" + "  KEY2: { a: { b: 456}}\n"+ "}","var e$KEY1$a={b:123}; var e$KEY2$a$b=456;");
+  test("/** @enum */ var e = { A: 1, B: 2 };\n" + "/** @type {{ c: { d: number } }} */ e.name1 = {" + "  c: { /** @nocollapse */ d: 123 } };","var e$A=1; var e$B=2; var e$name1$c={d:123};");
+  test("/** @enum */ var e = { A: 1, B: 2};\n" + "/** @nocollapse */ e.foo = { bar: true };","var e$A=1; var e$B=2; var e = {}; e.foo = { bar: true };");
 }
