@@ -9,14 +9,18 @@ case Token.GETPROP:
 if (parent.isAssign() || parent.isVar() || parent.isFunction()) {
   definitionMap.put(name,parent);
 }
+JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(n);
+if (jsdoc != null && jsdoc.isExport()) {
+handleExportDefinition(t,n);
+}
 if (!parent.isCall()) {
 return;
 }
 if (exportPropertyFunctionNames.contains(name)) {
-handlePropertyExport(parent);
+handlePropertyExportCall(parent);
 }
 if (exportSymbolFunctionNames.contains(name)) {
-handleSymbolExport(parent);
+handleSymbolExportCall(parent);
 }
 }
 }

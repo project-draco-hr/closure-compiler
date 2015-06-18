@@ -1,0 +1,13 @@
+{
+  if (!definitionNode.isGetProp() || !definitionNode.getFirstChild().isThis()) {
+    return;
+  }
+  Node constructorNode=t.getEnclosingFunction();
+  JSDocInfo constructorJsdoc=NodeUtil.getBestJSDocInfo(constructorNode);
+  if (constructorJsdoc == null || !constructorJsdoc.isConstructor()) {
+    return;
+  }
+  String constructorName=NodeUtil.getFunctionName(constructorNode);
+  String propertyName=definitionNode.getLastChild().getString();
+  this.exports.add(new PropertyExport(constructorName + ".prototype",propertyName,NodeUtil.getInitializer(definitionNode)));
+}
