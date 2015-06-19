@@ -33,8 +33,33 @@ parameters.addChildToBack(convertWithLocation(param));
 return result;
 }
 case Token.FUNCTION_TYPE:
+Node returnType=type.getFirstChild();
+Node paramList=new Node(Token.PARAM_LIST);
+for (Node param=returnType.getNext(); param != null; param=param.getNext()) {
+Node paramType=param.getDeclaredTypeExpression();
+if (param.isRest()) {
+if (paramType == null) {
+paramType=new Node(Token.ELLIPSIS,new Node(Token.QMARK));
+}
+ else {
+paramType=new Node(Token.ELLIPSIS,convertWithLocation(paramType.getFirstChild()));
+}
+}
+ else {
+paramType=maybeProcessOptionalParameter(param,maybeCreateAnyType(paramType));
+}
+paramList.addChildToBack(paramType);
+}
+Node function=new Node(Token.FUNCTION);
+function.addChildToBack(paramList);
+function.addChildToBack(convertWithLocation(returnType));
+return function;
 case Token.UNION_TYPE:
-case Token.OPTIONAL_PARAMETER:
+Node pipe=new Node(Token.PIPE);
+for (Node child : type.children()) {
+pipe.addChildToBack(convertWithLocation(child));
+}
+return pipe;
 case Token.RECORD_TYPE:
 default :
 break;

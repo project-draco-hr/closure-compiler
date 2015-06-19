@@ -1,0 +1,34 @@
+{
+  Node type=n.getDeclaredTypeExpression();
+  boolean hasColonType=type != null;
+  if (n.isRest() && hasColonType) {
+    type=new Node(Token.ELLIPSIS,convertWithLocation(type.removeFirstChild()));
+  }
+ else {
+    type=maybeProcessOptionalParameter(n,type);
+  }
+  if (type == null) {
+    return;
+  }
+  JSDocInfo info=n.getJSDocInfo();
+  Preconditions.checkState(info == null || info.getType() == null,"Nodes must not have both type declarations and JSDoc types");
+  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(info);
+  JSTypeExpression typeExpression=new JSTypeExpression(type,n.getSourceFileName());
+switch (n.getType()) {
+case Token.FUNCTION:
+    builder.recordReturnType(typeExpression);
+  break;
+case Token.MEMBER_VARIABLE_DEF:
+builder.recordType(typeExpression);
+break;
+default :
+builder.recordType(typeExpression);
+builder.recordInlineType();
+}
+info=builder.build();
+n.setJSDocInfo(info);
+if (hasColonType) {
+n.setDeclaredTypeExpression(null);
+compiler.reportCodeChange();
+}
+}
