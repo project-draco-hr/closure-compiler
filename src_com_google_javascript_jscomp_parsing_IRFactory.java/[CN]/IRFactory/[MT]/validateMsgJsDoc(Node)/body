@@ -1,0 +1,33 @@
+{
+  JSDocInfo info=n.getJSDocInfo();
+  if (info == null) {
+    return;
+  }
+  if (info.getDescription() != null || info.isHidden() || info.getMeaning() != null) {
+    boolean descOkay=false;
+switch (n.getType()) {
+case Token.ASSIGN:
+{
+        Node lhs=n.getFirstChild();
+        if (lhs.isName()) {
+          descOkay=lhs.getString().startsWith("MSG_");
+        }
+ else         if (lhs.isQualifiedName()) {
+          descOkay=lhs.getLastChild().getString().startsWith("MSG_");
+        }
+        break;
+      }
+case Token.VAR:
+case Token.LET:
+case Token.CONST:
+    descOkay=n.getFirstChild().getString().startsWith("MSG_");
+  break;
+case Token.STRING_KEY:
+descOkay=n.getString().startsWith("MSG_");
+break;
+}
+if (!descOkay) {
+errorReporter.warning(MISPLACED_MSG_ANNOTATION,sourceName,n.getLineno(),n.getCharno());
+}
+}
+}
