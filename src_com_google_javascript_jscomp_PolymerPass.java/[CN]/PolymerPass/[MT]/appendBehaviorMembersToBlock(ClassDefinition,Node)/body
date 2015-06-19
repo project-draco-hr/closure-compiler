@@ -4,6 +4,9 @@
   for (  BehaviorDefinition behavior : cls.behaviors) {
     for (    MemberDefinition behaviorFunction : behavior.functionsToCopy) {
       String fnName=behaviorFunction.name.getString();
+      if (NodeUtil.getFirstPropMatchingKey(cls.descriptor,fnName) != null) {
+        continue;
+      }
       if (nameToExprResult.containsKey(fnName)) {
         block.removeChild(nameToExprResult.get(fnName));
       }
