@@ -1,0 +1,16 @@
+{
+  parse("function foo<T>() {\n}");
+  parse("var x = <K, V>(p) => 3;");
+  parse("class Foo {\n  f<T>() {\n  }\n}");
+  parse("(function<T>() {\n})();");
+  parse("function* foo<T>() {\n}");
+  expectErrors("Parse error. Unexpected token '<' in type expression");
+  parse("var n: (<T>p1) => boolean;");
+  expectErrors("Parse error. '>' expected");
+  parse("function foo<T() {\n}");
+  expectErrors("Parse error. 'identifier' expected");
+  parse("function foo<>() {\n}");
+  expectErrors("Parse error. primary expression expected");
+  parse("var x = <T>((p:T) => 3);");
+  testNotEs6Typed("function foo<T>() {}","generic function");
+}

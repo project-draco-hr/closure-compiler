@@ -1,0 +1,20 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.OPEN_ANGLE);
+  LinkedHashMap<IdentifierToken,ParseTree> types=new LinkedHashMap<>();
+  do {
+    IdentifierToken name=eatId();
+    ParseTree bound=null;
+    if (peek(TokenType.EXTENDS)) {
+      eat(TokenType.EXTENDS);
+      bound=parseType();
+    }
+    types.put(name,bound);
+    if (peek(TokenType.COMMA)) {
+      eat(TokenType.COMMA);
+    }
+  }
+ while (peekId());
+  eat(TokenType.CLOSE_ANGLE);
+  return new GenericTypeListTree(getTreeLocation(start),types);
+}

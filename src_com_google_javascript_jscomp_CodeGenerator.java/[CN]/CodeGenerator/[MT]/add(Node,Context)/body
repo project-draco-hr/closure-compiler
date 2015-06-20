@@ -183,6 +183,7 @@ add(regexp);
 }
 break;
 case Token.FUNCTION:
+{
 if (n.getClass() != Node.class) {
 throw new Error("Unexpected Node subclass.");
 }
@@ -198,8 +199,12 @@ add("function");
 }
 if (n.isGeneratorFunction()) {
 add("*");
+if (!first.getString().isEmpty()) {
+cc.maybeInsertSpace();
+}
 }
 add(first);
+maybeAddGenericTypes(first);
 add(first.getNext());
 maybeAddTypeDecl(n);
 if (isArrow) {
@@ -211,6 +216,7 @@ if (funcNeedsParens) {
 add(")");
 }
 break;
+}
 case Token.REST:
 add("...");
 add(n.getString());
@@ -301,6 +307,7 @@ add("class");
 if (!name.isEmpty()) {
 add(name);
 }
+maybeAddGenericTypes(first);
 if (!superClass.isEmpty()) {
 add("extends");
 add(superClass);
@@ -374,6 +381,7 @@ Node parameters=fn.getChildAtIndex(1);
 Node body=fn.getLastChild();
 if (!n.isQuotedString() && TokenStream.isJSIdentifier(name) && NodeUtil.isLatin(name)) {
 add(name);
+maybeAddGenericTypes(fn.getFirstChild());
 }
  else {
 double d=getSimpleNumber(name);
@@ -831,6 +839,25 @@ add("<");
 addList(first.getNext());
 add(">");
 break;
+case Token.GENERIC_TYPE_LIST:
+add("<");
+Node generic=n.getFirstChild();
+add(generic);
+while ((generic=generic.getNext()) != null) {
+add(",");
+cc.maybeInsertSpace();
+add(generic);
+}
+add(">");
+break;
+case Token.GENERIC_TYPE:
+addIdentifier(n.getString());
+if (n.hasChildren()) {
+add("extends");
+cc.maybeInsertSpace();
+add(n.getFirstChild());
+}
+break;
 case Token.INTERFACE:
 {
 Preconditions.checkState(childCount == 3);
@@ -839,6 +866,7 @@ Node superTypes=first.getNext();
 Node members=last;
 add("interface");
 add(name);
+maybeAddGenericTypes(name);
 if (!superTypes.isEmpty()) {
 add("extends");
 for (Node child=superTypes.getFirstChild(); child != null; child=child.getNext()) {

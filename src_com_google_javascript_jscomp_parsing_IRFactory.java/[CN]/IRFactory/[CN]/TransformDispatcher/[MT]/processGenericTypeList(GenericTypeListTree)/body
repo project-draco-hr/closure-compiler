@@ -1,0 +1,12 @@
+{
+  Node list=new Node(Token.GENERIC_TYPE_LIST);
+  for (  Map.Entry<IdentifierToken,ParseTree> generic : tree.generics.entrySet()) {
+    Node type=newStringNode(Token.GENERIC_TYPE,generic.getKey().value);
+    ParseTree bound=generic.getValue();
+    if (bound != null) {
+      type.addChildToBack(transform(bound));
+    }
+    list.addChildToBack(type);
+  }
+  return list;
+}

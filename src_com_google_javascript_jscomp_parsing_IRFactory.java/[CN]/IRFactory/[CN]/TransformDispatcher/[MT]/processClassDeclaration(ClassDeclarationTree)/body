@@ -1,6 +1,10 @@
 {
   maybeWarnEs6Feature(tree,"class");
   Node name=transformOrEmpty(tree.name,tree);
+  if (tree.generics != null) {
+    maybeWarnTypeSyntax(tree,"generic class");
+    name.putProp(Node.GENERIC_TYPE_LIST,transform(tree.generics));
+  }
   Node superClass=transformOrEmpty(tree.superClass,tree);
   Node body=newNode(Token.CLASS_MEMBERS);
   setSourceInfo(body,tree);

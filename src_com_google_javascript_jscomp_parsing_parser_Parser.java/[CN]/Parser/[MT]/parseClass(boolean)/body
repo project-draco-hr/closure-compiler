@@ -5,6 +5,10 @@
   if (!isExpression || peekId()) {
     name=eatId();
   }
+  GenericTypeListTree genericTypes=null;
+  if (peek(TokenType.OPEN_ANGLE)) {
+    genericTypes=parseGenericTypes();
+  }
   ParseTree superClass=null;
   if (peek(TokenType.EXTENDS)) {
     eat(TokenType.EXTENDS);
@@ -13,5 +17,5 @@
   eat(TokenType.OPEN_CURLY);
   ImmutableList<ParseTree> elements=parseClassElements();
   eat(TokenType.CLOSE_CURLY);
-  return new ClassDeclarationTree(getTreeLocation(start),name,superClass,elements);
+  return new ClassDeclarationTree(getTreeLocation(start),name,genericTypes,superClass,elements);
 }
