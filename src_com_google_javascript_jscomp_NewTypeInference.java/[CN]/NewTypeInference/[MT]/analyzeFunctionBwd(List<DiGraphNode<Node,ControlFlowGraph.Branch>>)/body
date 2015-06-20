@@ -1,9 +1,6 @@
 {
   for (  DiGraphNode<Node,ControlFlowGraph.Branch> dn : workset) {
     Node n=dn.getValue();
-    if (n.isThrow()) {
-      continue;
-    }
     TypeEnv outEnv=getOutEnv(dn);
     TypeEnv inEnv;
     println("\tBWD Statment: ",n);
@@ -73,6 +70,7 @@ case Token.WHILE:
 Node expr=NodeUtil.isForIn(n) ? n.getFirstChild() : NodeUtil.getConditionExpression(n);
 inEnv=analyzeExprBwd(expr,outEnv).env;
 break;
+case Token.THROW:
 case Token.CASE:
 case Token.SWITCH:
 inEnv=analyzeExprBwd(n.getFirstChild(),outEnv).env;
