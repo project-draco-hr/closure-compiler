@@ -22,7 +22,9 @@
     entryEnv=envPutType(entryEnv,name,initType);
   }
   for (  String local : currentScope.getLocals()) {
-    entryEnv=envPutType(entryEnv,local,JSType.UNDEFINED);
+    if (!currentScope.isFunctionNamespace(local)) {
+      entryEnv=envPutType(entryEnv,local,JSType.UNDEFINED);
+    }
   }
   for (  String fnName : currentScope.getLocalFunDefs()) {
     JSType summaryType=getSummaryOfLocalFunDef(fnName);

@@ -2,11 +2,11 @@
   Preconditions.checkArgument(qnameNode.isGetProp());
   Preconditions.checkArgument(qnameNode.isQualifiedName());
   Node recv=qnameNode.getFirstChild();
-  if (!currentScope.isNamespace(recv)) {
+  if (!currentScope.isNamespace(recv) && !mayCreateFunctionNamespace(recv)) {
     return;
   }
   if (NodeUtil.isNamespaceDecl(qnameNode)) {
-    visitNamespace(qnameNode);
+    visitObjlitNamespace(qnameNode);
   }
  else   if (NodeUtil.isTypedefDecl(qnameNode)) {
     visitTypedef(qnameNode);

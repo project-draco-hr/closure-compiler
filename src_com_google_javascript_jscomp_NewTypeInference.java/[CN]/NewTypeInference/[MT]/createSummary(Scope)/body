@@ -1,8 +1,9 @@
 {
+  Node fnRoot=fn.getRoot();
+  Preconditions.checkArgument(!fnRoot.isFromExterns());
   TypeEnv entryEnv=getEntryTypeEnv();
   TypeEnv exitEnv=getFinalTypeEnv();
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
-  Node fnRoot=fn.getRoot();
   DeclaredFunctionType declType=fn.getDeclaredFunctionType();
   int reqArity=declType.getRequiredArity();
   int optArity=declType.getOptionalArity();
@@ -64,9 +65,16 @@
   JSType summary=commonTypes.fromFunctionType(builder.buildFunction());
   println("Function summary for ",fn.getReadableName());
   println("\t",summary);
+  Scope enclosingScope=fn.getParent();
+  Node fnNameNode=NodeUtil.getFunctionNameNode(fnRoot);
+  String fnName=fnNameNode != null && fnNameNode.isName() ? fnNameNode.getString() : null;
+  if (fnName != null && enclosingScope.isFunctionNamespace(fnName)) {
+    JSType namespaceType=enclosingScope.getDeclaredTypeOf(fnName);
+    namespaceType=JSType.meet(namespaceType,JSType.TOP_OBJECT);
+    summary=summary.specialize(namespaceType);
+  }
   summaries.put(fn,summary);
   maybeSetTypeI(fnRoot,summary);
-  Node fnNameNode=NodeUtil.getFunctionNameNode(fnRoot);
   if (fnNameNode != null) {
     maybeSetTypeI(fnNameNode,summary);
   }

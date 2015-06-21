@@ -1,7 +1,8 @@
 {
   TypeEnv env=new TypeEnv();
   Set<String> varNames=currentScope.getOuterVars();
-  varNames.addAll(currentScope.getLocals());
+  Set<String> locals=currentScope.getLocals();
+  varNames.addAll(locals);
   varNames.addAll(currentScope.getExterns());
   if (currentScope.isFunction()) {
     if (currentScope.getName() != null) {
@@ -19,8 +20,10 @@
     env=envPutType(env,ARGSARRAYELM_ID,argsArrayElmType);
   }
   for (  String varName : varNames) {
-    JSType declType=currentScope.getDeclaredTypeOf(varName);
-    env=envPutType(env,varName,declType == null ? JSType.UNKNOWN : pickInitialType(declType));
+    if (!locals.contains(varName) || !currentScope.isFunctionNamespace(varName)) {
+      JSType declType=currentScope.getDeclaredTypeOf(varName);
+      env=envPutType(env,varName,declType == null ? JSType.UNKNOWN : pickInitialType(declType));
+    }
   }
   for (  String fnName : currentScope.getLocalFunDefs()) {
     JSType summaryType=getSummaryOfLocalFunDef(fnName);

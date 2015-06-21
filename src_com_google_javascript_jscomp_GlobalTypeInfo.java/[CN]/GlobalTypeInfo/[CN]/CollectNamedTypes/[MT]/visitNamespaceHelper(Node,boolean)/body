@@ -1,0 +1,17 @@
+{
+  if (isObjlitNamespace && currentScope.isDefined(qnameNode)) {
+    return;
+  }
+  if (qnameNode.isGetProp()) {
+    Preconditions.checkState(qnameNode.getParent().isAssign());
+    qnameNode.getParent().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+  }
+  Scope s;
+  if (isObjlitNamespace) {
+    s=currentScope;
+  }
+ else {
+    s=currentScope.getScope(qnameNode.getString()).getParent();
+  }
+  s.addNamespace(qnameNode,qnameNode.isFromExterns());
+}

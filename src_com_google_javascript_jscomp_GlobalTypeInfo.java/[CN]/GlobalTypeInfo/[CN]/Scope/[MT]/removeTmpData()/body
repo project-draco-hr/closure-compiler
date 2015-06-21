@@ -6,6 +6,11 @@
   for (  Map.Entry<String,NamespaceLit> entry : localNamespaces.entrySet()) {
     String name=entry.getKey();
     JSType t=entry.getValue().toJSType();
+    if (localFunDefs.containsKey(name)) {
+      FunctionType ft=localFunDefs.get(name).getDeclaredFunctionType().toFunctionType();
+      JSType funTypeAsJstype=getCommonTypes().fromFunctionType(ft);
+      t=funTypeAsJstype.specialize(t);
+    }
     if (externs.containsKey(name)) {
       externs.put(name,t);
     }
@@ -23,4 +28,5 @@
   localClassDefs=ImmutableMap.of();
   localTypedefs=ImmutableMap.of();
   localEnums=ImmutableMap.of();
+  isFinalized=true;
 }
