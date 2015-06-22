@@ -1,8 +1,13 @@
 {
 switch (n.getType()) {
-case Token.VAR:
-    visitVar(n);
+case Token.CALL:
+    if (n.getFirstChild().matchesQualifiedName(Es6ToEs3Converter.INHERITS)) {
+      inheritsCalls.add(n);
+    }
   break;
+case Token.VAR:
+visitVar(n);
+break;
 case Token.ASSIGN:
 visitAssign(n);
 break;
