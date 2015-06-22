@@ -1,11 +1,15 @@
 {
 switch (n.getType()) {
 case Token.CLASS:
-    visitClass(n,parent);
-  break;
+    maybeAddGenerics(n,n);
+  visitClass(n,parent);
+break;
 case Token.NAME:
 case Token.REST:
+visitColonType(n);
+break;
 case Token.FUNCTION:
+maybeAddGenerics(n,parent.getType() == Token.MEMBER_FUNCTION_DEF ? parent : n);
 visitColonType(n);
 break;
 default :

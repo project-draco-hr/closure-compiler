@@ -1,0 +1,16 @@
+{
+  Node name=src.getFirstChild();
+  Node generics=(Node)name.getProp(Node.GENERIC_TYPE_LIST);
+  if (generics != null) {
+    JSDocInfoBuilder doc=JSDocInfoBuilder.maybeCopyFrom(dst.getJSDocInfo());
+    for (    Node typeName : generics.children()) {
+      doc.recordTemplateTypeName(typeName.getString());
+      if (typeName.hasChildren()) {
+        compiler.report(JSError.make(name,CANNOT_CONVERT_BOUNDED_GENERICS));
+        return;
+      }
+    }
+    name.putProp(Node.GENERIC_TYPE_LIST,null);
+    dst.setJSDocInfo(doc.build());
+  }
+}
