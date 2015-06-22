@@ -1,8 +1,9 @@
 {
-  Node prop=NodeUtil.getFirstPropMatchingKey(metadata.defineProperties,member.getString());
+  Node obj=member.isStaticMember() ? metadata.definePropertiesObjForClass : metadata.definePropertiesObjForPrototype;
+  Node prop=NodeUtil.getFirstPropMatchingKey(obj,member.getString());
   if (prop == null) {
-    prop=IR.objectlit();
-    metadata.defineProperties.addChildToBack(IR.stringKey(member.getString(),prop));
+    prop=IR.objectlit(IR.stringKey("configurable",IR.trueNode()),IR.stringKey("enumerable",IR.trueNode()));
+    obj.addChildToBack(IR.stringKey(member.getString(),prop));
   }
   Node function=member.getLastChild();
   JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(NodeUtil.getBestJSDocInfo(function));

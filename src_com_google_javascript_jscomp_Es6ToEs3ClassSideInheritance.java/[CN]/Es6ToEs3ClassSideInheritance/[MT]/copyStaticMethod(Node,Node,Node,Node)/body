@@ -1,7 +1,7 @@
 {
   Preconditions.checkState(staticMember.isAssign(),staticMember);
   String memberName=staticMember.getFirstChild().getLastChild().getString();
-  for (  Node subclassMember : staticMembers.get(subclassNameNode.getQualifiedName())) {
+  for (  Node subclassMember : staticMethods.get(subclassNameNode.getQualifiedName())) {
     Preconditions.checkState(subclassMember.isAssign(),subclassMember);
     if (subclassMember.getFirstChild().getLastChild().getString().equals(memberName)) {
       return;
@@ -13,5 +13,6 @@
   Node exprResult=IR.exprResult(assign);
   exprResult.useSourceInfoIfMissingFromForTree(superclassNameNode);
   insertionPoint.getParent().addChildAfter(exprResult,insertionPoint);
-  staticMembers.put(subclassNameNode.getQualifiedName(),assign);
+  staticMethods.put(subclassNameNode.getQualifiedName(),assign);
+  compiler.reportCodeChange();
 }
