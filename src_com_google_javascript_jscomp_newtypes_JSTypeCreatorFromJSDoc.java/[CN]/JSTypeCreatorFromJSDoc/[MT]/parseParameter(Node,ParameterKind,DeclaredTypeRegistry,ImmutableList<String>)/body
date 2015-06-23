@@ -1,0 +1,17 @@
+{
+  if (jsdoc == null) {
+    return null;
+  }
+switch (jsdoc.getType()) {
+case Token.EQUALS:
+    p=ParameterKind.OPTIONAL;
+  jsdoc=jsdoc.getFirstChild();
+break;
+case Token.ELLIPSIS:
+p=ParameterKind.REST;
+jsdoc=jsdoc.getFirstChild();
+break;
+}
+JSType t=getMaybeTypeFromComment(jsdoc,registry,typeParameters);
+return new ParameterType(t,p);
+}
