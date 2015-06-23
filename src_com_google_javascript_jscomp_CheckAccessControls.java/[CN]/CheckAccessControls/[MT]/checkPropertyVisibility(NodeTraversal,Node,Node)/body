@@ -1,4 +1,8 @@
 {
+  JSDocInfo jsdoc=parent.getJSDocInfo();
+  if (jsdoc != null && jsdoc.getSuppressions().contains("visibility")) {
+    return;
+  }
   ObjectType referenceType=ObjectType.cast(dereference(getprop.getFirstChild().getJSType()));
   String propertyName=getprop.getLastChild().getString();
   boolean isPrivateByConvention=isPrivateByConvention(propertyName);
@@ -8,7 +12,7 @@
   }
   StaticSourceFile definingSource=getDefiningSource(getprop,referenceType,propertyName);
   boolean isClassType=false;
-  boolean isOverride=parent.getJSDocInfo() != null && parent.isAssign() && parent.getFirstChild() == getprop;
+  boolean isOverride=jsdoc != null && parent.isAssign() && parent.getFirstChild() == getprop;
   ObjectType objectType=getObjectType(referenceType,isOverride,propertyName);
   Visibility fileOverviewVisibility=defaultVisibilityForFiles.get(definingSource);
   Visibility visibility=AccessControlUtils.getEffectivePropertyVisibility(getprop,referenceType,defaultVisibilityForFiles,enforceCodingConventions ? compiler.getCodingConvention() : null);
