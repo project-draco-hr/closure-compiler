@@ -1,13 +1,12 @@
 {
   List<PassFactory> checks=new ArrayList<>();
   checks.add(createEmptyPass("beforeStandardChecks"));
+  checks.add(checkJsDoc);
   if (options.closurePass) {
     checks.add(closureRewriteModule);
   }
-  if (!options.transpileOnly) {
-    if (options.declaredGlobalExternsOnWindow) {
-      checks.add(declaredGlobalExternsOnWindow);
-    }
+  if (!options.transpileOnly && options.declaredGlobalExternsOnWindow) {
+    checks.add(declaredGlobalExternsOnWindow);
   }
   if (options.lowerFromEs6() || options.aggressiveVarCheck.isOn()) {
     checks.add(checkVariableReferences);
