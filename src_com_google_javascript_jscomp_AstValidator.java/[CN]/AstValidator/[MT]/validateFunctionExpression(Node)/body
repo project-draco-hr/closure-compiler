@@ -2,18 +2,25 @@
   validateNodeType(Token.FUNCTION,n);
   validateChildCount(n);
   validateParameters(n.getChildAtIndex(1));
+  Node name=n.getFirstChild();
+  Node body=n.getLastChild();
   if (n.isArrowFunction()) {
     validateEs6Feature("arrow functions",n);
-    validateEmptyName(n.getFirstChild());
-    if (n.getLastChild().getType() == Token.BLOCK) {
-      validateBlock(n.getLastChild());
+    validateEmptyName(name);
+    if (body.getType() == Token.BLOCK) {
+      validateBlock(body);
     }
  else {
-      validateExpression(n.getLastChild());
+      validateExpression(body);
     }
   }
  else {
-    validateOptionalName(n.getFirstChild());
-    validateBlock(n.getLastChild());
+    validateOptionalName(name);
+    if (n.getBooleanProp(Node.METHOD_SIGNATURE)) {
+      validateNodeType(Token.EMPTY,body);
+    }
+ else {
+      validateBlock(body);
+    }
   }
 }

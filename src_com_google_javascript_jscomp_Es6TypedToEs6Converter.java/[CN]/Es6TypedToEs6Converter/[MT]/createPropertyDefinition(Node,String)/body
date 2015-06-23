@@ -1,0 +1,10 @@
+{
+  member.detachFromParent();
+  Node nameAccess=NodeUtil.newQName(compiler,name);
+  Node prototypeAcess=NodeUtil.newPropertyAccess(compiler,nameAccess,"prototype");
+  Node qualifiedMemberAccess=Es6ToEs3Converter.getQualifiedMemberAccess(compiler,member,nameAccess,prototypeAcess);
+  visitColonType(member,member);
+  qualifiedMemberAccess.setJSDocInfo(member.getJSDocInfo());
+  Node newNode=NodeUtil.newExpr(qualifiedMemberAccess);
+  return newNode.useSourceInfoIfMissingFromForTree(member);
+}

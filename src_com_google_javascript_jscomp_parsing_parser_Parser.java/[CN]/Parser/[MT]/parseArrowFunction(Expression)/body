@@ -1,10 +1,7 @@
 {
   SourcePosition start=getTreeStartLocation();
   inGeneratorContext.addLast(false);
-  GenericTypeListTree genericTypes=null;
-  if (peek(TokenType.OPEN_ANGLE)) {
-    genericTypes=parseGenericTypes();
-  }
+  GenericTypeListTree generics=maybeParseGenericTypes();
   FormalParameterListTree formalParameterList;
   if (peekId()) {
     ParseTree param=parseIdentifierExpression();
@@ -28,7 +25,7 @@
  else {
     functionBody=parseAssignment(expressionIn);
   }
-  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),null,genericTypes,false,false,FunctionDeclarationTree.Kind.ARROW,formalParameterList,returnType,functionBody);
+  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),null,generics,false,false,FunctionDeclarationTree.Kind.ARROW,formalParameterList,returnType,functionBody);
   inGeneratorContext.removeLast();
   return declaration;
 }

@@ -1,0 +1,31 @@
+{
+  Node name=n.getFirstChild();
+  Node superTypes=name.getNext();
+  JSDocInfoBuilder doc=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
+  doc.recordInterface();
+  if (!superTypes.isEmpty()) {
+    for (    Node child : superTypes.children()) {
+      Node type=convertWithLocation(child);
+      doc.recordExtendedInterface(new JSTypeExpression(type,n.getSourceFileName()));
+    }
+  }
+  n.setJSDocInfo(doc.build());
+  Node insertionPoint=n;
+  Node members=n.getLastChild();
+  for (  Node member : members.children()) {
+    if (member.isMemberFunctionDef()) {
+      Node function=member.getFirstChild();
+      function.getLastChild().setType(Token.BLOCK);
+      function.putBooleanProp(Node.METHOD_SIGNATURE,false);
+      continue;
+    }
+    Node newNode=createPropertyDefinition(member,name.getString());
+    insertionPoint.getParent().addChildAfter(newNode,insertionPoint);
+    insertionPoint=newNode;
+  }
+  n.setType(Token.CLASS);
+  Node empty=new Node(Token.EMPTY).useSourceInfoIfMissingFrom(n);
+  n.replaceChild(superTypes,empty);
+  members.setType(Token.CLASS_MEMBERS);
+  compiler.reportCodeChange();
+}

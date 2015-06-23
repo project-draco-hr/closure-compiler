@@ -1,0 +1,20 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  IdentifierToken name=null;
+  TokenType type=peekType();
+  if (type == TokenType.IDENTIFIER || Keywords.isKeyword(type)) {
+    name=eatIdOrKeywordAsId();
+  }
+ else {
+  }
+  if (peek(TokenType.OPEN_PAREN) || peek(TokenType.OPEN_ANGLE)) {
+    ParseTree function=parseMethodSignature(start,name);
+    eat(TokenType.SEMI_COLON);
+    return function;
+  }
+ else {
+    ParseTree declaredType=maybeParseColonType();
+    eat(TokenType.SEMI_COLON);
+    return new MemberVariableTree(getTreeLocation(start),name,false,declaredType);
+  }
+}

@@ -4,13 +4,18 @@ case Token.CLASS:
     maybeAddGenerics(n,n);
   visitClass(n,parent);
 break;
+case Token.INTERFACE:
+maybeAddGenerics(n,n);
+visitInterface(n);
+break;
 case Token.NAME:
 case Token.REST:
-visitColonType(n);
+visitColonType(n,n);
 break;
 case Token.FUNCTION:
-maybeAddGenerics(n,parent.getType() == Token.MEMBER_FUNCTION_DEF ? parent : n);
-visitColonType(n);
+Node jsDocNode=parent.getType() == Token.MEMBER_FUNCTION_DEF ? parent : n;
+maybeAddGenerics(n,jsDocNode);
+visitColonType(n,jsDocNode);
 break;
 default :
 }

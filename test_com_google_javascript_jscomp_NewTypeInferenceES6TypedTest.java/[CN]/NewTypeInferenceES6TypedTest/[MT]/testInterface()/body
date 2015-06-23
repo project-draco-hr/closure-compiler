@@ -1,0 +1,6 @@
+{
+  typeCheck(LINE_JOINER.join("interface Foo {","  prop: number;","}","class Bar implements Foo {","}"),TypeValidator.INTERFACE_METHOD_NOT_IMPLEMENTED);
+  typeCheck(LINE_JOINER.join("interface Foo {","  prop: number;","}","class Bar extends Foo {","}"),TypeCheck.CONFLICTING_EXTENDED_TYPE);
+  typeCheck("interface Foo extends Foo {}",JSTypeCreatorFromJSDoc.INHERITANCE_CYCLE);
+  typeCheck(LINE_JOINER.join("interface Foo {","  prop: number;","}","interface Bar {","  prop: string;","}","interface Baz extends Foo, Bar {}"),TypeCheck.INCOMPATIBLE_EXTENDED_PROPERTY_TYPE);
+}

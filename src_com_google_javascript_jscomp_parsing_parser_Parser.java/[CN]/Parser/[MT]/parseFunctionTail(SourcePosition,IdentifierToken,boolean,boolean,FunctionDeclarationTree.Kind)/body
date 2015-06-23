@@ -1,16 +1,10 @@
 {
   inGeneratorContext.addLast(isGenerator);
-  GenericTypeListTree genericTypes=null;
-  if (peek(TokenType.OPEN_ANGLE)) {
-    genericTypes=parseGenericTypes();
-  }
+  GenericTypeListTree generics=maybeParseGenericTypes();
   FormalParameterListTree formalParameterList=parseFormalParameterList();
-  ParseTree returnType=null;
-  if (peek(TokenType.COLON)) {
-    returnType=parseTypeAnnotation();
-  }
+  ParseTree returnType=maybeParseColonType();
   BlockTree functionBody=parseFunctionBody();
-  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),name,genericTypes,isStatic,isGenerator,kind,formalParameterList,returnType,functionBody);
+  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),name,generics,isStatic,isGenerator,kind,formalParameterList,returnType,functionBody);
   inGeneratorContext.removeLast();
   return declaration;
 }

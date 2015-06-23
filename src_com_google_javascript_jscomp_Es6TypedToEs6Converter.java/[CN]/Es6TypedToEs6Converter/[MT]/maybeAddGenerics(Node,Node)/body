@@ -1,8 +1,8 @@
 {
-  Node name=src.getFirstChild();
+  Node name=n.getFirstChild();
   Node generics=(Node)name.getProp(Node.GENERIC_TYPE_LIST);
   if (generics != null) {
-    JSDocInfoBuilder doc=JSDocInfoBuilder.maybeCopyFrom(dst.getJSDocInfo());
+    JSDocInfoBuilder doc=JSDocInfoBuilder.maybeCopyFrom(jsDocNode.getJSDocInfo());
     for (    Node typeName : generics.children()) {
       doc.recordTemplateTypeName(typeName.getString());
       if (typeName.hasChildren()) {
@@ -11,6 +11,6 @@
       }
     }
     name.putProp(Node.GENERIC_TYPE_LIST,null);
-    dst.setJSDocInfo(doc.build());
+    jsDocNode.setJSDocInfo(doc.build());
   }
 }

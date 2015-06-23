@@ -10,7 +10,7 @@
   if (type == null) {
     return;
   }
-  JSDocInfo info=n.getJSDocInfo();
+  JSDocInfo info=jsDocNode.getJSDocInfo();
   Preconditions.checkState(info == null || info.getType() == null,"Nodes must not have both type declarations and JSDoc types");
   JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(info);
   JSTypeExpression typeExpression=new JSTypeExpression(type,n.getSourceFileName());
@@ -26,7 +26,7 @@ builder.recordType(typeExpression);
 builder.recordInlineType();
 }
 info=builder.build();
-n.setJSDocInfo(info);
+jsDocNode.setJSDocInfo(info);
 if (hasColonType) {
 n.setDeclaredTypeExpression(null);
 compiler.reportCodeChange();

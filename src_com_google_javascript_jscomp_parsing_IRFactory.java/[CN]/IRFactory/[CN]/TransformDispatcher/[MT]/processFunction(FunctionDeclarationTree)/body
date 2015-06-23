@@ -3,6 +3,7 @@
   boolean isMember=(functionTree.kind == FunctionDeclarationTree.Kind.MEMBER);
   boolean isArrow=(functionTree.kind == FunctionDeclarationTree.Kind.ARROW);
   boolean isGenerator=functionTree.isGenerator;
+  boolean isSignature=(functionTree.functionBody.type == ParseTreeType.EMPTY_STATEMENT);
   if (!isEs6Mode()) {
     if (isGenerator) {
       maybeWarnEs6Feature(functionTree,"generators");
@@ -47,8 +48,9 @@
     recordJsDoc(functionTree.returnType.location,node.getJSDocInfo());
     node.setDeclaredTypeExpression(convertTypeTree(functionTree.returnType));
   }
-  Node bodyNode=transform(functionTree.functionBody);
-  if (!isArrow && !bodyNode.isBlock()) {
+  Node bodyNode=null;
+  bodyNode=transform(functionTree.functionBody);
+  if (!isArrow && !isSignature && !bodyNode.isBlock()) {
     Preconditions.checkState(config.isIdeMode);
     bodyNode=IR.block();
   }
@@ -56,12 +58,14 @@
   node.addChildToBack(bodyNode);
   node.setIsGeneratorFunction(isGenerator);
   node.setIsArrowFunction(isArrow);
+  node.putBooleanProp(Node.METHOD_SIGNATURE,isSignature);
   Node result;
   if (functionTree.kind == FunctionDeclarationTree.Kind.MEMBER) {
     setSourceInfo(node,functionTree);
     Node member=newStringNode(Token.MEMBER_FUNCTION_DEF,name.value);
     member.addChildToBack(node);
     member.setStaticMember(functionTree.isStatic);
+    node.setDeclaredTypeExpression(node.getDeclaredTypeExpression());
     result=member;
   }
  else {
