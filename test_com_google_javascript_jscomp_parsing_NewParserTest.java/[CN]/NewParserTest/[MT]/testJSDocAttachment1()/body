@@ -1,5 +1,5 @@
 {
-  Node varNode=parse("/** @type number */var a;").getFirstChild();
+  Node varNode=parse("/** @type {number} */var a;").getFirstChild();
   assertThat(varNode.getType()).isEqualTo(Token.VAR);
   JSDocInfo varInfo=varNode.getJSDocInfo();
   assertThat(varInfo).isNotNull();
@@ -8,7 +8,7 @@
   assertThat(varNameNode.getType()).isEqualTo(Token.NAME);
   assertThat(varNameNode.getJSDocInfo()).isNull();
   mode=LanguageMode.ECMASCRIPT6;
-  Node letNode=parse("/** @type number */let a;").getFirstChild();
+  Node letNode=parse("/** @type {number} */let a;").getFirstChild();
   assertThat(letNode.getType()).isEqualTo(Token.LET);
   JSDocInfo letInfo=letNode.getJSDocInfo();
   assertThat(letInfo).isNotNull();
@@ -16,7 +16,7 @@
   Node letNameNode=letNode.getFirstChild();
   assertThat(letNameNode.getType()).isEqualTo(Token.NAME);
   assertThat(letNameNode.getJSDocInfo()).isNull();
-  Node constNode=parse("/** @type number */const a = 0;").getFirstChild();
+  Node constNode=parse("/** @type {number} */const a = 0;").getFirstChild();
   assertThat(constNode.getType()).isEqualTo(Token.CONST);
   JSDocInfo constInfo=constNode.getJSDocInfo();
   assertThat(constInfo).isNotNull();
