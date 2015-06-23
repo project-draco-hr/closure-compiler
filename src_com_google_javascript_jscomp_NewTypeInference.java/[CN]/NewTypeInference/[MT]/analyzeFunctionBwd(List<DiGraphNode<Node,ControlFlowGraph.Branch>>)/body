@@ -1,7 +1,7 @@
 {
   for (  DiGraphNode<Node,ControlFlowGraph.Branch> dn : workset) {
     Node n=dn.getValue();
-    TypeEnv outEnv=getOutEnv(dn);
+    TypeEnv outEnv=Preconditions.checkNotNull(getOutEnv(dn));
     TypeEnv inEnv;
     println("\tBWD Statment: ",n);
     println("\t\toutEnv: ",outEnv);
@@ -85,6 +85,8 @@ break;
 }
 }
 println("\t\tinEnv: ",inEnv);
-setInEnv(dn,inEnv);
+for (DiGraphEdge<Node,ControlFlowGraph.Branch> de : dn.getInEdges()) {
+envs.put(de,inEnv);
+}
 }
 }

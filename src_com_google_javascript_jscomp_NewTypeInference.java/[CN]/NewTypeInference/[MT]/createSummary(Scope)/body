@@ -1,9 +1,12 @@
 {
   Node fnRoot=fn.getRoot();
   Preconditions.checkArgument(!fnRoot.isFromExterns());
-  TypeEnv entryEnv=getEntryTypeEnv();
-  TypeEnv exitEnv=getFinalTypeEnv();
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  TypeEnv entryEnv=getEntryTypeEnv();
+  TypeEnv exitEnv=getInEnv(cfg.getImplicitReturn());
+  if (exitEnv == null) {
+    exitEnv=envPutType(new TypeEnv(),RETVAL_ID,JSType.BOTTOM);
+  }
   DeclaredFunctionType declType=fn.getDeclaredFunctionType();
   int reqArity=declType.getRequiredArity();
   int optArity=declType.getOptionalArity();

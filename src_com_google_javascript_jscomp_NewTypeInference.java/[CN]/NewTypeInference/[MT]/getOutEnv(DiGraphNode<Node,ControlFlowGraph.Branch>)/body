@@ -1,9 +1,9 @@
 {
-  if (dn.getOutEdges().isEmpty()) {
-    Preconditions.checkArgument(dn.getValue().isThrow());
-    return getTypeEnvFromDeclaredTypes();
-  }
   List<DiGraphEdge<Node,ControlFlowGraph.Branch>> outEdges=dn.getOutEdges();
+  if (outEdges.isEmpty()) {
+    Preconditions.checkArgument(dn.getValue().isThrow());
+    return this.typeEnvFromDeclaredTypes;
+  }
   if (outEdges.size() == 1) {
     return envs.get(outEdges.get(0));
   }
@@ -14,5 +14,6 @@
       envSet.add(env);
     }
   }
+  Preconditions.checkState(!envSet.isEmpty());
   return TypeEnv.join(envSet);
 }
