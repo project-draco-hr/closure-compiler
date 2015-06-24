@@ -7,4 +7,5 @@
   test("class C { constructor() {}; foo() {}; bar() {} }",LINE_JOINER.join("/** @constructor @struct */","var C = function() {};","C.prototype.foo = function() {};","C.prototype.bar = function() {};"));
   test("class C { foo() {}; bar() {} }",LINE_JOINER.join("/** @constructor @struct */","var C = function() {};","C.prototype.foo = function() {};","C.prototype.bar = function() {};"));
   test(LINE_JOINER.join("class C {","  constructor(a) { this.a = a; }","","  foo() { console.log(this.a); }","","  bar() { alert(this.a); }","}"),LINE_JOINER.join("/** @constructor @struct */","var C = function(a) { this.a = a; };","C.prototype.foo = function() { console.log(this.a); };","C.prototype.bar = function() { alert(this.a); };"));
+  test(LINE_JOINER.join("if (true) {","   class Foo{}","} else {","   class Foo{}","}"),LINE_JOINER.join("if (true) {","    /** @constructor @struct */","    var Foo = function() {};","} else {","    /** @constructor @struct */","    var Foo$0 = function() {};","}"));
 }
