@@ -1,13 +1,10 @@
 {
   TypeDeclarationNode node=new TypeDeclarationNode(Token.RECORD_TYPE);
   for (  Map.Entry<String,TypeDeclarationNode> prop : properties.entrySet()) {
-    if (prop.getValue() == null) {
-      node.addChildToBack(IR.stringKey(prop.getKey()));
-    }
- else {
-      Node stringKey=IR.stringKey(prop.getKey());
+    Node stringKey=IR.stringKey(prop.getKey());
+    node.addChildToBack(stringKey);
+    if (prop.getValue() != null) {
       stringKey.addChildToFront(prop.getValue());
-      node.addChildToBack(stringKey);
     }
   }
   return node;
