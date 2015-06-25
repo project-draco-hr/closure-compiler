@@ -12,7 +12,7 @@
     }
  else     if (parent.getType() == Token.PARAM_LIST) {
     }
- else     if (isVar || isFunctionDecl) {
+ else     if (isVar || isFunctionDecl || NodeUtil.isClassDeclaration(parent)) {
       boolean isHoisted=NodeUtil.isHoistedFunctionDeclaration(parent);
       Node grandparent=parent.getParent();
       Node value=v.getInitialValue();
@@ -23,11 +23,17 @@
       scopedAliasNames.add(name);
       String globalName="$jscomp.scope." + name + (nameCount == 0 ? "" : ("$" + nameCount));
       compiler.ensureLibraryInjected("base",true);
-      if (isFunctionDecl) {
-        Node existingName=v.getNameNode();
-        Node newName=IR.name("").useSourceInfoFrom(existingName);
-        value.replaceChild(existingName,newName);
-        varNode=IR.var(existingName).useSourceInfoFrom(existingName);
+      if (isFunctionDecl || NodeUtil.isClassDeclaration(parent)) {
+        Node newName;
+        if (isFunctionDecl) {
+          newName=IR.name("");
+        }
+ else {
+          newName=IR.empty();
+        }
+        newName.useSourceInfoFrom(n);
+        value.replaceChild(n,newName);
+        varNode=IR.var(n).useSourceInfoFrom(n);
         grandparent.replaceChild(parent,varNode);
       }
  else {
