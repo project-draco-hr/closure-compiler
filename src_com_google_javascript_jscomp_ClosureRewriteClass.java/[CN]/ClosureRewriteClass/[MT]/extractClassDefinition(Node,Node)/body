@@ -9,8 +9,7 @@
     superClass=null;
   }
   Node description=NodeUtil.getArgumentForCallOrNew(callNode,1);
-  if (description == null || !description.isObjectLit() || !validateObjLit(description)) {
-    compiler.report(JSError.make(callNode,GOOG_CLASS_DESCRIPTOR_NOT_VALID));
+  if (!validateObjLit(description,callNode)) {
     return null;
   }
   int paramCount=callNode.getChildCount() - 1;
@@ -38,7 +37,10 @@
   Node statics=null;
   Node staticsProp=extractProperty(description,"statics");
   if (staticsProp != null) {
-    if (staticsProp.isObjectLit() && validateObjLit(staticsProp)) {
+    if (staticsProp.isObjectLit()) {
+      if (!validateObjLit(staticsProp,staticsProp.getParent())) {
+        return null;
+      }
       statics=staticsProp;
     }
  else     if (staticsProp.isFunction()) {

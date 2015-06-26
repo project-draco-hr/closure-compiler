@@ -1,0 +1,24 @@
+{
+  if (objlit == null || !objlit.isObjectLit()) {
+    reportErrorOnContext(parent);
+    return false;
+  }
+  for (  Node key : objlit.children()) {
+    if (key.isMemberFunctionDef()) {
+      continue;
+    }
+    if (key.isComputedProp()) {
+      compiler.report(JSError.make(objlit,GOOG_CLASS_ES6_COMPUTED_PROP_NAMES_NOT_SUPPORTED));
+      return false;
+    }
+    if (key.isStringKey() && !key.hasChildren()) {
+      compiler.report(JSError.make(objlit,GOOG_CLASS_ES6_SHORTHAND_ASSIGNMENT_NOT_SUPPORTED));
+      return false;
+    }
+    if (!key.isStringKey() || key.isQuotedString()) {
+      reportErrorOnContext(parent);
+      return false;
+    }
+  }
+  return true;
+}
