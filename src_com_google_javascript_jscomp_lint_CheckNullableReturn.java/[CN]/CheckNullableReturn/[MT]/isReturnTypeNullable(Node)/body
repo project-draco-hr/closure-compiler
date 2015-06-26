@@ -1,11 +1,12 @@
 {
-  if (n == null) {
+  if (n == null || !n.isFunction()) {
     return false;
   }
-  if (!n.isFunction()) {
+  FunctionType functionType=n.getJSType().toMaybeFunctionType();
+  if (functionType == null) {
     return false;
   }
-  JSType returnType=n.getJSType().toMaybeFunctionType().getReturnType();
+  JSType returnType=functionType.getReturnType();
   if (returnType == null || returnType.isUnknownType() || !returnType.isNullable()) {
     return false;
   }
