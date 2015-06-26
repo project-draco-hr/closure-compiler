@@ -9,8 +9,7 @@
       return null;
     }
     DeclaredFunctionType allButRecvType=typeParser.getFunctionType(null,functionName,declNode,null,null,parentScope);
-    DeclaredFunctionType onlyHasRecvType=(new FunctionTypeBuilder()).addReceiverType(recvType.getNominalTypeIfSingletonObj()).buildDeclaration();
-    return onlyHasRecvType.withTypeInfoFromSuper(allButRecvType,true);
+    return allButRecvType.withReceiverType(recvType.getNominalTypeIfSingletonObj());
   }
   if (parent.isCall() && declNode != parent.getFirstChild()) {
     DeclaredFunctionType calleeDeclType=getDeclaredFunctionTypeOfCalleeIfAny(parent.getFirstChild(),parentScope);
