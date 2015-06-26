@@ -1,0 +1,12 @@
+{
+  String alias=n.getString();
+  if (t.getScope().isDeclared(alias,true)) {
+    compiler.report(JSError.make(n,TYPE_ALIAS_ALREADY_DECLARED,alias));
+  }
+  Node var=IR.var(IR.name(n.getString())).useSourceInfoFromForTree(n);
+  JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+  builder.recordTypedef(new JSTypeExpression(convertWithLocation(n.getFirstChild()),n.getSourceFileName()));
+  var.setJSDocInfo(builder.build());
+  parent.replaceChild(n,var);
+  compiler.reportCodeChange();
+}
