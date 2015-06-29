@@ -1,7 +1,8 @@
 {
   Preconditions.checkState(isFinalized);
   if (this.ctorFn != ctorFn || this.ctorFnWrappedAsJSType == null) {
-    JSType result=withNamedTypes(ObjectType.makeObjectType(this.builtinFunction,otherProps,ctorFn,ctorFn.isLoose(),ObjectKind.UNRESTRICTED));
+    ObjectType ctorFnAsObj=ObjectType.makeObjectType(this.commonTypes.getFunctionType(),this.otherProps,ctorFn,ctorFn.isLoose(),ObjectKind.UNRESTRICTED);
+    JSType result=withNamedTypes(this.commonTypes,ctorFnAsObj);
     if (this.ctorFn == ctorFn) {
       this.ctorFnWrappedAsJSType=result;
     }

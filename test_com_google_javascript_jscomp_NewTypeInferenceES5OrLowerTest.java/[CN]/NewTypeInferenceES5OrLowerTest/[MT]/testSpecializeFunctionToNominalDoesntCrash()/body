@@ -1,4 +1,5 @@
 {
   typeCheck(Joiner.on('\n').join("/** @interface */ function Foo() {}","function reqFoo(/** Foo */ foo) {};","/** @param {Function} fun */","function f(fun) {","    reqFoo(fun);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","function f(x) {","  if (typeof x == 'function') {","    var /** !Foo */ y = x;","  }","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("function f(/** !Object */ x) {","  if (x instanceof Function) {","    x(123);","  }","}"));
 }

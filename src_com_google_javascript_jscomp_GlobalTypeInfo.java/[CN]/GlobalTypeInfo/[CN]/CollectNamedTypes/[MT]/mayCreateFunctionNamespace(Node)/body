@@ -1,11 +1,22 @@
 {
-  if (!qnameNode.isName()) {
+  if (!qnameNode.isQualifiedName()) {
     return false;
   }
-  Preconditions.checkState(!currentScope.isNamespace(qnameNode));
-  if (currentScope.isKnownFunction(qnameNode.getString())) {
-    visitNamespaceHelper(qnameNode,false);
-    return true;
+  QualifiedName qname=QualifiedName.fromNode(qnameNode);
+  Preconditions.checkState(!currentScope.isNamespace(qname));
+  if (!currentScope.isKnownFunction(qname)) {
+    return false;
   }
-  return false;
+  if (qnameNode.isGetProp()) {
+    markAssignNodeAsAnalyzed(qnameNode.getParent().getParent());
+  }
+  Scope s;
+  if (qnameNode.isName()) {
+    s=currentScope.getScope(qnameNode.getString()).getParent();
+  }
+ else {
+    s=currentScope;
+  }
+  s.addNamespace(qnameNode,qnameNode.isFromExterns());
+  return true;
 }

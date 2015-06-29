@@ -1,0 +1,24 @@
+{
+  Scope enclosingScope=fnScope.getParent();
+  Node fnNameNode=NodeUtil.getFunctionNameNode(fnScope.getRoot());
+  JSType summary=currentSummary;
+  JSType namespaceType=null;
+  if (fnNameNode == null) {
+    return currentSummary;
+  }
+  if (fnNameNode.isName()) {
+    String fnName=fnNameNode.getString();
+    if (enclosingScope.isFunctionNamespace(fnName)) {
+      namespaceType=enclosingScope.getDeclaredTypeOf(fnName);
+    }
+  }
+ else   if (fnNameNode.isQualifiedName()) {
+    QualifiedName qname=QualifiedName.fromNode(fnNameNode);
+    JSType rootNs=enclosingScope.getDeclaredTypeOf(qname.getLeftmostName());
+    namespaceType=rootNs == null ? null : rootNs.getProp(qname.getAllButLeftmost());
+  }
+  if (namespaceType != null && namespaceType.isFunctionWithProperties()) {
+    summary=namespaceType.withFunction(currentSummary.getFunTypeIfSingletonObj(),commonTypes.getFunctionType());
+  }
+  return summary;
+}

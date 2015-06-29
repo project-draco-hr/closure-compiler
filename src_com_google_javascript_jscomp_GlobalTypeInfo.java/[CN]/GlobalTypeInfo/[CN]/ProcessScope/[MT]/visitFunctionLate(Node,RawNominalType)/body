@@ -2,6 +2,8 @@
   Preconditions.checkArgument(fn.isFunction());
   String internalName=getFunInternalName(fn);
   Scope fnScope=currentScope.getScope(internalName);
-  updateFnScope(fnScope,ownerType);
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(fn);
+  DeclaredFunctionType declFunType=computeFnDeclaredType(jsdoc,internalName,fn,ownerType,currentScope);
+  fnScope.setDeclaredType(declFunType);
   return fnScope;
 }

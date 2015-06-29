@@ -10,4 +10,5 @@
   typeCheck(Joiner.on('\n').join("var f = function() {};","/** @enum */","f.e = { A: 1 };","function g() { var /** string */ s = f.e.A; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheckCustomExterns(Joiner.on('\n').join(DEFAULT_EXTERNS,"function f(x) {}","/** @type {number} */","f.prop;"),Joiner.on('\n').join("function h() {","  var /** string */ s = f.prop;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheckCustomExterns(Joiner.on('\n').join(DEFAULT_EXTERNS,"function f(x) {}","/** @constructor */","f.Foo = function() {};"),Joiner.on('\n').join("/** @param {!f.Foo} x */","function g(x) {}","function h() { g(123); }"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("function f(x) {};","/** @const */ f.subns = {};","function g() {","  /** @type {number} */","  f.subns.prop = 123;","}","function h() {","  var /** string */ s = f.subns.prop;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

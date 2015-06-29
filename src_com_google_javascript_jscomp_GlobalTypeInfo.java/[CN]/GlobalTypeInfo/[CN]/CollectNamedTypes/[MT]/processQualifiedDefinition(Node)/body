@@ -17,6 +17,14 @@
  else   if (NodeUtil.isAliasedNominalTypeDecl(qnameNode)) {
     maybeRecordAliasedNominalType(qnameNode);
   }
+ else   if (isQualifiedFunctionDefinition(qnameNode)) {
+    Namespace ns=currentScope.getNamespace(QualifiedName.fromNode(recv));
+    Scope s=currentScope.getScope(getFunInternalName(qnameNode.getParent().getLastChild()));
+    QualifiedName pname=new QualifiedName(qnameNode.getLastChild().getString());
+    if (!ns.isDefined(pname)) {
+      ns.addScope(pname,s);
+    }
+  }
  else   if (!currentScope.isDefined(qnameNode)) {
     Namespace ns=currentScope.getNamespace(QualifiedName.fromNode(recv));
     String pname=qnameNode.getLastChild().getString();

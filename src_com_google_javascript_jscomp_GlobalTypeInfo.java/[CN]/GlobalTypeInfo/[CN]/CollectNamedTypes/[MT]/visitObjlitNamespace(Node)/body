@@ -1,3 +1,9 @@
 {
-  visitNamespaceHelper(qnameNode,true);
+  if (currentScope.isDefined(qnameNode)) {
+    return;
+  }
+  if (qnameNode.isGetProp()) {
+    markAssignNodeAsAnalyzed(qnameNode.getParent());
+  }
+  currentScope.addNamespace(qnameNode,qnameNode.isFromExterns());
 }

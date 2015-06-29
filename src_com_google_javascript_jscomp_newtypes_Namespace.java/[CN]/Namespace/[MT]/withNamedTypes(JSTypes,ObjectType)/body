@@ -1,0 +1,23 @@
+{
+  if (nominals != null) {
+    for (    Map.Entry<String,RawNominalType> entry : nominals.entrySet()) {
+      obj=obj.withProperty(new QualifiedName(entry.getKey()),entry.getValue().toJSType(commonTypes));
+    }
+  }
+  if (enums != null) {
+    for (    Map.Entry<String,EnumType> entry : enums.entrySet()) {
+      obj=obj.withProperty(new QualifiedName(entry.getKey()),entry.getValue().toJSType(commonTypes));
+    }
+  }
+  if (namespaces != null) {
+    for (    Map.Entry<String,NamespaceLit> entry : namespaces.entrySet()) {
+      String name=entry.getKey();
+      JSType t=entry.getValue().toJSType(commonTypes);
+      if (scopes.containsKey(name)) {
+        t=t.withFunction(scopes.get(name).getDeclaredFunctionType().toFunctionType(),commonTypes.getFunctionType());
+      }
+      obj=obj.withProperty(new QualifiedName(name),t);
+    }
+  }
+  return JSType.fromObjectType(obj);
+}

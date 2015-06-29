@@ -1,11 +1,21 @@
 {
   Preconditions.checkState(areRelatedClasses(obj1.nominalType,obj2.nominalType));
+  if (obj1 == TOP_OBJECT) {
+    return obj2;
+  }
+ else   if (obj2 == TOP_OBJECT) {
+    return obj1;
+  }
   NominalType resultNominalType=NominalType.pickSubclass(obj1.nominalType,obj2.nominalType);
   FunctionType fn=FunctionType.meet(obj1.fn,obj2.fn);
   if (!FunctionType.isInhabitable(fn)) {
     return BOTTOM_OBJECT;
   }
   boolean isLoose=obj1.isLoose && obj2.isLoose || fn != null && fn.isLoose();
+  if (resultNominalType != null && resultNominalType.isFunction() && fn == null) {
+    fn=obj1.fn == null ? obj2.fn : obj1.fn;
+    isLoose=fn.isLoose();
+  }
   PersistentMap<String,Property> props;
   if (isLoose) {
     props=joinPropsLoosely(obj1.props,obj2.props);
