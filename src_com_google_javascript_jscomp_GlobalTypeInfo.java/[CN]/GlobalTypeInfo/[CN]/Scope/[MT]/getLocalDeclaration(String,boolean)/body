@@ -4,14 +4,12 @@
     return null;
   }
   JSType type=null;
-  boolean isFormal=false;
   boolean isForwardDeclaration=false;
   boolean isTypeVar=false;
   if (locals.containsKey(name)) {
     type=locals.get(name);
   }
  else   if (formals.contains(name)) {
-    isFormal=true;
     int formalIndex=formals.indexOf(name);
     if (declaredType != null && formalIndex != -1) {
       JSType formalType=declaredType.getFormalType(formalIndex);
@@ -37,5 +35,5 @@
  else   if (unknownTypeNames.contains(name)) {
     isForwardDeclaration=true;
   }
-  return new Declaration(type,localTypedefs.get(name),localNamespaces.get(name),localEnums.get(name),localFunDefs.get(name),localClassDefs.get(name),isFormal,isTypeVar,constVars.contains(name),isForwardDeclaration);
+  return new Declaration(type,localTypedefs.get(name),localNamespaces.get(name),localEnums.get(name),localFunDefs.get(name),localClassDefs.get(name),isTypeVar,constVars.contains(name),isForwardDeclaration);
 }
