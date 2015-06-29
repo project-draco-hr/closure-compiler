@@ -6,8 +6,9 @@
     return;
   }
   int type=n.getType();
+  boolean isObjLitShorthand=type == Token.STRING_KEY && !n.hasChildren();
   Var aliasVar=null;
-  if (type == Token.NAME) {
+  if (type == Token.NAME || isObjLitShorthand) {
     String name=n.getString();
     Var lexicalVar=t.getScope().getVar(name);
     if (lexicalVar != null && lexicalVar == aliases.get(name)) {
@@ -15,7 +16,7 @@
     }
   }
   if (t.getScopeDepth() == scopeFunctionDepth && findScopeMethodCall(t.getScope().getRootNode()) != null) {
-    if (aliasVar != null && NodeUtil.isLValue(n)) {
+    if (aliasVar != null && !isObjLitShorthand && NodeUtil.isLValue(n)) {
       if (aliasVar.getNode() == n) {
         aliasDefinitionsInOrder.add(n);
         return;
