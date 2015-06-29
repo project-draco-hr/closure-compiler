@@ -15,6 +15,10 @@
       compiler.report(JSError.make(objlit,GOOG_CLASS_ES6_SHORTHAND_ASSIGNMENT_NOT_SUPPORTED));
       return false;
     }
+    if (key.isStringKey() && key.hasChildren() && key.getFirstChild().isArrowFunction()) {
+      compiler.report(JSError.make(objlit,GOOG_CLASS_ES6_ARROW_FUNCTION_NOT_SUPPORTED));
+      return false;
+    }
     if (!key.isStringKey() || key.isQuotedString()) {
       reportErrorOnContext(parent);
       return false;
