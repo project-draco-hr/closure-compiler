@@ -1,0 +1,21 @@
+{
+  validateNodeType(Token.FUNCTION,n);
+  validateChildCount(n);
+  validateParameters(n.getChildAtIndex(1));
+  Node name=n.getFirstChild();
+  Node body=n.getLastChild();
+  if (n.isArrowFunction()) {
+    validateEs6Feature("arrow functions",n);
+    validateEmptyName(name);
+    if (body.getType() == Token.BLOCK) {
+      validateBlock(body);
+    }
+ else {
+      validateExpression(body);
+    }
+  }
+ else {
+    validateOptionalName(name);
+    validateFunctionBody(body,isAmbient);
+  }
+}
