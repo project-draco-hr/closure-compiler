@@ -1,15 +1,15 @@
 {
-  Preconditions.checkState(isLoose || obj2.isLoose);
-  if (obj2 == TOP_OBJECT) {
+  Preconditions.checkState(isLoose || other.isLoose);
+  if (other == TOP_OBJECT) {
     return true;
   }
   if (!isLoose) {
-    if (!objectKind.isSubtypeOf(obj2.objectKind)) {
+    if (!objectKind.isSubtypeOf(other.objectKind)) {
       return false;
     }
-    for (    String pname : obj2.props.keySet()) {
+    for (    String pname : other.props.keySet()) {
       QualifiedName qname=new QualifiedName(pname);
-      if (!mayHaveProp(qname) || !getProp(qname).isSubtypeOf(obj2.getProp(qname))) {
+      if (!mayHaveProp(qname) || !getProp(qname).isSubtypeOf(other.getProp(qname))) {
         return false;
       }
     }
@@ -17,16 +17,16 @@
  else {
     for (    String pname : props.keySet()) {
       QualifiedName qname=new QualifiedName(pname);
-      if (obj2.mayHaveProp(qname) && !getProp(qname).isSubtypeOf(obj2.getProp(qname))) {
+      if (other.mayHaveProp(qname) && !getProp(qname).isSubtypeOf(other.getProp(qname))) {
         return false;
       }
     }
   }
-  if (obj2.fn == null) {
-    return this.fn == null || obj2.isLoose();
+  if (other.fn == null) {
+    return this.fn == null || other.isLoose();
   }
  else   if (this.fn == null) {
     return isLoose;
   }
-  return fn.isLooseSubtypeOf(obj2.fn);
+  return fn.isLooseSubtypeOf(other.fn);
 }

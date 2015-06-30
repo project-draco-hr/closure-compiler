@@ -1,17 +1,19 @@
 {
-  if (obj2 == TOP_OBJECT) {
+  if (other == TOP_OBJECT) {
     return true;
   }
-  if ((keepLoosenessOfThis && this.isLoose) || obj2.isLoose) {
-    return this.isLooseSubtypeOf(obj2);
+  if ((keepLoosenessOfThis && this.isLoose) || other.isLoose) {
+    return this.isLooseSubtypeOf(other);
   }
-  if ((this.nominalType == null && obj2.nominalType != null) || this.nominalType != null && obj2.nominalType != null && !this.nominalType.isSubtypeOf(obj2.nominalType)) {
+  NominalType thisNt=this.nominalType;
+  NominalType otherNt=other.nominalType;
+  if (thisNt == null && otherNt != null || thisNt != null && otherNt != null && !thisNt.isSubtypeOf(otherNt)) {
     return false;
   }
-  if (!objectKind.isSubtypeOf(obj2.objectKind)) {
+  if (otherNt == null && !this.objectKind.isSubtypeOf(other.objectKind)) {
     return false;
   }
-  for (  Map.Entry<String,Property> entry : obj2.props.entrySet()) {
+  for (  Map.Entry<String,Property> entry : other.props.entrySet()) {
     String pname=entry.getKey();
     Property prop2=entry.getValue();
     Property prop1=this.getLeftmostProp(new QualifiedName(pname));
@@ -26,11 +28,11 @@
       }
     }
   }
-  if (obj2.fn == null) {
+  if (other.fn == null) {
     return true;
   }
  else   if (this.fn == null) {
     return false;
   }
-  return this.fn.isSubtypeOf(obj2.fn);
+  return this.fn.isSubtypeOf(other.fn);
 }
