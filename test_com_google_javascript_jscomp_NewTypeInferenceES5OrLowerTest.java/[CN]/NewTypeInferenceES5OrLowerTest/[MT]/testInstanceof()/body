@@ -2,7 +2,8 @@
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","function takesFoos(/** Foo */ afoo) {}","function f(/** (number|Foo) */ x) {","  takesFoos(x);","  if (x instanceof Foo) { takesFoos(x); }","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("({} instanceof function(){});",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","(123 instanceof Foo);"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","function takesFoos(/** Foo */ afoo) {}","function f(/** boolean */ cond, /** (number|Foo) */ x) {","  if (x instanceof (cond || Foo)) { takesFoos(x); }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","({} instanceof (true || Foo))"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","function takesFoos(/** Foo */ afoo) {}","function f(/** (number|Foo) */ x) {","  if (x instanceof Foo) { takesFoos(x); }","}"));
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","function f(/** (number|!Foo) */ x) {","  if (x instanceof Foo) {} else { x - 5; }","}"));
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","function f(/** (number|!Foo) */ x) {","  if (!(x instanceof Foo)) { x - 5; }","}"));
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @constructor */ function Bar() {}","function takesFoos(/** Foo */ afoo) {}","function f(/** Foo */ x) {","  if (x instanceof Bar) {} else { takesFoos(x); }","}"));
