@@ -6,7 +6,7 @@
   testWarning("x = 3;",ok);
   testWarning("x == 3;","JSCOMPILER_PRESERVE(x == 3);",e);
   testWarning("var x = 'test'",ok);
-  testWarning("var x = 'test'\n'str'","var x = 'test'\nJSCOMPILER_PRESERVE('str')",e);
+  testWarning("var x = 'test'\n'Breakstr'","var x = 'test'\nJSCOMPILER_PRESERVE('Breakstr')",e);
   testWarning("",ok);
   testWarning("foo();;;;bar();;;;",ok);
   testWarning("var a, b; a = 5, b = 6",ok);
@@ -17,4 +17,12 @@
   testWarning("var a, b; a = (b = 7, 6)",ok);
   testWarning("function x(){}\nfunction f(a, b){}\nf(1,(x(), 2));",ok);
   testWarning("function x(){}\nfunction f(a, b){}\nf(1,(2, 3));","function x(){}\nfunction f(a, b){}\n" + "f(1,(JSCOMPILER_PRESERVE(2), 3));",e);
+  testWarning("var x = `TemplateA`\n'TestB'","var x = `TemplateA`\nJSCOMPILER_PRESERVE('TestB')",e);
+  testWarning("`LoneTemplate`","JSCOMPILER_PRESERVE(`LoneTemplate`)",e);
+  testWarning(LINE_JOINER.join("var name = 'Bad';","`${name}Template`;"),LINE_JOINER.join("var name = 'Bad';","JSCOMPILER_PRESERVE(`${name}Template`)"),e);
+  testWarning(LINE_JOINER.join("var name = 'BadTail';","`Template${name}`;"),LINE_JOINER.join("var name = 'BadTail';","JSCOMPILER_PRESERVE(`Template${name}`)"),e);
+  testWarning(LINE_JOINER.join("var name = 'Good';","var templateString = `${name}Template`;"),ok);
+  testWarning("var templateString = `Template`;",ok);
+  testWarning("tagged`Template`;",ok);
+  testWarning("tagged`${name}Template`;",ok);
 }
