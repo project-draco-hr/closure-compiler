@@ -1,0 +1,23 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  if (peek(TokenType.TYPEOF)) {
+    eat(TokenType.TYPEOF);
+    IdentifierToken token=eatId();
+    ImmutableList.Builder<String> identifiers=ImmutableList.builder();
+    if (token != null) {
+      identifiers.add(token.value);
+    }
+    while (peek(TokenType.PERIOD)) {
+      eat(TokenType.PERIOD);
+      token=eatId();
+      if (token == null) {
+        break;
+      }
+      identifiers.add(token.value);
+    }
+    return new TypeQueryTree(getTreeLocation(start),identifiers.build());
+  }
+ else {
+    return parseTypeReference();
+  }
+}

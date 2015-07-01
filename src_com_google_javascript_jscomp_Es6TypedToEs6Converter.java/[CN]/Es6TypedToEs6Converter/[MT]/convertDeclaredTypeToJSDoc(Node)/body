@@ -46,7 +46,7 @@ paramType=new Node(Token.ELLIPSIS,convertWithLocation(paramType.getFirstChild())
 }
 }
  else {
-paramType=maybeProcessOptionalParameter(param,maybeCreateAnyType(paramType));
+paramType=maybeProcessOptionalParameter(param,maybeCreateAnyType(param,paramType));
 }
 paramList.addChildToBack(paramType);
 }
@@ -70,6 +70,9 @@ colon.addChildToBack(convertWithLocation(original));
 lb.addChildrenToBack(colon);
 }
 return new Node(Token.LC,lb);
+case Token.TYPEOF:
+compiler.report(JSError.make(type,TYPE_QUERY_NOT_SUPPORTED));
+return new Node(Token.QMARK);
 default :
 break;
 }

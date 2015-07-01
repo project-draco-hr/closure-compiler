@@ -8,7 +8,7 @@
       TypeDeclarationNode type=null;
       if (param.type == ParseTreeType.TYPED_PARAMETER) {
         TypedParameterTree typedParam=param.asTypedParameter();
-        type=(TypeDeclarationNode)process(typedParam.typeAnnotation);
+        type=(TypeDeclarationNode)transform(typedParam.typeAnnotation);
         param=typedParam.param;
       }
 switch (param.type) {
@@ -28,5 +28,5 @@ throw new IllegalStateException("Illegal parameter type: " + param.type);
 }
 }
 }
-return functionType(process(tree.returnType),requiredParams,optionalParams,restName,restType);
+return cloneProps(functionType(transform(tree.returnType),requiredParams,optionalParams,restName,restType));
 }
