@@ -1,7 +1,9 @@
 {
-  Node[] items=new Node[n.getChildCount() / 2];
-  for (int i=0, j=1; i < items.length; i++, j+=2) {
-    items[i]=IR.string((String)n.getChildAtIndex(j).getProp(Node.RAW_STRING_VALUE));
+  Node array=IR.arraylit();
+  for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+    if (child.isString()) {
+      array.addChildToBack(IR.string((String)child.getProp(Node.RAW_STRING_VALUE)));
+    }
   }
-  return IR.arraylit(items);
+  return array;
 }
