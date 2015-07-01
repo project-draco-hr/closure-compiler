@@ -1,7 +1,7 @@
 {
   test("var a1 = x => x+1; var a2 = x => x-1;","var a1 = function(x) { return x+1; }; var a2 = function(x) { return x-1; };");
   test("function f() { var a1 = x => x+1; var a2 = x => x-1; }",LINE_JOINER.join("function f() {","  var a1 = function(x) { return x+1; };","  var a2 = function(x) { return x-1; };","}"));
-  test("function f() { var a1 = () => this.x; var a2 = () => this.y; }",LINE_JOINER.join("function f() {","  /** @const */ var $jscomp$this = this;","  var a1 = function() { return $jscomp$this.x; };","  var a2 = function() { return $jscomp$this.y; };","}"));
+  test("function f() { var a1 = () => this.x; var a2 = () => this.y; }",LINE_JOINER.join("function f() {","  const $jscomp$this = this;","  var a1 = function() { return $jscomp$this.x; };","  var a2 = function() { return $jscomp$this.y; };","}"));
   test("var a = [1,2,3,4]; var b = a.map(x => x+1).map(x => x*x);",LINE_JOINER.join("var a = [1,2,3,4];","var b = a.map(function(x) { return x+1; }).map(function(x) { return x*x; });"));
   test(LINE_JOINER.join("function f() {","  var a = [1,2,3,4];","  var b = a.map(x => x+1).map(x => x*x);","}"),LINE_JOINER.join("function f() {","  var a = [1,2,3,4];","  var b = a.map(function(x) { return x+1; }).map(function(x) { return x*x; });","}"));
 }
