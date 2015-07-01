@@ -1,7 +1,13 @@
 {
   if (n.getType() == Token.MEMBER_FUNCTION_DEF || n.getType() == Token.GETTER_DEF || n.getType() == Token.SETTER_DEF) {
     validateChildCount(n);
-    validateFunctionExpression(n.getFirstChild());
+    Node function=n.getFirstChild();
+    if (isAmbient) {
+      validateFunctionSignature(function);
+    }
+ else {
+      validateFunctionExpression(function);
+    }
   }
  else   if (n.getType() == Token.MEMBER_VARIABLE_DEF) {
     validateChildless(n);

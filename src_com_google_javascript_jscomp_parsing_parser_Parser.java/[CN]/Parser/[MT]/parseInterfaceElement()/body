@@ -1,5 +1,6 @@
 {
   SourcePosition start=getTreeStartLocation();
+  boolean isGenerator=eatOpt(TokenType.STAR) != null;
   IdentifierToken name=null;
   TokenType type=peekType();
   if (type == TokenType.IDENTIFIER || Keywords.isKeyword(type)) {
@@ -8,8 +9,7 @@
  else {
   }
   if (peek(TokenType.OPEN_PAREN) || peek(TokenType.OPEN_ANGLE)) {
-    ParseTree function=parseMethodSignature(start,name);
-    eat(TokenType.SEMI_COLON);
+    ParseTree function=parseMethodSignature(start,name,false,isGenerator);
     return function;
   }
  else {

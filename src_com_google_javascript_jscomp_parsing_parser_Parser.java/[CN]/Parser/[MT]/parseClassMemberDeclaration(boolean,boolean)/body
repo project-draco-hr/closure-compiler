@@ -19,7 +19,7 @@
   }
   if (peek(TokenType.OPEN_PAREN) || peek(TokenType.OPEN_ANGLE)) {
     FunctionDeclarationTree.Kind kind=nameExpr == null ? FunctionDeclarationTree.Kind.MEMBER : FunctionDeclarationTree.Kind.EXPRESSION;
-    ParseTree function=parseFunctionTail(start,name,isStatic,isGenerator,kind);
+    ParseTree function=isAmbient ? parseMethodSignature(start,name,isStatic,isGenerator) : parseFunctionTail(start,name,isStatic,isGenerator,kind);
     if (kind == FunctionDeclarationTree.Kind.MEMBER) {
       return function;
     }
