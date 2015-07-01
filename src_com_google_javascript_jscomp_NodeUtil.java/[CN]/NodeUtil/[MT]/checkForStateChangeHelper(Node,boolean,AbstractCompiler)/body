@@ -17,6 +17,7 @@ case Token.NULL:
 case Token.STRING:
 case Token.STRING_KEY:
 case Token.SWITCH:
+case Token.TEMPLATELIT_SUB:
 case Token.TRY:
 case Token.EMPTY:
     break;
@@ -60,6 +61,13 @@ if (!functionCallHasSideEffects(n,compiler)) {
 break;
 }
 return true;
+case Token.TEMPLATELIT:
+if (n.getFirstChild().isString()) {
+break;
+}
+ else {
+return functionCallHasSideEffects(n);
+}
 default :
 if (isSimpleOperator(n)) {
 break;
