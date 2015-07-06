@@ -1,5 +1,4 @@
 {
-  compareJsDoc=false;
   test("class D {} class C extends D { constructor() { super(); } }",LINE_JOINER.join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function() {","  D.call(this);","}","$jscomp.inherits(C, D);"));
   test("class D {} class C extends D { constructor(str) { super(str); } }",LINE_JOINER.join("/** @constructor @struct */","var D = function() {}","/** @constructor @struct @extends {D} */","var C = function(str) {","  D.call(this,str);","}","$jscomp.inherits(C, D);"));
   test(LINE_JOINER.join("class D {}","class C extends D {","  constructor() { }","  foo() { return super.foo(); }","}"),LINE_JOINER.join("/** @constructor @struct */","var D = function() {}","/** @constructor @struct @extends {D} */","var C = function() { }","$jscomp.inherits(C, D);","C.prototype.foo = function() {","  return D.prototype.foo.call(this);","}"));

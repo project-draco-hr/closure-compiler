@@ -1,7 +1,6 @@
 {
   enableTypeCheck(CheckLevel.WARNING);
-  compareJsDoc=false;
   test(EXTERNS_BASE,LINE_JOINER.join("/** @constructor @struct */","function Foo() {}","Foo.prototype.f = function() {};","class Sub extends Foo {}","(new Sub).f();"),LINE_JOINER.join("/** @constructor @struct */","function Foo() {}","Foo.prototype.f = function() {};","/** @constructor @struct @extends {Foo} */","var Sub=function(var_args) { Foo.apply(this, arguments); }","$jscomp.inherits(Sub, Foo);","(new Sub).f();"),null,null);
   test(EXTERNS_BASE,LINE_JOINER.join("/** @constructor @struct */","function Foo() {}","Foo.f = function() {};","class Sub extends Foo {}","Sub.f();"),null,null,TypeCheck.INEXISTENT_PROPERTY);
-  test(EXTERNS_BASE,LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.f = function() {};","class Sub extends Foo {}"),LINE_JOINER.join("function Foo(){}Foo.f=function(){};","var Sub=function(var_args){Foo.apply(this,arguments)};","$jscomp.inherits(Sub,Foo)"),null,null);
+  test(EXTERNS_BASE,LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.f = function() {};","class Sub extends Foo {}"),LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.f = function() {};","/** @constructor @struct @extends {Foo} */","var Sub = function(var_args) { Foo.apply(this, arguments); };","$jscomp.inherits(Sub, Foo);"),null,null);
 }
