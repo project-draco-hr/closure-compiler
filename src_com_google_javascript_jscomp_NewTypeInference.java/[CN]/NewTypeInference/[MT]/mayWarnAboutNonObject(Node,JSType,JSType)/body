@@ -5,7 +5,7 @@
   boolean isNotAnObject=JSType.meet(recvType,JSType.TOP_OBJECT).isBottom();
   boolean mayNotBeAnObject=!recvType.isSubtypeOf(JSType.TOP_OBJECT);
   if (isNotAnObject || (!specializedType.isTruthy() && !specializedType.isFalsy() && mayNotBeAnObject)) {
-    warnings.add(JSError.make(receiver,PROPERTY_ACCESS_ON_NONOBJECT,pname,recvType.toString()));
+    warnings.add(JSError.make(receiver,PROPERTY_ACCESS_ON_NONOBJECT,getPropNameForErrorMsg(receiver.getParent()),recvType.toString()));
     return true;
   }
   return false;
