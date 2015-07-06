@@ -10,6 +10,9 @@
   Node body=newNode(Token.CLASS_MEMBERS);
   setSourceInfo(body,tree);
   for (  ParseTree child : tree.elements) {
+    if (child.type == ParseTreeType.MEMBER_VARIABLE || child.type == ParseTreeType.COMPUTED_PROPERTY_MEMBER_VARIABLE) {
+      maybeWarnTypeSyntax(child,"member variable in class");
+    }
     body.addChildToBack(transform(child));
   }
   Node classNode=newNode(Token.CLASS,name,superClass,body);
