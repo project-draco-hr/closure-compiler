@@ -162,14 +162,16 @@ type=null;
 if (token != JsDocToken.EOL && token != JsDocToken.EOC) {
 type=createJSTypeExpression(parseAndRecordTypeNode(token));
 }
+ else {
+restoreLookAhead(token);
+}
 if (type == null) {
 type=createJSTypeExpression(newStringNode("number"));
 }
 if (!jsdocBuilder.recordEnumParameterType(type)) {
 parser.addTypeWarning("msg.jsdoc.incompat.type",lineno,charno);
 }
-token=eatUntilEOLIfNotAnnotation(token);
-return token;
+return eatUntilEOLIfNotAnnotation();
 case EXPOSE:
 if (!jsdocBuilder.recordExpose()) {
 parser.addParserWarning("msg.jsdoc.expose",stream.getLineno(),stream.getCharno());
