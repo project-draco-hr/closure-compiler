@@ -29,7 +29,11 @@
     next=child.getNext();
     Node newLHS, newRHS;
     if (child.isStringKey()) {
-      Preconditions.checkState(child.hasChildren());
+      if (!child.hasChildren()) {
+        Node name=IR.name(child.getString());
+        name.copyInformationFrom(child);
+        child.addChildToBack(name);
+      }
       Node getprop=new Node(child.isQuotedString() ? Token.GETELEM : Token.GETPROP,IR.name(tempVarName),IR.string(child.getString()));
       Node value=child.removeFirstChild();
       if (!value.isDefaultValue()) {

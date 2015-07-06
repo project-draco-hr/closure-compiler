@@ -1,0 +1,46 @@
+{
+  Node functionBody=paramList.getLastSibling();
+  restParam.setType(Token.NAME);
+  restParam.setVarArgs(true);
+  String paramName=restParam.getString();
+  Node newBlock=IR.block().useSourceInfoFrom(functionBody);
+  Node name=IR.name(paramName);
+  Node let=IR.let(name,IR.name(REST_PARAMS)).useSourceInfoIfMissingFromForTree(functionBody);
+  newBlock.addChildToFront(let);
+  for (  Node child : functionBody.children()) {
+    newBlock.addChildToBack(child.detachFromParent());
+  }
+  JSTypeExpression type=null;
+  JSDocInfo info=restParam.getJSDocInfo();
+  if (info != null) {
+    type=info.getType();
+  }
+ else {
+    JSDocInfo functionInfo=paramList.getParent().getJSDocInfo();
+    if (functionInfo != null) {
+      type=functionInfo.getParameterType(paramName);
+    }
+  }
+  if (type != null) {
+    Node arrayType=IR.string("Array");
+    Node typeNode=type.getRoot();
+    if (typeNode.getType() != Token.ELLIPSIS) {
+      compiler.report(JSError.make(typeNode,BAD_REST_PARAMETER_ANNOTATION));
+    }
+    Node memberType=typeNode.getType() == Token.ELLIPSIS ? typeNode.getFirstChild().cloneNode() : typeNode.cloneNode();
+    arrayType.addChildToFront(new Node(Token.BLOCK,memberType).copyInformationFrom(typeNode));
+    JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+    builder.recordType(new JSTypeExpression(new Node(Token.BANG,arrayType),restParam.getSourceFileName()));
+    name.setJSDocInfo(builder.build());
+  }
+  int restIndex=paramList.getIndexOfChild(restParam);
+  Node newArr=IR.var(IR.name(REST_PARAMS),IR.arraylit());
+  functionBody.addChildToFront(newArr.useSourceInfoIfMissingFromForTree(restParam));
+  Node init=IR.var(IR.name(REST_INDEX),IR.number(restIndex));
+  Node cond=IR.lt(IR.name(REST_INDEX),IR.getprop(IR.name("arguments"),IR.string("length")));
+  Node incr=IR.inc(IR.name(REST_INDEX),false);
+  Node body=IR.block(IR.exprResult(IR.assign(IR.getelem(IR.name(REST_PARAMS),IR.sub(IR.name(REST_INDEX),IR.number(restIndex))),IR.getelem(IR.name("arguments"),IR.name(REST_INDEX)))));
+  functionBody.addChildAfter(IR.forNode(init,cond,incr,body).useSourceInfoIfMissingFromForTree(restParam),newArr);
+  functionBody.addChildToBack(newBlock);
+  compiler.reportCodeChange();
+}

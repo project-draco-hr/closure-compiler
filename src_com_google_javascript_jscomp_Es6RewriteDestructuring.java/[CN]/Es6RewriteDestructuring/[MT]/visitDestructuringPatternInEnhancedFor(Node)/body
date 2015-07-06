@@ -1,0 +1,29 @@
+{
+  Node forNode;
+  int declarationType;
+  if (NodeUtil.isEnhancedFor(pattern.getParent())) {
+    forNode=pattern.getParent();
+    declarationType=Token.ASSIGN;
+  }
+ else {
+    forNode=pattern.getParent().getParent();
+    declarationType=pattern.getParent().getType();
+    Preconditions.checkState(NodeUtil.isEnhancedFor(forNode));
+  }
+  String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
+  Node block=forNode.getLastChild();
+  if (declarationType == Token.ASSIGN) {
+    Node decl=IR.declaration(IR.name(tempVarName),Token.LET);
+    decl.useSourceInfoIfMissingFromForTree(pattern);
+    pattern.getParent().replaceChild(pattern,decl);
+    Node exprResult=IR.exprResult(IR.assign(pattern,IR.name(tempVarName)));
+    exprResult.useSourceInfoIfMissingFromForTree(pattern);
+    block.addChildToFront(exprResult);
+  }
+ else {
+    pattern.getParent().replaceChild(pattern,IR.name(tempVarName).useSourceInfoFrom(pattern));
+    Node decl=IR.declaration(pattern,IR.name(tempVarName),declarationType);
+    decl.useSourceInfoIfMissingFromForTree(pattern);
+    block.addChildToFront(decl);
+  }
+}
