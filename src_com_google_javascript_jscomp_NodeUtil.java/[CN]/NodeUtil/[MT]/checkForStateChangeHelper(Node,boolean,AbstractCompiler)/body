@@ -1,37 +1,16 @@
 {
 switch (n.getType()) {
-case Token.CAST:
-case Token.AND:
-case Token.BLOCK:
-case Token.EXPR_RESULT:
-case Token.HOOK:
-case Token.IF:
-case Token.IN:
-case Token.PARAM_LIST:
-case Token.NUMBER:
-case Token.OR:
-case Token.THIS:
-case Token.TRUE:
-case Token.FALSE:
-case Token.NULL:
-case Token.STRING:
-case Token.STRING_KEY:
-case Token.SWITCH:
-case Token.TEMPLATELIT_SUB:
-case Token.TRY:
-case Token.EMPTY:
-    break;
 case Token.THROW:
 case Token.YIELD:
-  return true;
+    return true;
 case Token.OBJECTLIT:
-if (checkForNewObjects) {
-  return true;
-}
+  if (checkForNewObjects) {
+    return true;
+  }
 for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
-if (checkForStateChangeHelper(c.getFirstChild(),checkForNewObjects,compiler)) {
-  return true;
-}
+  if (checkForStateChangeHelper(c.getFirstChild(),checkForNewObjects,compiler)) {
+    return true;
+  }
 }
 return false;
 case Token.ARRAYLIT:
@@ -63,6 +42,26 @@ break;
 return true;
 case Token.TAGGED_TEMPLATELIT:
 return functionCallHasSideEffects(n);
+case Token.CAST:
+case Token.AND:
+case Token.BLOCK:
+case Token.EXPR_RESULT:
+case Token.HOOK:
+case Token.IF:
+case Token.IN:
+case Token.PARAM_LIST:
+case Token.NUMBER:
+case Token.OR:
+case Token.THIS:
+case Token.TRUE:
+case Token.FALSE:
+case Token.NULL:
+case Token.STRING:
+case Token.STRING_KEY:
+case Token.SWITCH:
+case Token.TEMPLATELIT_SUB:
+case Token.TRY:
+case Token.EMPTY:
 case Token.TEMPLATELIT:
 break;
 default :
