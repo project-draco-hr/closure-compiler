@@ -13,6 +13,12 @@
       }
     }
   }
+ else   if (templateNode.isCall() && templateNode.getBooleanProp(Node.FREE_CALL) && templateNode.getFirstChild().isName()) {
+    String name=templateNode.getFirstChild().getString();
+    if (templateNodeToMatchMap.containsKey(name)) {
+      clone.putBooleanProp(Node.FREE_CALL,false);
+    }
+  }
   for (  Node child : templateNode.children()) {
     clone.addChildToBack(transformNode(child,templateNodeToMatchMap));
   }

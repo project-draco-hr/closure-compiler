@@ -1,0 +1,7 @@
+{
+  String externs="var foo = {}; /** @return {number} */ foo.someFn = function() {}";
+  String originalCode="foo.someFn();";
+  String expectedCode="foo.someFn().someOtherFn();";
+  String template="" + "/** @param {function():number} fn */\n" + "function before_template(fn) {\n"+ "  fn();\n"+ "}\n"+ "/** @param {function():number} fn */\n"+ "function after_template(fn) {\n"+ "  fn().someOtherFn();\n"+ "}\n";
+  assertChanges(externs,originalCode,expectedCode,template);
+}
