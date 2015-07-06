@@ -1,11 +1,11 @@
 {
-  testWarning("for(var x = 0; x < 100; x++) { foo(x) }",ok);
-  testWarning("for(; true; ) { bar() }",ok);
-  testWarning("for(foo(); true; foo()) { bar() }",ok);
-  testWarning("for(void 0; true; foo()) { bar() }","for(JSCOMPILER_PRESERVE(void 0); true; foo()) { bar() }",e);
-  testWarning("for(foo(); true; void 0) { bar() }","for(foo(); true; JSCOMPILER_PRESERVE(void 0)) { bar() }",e);
-  testWarning("for(foo(); true; (1, bar())) { bar() }","for(foo(); true; (JSCOMPILER_PRESERVE(1), bar())) { bar() }",e);
-  testWarning("for(foo in bar) { foo() }",ok);
-  testWarning("for (i = 0; el = el.previousSibling; i++) {}",ok);
-  testWarning("for (i = 0; el = el.previousSibling; i++);",ok);
+  testSame("for(var x = 0; x < 100; x++) { foo(x) }");
+  testSame("for(; true; ) { bar() }");
+  testSame("for(foo(); true; foo()) { bar() }");
+  test("for(void 0; true; foo()) { bar() }","for(JSCOMPILER_PRESERVE(void 0); true; foo()) { bar() }",null,e);
+  test("for(foo(); true; void 0) { bar() }","for(foo(); true; JSCOMPILER_PRESERVE(void 0)) { bar() }",null,e);
+  test("for(foo(); true; (1, bar())) { bar() }","for(foo(); true; (JSCOMPILER_PRESERVE(1), bar())) { bar() }",null,e);
+  testSame("for(foo in bar) { foo() }");
+  testSame("for (i = 0; el = el.previousSibling; i++) {}");
+  testSame("for (i = 0; el = el.previousSibling; i++);");
 }
