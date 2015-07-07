@@ -6,7 +6,7 @@
       FunctionType summary=summaries.get(calleeScope).getFunType();
       JSType outerType=envGetType(env,freeVar);
       JSType innerType=summary.getOuterVarPrecondition(freeVar);
-      if (outerType != null && JSType.meet(outerType,innerType).isBottom()) {
+      if (outerType != null && !JSType.haveCommonSubtype(outerType,innerType)) {
         warnings.add(JSError.make(callee,CROSS_SCOPE_GOTCHA,freeVar,outerType.toString(),innerType.toString()));
       }
     }

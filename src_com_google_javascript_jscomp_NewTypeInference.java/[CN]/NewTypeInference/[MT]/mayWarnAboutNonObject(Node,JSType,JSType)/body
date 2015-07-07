@@ -2,7 +2,7 @@
   if (recvType.isBottom()) {
     return true;
   }
-  boolean isNotAnObject=JSType.meet(recvType,JSType.TOP_OBJECT).isBottom();
+  boolean isNotAnObject=!JSType.haveCommonSubtype(recvType,JSType.TOP_OBJECT);
   boolean mayNotBeAnObject=!recvType.isSubtypeOf(JSType.TOP_OBJECT);
   if (isNotAnObject || (!specializedType.isTruthy() && !specializedType.isFalsy() && mayNotBeAnObject)) {
     warnings.add(JSError.make(receiver,PROPERTY_ACCESS_ON_NONOBJECT,getPropNameForErrorMsg(receiver.getParent()),recvType.toString()));
