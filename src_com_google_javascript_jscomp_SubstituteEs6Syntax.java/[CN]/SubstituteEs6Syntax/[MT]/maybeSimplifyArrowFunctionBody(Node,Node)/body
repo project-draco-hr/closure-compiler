@@ -1,0 +1,9 @@
+{
+  Preconditions.checkArgument(arrowFunction.isArrowFunction());
+  if (!body.isBlock() || body.getChildCount() != 1 || !body.getFirstChild().isReturn()) {
+    return;
+  }
+  Node returnValue=body.getFirstChild().removeFirstChild();
+  arrowFunction.replaceChild(body,returnValue != null ? returnValue : IR.name("undefined"));
+  compiler.reportCodeChange();
+}
