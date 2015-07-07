@@ -1,0 +1,11 @@
+{
+  maybeWarnTypeSyntax(tree,"index signature");
+  Node name=transform(tree.name);
+  Node indexType=name.getDeclaredTypeExpression();
+  if (indexType.getType() != Token.NUMBER_TYPE && indexType.getType() != Token.STRING_TYPE) {
+    errorReporter.error("Index signature parameter type must be 'string' or 'number'",sourceName,lineno(tree.name),charno(tree.name));
+  }
+  Node signature=newNode(Token.INDEX_SIGNATURE,name);
+  maybeProcessType(signature,tree.declaredType);
+  return signature;
+}

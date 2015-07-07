@@ -333,7 +333,7 @@ case Token.MEMBER_FUNCTION_DEF:
 case Token.MEMBER_VARIABLE_DEF:
 {
 n.getParent().toStringTree();
-Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers() || n.getParent().isInterfaceMembers()|| n.getParent().isRecordType());
+Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers() || n.getParent().isInterfaceMembers()|| n.getParent().isRecordType()|| n.getParent().isIndexSignature());
 if (n.isStaticMember()) {
 add("static ");
 }
@@ -359,7 +359,7 @@ if (n.isMemberVariableDef()) {
 add(n.getString());
 maybeAddOptional(n);
 maybeAddTypeDecl(n);
-if (!n.getParent().isRecordType()) {
+if (!n.getParent().isRecordType() && !n.getParent().isIndexSignature()) {
 add(";");
 }
 }
@@ -892,6 +892,13 @@ case Token.DECLARE:
 add("declare");
 add(first);
 cc.endStatement();
+break;
+case Token.INDEX_SIGNATURE:
+add("[");
+add(first);
+add("]");
+maybeAddTypeDecl(n);
+add(";");
 break;
 default :
 throw new RuntimeException("Unknown type " + Token.name(type) + "\n"+ n.toStringTree());

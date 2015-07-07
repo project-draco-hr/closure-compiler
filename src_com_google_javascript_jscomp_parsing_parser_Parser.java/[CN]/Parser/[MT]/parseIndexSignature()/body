@@ -1,0 +1,12 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.OPEN_SQUARE);
+  IdentifierToken name=eatIdOrKeywordAsId();
+  eat(TokenType.COLON);
+  ParseTree indexType=parseTypeName();
+  eat(TokenType.CLOSE_SQUARE);
+  eat(TokenType.COLON);
+  ParseTree declaredType=parseType();
+  ParseTree nameTree=new MemberVariableTree(getTreeLocation(start),name,false,false,indexType);
+  return new IndexSignatureTree(getTreeLocation(start),nameTree,declaredType);
+}

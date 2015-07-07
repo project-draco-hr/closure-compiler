@@ -1,0 +1,12 @@
+{
+  parse("interface I {\n  [foo: number]: number;\n}");
+  parse("var i: {[foo: number]: number;};");
+  parse("class C {\n  [foo: number]: number;\n}");
+  expectErrors("Parse error. ':' expected");
+  parse("interface I { [foo: number]; }");
+  expectErrors("Parse error. ':' expected");
+  parse("interface I { [foo]: number; }");
+  expectErrors("Parse error. Index signature parameter type must be 'string' or 'number'");
+  parse("interface I {\n  [foo: any]: number;\n}");
+  testNotEs6Typed("class C {\n  [foo: number]: number;\n}","index signature","type annotation","type annotation");
+}
