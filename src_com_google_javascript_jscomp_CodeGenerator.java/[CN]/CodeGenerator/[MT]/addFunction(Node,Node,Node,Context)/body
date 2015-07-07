@@ -1,0 +1,22 @@
+{
+  boolean funcNeedsParens=(context == Context.START_OF_EXPR);
+  if (funcNeedsParens) {
+    add("(");
+  }
+  add("function");
+  if (n.isGeneratorFunction()) {
+    add("*");
+    if (!first.getString().isEmpty()) {
+      cc.maybeInsertSpace();
+    }
+  }
+  add(first);
+  maybeAddGenericTypes(first);
+  add(first.getNext());
+  maybeAddTypeDecl(n);
+  add(last,Context.PRESERVE_BLOCK);
+  cc.endFunction(context == Context.STATEMENT);
+  if (funcNeedsParens) {
+    add(")");
+  }
+}

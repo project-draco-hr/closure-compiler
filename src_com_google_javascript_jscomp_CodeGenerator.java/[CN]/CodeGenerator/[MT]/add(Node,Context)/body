@@ -186,32 +186,11 @@ if (n.getClass() != Node.class) {
 throw new Error("Unexpected Node subclass.");
 }
 Preconditions.checkState(childCount == 3);
-boolean isArrow=n.isArrowFunction();
-boolean notSingleExpr=n.getParent() == null || !n.getParent().isExprResult();
-boolean funcNeedsParens=(context == Context.START_OF_EXPR) && (!isArrow || notSingleExpr);
-if (funcNeedsParens) {
-add("(");
+if (n.isArrowFunction()) {
+addArrowFunction(n,first,last,context);
 }
-if (!isArrow) {
-add("function");
-}
-if (n.isGeneratorFunction()) {
-add("*");
-if (!first.getString().isEmpty()) {
-cc.maybeInsertSpace();
-}
-}
-add(first);
-maybeAddGenericTypes(first);
-add(first.getNext());
-maybeAddTypeDecl(n);
-if (isArrow) {
-cc.addOp("=>",true);
-}
-add(last,Context.PRESERVE_BLOCK);
-cc.endFunction(context == Context.STATEMENT);
-if (funcNeedsParens) {
-add(")");
+ else {
+addFunction(n,first,last,context);
 }
 break;
 }

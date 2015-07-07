@@ -1,0 +1,21 @@
+{
+  Preconditions.checkState(first.getString().isEmpty());
+  boolean funcNeedsParens=arrowFunctionNeedsParens(n.getParent(),context);
+  if (funcNeedsParens) {
+    add("(");
+  }
+  maybeAddGenericTypes(first);
+  add(first.getNext());
+  maybeAddTypeDecl(n);
+  cc.addOp("=>",true);
+  if (last.isBlock()) {
+    add(last,Context.PRESERVE_BLOCK);
+  }
+ else {
+    addExpr(last,NodeUtil.precedence(Token.COMMA) + 1,Context.PRESERVE_BLOCK);
+  }
+  cc.endFunction(context == Context.STATEMENT);
+  if (funcNeedsParens) {
+    add(")");
+  }
+}
