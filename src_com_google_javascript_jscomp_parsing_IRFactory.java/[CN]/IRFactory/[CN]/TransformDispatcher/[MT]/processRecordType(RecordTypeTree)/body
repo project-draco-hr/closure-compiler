@@ -1,7 +1,7 @@
 {
-  LinkedHashMap<String,TypeDeclarationNode> members=new LinkedHashMap<>();
-  for (  Map.Entry<IdentifierToken,ParseTree> entry : tree.members.entrySet()) {
-    members.put(entry.getKey().value,(TypeDeclarationNode)transform(entry.getValue()));
+  TypeDeclarationNode node=new TypeDeclarationNode(Token.RECORD_TYPE);
+  for (  ParseTree child : tree.members) {
+    node.addChildToBack(transform(child));
   }
-  return cloneProps(recordType(members));
+  return cloneProps(node);
 }

@@ -91,9 +91,7 @@ addIdentifier(n.getString());
 break;
 case Token.NAME:
 addIdentifier(n.getString());
-if (n.getBooleanProp(Node.OPT_PARAM_ES6_TYPED)) {
-add("?");
-}
+maybeAddOptional(n);
 maybeAddTypeDecl(n);
 if (first != null && !first.isEmpty()) {
 Preconditions.checkState(childCount == 1);
@@ -356,7 +354,7 @@ case Token.MEMBER_FUNCTION_DEF:
 case Token.MEMBER_VARIABLE_DEF:
 {
 n.getParent().toStringTree();
-Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers() || n.getParent().isInterfaceMembers());
+Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers() || n.getParent().isInterfaceMembers()|| n.getParent().isRecordType());
 if (n.isStaticMember()) {
 add("static ");
 }
@@ -380,8 +378,11 @@ break;
 String name=n.getString();
 if (n.isMemberVariableDef()) {
 add(n.getString());
+maybeAddOptional(n);
 maybeAddTypeDecl(n);
+if (!n.getParent().isRecordType()) {
 add(";");
+}
 }
  else {
 Preconditions.checkState(childCount == 1);
@@ -403,6 +404,7 @@ cc.addNumber(d);
 addJsString(n);
 }
 }
+maybeAddOptional(fn);
 add(parameters);
 maybeAddTypeDecl(fn);
 if (body.isEmpty()) {

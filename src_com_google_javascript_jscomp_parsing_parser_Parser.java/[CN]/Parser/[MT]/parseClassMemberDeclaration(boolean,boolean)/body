@@ -19,7 +19,14 @@
   }
   if (peek(TokenType.OPEN_PAREN) || peek(TokenType.OPEN_ANGLE)) {
     FunctionDeclarationTree.Kind kind=nameExpr == null ? FunctionDeclarationTree.Kind.MEMBER : FunctionDeclarationTree.Kind.EXPRESSION;
-    ParseTree function=isAmbient ? parseMethodSignature(start,name,isStatic,isGenerator) : parseFunctionTail(start,name,isStatic,isGenerator,kind);
+    ParseTree function;
+    if (isAmbient) {
+      function=parseMethodSignature(start,name,isStatic,isGenerator,false);
+      eat(TokenType.SEMI_COLON);
+    }
+ else {
+      function=parseFunctionTail(start,name,isStatic,isGenerator,kind);
+    }
     if (kind == FunctionDeclarationTree.Kind.MEMBER) {
       return function;
     }
@@ -37,7 +44,7 @@
     }
     eat(TokenType.SEMI_COLON);
     if (nameExpr == null) {
-      return new MemberVariableTree(getTreeLocation(start),name,isStatic,declaredType);
+      return new MemberVariableTree(getTreeLocation(start),name,isStatic,false,declaredType);
     }
  else {
       return new ComputedPropertyMemberVariableTree(getTreeLocation(start),nameExpr,isStatic,declaredType);

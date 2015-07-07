@@ -2,6 +2,14 @@
   ImmutableList.Builder<ParseTree> result=ImmutableList.builder();
   while (peekInterfaceElement()) {
     result.add(parseInterfaceElement());
+    if (!peek(TokenType.CLOSE_CURLY)) {
+      if (peekImplicitSemiColon()) {
+        eatPossibleImplicitSemiColon();
+      }
+ else {
+        eat(TokenType.COMMA);
+      }
+    }
   }
   return result.build();
 }

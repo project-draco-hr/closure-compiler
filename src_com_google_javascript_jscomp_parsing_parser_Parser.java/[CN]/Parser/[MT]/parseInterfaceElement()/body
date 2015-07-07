@@ -8,13 +8,17 @@
   }
  else {
   }
+  boolean isOptional=false;
+  if (peek(TokenType.QUESTION)) {
+    eat(TokenType.QUESTION);
+    isOptional=true;
+  }
   if (peek(TokenType.OPEN_PAREN) || peek(TokenType.OPEN_ANGLE)) {
-    ParseTree function=parseMethodSignature(start,name,false,isGenerator);
+    ParseTree function=parseMethodSignature(start,name,false,isGenerator,isOptional);
     return function;
   }
  else {
     ParseTree declaredType=maybeParseColonType();
-    eat(TokenType.SEMI_COLON);
-    return new MemberVariableTree(getTreeLocation(start),name,false,declaredType);
+    return new MemberVariableTree(getTreeLocation(start),name,false,isOptional,declaredType);
   }
 }

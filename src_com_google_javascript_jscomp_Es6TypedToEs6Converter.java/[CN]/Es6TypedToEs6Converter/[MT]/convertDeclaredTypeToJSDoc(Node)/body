@@ -62,11 +62,17 @@ pipe.addChildToBack(convertWithLocation(child));
 return pipe;
 case Token.RECORD_TYPE:
 Node lb=new Node(Token.LB);
-for (Node stringKey : type.children()) {
+for (Node memberVar : type.children()) {
+if (!memberVar.isMemberVariableDef()) {
+compiler.report(JSError.make(type,UNSUPPORTED_RECORD_TYPE));
+continue;
+}
 Node colon=new Node(Token.COLON);
-Node original=stringKey.removeFirstChild();
-colon.addChildToBack(stringKey.detachFromParent());
-colon.addChildToBack(convertWithLocation(original));
+memberVar.setType(Token.STRING_KEY);
+Node memberType=convertWithLocation(maybeCreateAnyType(memberVar,memberVar.getDeclaredTypeExpression()));
+memberVar.setDeclaredTypeExpression(null);
+colon.addChildToBack(memberVar.detachFromParent());
+colon.addChildToBack(memberType);
 lb.addChildrenToBack(colon);
 }
 return new Node(Token.LC,lb);

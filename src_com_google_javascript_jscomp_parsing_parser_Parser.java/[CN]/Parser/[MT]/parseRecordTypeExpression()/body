@@ -3,25 +3,7 @@
   ParseTree typeExpression;
   if (peek(TokenType.OPEN_CURLY)) {
     eat(TokenType.OPEN_CURLY);
-    LinkedHashMap<IdentifierToken,ParseTree> members=new LinkedHashMap<>();
-    while (peekId()) {
-      IdentifierToken name=eatId();
-      eat(TokenType.COLON);
-      ParseTree type=parseType();
-      members.put(name,type);
-      if (peek(TokenType.CLOSE_CURLY)) {
-        break;
-      }
- else {
-        if (peekImplicitSemiColon()) {
-          eatPossibleImplicitSemiColon();
-        }
- else {
-          eat(TokenType.COMMA);
-        }
-      }
-    }
-    typeExpression=new RecordTypeTree(getTreeLocation(start),members);
+    typeExpression=new RecordTypeTree(getTreeLocation(start),parseInterfaceElements());
     eat(TokenType.CLOSE_CURLY);
   }
  else {
