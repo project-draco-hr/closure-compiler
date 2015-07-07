@@ -1,11 +1,7 @@
 {
   JSDocInfo inlineRetJsdoc=ignoreJsdoc ? null : funNode.getFirstChild().getJSDocInfo();
   JSTypeExpression retTypeExp=jsdoc == null ? null : jsdoc.getReturnType();
-  if (parent.isSetterDef()) {
-    inlineRetJsdoc=ignoreJsdoc ? null : funNode.getLastChild().getJSDocInfo();
-    if (retTypeExp != null || inlineRetJsdoc != null) {
-      warn("Cannot declare a return type on a setter",funNode);
-    }
+  if (parent.isSetterDef() && retTypeExp == null) {
     builder.addRetType(JSType.UNDEFINED);
   }
  else   if (inlineRetJsdoc != null) {

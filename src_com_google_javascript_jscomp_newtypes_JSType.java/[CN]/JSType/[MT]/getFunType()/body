@@ -1,10 +1,9 @@
 {
-  if (getObjs().size() <= 1) {
-    return getFunTypeIfSingletonObj();
-  }
-  FunctionType result=FunctionType.TOP_FUNCTION;
   for (  ObjectType obj : getObjs()) {
-    result=FunctionType.meet(result,obj.getFunType());
+    FunctionType ft=obj.getFunType();
+    if (ft != null) {
+      return ft;
+    }
   }
-  return result;
+  return null;
 }

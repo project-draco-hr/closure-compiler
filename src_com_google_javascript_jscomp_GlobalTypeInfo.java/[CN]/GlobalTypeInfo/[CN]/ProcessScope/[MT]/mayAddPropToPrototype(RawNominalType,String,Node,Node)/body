@@ -1,29 +1,20 @@
 {
-  Scope methodScope;
-  DeclaredFunctionType methodType;
-  JSType propDeclType;
+  Scope methodScope=null;
+  DeclaredFunctionType methodType=null;
+  JSType propDeclType=null;
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(defSite);
   if (initializer != null && initializer.isFunction()) {
     methodScope=visitFunctionLate(initializer,rawType);
     methodType=methodScope.getDeclaredFunctionType();
-    propDeclType=commonTypes.fromFunctionType(methodType.toFunctionType());
   }
- else {
-    JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(defSite);
-    if (jsdoc != null && jsdoc.containsFunctionDeclaration()) {
-      methodScope=null;
-      methodType=computeFnDeclaredType(jsdoc,pname,defSite,rawType,currentScope);
-      propDeclType=commonTypes.fromFunctionType(methodType.toFunctionType());
-    }
- else     if (jsdoc != null && jsdoc.hasType()) {
-      methodScope=null;
-      methodType=null;
-      propDeclType=typeParser.getDeclaredTypeOfNode(jsdoc,rawType,currentScope);
-    }
- else {
-      methodScope=null;
-      methodType=null;
-      propDeclType=null;
-    }
+ else   if (jsdoc != null && jsdoc.containsFunctionDeclaration()) {
+    methodType=computeFnDeclaredType(jsdoc,pname,defSite,rawType,currentScope);
+  }
+  if (jsdoc != null && jsdoc.hasType()) {
+    propDeclType=typeParser.getDeclaredTypeOfNode(jsdoc,rawType,currentScope);
+  }
+ else   if (methodType != null) {
+    propDeclType=commonTypes.fromFunctionType(methodType.toFunctionType());
   }
   propertyDefs.put(rawType,pname,new PropertyDef(defSite,methodType,methodScope));
   boolean isConst=isConst(defSite);

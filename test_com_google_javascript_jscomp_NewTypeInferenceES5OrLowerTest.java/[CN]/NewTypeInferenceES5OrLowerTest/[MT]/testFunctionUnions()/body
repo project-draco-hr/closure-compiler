@@ -1,0 +1,13 @@
+{
+  typeCheck("/** @type {?function()} */ function f() {};");
+  typeCheck("/** @type {?function()} */ function f() {}; f = 7;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @type {?function()} */ function f() {}; f = null;");
+  typeCheck("/** @const */ var ns = {}; /** @type {?function()} */ ns.f = function() {}; ns.f = 7;",NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck("/** @const */var ns = {}; /** @type {?function()} */ns.f = function(){}; ns.f = null;");
+  typeCheck("/** @type {?function(string)} */ function f(x) { x-5; };",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("/** @const */var ns = {}; /** @type {?function(string)} */ns.f = function(x){ x-5; };",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","/** @type {?function()} */ Foo.prototype.f;","(new Foo).f = 7;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","/** @type {?function()} */ Foo.prototype.f;","(new Foo).f = null;"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","/** @type {?function()} */ Foo.prototype.f = function() {};","(new Foo).f = 7;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","/** @type {?function()} */ Foo.prototype.f = function() {};","(new Foo).f = null;"));
+}

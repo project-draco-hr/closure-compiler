@@ -1,0 +1,13 @@
+{
+  if (funNode.getParent().isSetterDef()) {
+    JSType returnType=funType.getReturnType();
+    if (returnType != null && !returnType.isUnknown() && !returnType.isUndefined()) {
+      warnings.add(JSError.make(funNode,SETTER_WITH_RETURN));
+    }
+  }
+  int declaredArity=funType.getOptionalArity();
+  int parameterCount=funNode.getFirstChild().getNext().getChildCount();
+  if (!funType.hasRestFormals() && parameterCount != declaredArity) {
+    warnings.add(JSError.make(funNode,WRONG_PARAMETER_COUNT,String.valueOf(declaredArity),String.valueOf(parameterCount)));
+  }
+}

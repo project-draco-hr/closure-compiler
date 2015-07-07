@@ -5,29 +5,26 @@
   }
   try {
     if (jsdoc != null && jsdoc.getType() != null) {
-      Node jsdocNode=jsdoc.getType().getRoot();
-      int tokenType=jsdocNode.getType();
-      if (tokenType == Token.FUNCTION) {
-        if (declNode.isFunction()) {
-          return getFunTypeFromAtTypeJsdoc(jsdoc,declNode,ownerType,registry,builder);
-        }
-        try {
-          fillInFunTypeBuilder(jsdocNode,ownerType,registry,ImmutableList.<String>of(),builder);
-          return builder.buildDeclaration();
-        }
- catch (        UnknownTypeException e) {
-          return qmarkFunctionDeclared;
-        }
-      }
-      if (isQmarkFunction(jsdocNode)) {
+      JSType simpleType=getDeclaredTypeOfNode(jsdoc,ownerType,registry);
+      if (simpleType.isUnknown() || simpleType.isTop()) {
         return qmarkFunctionDeclared;
+      }
+      FunctionType funType=simpleType.getFunType();
+      if (funType != null) {
+        JSType slotType=simpleType.isFunctionType() ? null : simpleType;
+        DeclaredFunctionType declType=funType.toDeclaredFunctionType();
+        if (ownerType != null) {
+          declType=declType.withReceiverType(ownerType.getAsNominalType());
+        }
+        return new FunctionAndSlotType(slotType,declType);
       }
  else {
         warn("The function is annotated with a non-function jsdoc. " + "Ignoring jsdoc.",declNode);
-        return getFunTypeFromTypicalFunctionJsdoc(null,functionName,declNode,constructorType,ownerType,registry,builder,true);
+        jsdoc=null;
       }
     }
-    return getFunTypeFromTypicalFunctionJsdoc(jsdoc,functionName,declNode,constructorType,ownerType,registry,builder,false);
+    DeclaredFunctionType declType=getFunTypeFromTypicalFunctionJsdoc(jsdoc,functionName,declNode,constructorType,ownerType,registry,builder,false);
+    return new FunctionAndSlotType(null,declType);
   }
  catch (  FunctionTypeBuilder.WrongParameterOrderException e) {
     warn("Wrong parameter order: required parameters are first, " + "then optional, then varargs. Ignoring jsdoc.",declNode);

@@ -2,5 +2,8 @@
   Preconditions.checkArgument(!name.contains("."));
   Preconditions.checkState(isFinalized);
   Declaration d=getDeclaration(name,false);
-  return d != null && d.getFunctionScope() != null && d.getTypeOfSimpleDecl() != null;
+  if (d == null || d.getFunctionScope() == null || d.getTypeOfSimpleDecl() == null) {
+    return false;
+  }
+  return d.getTypeOfSimpleDecl().getObjTypeIfSingletonObj() != null;
 }

@@ -3,12 +3,7 @@
     return FunctionTypeBuilder.qmarkFunctionBuilder().buildDeclaration();
   }
   Preconditions.checkState(!isLoose(),"Loose function: %s",this);
-  if (isGeneric()) {
-    return null;
-  }
-  if (nominalType != null) {
-    return null;
-  }
+  Preconditions.checkState(!isGeneric(),"Generic function: %s",this);
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   for (  JSType type : requiredFormals) {
     builder.addReqFormal(type);

@@ -7,9 +7,16 @@
     }
   }
   RawNominalType ctorType=declNode.isFunction() ? nominaltypesByNode.get(declNode) : null;
-  DeclaredFunctionType result=typeParser.getFunctionType(fnDoc,functionName,declNode,ctorType,ownerType,parentScope);
-  if (ctorType != null) {
-    ctorType.setCtorFunction(result.toFunctionType(),commonTypes);
+  FunctionAndSlotType result=typeParser.getFunctionType(fnDoc,functionName,declNode,ctorType,ownerType,parentScope);
+  Node qnameNode=declNode.isGetProp() ? declNode : NodeUtil.getFunctionNameNode(declNode);
+  if (result.slotType != null && qnameNode != null && qnameNode.isName()) {
+    parentScope.addSimpleType(qnameNode,result.slotType);
   }
-  return result;
+  if (ctorType != null) {
+    ctorType.setCtorFunction(result.functionType.toFunctionType(),commonTypes);
+  }
+  if (declNode.isFunction()) {
+    maybeWarnFunctionDeclaration(declNode,result.functionType);
+  }
+  return result.functionType;
 }

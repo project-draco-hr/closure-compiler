@@ -1,0 +1,5 @@
+{
+  typeCheck("/** @typedef {function()} */ var Fun; /** @type {Fun} */ function f() {};");
+  typeCheck(Joiner.on('\n').join("/** @typedef {function(string)} */ var TakesString;","/** @type {TakesString} */ function f(x) {}","f(123);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @typedef {number|function()} */ var FunctionUnion;","/** @type {FunctionUnion} */ function f(x) {}"),GlobalTypeInfo.WRONG_PARAMETER_COUNT);
+}

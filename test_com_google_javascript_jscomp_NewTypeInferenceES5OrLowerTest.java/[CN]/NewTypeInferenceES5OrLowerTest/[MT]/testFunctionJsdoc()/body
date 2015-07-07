@@ -14,7 +14,7 @@
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","Foo.prototype.method = function(/** number */ x) {};","(new Foo).method('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @type {function(number)} */ function f(x) {}; f('asdf');",NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @type {number} */ function f() {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
-  typeCheck(Joiner.on('\n').join("/** @type {function():number} */","function /** number */ f() { return 1; }"),RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("/** @type {function():number} */","function /** number */ f() { return 1; }"));
   typeCheck(Joiner.on('\n').join("function f(/** function(number) */ fnum, floose, cond) {","  var y;","  if (cond) {","    y = fnum;","  } else {","    floose();","    y = floose;","  }","  return y;","}"));
   typeCheck(Joiner.on('\n').join("/** @param {function(): *} x */ function g(x) {}","/** @param {function(number): string} x */ function f(x) {","  g(x);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("var x = {}; x.a = function(/** string */ x) {}; x.a(123);",NewTypeInference.INVALID_ARGUMENT_TYPE);
