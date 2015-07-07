@@ -5,4 +5,6 @@
   typeCheck(Joiner.on('\n').join("function f(x) {","  if (x === null) {","    return 5;","  } else {","    return x - 43;","  }","}","f('str');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/** @const */ var goog = {};","/** @type {!Function} */ goog.abstractMethod = function(){};","/** @constructor */ function Foo(){};","/** @return {!Foo} */ Foo.prototype.clone = goog.abstractMethod;","/** @constructor @extends {Foo} */","function Bar() {}","/** @return {!Bar} */ Bar.prototype.clone = goog.abstractMethod;"));
   typeCheck(Joiner.on('\n').join("/** @const */ var goog = {};","/** @type {!Function} */ goog.abstractMethod = function(){};","/** @constructor */ function Foo(){};","/** @return {!Foo} */ Foo.prototype.clone = goog.abstractMethod;","/** @constructor @extends {Foo} */","function Bar() {}","/** @return {!Bar} */ Bar.prototype.clone = goog.abstractMethod;","var /** null */ n = (new Bar).clone();"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"/** @constructor */","function Foo() {}","/** @type {function(number)} */","Foo.prototype.m = goog.nullFunction;","/** @enum {function(string)} */","var e = {","  A: goog.nullFunction","};"));
+  typeCheck(Joiner.on('\n').join("function f() {}","/** @type {function(number)} */","var g = f;","/** @type {function(string)} */","var h = f;"));
 }

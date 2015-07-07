@@ -4,12 +4,12 @@
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","Foo.prototype.p = function(){};","function g(/** ?Foo */ f) { f.p(); }"),NewTypeInference.NULLABLE_DEREFERENCE);
   typeCheck("var f = 5 ? function() {} : null; f();",NewTypeInference.NULLABLE_DEREFERENCE);
   typeCheck("var f = 5 ? function(/** number */ n) {} : null; f('str');",NewTypeInference.NULLABLE_DEREFERENCE,NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** ?{ p : number } */ o) {","  goog.asserts.assert(o);","  return o.p;","}"));
-  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** ?{ p : number } */ o) {","  goog.asserts.assertObject(o);","  return o.p;","}"));
-  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("function f(/** ?Array<string> */ a) {","  goog.asserts.assertArray(a);","  return a.length;","}"));
-  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","Foo.prototype.p = function(){};","function g(/** ?Foo */ f) {","  goog.asserts.assertInstanceof(f, Foo);","  f.p();","}"));
-  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @constructor */ function Bar() {}","function g(/** !Bar */ o) {","  goog.asserts.assertInstanceof(o, Foo);","}"),NewTypeInference.ASSERT_FALSE);
-  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","function g(/** !Foo */ o) {","  goog.asserts.assertInstanceof(o, 42);","}"),NewTypeInference.UNKNOWN_ASSERTION_TYPE);
-  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","function Bar() {}","function g(/** !Foo */ o) {","  goog.asserts.assertInstanceof(o, Bar);","}"),NewTypeInference.UNKNOWN_ASSERTION_TYPE);
-  typeCheck(CLOSURE_BASE + Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @interface */ function Bar() {}","function g(/** !Foo */ o) {","  goog.asserts.assertInstanceof(o, Bar);","}"),NewTypeInference.UNKNOWN_ASSERTION_TYPE);
+  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"function f(/** ?{ p : number } */ o) {","  goog.asserts.assert(o);","  return o.p;","}"));
+  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"function f(/** ?{ p : number } */ o) {","  goog.asserts.assertObject(o);","  return o.p;","}"));
+  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"function f(/** ?Array<string> */ a) {","  goog.asserts.assertArray(a);","  return a.length;","}"));
+  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"/** @constructor */ function Foo() {}","Foo.prototype.p = function(){};","function g(/** ?Foo */ f) {","  goog.asserts.assertInstanceof(f, Foo);","  f.p();","}"));
+  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"/** @constructor */ function Foo() {}","/** @constructor */ function Bar() {}","function g(/** !Bar */ o) {","  goog.asserts.assertInstanceof(o, Foo);","}"),NewTypeInference.ASSERT_FALSE);
+  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"/** @constructor */ function Foo() {}","function g(/** !Foo */ o) {","  goog.asserts.assertInstanceof(o, 42);","}"),NewTypeInference.UNKNOWN_ASSERTION_TYPE);
+  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"/** @constructor */ function Foo() {}","function Bar() {}","function g(/** !Foo */ o) {","  goog.asserts.assertInstanceof(o, Bar);","}"),NewTypeInference.UNKNOWN_ASSERTION_TYPE);
+  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"/** @constructor */ function Foo() {}","/** @interface */ function Bar() {}","function g(/** !Foo */ o) {","  goog.asserts.assertInstanceof(o, Bar);","}"),NewTypeInference.UNKNOWN_ASSERTION_TYPE);
 }
