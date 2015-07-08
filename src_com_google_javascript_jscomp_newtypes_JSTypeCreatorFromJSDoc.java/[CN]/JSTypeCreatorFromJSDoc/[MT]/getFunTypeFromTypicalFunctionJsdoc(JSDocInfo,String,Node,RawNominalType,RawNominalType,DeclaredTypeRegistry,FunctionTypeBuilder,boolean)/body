@@ -49,8 +49,9 @@
     if (thisType != null) {
       thisType=thisType.removeType(JSType.NULL);
     }
-    NominalType thisTypeAsNominal=thisType == null ? null : thisType.getNominalTypeIfSingletonObj();
-    builder.addReceiverType(thisTypeAsNominal);
+    NominalType nt=thisType == null ? null : thisType.getNominalTypeIfSingletonObj();
+    NominalType builtinObject=registry.getCommonTypes().getObjectType();
+    builder.addReceiverType(nt == null ? builtinObject : nt);
   }
   return builder.buildDeclaration();
 }
