@@ -9,7 +9,6 @@
       doc.recordExtendedInterface(new JSTypeExpression(type,n.getSourceFileName()));
     }
   }
-  n.setJSDocInfo(doc.build());
   Node insertionPoint=n;
   Node members=n.getLastChild();
   for (  Node member : members.children()) {
@@ -18,10 +17,15 @@
       function.getLastChild().setType(Token.BLOCK);
       continue;
     }
+    if (member.isIndexSignature()) {
+      doc.recordExtendedInterface(createIObject(member));
+      continue;
+    }
     Node newNode=createPropertyDefinition(member,name.getString());
     insertionPoint.getParent().addChildAfter(newNode,insertionPoint);
     insertionPoint=newNode;
   }
+  n.setJSDocInfo(doc.build());
   n.setType(Token.CLASS);
   Node empty=new Node(Token.EMPTY).useSourceInfoIfMissingFrom(n);
   n.replaceChild(superTypes,empty);

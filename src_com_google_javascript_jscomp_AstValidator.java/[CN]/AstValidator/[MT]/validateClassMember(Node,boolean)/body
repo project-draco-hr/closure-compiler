@@ -1,23 +1,30 @@
 {
-  if (n.getType() == Token.MEMBER_FUNCTION_DEF || n.getType() == Token.GETTER_DEF || n.getType() == Token.SETTER_DEF) {
+switch (n.getType()) {
+case Token.MEMBER_FUNCTION_DEF:
+case Token.GETTER_DEF:
+case Token.SETTER_DEF:
     validateChildCount(n);
-    Node function=n.getFirstChild();
-    if (isAmbient) {
-      validateFunctionSignature(function);
-    }
+  Node function=n.getFirstChild();
+if (isAmbient) {
+  validateFunctionSignature(function);
+}
  else {
-      validateFunctionExpression(function);
-    }
-  }
- else   if (n.getType() == Token.MEMBER_VARIABLE_DEF) {
-    validateChildless(n);
-  }
- else   if (n.isComputedProp()) {
-    validateComputedPropClassMethod(n);
-  }
- else   if (n.isEmpty()) {
-  }
- else {
-    violation("Class contained member of invalid type " + Token.name(n.getType()),n);
-  }
+  validateFunctionExpression(function);
+}
+break;
+case Token.MEMBER_VARIABLE_DEF:
+validateChildless(n);
+break;
+case Token.COMPUTED_PROP:
+validateComputedPropClassMethod(n);
+break;
+case Token.INDEX_SIGNATURE:
+validateChildCount(n);
+validateChildless(n.getFirstChild());
+break;
+case Token.EMPTY:
+break;
+default :
+violation("Class contained member of invalid type " + Token.name(n.getType()),n);
+}
 }

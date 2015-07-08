@@ -1,17 +1,20 @@
 {
+  JSDocInfoBuilder doc=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
   Node interfaces=(Node)n.getProp(Node.IMPLEMENTS);
   if (interfaces != null) {
-    JSDocInfoBuilder doc=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
     for (    Node child : interfaces.children()) {
       Node type=convertWithLocation(child);
       doc.recordImplementedInterface(new JSTypeExpression(type,n.getSourceFileName()));
     }
     n.putProp(Node.IMPLEMENTS,null);
-    n.setJSDocInfo(doc.build());
   }
   Node classMembers=n.getLastChild();
   ClassDeclarationMetadata metadata=ClassDeclarationMetadata.create(n,parent);
   for (  Node member : classMembers.children()) {
+    if (member.isIndexSignature()) {
+      doc.recordImplementedInterface(createIObject(member));
+      continue;
+    }
     if (!member.isMemberVariableDef() && !member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)) {
       continue;
     }
@@ -22,4 +25,5 @@
     metadata.insertNodeAndAdvance(createPropertyDefinition(member,metadata.fullClassName));
     compiler.reportCodeChange();
   }
+  n.setJSDocInfo(doc.build());
 }

@@ -1,12 +1,17 @@
 {
-  if (n.getType() == Token.MEMBER_FUNCTION_DEF) {
+switch (n.getType()) {
+case Token.MEMBER_FUNCTION_DEF:
     validateChildCount(n);
-    validateFunctionSignature(n.getFirstChild());
-  }
- else   if (n.getType() == Token.MEMBER_VARIABLE_DEF) {
-    validateChildless(n);
-  }
- else {
-    violation("Interface contained member of invalid type " + Token.name(n.getType()),n);
-  }
+  validateFunctionSignature(n.getFirstChild());
+break;
+case Token.MEMBER_VARIABLE_DEF:
+validateChildless(n);
+break;
+case Token.INDEX_SIGNATURE:
+validateChildCount(n);
+validateChildless(n.getFirstChild());
+break;
+default :
+violation("Interface contained member of invalid type " + Token.name(n.getType()),n);
+}
 }
