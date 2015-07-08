@@ -1,9 +1,15 @@
 {
 switch (n.getType()) {
 case Token.FUNCTION:
-    if (n.getFirstChild().getString().isEmpty() && !n.isArrowFunction() && !NodeUtil.isVarArgsFunction(n)&& !NodeUtil.referencesThis(n.getLastChild())) {
-      n.setIsArrowFunction(true);
-      compiler.reportCodeChange();
+    if (n.getFirstChild().getString().isEmpty() && !n.isArrowFunction()) {
+      if (parent.isStringKey()) {
+        parent.setType(Token.MEMBER_FUNCTION_DEF);
+        compiler.reportCodeChange();
+      }
+ else       if (!NodeUtil.isVarArgsFunction(n) && !NodeUtil.referencesThis(n.getLastChild())) {
+        n.setIsArrowFunction(true);
+        compiler.reportCodeChange();
+      }
     }
   if (n.isArrowFunction()) {
     maybeSimplifyArrowFunctionBody(n,n.getLastChild());
