@@ -14,7 +14,7 @@
       parameter=new OptionalParameterTree(getTreeLocation(start),parameter);
     }
   }
- else   if (!inTypeExpression) {
+ else   if (context != ParamContext.TYPE_EXPRESSION) {
     if (peek(TokenType.OPEN_SQUARE)) {
       parameter=parseArrayPattern(PatternKind.INITIALIZER);
     }
@@ -28,7 +28,7 @@
     typeAnnotation=parseTypeAnnotation();
     typeLocation=getTreeLocation(getTreeStartLocation());
   }
-  if (!inTypeExpression && !isRestParam && peek(TokenType.EQUAL)) {
+  if (context == ParamContext.IMPLEMENTATION && !isRestParam && peek(TokenType.EQUAL)) {
     eat(TokenType.EQUAL);
     ParseTree defaultValue=parseAssignmentExpression();
     parameter=new DefaultParameterTree(getTreeLocation(start),parameter,defaultValue);
