@@ -3,13 +3,17 @@
   boolean isGenerator=eatOpt(TokenType.STAR) != null;
   IdentifierToken name=null;
   TokenType type=peekType();
-  if (type == TokenType.IDENTIFIER || Keywords.isKeyword(type)) {
+  if (type == TokenType.NEW) {
+    return parseCallSignature(true);
+  }
+ else   if (type == TokenType.IDENTIFIER || Keywords.isKeyword(type)) {
     name=eatIdOrKeywordAsId();
   }
  else   if (type == TokenType.OPEN_SQUARE) {
     return parseIndexSignature();
   }
- else {
+ else   if (type == TokenType.OPEN_ANGLE || type == TokenType.OPEN_PAREN) {
+    return parseCallSignature(false);
   }
   boolean isOptional=false;
   if (peek(TokenType.QUESTION)) {

@@ -39,15 +39,9 @@
     setSourceInfo(emptyName,functionTree);
     node.addChildToBack(emptyName);
   }
-  if (functionTree.generics != null) {
-    maybeWarnTypeSyntax(functionTree,"generic function");
-    node.getFirstChild().putProp(Node.GENERIC_TYPE_LIST,transform(functionTree.generics));
-  }
+  maybeProcessGenerics(node.getFirstChild(),functionTree.generics);
   node.addChildToBack(transform(functionTree.formalParameterList));
-  if (functionTree.returnType != null) {
-    recordJsDoc(functionTree.returnType.location,node.getJSDocInfo());
-    node.setDeclaredTypeExpression(convertTypeTree(functionTree.returnType));
-  }
+  maybeProcessType(node,functionTree.returnType);
   Node bodyNode=transform(functionTree.functionBody);
   if (!isArrow && !isSignature && !bodyNode.isBlock()) {
     Preconditions.checkState(config.isIdeMode);

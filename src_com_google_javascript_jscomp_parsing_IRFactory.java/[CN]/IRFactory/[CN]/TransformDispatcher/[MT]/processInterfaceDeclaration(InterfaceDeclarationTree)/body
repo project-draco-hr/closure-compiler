@@ -1,10 +1,7 @@
 {
   maybeWarnTypeSyntax(tree,"interface");
   Node name=processName(tree.name);
-  if (tree.generics != null) {
-    maybeWarnTypeSyntax(tree,"generic interface");
-    name.putProp(Node.GENERIC_TYPE_LIST,transform(tree.generics));
-  }
+  maybeProcessGenerics(name,tree.generics);
   Node superInterfaces=transformListOrEmpty(Token.INTERFACE_EXTENDS,tree.superInterfaces);
   Node body=newNode(Token.INTERFACE_MEMBERS);
   setSourceInfo(body,tree);
