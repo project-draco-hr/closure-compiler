@@ -1,5 +1,6 @@
 {
   eat(TokenType.OPEN_ANGLE);
+  scanner.incTypeParameterLevel();
   ImmutableList.Builder<ParseTree> typeArguments=ImmutableList.builder();
   ParseTree type=parseType();
   typeArguments.add(type);
@@ -11,5 +12,6 @@
     }
   }
   eat(TokenType.CLOSE_ANGLE);
+  scanner.decTypeParameterLevel();
   return new ParameterizedTypeTree(getTreeLocation(start),typeName,typeArguments.build());
 }
