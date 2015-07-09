@@ -14,7 +14,7 @@
   if (!options.transpileOnly && options.declaredGlobalExternsOnWindow) {
     checks.add(declaredGlobalExternsOnWindow);
   }
-  if (options.lowerFromEs6() || options.aggressiveVarCheck.isOn()) {
+  if (options.getLanguageIn().isEs6OrHigher() || options.aggressiveVarCheck.isOn()) {
     checks.add(checkVariableReferences);
   }
   if (!options.transpileOnly && options.closurePass) {
@@ -24,7 +24,7 @@
   if (options.getLanguageIn() == LanguageMode.ECMASCRIPT6_TYPED && options.getLanguageOut() != LanguageMode.ECMASCRIPT6_TYPED) {
     checks.add(convertEs6TypedToEs6);
   }
-  if (options.lowerFromEs6()) {
+  if (options.getLanguageIn().isEs6OrHigher()) {
     checks.add(es6ConvertSuper);
     checks.add(convertEs6ToEs3);
     checks.add(rewriteLetConst);
@@ -37,7 +37,7 @@
   if (options.transpileOnly) {
     return checks;
   }
-  if (options.lowerFromEs6()) {
+  if (options.getLanguageIn().isEs6OrHigher()) {
     checks.add(es6RuntimeLibrary);
   }
   checks.add(convertStaticInheritance);
