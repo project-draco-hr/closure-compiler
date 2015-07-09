@@ -49,22 +49,7 @@ objLitType=objLitType.withProperty(new QualifiedName(NodeUtil.getObjectLitKeyNam
 return objLitType;
 }
 case Token.GETPROP:
-Node recv=n.getFirstChild();
-if (recv.isQualifiedName()) {
-EnumType et=this.currentScope.getEnum(QualifiedName.fromNode(recv));
-if (et != null && et.enumLiteralHasKey(n.getLastChild().getString())) {
-return et.getEnumeratedType();
-}
-if (this.currentScope.isNamespace(recv)) {
-return null;
-}
-JSType recvType=simpleInferExprType(recv);
-QualifiedName qname=new QualifiedName(n.getLastChild().getString());
-if (recvType != null && recvType.mayHaveProp(qname)) {
-return recvType.getProp(qname);
-}
-}
-return null;
+return simpleInferGetpropType(n);
 case Token.COMMA:
 case Token.ASSIGN:
 return simpleInferExprType(n.getLastChild());

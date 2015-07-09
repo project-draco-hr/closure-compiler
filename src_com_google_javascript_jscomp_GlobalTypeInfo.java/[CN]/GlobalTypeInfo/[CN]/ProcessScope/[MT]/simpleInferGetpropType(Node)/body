@@ -1,0 +1,21 @@
+{
+  Preconditions.checkArgument(n.isGetProp());
+  Node recv=n.getFirstChild();
+  if (!recv.isQualifiedName()) {
+    return null;
+  }
+  String pname=n.getLastChild().getString();
+  EnumType et=this.currentScope.getEnum(QualifiedName.fromNode(recv));
+  if (et != null && et.enumLiteralHasKey(pname)) {
+    return et.getEnumeratedType();
+  }
+  if (this.currentScope.isNamespace(recv)) {
+    return null;
+  }
+  JSType recvType=simpleInferExprType(recv);
+  QualifiedName propQname=new QualifiedName(pname);
+  if (recvType != null && recvType.mayHaveProp(propQname)) {
+    return recvType.getProp(propQname);
+  }
+  return null;
+}
