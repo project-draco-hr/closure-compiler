@@ -8,8 +8,8 @@
  else {
       JSTypeExpression typeExpr=info.getType();
       if (typeExpr != null) {
-        JSType type=typeExpr.evaluate(t.getTypedScope(),compiler.getTypeIRegistry());
-        if (type.isConstructor()) {
+        Node typeExprRoot=typeExpr.getRoot();
+        if (typeExprRoot.isFunction() && typeExprRoot.getFirstChild().isNew()) {
           constructors.add(ctorName);
         }
       }
