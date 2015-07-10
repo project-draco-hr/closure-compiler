@@ -1,7 +1,7 @@
 {
   Preconditions.checkState(objLit.isObjectLit());
   for (  Node keyNode : objLit.children()) {
-    Node value=keyNode.getFirstChild();
+    Node value=keyNode.getLastChild();
     if (value != null && value.isFunction()) {
       JSDocInfoBuilder fnDoc=JSDocInfoBuilder.maybeCopyFrom(keyNode.getJSDocInfo());
       fnDoc.recordThisType(new JSTypeExpression(new Node(Token.BANG,IR.string(thisType)),VIRTUAL_FILE));
@@ -11,6 +11,10 @@
   for (  MemberDefinition property : extractProperties(objLit)) {
     if (!property.value.isObjectLit()) {
       continue;
+    }
+    if (hasShorthandAssignment(property.value)) {
+      compiler.report(JSError.make(property.value,POLYMER_SHORTHAND_NOT_SUPPORTED));
+      return;
     }
     Node defaultValue=NodeUtil.getFirstPropMatchingKey(property.value,"value");
     if (defaultValue == null || !defaultValue.isFunction()) {
