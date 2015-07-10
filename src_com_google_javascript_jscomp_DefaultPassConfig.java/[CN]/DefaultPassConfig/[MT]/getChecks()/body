@@ -2,14 +2,14 @@
   List<PassFactory> checks=new ArrayList<>();
   checks.add(createEmptyPass("beforeStandardChecks"));
   checks.add(checkJsDoc);
-  if (options.closurePass) {
-    checks.add(closureRewriteModule);
-  }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     checks.add(es6RewriteArrowFunction);
     checks.add(es6RenameVariablesInParamLists);
     checks.add(es6SplitVariableDeclarations);
     checks.add(es6RewriteDestructuring);
+  }
+  if (options.closurePass) {
+    checks.add(closureRewriteModule);
   }
   if (!options.transpileOnly && options.declaredGlobalExternsOnWindow) {
     checks.add(declaredGlobalExternsOnWindow);
