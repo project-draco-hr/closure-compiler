@@ -25,7 +25,13 @@
   ParseTree typeAnnotation=null;
   SourceRange typeLocation=null;
   if (peek(TokenType.COLON)) {
-    typeAnnotation=parseTypeAnnotation();
+    if (peek(1,TokenType.STRING)) {
+      eat(TokenType.COLON);
+      typeAnnotation=parseLiteralExpression();
+    }
+ else {
+      typeAnnotation=parseTypeAnnotation();
+    }
     typeLocation=getTreeLocation(getTreeStartLocation());
   }
   if (context == ParamContext.IMPLEMENTATION && !isRestParam && peek(TokenType.EQUAL)) {
