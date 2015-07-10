@@ -1,0 +1,30 @@
+{
+  if (rightType.isUnionType() || leftType.isUnionType()) {
+    return false;
+  }
+  if (!rightType.isObject() || !leftType.isObject()) {
+    return false;
+  }
+  if (leftType.isTemplatizedType()) {
+    return false;
+  }
+  if (leftType.isInterface() && rightType.isFunctionType()) {
+    if (leftType.toMaybeFunctionType().isStructuralInterface()) {
+      return checkConstructorImplicitMatch(rightType.toMaybeFunctionType(),leftType.toMaybeFunctionType(),implicitImplCache);
+    }
+  }
+  if (leftType.isInterface() && rightType.isRecordType()) {
+    if (leftType.toMaybeFunctionType().isStructuralInterface()) {
+      return checkObjectImplicitMatch(rightType.toMaybeObjectType(),leftType.toMaybeFunctionType(),implicitImplCache);
+    }
+  }
+  FunctionType leftConstructor=leftType.toMaybeObjectType().getConstructor();
+  FunctionType rightConstructor=rightType.toMaybeObjectType().getConstructor();
+  if (leftConstructor == null || !leftConstructor.isStructuralInterface()) {
+    return false;
+  }
+  if (rightConstructor != null) {
+    return checkConstructorImplicitMatch(rightConstructor,leftConstructor,implicitImplCache);
+  }
+  return checkObjectImplicitMatch(rightType.toMaybeObjectType(),leftConstructor,implicitImplCache);
+}

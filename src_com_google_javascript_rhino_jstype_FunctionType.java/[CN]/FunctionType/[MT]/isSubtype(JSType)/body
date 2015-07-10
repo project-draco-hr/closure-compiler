@@ -1,17 +1,3 @@
 {
-  if (JSType.isSubtypeHelper(this,that)) {
-    return true;
-  }
-  if (that.isFunctionType()) {
-    FunctionType other=that.toMaybeFunctionType();
-    if (other.isInterface()) {
-      return true;
-    }
-    if (isInterface()) {
-      return false;
-    }
-    boolean treatThisTypesAsCovariant=(other.typeOfThis.toObjectType() != null && other.typeOfThis.toObjectType().getConstructor() != null && other.typeOfThis.toObjectType().getConstructor().isInterface()) || other.typeOfThis.isSubtype(this.typeOfThis) || this.typeOfThis.isSubtype(other.typeOfThis);
-    return treatThisTypesAsCovariant && this.call.isSubtype(other.call);
-  }
-  return getNativeType(JSTypeNative.FUNCTION_PROTOTYPE).isSubtype(that);
+  return isSubtype(that,new ImplCache());
 }

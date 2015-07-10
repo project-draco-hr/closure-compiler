@@ -1,0 +1,19 @@
+{
+  Preconditions.checkArgument(interfaceType.isInterface());
+  for (  ObjectType implementedInterface : getAllImplementedInterfaces()) {
+    FunctionType ctor=implementedInterface.getConstructor();
+    if (ctor != null && ctor.checkEquivalenceHelper(interfaceType,EquivalenceMethod.IDENTITY)) {
+      return true;
+    }
+  }
+  for (  ObjectType implementedInterface : getExtendedInterfaces()) {
+    FunctionType ctor=implementedInterface.getConstructor();
+    if (ctor != null && ctor.checkEquivalenceHelper(interfaceType,EquivalenceMethod.IDENTITY)) {
+      return true;
+    }
+ else     if (ctor != null) {
+      return ctor.explicitlyImplOrExtInterface(interfaceType);
+    }
+  }
+  return false;
+}

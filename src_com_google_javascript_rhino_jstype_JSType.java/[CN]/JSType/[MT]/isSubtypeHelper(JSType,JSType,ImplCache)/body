@@ -1,0 +1,42 @@
+{
+  if (thatType.isUnknownType()) {
+    return true;
+  }
+  if (thatType.isAllType()) {
+    return true;
+  }
+  if (thisType.isEquivalentTo(thatType)) {
+    return true;
+  }
+  if (thatType.isUnionType()) {
+    UnionType union=thatType.toMaybeUnionType();
+    for (    JSType element : union.alternates) {
+      if (thisType.isSubtype(element,implicitImplCache)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  TemplateTypeMap thisTypeParams=thisType.getTemplateTypeMap();
+  TemplateTypeMap thatTypeParams=thatType.getTemplateTypeMap();
+  boolean templateMatch=true;
+  if (isExemptFromTemplateTypeInvariance(thatType)) {
+    TemplateType key=thisType.registry.getObjectElementKey();
+    JSType thisElement=thisTypeParams.getTemplateType(key);
+    JSType thatElement=thatTypeParams.getTemplateType(key);
+    templateMatch=thisElement.isSubtype(thatElement,implicitImplCache) || thatElement.isSubtype(thisElement,implicitImplCache);
+  }
+ else {
+    templateMatch=thisTypeParams.checkEquivalenceHelper(thatTypeParams,EquivalenceMethod.INVARIANT);
+  }
+  if (!templateMatch) {
+    return implicitMatch(thisType,thatType,implicitImplCache);
+  }
+  if (thisType.isTemplatizedType()) {
+    return thisType.toMaybeTemplatizedType().getReferencedType().isSubtype(thatType,implicitImplCache);
+  }
+  if (thatType instanceof ProxyObjectType) {
+    return thisType.isSubtype(((ProxyObjectType)thatType).getReferencedTypeInternal(),implicitImplCache);
+  }
+  return implicitMatch(thisType,thatType,implicitImplCache);
+}

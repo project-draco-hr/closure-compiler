@@ -1,0 +1,32 @@
+{
+  if (JSType.isSubtypeHelper(this,that,implicitImplCache)) {
+    return true;
+  }
+  if (that.isUnionType()) {
+    return false;
+  }
+  if (that.isRecordType()) {
+    return RecordType.isSubtype(this,that.toMaybeRecordType(),implicitImplCache);
+  }
+  ObjectType thatObj=that.toObjectType();
+  FunctionType thatCtor=thatObj == null ? null : thatObj.getConstructor();
+  if (getConstructor() != null && getConstructor().isInterface()) {
+    for (    ObjectType thisInterface : getCtorExtendedInterfaces()) {
+      if (thisInterface.isSubtype(that,implicitImplCache)) {
+        return true;
+      }
+    }
+  }
+ else   if (thatCtor != null && thatCtor.isInterface()) {
+    Iterable<ObjectType> thisInterfaces=getCtorImplementedInterfaces();
+    for (    ObjectType thisInterface : thisInterfaces) {
+      if (thisInterface.isSubtype(that,implicitImplCache)) {
+        return true;
+      }
+    }
+  }
+  if (isUnknownType() || implicitPrototypeChainIsUnknown()) {
+    return true;
+  }
+  return thatObj != null && isImplicitPrototype(thatObj);
+}

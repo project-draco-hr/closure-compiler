@@ -1,0 +1,26 @@
+{
+  Preconditions.checkArgument(leftType.isStructuralInterface());
+  if (rightType.explicitlyImplOrExtInterface(leftType)) {
+    return true;
+  }
+  ImplStatus result=implicitImplCache.checkCache(rightType,leftType);
+  if (result != null) {
+    return result.subtypeValue();
+  }
+  if (leftType.hasAnyTemplateTypes()) {
+    implicitImplCache.updateCache(leftType,rightType,ImplStatus.NOT_MATCH);
+    return false;
+  }
+  Map<String,JSType> interfacePropList=getPropertyTypeMap(leftType);
+  Map<String,JSType> functionPropList=getPropertyTypeMap(rightType);
+  for (  String propName : interfacePropList.keySet()) {
+    JSType typeInInterface=interfacePropList.get(propName);
+    JSType typeInFunction=functionPropList.get(propName);
+    if (typeInFunction == null || !typeInFunction.isSubtype(typeInInterface,implicitImplCache)) {
+      implicitImplCache.updateCache(leftType,rightType,ImplStatus.NOT_MATCH);
+      return false;
+    }
+  }
+  implicitImplCache.updateCache(leftType,rightType,ImplStatus.MATCH);
+  return true;
+}

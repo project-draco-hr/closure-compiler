@@ -1,0 +1,21 @@
+{
+  if (type == null) {
+    return;
+  }
+  ObjectType prototype=type.getPrototype();
+  if (prototype != null) {
+    Set<String> propNames=prototype.getOwnPropertyNames();
+    for (    String name : propNames) {
+      if (!propTypeMap.containsKey(name)) {
+        JSType propType=prototype.getPropertyType(name);
+        propTypeMap.put(name,propType);
+      }
+    }
+  }
+  Iterable<ObjectType> iterable=type.getExtendedInterfaces();
+  if (iterable != null) {
+    for (    ObjectType interfaceType : iterable) {
+      updatePropertyTypeMap(interfaceType.getConstructor(),propTypeMap);
+    }
+  }
+}
