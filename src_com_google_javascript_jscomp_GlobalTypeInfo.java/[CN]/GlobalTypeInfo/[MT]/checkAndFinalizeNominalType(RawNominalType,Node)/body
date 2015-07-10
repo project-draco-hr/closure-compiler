@@ -5,11 +5,11 @@
   NominalType superClass=rawType.getSuperClass();
   Set<String> nonInheritedPropNames=rawType.getAllOwnProps();
   if (superClass != null && !superClass.isFinalized()) {
-    checkAndFinalizeNominalType(superClass.getRawNominalType());
+    checkAndFinalizeNominalType(superClass.getRawNominalType(),constDeclNode);
   }
   for (  NominalType superInterf : rawType.getInterfaces()) {
     if (!superInterf.isFinalized()) {
-      checkAndFinalizeNominalType(superInterf.getRawNominalType());
+      checkAndFinalizeNominalType(superInterf.getRawNominalType(),constDeclNode);
     }
   }
   Multimap<String,DeclaredFunctionType> propMethodTypesToProcess=LinkedHashMultimap.create();
@@ -61,5 +61,5 @@
       warnings.add(JSError.make(propDefsite,TypeCheck.UNKNOWN_OVERRIDE,pname,rawType.getName()));
     }
   }
-  rawType.finalizeNominalType();
+  rawType.finalizeNominalType(constDeclNode);
 }

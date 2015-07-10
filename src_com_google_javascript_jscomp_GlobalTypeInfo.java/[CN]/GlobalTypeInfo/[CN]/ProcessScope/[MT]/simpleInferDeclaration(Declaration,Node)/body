@@ -1,0 +1,20 @@
+{
+  if (decl == null) {
+    return null;
+  }
+  if (constDeclNode != null) {
+    RawNominalType rawType=decl.getNominal();
+    if (rawType != null) {
+      checkAndFinalizeNominalType(rawType,constDeclNode);
+      return rawType.toJSType(commonTypes);
+    }
+  }
+  if (decl.getTypeOfSimpleDecl() != null) {
+    return decl.getTypeOfSimpleDecl();
+  }
+  Scope funScope=(Scope)decl.getFunctionScope();
+  if (funScope != null) {
+    return commonTypes.fromFunctionType(funScope.getDeclaredFunctionType().toFunctionType());
+  }
+  return null;
+}

@@ -1,0 +1,7 @@
+{
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","var Bar = Foo;","Foo.prop = 123;"),GlobalTypeInfo.NOMINAL_TYPE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @constructor @extends {Foo} */","function Bar() {}","/** @const */","var Baz = Bar;","Foo.prop = 123;"),GlobalTypeInfo.NOMINAL_TYPE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @interface */","function Foo() {}","/** @constructor @implements {Foo} */","function Bar() {}","/** @const */","var Baz = Bar;","Foo.prototype.prop = 123;"),GlobalTypeInfo.NOMINAL_TYPE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","var Bar = Foo;","Foo.prototype.prop = 123;"),GlobalTypeInfo.NOMINAL_TYPE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @interface */","function Foo() {}","/** @constructor @implements {Foo} */","function Bar() {}","/** @const */","var Baz = Bar;","Foo.prop = 123;"),GlobalTypeInfo.NOMINAL_TYPE_MODIFIED_AFTER_FINALIZATION);
+}

@@ -12,11 +12,9 @@
       Preconditions.checkState(!decl.getTypeOfSimpleDecl().isBottom(),"%s was bottom",name);
       return decl.getTypeOfSimpleDecl();
     }
- else     if (decl.getFunctionScope() != null) {
-      DeclaredFunctionType scopeType=decl.getFunctionScope().getDeclaredFunctionType();
-      if (scopeType != null) {
-        return getCommonTypes().fromFunctionType(scopeType.toFunctionType());
-      }
+    Scope funScope=(Scope)decl.getFunctionScope();
+    if (funScope != null) {
+      return getCommonTypes().fromFunctionType(funScope.getDeclaredFunctionType().toFunctionType());
     }
     Preconditions.checkState(decl.getNamespace() == null);
     return null;

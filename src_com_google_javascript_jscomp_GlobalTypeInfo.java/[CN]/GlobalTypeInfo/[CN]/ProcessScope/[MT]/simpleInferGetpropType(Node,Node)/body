@@ -4,16 +4,22 @@
   if (!recv.isQualifiedName()) {
     return null;
   }
+  QualifiedName recvQname=QualifiedName.fromNode(recv);
   String pname=n.getLastChild().getString();
-  EnumType et=this.currentScope.getEnum(QualifiedName.fromNode(recv));
+  Declaration decl=this.currentScope.getDeclaration(recvQname,false);
+  if (decl == null) {
+    return null;
+  }
+  EnumType et=decl.getEnum();
   if (et != null && et.enumLiteralHasKey(pname)) {
     return et.getEnumeratedType();
   }
-  if (this.currentScope.isNamespace(recv)) {
-    return null;
-  }
-  JSType recvType=simpleInferExprType(recv);
   QualifiedName propQname=new QualifiedName(pname);
+  Namespace ns=decl.getNamespace();
+  if (ns != null) {
+    return simpleInferDeclaration(ns.getDeclaration(propQname),constDeclNode);
+  }
+  JSType recvType=simpleInferExprType(recv,constDeclNode);
   if (recvType != null && recvType.mayHaveProp(propQname)) {
     return recvType.getProp(propQname);
   }

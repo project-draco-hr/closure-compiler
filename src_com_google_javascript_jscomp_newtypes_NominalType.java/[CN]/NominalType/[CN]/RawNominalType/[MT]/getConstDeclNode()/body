@@ -1,0 +1,21 @@
+{
+  if (this.constDeclNode != null) {
+    return this.constDeclNode;
+  }
+  Node n=null;
+  if (this.superClass != null) {
+    n=this.superClass.rawType.getConstDeclNode();
+  }
+  if (n != null) {
+    return n;
+  }
+  if (this.interfaces != null) {
+    for (    NominalType interf : interfaces) {
+      n=interf.rawType.getConstDeclNode();
+      if (n != null) {
+        return n;
+      }
+    }
+  }
+  return null;
+}

@@ -11,6 +11,10 @@
     }
     return;
   }
+  if (rawType.isFinalized()) {
+    warnings.add(JSError.make(getProp,NOMINAL_TYPE_MODIFIED_AFTER_FINALIZATION,rawType.getName(),rawType.getConstDeclNode().toString()));
+    return;
+  }
   if (initializer != null && initializer.isFunction()) {
     parent.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
   }
