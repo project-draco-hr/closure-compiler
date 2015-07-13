@@ -11,8 +11,12 @@
         param=param.getFirstChild();
         nameOptional=true;
       }
- else {
+ else       if (param.isName()) {
         nameOptional=param.getString().startsWith("opt_");
+      }
+ else {
+        Preconditions.checkState(param.isDestructuringPattern() || param.isRest(),param);
+        continue;
       }
       if (!jsDoc.hasParameterType(param.getString())) {
         t.report(param,MISSING_PARAM_JSDOC,param.getString());
