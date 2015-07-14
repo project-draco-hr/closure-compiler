@@ -334,6 +334,7 @@ case Token.MEMBER_VARIABLE_DEF:
 {
 n.getParent().toStringTree();
 Preconditions.checkState(n.getParent().isObjectLit() || n.getParent().isClassMembers() || n.getParent().isInterfaceMembers()|| n.getParent().isRecordType()|| n.getParent().isIndexSignature());
+maybeAddAccessibilityModifier(n);
 if (n.isStaticMember()) {
 add("static ");
 }
@@ -698,6 +699,7 @@ add(")");
 break;
 }
 case Token.COMPUTED_PROP:
+maybeAddAccessibilityModifier(n);
 if (n.getBooleanProp(Node.COMPUTED_PROP_GETTER)) {
 add("get ");
 }

@@ -1,12 +1,13 @@
 {
+  TokenType access=maybeParseAccessibilityModifier();
   if (peek(TokenType.SEMI_COLON)) {
     return parseEmptyStatement();
   }
   if (peekGetAccessor(true)) {
-    return parseGetAccessor();
+    return parseGetAccessor(access);
   }
   if (peekSetAccessor(true)) {
-    return parseSetAccessor();
+    return parseSetAccessor(access);
   }
-  return parseClassMemberDeclaration(true,isAmbient);
+  return parseClassMemberDeclaration(true,isAmbient,access);
 }

@@ -5,13 +5,13 @@
   }
  else   if (type == TokenType.STRING || type == TokenType.NUMBER || type == TokenType.IDENTIFIER || Keywords.isKeyword(type)) {
     if (peekGetAccessor(false)) {
-      return parseGetAccessor();
+      return parseGetAccessor(null);
     }
  else     if (peekSetAccessor(false)) {
-      return parseSetAccessor();
+      return parseSetAccessor(null);
     }
  else     if (peekType(1) == TokenType.OPEN_PAREN) {
-      return parseClassMemberDeclaration(false,false);
+      return parseClassMemberDeclaration(false,false,null);
     }
  else {
       return parsePropertyNameAssignment();
@@ -26,8 +26,8 @@
       return new ComputedPropertyDefinitionTree(getTreeLocation(start),name,value);
     }
  else {
-      ParseTree value=parseFunctionTail(start,null,false,false,FunctionDeclarationTree.Kind.EXPRESSION);
-      return new ComputedPropertyMethodTree(getTreeLocation(start),name,value);
+      ParseTree value=parseFunctionTail(start,null,false,false,null,FunctionDeclarationTree.Kind.EXPRESSION);
+      return new ComputedPropertyMethodTree(getTreeLocation(start),null,name,value);
     }
   }
  else {

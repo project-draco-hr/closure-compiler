@@ -1,0 +1,67 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  boolean isStatic=false;
+  if (allowStatic && peek(TokenType.STATIC) && peekType(1) != TokenType.OPEN_PAREN) {
+    eat(TokenType.STATIC);
+    isStatic=true;
+  }
+  boolean isGenerator=eatOpt(TokenType.STAR) != null;
+  ParseTree nameExpr;
+  IdentifierToken name;
+  TokenType type=peekType();
+  if (type == TokenType.IDENTIFIER || Keywords.isKeyword(type)) {
+    nameExpr=null;
+    name=eatIdOrKeywordAsId();
+  }
+ else {
+    if (peekIndexSignature()) {
+      ParseTree indexSignature=parseIndexSignature();
+      eatPossibleImplicitSemiColon();
+      return indexSignature;
+    }
+    nameExpr=parseComputedPropertyName();
+    name=null;
+  }
+  if (peek(TokenType.OPEN_PAREN) || peek(TokenType.OPEN_ANGLE)) {
+    FunctionDeclarationTree.Kind kind;
+    TokenType accessOnFunction;
+    if (nameExpr == null) {
+      kind=FunctionDeclarationTree.Kind.MEMBER;
+      accessOnFunction=access;
+    }
+ else {
+      kind=FunctionDeclarationTree.Kind.EXPRESSION;
+      accessOnFunction=null;
+    }
+    ParseTree function;
+    if (isAmbient) {
+      function=parseMethodSignature(start,name,isStatic,isGenerator,false,accessOnFunction);
+      eatPossibleImplicitSemiColon();
+    }
+ else {
+      function=parseFunctionTail(start,name,isStatic,isGenerator,accessOnFunction,kind);
+    }
+    if (kind == FunctionDeclarationTree.Kind.MEMBER) {
+      return function;
+    }
+ else {
+      return new ComputedPropertyMethodTree(getTreeLocation(start),access,nameExpr,function);
+    }
+  }
+ else {
+    if (isGenerator) {
+      reportError("Member variable cannot be prefixed by '*' (generator function)");
+    }
+    ParseTree declaredType=maybeParseColonType();
+    if (peek(TokenType.EQUAL)) {
+      reportError("Member variable initializers ('=') are not supported");
+    }
+    eatPossibleImplicitSemiColon();
+    if (nameExpr == null) {
+      return new MemberVariableTree(getTreeLocation(start),name,isStatic,false,access,declaredType);
+    }
+ else {
+      return new ComputedPropertyMemberVariableTree(getTreeLocation(start),nameExpr,isStatic,access,declaredType);
+    }
+  }
+}
