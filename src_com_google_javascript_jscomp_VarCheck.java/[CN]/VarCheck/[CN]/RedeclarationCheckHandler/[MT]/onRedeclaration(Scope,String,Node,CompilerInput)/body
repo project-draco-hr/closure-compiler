@@ -6,6 +6,10 @@
     if (origParent.isCatch() && parent.isCatch()) {
       return;
     }
+    if (parent.isLet() || parent.isConst() || origParent.isLet()|| origParent.isConst()) {
+      compiler.report(JSError.make(n,LET_CONST_MULTIPLY_DECLARED_ERROR));
+      return;
+    }
     boolean allowDupe=hasDuplicateDeclarationSuppression(n,origVar);
     if (!allowDupe) {
       compiler.report(JSError.make(n,VAR_MULTIPLY_DECLARED_ERROR,name,(origVar.input != null ? origVar.input.getName() : "??")));
