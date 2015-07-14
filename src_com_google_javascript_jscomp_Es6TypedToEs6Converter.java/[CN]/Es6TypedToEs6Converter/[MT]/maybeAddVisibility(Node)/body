@@ -1,0 +1,12 @@
+{
+  Visibility access=(Visibility)n.getProp(Node.ACCESS_MODIFIER);
+  if (access != null) {
+    if (n.isComputedProp()) {
+      compiler.report(JSError.make(n,COMPUTED_PROP_ACCESS_MODIFIER));
+    }
+    JSDocInfoBuilder memberDoc=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
+    memberDoc.recordVisibility(access);
+    n.setJSDocInfo(memberDoc.build());
+    n.removeProp(Node.ACCESS_MODIFIER);
+  }
+}
