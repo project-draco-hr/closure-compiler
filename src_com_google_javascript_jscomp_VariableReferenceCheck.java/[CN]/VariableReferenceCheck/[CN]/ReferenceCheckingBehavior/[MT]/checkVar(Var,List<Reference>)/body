@@ -36,13 +36,13 @@
  else {
             diagnosticType=REDECLARED_VARIABLE;
           }
-          compiler.report(JSError.make(referenceNode,checkLevel,diagnosticType,v.name));
+          compiler.report(JSError.make(referenceNode,diagnosticType,v.name));
           break;
         }
       }
     }
     if (!shadowDetected && isDeclaration && (letConstShadowsVar || shadowCatchVar)&& v.getScope() == reference.getScope()) {
-      compiler.report(JSError.make(referenceNode,checkLevel,REDECLARED_VARIABLE_ERROR,v.name));
+      compiler.report(JSError.make(referenceNode,REDECLARED_VARIABLE_ERROR,v.name));
     }
     if (isUnhoistedNamedFunction && !isDeclaration && isDeclaredInScope) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
@@ -61,15 +61,15 @@
         }
         if (reference.getScope() == v.scope && !v.getName().equals("goog")) {
           isUndeclaredReference=true;
-          compiler.report(JSError.make(reference.getNode(),checkLevel,(v.isLet() || v.isConst() || v.isParam()) ? EARLY_REFERENCE_ERROR : EARLY_REFERENCE,v.name));
+          compiler.report(JSError.make(reference.getNode(),(v.isLet() || v.isConst() || v.isParam()) ? EARLY_REFERENCE_ERROR : EARLY_REFERENCE,v.name));
         }
       }
     }
     if (!isDeclaration && !isUndeclaredReference && v.isConst()&& reference.isLvalue()) {
-      compiler.report(JSError.make(referenceNode,checkLevel,REASSIGNED_CONSTANT,v.name));
+      compiler.report(JSError.make(referenceNode,REASSIGNED_CONSTANT,v.name));
     }
     if (isDeclaration && !v.isVar() && reference.getGrandparent().isAddedBlock()) {
-      compiler.report(JSError.make(referenceNode,checkLevel,DECLARATION_NOT_DIRECTLY_IN_BLOCK,v.name));
+      compiler.report(JSError.make(referenceNode,DECLARATION_NOT_DIRECTLY_IN_BLOCK,v.name));
     }
     if (isDeclaration) {
       blocksWithDeclarations.add(basicBlock);
