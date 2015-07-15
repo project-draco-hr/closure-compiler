@@ -26,6 +26,9 @@
     checks.add(checkRequires);
   }
   checks.add(checkSideEffects);
+  if (options.checkProvides.isOn() || options.enables(DiagnosticGroups.MISSING_PROVIDE)) {
+    checks.add(checkProvides);
+  }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     checks.add(es6ConvertSuper);
     checks.add(convertEs6ToEs3);
@@ -48,9 +51,6 @@
   }
   if (options.angularPass) {
     checks.add(angularPass);
-  }
-  if (options.checkProvides.isOn() || options.enables(DiagnosticGroups.MISSING_PROVIDE)) {
-    checks.add(checkProvides);
   }
   if (options.generateExports) {
     checks.add(generateExports);
