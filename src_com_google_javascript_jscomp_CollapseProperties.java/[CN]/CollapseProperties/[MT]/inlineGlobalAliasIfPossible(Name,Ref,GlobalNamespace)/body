@@ -1,8 +1,11 @@
 {
   Node aliasParent=alias.node.getParent();
+  if (name.isConstructor() && aliasParent.isName()) {
+    return inlineAliasIfPossible(name,alias,namespace);
+  }
   if (aliasParent.isAssign() && NodeUtil.isExecutedExactlyOnce(aliasParent)) {
     if (aliasParent.getFirstChild().isQualifiedName()) {
-      Name name=namespace.getSlot(aliasParent.getFirstChild().getQualifiedName());
+      name=namespace.getSlot(aliasParent.getFirstChild().getQualifiedName());
       if (name != null && isInlinableGlobalAlias(name)) {
         List<AstChange> newNodes=new ArrayList<>();
         List<Ref> refs=new ArrayList<>(name.getRefs());
