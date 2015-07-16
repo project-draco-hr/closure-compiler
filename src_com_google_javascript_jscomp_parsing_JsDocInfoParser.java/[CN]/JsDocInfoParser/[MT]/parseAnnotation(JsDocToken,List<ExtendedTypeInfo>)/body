@@ -131,13 +131,13 @@ return token;
 }
 case FILE_OVERVIEW:
 String fileOverview="";
-if (jsdocBuilder.shouldParseDocumentation()) {
+if (jsdocBuilder.shouldParseDocumentation() && !lookAheadForAnnotation()) {
 ExtractionInfo fileOverviewInfo=extractMultilineTextualBlock(token,WhitespaceOption.TRIM);
 fileOverview=fileOverviewInfo.string;
 token=fileOverviewInfo.token;
 }
  else {
-token=eatTokensUntilEOL(token);
+token=eatUntilEOLIfNotAnnotation();
 }
 if (!jsdocBuilder.recordFileOverview(fileOverview)) {
 parser.addParserWarning("msg.jsdoc.fileoverview.extra",stream.getLineno(),stream.getCharno());
