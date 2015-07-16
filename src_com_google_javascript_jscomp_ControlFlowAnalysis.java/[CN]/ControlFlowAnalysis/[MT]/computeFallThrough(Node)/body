@@ -3,7 +3,8 @@ switch (n.getType()) {
 case Token.DO:
     return computeFallThrough(n.getFirstChild());
 case Token.FOR:
-  if (NodeUtil.isForIn(n)) {
+case Token.FOR_OF:
+  if (n.isForOf() || NodeUtil.isForIn(n)) {
     return n.getFirstChild().getNext();
   }
 return computeFallThrough(n.getFirstChild());

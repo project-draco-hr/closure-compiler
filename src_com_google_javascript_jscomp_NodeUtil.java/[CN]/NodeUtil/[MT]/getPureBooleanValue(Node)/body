@@ -1,9 +1,14 @@
 {
 switch (n.getType()) {
+case Token.TEMPLATELIT:
+    if (n.hasOneChild()) {
+      return TernaryValue.forBoolean(!n.getFirstChild().getString().isEmpty());
+    }
+  break;
 case Token.STRING:
-    return TernaryValue.forBoolean(n.getString().length() > 0);
+return TernaryValue.forBoolean(n.getString().length() > 0);
 case Token.NUMBER:
-  return TernaryValue.forBoolean(n.getDouble() != 0);
+return TernaryValue.forBoolean(n.getDouble() != 0);
 case Token.NOT:
 return getPureBooleanValue(n.getLastChild()).not();
 case Token.NULL:
@@ -25,6 +30,7 @@ return TernaryValue.TRUE;
 break;
 case Token.TRUE:
 case Token.REGEXP:
+case Token.CLASS:
 return TernaryValue.TRUE;
 case Token.ARRAYLIT:
 case Token.OBJECTLIT:

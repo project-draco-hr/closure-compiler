@@ -6,13 +6,8 @@ case Token.WHILE:
 case Token.DO:
   return n.getLastChild();
 case Token.FOR:
-switch (n.getChildCount()) {
-case 3:
-  return null;
-case 4:
-return n.getFirstChild().getNext();
-}
-throw new IllegalArgumentException("malformed 'for' statement " + n);
+return NodeUtil.isForIn(n) ? null : n.getFirstChild().getNext();
+case Token.FOR_OF:
 case Token.CASE:
 return null;
 }
