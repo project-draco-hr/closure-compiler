@@ -2,6 +2,9 @@
   List<PassFactory> checks=new ArrayList<>();
   checks.add(createEmptyPass("beforeStandardChecks"));
   checks.add(checkJsDoc);
+  if (options.getLanguageIn() == LanguageMode.ECMASCRIPT6_TYPED && options.getLanguageOut() != LanguageMode.ECMASCRIPT6_TYPED) {
+    checks.add(convertEs6TypedToEs6);
+  }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     checks.add(es6RewriteArrowFunction);
     checks.add(es6RenameVariablesInParamLists);
@@ -18,9 +21,6 @@
   if (!options.skipNonTranspilationPasses && options.closurePass) {
     checks.add(closureGoogScopeAliases);
     checks.add(closureRewriteClass);
-  }
-  if (options.getLanguageIn() == LanguageMode.ECMASCRIPT6_TYPED && options.getLanguageOut() != LanguageMode.ECMASCRIPT6_TYPED) {
-    checks.add(convertEs6TypedToEs6);
   }
   if (options.enables(DiagnosticGroups.MISSING_REQUIRE) || options.enables(DiagnosticGroups.EXTRA_REQUIRE)) {
     checks.add(checkRequires);
