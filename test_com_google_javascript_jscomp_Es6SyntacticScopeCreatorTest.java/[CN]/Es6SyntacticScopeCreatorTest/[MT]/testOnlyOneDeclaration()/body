@@ -1,0 +1,14 @@
+{
+  String js="function f(x) { if (!x) var x = 6; }";
+  Node root=getRoot(js);
+  Node fNode=root.getFirstChild();
+  Scope globalScope=scopeCreator.createScope(root,null);
+  Scope fScope=scopeCreator.createScope(fNode,globalScope);
+  assertTrue(fScope.isDeclared("x",false));
+  Node fBlock=fNode.getLastChild();
+  Scope fBlockScope=scopeCreator.createScope(fBlock,fScope);
+  assertTrue(fBlockScope.isDeclared("x",false));
+  Node ifBlock=fBlock.getFirstChild().getLastChild();
+  Scope ifBlockScope=scopeCreator.createScope(ifBlock,fBlockScope);
+  assertFalse(ifBlockScope.isDeclared("x",false));
+}

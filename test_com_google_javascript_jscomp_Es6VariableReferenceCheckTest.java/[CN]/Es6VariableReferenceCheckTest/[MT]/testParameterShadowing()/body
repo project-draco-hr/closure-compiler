@@ -1,13 +1,13 @@
 {
   assertParameterShadowed("function f(x) { let x; }");
   assertParameterShadowed("function f(x) { const x = 3; }");
-  assertRedeclare("function f(x) { function x() {} }");
   assertParameterShadowed("function f(X) { class X {} }");
+  assertRedeclare("function f(x) { function x() {} }");
   assertRedeclare("function f(x) { var x; }");
-  assertParameterShadowed("function f(x=3) { var x; }");
-  assertParameterShadowed("function f(...x) { var x; }");
-  assertParameterShadowed("function f(x=3) { function x() {} }");
-  assertParameterShadowed("function f(...x) { function x() {} }");
+  assertRedeclare("function f(x=3) { var x; }");
+  assertRedeclare("function f(...x) { var x; }");
+  assertRedeclare("function f(...x) { function x() {} }");
+  assertRedeclare("function f(x=3) { function x() {} }");
   assertNoWarning("function f(x) { if (true) { let x; } }");
   assertNoWarning(LINE_JOINER.join("function outer(x) {","  function inner() {","    let x = 1;","  }","}"));
   assertNoWarning(LINE_JOINER.join("function outer(x) {","  function inner() {","    var x = 1;","  }","}"));

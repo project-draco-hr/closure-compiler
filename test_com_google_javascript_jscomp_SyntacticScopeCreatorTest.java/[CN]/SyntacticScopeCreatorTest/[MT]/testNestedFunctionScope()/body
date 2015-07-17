@@ -1,0 +1,11 @@
+{
+  Node root=getRoot("function f(x) { function g(y) {} }");
+  Scope globalScope=scopeCreator.createScope(root,null);
+  Node fNode=root.getFirstChild();
+  Scope outerFScope=scopeCreator.createScope(fNode,globalScope);
+  assertTrue(outerFScope.isDeclared("x",false));
+  Node innerFNode=fNode.getLastChild().getFirstChild();
+  Scope innerFScope=scopeCreator.createScope(innerFNode,outerFScope);
+  assertFalse(innerFScope.isDeclared("x",false));
+  assertTrue(innerFScope.isDeclared("y",false));
+}

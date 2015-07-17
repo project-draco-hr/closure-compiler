@@ -1,0 +1,15 @@
+{
+  String js="function f(e) { try {} catch (e) {} }";
+  Node root=getRoot(js);
+  Node fNode=root.getFirstChild();
+  Scope globalScope=scopeCreator.createScope(root,null);
+  Scope fScope=scopeCreator.createScope(fNode,globalScope);
+  assertTrue(fScope.isDeclared("e",false));
+  Node fBlock=fNode.getLastChild();
+  Scope fBlockScope=scopeCreator.createScope(fBlock,fScope);
+  Node tryBlock=fBlock.getFirstChild().getFirstChild();
+  Scope tryScope=scopeCreator.createScope(tryBlock,fBlockScope);
+  Node catchBlock=tryBlock.getNext();
+  Scope catchScope=scopeCreator.createScope(catchBlock,tryScope);
+  assertTrue(catchScope.isDeclared("e",false));
+}

@@ -1,13 +1,10 @@
 {
-  String js="function foo() {\n" + " var x = 10;" + "}";
-  Compiler compiler=new Compiler();
-  Node root=compiler.parseTestCode(js);
-  assertEquals(0,compiler.getErrorCount());
-  Scope globalScope=SyntacticScopeCreator.makeUntyped(compiler).createScope(root,null);
+  Node root=getRoot("function foo() { var x = 10; }");
+  Scope globalScope=scopeCreator.createScope(root,null);
   assertEquals(root,globalScope.getRootNode());
   Node fooNode=root.getFirstChild();
   assertEquals(Token.FUNCTION,fooNode.getType());
-  Scope fooScope=SyntacticScopeCreator.makeUntyped(compiler).createScope(fooNode,null);
+  Scope fooScope=scopeCreator.createScope(fooNode,globalScope);
   assertEquals(fooNode,fooScope.getRootNode());
   assertTrue(fooScope.isDeclared("x",false));
 }

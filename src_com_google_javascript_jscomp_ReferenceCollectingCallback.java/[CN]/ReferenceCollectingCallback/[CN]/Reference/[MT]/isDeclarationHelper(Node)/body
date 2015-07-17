@@ -12,5 +12,8 @@
   if (parent.isDestructuringPattern() || (parent.isStringKey() && parent.getParent().isObjectPattern()) || (parent.isComputedProp() && parent.getParent().isObjectPattern() && node == parent.getLastChild())|| (parent.isDefaultValue() && node == parent.getFirstChild())) {
     return isDeclarationHelper(parent);
   }
+  if (parent.isArrowFunction()) {
+    return node == parent.getFirstChild();
+  }
   return DECLARATION_PARENTS.contains(parent.getType());
 }

@@ -1,0 +1,11 @@
+{
+  String js="function f(x) {}";
+  Node root=getRoot(js);
+  Node fNode=root.getFirstChild();
+  Scope globalScope=scopeCreator.createScope(root,null);
+  Scope fScope=scopeCreator.createScope(fNode,globalScope);
+  assertTrue(fScope.isDeclared("x",false));
+  Node fBlock=fNode.getLastChild();
+  Scope fBlockScope=scopeCreator.createScope(fBlock,null);
+  assertFalse(fBlockScope.isDeclared("x",false));
+}

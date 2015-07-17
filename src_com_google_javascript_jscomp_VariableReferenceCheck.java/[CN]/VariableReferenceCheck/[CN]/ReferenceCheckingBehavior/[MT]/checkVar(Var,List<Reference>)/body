@@ -30,8 +30,11 @@
         if (declaredBlock.provablyExecutesBefore(basicBlock)) {
           shadowDetected=true;
           DiagnosticType diagnosticType;
-          if (v.isLet() || v.isConst() || letConstShadowsVar|| shadowCatchVar) {
+          if (v.isLet() || v.isConst() || v.isClass()|| letConstShadowsVar|| shadowCatchVar) {
             diagnosticType=REDECLARED_VARIABLE_ERROR;
+          }
+ else           if (reference.getNode().getParent().isCatch()) {
+            return;
           }
  else {
             diagnosticType=REDECLARED_VARIABLE;
@@ -61,7 +64,7 @@
         }
         if (reference.getScope() == v.scope && !v.getName().equals("goog")) {
           isUndeclaredReference=true;
-          compiler.report(JSError.make(reference.getNode(),(v.isLet() || v.isConst() || v.isParam()) ? EARLY_REFERENCE_ERROR : EARLY_REFERENCE,v.name));
+          compiler.report(JSError.make(reference.getNode(),(v.isLet() || v.isConst() || v.isClass()|| v.isParam()) ? EARLY_REFERENCE_ERROR : EARLY_REFERENCE,v.name));
         }
       }
     }
