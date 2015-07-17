@@ -27,10 +27,13 @@
     }
   }
  else   if (n.isObjectLit() && isCallTargetQName(n.getParent(),"goog.testing.testSuite")) {
-    for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+    for (    Node c : n.children()) {
       if (c.isStringKey() && !c.isQuotedString()) {
         c.setQuotedString();
         compiler.reportCodeChange();
+      }
+ else       if (c.isMemberFunctionDef()) {
+        rewriteMemberDefInObjLit(c,n);
       }
     }
   }
