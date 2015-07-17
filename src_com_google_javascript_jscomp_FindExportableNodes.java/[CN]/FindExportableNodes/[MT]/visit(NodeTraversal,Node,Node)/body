@@ -10,18 +10,28 @@ case Token.FUNCTION:
         context=new GenerateNodeContext(n,Mode.EXPORT);
       }
     break;
-case Token.ASSIGN:
-  Node grandparent=parent.getParent();
-if (parent.isExprResult() && !n.getLastChild().isAssign()) {
-  if (grandparent != null && grandparent.isScript() && n.getFirstChild().isQualifiedName()) {
-    export=n.getFirstChild().getQualifiedName();
+case Token.CLASS:
+  if (parent.isScript()) {
+    export=NodeUtil.getClassName(n);
     context=new GenerateNodeContext(n,Mode.EXPORT);
   }
- else   if (allowLocalExports && n.getFirstChild().isGetProp()) {
-    Node target=n.getFirstChild();
-    export=target.getLastChild().getString();
-    context=new GenerateNodeContext(n,Mode.EXTERN);
-  }
+break;
+case Token.MEMBER_FUNCTION_DEF:
+export=n.getString();
+context=new GenerateNodeContext(n,Mode.EXPORT);
+break;
+case Token.ASSIGN:
+Node grandparent=parent.getParent();
+if (parent.isExprResult() && !n.getLastChild().isAssign()) {
+if (grandparent != null && grandparent.isScript() && n.getFirstChild().isQualifiedName()) {
+export=n.getFirstChild().getQualifiedName();
+context=new GenerateNodeContext(n,Mode.EXPORT);
+}
+ else if (allowLocalExports && n.getFirstChild().isGetProp()) {
+Node target=n.getFirstChild();
+export=target.getLastChild().getString();
+context=new GenerateNodeContext(n,Mode.EXTERN);
+}
 }
 break;
 case Token.VAR:

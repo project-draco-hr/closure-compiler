@@ -1,4 +1,9 @@
 {
-  Preconditions.checkArgument(node.isGetProp());
-  return node.getLastChild().getString();
+  Preconditions.checkArgument(node.isGetProp() || node.getParent().isMemberFunctionDef());
+  if (node.isGetProp()) {
+    return node.getLastChild().getString();
+  }
+ else {
+    return node.getParent().getString();
+  }
 }

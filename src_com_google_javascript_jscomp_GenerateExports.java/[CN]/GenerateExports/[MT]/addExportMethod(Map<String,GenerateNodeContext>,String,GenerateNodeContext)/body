@@ -9,11 +9,20 @@
       grandparent=parentNode.getFirstChild().getQualifiedName();
     }
   }
+ else   if (node.getParent().isMemberFunctionDef()) {
+    Node classNode=node.getParent().getParent().getParent();
+    parent=NodeUtil.getClassName(classNode);
+    parent+=node.getParent().isStaticMember() ? "" : ".prototype";
+    export=parent + "." + export;
+  }
   boolean useExportSymbol=true;
   if (grandparent != null) {
     useExportSymbol=false;
   }
  else   if (parent != null && exports.containsKey(parent)) {
+    useExportSymbol=false;
+  }
+ else   if (node.getParent().isMemberFunctionDef()) {
     useExportSymbol=false;
   }
   Node call;
