@@ -6,15 +6,15 @@
   scopes.add(globalScope);
   CollectNamedTypes rootCnt=new CollectNamedTypes(globalScope);
   if (externs != null) {
-    NodeTraversal.traverse(compiler,externs,rootCnt);
+    NodeTraversal.traverseEs6(compiler,externs,rootCnt);
   }
-  NodeTraversal.traverse(compiler,root,rootCnt);
+  NodeTraversal.traverseEs6(compiler,root,rootCnt);
   globalScope.resolveTypedefs(typeParser);
   globalScope.resolveEnums(typeParser);
   for (int i=1; i < scopes.size(); i++) {
     NTIScope s=scopes.get(i);
     CollectNamedTypes cnt=new CollectNamedTypes(s);
-    NodeTraversal.traverse(compiler,s.getBody(),cnt);
+    NodeTraversal.traverseEs6(compiler,s.getBody(),cnt);
     s.resolveTypedefs(typeParser);
     s.resolveEnums(typeParser);
     if (NewTypeInference.measureMem) {
@@ -27,9 +27,9 @@
   }
   ProcessScope rootPs=new ProcessScope(globalScope);
   if (externs != null) {
-    NodeTraversal.traverse(compiler,externs,rootPs);
+    NodeTraversal.traverseEs6(compiler,externs,rootPs);
   }
-  NodeTraversal.traverse(compiler,root,rootPs);
+  NodeTraversal.traverseEs6(compiler,root,rootPs);
   rootPs.finishProcessingScope();
   for (  String name : globalScope.getUnknownTypeNames()) {
     globalScope.mayDeclareUnknownType(QualifiedName.fromQualifiedString(name));
@@ -37,7 +37,7 @@
   for (int i=1; i < scopes.size(); i++) {
     NTIScope s=scopes.get(i);
     ProcessScope ps=new ProcessScope(s);
-    NodeTraversal.traverse(compiler,s.getBody(),ps);
+    NodeTraversal.traverseEs6(compiler,s.getBody(),ps);
     ps.finishProcessingScope();
     if (NewTypeInference.measureMem) {
       NewTypeInference.updatePeakMem();
