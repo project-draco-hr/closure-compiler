@@ -12,6 +12,11 @@
     props=props.getAllButRightmost();
   }
   Namespace ns=props.isIdentifier() ? leftmost : leftmost.getSubnamespace(props.getAllButRightmost());
-  String pname=props.getRightmostName();
-  ns.addUndeclaredProperty(pname,null,JSType.UNKNOWN,false);
+  if (!ns.isFinalized()) {
+    String pname=props.getRightmostName();
+    ns.addUndeclaredProperty(pname,null,JSType.UNKNOWN,false);
+  }
+ else   if (ns.getConstDeclNode() != null) {
+    warnings.add(JSError.make(ns.getConstDeclNode(),COULD_NOT_INFER_CONST_TYPE));
+  }
 }

@@ -1,12 +1,14 @@
 {
   for (  String name : unknownTypeNames) {
-    declareUnknownType(QualifiedName.fromQualifiedString(name));
+    declareUnknownType(QualifiedName.fromQualifiedString(name),warnings);
   }
   unknownTypeNames=ImmutableSet.of();
   JSTypes commonTypes=getCommonTypes();
   for (  Map.Entry<String,NamespaceLit> entry : localNamespaces.entrySet()) {
     String name=entry.getKey();
-    JSType t=entry.getValue().toJSType(commonTypes);
+    NamespaceLit nslit=entry.getValue();
+    nslit.finalize(null);
+    JSType t=nslit.toJSType(commonTypes);
     if (localFunDefs.containsKey(name)) {
       t=t.withFunction(localFunDefs.get(name).getDeclaredFunctionType().toFunctionType(),commonTypes.getFunctionType());
     }
@@ -18,7 +20,9 @@
     }
   }
   for (  Map.Entry<String,EnumType> entry : localEnums.entrySet()) {
-    locals.put(entry.getKey(),entry.getValue().toJSType(commonTypes));
+    EnumType et=entry.getValue();
+    et.finalize(null);
+    locals.put(entry.getKey(),et.toJSType(commonTypes));
   }
   for (  String typedefName : localTypedefs.keySet()) {
     locals.put(typedefName,JSType.UNDEFINED);

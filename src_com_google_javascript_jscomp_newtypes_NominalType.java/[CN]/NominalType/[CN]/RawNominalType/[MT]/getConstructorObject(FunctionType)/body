@@ -1,12 +1,8 @@
 {
-  Preconditions.checkState(isFinalized);
-  if (this.ctorFn != ctorFn || this.ctorFnWrappedAsJSType == null) {
+  Preconditions.checkState(this.isFinalized);
+  if (this.ctorFn != ctorFn || this.namespaceType == null) {
     ObjectType ctorFnAsObj=ObjectType.makeObjectType(this.commonTypes.getFunctionType(),this.otherProps,ctorFn,ctorFn.isLoose(),ObjectKind.UNRESTRICTED);
-    JSType result=withNamedTypes(this.commonTypes,ctorFnAsObj);
-    if (this.ctorFn == ctorFn) {
-      this.ctorFnWrappedAsJSType=result;
-    }
-    return result;
+    return withNamedTypes(this.commonTypes,ctorFnAsObj);
   }
-  return this.ctorFnWrappedAsJSType;
+  return this.namespaceType;
 }

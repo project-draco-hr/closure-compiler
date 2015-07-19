@@ -1,6 +1,6 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @const */ var x = ns;"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @enum {number} */ var e = { FOO : 5 };","/** @const */ var x = e;"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @const */ ns.numprop = 123;","/** @const */ var x = ns;","function f() { var /** string */ s = x.numprop; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @enum {number} */ var e = { FOO : 5 };","/** @const */ e.numprop = 123;","/** @const */ var x = e;","function f() { var /** string */ s = x.numprop; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @type {number} */ ns.n = 5;","/** @const */ var x = ns.n;"));
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","var Bar = Foo;","function g() { Bar(); }"),TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
   typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @constructor */","ns.Foo = function() {};","/** @type {string} */","ns.Foo.prop = 'asdf';","/** @const */ var Foo = ns.Foo;","function g() { Foo.prop - 5; }"),NewTypeInference.INVALID_OPERAND_TYPE);

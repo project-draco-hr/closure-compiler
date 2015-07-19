@@ -1,4 +1,5 @@
 {
+  Preconditions.checkState(!this.isFinalized);
   Declaration d=getDeclaration(qname);
   Preconditions.checkState(d == null || d.getNamespace() == null && d.getFunctionScope() != null);
   Namespace ns=getReceiverNamespace(qname);
@@ -6,5 +7,5 @@
     ns.namespaces=new LinkedHashMap<>();
   }
   String name=qname.getRightmostName();
-  ns.namespaces.put(name,new NamespaceLit());
+  ns.namespaces.put(name,new NamespaceLit(this.name + qname.toString()));
 }

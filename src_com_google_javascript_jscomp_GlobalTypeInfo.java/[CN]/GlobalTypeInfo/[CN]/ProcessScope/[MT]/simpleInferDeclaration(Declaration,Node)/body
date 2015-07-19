@@ -3,10 +3,15 @@
     return null;
   }
   if (constDeclNode != null) {
-    RawNominalType rawType=decl.getNominal();
-    if (rawType != null) {
-      checkAndFinalizeNominalType(rawType,constDeclNode);
-      return rawType.toJSType(commonTypes);
+    Namespace ns=decl.getNamespace();
+    if (ns != null) {
+      if (ns instanceof RawNominalType) {
+        checkAndFinalizeNominalType((RawNominalType)ns,constDeclNode);
+      }
+ else {
+        ns.finalize(constDeclNode);
+      }
+      return ns.toJSType(commonTypes);
     }
   }
   if (decl.getTypeOfSimpleDecl() != null) {

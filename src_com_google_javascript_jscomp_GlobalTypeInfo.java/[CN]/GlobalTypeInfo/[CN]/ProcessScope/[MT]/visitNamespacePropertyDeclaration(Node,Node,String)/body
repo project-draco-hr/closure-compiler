@@ -6,6 +6,10 @@
     return;
   }
   Namespace ns=currentScope.getNamespace(QualifiedName.fromNode(recv));
+  if (ns.isFinalized()) {
+    warnings.add(JSError.make(recv,NAMESPACE_MODIFIED_AFTER_FINALIZATION,ns.getName(),ns.getConstDeclNode().toString()));
+    return;
+  }
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(declNode);
   JSType propDeclType=getDeclaredTypeOfNode(jsdoc,currentScope);
   boolean isConst=isConst(declNode);
