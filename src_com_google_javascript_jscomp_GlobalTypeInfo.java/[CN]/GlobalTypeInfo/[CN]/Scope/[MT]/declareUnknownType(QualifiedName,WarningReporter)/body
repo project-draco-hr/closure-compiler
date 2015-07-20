@@ -16,7 +16,8 @@
     String pname=props.getRightmostName();
     ns.addUndeclaredProperty(pname,null,JSType.UNKNOWN,false);
   }
- else   if (ns.getConstDeclNode() != null) {
+ else {
+    Preconditions.checkNotNull(ns.getConstDeclNode(),"Namespace %s was finalized incorrectly",ns.getName());
     warnings.add(JSError.make(ns.getConstDeclNode(),COULD_NOT_INFER_CONST_TYPE));
   }
 }

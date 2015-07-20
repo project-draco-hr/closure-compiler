@@ -6,4 +6,7 @@
   typeCheck(Joiner.on('\n').join("/** @interface */","function Foo() {}","/** @constructor @implements {Foo} */","function Bar() {}","/** @const */","var Baz = Bar;","Foo.prop = 123;"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
   typeCheck(Joiner.on('\n').join("/** @const */","var ns = {}","/** @const */","var x = ns;","ns.prop = 123;"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
   typeCheck(Joiner.on('\n').join("/** @enum */","var e = { A: 1 }","/** @const */","var x = e;","e.prop = 123;"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @constructor */","ns.Foo = function() {};","/** @const */","var x = ns;","/** @type {number} */","ns.Foo.prop = 123;"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Bar() {}","/** @constructor */","Bar.Foo = function() {};","/** @const */","var x = Bar;","/** @type {number} */","Bar.Foo.prop = 123;"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @enum */","var e = {A:1};","/** @constructor */","e.Foo = function() {};","/** @const */","var x = e;","/** @type {number} */","e.Foo.prop = 123;"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
 }
