@@ -1,5 +1,7 @@
 {
-  testError("" + "/** @return {SomeType} */\n" + "function f() {\n"+ "  try {\n"+ "    return new SomeType();\n"+ "  } catch (e) {\n"+ "    return new SomeType();\n"+ "  }\n"+ "}");
-  testBodyOk("" + "try {\n" + "  if (a) throw '';\n"+ "} catch (e) {\n"+ "  return null;\n"+ "}\n"+ "return {}");
-  testBodyOk("" + "try {\n" + "  return bar();\n"+ "} catch (e) {\n"+ "} finally { }");
+  testError(LINE_JOINER.join("/** @return {SomeType} */","function f() {","  try {","    return new SomeType();","  } catch (e) {","    return new SomeType();","  }","}"));
+  setAcceptedLanguage(LanguageMode.ECMASCRIPT6);
+  testError(LINE_JOINER.join("var obj = {","  /** @return {SomeType} */","  f() {","    try {","      return new SomeType();","    } catch (e) {","      return new SomeType();","    }","  }","}"));
+  testBodyOk(LINE_JOINER.join("try {","  if (a) throw '';","} catch (e) {","  return null;","}","return {}"));
+  testBodyOk(LINE_JOINER.join("try {","  return bar();","} catch (e) {","} finally { }"));
 }
