@@ -1,6 +1,12 @@
 {
   JSDocInfo docInfo=n.getJSDocInfo();
   if (docInfo != null && docInfo.isExport()) {
+    if (parent.isAssign() && (n.isFunction() || n.isClass())) {
+      JSDocInfo parentInfo=parent.getJSDocInfo();
+      if (parentInfo != null && parentInfo.isExport()) {
+        return;
+      }
+    }
     String export=null;
     GenerateNodeContext context=null;
 switch (n.getType()) {
