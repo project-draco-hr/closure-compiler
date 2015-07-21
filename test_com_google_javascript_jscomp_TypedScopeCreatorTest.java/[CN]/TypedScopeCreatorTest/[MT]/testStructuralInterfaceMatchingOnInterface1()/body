@@ -1,0 +1,8 @@
+{
+  testSame("/** @record */ var I = function() {};" + "/** @type {number} */ I.prototype.bar;" + "I.prototype.baz = function(){};");
+  TypedVar i=globalScope.getVar("I");
+  assertEquals("function (this:I): ?",i.getType().toString());
+  assertTrue(i.getType().isInterface());
+  assertTrue(i.getType().isFunctionType());
+  assertTrue(i.getType().toMaybeFunctionType().usesImplicitMatch());
+}
