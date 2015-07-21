@@ -3,6 +3,9 @@
     return type.hasProperty(propertyName);
   }
  else {
+    if (!type.isEmptyType() && !type.isUnknownType() && type.hasProperty(propertyName)) {
+      return true;
+    }
     if (typesIndexedByProperty.containsKey(propertyName)) {
       for (      JSType alt : typesIndexedByProperty.get(propertyName).getAlternates()) {
         JSType greatestSubtype=alt.getGreatestSubtype(type);
