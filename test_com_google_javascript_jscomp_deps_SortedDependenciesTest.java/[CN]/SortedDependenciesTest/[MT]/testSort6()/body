@@ -1,0 +1,13 @@
+{
+  SimpleDependencyInfo a=new SimpleDependencyInfo("gin","gin",provides("gin"),requires("tonic"),false);
+  SimpleDependencyInfo b=new SimpleDependencyInfo("tonic","tonic",provides("tonic"),requires("gin2"),false);
+  SimpleDependencyInfo c=new SimpleDependencyInfo("gin2","gin2",provides("gin2"),requires("gin"),false);
+  SimpleDependencyInfo d=new SimpleDependencyInfo("gin3","gin3",provides("gin3"),requires("gin"),false);
+  try {
+    new SortedDependencies<>(ImmutableList.of(a,b,c,d));
+    fail("expected exception");
+  }
+ catch (  CircularDependencyException e) {
+    assertThat(e.getMessage()).isEqualTo("tonic -> gin2 -> gin -> tonic");
+  }
+}
