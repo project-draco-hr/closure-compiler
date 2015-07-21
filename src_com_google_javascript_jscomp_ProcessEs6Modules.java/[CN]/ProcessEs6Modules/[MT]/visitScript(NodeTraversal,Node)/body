@@ -4,7 +4,8 @@
   }
   Preconditions.checkArgument(scriptNodeCount == 1,"ProcessEs6Modules supports only one invocation per " + "CompilerInput / script node");
   rewriteRequires(script);
-  String moduleName=toModuleName(loader.getLoadAddress(t.getInput()));
+  URI normalizedAddress=loader.normalizeInputAddress(t.getInput());
+  String moduleName=ES6ModuleLoader.toModuleName(normalizedAddress);
   if (!exportMap.isEmpty()) {
     Node objectlit=IR.objectlit();
     Node varNode=IR.var(IR.name(moduleName),objectlit).useSourceInfoIfMissingFromForTree(script);

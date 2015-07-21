@@ -1,0 +1,14 @@
+{
+  this.moduleRootUris=Lists.transform(moduleRoots,new Function<String,URI>(){
+    @Override public URI apply(    String path){
+      return createUri(path);
+    }
+  }
+);
+  this.moduleUris=new HashSet<URI>();
+  for (  CompilerInput input : inputs) {
+    if (!moduleUris.add(normalizeInputAddress(input))) {
+      throw new IllegalArgumentException("Duplicate module URI after resolving: " + input.getName());
+    }
+  }
+}

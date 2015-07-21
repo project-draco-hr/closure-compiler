@@ -1,0 +1,10 @@
+{
+  ES6ModuleLoader loader=new ES6ModuleLoader(ImmutableList.of("."),inputs("A/index.js","B/index.js","app.js"));
+  CompilerInput inputA=input("A/index.js");
+  CompilerInput inputB=input("B/index.js");
+  CompilerInput inputApp=input("app.js");
+  assertUri("A/index.js",loader.normalizeInputAddress(inputA));
+  assertUri("A/index.js",loader.locateCommonJsModule("../A",inputB));
+  assertUri("A/index.js",loader.locateCommonJsModule("./A",inputApp));
+  assertUri("A/index.js",loader.locateCommonJsModule("A",inputApp));
+}

@@ -1,3 +1,11 @@
 {
-  return new ProcessCommonJSModules(compiler,new ES6ModuleLoader(compiler,"foo/bar/"),false);
+  return new CompilerPass(){
+    @Override public void process(    Node externs,    Node root){
+      Node testCodeScript=root.getLastChild();
+      assertEquals("Last source should be main test script",getFilename() + ".js",testCodeScript.getSourceFileName());
+      ProcessCommonJSModules processor=new ProcessCommonJSModules(compiler,new ES6ModuleLoader(ImmutableList.of("foo/bar/"),compiler.getInputsForTesting()),false);
+      processor.process(externs,testCodeScript);
+    }
+  }
+;
 }

@@ -30,8 +30,12 @@
     importNode.copyInformationFrom(export);
     parent.addChildBefore(importNode,export);
     visit(t,importNode,parent);
-    String loadAddress=loader.locate(moduleIdentifier.getString(),t.getInput());
-    String moduleName=toModuleName(loadAddress);
+    URI loadAddress=loader.locateEs6Module(moduleIdentifier.getString(),t.getInput());
+    if (loadAddress == null) {
+      compiler.report(t.makeError(moduleIdentifier,ES6ModuleLoader.LOAD_ERROR,moduleIdentifier.getString()));
+      return;
+    }
+    String moduleName=ES6ModuleLoader.toModuleName(loadAddress);
     for (    Node exportSpec : export.getFirstChild().children()) {
       String nameFromOtherModule=exportSpec.getFirstChild().getString();
       String exportedName=exportSpec.getLastChild().getString();

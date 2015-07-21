@@ -2,7 +2,14 @@
   RecentChange recentChange=new RecentChange();
   compiler.addChangeHandler(recentChange);
   Node root=compiler.parseInputs();
-  assertNotNull("Unexpected parse error(s): " + LINE_JOINER.join(compiler.getErrors()),root);
+  String errorMsg=LINE_JOINER.join(compiler.getErrors());
+  if (root == null && expected == null && error != null) {
+    assert_().withFailureMessage("Expected one parse error, but got " + errorMsg).that(compiler.getErrorCount()).isEqualTo(1);
+    JSError actualError=compiler.getErrors()[0];
+    assert_().withFailureMessage("Unexpected parse error(s): " + errorMsg).that(actualError.getType()).isEqualTo(error);
+    return;
+  }
+  assert_().withFailureMessage("Unexpected parse error(s): " + errorMsg).that(root).isNotNull();
   if (!expectParseWarningsThisTest) {
     assertEquals("Unexpected parse warnings(s): " + LINE_JOINER.join(compiler.getWarnings()),0,compiler.getWarnings().length);
   }
@@ -20,7 +27,6 @@
   int aggregateWarningCount=0;
   List<JSError> aggregateWarnings=new ArrayList<>();
   boolean hasCodeChanged=false;
-  assertFalse("Code should not change before processing",recentChange.hasCodeChanged());
   for (int i=0; i < numRepetitions; ++i) {
     if (compiler.getErrorCount() == 0) {
       errorManagers[i]=new BlackHoleErrorManager();

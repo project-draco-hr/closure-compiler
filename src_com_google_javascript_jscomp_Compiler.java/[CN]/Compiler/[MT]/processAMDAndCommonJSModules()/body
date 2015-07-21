@@ -1,6 +1,7 @@
 {
   Map<String,JSModule> modulesByProvide=new LinkedHashMap<>();
   Map<CompilerInput,JSModule> modulesByInput=new LinkedHashMap<>();
+  ES6ModuleLoader loader=new ES6ModuleLoader(options.moduleRoots,inputs);
   for (  CompilerInput input : inputs) {
     input.setCompiler(this);
     Node root=input.getAstRoot(this);
@@ -11,7 +12,7 @@
       new TransformAMDToCJSModule(this).process(null,root);
     }
     if (options.processCommonJSModules) {
-      ProcessCommonJSModules cjs=new ProcessCommonJSModules(this,new ES6ModuleLoader(this,options.commonJSModulePathPrefix),true);
+      ProcessCommonJSModules cjs=new ProcessCommonJSModules(this,loader,true);
       cjs.process(null,root);
       JSModule m=new JSModule(cjs.inputToModuleName(input));
       m.addAndOverrideModule(input);

@@ -1,13 +1,11 @@
 {
   String importName=importDecl.getLastChild().getString();
-  String loadAddress=loader.locate(importName,t.getInput());
-  try {
-    loader.load(loadAddress);
-  }
- catch (  ES6ModuleLoader.LoadFailedException e) {
+  URI loadAddress=loader.locateEs6Module(importName,t.getInput());
+  if (loadAddress == null) {
     compiler.report(t.makeError(importDecl,ES6ModuleLoader.LOAD_ERROR,importName));
+    return;
   }
-  String moduleName=toModuleName(loadAddress);
+  String moduleName=ES6ModuleLoader.toModuleName(loadAddress);
   Set<String> namesToRequire=new LinkedHashSet<>();
   for (  Node child : importDecl.children()) {
     if (child.isEmpty() || child.isString()) {

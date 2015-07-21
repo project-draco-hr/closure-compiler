@@ -1,4 +1,12 @@
 {
-  URI base=isRelativeIdentifier(name) ? createUri(referrer) : moduleRootURI;
-  return convertSourceUriToModuleAddress(base.resolve(createUri(name)));
+  URI uri=createUri(name);
+  if (isRelativeIdentifier(name)) {
+    URI referrerUri=normalizeInputAddress(referrer);
+    uri=referrerUri.resolve(uri);
+  }
+  URI normalized=normalizeAddress(uri);
+  if (moduleUris.contains(normalized)) {
+    return normalized;
+  }
+  return null;
 }

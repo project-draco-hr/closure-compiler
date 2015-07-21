@@ -1,5 +1,5 @@
 {
   setFilename("foo/bar");
-  test("var name = require('name');","goog.provide('module$foo$bar'); var module$foo$bar = {};" + "goog.require('module$name');" + "var name$$module$foo$bar = module$name;");
-  test("var name = require('./name');","goog.provide('module$foo$bar');" + "var module$foo$bar = {};" + "goog.require('module$foo$name');"+ "var name$$module$foo$bar = module$foo$name;");
+  testModules("var name = require('other');","goog.provide('module$foo$bar'); var module$foo$bar = {};" + "goog.require('module$other');" + "var name$$module$foo$bar = module$other;");
+  ProcessEs6ModulesTest.testModules(this,ImmutableList.of(SourceFile.fromCode("foo/name.js",""),SourceFile.fromCode("foo/bar.js","var name = require('./name');")),"goog.provide('module$foo$bar');" + "var module$foo$bar = {};" + "goog.require('module$foo$name');"+ "var name$$module$foo$bar = module$foo$name;");
 }

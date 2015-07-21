@@ -1,13 +1,11 @@
 {
   String requireName=require.getChildAtIndex(1).getString();
-  String loadAddress=loader.locate(requireName,t.getInput());
-  try {
-    loader.load(loadAddress);
+  URI loadAddress=loader.locateCommonJsModule(requireName,t.getInput());
+  if (loadAddress == null) {
+    compiler.report(t.makeError(require,ES6ModuleLoader.LOAD_ERROR,requireName));
+    return;
   }
- catch (  ES6ModuleLoader.LoadFailedException e) {
-    t.makeError(require,ES6ModuleLoader.LOAD_ERROR,requireName);
-  }
-  String moduleName=toModuleName(loadAddress);
+  String moduleName=ES6ModuleLoader.toModuleName(loadAddress);
   Node moduleRef=IR.name(moduleName).srcref(require);
   parent.replaceChild(require,moduleRef);
   Node script=getCurrentScriptNode(parent);
