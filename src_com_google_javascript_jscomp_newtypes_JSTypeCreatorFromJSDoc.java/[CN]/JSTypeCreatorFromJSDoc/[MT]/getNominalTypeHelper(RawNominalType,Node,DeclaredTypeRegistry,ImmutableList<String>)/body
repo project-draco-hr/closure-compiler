@@ -1,7 +1,7 @@
 {
   NominalType uninstantiated=rawType.getAsNominalType();
   if (!rawType.isGeneric() && !n.hasChildren()) {
-    return rawType.getInstanceAsNullableJSType();
+    return rawType.getInstanceWithNullability(NULLABLE_TYPES_BY_DEFAULT);
   }
   ImmutableList.Builder<JSType> typeList=ImmutableList.builder();
   if (n.hasChildren()) {
@@ -18,7 +18,7 @@
     if (typeArgsSize > typeParamsSize) {
       warnings.add(JSError.make(n,INVALID_GENERICS_INSTANTIATION,uninstantiated.getName(),String.valueOf(typeParamsSize),String.valueOf(typeArgsSize)));
     }
-    return JSType.join(JSType.NULL,JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated.instantiateGenerics(fixLengthOfTypeList(typeParameters.size(),typeArguments)))));
+    return maybeMakeNullable(JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated.instantiateGenerics(fixLengthOfTypeList(typeParameters.size(),typeArguments)))));
   }
-  return JSType.join(JSType.NULL,JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated.instantiateGenerics(typeArguments))));
+  return maybeMakeNullable(JSType.fromObjectType(ObjectType.fromNominalType(uninstantiated.instantiateGenerics(typeArguments))));
 }
