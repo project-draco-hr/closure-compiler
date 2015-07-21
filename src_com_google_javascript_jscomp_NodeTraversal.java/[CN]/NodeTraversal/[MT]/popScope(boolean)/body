@@ -2,13 +2,19 @@
   if (!quietly && scopeCallback != null) {
     scopeCallback.exitScope(this);
   }
+  Node scopeRoot;
   if (scopeRoots.isEmpty()) {
-    scopes.pop();
+    scopeRoot=scopes.pop().getRootNode();
   }
  else {
-    scopeRoots.pop();
+    scopeRoot=scopeRoots.pop();
   }
-  cfgs.pop();
+  if (NodeUtil.isValidCfgRoot(scopeRoot)) {
+    cfgs.pop();
+    if (!cfgRoots.isEmpty()) {
+      Preconditions.checkState(cfgRoots.pop() == scopeRoot);
+    }
+  }
   if (hasScope()) {
     compiler.setScope(getScopeRoot());
   }
