@@ -1,8 +1,10 @@
 {
 switch (node.getType()) {
+case Token.CLASS:
+    return NodeUtil.getClassName(node);
 case Token.FUNCTION:
-    Node functionNameNode=node.getFirstChild();
-  return functionNameNode.getString();
+  Node functionNameNode=node.getFirstChild();
+return functionNameNode.getString();
 case Token.GETPROP:
 Node lhsOfDot=node.getFirstChild();
 Node rhsOfDot=lhsOfDot.getNext();
@@ -29,6 +31,7 @@ case Token.NAME:
 return node.getString();
 case Token.STRING:
 case Token.STRING_KEY:
+case Token.MEMBER_FUNCTION_DEF:
 return TokenStream.isJSIdentifier(node.getString()) ? node.getString() : ("__" + nextUniqueInt++);
 case Token.NUMBER:
 return NodeUtil.getStringValue(node);
