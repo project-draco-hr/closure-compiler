@@ -39,8 +39,16 @@
   if (info.getVisibility() != null && info.getVisibility() != Visibility.INHERITED) {
     sb.append("@" + info.getVisibility().toString().toLowerCase() + " ");
   }
-  for (  String suppression : info.getSuppressions()) {
-    sb.append("@suppress {" + suppression + "} ");
+  Iterator<String> suppressions=info.getSuppressions().iterator();
+  if (suppressions.hasNext()) {
+    sb.append("@suppress {");
+    while (suppressions.hasNext()) {
+      sb.append(suppressions.next());
+      if (suppressions.hasNext()) {
+        sb.append(",");
+      }
+    }
+    sb.append("} ");
   }
   ImmutableList<String> names=info.getTemplateTypeNames();
   if (!names.isEmpty()) {
