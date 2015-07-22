@@ -2,20 +2,21 @@
   Preconditions.checkState(n.canCollapseUnannotatedChildNames());
   Preconditions.checkArgument(NodeUtil.isStatementBlock(parent));
   Preconditions.checkNotNull(addAfter);
+  if (n.props == null) {
+    return 0;
+  }
   int numStubs=0;
-  if (n.props != null) {
-    for (    Name p : n.props) {
-      if (p.needsToBeStubbed()) {
-        String propAlias=appendPropForAlias(alias,p.getBaseName());
-        Node nameNode=IR.name(propAlias);
-        Node newVar=IR.var(nameNode).copyInformationFromForTree(addAfter);
-        parent.addChildAfter(newVar,addAfter);
-        addAfter=newVar;
-        numStubs++;
-        compiler.reportCodeChange();
-        if (p.getRefs().get(0).node.getLastChild().getBooleanProp(Node.IS_CONSTANT_NAME)) {
-          nameNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
-        }
+  for (  Name p : n.props) {
+    if (p.needsToBeStubbed()) {
+      String propAlias=appendPropForAlias(alias,p.getBaseName());
+      Node nameNode=IR.name(propAlias);
+      Node newVar=IR.var(nameNode).copyInformationFromForTree(addAfter);
+      parent.addChildAfter(newVar,addAfter);
+      addAfter=newVar;
+      numStubs++;
+      compiler.reportCodeChange();
+      if (p.getRefs().get(0).node.getLastChild().getBooleanProp(Node.IS_CONSTANT_NAME)) {
+        nameNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
       }
     }
   }

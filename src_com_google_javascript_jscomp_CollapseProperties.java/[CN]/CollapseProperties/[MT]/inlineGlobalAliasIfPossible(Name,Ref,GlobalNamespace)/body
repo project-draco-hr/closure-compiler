@@ -2,22 +2,24 @@
   Node aliasParent=alias.node.getParent();
   if (aliasParent.isAssign() && NodeUtil.isExecutedExactlyOnce(aliasParent) || aliasParent.isName() && name.isConstructor()) {
     Node lvalue=aliasParent.isName() ? aliasParent : aliasParent.getFirstChild();
-    if (lvalue.isQualifiedName()) {
-      name=namespace.getSlot(lvalue.getQualifiedName());
-      if (name != null && isInlinableGlobalAlias(name)) {
-        List<AstChange> newNodes=new ArrayList<>();
-        List<Ref> refs=new ArrayList<>(name.getRefs());
-        for (        Ref ref : refs) {
+    if (!lvalue.isQualifiedName()) {
+      return false;
+    }
+    name=namespace.getSlot(lvalue.getQualifiedName());
+    if (name != null && isInlinableGlobalAlias(name)) {
+      Set<AstChange> newNodes=new LinkedHashSet<>();
+      List<Ref> refs=new ArrayList<>(name.getRefs());
+      for (      Ref ref : refs) {
 switch (ref.type) {
 case SET_FROM_GLOBAL:
-            continue;
+          continue;
 case DIRECT_GET:
 case ALIASING_GET:
-          Node newNode=alias.node.cloneTree();
-        Node node=ref.node;
-      node.getParent().replaceChild(node,newNode);
-    newNodes.add(new AstChange(ref.module,ref.scope,newNode));
-  name.removeRef(ref);
+        Node newNode=alias.node.cloneTree();
+      Node node=ref.node;
+    node.getParent().replaceChild(node,newNode);
+  newNodes.add(new AstChange(ref.module,ref.scope,newNode));
+name.removeRef(ref);
 break;
 default :
 throw new IllegalStateException();
@@ -28,7 +30,6 @@ aliasParent.replaceChild(alias.node,IR.nullNode());
 compiler.reportCodeChange();
 namespace.scanNewNodes(newNodes);
 return true;
-}
 }
 }
 return false;
