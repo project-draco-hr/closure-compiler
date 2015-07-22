@@ -7,8 +7,15 @@ case Token.SCRIPT:
   if (!Ordering.natural().isOrdered(providedNamespaces)) {
     t.report(n,PROVIDES_NOT_SORTED);
   }
+if (!moduleNamespaces.isEmpty() && !providedNamespaces.isEmpty()) {
+  t.report(n,MODULE_AND_PROVIDES);
+}
+if (moduleNamespaces.size() > 1) {
+t.report(n,MULTIPLE_MODULES_IN_FILE);
+}
 requiredNamespaces.clear();
 providedNamespaces.clear();
+moduleNamespaces.clear();
 break;
 case Token.CALL:
 if (parent.isExprResult() && parent.getParent().isScript()) {
@@ -21,7 +28,12 @@ if (prov != null) {
 if (!requiredNamespaces.isEmpty()) {
 t.report(n,PROVIDES_AFTER_REQUIRES);
 }
+if (n.getFirstChild().matchesQualifiedName("goog.module")) {
+moduleNamespaces.add(prov);
+}
+ else {
 providedNamespaces.add(prov);
+}
 }
 }
 break;
