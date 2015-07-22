@@ -1,0 +1,18 @@
+{
+  RecordTypeBuilder builder=new RecordTypeBuilder(registry);
+  builder.addProperty("d",googBar.getPrototype(),null);
+  builder.addProperty("e",STRING_TYPE,null);
+  JSType recordType1=builder.build();
+  FunctionType googBarArgConstructor=registry.createConstructorType("barArg",null,registry.createParameters(googBar),null,null);
+  builder=new RecordTypeBuilder(registry);
+  builder.addProperty("d",googBarArgConstructor,null);
+  builder.addProperty("e",STRING_TYPE,null);
+  builder.addProperty("f",STRING_TYPE,null);
+  JSType recordType2=builder.build();
+  JSType subtype=recordType2.getGreatestSubtype(recordType1);
+  builder=new RecordTypeBuilder(registry);
+  builder.addProperty("d",registry.getNativeObjectType(JSTypeNative.NO_OBJECT_TYPE),null);
+  builder.addProperty("e",STRING_TYPE,null);
+  builder.addProperty("f",STRING_TYPE,null);
+  assertTypeEquals(subtype,builder.build());
+}

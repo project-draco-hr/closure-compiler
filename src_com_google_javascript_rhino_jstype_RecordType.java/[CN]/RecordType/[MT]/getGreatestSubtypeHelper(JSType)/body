@@ -3,11 +3,21 @@
     RecordType thatRecord=that.toMaybeRecordType();
     RecordTypeBuilder builder=new RecordTypeBuilder(registry);
     builder.setSynthesized(true);
+    JSType noType=registry.getNativeObjectType(JSTypeNative.NO_TYPE);
     for (    String property : getOwnPropertyNames()) {
-      if (thatRecord.hasProperty(property) && !thatRecord.getPropertyType(property).isInvariant(getPropertyType(property))) {
-        return registry.getNativeObjectType(JSTypeNative.NO_TYPE);
+      JSType thisPropertyType=getPropertyType(property);
+      JSType propType=null;
+      if (thatRecord.hasProperty(property)) {
+        JSType thatPropertyType=thatRecord.getPropertyType(property);
+        propType=thisPropertyType.getGreatestSubtype(thatPropertyType);
+        if (propType.isEquivalentTo(noType)) {
+          return noType;
+        }
       }
-      builder.addProperty(property,getPropertyType(property),getPropertyNode(property));
+ else {
+        propType=thisPropertyType;
+      }
+      builder.addProperty(property,propType,getPropertyNode(property));
     }
     for (    String property : thatRecord.getOwnPropertyNames()) {
       if (!hasProperty(property)) {
@@ -24,7 +34,7 @@
       UnionTypeBuilder builder=new UnionTypeBuilder(registry);
       for (      ObjectType alt : registry.getEachReferenceTypeWithProperty(propName)) {
         JSType altPropType=alt.getPropertyType(propName);
-        if (altPropType != null && !alt.isEquivalentTo(this) && alt.isSubtype(that) && propType.isInvariant(altPropType)) {
+        if (altPropType != null && !alt.isEquivalentTo(this) && alt.isSubtype(that) && altPropType.isSubtype(propType)) {
           builder.addAlternate(alt);
         }
       }
