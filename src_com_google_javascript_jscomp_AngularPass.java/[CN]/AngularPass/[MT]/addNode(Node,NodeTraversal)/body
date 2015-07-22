@@ -27,11 +27,16 @@ if (parent.isClassMembers()) {
 Node classNode=parent.getParent();
 String midPart=n.isStaticMember() ? "." : ".prototype.";
 name=NodeUtil.getClassName(classNode) + midPart + n.getString();
-if (n.getString() == "constructor") {
+if (n.getString().equals("constructor")) {
 name=NodeUtil.getClassName(classNode);
 }
 fn=n.getFirstChild();
+if (classNode.getParent().isAssign()) {
+target=classNode.getParent().getParent();
+}
+ else {
 target=classNode;
+}
 }
 break;
 }
