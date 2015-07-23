@@ -7,14 +7,14 @@
   assertExternProperties("/** @type {{bar: string, baz: string}} */ var foo;","bar","baz");
   assertExternProperties("/** @typedef {{bar: string, baz: string}} */ var FooType;","bar","baz");
   assertExternProperties("/** @type {string|{bar: string}|{baz: string}} */ var foo;","bar","baz");
-  assertExternProperties("/** @type {function(string, {bar: string}): {baz: string}} */\n" + "var foo;","bar","baz");
+  assertExternProperties(LINE_JOINER.join("/** @type {function(string, {bar: string}): {baz: string}} */","var foo;"),"bar","baz");
   assertExternProperties("/** @type {Array.<{bar: string, baz: string}>} */ var foo;","bar","baz");
-  assertExternProperties("/**\n" + " * @interface\n" + " * @template T\n"+ " */\n"+ "var Foo;\n"+ "/**\n"+ " * @constructor\n"+ " * @implements {Foo.<{bar: string, baz: string}>}\n"+ " */\n"+ "var Bar;","bar","baz");
-  assertExternProperties("/**\n" + " * @constructor\n" + " * @template T\n"+ " */\n"+ "var Foo = function() {};\n"+ "/**\n"+ " * @constructor\n"+ " * @extends {Foo.<{bar: string, baz: string}>}\n"+ " */\n"+ "var Bar = function() {};","bar","baz");
-  assertExternProperties("/** @enum {{bar: string, baz: (string|undefined)}} */\n" + "var FooEnum = {VALUE: {bar: ''}};","VALUE","bar","baz");
+  assertExternProperties(LINE_JOINER.join("/**"," * @interface"," * @template T"," */","var Foo;","/**"," * @constructor"," * @implements {Foo.<{bar: string, baz: string}>}"," */","var Bar;"),"bar","baz");
+  assertExternProperties(LINE_JOINER.join("/**"," * @constructor"," * @template T"," */","var Foo = function() {};","/**"," * @constructor"," * @extends {Foo.<{bar: string, baz: string}>}"," */","var Bar = function() {};"),"bar","baz");
+  assertExternProperties(LINE_JOINER.join("/** @enum {{bar: string, baz: (string|undefined)}} */","var FooEnum = {VALUE: {bar: ''}};"),"VALUE","bar","baz");
   assertExternProperties("/** @type {{bar: string, baz: {foobar: string}}} */ var foo;","bar","baz","foobar");
-  assertExternProperties("/** @typedef {{a: D2}} */\n" + "var D1;\n" + "\n"+ "/** @typedef {{b: D1}} */\n"+ "var D2;","a","b");
-  assertExternProperties("/** @typedef {{a: function(D2)}} */\n" + "var D1;\n" + "\n"+ "/** @typedef {{b: D1}} */\n"+ "var D2;","a","b");
+  assertExternProperties(LINE_JOINER.join("/** @typedef {{a: D2}} */","var D1;","","/** @typedef {{b: D1}} */","var D2;"),"a","b");
+  assertExternProperties(LINE_JOINER.join("/** @typedef {{a: function(D2)}} */","var D1;","","/** @typedef {{b: D1}} */","var D2;"),"a","b");
   testSame("/** @type {NonExternType} */ var foo;","/** @typedef {{bar: string, baz: string}} */ var NonExternType;",null);
   assertThat(getLastCompiler().getExternProperties()).isEmpty();
 }
