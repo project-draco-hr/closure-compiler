@@ -2,6 +2,21 @@
   if (n.isCall() && n.getChildCount() == 2 && n.getFirstChild().matchesQualifiedName("require") && n.getChildAtIndex(1).isString()) {
     visitRequireCall(t,n,parent);
   }
+  if (n.isIf()) {
+    FindModuleExportStatements commonjsFinder=new FindModuleExportStatements();
+    Node condition=n.getFirstChild();
+    NodeTraversal.traverse(compiler,condition,commonjsFinder);
+    if (commonjsFinder.isFound()) {
+      visitCommonJSIfStatement(n);
+    }
+ else {
+      FindDefineAmdStatements amdFinder=new FindDefineAmdStatements();
+      NodeTraversal.traverse(compiler,condition,amdFinder);
+      if (amdFinder.isFound()) {
+        visitAMDIfStatement(n);
+      }
+    }
+  }
   if (n.isScript()) {
     scriptNodeCount++;
     visitScript(t,n);
