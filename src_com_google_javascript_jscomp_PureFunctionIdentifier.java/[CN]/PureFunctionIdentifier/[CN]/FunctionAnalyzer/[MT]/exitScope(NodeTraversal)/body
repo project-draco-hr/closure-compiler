@@ -2,7 +2,14 @@
   if (t.inGlobalScope()) {
     return;
   }
-  FunctionInformation sideEffectInfo=functionSideEffectMap.get(t.getScopeRoot());
+  Node function=NodeUtil.getEnclosingFunction(t.getScopeRoot());
+  if (function == null) {
+    return;
+  }
+  FunctionInformation sideEffectInfo=functionSideEffectMap.get(function);
+  if (sideEffectInfo == null) {
+    return;
+  }
   if (sideEffectInfo.mutatesGlobalState()) {
     sideEffectInfo.resetLocalVars();
     return;
@@ -26,6 +33,7 @@
       }
     }
   }
-  sideEffectInfo.taintedLocals=Collections.emptySet();
-  sideEffectInfo.blacklisted=Collections.emptySet();
+  if (t.getScopeRoot().isFunction()) {
+    sideEffectInfo.resetLocalVars();
+  }
 }
