@@ -30,6 +30,18 @@
   }
  else   if (arg.isObjectLit()) {
     for (    Node key : arg.children()) {
+      if (key.isMemberFunctionDef()) {
+        compiler.report(t.makeError(n,SHORTHAND_FUNCTION_NOT_SUPPORTED_IN_ID_GEN));
+        return;
+      }
+      if (key.isStringKey() && !key.hasChildren()) {
+        compiler.report(t.makeError(n,SHORTHAND_ASSIGNMENT_NOT_SUPPORTED_IN_ID_GEN));
+        return;
+      }
+      if (key.isComputedProp()) {
+        compiler.report(t.makeError(n,COMPUTED_PROP_NOT_SUPPORTED_IN_ID_GEN));
+        return;
+      }
       String rename=getObfuscatedName(key,callName,nameGenerator,key.getString());
       key.setString(rename);
       key.putBooleanProp(Node.QUOTED_PROP,true);
