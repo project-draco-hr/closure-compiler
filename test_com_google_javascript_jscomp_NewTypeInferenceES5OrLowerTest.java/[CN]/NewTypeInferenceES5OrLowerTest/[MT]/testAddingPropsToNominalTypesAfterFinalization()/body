@@ -1,0 +1,10 @@
+{
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.prop = 123;","}","/** @const */","var exports = Foo;","function f() {","  var /** string */ s = (new Foo).prop;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","var exports = Foo;","Foo.prototype.method = function() {","  /** @type {number} */","  this.prop = 123;","};","function f() {","  var /** string */ s = (new Foo).prop;","}"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","var exports = Foo;","function f(/** !Foo */ x) {","  /** @type {number} */","  x.prop = 123;","}","function g(/** !Foo */ x) {","  var /** string */ s = x.prop;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prop = 123;","/** @const */","var exports = Foo;","Foo.prop = 234;"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prop = 123;","/** @const */","var exports = Foo;","function f() {","  Foo.prop = 234;","}"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prop = 123;","/** @const */","var exports = Foo;","Foo.prop2 = 234;"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prop = 123;","/** @const */","var exports = Foo;","function f() {","  /** @type {number} */","  Foo.prop = 234;","}"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","var exports = Foo;","Foo.prototype.method = function() {","  /** @type {number} */","  this.prop = 123;","};","function f() {","  var /** string */ s = (new Foo).prop;","}"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION,NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

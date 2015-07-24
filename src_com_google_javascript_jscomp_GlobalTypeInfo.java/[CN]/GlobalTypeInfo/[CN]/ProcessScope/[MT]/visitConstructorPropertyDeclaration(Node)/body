@@ -7,10 +7,6 @@
   QualifiedName ctorQname=QualifiedName.fromNode(getProp.getFirstChild());
   Preconditions.checkState(currentScope.isLocalFunDef(ctorName));
   RawNominalType classType=currentScope.getNominalType(ctorQname);
-  if (classType.isFinalized()) {
-    warnings.add(JSError.make(getProp,NAMESPACE_MODIFIED_AFTER_FINALIZATION,classType.getName(),classType.getConstDeclNode().toString()));
-    return;
-  }
   String pname=getProp.getLastChild().getString();
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
   JSType propDeclType=getDeclaredTypeOfNode(jsdoc,currentScope);
@@ -24,13 +20,15 @@
     if (isConst && !mayWarnAboutNoInit(getProp) && propDeclType == null) {
       propDeclType=inferConstTypeFromRhs(getProp);
     }
-    classType.addCtorProperty(pname,getProp,propDeclType,isConst);
-    getProp.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
-    if (isConst) {
-      getProp.putBooleanProp(Node.CONSTANT_PROPERTY_DEF,true);
+    if (!mayWarnAboutAddingPropToFinalizedNamespace(classType,pname,jsdoc,getProp)) {
+      classType.addCtorProperty(pname,getProp,propDeclType,isConst);
+      getProp.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+      if (isConst) {
+        getProp.putBooleanProp(Node.CONSTANT_PROPERTY_DEF,true);
+      }
     }
   }
- else {
+ else   if (!mayWarnAboutAddingPropToFinalizedNamespace(classType,pname,jsdoc,getProp)) {
     classType.addUndeclaredCtorProperty(pname,getProp);
   }
 }

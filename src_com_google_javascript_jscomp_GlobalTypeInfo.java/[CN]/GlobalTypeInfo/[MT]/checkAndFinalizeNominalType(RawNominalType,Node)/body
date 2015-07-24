@@ -1,28 +1,28 @@
 {
-  if (rawType.isFinalized()) {
+  if (rawType.isRawTypeFinalized()) {
     return;
   }
   NominalType superClass=rawType.getSuperClass();
   Set<String> nonInheritedPropNames=rawType.getAllOwnProps();
-  if (superClass != null && !superClass.isFinalized()) {
+  if (superClass != null && !superClass.isRawTypeFinalized()) {
     checkAndFinalizeNominalType(superClass.getRawNominalType(),constDeclNode);
   }
   for (  NominalType superInterf : rawType.getInterfaces()) {
-    if (!superInterf.isFinalized()) {
+    if (!superInterf.isRawTypeFinalized()) {
       checkAndFinalizeNominalType(superInterf.getRawNominalType(),constDeclNode);
     }
   }
   Multimap<String,DeclaredFunctionType> propMethodTypesToProcess=LinkedHashMultimap.create();
   Multimap<String,JSType> propTypesToProcess=LinkedHashMultimap.create();
   if (superClass != null) {
-    Preconditions.checkState(superClass.isFinalized());
+    Preconditions.checkState(superClass.isRawTypeFinalized());
     for (    String pname : superClass.getAllPropsOfClass()) {
       nonInheritedPropNames.remove(pname);
       checkSuperProperty(rawType,superClass,pname,propMethodTypesToProcess,propTypesToProcess);
     }
   }
   for (  NominalType superInterf : rawType.getInterfaces()) {
-    Preconditions.checkState(superInterf.isFinalized());
+    Preconditions.checkState(superInterf.isRawTypeFinalized());
     for (    String pname : superInterf.getAllPropsOfInterface()) {
       nonInheritedPropNames.remove(pname);
       checkSuperProperty(rawType,superInterf,pname,propMethodTypesToProcess,propTypesToProcess);
@@ -61,5 +61,5 @@
       warnings.add(JSError.make(propDefsite,TypeCheck.UNKNOWN_OVERRIDE,pname,rawType.getName()));
     }
   }
-  rawType.finalize(constDeclNode);
+  rawType.finalizeRawType();
 }

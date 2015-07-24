@@ -5,13 +5,10 @@
   if (constDeclNode != null) {
     Namespace ns=decl.getNamespace();
     if (ns != null) {
-      if (ns instanceof RawNominalType) {
-        checkAndFinalizeNominalType((RawNominalType)ns,constDeclNode);
+      if (ns.finalizeNamespace(constDeclNode)) {
+        return ns.toJSType(commonTypes);
       }
- else {
-        ns.finalize(constDeclNode);
-      }
-      return ns.toJSType(commonTypes);
+      return null;
     }
   }
   if (decl.getTypeOfSimpleDecl() != null) {

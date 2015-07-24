@@ -6,10 +6,6 @@
     return;
   }
   Namespace ns=currentScope.getNamespace(QualifiedName.fromNode(recv));
-  if (ns.isFinalized()) {
-    warnings.add(JSError.make(recv,NAMESPACE_MODIFIED_AFTER_FINALIZATION,ns.getName(),ns.getConstDeclNode().toString()));
-    return;
-  }
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(declNode);
   JSType propDeclType=getDeclaredTypeOfNode(jsdoc,currentScope);
   boolean isConst=isConst(declNode);
@@ -22,10 +18,12 @@
     if (isConst && !mayWarnAboutNoInit(declNode) && propDeclType == null) {
       propDeclType=inferConstTypeFromRhs(declNode);
     }
-    ns.addProperty(pname,declNode,propDeclType,isConst);
-    declNode.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
-    if (declNode.isGetProp() && isConst) {
-      declNode.putBooleanProp(Node.CONSTANT_PROPERTY_DEF,true);
+    if (!mayWarnAboutAddingPropToFinalizedNamespace(ns,pname,jsdoc,declNode)) {
+      ns.addProperty(pname,declNode,propDeclType,isConst);
+      declNode.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+      if (declNode.isGetProp() && isConst) {
+        declNode.putBooleanProp(Node.CONSTANT_PROPERTY_DEF,true);
+      }
     }
   }
  else {
@@ -34,6 +32,8 @@
     if (t == null) {
       t=JSType.UNKNOWN;
     }
-    ns.addUndeclaredProperty(pname,declNode,t,false);
+    if (!mayWarnAboutAddingPropToFinalizedNamespace(ns,pname,jsdoc,declNode)) {
+      ns.addUndeclaredProperty(pname,declNode,t,false);
+    }
   }
 }

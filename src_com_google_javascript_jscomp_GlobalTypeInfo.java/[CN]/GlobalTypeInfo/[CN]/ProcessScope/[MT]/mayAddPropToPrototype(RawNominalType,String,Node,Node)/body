@@ -25,15 +25,17 @@
     if (defSite.isGetProp() && propDeclType == null && isConst && !mayWarnAboutNoInit(defSite)) {
       propDeclType=inferConstTypeFromRhs(defSite);
     }
-    rawType.addProtoProperty(pname,defSite,propDeclType,isConst);
-    if (defSite.isGetProp()) {
-      defSite.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
-      if (isConst) {
-        defSite.putBooleanProp(Node.CONSTANT_PROPERTY_DEF,true);
+    if (!mayWarnAboutAddingPropToFinalizedNamespace(rawType,pname,jsdoc,defSite)) {
+      rawType.addProtoProperty(pname,defSite,propDeclType,isConst);
+      if (defSite.isGetProp()) {
+        defSite.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+        if (isConst) {
+          defSite.putBooleanProp(Node.CONSTANT_PROPERTY_DEF,true);
+        }
       }
     }
   }
- else {
+ else   if (!mayWarnAboutAddingPropToFinalizedNamespace(rawType,pname,jsdoc,defSite)) {
     rawType.addUndeclaredProtoProperty(pname,defSite);
   }
 }

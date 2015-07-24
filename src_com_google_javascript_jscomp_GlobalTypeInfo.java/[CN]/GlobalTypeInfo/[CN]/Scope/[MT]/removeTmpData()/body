@@ -4,7 +4,7 @@
   for (  Map.Entry<String,NamespaceLit> entry : localNamespaces.entrySet()) {
     String name=entry.getKey();
     NamespaceLit nslit=entry.getValue();
-    nslit.finalize(null);
+    nslit.finalizeNamespace(null);
     JSType t=nslit.toJSType(commonTypes);
     if (localFunDefs.containsKey(name)) {
       t=t.withFunction(localFunDefs.get(name).getDeclaredFunctionType().toFunctionType(),commonTypes.getFunctionType());
@@ -18,7 +18,7 @@
   }
   for (  Map.Entry<String,EnumType> entry : localEnums.entrySet()) {
     EnumType et=entry.getValue();
-    et.finalize(null);
+    et.finalizeNamespace(null);
     locals.put(entry.getKey(),et.toJSType(commonTypes));
   }
   for (  String typedefName : localTypedefs.keySet()) {
