@@ -1,6 +1,6 @@
 {
   if (token != JsDocToken.LEFT_CURLY) {
-    parser.addParserWarning("msg.jsdoc.suppress",stream.getLineno(),stream.getCharno());
+    addParserWarning("msg.jsdoc.suppress");
     return token;
   }
  else {
@@ -9,13 +9,13 @@
       if (match(JsDocToken.STRING)) {
         String name=stream.getString();
         if (!suppressionNames.contains(name)) {
-          parser.addParserWarning("msg.jsdoc.suppress.unknown",name,stream.getLineno(),stream.getCharno());
+          addParserWarning("msg.jsdoc.suppress.unknown",name);
         }
         suppressions.add(stream.getString());
         token=next();
       }
  else {
-        parser.addParserWarning("msg.jsdoc.suppress",stream.getLineno(),stream.getCharno());
+        addParserWarning("msg.jsdoc.suppress");
         return token;
       }
       if (match(JsDocToken.PIPE,JsDocToken.COMMA)) {
@@ -26,12 +26,12 @@
       }
     }
     if (!match(JsDocToken.RIGHT_CURLY)) {
-      parser.addParserWarning("msg.jsdoc.suppress",stream.getLineno(),stream.getCharno());
+      addParserWarning("msg.jsdoc.suppress");
     }
  else {
       token=next();
       if (!jsdocBuilder.recordSuppressions(suppressions)) {
-        parser.addParserWarning("msg.jsdoc.suppress.duplicate",stream.getLineno(),stream.getCharno());
+        addParserWarning("msg.jsdoc.suppress.duplicate");
       }
     }
     return eatUntilEOLIfNotAnnotation();

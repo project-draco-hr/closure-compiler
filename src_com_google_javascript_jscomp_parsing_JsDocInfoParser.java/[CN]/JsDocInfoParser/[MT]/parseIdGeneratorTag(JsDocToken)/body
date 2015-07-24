@@ -4,17 +4,17 @@
     if (match(JsDocToken.STRING)) {
       String name=stream.getString();
       if (!idGeneratorAnnotationKeywords.contains(name) && !jsdocBuilder.hasParameter(name)) {
-        parser.addParserWarning("msg.jsdoc.idgen.unknown",name,stream.getLineno(),stream.getCharno());
+        addParserWarning("msg.jsdoc.idgen.unknown",name);
       }
       idgenKind=name;
       token=next();
     }
  else {
-      parser.addParserWarning("msg.jsdoc.idgen.bad",stream.getLineno(),stream.getCharno());
+      addParserWarning("msg.jsdoc.idgen.bad");
       return token;
     }
     if (!match(JsDocToken.RIGHT_CURLY)) {
-      parser.addParserWarning("msg.jsdoc.idgen.bad",stream.getLineno(),stream.getCharno());
+      addParserWarning("msg.jsdoc.idgen.bad");
     }
  else {
       token=next();
@@ -23,22 +23,22 @@
 switch (idgenKind) {
 case "unique":
     if (!jsdocBuilder.recordIdGenerator()) {
-      parser.addParserWarning("msg.jsdoc.idgen.duplicate",stream.getLineno(),stream.getCharno());
+      addParserWarning("msg.jsdoc.idgen.duplicate");
     }
   break;
 case "consistent":
 if (!jsdocBuilder.recordConsistentIdGenerator()) {
-  parser.addParserWarning("msg.jsdoc.idgen.duplicate",stream.getLineno(),stream.getCharno());
+  addParserWarning("msg.jsdoc.idgen.duplicate");
 }
 break;
 case "stable":
 if (!jsdocBuilder.recordStableIdGenerator()) {
-parser.addParserWarning("msg.jsdoc.idgen.duplicate",stream.getLineno(),stream.getCharno());
+addParserWarning("msg.jsdoc.idgen.duplicate");
 }
 break;
 case "mapped":
 if (!jsdocBuilder.recordMappedIdGenerator()) {
-parser.addParserWarning("msg.jsdoc.idgen.duplicate",stream.getLineno(),stream.getCharno());
+addParserWarning("msg.jsdoc.idgen.duplicate");
 }
 break;
 }
