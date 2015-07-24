@@ -1,4 +1,8 @@
 {
+  if (parent.getParent().isConst() || parent.getParent().isLet()) {
+    compiler.report(JSError.make(n,POLYMER_INVALID_DECLARATION));
+    return;
+  }
   ClassDefinition def=extractClassDefinition(n);
   if (def != null) {
     if (NodeUtil.isNameDeclaration(parent.getParent()) || parent.isAssign()) {
