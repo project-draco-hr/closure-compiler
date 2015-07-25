@@ -1,11 +1,14 @@
 {
   if (parent == null || !parent.isFunction() || n == parent.getFirstChild()) {
     if (NodeUtil.isVarDeclaration(n)) {
-      renamer.addDeclaredName(n.getString());
+      renamer.addDeclaredName(n.getString(),true);
+    }
+ else     if (NodeUtil.isBlockScopedDeclaration(n)) {
+      renamer.addDeclaredName(n.getString(),false);
     }
  else     if (NodeUtil.isFunctionDeclaration(n)) {
       Node nameNode=n.getFirstChild();
-      renamer.addDeclaredName(nameNode.getString());
+      renamer.addDeclaredName(nameNode.getString(),true);
     }
     for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
       findDeclaredNames(c,n,renamer);
