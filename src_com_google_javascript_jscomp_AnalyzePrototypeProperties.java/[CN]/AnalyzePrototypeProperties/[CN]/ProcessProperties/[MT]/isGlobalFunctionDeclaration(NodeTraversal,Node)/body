@@ -1,10 +1,6 @@
 {
-  boolean isNotDefinedAsProperty=n.isFunction() && n.getParent().isName();
-  if (isNotDefinedAsProperty && n.getParent().getParent().isVar()) {
-    return t.inGlobalHoistScope();
+  if (!(t.inGlobalHoistScope() || n.isFunction() && t.getScopeRoot() == n && t.getScope().getParent().getClosestHoistScope().isGlobal())) {
+    return false;
   }
- else   if (NodeUtil.isFunctionDeclaration(n) || isNotDefinedAsProperty) {
-    return t.getScopeDepth() <= 1;
-  }
-  return false;
+  return NodeUtil.isFunctionDeclaration(n) || n.isFunction() && n.getParent().isName();
 }
