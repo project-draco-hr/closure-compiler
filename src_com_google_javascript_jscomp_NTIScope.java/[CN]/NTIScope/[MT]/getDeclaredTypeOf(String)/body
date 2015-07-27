@@ -1,0 +1,29 @@
+{
+  Preconditions.checkArgument(!name.contains("."));
+  if ("this".equals(name)) {
+    if (!hasThis()) {
+      return null;
+    }
+    return getDeclaredFunctionType().getThisType().getInstanceAsJSType();
+  }
+  Declaration decl=getLocalDeclaration(name,false);
+  if (decl != null) {
+    if (decl.getTypeOfSimpleDecl() != null) {
+      Preconditions.checkState(!decl.getTypeOfSimpleDecl().isBottom(),"%s was bottom",name);
+      return decl.getTypeOfSimpleDecl();
+    }
+    NTIScope funScope=(NTIScope)decl.getFunctionScope();
+    if (funScope != null) {
+      return getCommonTypes().fromFunctionType(funScope.getDeclaredFunctionType().toFunctionType());
+    }
+    Preconditions.checkState(decl.getNamespace() == null);
+    return null;
+  }
+  if (name.equals(this.name) && !parent.isFunctionNamespace(name)) {
+    return getCommonTypes().fromFunctionType(getDeclaredFunctionType().toFunctionType());
+  }
+  if (parent != null) {
+    return parent.getDeclaredTypeOf(name);
+  }
+  return null;
+}

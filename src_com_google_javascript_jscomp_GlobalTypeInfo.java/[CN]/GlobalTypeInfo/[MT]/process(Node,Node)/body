@@ -2,7 +2,7 @@
   Preconditions.checkNotNull(warnings,"Cannot rerun GlobalTypeInfo.process");
   Preconditions.checkArgument(externs == null || externs.isSyntheticBlock());
   Preconditions.checkArgument(root.isSyntheticBlock());
-  globalScope=new Scope(root,null,ImmutableList.<String>of(),commonTypes);
+  globalScope=new NTIScope(root,null,ImmutableList.<String>of(),commonTypes);
   scopes.add(globalScope);
   CollectNamedTypes rootCnt=new CollectNamedTypes(globalScope);
   if (externs != null) {
@@ -12,7 +12,7 @@
   globalScope.resolveTypedefs(typeParser);
   globalScope.resolveEnums(typeParser);
   for (int i=1; i < scopes.size(); i++) {
-    Scope s=scopes.get(i);
+    NTIScope s=scopes.get(i);
     CollectNamedTypes cnt=new CollectNamedTypes(s);
     NodeTraversal.traverse(compiler,s.getBody(),cnt);
     s.resolveTypedefs(typeParser);
@@ -31,8 +31,14 @@
   }
   NodeTraversal.traverse(compiler,root,rootPs);
   rootPs.finishProcessingScope();
+  for (  String name : globalScope.getUnknownTypeNames()) {
+    Node constDeclNode=globalScope.mayDeclareUnknownType(QualifiedName.fromQualifiedString(name),this.warnings);
+    if (constDeclNode != null) {
+      warnings.add(JSError.make(constDeclNode,COULD_NOT_INFER_CONST_TYPE));
+    }
+  }
   for (int i=1; i < scopes.size(); i++) {
-    Scope s=scopes.get(i);
+    NTIScope s=scopes.get(i);
     ProcessScope ps=new ProcessScope(s);
     NodeTraversal.traverse(compiler,s.getBody(),ps);
     ps.finishProcessingScope();
@@ -45,7 +51,7 @@
   }
   nominaltypesByNode=null;
   propertyDefs=null;
-  for (  Scope s : scopes) {
+  for (  NTIScope s : scopes) {
     s.removeTmpData();
   }
   Map<Node,String> unknownTypes=typeParser.getUnknownTypesMap();
