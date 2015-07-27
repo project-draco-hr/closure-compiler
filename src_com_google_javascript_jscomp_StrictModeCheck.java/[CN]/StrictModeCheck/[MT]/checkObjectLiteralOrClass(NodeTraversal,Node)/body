@@ -4,12 +4,22 @@
   for (Node key=n.getFirstChild(); key != null; key=key.getNext()) {
     if (!key.isSetterDef()) {
       if (!getters.add(key.getString())) {
-        t.report(key,DUPLICATE_OBJECT_KEY);
+        if (n.isClassMembers()) {
+          t.report(key,DUPLICATE_CLASS_METHODS);
+        }
+ else {
+          t.report(key,DUPLICATE_OBJECT_KEY);
+        }
       }
     }
     if (!key.isGetterDef()) {
       if (!setters.add(key.getString())) {
-        t.report(key,DUPLICATE_OBJECT_KEY);
+        if (n.isClassMembers()) {
+          t.report(key,DUPLICATE_CLASS_METHODS);
+        }
+ else {
+          t.report(key,DUPLICATE_OBJECT_KEY);
+        }
       }
     }
   }
