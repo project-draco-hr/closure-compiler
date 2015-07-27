@@ -6,7 +6,15 @@
   }
   QualifiedName recvQname=QualifiedName.fromNode(getProp.getFirstChild());
   Declaration d=this.currentScope.getDeclaration(recvQname,false);
-  JSType recvType=d == null ? null : d.getTypeOfSimpleDecl();
+  if (d == null) {
+    return;
+  }
+  if (d.getTypedef() != null) {
+    warnings.add(JSError.make(getProp,CANNOT_ADD_PROPERTIES_TO_TYPEDEF));
+    getProp.getParent().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+    return;
+  }
+  JSType recvType=d.getTypeOfSimpleDecl();
   if (recvType == null) {
     return;
   }
