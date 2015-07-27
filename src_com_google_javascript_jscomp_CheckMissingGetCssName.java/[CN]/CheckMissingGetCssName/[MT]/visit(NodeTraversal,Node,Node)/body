@@ -2,6 +2,14 @@
   if (n.isString() && !parent.isGetProp() && !parent.isRegExp()) {
     String s=n.getString();
     for (blacklist.reset(s); blacklist.find(); ) {
+      if (parent.isTemplateLit()) {
+        if (parent.getChildCount() > 1) {
+          continue;
+        }
+ else {
+          n=parent;
+        }
+      }
       if (insideGetCssNameCall(n)) {
         continue;
       }
