@@ -5,6 +5,10 @@
       renamer.addDeclaredName(s,false);
     }
     MakeDeclaredNamesUnique uniquifier=new MakeDeclaredNamesUnique(renamer);
-    NodeTraversal.traverse(compiler,t.getScopeRoot(),uniquifier);
+    Node scopeRoot=t.getScopeRoot();
+    if (scopeRoot.isBlock() && scopeRoot.getParent().isFunction()) {
+      scopeRoot=scopeRoot.getParent();
+    }
+    NodeTraversal.traverse(compiler,scopeRoot,uniquifier);
   }
 }
