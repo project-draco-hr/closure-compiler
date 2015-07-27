@@ -16,7 +16,7 @@
   }
   List<Node> keyNodeReferences=new ArrayList<>();
   List<Node> valueNodeReferences=new ArrayList<>();
-  NodeTraversal.traverse(compiler,NodeUtil.getFunctionBody(callbackFunction),new FindCallbackArgumentReferences(callbackFunction,keyNodeReferences,valueNodeReferences,objectToLoopOver.isArrayLit()));
+  new NodeTraversal(compiler,new FindCallbackArgumentReferences(callbackFunction,keyNodeReferences,valueNodeReferences,objectToLoopOver.isArrayLit())).traverseInnerNode(NodeUtil.getFunctionBody(callbackFunction),callbackFunction,t.getScope());
   if (keyNodeReferences.isEmpty()) {
     t.report(n,JQUERY_USELESS_EACH_EXPANSION,(String)null);
     return;
