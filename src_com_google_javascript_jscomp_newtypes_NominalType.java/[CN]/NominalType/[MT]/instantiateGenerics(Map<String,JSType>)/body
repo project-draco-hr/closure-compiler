@@ -3,7 +3,7 @@
     return this;
   }
   if (!this.rawType.isGeneric()) {
-    return this.rawType.wrappedAsNominal;
+    return this.rawType.getAsNominalType();
   }
   ImmutableMap.Builder<String,JSType> builder=ImmutableMap.builder();
   ImmutableMap<String,JSType> resultMap;
@@ -14,7 +14,8 @@
     resultMap=builder.build();
   }
  else {
-    for (    String newKey : rawType.typeParameters) {
+    ImmutableList<String> typeParams=this.rawType.getTypeParameters();
+    for (    String newKey : typeParams) {
       if (newTypeMap.containsKey(newKey)) {
         builder.put(newKey,newTypeMap.get(newKey));
       }
@@ -23,7 +24,7 @@
     if (resultMap.isEmpty()) {
       return this;
     }
-    if (resultMap.size() < rawType.typeParameters.size()) {
+    if (resultMap.size() < typeParams.size()) {
       return this;
     }
   }

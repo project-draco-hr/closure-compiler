@@ -1,5 +1,22 @@
 {
-  builder.append(rawType.name);
-  rawType.appendGenericSuffixTo(builder,typeMap);
+  if (this.typeMap.isEmpty()) {
+    return this.rawType.appendTo(builder);
+  }
+  builder.append(this.rawType.name);
+  ImmutableList<String> typeParams=this.rawType.getTypeParameters();
+  Preconditions.checkState(this.typeMap.keySet().containsAll(typeParams));
+  boolean firstIteration=true;
+  builder.append('<');
+  for (  String typeParam : typeParams) {
+    if (firstIteration) {
+      firstIteration=false;
+    }
+ else {
+      builder.append(',');
+    }
+    JSType concrete=this.typeMap.get(typeParam);
+    Preconditions.checkNotNull(concrete).appendTo(builder);
+  }
+  builder.append('>');
   return builder;
 }
