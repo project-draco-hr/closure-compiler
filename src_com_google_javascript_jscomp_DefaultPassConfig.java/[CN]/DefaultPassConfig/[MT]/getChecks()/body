@@ -53,6 +53,9 @@
   if (options.closurePass && options.checkMissingGetCssNameLevel.isOn() && !options.skipNonTranspilationPasses) {
     checks.add(closureCheckGetCssName);
   }
+  if (options.syntheticBlockStartMarker != null && !options.skipNonTranspilationPasses) {
+    checks.add(createSyntheticBlocks);
+  }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     checks.add(es6ConvertSuper);
     checks.add(convertEs6ToEs3);
@@ -70,9 +73,6 @@
     checks.add(es6RuntimeLibrary);
   }
   checks.add(convertStaticInheritance);
-  if (options.syntheticBlockStartMarker != null) {
-    checks.add(createSyntheticBlocks);
-  }
   checks.add(checkVars);
   if (options.inferConsts) {
     checks.add(inferConsts);
