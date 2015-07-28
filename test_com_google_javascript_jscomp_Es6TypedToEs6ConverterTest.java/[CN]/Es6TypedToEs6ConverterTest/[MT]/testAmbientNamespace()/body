@@ -1,5 +1,4 @@
 {
-  enableCompareAsTree(false);
   testExternChanges("declare namespace foo { var i, j, k; }","/** @const */ var foo = {}; foo.i; foo.j; foo.k;");
   testExternChanges("declare namespace foo { let i, j, k; }","/** @const */ var foo = {}; foo.i; foo.j; foo.k;");
   testExternChanges("declare namespace foo { function f(); }","/** @const */ var foo = {}; foo.f = function() {};");
@@ -14,4 +13,7 @@
   testExternChanges("declare namespace foo { var x: Bar; } declare namespace foo { class Bar {} }","/** @const */ var foo = {}; /** @type {!foo.Bar} */ foo.x; foo.Bar = class {};");
   testExternChanges("declare namespace foo {} declare var x;","/** @const */ var foo = {}; var x;");
   testExternChanges("declare namespace foo.bar {} declare var x;","/** @const */ var foo = {}; /** @const */ foo.bar = {}; var x;");
+  testExternChanges("export declare namespace foo.bar {}","export /** @const */ var foo = {}; /** @const */ foo.bar = {};");
+  testExternChanges("export declare namespace foo.bar { export var x; }","export /** @const */ var foo = {}; /** @const */ foo.bar = {}; foo.bar.x;");
+  testExternChanges("export declare namespace foo.bar {} export declare namespace foo.bar {}","export /** @const */ var foo = {}; /** @const */ foo.bar = {};");
 }

@@ -1,0 +1,21 @@
+{
+  for (  Node c : n.children()) {
+    JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(c.getJSDocInfo());
+    if (c.getType() == Token.CONST) {
+      builder.recordConstancy();
+      c.setType(Token.VAR);
+    }
+    c.setJSDocInfo(builder.build());
+    Node toAdd;
+    if (parent.getType() == Token.EXPORT && !c.isExprResult()) {
+      toAdd=parent.detachFromParent();
+      toAdd.addChildToFront(c.detachFromParent());
+    }
+ else {
+      toAdd=c.detachFromParent();
+    }
+    compiler.getSynthesizedExternsInput().getAstRoot(compiler).addChildToBack(toAdd);
+  }
+  n.detachFromParent();
+  compiler.reportCodeChange();
+}

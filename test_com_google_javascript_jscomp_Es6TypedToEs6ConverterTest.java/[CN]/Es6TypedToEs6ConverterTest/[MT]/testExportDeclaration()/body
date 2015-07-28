@@ -1,0 +1,13 @@
+{
+  test("export var i: number;","export var /** number */ i;");
+  test("export var i, j: string, k: number;","export var i, /** string */ j, /** number */ k;");
+  test("export let i, j: string, k: number;","export let i, /** string */ j, /** number */ k;");
+  test("export const i: number = 5, j: string = '5';","export const /** number */ i = 5, /** string */ j = '5';");
+  test("export function f(): number {}","export /** @return {number} */ function f() {}");
+  test("export interface I {}","export /** @interface */ class I {}");
+  test("export interface I {} export class C implements I {}","export /** @interface */ class I {} export /** @implements {I} */ class C {}");
+  testSame("export class A {} export class B extends A {}");
+  test("export class C {} export var x: C;","export class C {} export var /** !C */ x;");
+  test("export enum E {}","export /** @enum */ var E = {};");
+  testError("namespace foo { export var x; }",Es6TypedToEs6Converter.NON_AMBIENT_NAMESPACE_NOT_SUPPORTED);
+}

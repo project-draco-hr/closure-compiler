@@ -1,5 +1,20 @@
 {
   if (n.getType() == Token.NAMESPACE) {
-    currNamespace=nodeNamespaceMap.get(parent.getType() == Token.DECLARE ? parent.getParent().getParent() : parent.getParent());
-  }
+    Node parentModuleRoot;
+    Node grandParent=parent.getParent();
+switch (parent.getType()) {
+case Token.DECLARE:
+case Token.EXPORT:
+      if (parent.getParent().getType() == Token.EXPORT) {
+        parentModuleRoot=grandParent.getParent().getParent();
+      }
+ else {
+        parentModuleRoot=grandParent.getParent();
+      }
+    break;
+default :
+  parentModuleRoot=grandParent;
+}
+currNamespace=nodeNamespaceMap.get(parentModuleRoot);
+}
 }

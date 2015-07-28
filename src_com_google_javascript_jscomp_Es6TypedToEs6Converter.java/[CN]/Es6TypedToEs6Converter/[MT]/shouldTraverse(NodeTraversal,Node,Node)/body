@@ -1,5 +1,9 @@
 {
   if (n.getType() == Token.NAMESPACE) {
+    if (currNamespace == null && parent.getType() != Token.DECLARE) {
+      compiler.report(JSError.make(n,NON_AMBIENT_NAMESPACE_NOT_SUPPORTED));
+      return false;
+    }
     currNamespace=nodeNamespaceMap.get(n);
   }
   return true;

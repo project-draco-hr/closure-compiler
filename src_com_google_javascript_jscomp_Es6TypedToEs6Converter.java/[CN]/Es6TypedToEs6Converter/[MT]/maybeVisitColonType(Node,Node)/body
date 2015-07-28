@@ -10,8 +10,7 @@
   if (type == null) {
     return;
   }
-  JSDocInfo info=jsDocNode.getJSDocInfo();
-  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(info);
+  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(jsDocNode.getJSDocInfo());
   JSTypeExpression typeExpression=new JSTypeExpression(type,n.getSourceFileName());
 switch (n.getType()) {
 case Token.FUNCTION:
@@ -24,8 +23,7 @@ default :
 builder.recordType(typeExpression);
 builder.recordInlineType();
 }
-info=builder.build();
-jsDocNode.setJSDocInfo(info);
+jsDocNode.setJSDocInfo(builder.build());
 if (hasColonType) {
 n.setDeclaredTypeExpression(null);
 compiler.reportCodeChange();

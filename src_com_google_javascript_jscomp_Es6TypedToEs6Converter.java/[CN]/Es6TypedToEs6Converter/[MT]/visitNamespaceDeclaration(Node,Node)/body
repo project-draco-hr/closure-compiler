@@ -10,12 +10,5 @@
       convertedNamespaces.add(fullName);
     }
   }
-  Node insertPoint=n;
-  for (  Node child : n.getLastChild().children()) {
-    Node detached=child.detachFromParent();
-    parent.addChildAfter(detached,insertPoint);
-    insertPoint=detached;
-  }
-  parent.removeChild(n);
-  compiler.reportCodeChange();
+  replaceWithNodes(n,n.getLastChild().children());
 }

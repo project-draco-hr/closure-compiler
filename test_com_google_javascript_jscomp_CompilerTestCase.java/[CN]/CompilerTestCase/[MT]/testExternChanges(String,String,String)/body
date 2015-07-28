@@ -11,6 +11,13 @@
   assertThat(compiler.hasErrors()).isFalse();
   (getProcessor(compiler)).process(externs,root);
   if (compareAsTree) {
+    if (externs.hasMoreThanOneChild()) {
+      for (      Node c : externs.children()) {
+        if (!c.hasChildren()) {
+          c.detachFromParent();
+        }
+      }
+    }
     Preconditions.checkState(externs.isBlock());
     Preconditions.checkState(compareJsDoc);
     Preconditions.checkState(externs.hasOneChild(),"Compare as tree only works when output has a single script.");

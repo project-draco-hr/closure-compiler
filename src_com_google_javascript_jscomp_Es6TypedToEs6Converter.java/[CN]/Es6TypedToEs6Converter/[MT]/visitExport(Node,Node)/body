@@ -1,0 +1,15 @@
+{
+  if (currNamespace != null) {
+    replaceWithNodes(n,n.children());
+  }
+ else   if (n.hasMoreThanOneChild()) {
+    Node insertPoint=n;
+    for (Node c=n.getFirstChild().getNext(); c != null; c=c.getNext()) {
+      Node extraExport=n.cloneNode();
+      extraExport.addChildToFront(c.detachFromParent());
+      parent.addChildAfter(extraExport,insertPoint);
+      insertPoint=extraExport;
+    }
+    compiler.reportCodeChange();
+  }
+}
