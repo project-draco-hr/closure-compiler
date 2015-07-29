@@ -1,0 +1,19 @@
+{
+  char[] reservedChars=options.anonymousFunctionNaming.getReservedCharacters();
+switch (options.propertyRenaming) {
+case HEURISTIC:
+    RenamePrototypes rproto=new RenamePrototypes(compiler,false,reservedChars,prevPropertyMap);
+  rproto.process(externs,root);
+return rproto.getPropertyMap();
+case AGGRESSIVE_HEURISTIC:
+RenamePrototypes rproto2=new RenamePrototypes(compiler,true,reservedChars,prevPropertyMap);
+rproto2.process(externs,root);
+return rproto2.getPropertyMap();
+case ALL_UNQUOTED:
+RenameProperties rprop=new RenameProperties(compiler,options.generatePseudoNames,prevPropertyMap,reservedChars);
+rprop.process(externs,root);
+return rprop.getPropertyMap();
+default :
+throw new IllegalStateException("Unrecognized property renaming policy");
+}
+}

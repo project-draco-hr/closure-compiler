@@ -1,6 +1,6 @@
 {
   List<PassFactory> passes=new ArrayList<>();
-  if (options.collapseObjectLiterals) {
+  if (options.collapseObjectLiterals && !isInliningForbidden()) {
     passes.add(collapseObjectLiterals);
   }
   if (options.inlineVariables || options.inlineLocalVariables) {
@@ -19,7 +19,7 @@
   if (options.removeUnusedPrototypeProperties) {
     passes.add(removeUnusedPrototypeProperties);
   }
-  if (options.removeUnusedClassProperties) {
+  if (options.removeUnusedClassProperties && !isInliningForbidden()) {
     passes.add(removeUnusedClassProperties);
   }
   assertAllLoopablePasses(passes);
