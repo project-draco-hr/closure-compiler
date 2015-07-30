@@ -1,11 +1,18 @@
 {
   if (compiler.getLanguageMode().isEs6OrHigher()) {
-    return new Es6SyntacticScopeCreator(compiler,new RedeclarationCheckHandler());
-  }
- else   if (sanityCheck) {
-    return SyntacticScopeCreator.makeUntyped(compiler);
+    if (sanityCheck) {
+      return new Es6SyntacticScopeCreator(compiler);
+    }
+ else {
+      return new Es6SyntacticScopeCreator(compiler,new RedeclarationCheckHandler());
+    }
   }
  else {
-    return SyntacticScopeCreator.makeUntypedWithRedeclHandler(compiler,new RedeclarationCheckHandler());
+    if (sanityCheck) {
+      return SyntacticScopeCreator.makeUntyped(compiler);
+    }
+ else {
+      return SyntacticScopeCreator.makeUntypedWithRedeclHandler(compiler,new RedeclarationCheckHandler());
+    }
   }
 }
