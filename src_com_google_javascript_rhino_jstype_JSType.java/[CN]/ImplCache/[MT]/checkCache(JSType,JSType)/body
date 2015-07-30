@@ -1,7 +1,10 @@
 {
-  this.initTable();
-  if (this.contains(leftType,rightType)) {
-    return this.getStatus(leftType,rightType);
+  Preconditions.checkState(isStructuralTyping);
+  if (this.implicitImplCache == null) {
+    this.implicitImplCache=HashBasedTable.create();
+  }
+  if (this.implicitImplCache.contains(leftType,rightType)) {
+    return this.implicitImplCache.get(leftType,rightType);
   }
  else {
     this.updateCache(leftType,rightType,ImplStatus.PROCESSING);

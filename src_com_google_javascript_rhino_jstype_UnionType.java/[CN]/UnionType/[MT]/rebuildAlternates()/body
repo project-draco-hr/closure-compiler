@@ -1,8 +1,13 @@
 {
   UnionTypeBuilder builder=new UnionTypeBuilder(registry);
-  for (  JSType alternate : alternates) {
+  for (  JSType alternate : alternatesWithoutStucturalTyping) {
     builder.addAlternate(alternate);
   }
+  alternatesWithoutStucturalTyping=builder.getAlternates();
+  builder=new UnionTypeBuilder(registry);
+  for (  JSType alternate : alternatesWithoutStucturalTyping) {
+    builder.addAlternate(alternate,true);
+  }
   alternates=builder.getAlternates();
-  hashcode=alternates.hashCode();
+  hashcode=alternatesWithoutStucturalTyping.hashCode();
 }

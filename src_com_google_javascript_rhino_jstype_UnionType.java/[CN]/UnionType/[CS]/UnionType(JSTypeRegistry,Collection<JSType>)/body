@@ -1,5 +1,10 @@
 {
   super(registry);
-  this.alternates=alternates;
-  this.hashcode=this.alternates.hashCode();
+  this.alternatesWithoutStucturalTyping=alternatesWithoutStructuralTyping;
+  UnionTypeBuilder builder=new UnionTypeBuilder(registry);
+  for (  JSType alternate : alternatesWithoutStructuralTyping) {
+    builder.addAlternate(alternate,true);
+  }
+  this.alternates=builder.getAlternates();
+  this.hashcode=this.alternatesWithoutStucturalTyping.hashCode();
 }

@@ -10,7 +10,7 @@
   }
   if (thatType.isUnionType()) {
     UnionType union=thatType.toMaybeUnionType();
-    for (    JSType element : union.alternates) {
+    for (    JSType element : union.alternatesWithoutStucturalTyping) {
       if (thisType.isSubtype(element,implicitImplCache)) {
         return true;
       }
@@ -30,7 +30,7 @@
     templateMatch=thisTypeParams.checkEquivalenceHelper(thatTypeParams,EquivalenceMethod.INVARIANT);
   }
   if (!templateMatch) {
-    return implicitMatch(thisType,thatType,implicitImplCache);
+    return implicitImplCache.isStructuralTyping() && implicitMatch(thisType,thatType,implicitImplCache);
   }
   if (thisType.isTemplatizedType()) {
     return thisType.toMaybeTemplatizedType().getReferencedType().isSubtype(thatType,implicitImplCache);
@@ -38,5 +38,5 @@
   if (thatType instanceof ProxyObjectType) {
     return thisType.isSubtype(((ProxyObjectType)thatType).getReferencedTypeInternal(),implicitImplCache);
   }
-  return implicitMatch(thisType,thatType,implicitImplCache);
+  return implicitImplCache.isStructuralTyping() && implicitMatch(thisType,thatType,implicitImplCache);
 }

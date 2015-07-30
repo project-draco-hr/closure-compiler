@@ -2,6 +2,10 @@
   found=found.restrictByNotNullOrUndefined();
   required=required.restrictByNotNullOrUndefined();
   if (found.isSubtype(required) || required.isSubtype(found)) {
+    boolean strictMismatch=!found.isSubtypeWithoutStructuralTyping(required) && !required.isSubtypeWithoutStructuralTyping(found);
+    if (strictMismatch) {
+      implicitStructuralInterfaceUses.add(new TypeMismatch(found,required,error));
+    }
     return;
   }
   mismatches.add(new TypeMismatch(found,required,error));
