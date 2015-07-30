@@ -1,11 +1,11 @@
 {
   Node block=IR.block();
   cls.constructor.value.setJSDocInfo(null);
-  if (exprRoot.isVar()) {
-    Node var=IR.var(cls.name.cloneTree(),cls.constructor.value).srcref(exprRoot);
-    JSDocInfo mergedClassInfo=mergeJsDocFor(cls,var);
-    var.setJSDocInfo(mergedClassInfo);
-    block.addChildToBack(var);
+  if (NodeUtil.isNameDeclaration(exprRoot)) {
+    Node decl=IR.declaration(cls.name.cloneTree(),cls.constructor.value,exprRoot.getType()).srcref(exprRoot);
+    JSDocInfo mergedClassInfo=mergeJsDocFor(cls,decl);
+    decl.setJSDocInfo(mergedClassInfo);
+    block.addChildToBack(decl);
   }
  else {
     Node assign=IR.assign(cls.name.cloneTree(),cls.constructor.value).srcref(exprRoot).setJSDocInfo(cls.constructor.info);
