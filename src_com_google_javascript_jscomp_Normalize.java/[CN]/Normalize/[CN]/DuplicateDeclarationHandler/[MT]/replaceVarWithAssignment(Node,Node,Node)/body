@@ -6,18 +6,18 @@
     Node replacement=IR.assign(n,value);
     replacement.setJSDocInfo(parent.getJSDocInfo());
     replacement.copyInformationFrom(parent);
-    gramps.replaceChild(parent,NodeUtil.newExpr(replacement));
+    grandparent.replaceChild(parent,NodeUtil.newExpr(replacement));
   }
  else {
-    if (NodeUtil.isStatementBlock(gramps)) {
-      gramps.removeChild(parent);
+    if (NodeUtil.isStatementBlock(grandparent)) {
+      grandparent.removeChild(parent);
     }
- else     if (gramps.isFor()) {
+ else     if (grandparent.isFor()) {
       parent.removeChild(n);
-      gramps.replaceChild(parent,n);
+      grandparent.replaceChild(parent,n);
     }
  else {
-      Preconditions.checkState(gramps.isLabel());
+      Preconditions.checkState(grandparent.isLabel());
       throw new IllegalStateException("Unexpected LABEL");
     }
   }

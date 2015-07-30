@@ -4,18 +4,18 @@
   for (  Reference ref : refs) {
     Node name=ref.getNode();
     Node parent=ref.getParent();
-    Node gramps=ref.getGrandparent();
+    Node grandparent=ref.getGrandparent();
     if (parent.isGetProp()) {
       Preconditions.checkState(parent.getFirstChild() == name);
-      if (gramps.isCall() && gramps.getFirstChild() == parent) {
+      if (grandparent.isCall() && grandparent.getFirstChild() == parent) {
         return false;
       }
-      if (gramps.isDelProp()) {
+      if (grandparent.isDelProp()) {
         return false;
       }
       String propName=parent.getLastChild().getString();
       if (!validProperties.contains(propName)) {
-        if (NodeUtil.isVarOrSimpleAssignLhs(parent,gramps)) {
+        if (NodeUtil.isVarOrSimpleAssignLhs(parent,grandparent)) {
           validProperties.add(propName);
         }
  else {

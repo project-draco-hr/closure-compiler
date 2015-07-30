@@ -22,16 +22,16 @@ case Token.ASSIGN_DIV:
 case Token.ASSIGN_MOD:
 if (isReferenceToRemovedVar(t,n)) {
 if (parent.getFirstChild() == n) {
-  Node gramps=parent.getParent();
-  if (gramps.isExprResult()) {
-    Node greatGramps=gramps.getParent();
-    replaceWithEmpty(gramps,greatGramps);
+  Node grandparent=parent.getParent();
+  if (grandparent.isExprResult()) {
+    Node greatGrandparent=grandparent.getParent();
+    replaceWithEmpty(grandparent,greatGrandparent);
     compiler.reportCodeChange();
   }
  else {
     Node rvalue=n.getNext();
     parent.removeChild(rvalue);
-    gramps.replaceChild(parent,rvalue);
+    grandparent.replaceChild(parent,rvalue);
     compiler.reportCodeChange();
   }
 }

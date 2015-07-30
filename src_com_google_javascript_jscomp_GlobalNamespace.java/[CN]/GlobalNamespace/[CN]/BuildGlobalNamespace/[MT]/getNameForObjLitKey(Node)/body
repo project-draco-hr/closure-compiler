@@ -1,26 +1,26 @@
 {
   Node parent=n.getParent();
   Preconditions.checkState(parent.isObjectLit());
-  Node gramps=parent.getParent();
-  if (gramps == null) {
+  Node grandparent=parent.getParent();
+  if (grandparent == null) {
     return null;
   }
-  Node greatGramps=gramps.getParent();
+  Node greatGrandparent=grandparent.getParent();
   String name;
-switch (gramps.getType()) {
+switch (grandparent.getType()) {
 case Token.NAME:
-    if (greatGramps == null || !NodeUtil.isNameDeclaration(greatGramps)) {
+    if (greatGrandparent == null || !NodeUtil.isNameDeclaration(greatGrandparent)) {
       return null;
     }
-  name=gramps.getString();
+  name=grandparent.getString();
 break;
 case Token.ASSIGN:
-Node lvalue=gramps.getFirstChild();
+Node lvalue=grandparent.getFirstChild();
 name=lvalue.getQualifiedName();
 break;
 case Token.STRING_KEY:
-if (greatGramps != null && greatGramps.isObjectLit()) {
-name=getNameForObjLitKey(gramps);
+if (greatGrandparent != null && greatGrandparent.isObjectLit()) {
+name=getNameForObjLitKey(grandparent);
 }
  else {
 return null;

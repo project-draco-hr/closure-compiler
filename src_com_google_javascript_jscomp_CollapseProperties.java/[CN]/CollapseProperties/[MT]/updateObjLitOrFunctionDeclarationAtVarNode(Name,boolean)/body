@@ -6,17 +6,17 @@
   String name=ref.node.getString();
   Node rvalue=ref.node.getFirstChild();
   Node varNode=ref.node.getParent();
-  Node gramps=varNode.getParent();
+  Node grandparent=varNode.getParent();
   boolean isObjLit=rvalue.isObjectLit();
   int numChanges=0;
   if (isObjLit) {
-    numChanges+=declareVarsForObjLitValues(n,name,rvalue,varNode,gramps.getChildBefore(varNode),gramps);
+    numChanges+=declareVarsForObjLitValues(n,name,rvalue,varNode,grandparent.getChildBefore(varNode),grandparent);
   }
-  numChanges+=addStubsForUndeclaredProperties(n,name,gramps,varNode);
+  numChanges+=addStubsForUndeclaredProperties(n,name,grandparent,varNode);
   if (isObjLit && n.canEliminate()) {
     varNode.removeChild(ref.node);
     if (!varNode.hasChildren()) {
-      gramps.removeChild(varNode);
+      grandparent.removeChild(varNode);
     }
     numChanges++;
     ref.node=null;
