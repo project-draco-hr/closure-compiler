@@ -59,6 +59,9 @@
   if (!options.skipNonTranspilationPasses) {
     checks.add(checkVars);
   }
+  if (options.computeFunctionSideEffects) {
+    checks.add(checkRegExp);
+  }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     checks.add(es6ConvertSuper);
     checks.add(convertEs6ToEs3);
@@ -78,9 +81,6 @@
   checks.add(convertStaticInheritance);
   if (options.inferConsts) {
     checks.add(inferConsts);
-  }
-  if (options.computeFunctionSideEffects) {
-    checks.add(checkRegExp);
   }
   if (options.processObjectPropertyString) {
     checks.add(objectPropertyStringPreprocess);
