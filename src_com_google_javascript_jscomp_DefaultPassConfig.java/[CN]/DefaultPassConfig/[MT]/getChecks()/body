@@ -59,6 +59,9 @@
   if (!options.skipNonTranspilationPasses) {
     checks.add(checkVars);
   }
+  if (options.inferConsts && !options.skipNonTranspilationPasses) {
+    checks.add(inferConsts);
+  }
   if (options.computeFunctionSideEffects && !options.skipNonTranspilationPasses) {
     checks.add(checkRegExp);
   }
@@ -79,9 +82,6 @@
     checks.add(es6RuntimeLibrary);
   }
   checks.add(convertStaticInheritance);
-  if (options.inferConsts) {
-    checks.add(inferConsts);
-  }
   if (options.processObjectPropertyString) {
     checks.add(objectPropertyStringPreprocess);
   }
