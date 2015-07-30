@@ -65,6 +65,9 @@
   if (options.computeFunctionSideEffects && !options.skipNonTranspilationPasses) {
     checks.add(checkRegExp);
   }
+  if (options.processObjectPropertyString && !options.skipNonTranspilationPasses) {
+    checks.add(objectPropertyStringPreprocess);
+  }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     checks.add(es6ConvertSuper);
     checks.add(convertEs6ToEs3);
@@ -82,9 +85,6 @@
     checks.add(es6RuntimeLibrary);
   }
   checks.add(convertStaticInheritance);
-  if (options.processObjectPropertyString) {
-    checks.add(objectPropertyStringPreprocess);
-  }
   checks.add(createEmptyPass("beforeTypeChecking"));
   if (options.useNewTypeInference) {
     checks.add(symbolTableForNewTypeInference);
