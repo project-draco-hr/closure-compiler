@@ -1,0 +1,9 @@
+{
+  reportLintWarnings=false;
+  assertNoWarningOrError("/** @return */ function f() {}");
+  reportLintWarnings=true;
+  String message="Missing type declaration.";
+  JSError error=assertWarning("/** @return */ function f() {}",RhinoErrorReporter.JSDOC_MISSING_TYPE_WARNING,message);
+  assertEquals(1,error.getLineNumber());
+  assertEquals(4,error.getCharno());
+}

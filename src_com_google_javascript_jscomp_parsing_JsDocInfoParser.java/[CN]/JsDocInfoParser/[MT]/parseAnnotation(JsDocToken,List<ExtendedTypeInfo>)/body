@@ -330,6 +330,7 @@ token=next();
 lineno=stream.getLineno();
 charno=stream.getCharno();
 type=null;
+boolean hasParamType=false;
 if (token == JsDocToken.LEFT_CURLY) {
 type=createJSTypeExpression(parseAndRecordParamTypeNode(token));
 if (type == null) {
@@ -339,6 +340,7 @@ skipEOLs();
 token=next();
 lineno=stream.getLineno();
 charno=stream.getCharno();
+hasParamType=true;
 }
 String name=null;
 boolean isBracketedParam=JsDocToken.LEFT_SQUARE == token;
@@ -349,6 +351,9 @@ if (JsDocToken.STRING != token) {
 addTypeWarning("msg.missing.variable.name",lineno,charno);
 }
  else {
+if (!hasParamType) {
+addMissingTypeWarning(annotationName,stream.getLineno(),stream.getCharno());
+}
 name=stream.getString();
 if (isBracketedParam) {
 token=next();
@@ -556,6 +561,9 @@ boolean hasType=lookAheadForType();
 boolean isAlternateTypeAnnotation=annotation == Annotation.PACKAGE || annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC || annotation == Annotation.CONSTANT || annotation == Annotation.EXPORT;
 boolean canSkipTypeAnnotation=isAlternateTypeAnnotation || annotation == Annotation.RETURN;
 type=null;
+if (annotation == Annotation.RETURN && !hasType) {
+addMissingTypeWarning(annotationName,stream.getLineno(),stream.getCharno());
+}
 if (hasType || !canSkipTypeAnnotation) {
 skipEOLs();
 token=next();
