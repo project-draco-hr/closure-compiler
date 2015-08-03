@@ -1,0 +1,14 @@
+{
+  if (!letConsts.isEmpty()) {
+    for (    Node n : letConsts) {
+      if (n.isConst()) {
+        JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
+        builder.recordConstancy();
+        JSDocInfo info=builder.build();
+        n.setJSDocInfo(info);
+      }
+      n.setType(Token.VAR);
+    }
+    compiler.reportCodeChange();
+  }
+}

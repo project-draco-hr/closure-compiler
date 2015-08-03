@@ -1,0 +1,25 @@
+{
+  Scope referencedIn=t.getScope();
+  String oldName=n.getString();
+  Scope current=referencedIn;
+  boolean doRename=false;
+  String newName=null;
+  while (current != null) {
+    Map<String,String> renamesAtCurrentLevel=renameMap.get(current.getRootNode());
+    if (renamesAtCurrentLevel != null && renamesAtCurrentLevel.containsKey(oldName)) {
+      doRename=true;
+      newName=renamesAtCurrentLevel.get(oldName);
+      break;
+    }
+ else     if (current.isDeclared(oldName,false)) {
+      return;
+    }
+ else {
+      current=current.getParent();
+    }
+  }
+  if (doRename) {
+    n.setString(newName);
+    t.getCompiler().reportCodeChange();
+  }
+}

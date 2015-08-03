@@ -29,5 +29,7 @@
       currFuncRenameMap.put(oldName,oldName + "$" + compiler.getUniqueNameIdSupplier().get());
     }
   }
-  new NodeTraversal(compiler,new RenameReferences(fBlockScope,currFuncRenameMap)).traverseInnerNode(block,block.getParent(),fScope);
+  Map<Node,Map<String,String>> renameMap=new LinkedHashMap<>();
+  renameMap.put(fBlockScope.rootNode,currFuncRenameMap);
+  new NodeTraversal(compiler,new Es6RenameReferences(renameMap)).traverseInnerNode(block,block.getParent(),fScope);
 }

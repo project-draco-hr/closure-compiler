@@ -1,0 +1,10 @@
+{
+  NodeTraversal.traverse(compiler,scriptRoot,new CollectUndeclaredNames());
+  NodeTraversal.traverse(compiler,scriptRoot,this);
+  NodeTraversal.traverse(compiler,scriptRoot,new Es6RenameReferences(renameMap));
+  LoopClosureTransformer transformer=new LoopClosureTransformer();
+  NodeTraversal.traverse(compiler,scriptRoot,transformer);
+  transformer.transformLoopClosure();
+  varify();
+  NodeTraversal.traverse(compiler,scriptRoot,new RewriteBlockScopedFunctionDeclaration());
+}
