@@ -1,0 +1,18 @@
+{
+  Node target=n.getFirstChild();
+  ObjectType targetType=target.getJSType().toObjectType();
+  if (targetType != null) {
+    Property prop=targetType.getSlot(n.getLastChild().getString());
+    if (prop != null) {
+      JSDocInfo info=prop.getJSDocInfo();
+      if (info != null && info.hasType()) {
+        JSTypeExpression expr=info.getType();
+        Node typeExprNode=expr.getRoot();
+        if (typeExprNode.getType() == Token.QMARK) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}

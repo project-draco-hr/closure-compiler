@@ -1,0 +1,17 @@
+{
+  JSTypeRegistry registry=compiler.getTypeRegistry();
+  List<JSType> types=new ArrayList<>();
+  for (  String typeName : typeNames) {
+    JSType type=registry.getType(typeName);
+    if (type != null) {
+      types.add(type);
+    }
+  }
+  if (types.isEmpty()) {
+    return null;
+  }
+ else {
+    JSType[] variants=types.toArray(new JSType[0]);
+    return registry.createUnionType(variants);
+  }
+}
