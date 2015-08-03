@@ -1,0 +1,22 @@
+{
+  JSDocInfo jsdoc=objLitNode.getJSDocInfo();
+  if (jsdoc != null && jsdoc.getLendsName() != null) {
+    lendsObjlits.add(objLitNode);
+  }
+  Node maybeLvalue=parent.isAssign() ? parent.getFirstChild() : parent;
+  if (NodeUtil.isNamespaceDecl(maybeLvalue) && currentScope.isNamespace(maybeLvalue)) {
+    for (    Node prop : objLitNode.children()) {
+      visitNamespacePropertyDeclaration(prop,maybeLvalue,prop.getString());
+    }
+  }
+ else   if (!NodeUtil.isEnumDecl(maybeLvalue) && !NodeUtil.isPrototypeAssignment(maybeLvalue)) {
+    for (    Node prop : objLitNode.children()) {
+      if (prop.getJSDocInfo() != null) {
+        declaredObjLitProps.put(prop,getDeclaredTypeOfNode(prop.getJSDocInfo(),currentScope));
+      }
+      if (isAnnotatedAsConst(prop)) {
+        warnings.add(JSError.make(prop,MISPLACED_CONST_ANNOTATION));
+      }
+    }
+  }
+}

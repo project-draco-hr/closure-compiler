@@ -12,7 +12,10 @@
  else {
     isRedeclaration=currentScope.isDefined(nameNode);
   }
-  ArrayList<String> formals=collectFormals(fn,fnDoc);
-  createFunctionScope(fn,formals,internalName);
+  NTIScope fnScope=new NTIScope(fn,this.currentScope,collectFormals(fn,fnDoc),null);
+  if (!fn.isFromExterns()) {
+    scopes.add(fnScope);
+  }
+  this.currentScope.addLocalFunDef(internalName,fnScope);
   maybeRecordNominalType(fn,nameNode,fnDoc,isRedeclaration);
 }

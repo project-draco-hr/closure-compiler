@@ -1,0 +1,27 @@
+{
+  String name=nameNode.getString();
+  if (this.currentScope.isNamespace(name) || NodeUtil.isTypedefDecl(nameNode) || NodeUtil.isEnumDecl(nameNode)) {
+    if (!this.currentScope.isDefinedLocally(name,false)) {
+      this.currentScope.addLocal(name,JSType.UNKNOWN,false,nameNode.isFromExterns());
+    }
+    return;
+  }
+  Node initializer=nameNode.getFirstChild();
+  if (initializer != null && initializer.isFunction()) {
+    return;
+  }
+ else   if (this.currentScope.isDefinedLocally(name,false)) {
+    return;
+  }
+  if (parent.isCatch()) {
+    this.currentScope.addLocal(name,JSType.UNKNOWN,false,false);
+  }
+ else {
+    boolean isConst=isConst(parent);
+    JSType declType=getVarTypeFromAnnotation(nameNode);
+    if (isConst && !mayWarnAboutNoInit(nameNode) && declType == null) {
+      declType=inferConstTypeFromRhs(nameNode);
+    }
+    this.currentScope.addLocal(name,declType,isConst,nameNode.isFromExterns());
+  }
+}

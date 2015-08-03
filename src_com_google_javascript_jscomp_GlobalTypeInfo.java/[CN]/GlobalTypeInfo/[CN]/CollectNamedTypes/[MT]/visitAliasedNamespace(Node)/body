@@ -1,0 +1,20 @@
+{
+  Node rhs=NodeUtil.getRValueOfLValue(lhs);
+  QualifiedName rhsQname=QualifiedName.fromNode(rhs);
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(lhs);
+  if (jsdoc != null && jsdoc.isConstructorOrInterface()) {
+    RawNominalType rawType=this.currentScope.getNominalType(rhsQname);
+    if (jsdoc.isConstructor() && (rawType == null || rawType.isInterface())) {
+      warnings.add(JSError.make(rhs,EXPECTED_CONSTRUCTOR,rhsQname.toString()));
+      return;
+    }
+    if (jsdoc.isInterface() && (rawType == null || rawType.isClass())) {
+      warnings.add(JSError.make(rhs,EXPECTED_INTERFACE,rhsQname.toString()));
+      return;
+    }
+  }
+  Namespace ns=this.currentScope.getNamespace(rhsQname);
+  if (ns != null) {
+    this.currentScope.addNamespace(lhs,ns);
+  }
+}

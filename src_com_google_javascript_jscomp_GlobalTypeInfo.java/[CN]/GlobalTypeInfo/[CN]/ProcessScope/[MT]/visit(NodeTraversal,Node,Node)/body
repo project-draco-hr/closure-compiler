@@ -13,32 +13,7 @@ if (name == null || "undefined".equals(name) || parent.isFunction()) {
   return;
 }
 if (parent.isVar() || parent.isCatch()) {
-  if (NodeUtil.isNamespaceDecl(n) || NodeUtil.isTypedefDecl(n) || NodeUtil.isEnumDecl(n)) {
-    if (!currentScope.isDefinedLocally(name,false)) {
-      currentScope.addLocal(name,JSType.UNKNOWN,false,n.isFromExterns());
-    }
-    break;
-  }
-  Node initializer=n.getFirstChild();
-  if (initializer != null && initializer.isFunction()) {
-    break;
-  }
- else   if (currentScope.isDefinedLocally(name,false)) {
-    break;
-  }
- else {
-    if (parent.isCatch()) {
-      currentScope.addLocal(name,JSType.UNKNOWN,false,false);
-    }
- else {
-      boolean isConst=isConst(parent);
-      JSType declType=getVarTypeFromAnnotation(n);
-      if (isConst && !mayWarnAboutNoInit(n) && declType == null) {
-        declType=inferConstTypeFromRhs(n);
-      }
-      currentScope.addLocal(name,declType,isConst,n.isFromExterns());
-    }
-  }
+  visitVar(n,parent);
 }
  else if (currentScope.isOuterVarEarly(name)) {
   currentScope.addOuterVar(name);
@@ -64,28 +39,7 @@ case Token.CAST:
 castTypes.put(n,getDeclaredTypeOfNode(n.getJSDocInfo(),currentScope));
 break;
 case Token.OBJECTLIT:
-{
-JSDocInfo jsdoc=n.getJSDocInfo();
-if (jsdoc != null && jsdoc.getLendsName() != null) {
-lendsObjlits.add(n);
-}
-Node maybeLvalue=parent.isAssign() ? parent.getFirstChild() : parent;
-if (NodeUtil.isNamespaceDecl(maybeLvalue) && currentScope.isNamespace(maybeLvalue)) {
-for (Node prop : n.children()) {
-visitNamespacePropertyDeclaration(prop,maybeLvalue,prop.getString());
-}
-}
- else if (!NodeUtil.isEnumDecl(maybeLvalue) && !NodeUtil.isPrototypeAssignment(maybeLvalue)) {
-for (Node prop : n.children()) {
-if (prop.getJSDocInfo() != null) {
-declaredObjLitProps.put(prop,getDeclaredTypeOfNode(prop.getJSDocInfo(),currentScope));
-}
-if (isAnnotatedAsConst(prop)) {
-warnings.add(JSError.make(prop,MISPLACED_CONST_ANNOTATION));
-}
-}
-}
+visitObjectLit(n,parent);
 break;
-}
 }
 }

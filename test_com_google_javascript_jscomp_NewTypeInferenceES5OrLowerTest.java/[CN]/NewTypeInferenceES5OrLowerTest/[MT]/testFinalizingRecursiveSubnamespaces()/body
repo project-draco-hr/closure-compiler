@@ -1,5 +1,6 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @constructor */","ns.Foo = function() {};","/** @const */","ns.Foo.ns2 = ns;"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","Foo.alias = Foo;"),GlobalTypeInfo.NAMESPACE_MODIFIED_AFTER_FINALIZATION);
+  typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @constructor */","ns.Foo = function() {};","/** @const */","ns.Foo.ns2 = ns;"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","Foo.alias = Foo;"));
   typeCheck(Joiner.on('\n').join("/** @interface */","function Foo() {}","/** @constructor @implements {Foo} */","Foo.Bar = function() {};","/** @const */","var exports = Foo;"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @const */","Foo.alias = Foo;","var x = new Foo.alias.alias.alias();"),TypeCheck.INEXISTENT_PROPERTY);
 }

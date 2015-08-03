@@ -1,4 +1,9 @@
 {
+  if (this.duringComputeJSType) {
+    this.namespaceType=JSType.fromObjectType(obj);
+    return this.namespaceType;
+  }
+  this.duringComputeJSType=true;
   if (nominals != null) {
     for (    Map.Entry<String,RawNominalType> entry : nominals.entrySet()) {
       obj=obj.withProperty(new QualifiedName(entry.getKey()),entry.getValue().toJSType(commonTypes));
@@ -19,5 +24,6 @@
       obj=obj.withProperty(new QualifiedName(name),t);
     }
   }
+  this.duringComputeJSType=false;
   return JSType.fromObjectType(obj);
 }

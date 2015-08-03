@@ -32,10 +32,7 @@
   NodeTraversal.traverse(compiler,root,rootPs);
   rootPs.finishProcessingScope();
   for (  String name : globalScope.getUnknownTypeNames()) {
-    Node constDeclNode=globalScope.mayDeclareUnknownType(QualifiedName.fromQualifiedString(name),this.warnings);
-    if (constDeclNode != null) {
-      warnings.add(JSError.make(constDeclNode,COULD_NOT_INFER_CONST_TYPE));
-    }
+    globalScope.mayDeclareUnknownType(QualifiedName.fromQualifiedString(name));
   }
   for (int i=1; i < scopes.size(); i++) {
     NTIScope s=scopes.get(i);
@@ -47,7 +44,7 @@
     }
   }
   for (  RawNominalType rawType : nominaltypesByNode.values()) {
-    checkAndFinalizeNominalType(rawType,null);
+    checkAndFinalizeNominalType(rawType);
   }
   nominaltypesByNode=null;
   propertyDefs=null;
