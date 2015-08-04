@@ -1,0 +1,14 @@
+{
+  ImmutableList<String> segments=name.segments;
+  if (segments.size() == 1) {
+    return newStringNode(Token.NAME,segments.get(0));
+  }
+ else {
+    Iterator<String> segmentsIt=segments.iterator();
+    Node node=IR.name(segmentsIt.next());
+    while (segmentsIt.hasNext()) {
+      node=newNode(Token.GETPROP,node,newStringNode(Token.STRING,segmentsIt.next()));
+    }
+    return node;
+  }
+}
