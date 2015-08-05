@@ -1,0 +1,26 @@
+{
+  if (isConstructor()) {
+    if (that.isConstructor()) {
+      return this == that;
+    }
+    return false;
+  }
+  if (isInterface()) {
+    if (that.isInterface()) {
+      if (getReferenceName().equals(that.getReferenceName())) {
+        return true;
+      }
+ else {
+        if (this.isStructuralInterface() && that.isStructuralInterface()) {
+          return checkStructuralInterfaceEquivalenceHelper(that,eqMethod,eqCache);
+        }
+        return false;
+      }
+    }
+    return false;
+  }
+  if (that.isInterface()) {
+    return false;
+  }
+  return typeOfThis.checkEquivalenceHelper(that.typeOfThis,eqMethod,eqCache) && call.checkArrowEquivalenceHelper(that.call,eqMethod,eqCache);
+}

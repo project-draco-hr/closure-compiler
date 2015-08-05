@@ -1,0 +1,19 @@
+{
+  MatchStatus result=eqCache.checkCache(this,otherRecord);
+  if (result != null) {
+    return result.subtypeValue();
+  }
+  Set<String> keySet=getOwnPropertyNames();
+  Set<String> otherKeySet=otherRecord.getOwnPropertyNames();
+  if (!otherKeySet.equals(keySet)) {
+    return false;
+  }
+  for (  String key : keySet) {
+    if (!otherRecord.getPropertyType(key).checkEquivalenceHelper(getPropertyType(key),eqMethod,eqCache)) {
+      eqCache.updateCache(this,otherRecord,MatchStatus.NOT_MATCH);
+      return false;
+    }
+  }
+  eqCache.updateCache(this,otherRecord,MatchStatus.MATCH);
+  return true;
+}

@@ -1,0 +1,28 @@
+{
+  Preconditions.checkState(eqCache.isStructuralTyping());
+  Preconditions.checkState(this.isStructuralInterface());
+  Preconditions.checkState(that.isRecordType() || that.isFunctionType());
+  MatchStatus result=eqCache.checkCache(this,that);
+  if (result != null) {
+    return result.subtypeValue();
+  }
+  if (this.hasAnyTemplateTypes() || that.hasAnyTemplateTypes()) {
+    return false;
+  }
+  Map<String,JSType> thisPropList=getPropertyTypeMap(this);
+  Map<String,JSType> thatPropList=that.isRecordType() ? that.toMaybeRecordType().getOwnPropertyTypeMap() : getPropertyTypeMap(that.toMaybeFunctionType());
+  if (thisPropList.size() != thatPropList.size()) {
+    eqCache.updateCache(this,that,MatchStatus.NOT_MATCH);
+    return false;
+  }
+  for (  String propName : thisPropList.keySet()) {
+    JSType typeInInterface=thisPropList.get(propName);
+    JSType typeInFunction=thatPropList.get(propName);
+    if (typeInFunction == null || !typeInFunction.checkEquivalenceHelper(typeInInterface,eqMethod,eqCache)) {
+      eqCache.updateCache(this,that,MatchStatus.NOT_MATCH);
+      return false;
+    }
+  }
+  eqCache.updateCache(this,that,MatchStatus.MATCH);
+  return true;
+}

@@ -13,9 +13,23 @@
         assertTrue("Proxy " + typeI + " should equal itself",proxyTypeI.isEquivalentTo(proxyTypeI));
       }
  else {
-        assertFalse(typeI + " should not equal " + typeJ,typeI.isEquivalentTo(typeJ));
-        assertFalse("Named " + typeI + " should not equal "+ typeJ,namedTypeI.isEquivalentTo(namedTypeJ));
-        assertFalse("Proxy " + typeI + " should not equal "+ typeJ,proxyTypeI.isEquivalentTo(proxyTypeJ));
+        boolean shouldCheck=true;
+        ObjectType objectI=typeI.toObjectType();
+        ObjectType objectJ=typeJ.toObjectType();
+        if (objectI != null && objectJ != null) {
+          FunctionType constructorI=objectI.getConstructor();
+          FunctionType constructorJ=objectJ.getConstructor();
+          if (constructorI != null && constructorJ != null && constructorI.isStructuralInterface() && constructorJ.isStructuralInterface()) {
+            if (constructorI.checkEquivalenceHelper(constructorJ,EquivalenceMethod.IDENTITY)) {
+              shouldCheck=false;
+            }
+          }
+        }
+        if (shouldCheck) {
+          assertFalse(typeI + " should not equal " + typeJ,typeI.isEquivalentTo(typeJ));
+          assertFalse("Named " + typeI + " should not equal "+ typeJ,namedTypeI.isEquivalentTo(namedTypeJ));
+          assertFalse("Proxy " + typeI + " should not equal "+ typeJ,proxyTypeI.isEquivalentTo(proxyTypeJ));
+        }
       }
       assertTrue(typeJ + " should be castable to " + typeI,typeJ.canCastTo(typeI));
       assertTrue(typeJ + " should be castable to Named " + namedTypeI,typeJ.canCastTo(namedTypeI));

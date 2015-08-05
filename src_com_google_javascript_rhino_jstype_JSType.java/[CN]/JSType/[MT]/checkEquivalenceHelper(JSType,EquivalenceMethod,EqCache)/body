@@ -1,0 +1,46 @@
+{
+  if (this == that) {
+    return true;
+  }
+  boolean thisUnknown=isUnknownType();
+  boolean thatUnknown=that.isUnknownType();
+  if (thisUnknown || thatUnknown) {
+    if (eqMethod == EquivalenceMethod.INVARIANT) {
+      return true;
+    }
+ else     if (eqMethod == EquivalenceMethod.DATA_FLOW) {
+      return thisUnknown && thatUnknown;
+    }
+ else     if (thisUnknown && thatUnknown && (isNominalType() ^ that.isNominalType())) {
+      return false;
+    }
+  }
+  if (isUnionType() && that.isUnionType()) {
+    return toMaybeUnionType().checkUnionEquivalenceHelper(that.toMaybeUnionType(),eqMethod,eqCache);
+  }
+  if (isFunctionType() && that.isFunctionType()) {
+    return toMaybeFunctionType().checkFunctionEquivalenceHelper(that.toMaybeFunctionType(),eqMethod,eqCache);
+  }
+  if (isRecordType() && that.isRecordType()) {
+    return toMaybeRecordType().checkRecordEquivalenceHelper(that.toMaybeRecordType(),eqMethod,eqCache);
+  }
+  if (!getTemplateTypeMap().checkEquivalenceHelper(that.getTemplateTypeMap(),eqMethod,eqCache)) {
+    return false;
+  }
+  if (eqCache.isStructuralTyping() && this.isStructuralType() && that.isStructuralType()) {
+    return checkStructuralEquivalenceHelper(that,eqMethod,eqCache);
+  }
+  if (isNominalType() && that.isNominalType()) {
+    return getConcreteNominalTypeName(this.toObjectType()).equals(getConcreteNominalTypeName(that.toObjectType()));
+  }
+  if (isTemplateType() && that.isTemplateType()) {
+    return false;
+  }
+  if (this instanceof ProxyObjectType) {
+    return ((ProxyObjectType)this).getReferencedTypeInternal().checkEquivalenceHelper(that,eqMethod,eqCache);
+  }
+  if (that instanceof ProxyObjectType) {
+    return checkEquivalenceHelper(((ProxyObjectType)that).getReferencedTypeInternal(),eqMethod,eqCache);
+  }
+  return false;
+}

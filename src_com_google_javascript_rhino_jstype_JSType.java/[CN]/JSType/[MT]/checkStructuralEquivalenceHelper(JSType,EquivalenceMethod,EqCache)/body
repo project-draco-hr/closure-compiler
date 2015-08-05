@@ -1,0 +1,16 @@
+{
+  if (this.isFunctionType() || that.isFunctionType()) {
+    return false;
+  }
+  Preconditions.checkState(eqCache.isStructuralTyping());
+  Preconditions.checkState((isRecordType() || that.isRecordType()) || isNominalType() && that.isNominalType());
+  if (isNominalType() && that.isNominalType()) {
+    if (getConcreteNominalTypeName(this.toObjectType()).equals(getConcreteNominalTypeName(that.toObjectType()))) {
+      return true;
+    }
+    FunctionType thatConstructor=that.toObjectType().getConstructor();
+    FunctionType thisConstructor=this.toObjectType().getConstructor();
+    return thisConstructor.checkStructuralInterfaceEquivalenceHelper(thatConstructor,eqMethod,eqCache);
+  }
+  return checkObjectRecordEquivalenceHelper(that,eqMethod,eqCache);
+}

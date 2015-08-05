@@ -3,12 +3,12 @@
   if (rightType.explicitlyImplOrExtInterface(leftType)) {
     return true;
   }
-  ImplStatus result=implicitImplCache.checkCache(rightType,leftType);
+  MatchStatus result=implicitImplCache.checkCache(rightType,leftType);
   if (result != null) {
     return result.subtypeValue();
   }
   if (leftType.hasAnyTemplateTypes()) {
-    implicitImplCache.updateCache(leftType,rightType,ImplStatus.NOT_MATCH);
+    implicitImplCache.updateCache(leftType,rightType,MatchStatus.NOT_MATCH);
     return false;
   }
   Map<String,JSType> interfacePropList=getPropertyTypeMap(leftType);
@@ -17,10 +17,10 @@
     JSType typeInInterface=interfacePropList.get(propName);
     JSType typeInFunction=functionPropList.get(propName);
     if (typeInFunction == null || !typeInFunction.isSubtype(typeInInterface,implicitImplCache)) {
-      implicitImplCache.updateCache(leftType,rightType,ImplStatus.NOT_MATCH);
+      implicitImplCache.updateCache(leftType,rightType,MatchStatus.NOT_MATCH);
       return false;
     }
   }
-  implicitImplCache.updateCache(leftType,rightType,ImplStatus.MATCH);
+  implicitImplCache.updateCache(leftType,rightType,MatchStatus.MATCH);
   return true;
 }
