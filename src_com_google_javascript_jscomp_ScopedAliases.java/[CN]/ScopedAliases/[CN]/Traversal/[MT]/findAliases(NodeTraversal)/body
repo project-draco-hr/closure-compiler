@@ -17,6 +17,17 @@
       Node grandparent=parent.getParent();
       Node value=v.getInitialValue();
       Node varNode=null;
+      if (n.getJSDocInfo() != null) {
+        JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(parent.getJSDocInfo());
+        if (isFunctionDecl) {
+          builder.recordReturnType(n.getJSDocInfo().getType());
+        }
+ else {
+          builder.recordType(n.getJSDocInfo().getType());
+        }
+        parent.setJSDocInfo(builder.build());
+        n.setJSDocInfo(null);
+      }
       JSDocInfo varDocInfo=v.getJSDocInfo();
       String name=n.getString();
       int nameCount=scopedAliasNames.count(name);
