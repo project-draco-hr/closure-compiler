@@ -1,12 +1,14 @@
 {
   astPosition.put(n,astPositionCounter++);
 switch (n.getType()) {
+case Token.CLASS:
+    return shouldTraverseFunctionsAndClasses;
 case Token.FUNCTION:
-    if (shouldTraverseFunctions || n == cfg.getEntry().getValue()) {
-      exceptionHandler.push(n);
-      return true;
-    }
-  return false;
+  if (shouldTraverseFunctionsAndClasses || n == cfg.getEntry().getValue()) {
+    exceptionHandler.push(n);
+    return true;
+  }
+return false;
 case Token.TRY:
 exceptionHandler.push(n);
 return true;
