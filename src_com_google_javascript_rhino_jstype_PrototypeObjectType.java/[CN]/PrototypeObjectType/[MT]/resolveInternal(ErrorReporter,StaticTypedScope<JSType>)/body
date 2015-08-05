@@ -3,6 +3,13 @@
   ObjectType implicitPrototype=getImplicitPrototype();
   if (implicitPrototype != null) {
     implicitPrototypeFallback=(ObjectType)implicitPrototype.resolve(t,scope);
+    FunctionType ctor=getConstructor();
+    if (ctor != null) {
+      FunctionType superCtor=ctor.getSuperClassConstructor();
+      if (superCtor != null) {
+        superCtor.addSubTypeIfNotPresent(ctor);
+      }
+    }
   }
   for (  Property prop : properties.values()) {
     prop.setType(safeResolve(prop.getType(),t,scope));
