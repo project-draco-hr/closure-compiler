@@ -1,0 +1,8 @@
+{
+  testSame(LINE_JOINER.join("function f() { ","  var obj = {a:1, b:2}; ","  var {a:c, b:d} = obj; ","}"));
+  testSame(LINE_JOINER.join("function f() { ","  var obj = {a:1, b:2}; ","  var {a, b} = obj; ","}"));
+  assertRedeclare(LINE_JOINER.join("function f() { ","  var obj = {a:1, b:2}; ","  var {a:c, b:d} = obj; ","  var c = b;","}"));
+  assertEarlyReference(LINE_JOINER.join("function f() { ","  var {a:c, b:d} = obj;","  var obj = {a:1, b:2};","}"));
+  assertEarlyReference(LINE_JOINER.join("function f() { ","  var {a, b} = obj;","  var obj = {a:1, b:2};","}"));
+  assertEarlyReference(LINE_JOINER.join("function f() { ","  var e = c;","  var {a:c, b:d} = {a:1, b:2};","}"));
+}

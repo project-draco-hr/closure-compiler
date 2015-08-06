@@ -1,8 +1,8 @@
 {
-  assertRedeclare(LINE_JOINER.join("if (a) {","  var x;","  var x;","}"));
-  assertRedeclareError(LINE_JOINER.join("if (a) {","  var x;","  let x;","}"));
-  assertRedeclare(LINE_JOINER.join("function f() {","  var x;","  if (a) {","    var x;","  }","}"));
-  assertRedeclareError(LINE_JOINER.join("function f() {","  if (a) {","    var x;","  }","  let x;","}"));
-  assertNoWarning(LINE_JOINER.join("function f() {","  var x;","  if (a) {","    let x;","  }","}"));
-  assertNoWarning(LINE_JOINER.join("function f() {","  if (a) {","    var x;","  }","  if (b) {","    let x;","  }","}"));
+  assertRedeclare("if (a) { var x; var x;}");
+  assertRedeclareError("if (a) { var x; let x;}");
+  assertRedeclare("function f() { var x; if (a) { var x; }}");
+  assertRedeclareError("function f() { if (a) { var x; } let x;}");
+  assertNoWarning("function f() { var x; if (a) { let x; }}");
+  assertNoWarning(LINE_JOINER.join("function f() {","  if (a) { var x; }","  if (b) { let x; }","}"));
 }
