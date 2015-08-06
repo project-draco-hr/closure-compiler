@@ -1,0 +1,11 @@
+{
+  PersistentMap<String,Property> newProps=PersistentMap.create();
+  for (  Map.Entry<String,Property> entry : oldProps.entrySet()) {
+    Property prop=entry.getValue();
+    if (prop.getDeclaredType().isBottom()) {
+      return BOTTOM_OBJECT;
+    }
+    newProps=newProps.with(entry.getKey(),prop);
+  }
+  return new ObjectType(null,newProps,null,false,ObjectKind.UNRESTRICTED);
+}
