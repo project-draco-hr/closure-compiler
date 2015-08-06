@@ -5,5 +5,6 @@
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @constructor"," * @param {T} x"," */","function Foo(x) {}","/** @param {Foo<number, string>} x */","function f(x) {}"),JSTypeCreatorFromJSDoc.INVALID_GENERICS_INSTANTIATION);
   typeCheck("/** @type {Array<number>} */ var x;");
   typeCheck("/** @type {Object<number>} */ var x;");
+  typeCheck(Joiner.on('\n').join("function f(/** !Object<string, string> */ x) {","  return x['dont-warn-about-inexistent-property'];","}"));
   typeCheck("/** @template T\n@param {!T} x */ function f(x) {}",JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
 }
