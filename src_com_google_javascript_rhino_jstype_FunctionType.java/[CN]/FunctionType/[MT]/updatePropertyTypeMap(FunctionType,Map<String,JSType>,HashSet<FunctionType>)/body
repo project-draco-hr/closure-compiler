@@ -15,7 +15,13 @@
   Iterable<ObjectType> iterable=type.getExtendedInterfaces();
   if (iterable != null) {
     for (    ObjectType interfaceType : iterable) {
-      updatePropertyTypeMap(interfaceType.getConstructor(),propTypeMap);
+      FunctionType superConstructor=interfaceType.getConstructor();
+      if (superConstructor == null || cache.contains(superConstructor)) {
+        continue;
+      }
+      cache.add(superConstructor);
+      updatePropertyTypeMap(superConstructor,propTypeMap,cache);
+      cache.remove(superConstructor);
     }
   }
 }
