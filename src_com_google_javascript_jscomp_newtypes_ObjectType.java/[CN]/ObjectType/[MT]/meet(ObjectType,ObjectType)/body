@@ -6,13 +6,13 @@
  else   if (obj2 == TOP_OBJECT) {
     return obj1;
   }
-  NominalType resultNominalType=NominalType.pickSubclass(obj1.nominalType,obj2.nominalType);
+  NominalType resultNomType=NominalType.pickSubclass(obj1.nominalType,obj2.nominalType);
   FunctionType fn=FunctionType.meet(obj1.fn,obj2.fn);
   if (!FunctionType.isInhabitable(fn)) {
     return BOTTOM_OBJECT;
   }
   boolean isLoose=obj1.isLoose && obj2.isLoose || fn != null && fn.isLoose();
-  if (resultNominalType != null && resultNominalType.isFunction() && fn == null) {
+  if (resultNomType != null && resultNomType.isFunction() && fn == null) {
     fn=obj1.fn == null ? obj2.fn : obj1.fn;
     isLoose=fn.isLoose();
   }
@@ -21,10 +21,11 @@
     props=joinPropsLoosely(obj1.props,obj2.props);
   }
  else {
-    props=meetPropsHelper(false,resultNominalType,obj1.props,obj2.props);
+    props=meetPropsHelper(false,resultNomType,obj1.props,obj2.props);
   }
   if (props == BOTTOM_MAP) {
     return BOTTOM_OBJECT;
   }
-  return new ObjectType(resultNominalType,props,fn,isLoose,ObjectKind.meet(obj1.objectKind,obj2.objectKind));
+  ObjectKind ok=ObjectKind.meet(obj1.objectKind,obj2.objectKind);
+  return new ObjectType(resultNomType,props,fn,isLoose,ok);
 }
