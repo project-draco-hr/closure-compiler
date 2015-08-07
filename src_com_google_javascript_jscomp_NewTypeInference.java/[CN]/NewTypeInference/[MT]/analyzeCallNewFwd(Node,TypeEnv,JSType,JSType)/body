@@ -10,7 +10,7 @@
   if (assertionFunctionSpec != null) {
     return analyzeAssertionCall(expr,inEnv,assertionFunctionSpec);
   }
-  EnvTypePair calleePair=analyzeCalleeFwd(callee,inEnv,requiredType,specializedType);
+  EnvTypePair calleePair=analyzeExprFwd(callee,inEnv,commonTypes.topFunction());
   calleePair=mayWarnAboutNullableReferenceAndTighten(callee,calleePair.type,inEnv,commonTypes.topFunction());
   JSType calleeType=calleePair.type;
   if (calleeType.isBottom() || !calleeType.isSubtypeOf(commonTypes.topFunction())) {
@@ -76,5 +76,8 @@
     }
   }
   JSType retType=expr.isNew() ? funType.getThisType() : funType.getReturnType();
+  if (retType.isSubtypeOf(requiredType)) {
+    retType=retType.specialize(specializedType);
+  }
   return new EnvTypePair(tmpEnv,retType);
 }
