@@ -1,13 +1,15 @@
 {
-  if (t.getScopeDepth() > scopeFunctionDepth) {
-    findNamespaceShadows(t);
-  }
-  if (t.getScopeDepth() == scopeFunctionDepth) {
+  if (isGoogScopeFunctionBody(t.getScopeRoot())) {
+    scopeFunctionBody=null;
     renameNamespaceShadows(t);
     injectedDecls.clear();
     aliases.clear();
     forbiddenLocals.clear();
     transformation=null;
     hasNamespaceShadows=false;
+  }
+ else   if (inGoogScopeBody()) {
+    findNamespaceShadows(t);
+    reportInvalidVariables(t);
   }
 }

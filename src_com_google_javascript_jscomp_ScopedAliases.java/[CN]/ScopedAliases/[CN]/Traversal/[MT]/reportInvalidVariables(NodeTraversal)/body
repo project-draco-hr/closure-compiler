@@ -1,0 +1,18 @@
+{
+  Scope scope=t.getScope();
+  Node scopeRoot=scope.getRootNode();
+  Node enclosingFunctionBody=NodeUtil.getEnclosingFunction(scopeRoot).getLastChild();
+  if (isGoogScopeFunctionBody(enclosingFunctionBody) && scopeRoot.isBlock() && !scope.isFunctionBlockScope()) {
+    for (    Var v : scope.getVarIterable()) {
+      Node parent=v.getNameNode().getParent();
+      if (!parent.isCatch() && !parent.isLet() && !parent.isConst()) {
+        report(t,v.getNode(),GOOG_SCOPE_INVALID_VARIABLE,v.getName());
+      }
+    }
+    if (scopeRoot.getFirstChild().isCatch()) {
+      for (      Var v : scope.getClosestHoistScope().getVarIterable()) {
+        report(t,v.getNode(),GOOG_SCOPE_INVALID_VARIABLE,v.getName());
+      }
+    }
+  }
+}

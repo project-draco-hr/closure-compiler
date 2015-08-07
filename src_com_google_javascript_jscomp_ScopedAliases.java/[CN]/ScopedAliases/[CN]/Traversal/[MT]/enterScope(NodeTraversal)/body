@@ -2,9 +2,16 @@
   if (t.getScope().isGlobal()) {
     return;
   }
+  if (inGoogScopeBody()) {
+    Scope hoistedScope=t.getScope().getClosestHoistScope();
+    if (isGoogScopeFunctionBody(hoistedScope.getRootNode())) {
+      findAliases(t,hoistedScope);
+    }
+  }
   Node scopeMethodCall=findScopeMethodCall(t.getScope().getRootNode());
   if (scopeMethodCall != null) {
     transformation=transformationHandler.logAliasTransformation(scopeMethodCall.getSourceFileName(),getSourceRegion(scopeMethodCall));
-    findAliases(t);
+    findAliases(t,t.getScope());
+    scopeFunctionBody=scopeMethodCall.getLastChild().getLastChild();
   }
 }

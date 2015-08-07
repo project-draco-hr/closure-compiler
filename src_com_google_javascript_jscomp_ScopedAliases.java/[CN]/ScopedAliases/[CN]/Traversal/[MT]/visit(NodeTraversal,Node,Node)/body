@@ -2,7 +2,7 @@
   if (isCallToScopeMethod(n)) {
     validateScopeCall(t,n,n.getParent());
   }
-  if (t.getScopeDepth() < scopeFunctionDepth) {
+  if (!inGoogScopeBody()) {
     return;
   }
   int type=n.getType();
@@ -15,7 +15,7 @@
       aliasVar=lexicalVar;
     }
   }
-  if (t.getScopeDepth() == scopeFunctionDepth && findScopeMethodCall(t.getScope().getRootNode()) != null) {
+  if (isGoogScopeFunctionBody(t.getScope().getClosestHoistScope().getRootNode())) {
     if (aliasVar != null && !isObjLitShorthand && NodeUtil.isLValue(n)) {
       if (aliasVar.getNode() == n) {
         aliasDefinitionsInOrder.add(n);
@@ -35,7 +35,7 @@
       report(t,n,GOOG_SCOPE_USES_THROW);
     }
   }
-  if (t.getScopeDepth() >= scopeFunctionDepth) {
+  if (inGoogScopeBody()) {
     if (aliasVar != null) {
       aliasUsages.add(new AliasedNode(aliasVar,n));
     }
