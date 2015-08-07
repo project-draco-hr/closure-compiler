@@ -41,5 +41,14 @@
         properties.putAll(currentProperties);
       }
     }
+    List<FunctionType> loopPath=functionType.checkExtendsLoop();
+    if (loopPath != null) {
+      String strPath="";
+      for (int i=0; i < loopPath.size() - 1; i++) {
+        strPath+=loopPath.get(i).getDisplayName() + " -> ";
+      }
+      strPath+=loopPath.get(loopPath.size() - 1).getDisplayName();
+      compiler.report(t.makeError(n,INTERFACE_EXTENDS_LOOP,loopPath.get(0).getDisplayName(),strPath));
+    }
   }
 }

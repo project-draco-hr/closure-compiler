@@ -1,0 +1,27 @@
+{
+  Iterable<ObjectType> iterable=this.getExtendedInterfaces();
+  if (iterable != null) {
+    for (    ObjectType interfaceType : iterable) {
+      FunctionType superConstructor=interfaceType.getConstructor();
+      if (superConstructor == null) {
+        continue;
+      }
+      if (cache.contains(superConstructor)) {
+        path.add(superConstructor);
+        while (path.get(0) != superConstructor) {
+          path.remove(0);
+        }
+        return path;
+      }
+      cache.add(superConstructor);
+      path.add(superConstructor);
+      List<FunctionType> result=superConstructor.checkExtendsLoop(cache,path);
+      if (result != null) {
+        return result;
+      }
+      cache.remove(superConstructor);
+      path.remove(path.size() - 1);
+    }
+  }
+  return null;
+}
