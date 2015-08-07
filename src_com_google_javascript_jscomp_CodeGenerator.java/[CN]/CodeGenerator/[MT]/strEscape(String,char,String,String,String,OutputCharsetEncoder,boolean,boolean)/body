@@ -91,21 +91,11 @@ sb.append(c);
 }
 break;
 default :
-if (outputCharsetEncoder != null) {
-if (outputCharsetEncoder.canEncode(c)) {
+if (outputCharsetEncoder != null && outputCharsetEncoder.canEncode(c) || c > 0x1f && c < 0x7f) {
 sb.append(c);
 }
  else {
 appendHexJavaScriptRepresentation(sb,c);
-}
-}
- else {
-if (c > 0x1f && c < 0x7f) {
-sb.append(c);
-}
- else {
-appendHexJavaScriptRepresentation(sb,c);
-}
 }
 }
 }
