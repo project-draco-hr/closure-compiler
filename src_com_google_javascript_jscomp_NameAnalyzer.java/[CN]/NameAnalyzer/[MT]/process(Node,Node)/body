@@ -7,6 +7,14 @@
   referenceParentNames();
   referenceAliases();
   calculateReferences();
+  if (reportPath != null) {
+    try {
+      Files.append(getHtmlReport(),new File(reportPath),UTF_8);
+    }
+ catch (    IOException e) {
+      compiler.report(JSError.make(REPORT_PATH_IO_ERROR,reportPath));
+    }
+  }
   if (removeUnreferenced) {
     removeUnreferenced();
   }

@@ -30,12 +30,15 @@
   if (options.inferConsts) {
     passes.add(inferConsts);
   }
+  if (options.reportPath != null && (options.extraSmartNameRemoval || options.smartNameRemoval)) {
+    passes.add(initNameAnalyzeReport);
+  }
   if (options.extraSmartNameRemoval && options.smartNameRemoval) {
     if (options.foldConstants && (options.inlineVariables || options.inlineLocalVariables)) {
       passes.add(earlyInlineVariables);
       passes.add(earlyPeepholeOptimizations);
     }
-    passes.add(smartNamePass);
+    passes.add(extraSmartNamePass);
   }
   if (options.disambiguateProperties) {
     passes.add(disambiguateProperties);
