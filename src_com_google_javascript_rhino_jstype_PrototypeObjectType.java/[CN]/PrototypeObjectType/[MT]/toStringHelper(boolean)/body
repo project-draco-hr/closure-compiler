@@ -10,10 +10,14 @@
     }
     StringBuilder sb=new StringBuilder();
     sb.append("{");
+    boolean useNewlines=!forAnnotations && propertyNames.size() > 2;
     int i=0;
     for (    String property : propertyNames) {
       if (i > 0) {
         sb.append(", ");
+      }
+      if (useNewlines) {
+        sb.append("\n  ");
       }
       sb.append(property);
       sb.append(": ");
@@ -23,6 +27,9 @@
         sb.append(", ...");
         break;
       }
+    }
+    if (useNewlines) {
+      sb.append("\n");
     }
     sb.append("}");
     prettyPrint=true;
