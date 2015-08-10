@@ -4,9 +4,12 @@
   EnvTypePair pair;
   JSType reqObjType=pickReqObjType(propAccessNode).withLoose();
   JSType recvReqType, recvSpecType;
-  if (specializedType.isTruthy() || specializedType.isFalsy()) {
+  if (specializedType.isTruthy()) {
     recvReqType=reqObjType;
-    recvSpecType=reqObjType.withProperty(propQname,requiredType);
+    recvSpecType=reqObjType.withProperty(propQname,specializedType);
+  }
+ else   if (specializedType.isFalsy()) {
+    recvReqType=recvSpecType=reqObjType;
   }
  else {
     recvReqType=reqObjType.withProperty(propQname,requiredType);
@@ -47,7 +50,7 @@
     warnings.add(JSError.make(propAccessNode,BOTTOM_PROP,pname,recvType.toString()));
     return new EnvTypePair(pair.env,JSType.UNKNOWN);
   }
-  if (!propAccessNode.getParent().isExprResult() && !specializedType.isTruthy() && !specializedType.isFalsy()&& !recvType.isDict()) {
+  if (!propAccessNode.getParent().isExprResult() && !specializedType.isTruthy() && !specializedType.isFalsy()&& !recvType.mayBeDict()) {
     if (!recvType.mayHaveProp(propQname)) {
       warnings.add(JSError.make(propAccessNode,TypeCheck.INEXISTENT_PROPERTY,pname,recvType.toString()));
     }

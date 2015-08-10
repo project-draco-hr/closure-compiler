@@ -2,13 +2,17 @@
   if (other.isTop() || other.isUnknown() || this == other) {
     return this;
   }
- else   if (other.isTruthy()) {
+  if (other.hasTruthyMask()) {
     return makeTruthy();
   }
- else   if (other.isFalsy()) {
+  if (hasTruthyMask()) {
+    return other.makeTruthy();
+  }
+  if (other.hasFalsyMask()) {
     return makeFalsy();
   }
- else   if (this.isTop() || this.isUnknown()) {
+  Preconditions.checkState(!hasFalsyMask());
+  if (this.isTop() || this.isUnknown()) {
     return other;
   }
   int newMask=getMask() & other.getMask();

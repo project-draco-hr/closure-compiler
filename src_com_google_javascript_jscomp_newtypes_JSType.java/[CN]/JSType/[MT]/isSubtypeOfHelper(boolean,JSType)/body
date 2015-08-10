@@ -2,6 +2,12 @@
   if (isUnknown() || other.isUnknown() || other.isTop()) {
     return true;
   }
+  if (hasTruthyMask()) {
+    return !other.makeTruthy().isBottom();
+  }
+  if (hasFalsyMask()) {
+    return !other.makeFalsy().isBottom();
+  }
   if (!EnumType.areSubtypes(this,other)) {
     return false;
   }

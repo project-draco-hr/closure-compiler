@@ -4,14 +4,17 @@
   if (lhs.isTop() || rhs.isTop()) {
     return TOP;
   }
- else   if (lhs.isUnknown() || rhs.isUnknown()) {
+  if (lhs.isUnknown() || rhs.isUnknown()) {
     return UNKNOWN;
   }
- else   if (lhs.isBottom()) {
+  if (lhs.isBottom()) {
     return rhs;
   }
- else   if (rhs.isBottom()) {
+  if (rhs.isBottom()) {
     return lhs;
+  }
+  if (lhs.hasTruthyMask() || lhs.hasFalsyMask() || rhs.hasTruthyMask()|| rhs.hasFalsyMask()) {
+    return UNKNOWN;
   }
   if (lhs.getTypeVar() != null && rhs.getTypeVar() != null && !lhs.getTypeVar().equals(rhs.getTypeVar())) {
     return UNKNOWN;

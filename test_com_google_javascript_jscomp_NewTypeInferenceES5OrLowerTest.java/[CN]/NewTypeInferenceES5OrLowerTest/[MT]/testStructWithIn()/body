@@ -1,4 +1,6 @@
 {
   typeCheck("('prop' in /** @struct */ {});",TypeCheck.IN_USED_WITH_STRUCT);
   typeCheck("for (var x in /** @struct */ {});",TypeCheck.IN_USED_WITH_STRUCT);
+  typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @struct"," */","function Foo() {}","/** @constructor */","function Bar() {","  this['asdf'] = 123;","}","function f(/** (!Foo|!Bar) */ x) {","  if ('asdf' in x) {}","}"));
+  typeCheck(Joiner.on('\n').join("function f(p1, /** !Object */ obj) {","  if (p1 in obj['asdf']) {}","}"),TypeCheck.INEXISTENT_PROPERTY);
 }
