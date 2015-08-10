@@ -1,5 +1,5 @@
 {
-  String externs="/** @const */ var foo = {};\n" + "/** @return {boolean}\n * @nosideeffects */\n" + "foo.noSideEffectsExtern = function(){}";
+  String externs=LINE_JOINER.join("/** @const */ var foo = {};","/** @return {boolean}","  * @nosideeffects */","foo.noSideEffectsExtern = function(){}");
   testSame(externs,"alert(foo.noSideEffectsExtern());",null);
   test(externs,"foo.noSideEffectsExtern();","JSCOMPILER_PRESERVE(foo.noSideEffectsExtern());",null,e,"Suspicious code. The result of the extern function call " + "'foo.noSideEffectsExtern' is not being used.");
   testSame(externs,"(function() { var foo = {}; " + "foo.noSideEffectsExtern = function() {}; " + "noSideEffectsExtern(); })()",null);
