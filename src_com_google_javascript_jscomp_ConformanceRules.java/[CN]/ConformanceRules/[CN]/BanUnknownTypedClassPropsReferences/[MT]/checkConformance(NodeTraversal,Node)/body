@@ -1,6 +1,8 @@
 {
   if (n.isGetProp() && isUnknown(n) && isUsed(n)&& !isWhiteListed(n)&& isCheckablePropertySource(n.getFirstChild())&& !isTemplateType(n)&& !isDeclaredUnknown(n)) {
-    return ConformanceResult.VIOLATION;
+    String propName=n.getLastChild().getString();
+    String typeName=n.getFirstChild().getJSType().toString();
+    return new ConformanceResult(ConformanceLevel.VIOLATION,"The property \"" + propName + "\" on type \""+ typeName+ "\"");
   }
   return ConformanceResult.CONFORMANCE;
 }
