@@ -4,4 +4,5 @@
   typeCheck(Joiner.on('\n').join("var obj = { n: (1 < 2 ? null : 123) };","if (obj.n !== null) {","  obj.n - 123;","}"));
   typeCheck(Joiner.on('\n').join("var obj = { n: (1 < 2 ? null : 123) };","if (obj.n !== null) {","  obj.n - 123;","}","obj.n - 123;"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  this.a = 123;","}","/** @constructor */","function Bar(x) {","  /** @type {Foo} */","  this.b = x;","  if (this.b != null) {","    return this.b.a;","  }","}"));
+  typeCheck(Joiner.on('\n').join("function f(/** (null | { prop: (null|number) }) */ x) {","  if (x.prop !== null) {","    return x.prop - 1;","  }","}"),NewTypeInference.NULLABLE_DEREFERENCE);
 }
