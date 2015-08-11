@@ -7,7 +7,8 @@
   typeCheck(Joiner.on('\n').join("/** @constructor */ function F() {}","F.prototype.bar = function() {};","F.prototype.bar = function() {};"),GlobalTypeInfo.REDECLARED_PROPERTY);
   typeCheck(Joiner.on('\n').join("/** @constructor */ function F() {}","/** @return {void} */ F.prototype.bar = function() {};","F.prototype.bar = function() {};"),GlobalTypeInfo.REDECLARED_PROPERTY);
   typeCheck(Joiner.on('\n').join("/** @constructor */ function C(){}","C.prototype.foo = {};","C.prototype.method = function() { this.foo.bar = 123; }"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {};","/** @param {string} s */ Foo.prototype.bar = function(s) {};","function g() { (new Foo()).bar(5); }"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {};","Foo.prototype.bar = function(/** string */ s) {};","function g() { (new Foo()).bar(5); }"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("function f() {}","function g() { f.prototype.prop = 123; }"));
   typeCheck(Joiner.on('\n').join("/** @param {!Function} f */","function foo(f) { f.prototype.bar = function(x) {}; }"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype.method = function() {};","/** @type {number} */","Foo.prototype.method.pnum = 123;","var /** number */ n = Foo.prototype['method.pnum'];"),TypeCheck.INEXISTENT_PROPERTY);
 }

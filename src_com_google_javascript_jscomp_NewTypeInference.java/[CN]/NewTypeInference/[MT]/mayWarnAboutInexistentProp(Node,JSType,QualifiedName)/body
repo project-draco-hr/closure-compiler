@@ -1,0 +1,15 @@
+{
+  if (!propAccessNode.isGetProp()) {
+    return false;
+  }
+  String pname=propQname.toString();
+  if (!recvType.mayHaveProp(propQname)) {
+    warnings.add(JSError.make(propAccessNode,TypeCheck.INEXISTENT_PROPERTY,pname,recvType.toString()));
+    return true;
+  }
+ else   if (!recvType.hasProp(propQname)) {
+    warnings.add(JSError.make(propAccessNode,POSSIBLY_INEXISTENT_PROPERTY,pname,recvType.toString()));
+    return true;
+  }
+  return false;
+}
