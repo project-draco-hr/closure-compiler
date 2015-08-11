@@ -22,8 +22,8 @@
     if (mayWarnAboutExistingProp(rawType,pname,defSite,propDeclType)) {
       return;
     }
-    if (defSite.isGetProp() && propDeclType == null && isConst && !mayWarnAboutNoInit(defSite)) {
-      propDeclType=inferConstTypeFromRhs(defSite);
+    if (propDeclType == null) {
+      propDeclType=mayInferFromRhsIfConst(defSite);
     }
     rawType.addProtoProperty(pname,defSite,propDeclType,isConst);
     if (defSite.isGetProp()) {

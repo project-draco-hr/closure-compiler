@@ -17,10 +17,10 @@
     this.currentScope.addLocal(name,JSType.UNKNOWN,false,false);
   }
  else {
-    boolean isConst=isConst(parent);
+    boolean isConst=isConst(nameNode);
     JSType declType=getVarTypeFromAnnotation(nameNode);
-    if (isConst && !mayWarnAboutNoInit(nameNode) && declType == null) {
-      declType=inferConstTypeFromRhs(nameNode);
+    if (declType == null) {
+      declType=mayInferFromRhsIfConst(nameNode);
     }
     this.currentScope.addLocal(name,declType,isConst,nameNode.isFromExterns());
   }

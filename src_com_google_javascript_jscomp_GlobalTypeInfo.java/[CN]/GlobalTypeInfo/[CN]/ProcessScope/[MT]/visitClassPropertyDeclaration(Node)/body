@@ -10,8 +10,8 @@
   boolean isConst=isConst(getProp);
   if (declType != null || isConst) {
     mayWarnAboutExistingProp(rawNominalType,pname,getProp,declType);
-    if (isConst && !mayWarnAboutNoInit(getProp) && declType == null) {
-      declType=inferConstTypeFromRhs(getProp);
+    if (declType == null) {
+      declType=mayInferFromRhsIfConst(getProp);
     }
     if (mayAddPropToType(getProp,rawNominalType)) {
       rawNominalType.addClassProperty(pname,getProp,declType,isConst);

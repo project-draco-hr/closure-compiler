@@ -15,8 +15,8 @@
       warnings.add(JSError.make(declNode,REDECLARED_PROPERTY,pname,ns.toString()));
       return;
     }
-    if (isConst && !mayWarnAboutNoInit(declNode) && propDeclType == null) {
-      propDeclType=inferConstTypeFromRhs(declNode);
+    if (propDeclType == null) {
+      propDeclType=mayInferFromRhsIfConst(declNode);
     }
     ns.addProperty(pname,declNode,propDeclType,isConst);
     declNode.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
