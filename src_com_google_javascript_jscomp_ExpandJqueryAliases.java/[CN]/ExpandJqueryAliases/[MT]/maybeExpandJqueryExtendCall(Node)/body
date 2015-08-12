@@ -22,13 +22,23 @@
   }
   while (extendArg.hasChildren()) {
     Node currentProp=extendArg.removeFirstChild();
-    currentProp.setType(Token.STRING);
-    Node propValue=currentProp.removeFirstChild();
+    Node propValue;
+    if (currentProp.hasChildren()) {
+      propValue=currentProp.getLastChild().detachFromParent();
+    }
+ else {
+      propValue=IR.name(currentProp.getString()).srcref(currentProp);
+    }
     Node newProp;
     if (currentProp.isQuotedString()) {
       newProp=IR.getelem(objectToExtend.cloneTree(),currentProp).srcref(currentProp);
     }
+ else     if (currentProp.isComputedProp()) {
+      Node childOfcompProp=currentProp.removeFirstChild();
+      newProp=IR.getelem(objectToExtend.cloneTree(),childOfcompProp).srcref(currentProp);
+    }
  else {
+      currentProp.setType(Token.STRING);
       newProp=IR.getprop(objectToExtend.cloneTree(),currentProp).srcref(currentProp);
     }
     Node assignNode=IR.assign(newProp,propValue).srcref(currentProp);
