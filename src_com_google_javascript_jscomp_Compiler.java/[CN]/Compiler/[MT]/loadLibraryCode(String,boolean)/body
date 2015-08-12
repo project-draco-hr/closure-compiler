@@ -1,14 +1,8 @@
 {
-  String originalCode;
-  try {
-    originalCode=CharStreams.toString(new InputStreamReader(Compiler.class.getResourceAsStream(String.format("js/%s.js",resourceName)),UTF_8));
-  }
- catch (  IOException e) {
-    throw new RuntimeException(e);
-  }
+  String originalCode=ResourceLoader.loadTextResource(Compiler.class,"js/" + resourceName + ".js");
   Node ast=parseSyntheticCode(originalCode);
   if (normalizeAndUniquifyNames) {
-    Normalize.normalizeSyntheticCode(this,ast,String.format("jscomp_%s_",resourceName));
+    Normalize.normalizeSyntheticCode(this,ast,"jscomp_" + resourceName + "_");
   }
   return ast;
 }
