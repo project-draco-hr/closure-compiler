@@ -3,10 +3,8 @@
     Node ref=moduleExportRefs.get(0);
     Node newName=IR.name(moduleName);
     newName.putProp(Node.ORIGINALNAME_PROP,ref.getQualifiedName());
-    Node newVar=IR.var(newName).copyInformationFromForTree(ref.getParent());
     Node rhsValue=ref.getNext().detachFromParent();
-    newVar.getFirstChild().addChildToFront(rhsValue);
-    newVar.setJSDocInfo(NodeUtil.createConstantJsDoc());
+    Node newExprResult=IR.exprResult(IR.assign(newName,rhsValue).copyInformationFromForTree(ref.getParent()));
     if (rhsValue.isObjectLit()) {
       Scope globalScope=SyntacticScopeCreator.makeUntyped(compiler).createScope(script,null);
       for (Node key=rhsValue.getFirstChild(); key != null; key=key.getNext()) {
@@ -21,12 +19,10 @@
     }
     Node assign=ref.getParent();
     Node exprResult=assign.getParent();
-    script.replaceChild(exprResult,newVar);
+    script.replaceChild(exprResult,newExprResult);
     return;
   }
   if (!hasExportLValues()) {
-    Node newVar=injectExportsObject(script,moduleName);
-    newVar.setJSDocInfo(NodeUtil.createConstantJsDoc());
     for (    Node ref : Iterables.concat(moduleExportRefs,exportRefs)) {
       Node newRef=IR.name(moduleName).copyInformationFrom(ref);
       newRef.putProp(Node.ORIGINALNAME_PROP,ref.getQualifiedName());
@@ -34,7 +30,6 @@
     }
     return;
   }
-  Node exportsNode=injectExportsObject(script,moduleName);
   for (  Node ref : moduleExportRefs) {
     Node newRef=IR.name(moduleName).copyInformationFrom(ref);
     ref.getParent().replaceChild(ref,newRef);
@@ -42,7 +37,7 @@
   if (!exportRefs.isEmpty()) {
     String aliasName="exports$$" + moduleName;
     Node aliasNode=IR.var(IR.name(aliasName),IR.name(moduleName)).copyInformationFromForTree(script);
-    script.addChildAfter(aliasNode,exportsNode);
+    script.addChildToFront(aliasNode);
     for (    Node ref : exportRefs) {
       ref.putProp(Node.ORIGINALNAME_PROP,ref.getString());
       ref.setString(aliasName);
