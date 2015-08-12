@@ -1,0 +1,12 @@
+{
+  SourceFile file=SourceFile.fromFile(path.toString());
+  Compiler compiler=new Compiler();
+  CompilerOptions options=new CompilerOptions();
+  options.setLanguageIn(LanguageMode.ECMASCRIPT6);
+  options.setCodingConvention(new GoogleCodingConvention());
+  options.setWarningLevel(DiagnosticGroups.MISSING_REQUIRE,CheckLevel.WARNING);
+  options.setWarningLevel(DiagnosticGroups.EXTRA_REQUIRE,CheckLevel.WARNING);
+  compiler.setPassConfig(new LintPassConfig(options));
+  compiler.disableThreads();
+  compiler.compile(ImmutableList.<SourceFile>of(),ImmutableList.of(file),options);
+}
