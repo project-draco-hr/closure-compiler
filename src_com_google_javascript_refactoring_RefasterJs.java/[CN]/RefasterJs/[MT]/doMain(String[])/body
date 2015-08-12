@@ -18,7 +18,9 @@
   }
   RefasterJsScanner scanner=new RefasterJsScanner();
   scanner.loadRefasterJsTemplate(refasterJsTemplate);
-  RefactoringDriver driver=new RefactoringDriver.Builder(scanner).addExterns(includeDefaultExterns ? CommandLineRunner.getDefaultExterns() : ImmutableList.<SourceFile>of()).addExternsFromFile(getExterns()).addInputsFromFile(fileInputs).build();
+  CompilerOptions options=new CompilerOptions();
+  options.setEnvironment(environment);
+  RefactoringDriver driver=new RefactoringDriver.Builder(scanner).addExterns(CommandLineRunner.getBuiltinExterns(options)).addExternsFromFile(getExterns()).addInputsFromFile(fileInputs).build();
   System.out.println("Compiling JavaScript code and searching for suggested fixes.");
   List<SuggestedFix> fixes=driver.drive();
   if (!verbose) {
