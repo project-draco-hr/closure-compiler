@@ -1,0 +1,14 @@
+{
+  String className=convention.getSingletonGetterClassName(call);
+  if (className == null) {
+    return;
+  }
+  QualifiedName qname=QualifiedName.fromQualifiedString(className);
+  RawNominalType rawType=this.currentScope.getNominalType(qname);
+  if (rawType != null) {
+    JSType instanceType=rawType.getInstanceAsJSType();
+    FunctionType getInstanceFunType=(new FunctionTypeBuilder()).addRetType(instanceType).buildFunction();
+    JSType getInstanceType=commonTypes.fromFunctionType(getInstanceFunType);
+    convention.applySingletonGetterNew(rawType,getInstanceType,instanceType);
+  }
+}
