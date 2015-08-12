@@ -1,6 +1,13 @@
 {
   FunctionNames functionNames=new FunctionNames(compiler);
   functionNames.process(externs,root);
-  InstrumentFunctions instrumentation=new InstrumentFunctions(compiler,functionNames,"test init code","testfile.js",new StringReader(instrumentationPb));
+  Instrumentation.Builder builder=Instrumentation.newBuilder();
+  try {
+    TextFormat.merge(instrumentationPb,builder);
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+  InstrumentFunctions instrumentation=new InstrumentFunctions(compiler,functionNames,builder.build(),"testfile.js");
   instrumentation.process(externs,root);
 }
