@@ -1,8 +1,18 @@
 {
   Node param=params.getFirstChild();
   ArrayList<Node> names=new ArrayList<>();
-  while (param != null && param.isName()) {
-    names.add(IR.string(param.getString()).srcref(param));
+  while (param != null) {
+    if (param.isName()) {
+      names.add(IR.string(param.getString()).srcref(param));
+    }
+ else     if (param.isDestructuringPattern()) {
+      compiler.report(JSError.make(param,INJECTED_FUNCTION_HAS_DESTRUCTURED_PARAM));
+      return new ArrayList<>();
+    }
+ else     if (param.isDefaultValue()) {
+      compiler.report(JSError.make(param,INJECTED_FUNCTION_HAS_DEFAULT_VALUE));
+      return new ArrayList<>();
+    }
     param=param.getNext();
   }
   return names;
