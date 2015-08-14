@@ -34,13 +34,13 @@
         Node proto=prop.getPrototype();
         int stubId=idGenerator.newId();
         if (!noStubFunctions) {
-          Node stubCall=IR.call(IR.name(STUB_METHOD_NAME),IR.number(stubId)).copyInformationFromForTree(value);
+          Node stubCall=IR.call(IR.name(STUB_METHOD_NAME),IR.number(stubId)).useSourceInfoIfMissingFromForTree(value);
           stubCall.putBooleanProp(Node.FREE_CALL,true);
           valueParent.replaceChild(value,stubCall);
           Node unstubParent=compiler.getNodeForCodeInsertion(deepestCommonModuleRef);
           Node unstubCall=IR.call(IR.name(UNSTUB_METHOD_NAME),IR.number(stubId),value);
           unstubCall.putBooleanProp(Node.FREE_CALL,true);
-          unstubParent.addChildToFront(IR.exprResult(IR.assign(IR.getprop(proto.cloneTree(),IR.string(nameInfo.name)),unstubCall)).copyInformationFromForTree(value));
+          unstubParent.addChildToFront(IR.exprResult(IR.assign(IR.getprop(proto.cloneTree(),IR.string(nameInfo.name)),unstubCall)).useSourceInfoIfMissingFromForTree(value));
           compiler.reportCodeChange();
         }
  else {
@@ -48,7 +48,7 @@
           valueParent.removeChild(value);
           assignmentParent.getParent().removeChild(assignmentParent);
           Node destParent=compiler.getNodeForCodeInsertion(deepestCommonModuleRef);
-          destParent.addChildToFront(IR.exprResult(IR.assign(IR.getprop(proto.cloneTree(),IR.string(nameInfo.name)),value)).copyInformationFromForTree(value));
+          destParent.addChildToFront(IR.exprResult(IR.assign(IR.getprop(proto.cloneTree(),IR.string(nameInfo.name)),value)).useSourceInfoIfMissingFromForTree(value));
           compiler.reportCodeChange();
         }
       }

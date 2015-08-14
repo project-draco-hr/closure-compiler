@@ -2,7 +2,7 @@
   PrototypeMemberDeclaration first=instance.declarations.getFirst();
   String className=first.qualifiedClassName;
   if (pattern == Pattern.USE_GLOBAL_TEMP) {
-    Node stmt=new Node(first.node.getType(),IR.assign(IR.name(prototypeAlias),NodeUtil.newQName(compiler,className + ".prototype",instance.parent,className + ".prototype"))).copyInformationFromForTree(first.node);
+    Node stmt=new Node(first.node.getType(),IR.assign(IR.name(prototypeAlias),NodeUtil.newQName(compiler,className + ".prototype",instance.parent,className + ".prototype"))).useSourceInfoIfMissingFromForTree(first.node);
     instance.parent.addChildBefore(stmt,first.node);
   }
  else   if (pattern == Pattern.USE_IIFE) {
@@ -11,7 +11,7 @@
     Node call=IR.call(func,NodeUtil.newQName(compiler,className + ".prototype",instance.parent,className + ".prototype"));
     call.putIntProp(Node.FREE_CALL,1);
     Node stmt=new Node(first.node.getType(),call);
-    stmt.copyInformationFromForTree(first.node);
+    stmt.useSourceInfoIfMissingFromForTree(first.node);
     instance.parent.addChildBefore(stmt,first.node);
     for (    PrototypeMemberDeclaration declar : instance.declarations) {
       block.addChildToBack(declar.node.detachFromParent());

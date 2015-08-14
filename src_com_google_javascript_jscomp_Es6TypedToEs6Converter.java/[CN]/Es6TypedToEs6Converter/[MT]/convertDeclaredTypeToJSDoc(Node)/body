@@ -17,7 +17,7 @@ case Token.ARRAY_TYPE:
 {
 Node arrayType=IR.string("Array");
 Node memberType=convertWithLocation(type.getFirstChild());
-arrayType.addChildToFront(new Node(Token.BLOCK,memberType).copyInformationFrom(type));
+arrayType.addChildToFront(new Node(Token.BLOCK,memberType).useSourceInfoIfMissingFrom(type));
 return new Node(Token.BANG,arrayType);
 }
 case Token.PARAMETERIZED_TYPE:
@@ -25,7 +25,7 @@ case Token.PARAMETERIZED_TYPE:
 Node namedType=type.getFirstChild();
 Node result=convertWithLocation(namedType);
 Node typeParameterTarget=result.getType() == Token.BANG ? result.getFirstChild() : result;
-Node parameters=IR.block().copyInformationFrom(type);
+Node parameters=IR.block().useSourceInfoIfMissingFrom(type);
 typeParameterTarget.addChildToFront(parameters);
 for (Node param=namedType.getNext(); param != null; param=param.getNext()) {
 parameters.addChildToBack(convertWithLocation(param));

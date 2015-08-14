@@ -14,7 +14,7 @@
     Node val=initvals.get(entry.getKey());
     Node varnode=NodeUtil.newVarNode(entry.getValue(),val);
     if (val == null) {
-      varnode.copyInformationFromForTree(vnode);
+      varnode.useSourceInfoIfMissingFromForTree(vnode);
     }
  else {
       blacklistVarReferencesInTree(val,v.scope);
@@ -42,7 +42,7 @@
       String var=getprop.getChildAtIndex(1).getString();
       Preconditions.checkState(varmap.containsKey(var));
       Node replacement=IR.name(varmap.get(var));
-      replacement.copyInformationFrom(getprop);
+      replacement.useSourceInfoIfMissingFrom(getprop);
       ref.getGrandparent().replaceChild(ref.getParent(),replacement);
     }
   }

@@ -16,7 +16,7 @@
   if (delimiter != null) {
     String template=Joiner.on(delimiter).join(strings);
     Node call=IR.call(IR.getprop(IR.string(template),IR.string("split")),IR.string("" + delimiter));
-    call.copyInformationFromForTree(n);
+    call.useSourceInfoIfMissingFromForTree(n);
     n.getParent().replaceChild(n,call);
     reportCodeChange();
     return call;

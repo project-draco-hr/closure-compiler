@@ -32,7 +32,7 @@
     Node arrayType=IR.string("Array");
     Node typeNode=type.getRoot();
     Node memberType=typeNode.getType() == Token.ELLIPSIS ? typeNode.getFirstChild().cloneNode() : typeNode.cloneNode();
-    arrayType.addChildToFront(new Node(Token.BLOCK,memberType).copyInformationFrom(typeNode));
+    arrayType.addChildToFront(new Node(Token.BLOCK,memberType).useSourceInfoIfMissingFrom(typeNode));
     JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
     builder.recordType(new JSTypeExpression(new Node(Token.BANG,arrayType),restParam.getSourceFileName()));
     name.setJSDocInfo(builder.build());

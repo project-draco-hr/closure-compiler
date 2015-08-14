@@ -6,10 +6,10 @@
     Preconditions.checkState(NodeUtil.isStatementBlock(parent));
     Node resultNode=getReplacementReturnStatement(current,resultName);
     Node breakNode=IR.breakNode(IR.labelName(labelName));
-    breakNode.copyInformationFromForTree(current);
+    breakNode.useSourceInfoIfMissingFromForTree(current);
     parent.replaceChild(current,breakNode);
     if (resultNode != null) {
-      resultNode.copyInformationFromForTree(current);
+      resultNode.useSourceInfoIfMissingFromForTree(current);
       parent.addChildBefore(resultNode,breakNode);
     }
     current=breakNode;

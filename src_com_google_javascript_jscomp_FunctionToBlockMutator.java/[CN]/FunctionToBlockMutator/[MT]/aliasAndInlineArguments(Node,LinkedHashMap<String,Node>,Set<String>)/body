@@ -16,14 +16,14 @@
           if (!value.isThis() && (referencesThis || NodeUtil.mayHaveSideEffects(value,compiler))) {
             String newName=getUniqueThisName();
             Node newValue=entry.getValue().cloneTree();
-            Node newNode=NodeUtil.newVarNode(newName,newValue).copyInformationFromForTree(newValue);
+            Node newNode=NodeUtil.newVarNode(newName,newValue).useSourceInfoIfMissingFromForTree(newValue);
             newVars.add(0,newNode);
             newArgMap.put(THIS_MARKER,IR.name(newName).srcrefTree(newValue));
           }
         }
  else {
           Node newValue=entry.getValue().cloneTree();
-          Node newNode=NodeUtil.newVarNode(name,newValue).copyInformationFromForTree(newValue);
+          Node newNode=NodeUtil.newVarNode(name,newValue).useSourceInfoIfMissingFromForTree(newValue);
           newVars.add(0,newNode);
           newArgMap.remove(name);
         }
