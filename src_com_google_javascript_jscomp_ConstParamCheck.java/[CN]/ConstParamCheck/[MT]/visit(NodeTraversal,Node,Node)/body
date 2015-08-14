@@ -5,7 +5,7 @@
     if (argument == null) {
       return;
     }
-    if (name.isName()) {
+    if (name.isName() && !name.matchesQualifiedName(CONST_FUNCTION_NAME_COLLAPSED)) {
       Scope scope=traversal.getScope();
       Var var=scope.getVar(name.getString());
       if (var == null) {
@@ -16,7 +16,7 @@
         return;
       }
     }
-    if (name.matchesQualifiedName(CONST_FUNCTION_NAME)) {
+    if (name.matchesQualifiedName(CONST_FUNCTION_NAME) || name.matchesQualifiedName(CONST_FUNCTION_NAME_COLLAPSED)) {
       checkArgumentConstant(traversal,argument);
     }
   }
