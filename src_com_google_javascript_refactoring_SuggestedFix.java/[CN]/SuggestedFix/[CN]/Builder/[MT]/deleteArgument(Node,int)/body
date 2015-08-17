@@ -1,0 +1,39 @@
+{
+  Preconditions.checkArgument(n.isCall(),"deleteArgument is only applicable to function call nodes.");
+  int numArguments=n.getChildCount() - 1;
+  Preconditions.checkState(numArguments > 0,"deleteArgument() cannot be used on a function call with no arguments");
+  Preconditions.checkArgument(position >= 0 && position < numArguments,"The specified position must be less than the number of arguments.");
+  Node argument=n.getFirstChild().getNext();
+  int startOfArgumentToRemove=-1;
+  int endOfArgumentToRemove=-1;
+  int i=0;
+  while (argument != null) {
+    if (i < position) {
+      startOfArgumentToRemove=argument.getSourceOffset() + argument.getLength();
+    }
+ else     if (i == position) {
+      if (position == 0) {
+        startOfArgumentToRemove=argument.getSourceOffset();
+        JSDocInfo jsDoc=argument.getJSDocInfo();
+        if (jsDoc != null) {
+          int jsDocPosition=jsDoc.getOriginalCommentPosition();
+          if (jsDocPosition < startOfArgumentToRemove) {
+            startOfArgumentToRemove=jsDocPosition;
+          }
+        }
+      }
+      endOfArgumentToRemove=argument.getSourceOffset() + argument.getLength();
+    }
+ else     if (i > position) {
+      if (position == 0) {
+        endOfArgumentToRemove=argument.getSourceOffset();
+      }
+      break;
+    }
+    argument=argument.getNext();
+    i++;
+  }
+  int lengthOfArgumentToRemove=endOfArgumentToRemove - startOfArgumentToRemove;
+  replacements.put(n.getSourceFileName(),new CodeReplacement(startOfArgumentToRemove,lengthOfArgumentToRemove,""));
+  return this;
+}

@@ -1,0 +1,11 @@
+{
+  String fnCall="f();";
+  Compiler compiler=getCompiler(fnCall);
+  Node root=compileToScriptRoot(compiler);
+  try {
+    new SuggestedFix.Builder().deleteArgument(root.getFirstChild().getFirstChild(),0).build();
+    fail("An exception should have been thrown for an invalid index");
+  }
+ catch (  IllegalStateException e) {
+  }
+}

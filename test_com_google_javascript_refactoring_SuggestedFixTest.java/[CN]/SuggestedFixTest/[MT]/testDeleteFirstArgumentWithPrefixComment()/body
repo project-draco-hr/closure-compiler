@@ -1,0 +1,8 @@
+{
+  String originalCode="f(/** @type {number} */ (a), b, c);";
+  String expectedCode="f(b, c);";
+  Compiler compiler=getCompiler(originalCode);
+  Node root=compileToScriptRoot(compiler);
+  SuggestedFix fix=new SuggestedFix.Builder().deleteArgument(root.getFirstChild().getFirstChild(),0).build();
+  assertChanges(fix,"",originalCode,expectedCode);
+}
