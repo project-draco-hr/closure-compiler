@@ -2,8 +2,8 @@
   Node body=function.getLastChild();
   NodeTraversal.traverse(compiler,body,this);
   if (!allPathsReturn(function)) {
-    Node call=newReportFunctionExitNode();
-    Node expr=IR.exprResult(call);
+    Node call=newReportFunctionExitNode(function);
+    Node expr=IR.exprResult(call).useSourceInfoIfMissingFromForTree(function);
     body.addChildToBack(expr);
     compiler.reportCodeChange();
   }
