@@ -1,0 +1,13 @@
+{
+  Preconditions.checkArgument(funNode.isFunction());
+  if (parent.isAssign() && parent.getFirstChild().isGetElem()) {
+    Node recv=parent.getFirstChild().getFirstChild();
+    if (recv.isGetProp() && recv.getLastChild().getString().equals("prototype")) {
+      QualifiedName qname=QualifiedName.fromNode(recv.getFirstChild());
+      if (qname != null) {
+        return this.currentScope.getNominalType(qname);
+      }
+    }
+  }
+  return null;
+}
