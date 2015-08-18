@@ -1,6 +1,5 @@
 {
   Compiler compiler=new Compiler();
-  SourceFile extern=SourceFile.fromCode("extern","");
   SourceFile input=SourceFile.fromCode("js",js);
   compiler.init(ImmutableList.<SourceFile>of(),ImmutableList.of(input),new CompilerOptions());
   compiler.options.setLanguageIn(LanguageMode.ECMASCRIPT6);
@@ -11,7 +10,7 @@
   inferConsts.process(compiler.getRoot().getFirstChild(),compiler.getRoot().getLastChild());
   Node n=compiler.getRoot().getLastChild();
   FindConstants constFinder=new FindConstants(constants);
-  NodeTraversal.traverse(compiler,n,constFinder);
+  NodeTraversal.traverseEs6(compiler,n,constFinder);
   for (  String name : constants) {
     if (constExpected) {
       assertTrue("Expect constant: " + name,constFinder.foundNodes.containsKey(name));
