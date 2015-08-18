@@ -29,14 +29,14 @@
   if (options.getLanguageIn() == LanguageMode.ECMASCRIPT6_TYPED && options.getLanguageOut() != LanguageMode.ECMASCRIPT6_TYPED) {
     checks.add(convertEs6TypedToEs6);
   }
+  if (options.generateExports && !options.skipNonTranspilationPasses) {
+    checks.add(generateExports);
+  }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     checks.add(es6RewriteArrowFunction);
     checks.add(es6RenameVariablesInParamLists);
     checks.add(es6SplitVariableDeclarations);
     checks.add(es6RewriteDestructuring);
-  }
-  if (options.generateExports && !options.skipNonTranspilationPasses) {
-    checks.add(generateExports);
   }
   if (options.exportTestFunctions && !options.skipNonTranspilationPasses) {
     checks.add(exportTestFunctions);
