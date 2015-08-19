@@ -6,9 +6,22 @@
   Preconditions.checkNotNull(input);
   ZipInputStream zip=new ZipInputStream(input);
   final String envPrefix=options.getEnvironment().toString().toLowerCase() + "/";
-  Map<String,SourceFile> externsMap=new HashMap<>();
+  ImmutableList.Builder<ZipEntry> builder=ImmutableList.builder();
   for (ZipEntry entry=null; (entry=zip.getNextEntry()) != null; ) {
-    if (entry.getName().indexOf('/') < 0 || (entry.getName().indexOf(envPrefix) == 0 && entry.getName().length() > envPrefix.length())) {
+    builder.add(entry);
+  }
+  ImmutableList<ZipEntry> zipEntries=builder.build();
+  boolean flatExternStructure=true;
+  String browserEnv=CompilerOptions.Environment.BROWSER.toString().toLowerCase();
+  for (  ZipEntry entry : zipEntries) {
+    if (entry.getName().contains(browserEnv)) {
+      flatExternStructure=false;
+      break;
+    }
+  }
+  Map<String,SourceFile> externsMap=new HashMap<>();
+  for (  ZipEntry entry : zipEntries) {
+    if (entry.getName().indexOf('/') < 0 || flatExternStructure || (entry.getName().indexOf(envPrefix) == 0 && entry.getName().length() > envPrefix.length())) {
       BufferedInputStream entryStream=new BufferedInputStream(ByteStreams.limit(zip,entry.getSize()));
       externsMap.put(entry.getName(),SourceFile.fromInputStream("externs.zip//" + entry.getName(),entryStream,UTF_8));
     }
