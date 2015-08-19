@@ -41,14 +41,14 @@
   if (options.polymerPass && !options.skipNonTranspilationPasses) {
     checks.add(polymerPass);
   }
+  if ((options.checkSuspiciousCode || options.enables(DiagnosticGroups.GLOBAL_THIS) || options.enables(DiagnosticGroups.DEBUGGER_STATEMENT_PRESENT)) && !options.skipNonTranspilationPasses) {
+    checks.add(suspiciousCode);
+  }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     checks.add(es6RewriteArrowFunction);
     checks.add(es6RenameVariablesInParamLists);
     checks.add(es6SplitVariableDeclarations);
     checks.add(es6RewriteDestructuring);
-  }
-  if ((options.checkSuspiciousCode || options.enables(DiagnosticGroups.GLOBAL_THIS) || options.enables(DiagnosticGroups.DEBUGGER_STATEMENT_PRESENT)) && !options.skipNonTranspilationPasses) {
-    checks.add(suspiciousCode);
   }
   if (options.closurePass && options.checkMissingGetCssNameLevel.isOn() && !options.skipNonTranspilationPasses) {
     checks.add(closureCheckGetCssName);
