@@ -8,7 +8,7 @@
   for (  CompilerInput input : this.moduleGraph.manageDependencies(depOptions,inputs)) {
     modules.add(modulesByInput.get(input));
   }
-  SortedDependencies<JSModule> sorter=new SortedDependencies<>(modules);
+  SortedDependencies<JSModule> sorter=depOptions.isEs6ModuleOrder() ? new Es6SortedDependencies<>(modules) : new ClosureSortedDependencies<>(modules);
   modules=sorter.getDependenciesOf(modules,true);
   JSModule firstModule=Iterables.getFirst(modules,null);
   for (int i=1; i < modules.size(); i++) {

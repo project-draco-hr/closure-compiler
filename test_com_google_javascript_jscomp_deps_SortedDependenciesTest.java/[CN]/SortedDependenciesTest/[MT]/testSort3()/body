@@ -2,11 +2,5 @@
   SimpleDependencyInfo a=new SimpleDependencyInfo("a","a",provides("a"),requires("c"),false);
   SimpleDependencyInfo b=new SimpleDependencyInfo("b","b",provides("b"),requires("a"),false);
   SimpleDependencyInfo c=new SimpleDependencyInfo("c","c",provides("c"),requires("b"),false);
-  try {
-    new SortedDependencies<>(ImmutableList.of(a,b,c));
-    fail("expected exception");
-  }
- catch (  CircularDependencyException e) {
-    assertThat(e.getMessage()).isEqualTo("c -> b -> a -> c");
-  }
+  assertOrderOrException(ImmutableList.of(a,b,c),ImmutableList.of(b,c,a),"c -> b -> a -> c");
 }

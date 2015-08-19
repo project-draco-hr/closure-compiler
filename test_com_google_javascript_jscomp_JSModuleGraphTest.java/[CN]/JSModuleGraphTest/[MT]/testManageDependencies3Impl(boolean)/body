@@ -1,0 +1,15 @@
+{
+  List<CompilerInput> inputs=setUpManageDependenciesTest();
+  DependencyOptions depOptions=new DependencyOptions();
+  depOptions.setDependencySorting(true);
+  depOptions.setDependencyPruning(true);
+  depOptions.setMoocherDropping(true);
+  depOptions.setEntryPoints(ImmutableList.of("c2"));
+  depOptions.setEs6ModuleOrder(es6ModuleOrder);
+  List<CompilerInput> results=graph.manageDependencies(depOptions,inputs);
+  assertInputs(A);
+  assertInputs(B);
+  assertInputs(C,"a1","c1","c2");
+  assertInputs(E);
+  assertEquals(ImmutableList.of("a1","c1","c2"),sourceNames(results));
+}

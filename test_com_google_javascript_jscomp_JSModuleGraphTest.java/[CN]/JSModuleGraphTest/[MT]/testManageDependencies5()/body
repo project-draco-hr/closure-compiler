@@ -1,15 +1,3 @@
 {
-  A.add(code("a2",provides("a2"),requires("a1")));
-  A.add(code("a1",provides("a1"),requires()));
-  A.add(code("base.js",BASEJS,provides(),requires()));
-  for (  CompilerInput input : A.getInputs()) {
-    input.setCompiler(compiler);
-  }
-  DependencyOptions depOptions=new DependencyOptions();
-  depOptions.setDependencySorting(true);
-  List<CompilerInput> inputs=new ArrayList<>();
-  inputs.addAll(A.getInputs());
-  List<CompilerInput> results=graph.manageDependencies(depOptions,inputs);
-  assertInputs(A,"base.js","a1","a2");
-  assertThat(sourceNames(results)).containsExactly("base.js","a1","a2").inOrder();
+  testManageDependencies5Impl(false);
 }

@@ -3,7 +3,7 @@
     input.setCompiler(compiler);
   }
   try {
-    List<CompilerInput> sortedList=(new SortedDependencies<>(Collections.unmodifiableList(inputs))).getSortedList();
+    List<CompilerInput> sortedList=(compiler.getOptions().getDependencyOptions().isEs6ModuleOrder() ? new Es6SortedDependencies<>(inputs) : new ClosureSortedDependencies<>(inputs)).getSortedList();
     inputs.clear();
     inputs.addAll(sortedList);
   }

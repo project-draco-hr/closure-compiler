@@ -1,0 +1,12 @@
+{
+  SimpleDependencyInfo a=new SimpleDependencyInfo("A","A",provides("A"),requires("C"),false);
+  SimpleDependencyInfo b=new SimpleDependencyInfo("B","B",provides("B"),requires(),false);
+  SimpleDependencyInfo c=new SimpleDependencyInfo("C","C",provides("C"),requires(),false);
+  SortedDependencies<SimpleDependencyInfo> sorted=createSortedDependencies(ImmutableList.of(a,b,c));
+  if (handlesCycles()) {
+    assertThat(sorted.getSortedList()).isEqualTo(ImmutableList.of(c,a,b));
+  }
+ else {
+    assertThat(sorted.getSortedList()).isEqualTo(ImmutableList.of(b,c,a));
+  }
+}

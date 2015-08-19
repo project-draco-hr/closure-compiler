@@ -1,0 +1,19 @@
+{
+  try {
+    SortedDependencies<SimpleDependencyInfo> sorted=createSortedDependencies(shuffle);
+    if (handlesCycles()) {
+      assertThat(sorted.getSortedList()).isEqualTo(expected);
+    }
+ else {
+      fail("expected exception");
+    }
+  }
+ catch (  CircularDependencyException e) {
+    if (handlesCycles()) {
+      fail("expected no exception");
+    }
+ else {
+      assertThat(e.getMessage()).isEqualTo(failMessage);
+    }
+  }
+}

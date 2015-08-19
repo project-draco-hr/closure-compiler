@@ -1,0 +1,23 @@
+{
+  Preconditions.checkArgument(userOrderedInputs.containsAll(rootInputs));
+  Set<INPUT> includedInputs=new HashSet<>();
+  Deque<INPUT> worklist=new ArrayDeque<>(rootInputs);
+  while (!worklist.isEmpty()) {
+    INPUT input=worklist.pop();
+    if (includedInputs.add(input)) {
+      for (      String symbolName : input.getRequires()) {
+        INPUT importedSymbolName=exportingInputBySymbolName.get(symbolName);
+        if (importedSymbolName != null) {
+          worklist.add(importedSymbolName);
+        }
+      }
+    }
+  }
+  ImmutableList.Builder<INPUT> builder=ImmutableList.builder();
+  for (  INPUT input : (sorted ? importOrderedInputs : userOrderedInputs)) {
+    if (includedInputs.contains(input)) {
+      builder.add(input);
+    }
+  }
+  return builder.build();
+}

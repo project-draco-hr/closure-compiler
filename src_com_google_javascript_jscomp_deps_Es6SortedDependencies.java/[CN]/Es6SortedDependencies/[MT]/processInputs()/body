@@ -1,0 +1,23 @@
+{
+  for (  INPUT userOrderedInput : userOrderedInputs) {
+    if (userOrderedInput.getProvides().isEmpty()) {
+      nonExportingInputs.add(userOrderedInput);
+    }
+    for (    String providedSymbolName : userOrderedInput.getProvides()) {
+      exportingInputBySymbolName.put(providedSymbolName,userOrderedInput);
+    }
+  }
+  for (  INPUT userOrderedInput : userOrderedInputs) {
+    for (    String symbolName : userOrderedInput.getRequires()) {
+      INPUT importedInput=exportingInputBySymbolName.get(symbolName);
+      if (importedInput != null) {
+        importedInputByImportingInput.put(userOrderedInput,importedInput);
+      }
+    }
+  }
+  for (  INPUT userOrderedInput : userOrderedInputs) {
+    orderInput(userOrderedInput);
+  }
+  completedInputs.clear();
+  importedInputByImportingInput.clear();
+}
