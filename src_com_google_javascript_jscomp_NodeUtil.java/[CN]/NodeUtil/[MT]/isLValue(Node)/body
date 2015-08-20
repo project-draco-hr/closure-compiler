@@ -1,8 +1,8 @@
 {
-  Preconditions.checkArgument(n.isName() || n.isGetProp() || n.isGetElem());
+  Preconditions.checkArgument(n.isName() || n.isGetProp() || n.isGetElem()|| n.isStringKey()|| n.isRest(),n);
   Node parent=n.getParent();
   if (parent == null) {
     return false;
   }
-  return (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || (NodeUtil.isForIn(parent) && parent.getFirstChild() == n) || parent.isVar()|| parent.isLet()|| parent.isConst()|| (parent.isFunction() && parent.getFirstChild() == n)|| parent.isDec()|| parent.isInc()|| parent.isParamList()|| parent.isCatch()|| isLhsByDestructuring(n);
+  return (isAssignmentOp(parent) && parent.getFirstChild() == n) || (isForIn(parent) && parent.getFirstChild() == n) || isNameDeclaration(parent)|| (parent.isFunction() && parent.getFirstChild() == n)|| parent.isRest()|| (parent.isDefaultValue() && parent.getFirstChild() == n)|| parent.isDec()|| parent.isInc()|| parent.isParamList()|| parent.isCatch()|| isLhsByDestructuring(n);
 }
