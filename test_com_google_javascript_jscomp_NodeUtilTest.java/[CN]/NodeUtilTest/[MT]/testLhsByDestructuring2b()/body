@@ -1,0 +1,29 @@
+{
+  Node root=parse("var {a: e, b: {c: f, d: g}} = obj;");
+  Node destructPat=root.getFirstChild().getFirstChild();
+  Preconditions.checkArgument(destructPat.isObjectPattern());
+  Node strKeyNodeA=destructPat.getFirstChild();
+  Node strKeyNodeB=strKeyNodeA.getNext();
+  Node strKeyNodeC=strKeyNodeB.getFirstChild().getFirstChild();
+  Node strKeyNodeD=strKeyNodeC.getNext();
+  Node nameNodeE=strKeyNodeA.getFirstChild();
+  Node nameNodeF=strKeyNodeC.getFirstChild();
+  Node nameNodeG=strKeyNodeD.getFirstChild();
+  Node nameNodeObj=strKeyNodeB.getNext();
+  Preconditions.checkState(strKeyNodeA.getString().equals("a"),strKeyNodeA);
+  Preconditions.checkState(strKeyNodeB.getString().equals("b"),strKeyNodeB);
+  Preconditions.checkState(strKeyNodeC.getString().equals("c"),strKeyNodeC);
+  Preconditions.checkState(strKeyNodeD.getString().equals("d"),strKeyNodeD);
+  Preconditions.checkState(nameNodeE.getString().equals("e"),nameNodeE);
+  Preconditions.checkState(nameNodeF.getString().equals("f"),nameNodeF);
+  Preconditions.checkState(nameNodeG.getString().equals("g"),nameNodeG);
+  Preconditions.checkState(nameNodeObj.getString().equals("obj"),nameNodeObj);
+  assertNotLhsByDestructuring(strKeyNodeA);
+  assertNotLhsByDestructuring(strKeyNodeB);
+  assertNotLhsByDestructuring(strKeyNodeC);
+  assertNotLhsByDestructuring(strKeyNodeD);
+  assertLhsByDestructuring(nameNodeE);
+  assertLhsByDestructuring(nameNodeF);
+  assertLhsByDestructuring(nameNodeG);
+  assertNotLhsByDestructuring(nameNodeObj);
+}

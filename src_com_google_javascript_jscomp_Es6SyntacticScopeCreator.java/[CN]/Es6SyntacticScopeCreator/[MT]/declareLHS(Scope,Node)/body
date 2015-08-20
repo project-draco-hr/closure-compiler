@@ -18,7 +18,7 @@
   }
  else   if (lhs.isArrayPattern() || lhs.isObjectPattern()) {
     for (Node child=lhs.getFirstChild(); child != null; child=child.getNext()) {
-      if (NodeUtil.isNameDeclaration(lhs.getParent()) && child.getNext() == null) {
+      if (NodeUtil.isNameDeclaration(lhs.getParent()) && child.getNext() == null && !lhs.getParent().getParent().isForOf()) {
         return;
       }
       declareLHS(declarationScope,child);

@@ -1,0 +1,17 @@
+{
+  Node root=parse("function fn([a, b] = [c, d]){}");
+  Node destructPat=root.getFirstChild().getFirstChild().getNext().getFirstChild().getFirstChild();
+  Preconditions.checkArgument(destructPat.isArrayPattern());
+  Node nameNodeA=destructPat.getFirstChild();
+  Node nameNodeB=destructPat.getLastChild();
+  Node nameNodeC=destructPat.getNext().getFirstChild();
+  Node nameNodeD=destructPat.getNext().getLastChild();
+  Preconditions.checkState(nameNodeA.getString().equals("a"),nameNodeA);
+  Preconditions.checkState(nameNodeB.getString().equals("b"),nameNodeB);
+  Preconditions.checkState(nameNodeC.getString().equals("c"),nameNodeC);
+  Preconditions.checkState(nameNodeD.getString().equals("d"),nameNodeD);
+  assertLhsByDestructuring(nameNodeA);
+  assertLhsByDestructuring(nameNodeB);
+  assertNotLhsByDestructuring(nameNodeC);
+  assertNotLhsByDestructuring(nameNodeD);
+}

@@ -7,7 +7,9 @@
     return false;
   }
   if (NodeUtil.isNameDeclaration(parent.getParent()) && node == parent.getLastChild()) {
-    return false;
+    if (parent.getParent().getParent() == null || !parent.getParent().getParent().isForOf()) {
+      return false;
+    }
   }
   if (parent.isDestructuringPattern() || (parent.isStringKey() && parent.getParent().isObjectPattern()) || (parent.isComputedProp() && parent.getParent().isObjectPattern() && node == parent.getLastChild())|| (parent.isDefaultValue() && node == parent.getFirstChild())) {
     return isDeclarationHelper(parent);

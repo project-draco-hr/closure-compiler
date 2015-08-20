@@ -1,0 +1,14 @@
+{
+  Node root=parse("var {a, b} = obj;");
+  Node destructPat=root.getFirstChild().getFirstChild();
+  Preconditions.checkArgument(destructPat.isObjectPattern());
+  Node strKeyNodeA=destructPat.getFirstChild();
+  Node strKeyNodeB=strKeyNodeA.getNext();
+  Node nameNodeObj=strKeyNodeB.getNext();
+  Preconditions.checkState(strKeyNodeA.getString().equals("a"),strKeyNodeA);
+  Preconditions.checkState(strKeyNodeB.getString().equals("b"),strKeyNodeB);
+  Preconditions.checkState(nameNodeObj.getString().equals("obj"),nameNodeObj);
+  assertLhsByDestructuring(strKeyNodeA);
+  assertLhsByDestructuring(strKeyNodeB);
+  assertNotLhsByDestructuring(nameNodeObj);
+}

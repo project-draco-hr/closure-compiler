@@ -1,0 +1,14 @@
+{
+  Node root=parse("for ([{a: b}] in c) {}");
+  Node destructPat=root.getFirstChild().getFirstChild().getFirstChild();
+  Preconditions.checkArgument(destructPat.isObjectPattern() && destructPat.getParent().isArrayPattern());
+  Node strKeyNodeA=destructPat.getFirstChild();
+  Node nameNodeB=strKeyNodeA.getFirstChild();
+  Node nameNodeC=destructPat.getParent().getNext();
+  Preconditions.checkState(strKeyNodeA.getString().equals("a"),strKeyNodeA);
+  Preconditions.checkState(nameNodeB.getString().equals("b"),nameNodeB);
+  Preconditions.checkState(nameNodeC.getString().equals("c"),nameNodeC);
+  assertNotLhsByDestructuring(strKeyNodeA);
+  assertLhsByDestructuring(nameNodeB);
+  assertNotLhsByDestructuring(nameNodeC);
+}

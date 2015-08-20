@@ -1,0 +1,8 @@
+{
+  Node root=parse("for (var [a] = [1];;) {}");
+  Node destructPat=root.getFirstChild().getFirstChild().getFirstChild();
+  Preconditions.checkArgument(destructPat.isArrayPattern());
+  Node nameNodeA=destructPat.getFirstChild();
+  Preconditions.checkState(nameNodeA.getString().equals("a"),nameNodeA);
+  assertLhsByDestructuring(nameNodeA);
+}

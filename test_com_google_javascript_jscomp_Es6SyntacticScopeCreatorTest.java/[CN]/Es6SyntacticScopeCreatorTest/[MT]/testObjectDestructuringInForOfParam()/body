@@ -1,0 +1,10 @@
+{
+  String js="{for (let {length: x} of gen()) {}}";
+  Node root=getRoot(js);
+  Scope globalScope=scopeCreator.createScope(root,null);
+  Node block=root.getFirstChild();
+  Scope blockScope=scopeCreator.createScope(block,globalScope);
+  Node forOf=block.getFirstChild();
+  Scope forOfScope=scopeCreator.createScope(forOf,blockScope);
+  assertTrue(forOfScope.isDeclared("x",false));
+}

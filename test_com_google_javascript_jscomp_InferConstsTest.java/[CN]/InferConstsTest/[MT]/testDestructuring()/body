@@ -1,0 +1,11 @@
+{
+  testConsts("var [a, b, c] = [1, 2, 3];","a","b","c");
+  testNotConsts("var [a, b, c] = obj;","obj");
+  testNotConsts("" + "var [a, b, c] = [1, 2, 3];" + "[a, b, c] = [1, 2, 3];","a","b","c");
+  testConsts("" + "var [a, b, c] = [1, 2, 3];" + "[a, b]= [1, 2];","c");
+  testConsts("var {a: b} = {a: 1}","b");
+  testNotConsts("var {a: b} = {a: 1}","a");
+  testConsts("var obj = {a: 1}; var {a} = obj","a");
+  testNotConsts("" + "var [{a: x} = {a: 'y'}] = [{a: 'x'}];" + "[{a: x} = {a: 'x'}] = {};","x");
+  testNotConsts("" + "let fg = '', bg = '';" + "({fg, bg}) = pal[val - 1];","fg","bg");
+}
