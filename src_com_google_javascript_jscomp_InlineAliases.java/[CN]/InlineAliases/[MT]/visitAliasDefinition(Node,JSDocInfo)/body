@@ -1,0 +1,11 @@
+{
+  if (info != null && info.hasConstAnnotation() && lhs.isQualifiedName()) {
+    Node rhs=NodeUtil.getRValueOfLValue(lhs);
+    if (rhs != null && rhs.isQualifiedName()) {
+      GlobalNamespace.Name name=namespace.getOwnSlot(rhs.getQualifiedName());
+      if (name != null && name.isInlinableGlobalAlias()) {
+        aliases.put(lhs.getQualifiedName(),rhs.getQualifiedName());
+      }
+    }
+  }
+}
