@@ -1,7 +1,11 @@
 {
-  Scope s=t.getScope();
-  if (!(s.isGlobal() || s.getDepth() == 1 && s.getRootNode() == n)) {
-    return false;
+  boolean isNotDefinedAsProperty=n.isFunction() && n.getParent().isName();
+  boolean lookingAtScopeRoot=t.getScopeRoot() == n && t.getScopeDepth() == 1;
+  if (isNotDefinedAsProperty && n.getParent().getParent().isVar()) {
+    return t.getScope().getClosestHoistScope().isGlobal() || lookingAtScopeRoot;
   }
-  return NodeUtil.isFunctionDeclaration(n) || n.isFunction() && n.getParent().isName();
+ else   if (NodeUtil.isFunctionDeclaration(n) || isNotDefinedAsProperty) {
+    return t.inGlobalScope() || lookingAtScopeRoot;
+  }
+  return false;
 }
