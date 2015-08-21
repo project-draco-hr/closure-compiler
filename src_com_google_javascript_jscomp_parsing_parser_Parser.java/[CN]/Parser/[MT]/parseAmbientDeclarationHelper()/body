@@ -1,0 +1,25 @@
+{
+  ParseTree declare;
+switch (peekType()) {
+case FUNCTION:
+    declare=parseAmbientFunctionDeclaration();
+  break;
+case CLASS:
+declare=parseClassDeclaration(true);
+break;
+case ENUM:
+declare=parseEnumDeclaration();
+break;
+case MODULE:
+declare=parseModuleDeclaration(true);
+break;
+default :
+case VAR:
+case LET:
+case CONST:
+declare=parseAmbientVariableDeclarationList();
+break;
+}
+eatPossibleImplicitSemiColon();
+return declare;
+}

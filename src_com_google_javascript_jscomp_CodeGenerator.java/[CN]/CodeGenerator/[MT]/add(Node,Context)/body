@@ -219,7 +219,7 @@ if (childCount == 2) {
 add("from");
 add(last);
 }
-cc.endStatement();
+cc.maybeEndStatement();
 break;
 case Token.IMPORT:
 add("import");
@@ -306,6 +306,9 @@ case Token.MODULE_ELEMENTS:
 cc.beginBlock();
 for (Node c=first; c != null; c=c.getNext()) {
 add(c);
+if (needsSemiColon(c)) {
+cc.endStatement(true);
+}
 cc.endLine();
 }
 cc.endBlock(false);
@@ -354,9 +357,6 @@ if (n.isMemberVariableDef()) {
 add(n.getString());
 maybeAddOptional(n);
 maybeAddTypeDecl(n);
-if (!n.getParent().isRecordType() && !n.getParent().isIndexSignature()) {
-add(";");
-}
 }
  else {
 Preconditions.checkState(childCount == 1);
@@ -381,12 +381,7 @@ addJsString(n);
 maybeAddOptional(fn);
 add(parameters);
 maybeAddTypeDecl(fn);
-if (body.isEmpty()) {
-add(";");
-}
- else {
 add(body,Context.PRESERVE_BLOCK);
-}
 }
 break;
 }
@@ -725,9 +720,6 @@ add(initializer);
  else {
 Preconditions.checkState(n.getBooleanProp(Node.COMPUTED_PROP_VARIABLE));
 }
-if (isInClass) {
-add(";");
-}
 }
 break;
 case Token.OBJECT_PATTERN:
@@ -892,19 +884,21 @@ add("type");
 add(n.getString());
 cc.addOp("=",true);
 add(last);
-cc.endStatement();
+cc.endStatement(true);
 break;
 case Token.DECLARE:
 add("declare");
 add(first);
-cc.endStatement();
+if (needsSemiColon(first)) {
+cc.endStatement(true);
+}
 break;
 case Token.INDEX_SIGNATURE:
 add("[");
 add(first);
 add("]");
 maybeAddTypeDecl(n);
-add(";");
+cc.endStatement(true);
 break;
 case Token.CALL_SIGNATURE:
 if (n.getBooleanProp(Node.CONSTRUCT_SIGNATURE)) {
@@ -913,7 +907,7 @@ add("new ");
 maybeAddGenericTypes(n);
 add(first);
 maybeAddTypeDecl(n);
-add(";");
+cc.endStatement(true);
 break;
 default :
 throw new RuntimeException("Unknown type " + Token.name(type) + "\n"+ n.toStringTree());

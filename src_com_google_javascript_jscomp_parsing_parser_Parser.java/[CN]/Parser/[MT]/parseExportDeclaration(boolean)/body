@@ -12,10 +12,22 @@ case STAR:
   nextToken();
 break;
 case FUNCTION:
-export=parseFunctionDeclaration();
+export=isAmbient ? parseAmbientFunctionDeclaration() : parseFunctionDeclaration();
 break;
 case CLASS:
-export=parseClassDeclaration(false);
+export=parseClassDeclaration(isAmbient);
+break;
+case INTERFACE:
+export=parseInterfaceDeclaration();
+break;
+case ENUM:
+export=parseEnumDeclaration();
+break;
+case MODULE:
+export=parseModuleDeclaration(isAmbient);
+break;
+case DECLARE:
+export=parseAmbientDeclaration();
 break;
 case DEFAULT:
 isDefault=true;
@@ -26,11 +38,14 @@ case OPEN_CURLY:
 isExportSpecifier=true;
 exportSpecifierList=parseExportSpecifierSet();
 break;
+case TYPE:
+export=parseTypeAlias();
+break;
 default :
 case VAR:
 case LET:
 case CONST:
-export=parseVariableDeclarationList();
+export=isAmbient ? parseAmbientVariableDeclarationList() : parseVariableDeclarationList();
 break;
 }
 LiteralToken moduleSpecifier=null;

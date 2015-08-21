@@ -1,32 +1,6 @@
 {
   SourcePosition start=getTreeStartLocation();
   eat(TokenType.DECLARE);
-  ParseTree declare;
-switch (peekType()) {
-case FUNCTION:
-    declare=parseAmbientFunctionDeclaration();
-  break;
-case CLASS:
-declare=parseClassDeclaration(true);
-break;
-case ENUM:
-declare=parseEnumDeclaration();
-break;
-case MODULE:
-declare=parseModuleDeclaration();
-break;
-default :
-case VAR:
-case LET:
-case CONST:
-declare=parseVariableDeclarationListNoIn();
-for (VariableDeclarationTree tree : declare.asVariableDeclarationList().declarations) {
-if (tree.initializer != null) {
-reportError("Ambient variable declaration may not have initializer");
-}
-}
-break;
-}
-eatPossibleImplicitSemiColon();
-return new AmbientDeclarationTree(getTreeLocation(start),declare);
+  ParseTree declare=parseAmbientDeclarationHelper();
+  return new AmbientDeclarationTree(getTreeLocation(start),declare);
 }
