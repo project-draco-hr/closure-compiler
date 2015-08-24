@@ -2,6 +2,9 @@
   List<PassFactory> checks=new ArrayList<>();
   checks.add(createEmptyPass("beforeStandardChecks"));
   checks.add(checkJsDoc);
+  if (!options.skipNonTranspilationPasses && options.closurePass && options.enables(DiagnosticGroups.LINT_CHECKS)) {
+    checks.add(checkRequiresAndProvidesSorted);
+  }
   if (options.closurePass) {
     checks.add(closureRewriteModule);
   }
