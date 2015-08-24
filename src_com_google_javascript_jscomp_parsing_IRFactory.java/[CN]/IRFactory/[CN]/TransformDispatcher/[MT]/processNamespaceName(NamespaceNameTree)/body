@@ -1,0 +1,20 @@
+{
+  ImmutableList<String> segments=name.segments;
+  if (segments.size() == 1) {
+    Node namespaceName=newStringNode(Token.NAME,segments.get(0));
+    setSourceInfo(namespaceName,name);
+    return namespaceName;
+  }
+ else {
+    Iterator<String> segmentsIt=segments.iterator();
+    Node node=IR.name(segmentsIt.next());
+    setSourceInfo(node,name);
+    while (segmentsIt.hasNext()) {
+      Node string=newStringNode(Token.STRING,segmentsIt.next());
+      setSourceInfo(string,name);
+      node=newNode(Token.GETPROP,node,string);
+      setSourceInfo(node,name);
+    }
+    return node;
+  }
+}

@@ -1,0 +1,10 @@
+{
+  maybeWarnTypeSyntax(tree,"namespace declaration");
+  Node name=processNamespaceName(tree.name);
+  Node body=newNode(Token.NAMESPACE_ELEMENTS);
+  setSourceInfo(body,tree);
+  for (  ParseTree child : tree.elements) {
+    body.addChildToBack(transform(child));
+  }
+  return newNode(Token.NAMESPACE,name,body);
+}

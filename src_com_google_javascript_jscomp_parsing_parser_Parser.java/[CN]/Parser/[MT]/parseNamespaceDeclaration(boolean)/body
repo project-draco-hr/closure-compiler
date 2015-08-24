@@ -1,0 +1,11 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  if (eatOpt(TokenType.MODULE) == null) {
+    eat(TokenType.NAMESPACE);
+  }
+  NamespaceNameTree name=parseNamespaceName();
+  eat(TokenType.OPEN_CURLY);
+  ImmutableList<ParseTree> elements=isAmbient ? parseAmbientNamespaceElements() : parseNamespaceElements();
+  eat(TokenType.CLOSE_CURLY);
+  return new NamespaceDeclarationTree(getTreeLocation(start),name,elements);
+}
