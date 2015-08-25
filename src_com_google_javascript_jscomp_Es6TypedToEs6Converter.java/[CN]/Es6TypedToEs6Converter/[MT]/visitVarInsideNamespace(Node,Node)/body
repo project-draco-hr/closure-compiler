@@ -1,0 +1,19 @@
+{
+  if (currNamespace != null) {
+    Node insertPoint=n;
+    for (    Node child : n.children()) {
+      Node name=child;
+      String oldName=name.getString();
+      String qName=maybePrependCurrNamespace(oldName);
+      JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(child.getJSDocInfo());
+      if (n.isConst()) {
+        builder.recordConstancy();
+      }
+      Node newDec=NodeUtil.newQNameDeclaration(compiler,qName,child.removeFirstChild(),builder.build()).useSourceInfoFromForTree(n);
+      parent.addChildAfter(newDec,insertPoint);
+      insertPoint=newDec;
+    }
+    n.detachFromParent();
+    compiler.reportCodeChange();
+  }
+}

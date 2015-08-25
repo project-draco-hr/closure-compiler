@@ -3,10 +3,10 @@
   if (t.getScope().isDeclared(alias,true)) {
     compiler.report(JSError.make(n,TYPE_ALIAS_ALREADY_DECLARED,alias));
   }
-  Node var=IR.var(IR.name(n.getString())).useSourceInfoFromForTree(n);
-  JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
   builder.recordTypedef(new JSTypeExpression(convertWithLocation(n.getFirstChild()),n.getSourceFileName()));
-  var.setJSDocInfo(builder.build());
-  parent.replaceChild(n,var);
+  Node newName=maybeGetQualifiedNameNode(IR.name(n.getString())).useSourceInfoIfMissingFromForTree(n);
+  Node newDec1=NodeUtil.newQNameDeclaration(compiler,newName.getQualifiedName(),null,builder.build()).useSourceInfoFromForTree(n);
+  parent.replaceChild(n,newDec1);
   compiler.reportCodeChange();
 }

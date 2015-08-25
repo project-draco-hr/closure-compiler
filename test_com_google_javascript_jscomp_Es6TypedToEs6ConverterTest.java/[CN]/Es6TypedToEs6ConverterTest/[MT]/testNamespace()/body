@@ -1,0 +1,21 @@
+{
+  test("namespace foo { var i, j, k; }","/** @const */ var foo = {}; foo.i; foo.j; foo.k;");
+  test("namespace foo { let i, j, k; }","/** @const */ var foo = {}; foo.i; foo.j; foo.k;");
+  test("namespace foo { const i = 3; }","/** @const */ var foo = {}; /** @const */ foo.i = 3;");
+  test("namespace foo { function f() {} }","/** @const */ var foo = {}; foo.f = function() {};");
+  test("namespace foo { interface I {} }","/** @const */ var foo = {}; /** @interface */ foo.I = class {};");
+  test("namespace foo { interface I {} class C implements I, J {} }",LINE_JOINER.join("/** @const */ var foo = {};","/** @interface */ foo.I = class {};","/** @implements {foo.I} @implements {J} */ foo.C = class {}"));
+  test("namespace foo { class A {} class B extends A {} }",LINE_JOINER.join("/** @const */ var foo = {};","foo.A = class {};","foo.B = class extends foo.A {}"));
+  test("namespace foo { class C {} var x: C; }","/** @const */ var foo = {}; foo.C = class {}; /** @type {!foo.C} */ foo.x;");
+  test("namespace foo { interface J {} interface I extends J {} }",LINE_JOINER.join("/** @const */ var foo = {}; /** @interface */ foo.J = class {};","/** @interface @extends {foo.J} */ foo.I = class {};"));
+  test("namespace foo { interface J {} namespace bar { interface I extends J {} } }",LINE_JOINER.join("/** @const */ var foo = {}; /** @interface */ foo.J = class {};","/** @const */ foo.bar = {};","/** @interface @extends {foo.J} */ foo.bar.I = class {};"));
+  test("namespace foo { enum E {} }","/** @const */ var foo = {}; /** @enum */ foo.E = {};");
+  test("namespace foo { type Bar = number; }","/** @const */ var foo = {}; /** @typedef{number} */ foo.Bar;");
+  test("namespace foo.bar {}","/** @const */ var foo = {}; /** @const */ foo.bar = {};");
+  test("namespace foo.bar { namespace foo.bar {} }",LINE_JOINER.join("/** @const */ var foo = {}; /** @const */ foo.bar = {};","/** @const */ foo.bar.foo = {}; /** @const */ foo.bar.foo.bar = {};"));
+  test("namespace foo { namespace baw {} } namespace foo { namespace baz {} }","/** @const */ var foo = {}; /** @const */ foo.baw = {}; /** @const */ foo.baz = {};");
+  test("namespace foo { var x; } namespace foo { var y; }","/** @const */ var foo = {}; foo.x; foo.y;");
+  test("namespace foo { var x: Bar; } namespace foo { class Bar {} }","/** @const */ var foo = {}; /** @type {!foo.Bar} */ foo.x; foo.Bar = class {};");
+  test("namespace foo {} var x;","/** @const */ var foo = {}; var x;");
+  test("namespace foo.bar {} var x;","/** @const */ var foo = {}; /** @const */ foo.bar = {}; var x;");
+}

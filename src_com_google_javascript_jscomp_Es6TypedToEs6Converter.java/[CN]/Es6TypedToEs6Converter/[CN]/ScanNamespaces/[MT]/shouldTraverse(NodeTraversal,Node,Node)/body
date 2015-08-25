@@ -1,0 +1,36 @@
+{
+switch (n.getType()) {
+case Token.SCRIPT:
+case Token.NAMESPACE_ELEMENTS:
+    return true;
+case Token.BLOCK:
+  return n.getFirstChild() != null && n.getFirstChild().isScript();
+case Token.DECLARE:
+return n.getFirstChild().getType() == Token.NAMESPACE;
+case Token.NAMESPACE:
+String[] segments=n.getFirstChild().getQualifiedName().split("\\.");
+for (String s : segments) {
+String currName=maybePrependCurrNamespace(s);
+if (!namespaces.containsKey(currName)) {
+currNamespace=new Namespace(currName,currNamespace);
+namespaces.put(currName,currNamespace);
+}
+currNamespace=namespaces.get(currName);
+}
+nodeNamespaceMap.put(n,currNamespace);
+return true;
+case Token.CLASS:
+case Token.INTERFACE:
+case Token.ENUM:
+if (currNamespace != null) {
+currNamespace.typeNames.add(n.getFirstChild().getString());
+}
+return true;
+case Token.TYPE_ALIAS:
+if (currNamespace != null) {
+currNamespace.typeNames.add(n.getString());
+}
+return true;
+}
+return false;
+}

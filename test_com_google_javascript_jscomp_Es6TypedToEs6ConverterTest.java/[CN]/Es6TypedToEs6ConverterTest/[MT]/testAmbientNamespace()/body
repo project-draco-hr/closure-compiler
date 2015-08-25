@@ -1,0 +1,17 @@
+{
+  enableCompareAsTree(false);
+  testExternChanges("declare namespace foo { var i, j, k; }","/** @const */ var foo = {}; foo.i; foo.j; foo.k;");
+  testExternChanges("declare namespace foo { let i, j, k; }","/** @const */ var foo = {}; foo.i; foo.j; foo.k;");
+  testExternChanges("declare namespace foo { function f(); }","/** @const */ var foo = {}; foo.f = function() {};");
+  testExternChanges("declare namespace foo { interface I {} }","/** @const */ var foo = {}; /** @interface */ foo.I = class {};");
+  testExternChanges("declare namespace foo { interface I {} class C implements I {} }",LINE_JOINER.join("/** @const */ var foo = {};","/** @interface */ foo.I = class {};","/** @implements {foo.I} */ foo.C = class {}"));
+  testExternChanges("declare namespace foo { class A {} class B extends A {} }",LINE_JOINER.join("/** @const */ var foo = {};","foo.A = class {};","foo.B = class extends foo.A {};"));
+  testExternChanges("declare namespace foo { class C {} var x: C; }",LINE_JOINER.join("/** @const */ var foo = {};","foo.C = class {};","/** @type {!foo.C} */ foo.x;"));
+  testExternChanges("declare namespace foo { interface J {} interface I extends J {} }",LINE_JOINER.join("/** @const */ var foo = {};","/** @interface */ foo.J = class {};","/** @interface @extends {foo.J} */ foo.I = class {};"));
+  testExternChanges("declare namespace foo { enum E {} }","/** @const */ var foo = {}; /** @enum */ foo.E = {};");
+  testExternChanges("declare namespace foo.bar {}","/** @const */ var foo = {}; /** @const */ foo.bar = {};");
+  testExternChanges("declare namespace foo { module baw {} } declare namespace foo { module baz {} }",LINE_JOINER.join("/** @const */ var foo = {};","/** @const */ foo.baw = {}; /** @const */ foo.baz = {};"));
+  testExternChanges("declare namespace foo { var x: Bar; } declare namespace foo { class Bar {} }","/** @const */ var foo = {}; /** @type {!foo.Bar} */ foo.x; foo.Bar = class {};");
+  testExternChanges("declare namespace foo {} declare var x;","/** @const */ var foo = {}; var x;");
+  testExternChanges("declare namespace foo.bar {} declare var x;","/** @const */ var foo = {}; /** @const */ foo.bar = {}; var x;");
+}

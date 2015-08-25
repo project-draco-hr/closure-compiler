@@ -1,0 +1,21 @@
+{
+  popNamespace(n,parent);
+  for (Node name=NodeUtil.getRootOfQualifiedName(n.getFirstChild()); name != n; name=name.getParent()) {
+    String fullName=maybePrependCurrNamespace(name.getQualifiedName());
+    if (!convertedNamespaces.contains(fullName)) {
+      JSDocInfoBuilder doc=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
+      doc.recordConstancy();
+      Node namespaceDec=NodeUtil.newQNameDeclaration(compiler,fullName,IR.objectlit(),doc.build()).useSourceInfoFromForTree(n);
+      parent.addChildBefore(namespaceDec,n);
+      convertedNamespaces.add(fullName);
+    }
+  }
+  Node insertPoint=n;
+  for (  Node child : n.getLastChild().children()) {
+    Node detached=child.detachFromParent();
+    parent.addChildAfter(detached,insertPoint);
+    insertPoint=detached;
+  }
+  parent.removeChild(n);
+  compiler.reportCodeChange();
+}

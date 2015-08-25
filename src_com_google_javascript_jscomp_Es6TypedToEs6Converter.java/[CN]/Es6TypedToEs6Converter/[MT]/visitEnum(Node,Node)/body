@@ -16,12 +16,12 @@
   for (  Node child : stringKeys) {
     child.detachFromParent();
   }
-  Node var=IR.var(name.detachFromParent());
-  Node objectlit=IR.objectlit(stringKeys);
-  name.addChildToFront(objectlit);
-  JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+  String oldName=name.getString();
+  String qName=maybePrependCurrNamespace(oldName);
+  JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
   builder.recordEnumParameterType(new JSTypeExpression(IR.string("number"),n.getSourceFileName()));
-  var.setJSDocInfo(builder.build());
-  parent.replaceChild(n,var.useSourceInfoIfMissingFromForTree(n));
+  Node newDec=NodeUtil.newQNameDeclaration(compiler,qName,IR.objectlit(stringKeys),builder.build()).useSourceInfoFromForTree(n);
+  n.setJSDocInfo(null);
+  parent.replaceChild(n,newDec);
   compiler.reportCodeChange();
 }

@@ -1,0 +1,16 @@
+{
+  if (currNamespace != null) {
+    Node name=n.getFirstChild();
+    String oldName=name.getString();
+    String qName=maybePrependCurrNamespace(oldName);
+    Node newName=n.isFunction() ? IR.name("") : IR.empty();
+    newName.useSourceInfoFrom(n);
+    n.replaceChild(name,newName);
+    Node placeHolder=IR.empty();
+    parent.replaceChild(n,placeHolder);
+    Node newDec=NodeUtil.newQNameDeclaration(compiler,qName,n,n.getJSDocInfo()).useSourceInfoFromForTree(n);
+    n.setJSDocInfo(null);
+    parent.replaceChild(placeHolder,newDec);
+    compiler.reportCodeChange();
+  }
+}

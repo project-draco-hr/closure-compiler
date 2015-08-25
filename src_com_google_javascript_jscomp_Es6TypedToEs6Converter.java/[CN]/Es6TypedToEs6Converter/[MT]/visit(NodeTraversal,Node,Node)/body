@@ -1,12 +1,10 @@
 {
 switch (n.getType()) {
 case Token.CLASS:
-    maybeAddGenerics(n,n);
-  visitClass(n,parent);
-break;
+    visitClass(n,parent);
+  break;
 case Token.INTERFACE:
-maybeAddGenerics(n,n);
-visitInterface(n);
+visitInterface(n,parent);
 break;
 case Token.ENUM:
 visitEnum(n,parent);
@@ -16,15 +14,21 @@ case Token.REST:
 maybeVisitColonType(n,n);
 break;
 case Token.FUNCTION:
-Node jsDocNode=parent.getType() == Token.MEMBER_FUNCTION_DEF ? parent : n;
-maybeAddGenerics(n,jsDocNode);
-maybeVisitColonType(n,jsDocNode);
+visitFunction(n,parent);
 break;
 case Token.TYPE_ALIAS:
 visitTypeAlias(t,n,parent);
 break;
 case Token.DECLARE:
 visitAmbientDeclaration(n);
+break;
+case Token.NAMESPACE:
+visitNamespaceDeclaration(n,parent);
+break;
+case Token.VAR:
+case Token.LET:
+case Token.CONST:
+visitVarInsideNamespace(n,parent);
 break;
 default :
 }

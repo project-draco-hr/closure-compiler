@@ -1,9 +1,11 @@
 {
   enableCompareAsTree(false);
   testExternChanges("declare var x: number;","var /** number */ x;");
-  testExternChanges("declare let x;","var x;");
+  testExternChanges("declare let x;","let x;");
   testExternChanges("declare const x;","/** @const */ var x;");
   testExternChanges("declare function f(): number;","/** @return {number} */ function f() {}");
   testExternChanges("declare enum Foo {}","/** @enum {number} */ var Foo = {}");
   testExternChanges("declare class C { constructor(); };","class C { constructor() {} }");
+  testExternChanges("declare module foo {}","/** @const */ var foo = {};");
+  testExternChanges("declare namespace foo {}","/** @const */ var foo = {};");
 }

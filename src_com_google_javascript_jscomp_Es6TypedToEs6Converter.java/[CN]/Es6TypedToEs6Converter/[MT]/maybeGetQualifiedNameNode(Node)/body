@@ -1,0 +1,11 @@
+{
+  if (oldNameNode.isName()) {
+    String oldName=oldNameNode.getString();
+    for (Namespace definitionNamespace=currNamespace; definitionNamespace != null; definitionNamespace=definitionNamespace.parent) {
+      if (definitionNamespace.typeNames.contains(oldName)) {
+        return NodeUtil.newQName(compiler,definitionNamespace.name + "." + oldName).useSourceInfoFromForTree(oldNameNode);
+      }
+    }
+  }
+  return oldNameNode;
+}
