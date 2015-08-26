@@ -1,5 +1,5 @@
 {
-  if (specializedType.isTruthy() || specializedType.isFalsy()) {
+  if (specializedType.isTrueOrTruthy() || specializedType.isFalseOrFalsy()) {
     if (lhs.isTypeOf()) {
       return analyzeSpecializedTypeof(lhs,rhs,comparisonOp,inEnv,specializedType);
     }
@@ -16,12 +16,12 @@
   EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv);
   EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env);
   TypeEnv preciseEnv=rhsPair.env;
-  if ((comparisonOp == Token.SHEQ && specializedType.isTruthy()) || (comparisonOp == Token.SHNE && specializedType.isFalsy())) {
+  if ((comparisonOp == Token.SHEQ && specializedType.isTrueOrTruthy()) || (comparisonOp == Token.SHNE && specializedType.isFalseOrFalsy())) {
     JSType meetType=JSType.meet(lhsPair.type,rhsPair.type);
     lhsPair=analyzeExprFwd(lhs,preciseEnv,JSType.UNKNOWN,meetType);
     rhsPair=analyzeExprFwd(rhs,lhsPair.env,JSType.UNKNOWN,meetType);
   }
- else   if ((comparisonOp == Token.SHEQ && specializedType.isFalsy()) || (comparisonOp == Token.SHNE && specializedType.isTruthy())) {
+ else   if ((comparisonOp == Token.SHEQ && specializedType.isFalseOrFalsy()) || (comparisonOp == Token.SHNE && specializedType.isTrueOrTruthy())) {
     JSType lhsType=lhsPair.type;
     JSType rhsType=rhsPair.type;
     if (lhsType.isNullOrUndef()) {

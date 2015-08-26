@@ -13,12 +13,12 @@
   if (!ctorType.isUnknown() && (!ctorType.isSubtypeOf(commonTypes.topFunction()) || !ctorFunType.isQmarkFunction() && !ctorFunType.isConstructor())) {
     warnInvalidOperand(ctor,Token.INSTANCEOF,"a constructor function",ctorType);
   }
-  if (ctorFunType == null || !ctorFunType.isConstructor() || (!specializedType.isTruthy() && !specializedType.isFalsy())) {
+  if (ctorFunType == null || !ctorFunType.isConstructor() || (!specializedType.isTrueOrTruthy() && !specializedType.isFalseOrFalsy())) {
     ctorPair.type=JSType.BOOLEAN;
     return ctorPair;
   }
   JSType instanceType=ctorFunType.getInstanceTypeOfCtor();
-  JSType instanceSpecType=specializedType.isTruthy() ? objPair.type.specialize(instanceType) : objPair.type.removeType(instanceType);
+  JSType instanceSpecType=specializedType.isTrueOrTruthy() ? objPair.type.specialize(instanceType) : objPair.type.removeType(instanceType);
   if (!instanceSpecType.isBottom()) {
     objPair=analyzeExprFwd(obj,inEnv,JSType.UNKNOWN,instanceSpecType);
     ctorPair=analyzeExprFwd(ctor,objPair.env,commonTypes.topFunction());

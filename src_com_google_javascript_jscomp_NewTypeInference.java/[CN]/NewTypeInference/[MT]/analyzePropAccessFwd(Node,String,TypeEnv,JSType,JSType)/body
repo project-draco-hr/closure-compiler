@@ -4,11 +4,11 @@
   EnvTypePair pair;
   JSType reqObjType=pickReqObjType(propAccessNode).withLoose();
   JSType recvReqType, recvSpecType;
-  if (specializedType.isTruthy()) {
+  if (specializedType.isTrueOrTruthy()) {
     recvReqType=reqObjType;
     recvSpecType=reqObjType.withProperty(propQname,specializedType);
   }
- else   if (specializedType.isFalsy()) {
+ else   if (specializedType.isFalseOrFalsy()) {
     recvReqType=recvSpecType=reqObjType;
   }
  else {
@@ -50,7 +50,7 @@
     warnings.add(JSError.make(propAccessNode,BOTTOM_PROP,pname,recvType.toString()));
     return new EnvTypePair(pair.env,JSType.UNKNOWN);
   }
-  if (!propAccessNode.getParent().isExprResult() && !specializedType.isTruthy() && !specializedType.isFalsy()&& !recvType.mayBeDict()&& !mayWarnAboutInexistentProp(propAccessNode,recvType,propQname)&& recvType.hasProp(propQname)&& !resultType.isSubtypeOf(requiredType)&& tightenTypeAndDontWarn(receiver.isName() ? receiver.getString() : null,receiver,recvType.getDeclaredProp(propQname),resultType,requiredType)) {
+  if (!propAccessNode.getParent().isExprResult() && !specializedType.isTrueOrTruthy() && !specializedType.isFalseOrFalsy()&& !recvType.mayBeDict()&& !mayWarnAboutInexistentProp(propAccessNode,recvType,propQname)&& recvType.hasProp(propQname)&& !resultType.isSubtypeOf(requiredType)&& tightenTypeAndDontWarn(receiver.isName() ? receiver.getString() : null,receiver,recvType.getDeclaredProp(propQname),resultType,requiredType)) {
     resultType=resultType.specialize(requiredType);
     LValueResultFwd lvr=analyzeLValueFwd(propAccessNode,inEnv,resultType);
     TypeEnv updatedEnv=updateLvalueTypeInEnv(lvr.env,propAccessNode,lvr.ptr,resultType);

@@ -2,7 +2,7 @@
   int tokenType=expr.getType();
   Node lhs=expr.getFirstChild();
   Node rhs=expr.getLastChild();
-  if (specializedType.isTruthy() || specializedType.isFalsy()) {
+  if (specializedType.isTrueOrTruthy() || specializedType.isFalseOrFalsy()) {
     if (lhs.isTypeOf()) {
       return analyzeSpecializedTypeof(lhs,rhs,tokenType,inEnv,specializedType);
     }
@@ -21,7 +21,7 @@
   TypeEnv preciseEnv=rhsPair.env;
   JSType lhsType=lhsPair.type;
   JSType rhsType=rhsPair.type;
-  if (tokenType == Token.EQ && specializedType.isTruthy() || tokenType == Token.NE && specializedType.isFalsy()) {
+  if (tokenType == Token.EQ && specializedType.isTrueOrTruthy() || tokenType == Token.NE && specializedType.isFalseOrFalsy()) {
     if (lhsType.isNullOrUndef()) {
       rhsPair=analyzeExprFwd(rhs,preciseEnv,JSType.UNKNOWN,JSType.NULL_OR_UNDEF);
     }
@@ -39,7 +39,7 @@
       rhsPair=analyzeExprFwd(rhs,lhsPair.env);
     }
   }
- else   if (tokenType == Token.EQ && specializedType.isFalsy() || tokenType == Token.NE && specializedType.isTruthy()) {
+ else   if (tokenType == Token.EQ && specializedType.isFalseOrFalsy() || tokenType == Token.NE && specializedType.isTrueOrTruthy()) {
     if (lhsType.isNullOrUndef()) {
       rhsType=rhsType.removeType(JSType.NULL_OR_UNDEF);
       rhsPair=analyzeExprFwd(rhs,preciseEnv,JSType.UNKNOWN,rhsType);

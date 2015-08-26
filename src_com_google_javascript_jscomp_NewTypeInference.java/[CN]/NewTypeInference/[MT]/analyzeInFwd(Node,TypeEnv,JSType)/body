@@ -21,11 +21,11 @@
   JSType resultType=JSType.BOOLEAN;
   if (lhs.isString()) {
     QualifiedName pname=new QualifiedName(lhs.getString());
-    if (specializedType.isTruthy()) {
+    if (specializedType.isTrueOrTruthy()) {
       pair=analyzeExprFwd(rhs,inEnv,reqObjType,reqObjType.withPropertyRequired(pname.getLeftmostName()));
       resultType=JSType.TRUE_TYPE;
     }
- else     if (specializedType.isFalsy()) {
+ else     if (specializedType.isFalseOrFalsy()) {
       pair=analyzeExprFwd(rhs,inEnv,reqObjType);
       pair=analyzeExprFwd(rhs,inEnv,reqObjType,pair.type.withoutProperty(pname));
       resultType=JSType.FALSE_TYPE;

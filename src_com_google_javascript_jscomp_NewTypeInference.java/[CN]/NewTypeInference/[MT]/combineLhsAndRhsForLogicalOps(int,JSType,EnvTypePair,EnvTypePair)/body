@@ -1,0 +1,19 @@
+{
+  if (logicalOp == Token.OR) {
+    if (lhsUnspecializedType.isAnyTruthyType()) {
+      return lhsPair;
+    }
+    if (lhsUnspecializedType.isAnyFalsyType()) {
+      return rhsPair;
+    }
+    return EnvTypePair.join(lhsPair,rhsPair);
+  }
+  Preconditions.checkState(logicalOp == Token.AND);
+  if (lhsUnspecializedType.isAnyFalsyType()) {
+    return lhsPair;
+  }
+  if (lhsUnspecializedType.isAnyTruthyType()) {
+    return rhsPair;
+  }
+  return EnvTypePair.join(lhsPair,rhsPair);
+}

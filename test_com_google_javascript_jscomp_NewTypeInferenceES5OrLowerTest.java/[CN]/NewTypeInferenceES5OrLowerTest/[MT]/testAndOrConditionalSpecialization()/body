@@ -11,4 +11,9 @@
   typeCheck(Joiner.on('\n').join("function f(/** (number|string|null) */ x) {","  typeof x === 'string' && x;","  x < 'asdf';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(Joiner.on('\n').join("function f(/** (null|number) */ x, /** (null|number) */ y) {","  if (x == y) {","    return x - 1;","  }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(Joiner.on('\n').join("function f(/** (null|number) */ x, /** (null|number) */ y) {","  if (x == y) {","    return y - 1;","  }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck("var /** boolean */ x = true || 123;");
+  typeCheck("var /** number */ x = undefined || 123;");
+  typeCheck("var /** null */ x = null && 123;");
+  typeCheck("var /** number */ x = { a: 1 } && 123;");
+  typeCheck(Joiner.on('\n').join("function f(/** Object|undefined */ opt_obj) {","  var x = opt_obj && 'asdf';","  if (opt_obj && x in opt_obj) {}","}"),NewTypeInference.INVALID_OPERAND_TYPE);
 }
