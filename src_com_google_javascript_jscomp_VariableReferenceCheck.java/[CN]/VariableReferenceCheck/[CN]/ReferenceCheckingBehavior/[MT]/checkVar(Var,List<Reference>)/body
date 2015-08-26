@@ -2,7 +2,10 @@
   blocksWithDeclarations.clear();
   boolean isDeclaredInScope=false;
   boolean isUnhoistedNamedFunction=false;
+  boolean hasErrors=false;
+  boolean isRead=false;
   Reference hoistedFn=null;
+  Reference unusedAssignment=null;
   for (  Reference reference : references) {
     if (reference.isHoistedFunction()) {
       blocksWithDeclarations.add(reference.getBasicBlock());
@@ -21,6 +24,7 @@
     BasicBlock basicBlock=reference.getBasicBlock();
     boolean isDeclaration=reference.isDeclaration();
     Node referenceNode=reference.getNode();
+    boolean isAssignment=isDeclaration || reference.isLvalue();
     boolean allowDupe=VarCheck.hasDuplicateDeclarationSuppression(referenceNode,v);
     boolean letConstShadowsVar=v.getParentNode().isVar() && (reference.isLetDeclaration() || reference.isConstDeclaration());
     boolean shadowCatchVar=compiler.getLanguageMode().isEs6OrHigher() && v.getParentNode().isCatch() && reference.isDeclaration()&& reference.getNode() != v.getNode();
@@ -40,6 +44,7 @@
             diagnosticType=REDECLARED_VARIABLE;
           }
           compiler.report(JSError.make(referenceNode,diagnosticType,v.name));
+          hasErrors=true;
           break;
         }
       }
@@ -47,10 +52,22 @@
     if (!shadowDetected && isDeclaration && (letConstShadowsVar || shadowCatchVar)&& v.getScope() == reference.getScope()) {
       compiler.report(JSError.make(referenceNode,REDECLARED_VARIABLE_ERROR,v.name));
     }
+    if (isAssignment) {
+      Reference decl=references.get(0);
+      Node declNode=decl.getNode();
+      boolean lhsOfForInLoop=(NodeUtil.isForIn(declNode.getParent()) && declNode == declNode.getParent().getFirstChild()) || (NodeUtil.isForIn(declNode.getParent().getParent()) && declNode.getParent().getParent().getFirstChild().getFirstChild() == declNode);
+      if (decl.getScope().isLocal() && (decl.isVarDeclaration() || decl.isLetDeclaration() || decl.isConstDeclaration()) && !decl.getNode().isFromExterns()&& !lhsOfForInLoop) {
+        unusedAssignment=reference;
+      }
+    }
+ else {
+      isRead=true;
+    }
     if (isUnhoistedNamedFunction && !isDeclaration && isDeclaredInScope) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
         if (!declaredBlock.provablyExecutesBefore(basicBlock)) {
           compiler.report(JSError.make(referenceNode,AMBIGUOUS_FUNCTION_DECL,v.name));
+          hasErrors=true;
           break;
         }
       }
@@ -65,6 +82,7 @@
         if (reference.getScope() == v.scope && !v.getName().equals("goog")) {
           isUndeclaredReference=true;
           compiler.report(JSError.make(reference.getNode(),(v.isLet() || v.isConst() || v.isClass()|| v.isParam()) ? EARLY_REFERENCE_ERROR : EARLY_REFERENCE,v.name));
+          hasErrors=true;
         }
       }
     }
@@ -78,5 +96,8 @@
       blocksWithDeclarations.add(basicBlock);
       isDeclaredInScope=true;
     }
+  }
+  if (unusedAssignment != null && !isRead && !hasErrors) {
+    compiler.report(JSError.make(unusedAssignment.getNode(),UNUSED_LOCAL_ASSIGNMENT,v.name));
   }
 }
