@@ -27,17 +27,18 @@
     boolean isAssignment=isDeclaration || reference.isLvalue();
     boolean allowDupe=VarCheck.hasDuplicateDeclarationSuppression(referenceNode,v);
     boolean letConstShadowsVar=v.getParentNode().isVar() && (reference.isLetDeclaration() || reference.isConstDeclaration());
-    boolean shadowCatchVar=compiler.getLanguageMode().isEs6OrHigher() && v.getParentNode().isCatch() && reference.isDeclaration()&& reference.getNode() != v.getNode();
+    boolean shadowCatchVar=isDeclaration && compiler.getLanguageMode().isEs6OrHigher() && v.getParentNode().isCatch()&& reference.getNode() != v.getNode();
+    boolean shadowParam=isDeclaration && NodeUtil.isBlockScopedDeclaration(referenceNode) && v.isParam()&& v.getScope() == reference.getScope().getParentScope();
     boolean shadowDetected=false;
     if (isDeclaration && !allowDupe) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
         if (declaredBlock.provablyExecutesBefore(basicBlock)) {
           shadowDetected=true;
           DiagnosticType diagnosticType;
-          if (v.isLet() || v.isConst() || v.isClass()|| letConstShadowsVar|| shadowCatchVar) {
+          if (v.isLet() || v.isConst() || v.isClass()|| letConstShadowsVar|| shadowCatchVar|| shadowParam) {
             diagnosticType=REDECLARED_VARIABLE_ERROR;
           }
- else           if (reference.getNode().getParent().isCatch()) {
+ else           if (reference.getNode().getParent().isCatch() || allowDupe) {
             return;
           }
  else {
