@@ -10,7 +10,7 @@
   typeCheck("(/** @struct */ { 'prop' : 1 });",TypeCheck.ILLEGAL_OBJLIT_KEY);
   typeCheck("var lit = /** @struct */ { prop : 1 }; lit['prop'];",TypeValidator.ILLEGAL_PROPERTY_ACCESS);
   typeCheck(Joiner.on('\n').join("function f(cond) {","  var x;","  if (cond) {","    x = /** @struct */ { a: 1 };","  }","  else {","    x = /** @struct */ { a: 2 };","  }","  x['a'] = 123;","}"),TypeValidator.ILLEGAL_PROPERTY_ACCESS);
-  typeCheck(Joiner.on('\n').join("function f(cond) {","  var x;","  if (cond) {","    x = /** @struct */ { a: 1 };","  }","  else {","    x = {};","  }","  x['random' + 'propname'] = 123;","}"),TypeValidator.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck(Joiner.on('\n').join("function f(cond) {","  var x;","  if (cond) {","    x = /** @struct */ { a: 1 };","  }","  else {","    x = { b: 2 };","  }","  x['random' + 'propname'] = 123;","}"),TypeValidator.ILLEGAL_PROPERTY_ACCESS);
   typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @struct"," */","function Foo() {","  /** @type {number} */","  this.prop;","  this.prop = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @struct"," */","function Foo() {","  /** @type {number} */","  this.prop;","}","(new Foo).prop = 'asdf';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }
