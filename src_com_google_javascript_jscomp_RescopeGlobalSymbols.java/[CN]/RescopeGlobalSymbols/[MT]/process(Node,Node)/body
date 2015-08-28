@@ -2,14 +2,14 @@
   if (addExtern) {
     addExternForGlobalSymbolNamespace();
   }
-  NodeTraversal.traverse(compiler,root,new RewriteGlobalFunctionStatementsToVarAssignmentsCallback());
+  NodeTraversal.traverseEs6(compiler,root,new RewriteGlobalFunctionStatementsToVarAssignmentsCallback());
   List<Callback> nonMutatingPasses=new ArrayList<>();
   nonMutatingPasses.add(new FindCrossModuleNamesCallback());
   nonMutatingPasses.add(new FindNamesReferencingThis());
   CombinedCompilerPass.traverse(compiler,root,nonMutatingPasses);
   RewriteScopeCallback rewriteScope=new RewriteScopeCallback();
-  NodeTraversal.traverse(compiler,root,rewriteScope);
-  NodeTraversal.traverse(compiler,root,new RemoveGlobalVarCallback());
+  NodeTraversal.traverseEs6(compiler,root,rewriteScope);
+  NodeTraversal.traverseEs6(compiler,root,new RemoveGlobalVarCallback());
   rewriteScope.declareModuleGlobals();
-  NodeTraversal.traverse(compiler,root,new MakeExternsReferenceWindowExplicitly());
+  NodeTraversal.traverseEs6(compiler,root,new MakeExternsReferenceWindowExplicitly());
 }
