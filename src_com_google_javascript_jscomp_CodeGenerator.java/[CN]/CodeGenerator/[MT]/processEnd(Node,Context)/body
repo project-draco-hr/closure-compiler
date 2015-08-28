@@ -1,0 +1,47 @@
+{
+switch (n.getType()) {
+case Token.CLASS:
+case Token.INTERFACE:
+case Token.ENUM:
+case Token.NAMESPACE:
+    cc.endClass(context == Context.STATEMENT);
+  break;
+case Token.FUNCTION:
+if (n.getLastChild().isEmpty()) {
+  cc.endStatement(true);
+}
+ else {
+  cc.endFunction(context == Context.STATEMENT);
+}
+break;
+case Token.DECLARE:
+if (n.getParent().getType() != Token.NAMESPACE_ELEMENTS) {
+processEnd(n.getFirstChild(),context);
+}
+break;
+case Token.EXPORT:
+if (n.getParent().getType() != Token.NAMESPACE_ELEMENTS && n.getFirstChild().getType() != Token.DECLARE) {
+processEnd(n.getFirstChild(),context);
+}
+break;
+case Token.COMPUTED_PROP:
+if (n.hasOneChild()) {
+cc.endStatement(true);
+}
+break;
+case Token.MEMBER_FUNCTION_DEF:
+case Token.GETTER_DEF:
+case Token.SETTER_DEF:
+if (n.getFirstChild().getLastChild().isEmpty()) {
+cc.endStatement(true);
+}
+break;
+case Token.MEMBER_VARIABLE_DEF:
+cc.endStatement(true);
+break;
+default :
+if (context == Context.STATEMENT) {
+cc.endStatement();
+}
+}
+}

@@ -1,10 +1,12 @@
 {
   languageMode=LanguageMode.ECMASCRIPT6;
   assertPrintSame("export var x=1");
+  assertPrintSame("export var x;export var y");
   assertPrintSame("export let x=1");
   assertPrintSame("export const x=1");
   assertPrintSame("export function f(){}");
   assertPrintSame("export class f{}");
+  assertPrintSame("export class f{}export class b{}");
   assertPrint("export * from 'a.b.c'","export*from\"a.b.c\"");
   assertPrintSame("export{a}from\"a.b.c\"");
   assertPrintSame("export{a as x}from\"a.b.c\"");
@@ -16,4 +18,6 @@
   assertPrintSame("export{a as x,b as y}");
   assertPrintSame("export default x");
   assertPrintSame("export default 1");
+  assertPrintSame("export default class Foo{}export function f(){}");
+  assertPrintSame("export function f(){}export default class Foo{}");
 }

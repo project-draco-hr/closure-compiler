@@ -219,7 +219,7 @@ if (childCount == 2) {
 add("from");
 add(last);
 }
-cc.maybeEndStatement();
+processEnd(first,context);
 break;
 case Token.IMPORT:
 add("import");
@@ -306,9 +306,7 @@ case Token.NAMESPACE_ELEMENTS:
 cc.beginBlock();
 for (Node c=first; c != null; c=c.getNext()) {
 add(c);
-if (needsSemiColon(c)) {
-cc.endStatement(true);
-}
+processEnd(c,context);
 cc.endLine();
 }
 cc.endBlock(false);
@@ -889,9 +887,7 @@ break;
 case Token.DECLARE:
 add("declare");
 add(first);
-if (needsSemiColon(first)) {
-cc.endStatement(true);
-}
+processEnd(n,context);
 break;
 case Token.INDEX_SIGNATURE:
 add("[");
