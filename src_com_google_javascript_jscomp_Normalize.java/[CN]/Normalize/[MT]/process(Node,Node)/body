@@ -8,9 +8,9 @@
   removeDuplicateDeclarations(externs,root);
   new PropagateConstantAnnotationsOverVars(compiler,assertOnChange).process(externs,root);
   FindExposeAnnotations findExposeAnnotations=new FindExposeAnnotations();
-  NodeTraversal.traverse(compiler,root,findExposeAnnotations);
+  NodeTraversal.traverseEs6(compiler,root,findExposeAnnotations);
   if (!findExposeAnnotations.exposedProperties.isEmpty()) {
-    NodeTraversal.traverse(compiler,root,new RewriteExposedProperties(findExposeAnnotations.exposedProperties));
+    NodeTraversal.traverseEs6(compiler,root,new RewriteExposedProperties(findExposeAnnotations.exposedProperties));
   }
   if (!compiler.getLifeCycleStage().isNormalized()) {
     compiler.setLifeCycleStage(LifeCycleStage.NORMALIZED);
