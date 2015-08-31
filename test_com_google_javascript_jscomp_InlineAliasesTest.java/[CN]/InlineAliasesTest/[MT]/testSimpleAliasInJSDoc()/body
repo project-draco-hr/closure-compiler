@@ -1,5 +1,5 @@
 {
   test("function Foo(){}; var /** @const */ alias = Foo; /** @type {alias} */ var x;","function Foo(){}; var /** @const */ alias = Foo; /** @type {Foo} */ var x;");
-  test("function Foo(){}; /** @const */ mod.alias = Foo; /** @type {mod.alias} */ var x;","function Foo(){}; /** @const */ mod.alias = Foo; /** @type {Foo} */ var x;");
-  test("function Foo(){}; /** @const */ mod.alias = Foo; /** @type {mod.alias.Subfoo} */ var x;","function Foo(){}; /** @const */ mod.alias = Foo; /** @type {Foo.Subfoo} */ var x;");
+  test(LINE_JOINER.join("var ns={};","function Foo(){};","/** @const */ ns.alias = Foo;","/** @type {ns.alias} */ var x;"),LINE_JOINER.join("var ns={};","function Foo(){};","/** @const */ ns.alias = Foo;","/** @type {Foo} */ var x;"));
+  test(LINE_JOINER.join("var ns={};","function Foo(){};","/** @const */ ns.alias = Foo;","/** @type {ns.alias.Subfoo} */ var x;"),LINE_JOINER.join("var ns={};","function Foo(){};","/** @const */ ns.alias = Foo;","/** @type {Foo.Subfoo} */ var x;"));
 }
