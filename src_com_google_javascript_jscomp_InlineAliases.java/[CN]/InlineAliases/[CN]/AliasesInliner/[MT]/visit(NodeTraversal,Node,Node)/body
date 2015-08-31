@@ -1,0 +1,20 @@
+{
+switch (n.getType()) {
+case Token.NAME:
+case Token.GETPROP:
+    if (n.isQualifiedName() && aliases.containsKey(n.getQualifiedName())) {
+      String leftmostName=NodeUtil.getRootOfQualifiedName(n).getString();
+      Var v=t.getScope().getVar(leftmostName);
+      if (v != null && v.isLocal()) {
+        return;
+      }
+      if (NodeUtil.isVarOrSimpleAssignLhs(n,parent)) {
+        return;
+      }
+      parent.replaceChild(n,NodeUtil.newQName(compiler,resolveAlias(n.getQualifiedName(),n)).copyInformationFromForTree(n));
+      compiler.reportCodeChange();
+    }
+  break;
+}
+maybeRewriteJsdoc(n.getJSDocInfo());
+}

@@ -1,0 +1,14 @@
+{
+switch (n.getType()) {
+case Token.VAR:
+    if (n.getChildCount() == 1 && t.inGlobalScope()) {
+      visitAliasDefinition(n.getFirstChild(),NodeUtil.getBestJSDocInfo(n.getFirstChild()));
+    }
+  break;
+case Token.ASSIGN:
+if (parent != null && parent.isExprResult() && t.inGlobalScope()) {
+  visitAliasDefinition(n.getFirstChild(),n.getJSDocInfo());
+}
+break;
+}
+}

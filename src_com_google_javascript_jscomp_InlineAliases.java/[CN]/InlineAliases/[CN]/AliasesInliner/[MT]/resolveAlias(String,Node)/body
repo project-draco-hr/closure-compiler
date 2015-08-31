@@ -1,0 +1,12 @@
+{
+  Set<String> aliasPath=new LinkedHashSet<>();
+  while (aliases.containsKey(name)) {
+    if (!aliasPath.add(name)) {
+      compiler.report(JSError.make(n,ALIAS_CYCLE,aliasPath.toString(),name));
+      aliases.remove(name);
+      break;
+    }
+    name=aliases.get(name);
+  }
+  return name;
+}
