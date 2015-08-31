@@ -16,15 +16,15 @@
     if (member.isMemberFunctionDef()) {
       Node function=member.getFirstChild();
       function.getLastChild().setType(Token.BLOCK);
-      continue;
     }
-    if (member.isIndexSignature()) {
+ else     if (member.isIndexSignature()) {
       doc.recordExtendedInterface(createIObject(member));
-      continue;
     }
-    Node newNode=createPropertyDefinition(member,name.getString());
-    insertionPoint.getParent().addChildAfter(newNode,insertionPoint);
-    insertionPoint=newNode;
+ else {
+      Node newNode=createPropertyDefinition(member,name.getString());
+      insertionPoint.getParent().addChildAfter(newNode,insertionPoint);
+      insertionPoint=newNode;
+    }
   }
   n.setJSDocInfo(doc.build());
   n.setType(Token.CLASS);

@@ -4,16 +4,18 @@
   }
   Node current=n.getParent();
   while (current != null) {
-    if (current.isBlock()) {
+switch (current.getType()) {
+case Token.BLOCK:
       return !current.getParent().isFunction();
-    }
- else     if (current.isFunction() || current.isScript()) {
-      return false;
-    }
- else {
-      Preconditions.checkArgument(current.isLabel());
-      current=current.getParent();
-    }
-  }
-  return false;
+case Token.FUNCTION:
+case Token.SCRIPT:
+case Token.DECLARE:
+case Token.EXPORT:
+    return false;
+default :
+  Preconditions.checkState(current.isLabel());
+current=current.getParent();
+}
+}
+return false;
 }
