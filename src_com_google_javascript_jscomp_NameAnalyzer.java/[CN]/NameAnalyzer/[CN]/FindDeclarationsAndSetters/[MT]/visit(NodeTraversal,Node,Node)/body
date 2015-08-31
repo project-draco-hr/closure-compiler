@@ -1,11 +1,11 @@
 {
-  if (t.getClosestHoistScope().isGlobal()) {
+  if (t.inGlobalHoistScope()) {
     if (NodeUtil.isVarDeclaration(n)) {
       NameInformation ns=createNameInformation(t,n);
       Preconditions.checkNotNull(ns);
       recordSet(ns.name,n);
     }
- else     if (NodeUtil.isFunctionDeclaration(n)) {
+ else     if (NodeUtil.isFunctionDeclaration(n) && t.inGlobalScope()) {
       Node nameNode=n.getFirstChild();
       NameInformation ns=createNameInformation(t,nameNode);
       if (ns != null) {

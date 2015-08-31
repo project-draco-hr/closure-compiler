@@ -1,5 +1,5 @@
 {
-  if (!t.getClosestHoistScope().isGlobal()) {
+  if (!t.inGlobalHoistScope()) {
     return;
   }
   if (n.isAssign()) {
@@ -12,7 +12,7 @@
     NameInformation ns=createNameInformation(t,n);
     recordDepScope(n,ns);
   }
- else   if (NodeUtil.isFunctionDeclaration(n)) {
+ else   if (NodeUtil.isFunctionDeclaration(n) && t.inGlobalScope()) {
     NameInformation ns=createNameInformation(t,n.getFirstChild());
     recordDepScope(n,ns);
   }

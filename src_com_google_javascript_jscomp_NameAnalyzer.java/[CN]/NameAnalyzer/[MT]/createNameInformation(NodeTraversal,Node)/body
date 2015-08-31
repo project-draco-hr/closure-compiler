@@ -36,7 +36,7 @@
       break;
     }
   }
-  if (parent.isCall() && t.inGlobalScope()) {
+  if (parent.isCall() && t.inGlobalHoistScope()) {
     CodingConvention convention=compiler.getCodingConvention();
     SubclassRelationship classes=convention.getClassesDefinedByCall(parent);
     if (classes != null) {
@@ -70,7 +70,7 @@ case Token.NAME:
     }
   return createNameInformation(rootNameNode.getString() + name,t.getScope(),rootNameNode);
 case Token.THIS:
-if (t.inGlobalScope()) {
+if (t.inGlobalHoistScope()) {
   NameInformation nameInfo=new NameInformation();
   if (name.indexOf('.') == 0) {
     nameInfo.name=name.substring(1);
