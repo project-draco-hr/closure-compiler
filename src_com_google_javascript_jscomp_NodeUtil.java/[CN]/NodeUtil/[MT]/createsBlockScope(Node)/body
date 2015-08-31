@@ -1,12 +1,10 @@
 {
 switch (n.getType()) {
 case Token.BLOCK:
-    Node parent=n.getParent();
-  if (parent == null || parent.isCatch()) {
-    return false;
-  }
-Node child=n.getFirstChild();
-return child != null && !child.isScript();
+    if (n.getParent() == null || n.getParent().isCatch() || n.getFirstChild() != null && n.getFirstChild().isScript()) {
+      return false;
+    }
+  return true;
 case Token.FOR:
 case Token.FOR_OF:
 return true;
