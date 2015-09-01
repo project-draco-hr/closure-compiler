@@ -33,6 +33,7 @@ parameters.addChildToBack(convertWithLocation(param));
 return result;
 }
 case Token.FUNCTION_TYPE:
+{
 Node returnType=type.getFirstChild();
 Node paramList=new Node(Token.PARAM_LIST);
 for (Node param=returnType.getNext(); param != null; param=param.getNext()) {
@@ -51,9 +52,12 @@ paramType=maybeProcessOptionalParameter(param,maybeCreateAnyType(param,paramType
 paramList.addChildToBack(paramType);
 }
 Node function=new Node(Token.FUNCTION);
+if (paramList.hasChildren()) {
 function.addChildToBack(paramList);
+}
 function.addChildToBack(convertWithLocation(returnType));
 return function;
+}
 case Token.UNION_TYPE:
 Node pipe=new Node(Token.PIPE);
 for (Node child : type.children()) {
@@ -61,21 +65,26 @@ pipe.addChildToBack(convertWithLocation(child));
 }
 return pipe;
 case Token.RECORD_TYPE:
+{
 Node lb=new Node(Token.LB);
-for (Node memberVar : type.children()) {
-if (!memberVar.isMemberVariableDef()) {
+for (Node member : type.children()) {
+if (member.isMemberFunctionDef()) {
+member=convertMemberFunctionToMemberVariable(member);
+}
+ else if (!member.isMemberVariableDef()) {
 compiler.report(JSError.make(type,UNSUPPORTED_RECORD_TYPE));
 continue;
 }
 Node colon=new Node(Token.COLON);
-memberVar.setType(Token.STRING_KEY);
-Node memberType=convertWithLocation(maybeCreateAnyType(memberVar,memberVar.getDeclaredTypeExpression()));
-memberVar.setDeclaredTypeExpression(null);
-colon.addChildToBack(memberVar.detachFromParent());
+member.setType(Token.STRING_KEY);
+Node memberType=convertWithLocation(maybeCreateAnyType(member,member.getDeclaredTypeExpression()));
+member.setDeclaredTypeExpression(null);
+colon.addChildToBack(member.detachFromParent());
 colon.addChildToBack(memberType);
 lb.addChildrenToBack(colon);
 }
 return new Node(Token.LC,lb);
+}
 case Token.TYPEOF:
 compiler.report(JSError.make(type,TYPE_QUERY_NOT_SUPPORTED));
 return new Node(Token.QMARK);

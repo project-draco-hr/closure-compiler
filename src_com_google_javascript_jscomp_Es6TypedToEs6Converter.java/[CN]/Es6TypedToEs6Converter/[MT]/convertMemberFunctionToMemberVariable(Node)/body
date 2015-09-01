@@ -1,0 +1,29 @@
+{
+  Node function=member.getFirstChild();
+  Node returnType=maybeCreateAnyType(function,function.getDeclaredTypeExpression());
+  LinkedHashMap<String,TypeDeclarationNode> required=new LinkedHashMap<>();
+  LinkedHashMap<String,TypeDeclarationNode> optional=new LinkedHashMap<>();
+  String restName=null;
+  TypeDeclarationNode restType=null;
+  for (  Node param : function.getFirstChild().getNext().children()) {
+    if (param.isName()) {
+      if (param.getBooleanProp(Node.OPT_ES6_TYPED)) {
+        optional.put(param.getString(),param.getDeclaredTypeExpression());
+      }
+ else {
+        required.put(param.getString(),param.getDeclaredTypeExpression());
+      }
+    }
+ else     if (param.isRest()) {
+      restName=param.getString();
+      restType=param.getDeclaredTypeExpression();
+    }
+  }
+  TypeDeclarationNode type=TypeDeclarationsIR.functionType(returnType,required,optional,restName,restType);
+  Node memberVariable=Node.newString(Token.MEMBER_VARIABLE_DEF,member.getString());
+  memberVariable.useSourceInfoFrom(member);
+  memberVariable.setDeclaredTypeExpression(type);
+  memberVariable.putBooleanProp(Node.OPT_ES6_TYPED,member.getBooleanProp(Node.OPT_ES6_TYPED));
+  member.getParent().replaceChild(member,memberVariable);
+  return memberVariable;
+}

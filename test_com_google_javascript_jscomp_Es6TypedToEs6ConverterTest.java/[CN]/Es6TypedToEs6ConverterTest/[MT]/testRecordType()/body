@@ -3,5 +3,6 @@
   test("var x: {p: string, q: number};","var /** {p: string, q: number} */ x;");
   test("var x: {p: string; q: {p: string; q: number}};","var /** {p: string, q: {p: string, q: number}}*/ x;");
   test(LINE_JOINER.join("var x: {","  p: string;","};"),"var /** {p: string} */ x;");
-  testError("var x: {constructor(); q: number};",Es6TypedToEs6Converter.UNSUPPORTED_RECORD_TYPE);
+  test("var x: {foo(p1: number, p2?, ...p3: string[]): string;};","var /** {foo: function(number, ?=, ...string): string} */ x;");
+  test("var x: {constructor(); q: number};","var /** {constructor: function(): ?, q: number} */ x;");
 }
