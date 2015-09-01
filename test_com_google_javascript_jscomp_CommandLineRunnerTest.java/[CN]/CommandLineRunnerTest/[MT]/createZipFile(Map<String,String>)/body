@@ -1,0 +1,10 @@
+{
+  File tempZipFile=File.createTempFile("testdata",".js.zip");
+  try (ZipOutputStream zipOutputStream=new ZipOutputStream(new FileOutputStream(tempZipFile))){
+    for (    Entry<String,String> entry : entryContentsByName.entrySet()) {
+      zipOutputStream.putNextEntry(new ZipEntry(entry.getKey()));
+      zipOutputStream.write(entry.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+  }
+   return tempZipFile.getAbsolutePath();
+}
