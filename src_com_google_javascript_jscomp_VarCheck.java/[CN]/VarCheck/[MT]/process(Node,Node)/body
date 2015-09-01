@@ -1,7 +1,8 @@
 {
   ScopeCreator scopeCreator=createScopeCreator();
   if (!sanityCheck) {
-    NodeTraversal.traverseEs6(compiler,externs,new NameRefInExternsCheck());
+    NodeTraversal traversal=new NodeTraversal(compiler,new NameRefInExternsCheck(),scopeCreator);
+    traversal.traverse(externs);
   }
   NodeTraversal t=new NodeTraversal(compiler,this,scopeCreator);
   t.traverseRoots(externs,root);
