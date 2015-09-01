@@ -1,9 +1,12 @@
 {
-  Node jsDocNode=parent.getType() == Token.MEMBER_FUNCTION_DEF ? parent : n;
+  boolean isMemberFunctionDef=parent.getType() == Token.MEMBER_FUNCTION_DEF;
+  Node jsDocNode=isMemberFunctionDef ? parent : n;
   maybeAddGenerics(n,jsDocNode);
   maybeVisitColonType(n,jsDocNode);
   if (n.getLastChild().isEmpty()) {
     n.replaceChild(n.getLastChild(),IR.block().useSourceInfoFrom(n));
   }
-  maybeCreateQualifiedDeclaration(n,parent);
+  if (!isMemberFunctionDef) {
+    maybeCreateQualifiedDeclaration(n,parent);
+  }
 }
