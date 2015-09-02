@@ -1,13 +1,14 @@
 {
-  if (t.inGlobalScope() || !shouldTemporarilyRenameLocalsInScope(t.getScope())) {
+  Scope scope=t.getScope();
+  if (t.inGlobalHoistScope() || !shouldTemporarilyRenameLocalsInScope(scope)) {
     return;
   }
-  Iterator<Var> it=t.getScope().getVars();
+  Iterator<Var> it=scope.getVars();
   while (it.hasNext()) {
     Var current=it.next();
     if (current.isBleedingFunction()) {
       localBleedingFunctions.add(current);
-      localBleedingFunctionsPerScope.put(t.getScope().getParent(),current);
+      localBleedingFunctionsPerScope.put(scope.getParent(),current);
     }
   }
 }
