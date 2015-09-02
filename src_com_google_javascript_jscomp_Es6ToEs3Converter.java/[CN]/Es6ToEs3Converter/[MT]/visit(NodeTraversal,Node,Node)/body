@@ -1,16 +1,21 @@
 {
 switch (n.getType()) {
-case Token.OBJECTLIT:
-    for (    Node child : n.children()) {
-      if (child.isComputedProp()) {
-        visitObjectWithComputedProperty(n,parent);
-        break;
-      }
+case Token.NAME:
+    if (!n.isFromExterns() && isGlobalSymbol(t,n)) {
+      initSymbolBefore(n);
     }
   break;
+case Token.GETPROP:
+if (!n.isFromExterns()) {
+  visitGetprop(t,n);
+}
+break;
+case Token.OBJECTLIT:
+visitObject(n);
+break;
 case Token.MEMBER_FUNCTION_DEF:
 if (parent.isObjectLit()) {
-  visitMemberDefInObjectLit(n,parent);
+visitMemberDefInObjectLit(n,parent);
 }
 break;
 case Token.FOR_OF:

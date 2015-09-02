@@ -4,7 +4,7 @@
   Node currElement=obj.getFirstChild();
   while (currElement != null) {
     if (currElement.getBooleanProp(Node.COMPUTED_PROP_GETTER) || currElement.getBooleanProp(Node.COMPUTED_PROP_SETTER)) {
-      cannotConvertYet(currElement,"computed getter/setter");
+      cannotConvertYet(currElement,"computed getter/setter in an object literal");
       return;
     }
  else     if (currElement.isGetterDef() || currElement.isSetterDef()) {
@@ -43,7 +43,7 @@
     statement=statement.getParent();
   }
   result.useSourceInfoIfMissingFromForTree(obj);
-  parent.replaceChild(obj,result);
+  obj.getParent().replaceChild(obj,result);
   Node var=IR.var(IR.name(objName),obj);
   var.useSourceInfoIfMissingFromForTree(statement);
   statement.getParent().addChildBefore(var,statement);

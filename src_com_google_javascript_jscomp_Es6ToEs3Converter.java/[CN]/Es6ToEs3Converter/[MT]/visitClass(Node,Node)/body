@@ -24,28 +24,30 @@
       continue;
     }
     Preconditions.checkState(member.isMemberFunctionDef() || member.isGetterDef() || member.isSetterDef()|| (member.isComputedProp() && !member.getBooleanProp(Node.COMPUTED_PROP_VARIABLE)),"Member variables should have been transpiled earlier: ",member);
-    if (member.isComputedProp() && (member.getBooleanProp(Node.COMPUTED_PROP_GETTER) || member.getBooleanProp(Node.COMPUTED_PROP_SETTER))) {
-      cannotConvertYet(member,"computed getter or setter in classes");
-    }
- else     if (member.isGetterDef() || member.isSetterDef()) {
+    if ((member.isComputedProp() && (member.getBooleanProp(Node.COMPUTED_PROP_GETTER) || member.getBooleanProp(Node.COMPUTED_PROP_SETTER))) || (member.isGetterDef() || member.isSetterDef())) {
+      if (member.isComputedProp() && !member.getFirstChild().isQualifiedName()) {
+        cannotConvert(member.getFirstChild(),"Computed property with non-qualified-name key");
+      }
       JSTypeExpression typeExpr=getTypeFromGetterOrSetter(member).clone();
       addToDefinePropertiesObject(metadata,member);
-      Map<String,JSDocInfo> membersToDeclare=member.isStaticMember() ? classMembersToDeclare : prototypeMembersToDeclare;
-      JSDocInfo existingJSDoc=membersToDeclare.get(member.getString());
-      JSTypeExpression existingType=existingJSDoc == null ? null : existingJSDoc.getType();
-      if (existingType != null && !existingType.equals(typeExpr)) {
-        compiler.report(JSError.make(member,CONFLICTING_GETTER_SETTER_TYPE,member.getString()));
-      }
+      if (!member.isComputedProp()) {
+        Map<String,JSDocInfo> membersToDeclare=member.isStaticMember() ? classMembersToDeclare : prototypeMembersToDeclare;
+        JSDocInfo existingJSDoc=membersToDeclare.get(member.getString());
+        JSTypeExpression existingType=existingJSDoc == null ? null : existingJSDoc.getType();
+        if (existingType != null && !existingType.equals(typeExpr)) {
+          compiler.report(JSError.make(member,CONFLICTING_GETTER_SETTER_TYPE,member.getString()));
+        }
  else {
-        JSDocInfoBuilder jsDoc=new JSDocInfoBuilder(false);
-        jsDoc.recordType(typeExpr);
-        if (member.getJSDocInfo() != null && member.getJSDocInfo().isExport()) {
-          jsDoc.recordExport();
+          JSDocInfoBuilder jsDoc=new JSDocInfoBuilder(false);
+          jsDoc.recordType(typeExpr);
+          if (member.getJSDocInfo() != null && member.getJSDocInfo().isExport()) {
+            jsDoc.recordExport();
+          }
+          if (member.isStaticMember()) {
+            jsDoc.recordNoCollapse();
+          }
+          membersToDeclare.put(member.getString(),jsDoc.build());
         }
-        if (member.isStaticMember()) {
-          jsDoc.recordNoCollapse();
-        }
-        membersToDeclare.put(member.getString(),jsDoc.build());
       }
     }
  else     if (member.isMemberFunctionDef() && member.getString().equals("constructor")) {
@@ -89,11 +91,13 @@
     Node definePropsCall=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"Object.defineProperties"),prototypeAccess.cloneTree(),metadata.definePropertiesObjForPrototype));
     definePropsCall.useSourceInfoIfMissingFromForTree(classNode);
     metadata.insertNodeAndAdvance(definePropsCall);
+    visitObject(metadata.definePropertiesObjForPrototype);
   }
   if (metadata.definePropertiesObjForClass.hasChildren()) {
     Node definePropsCall=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"Object.defineProperties"),classNameAccess.cloneTree(),metadata.definePropertiesObjForClass));
     definePropsCall.useSourceInfoIfMissingFromForTree(classNode);
     metadata.insertNodeAndAdvance(definePropsCall);
+    visitObject(metadata.definePropertiesObjForClass);
   }
   Preconditions.checkNotNull(constructor);
   JSDocInfo classJSDoc=NodeUtil.getBestJSDocInfo(classNode);
