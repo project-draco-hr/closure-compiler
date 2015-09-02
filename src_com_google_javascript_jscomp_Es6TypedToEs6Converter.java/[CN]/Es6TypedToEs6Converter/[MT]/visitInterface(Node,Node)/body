@@ -13,14 +13,22 @@
   Node insertionPoint=n;
   Node members=n.getLastChild();
   for (  Node member : members.children()) {
-    if (member.isMemberFunctionDef()) {
-      Node function=member.getFirstChild();
-      function.getLastChild().setType(Token.BLOCK);
+    if (member.isCallSignature()) {
+      compiler.report(JSError.make(n,CALL_SIGNATURE_NOT_SUPPORTED));
     }
- else     if (member.isIndexSignature()) {
+    if (member.isIndexSignature()) {
       doc.recordExtendedInterface(createIObject(member));
     }
+    if (member.isMemberFunctionDef()) {
+      Node function=member.getFirstChild();
+      if (function.isOptionalEs6Typed()) {
+        member=convertMemberFunctionToMemberVariable(member);
+      }
  else {
+        function.getLastChild().setType(Token.BLOCK);
+      }
+    }
+    if (member.isMemberVariableDef()) {
       Node newNode=createPropertyDefinition(member,name.getString());
       insertionPoint.getParent().addChildAfter(newNode,insertionPoint);
       insertionPoint=newNode;

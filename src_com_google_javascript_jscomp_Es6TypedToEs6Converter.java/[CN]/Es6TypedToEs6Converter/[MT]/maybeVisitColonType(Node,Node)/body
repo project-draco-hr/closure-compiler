@@ -4,6 +4,11 @@
   if (n.isRest() && hasColonType) {
     type=new Node(Token.ELLIPSIS,convertWithLocation(type.removeFirstChild()));
   }
+ else   if (n.isMemberVariableDef()) {
+    if (type != null) {
+      type=maybeProcessOptionalProperty(n,type);
+    }
+  }
  else {
     type=maybeProcessOptionalParameter(n,type);
   }

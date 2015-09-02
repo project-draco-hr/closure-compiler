@@ -1,0 +1,12 @@
+{
+  if (n.isOptionalEs6Typed()) {
+    n.putBooleanProp(Node.OPT_ES6_TYPED,false);
+    TypeDeclarationNode baseType=(TypeDeclarationNode)maybeCreateAnyType(n,type);
+    type=TypeDeclarationsIR.unionType(ImmutableList.of(baseType,TypeDeclarationsIR.undefinedType()));
+    type.useSourceInfoIfMissingFromForTree(baseType);
+  }
+ else {
+    type=maybeCreateAnyType(n,type);
+  }
+  return convertWithLocation(type);
+}

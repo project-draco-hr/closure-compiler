@@ -9,6 +9,8 @@ case Token.NUMBER_TYPE:
 return IR.string("number");
 case Token.VOID_TYPE:
 return IR.string("void");
+case Token.UNDEFINED_TYPE:
+return IR.string("undefined");
 case Token.ANY_TYPE:
 return new Node(Token.QMARK);
 case Token.NAMED_TYPE:
@@ -77,7 +79,7 @@ continue;
 }
 Node colon=new Node(Token.COLON);
 member.setType(Token.STRING_KEY);
-Node memberType=convertWithLocation(maybeCreateAnyType(member,member.getDeclaredTypeExpression()));
+Node memberType=maybeProcessOptionalProperty(member,member.getDeclaredTypeExpression());
 member.setDeclaredTypeExpression(null);
 colon.addChildToBack(member.detachFromParent());
 colon.addChildToBack(memberType);

@@ -2,7 +2,9 @@
   boolean isMemberFunctionDef=parent.getType() == Token.MEMBER_FUNCTION_DEF;
   Node jsDocNode=isMemberFunctionDef ? parent : n;
   maybeAddGenerics(n,jsDocNode);
-  maybeVisitColonType(n,jsDocNode);
+  if (!(isMemberFunctionDef && n.isOptionalEs6Typed())) {
+    maybeVisitColonType(n,jsDocNode);
+  }
   if (n.getLastChild().isEmpty()) {
     n.replaceChild(n.getLastChild(),IR.block().useSourceInfoFrom(n));
   }

@@ -17,6 +17,10 @@
   Node classMembers=n.getLastChild();
   ClassDeclarationMetadata metadata=ClassDeclarationMetadata.create(n,parent);
   for (  Node member : classMembers.children()) {
+    if (member.isCallSignature()) {
+      compiler.report(JSError.make(n,CALL_SIGNATURE_NOT_SUPPORTED));
+      continue;
+    }
     if (member.isIndexSignature()) {
       doc.recordImplementedInterface(createIObject(member));
       continue;
