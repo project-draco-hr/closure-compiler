@@ -1,8 +1,10 @@
 {
   test("var x: {foo?};","var /** {foo: (? | undefined)} */ x;");
+  test("var x: {foo?()};","var /** {foo: (function(): ? | undefined)}  */ x;");
   test("var x: {foo?: string};","var /** {foo: (string | undefined)} */ x;");
   test("var x: {foo?: string | number};","var /** {foo: ((string | number) | undefined)} */ x;");
   test("var x: {foo?(): string};","var /** {foo: ((function(): string) | undefined)} */ x;");
   test("interface I {foo?: string}","/** @interface */ class I {} /** @type {string | undefined} */ I.prototype.foo;");
   test("interface I {foo?(): string}",LINE_JOINER.join("/** @interface */ class I {}","/** @type {(function(): string) | undefined} */ I.prototype.foo;"));
+  test("interface I {foo?()}",LINE_JOINER.join("/** @interface */ class I {}","/** @type {(function(): ?) | undefined} */ I.prototype.foo;"));
 }

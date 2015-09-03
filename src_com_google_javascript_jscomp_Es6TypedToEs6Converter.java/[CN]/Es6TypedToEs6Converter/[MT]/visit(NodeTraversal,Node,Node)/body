@@ -2,9 +2,11 @@
 switch (n.getType()) {
 case Token.CLASS:
     visitClass(n,parent);
-  break;
+  popOverloads();
+break;
 case Token.INTERFACE:
 visitInterface(n,parent);
+popOverloads();
 break;
 case Token.ENUM:
 visitEnum(n,parent);
@@ -27,11 +29,15 @@ visitExport(n,parent);
 break;
 case Token.NAMESPACE:
 visitNamespaceDeclaration(n,parent);
+popOverloads();
 break;
 case Token.VAR:
 case Token.LET:
 case Token.CONST:
 visitVarInsideNamespace(n,parent);
+break;
+case Token.SCRIPT:
+popOverloads();
 break;
 default :
 }

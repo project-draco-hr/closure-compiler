@@ -1,33 +1,3 @@
 {
-  Compiler compiler=createCompiler();
-  CompilerOptions options=getOptions();
-  compiler.init(ImmutableList.of(SourceFile.fromCode("extern",extern)),ImmutableList.of(SourceFile.fromCode("input",input)),options);
-  compiler.parseInputs();
-  assertThat(compiler.hasErrors()).isFalse();
-  Node externsAndJs=compiler.getRoot();
-  Node root=externsAndJs.getLastChild();
-  Node externs=externsAndJs.getFirstChild();
-  Node expected=compiler.parseTestCode(expectedExtern);
-  assertThat(compiler.hasErrors()).isFalse();
-  (getProcessor(compiler)).process(externs,root);
-  if (compareAsTree) {
-    if (externs.hasMoreThanOneChild()) {
-      for (      Node c : externs.children()) {
-        if (!c.hasChildren()) {
-          c.detachFromParent();
-        }
-      }
-    }
-    Preconditions.checkState(externs.isBlock());
-    Preconditions.checkState(compareJsDoc);
-    Preconditions.checkState(externs.hasOneChild(),"Compare as tree only works when output has a single script.");
-    externs=externs.getFirstChild();
-    String explanation=expected.checkTreeEqualsIncludingJsDoc(externs);
-    assertNull("\nExpected: " + compiler.toSource(expected) + "\nResult:   "+ compiler.toSource(externs)+ "\n"+ explanation,explanation);
-  }
- else {
-    String externsCode=compiler.toSource(externs);
-    String expectedCode=compiler.toSource(expected);
-    assertThat(externsCode).isEqualTo(expectedCode);
-  }
+  testExternChanges(extern,input,expectedExtern,(DiagnosticType[])null);
 }

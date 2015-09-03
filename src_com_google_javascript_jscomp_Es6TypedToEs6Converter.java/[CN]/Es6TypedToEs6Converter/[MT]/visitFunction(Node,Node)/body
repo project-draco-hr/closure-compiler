@@ -1,5 +1,29 @@
 {
-  boolean isMemberFunctionDef=parent.getType() == Token.MEMBER_FUNCTION_DEF;
+  boolean isMemberFunctionDef=parent.isMemberFunctionDef();
+  String name=isMemberFunctionDef ? parent.getString() : n.getFirstChild().getString();
+  if (!name.isEmpty() && overloadStack.peek().containsKey(name)) {
+    compiler.report(JSError.make(n,OVERLOAD_NOT_SUPPORTED));
+    if (isMemberFunctionDef) {
+      parent.detachFromParent();
+    }
+ else {
+      n.detachFromParent();
+    }
+    if (!processedOverloads.contains(overloadStack)) {
+      Node original=overloadStack.peek().get(name);
+      processedOverloads.add(original);
+      Node paramList=original.getChildAtIndex(1);
+      paramList.removeChildren();
+      Node originalParent=original.getParent();
+      Node originalJsDocNode=originalParent.isMemberFunctionDef() || originalParent.isAssign() ? originalParent : original;
+      JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+      builder.recordType(new JSTypeExpression(convertWithLocation(TypeDeclarationsIR.namedType("Function")),n.getSourceFileName()));
+      originalJsDocNode.setJSDocInfo(builder.build());
+    }
+    compiler.reportCodeChange();
+    return;
+  }
+  overloadStack.peek().put(name,n);
   Node jsDocNode=isMemberFunctionDef ? parent : n;
   maybeAddGenerics(n,jsDocNode);
   if (!(isMemberFunctionDef && n.isOptionalEs6Typed())) {
