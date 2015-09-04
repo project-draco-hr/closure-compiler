@@ -5,7 +5,12 @@
   }
   for (BasicBlock block=ref.getBasicBlock(); block != null; block=block.getParent()) {
     if (block.isFunction) {
-      if (ref.getSymbol().getScope() != ref.scope) {
+      Scope declScope=ref.getSymbol().getScope();
+      Scope refScope=ref.scope;
+      if ((declScope.getRootNode().isFunction() && declScope == refScope)) {
+        return true;
+      }
+ else       if (declScope != refScope.getClosestHoistScope()) {
         return false;
       }
       break;

@@ -1,5 +1,7 @@
 {
-  pop(blockStack);
+  if (t.inGlobalScope() || t.getScopeRoot().isFunction()) {
+    pop(blockStack);
+  }
   if (t.getScope().isGlobal()) {
     compiler.updateGlobalVarReferences(referenceMap,t.getScopeRoot());
     behavior.afterExitScope(t,compiler.getGlobalVarReferences());

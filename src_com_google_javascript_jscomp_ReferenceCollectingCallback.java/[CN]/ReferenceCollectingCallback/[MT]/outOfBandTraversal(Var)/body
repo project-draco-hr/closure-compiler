@@ -7,13 +7,14 @@
   Preconditions.checkState(NodeUtil.isHoistedFunctionDeclaration(fnNode));
   Scope containingScope=v.getScope();
   List<BasicBlock> newBlockStack=null;
-  if (containingScope.isGlobal()) {
+  if (containingScope.getClosestHoistScope().isGlobal()) {
     newBlockStack=new ArrayList<>();
     newBlockStack.add(blockStack.get(0));
   }
  else {
+    Node function=NodeUtil.getEnclosingFunction(containingScope.getRootNode());
     for (int i=0; i < blockStack.size(); i++) {
-      if (blockStack.get(i).root == containingScope.getRootNode()) {
+      if (blockStack.get(i).root == function) {
         newBlockStack=new ArrayList<>(blockStack.subList(0,i + 1));
       }
     }
@@ -21,7 +22,7 @@
   Preconditions.checkNotNull(newBlockStack);
   List<BasicBlock> oldBlockStack=blockStack;
   blockStack=newBlockStack;
-  NodeTraversal outOfBandTraversal=new NodeTraversal(compiler,this);
+  NodeTraversal outOfBandTraversal=new NodeTraversal(compiler,this,new Es6SyntacticScopeCreator(compiler));
   outOfBandTraversal.traverseFunctionOutOfBand(fnNode,containingScope);
   blockStack=oldBlockStack;
   finishedFunctionTraverse.add(v);
