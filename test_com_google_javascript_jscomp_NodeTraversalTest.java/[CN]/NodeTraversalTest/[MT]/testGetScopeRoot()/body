@@ -1,6 +1,8 @@
 {
   Compiler compiler=new Compiler();
-  NodeTraversal t=new NodeTraversal(compiler,new NodeTraversal.ScopedCallback(){
+  String code=Joiner.on('\n').join("var a;","function foo() {","  var b","}");
+  Node tree=parse(compiler,code);
+  NodeTraversal.traverseEs6(compiler,tree,new NodeTraversal.ScopedCallback(){
     @Override public void enterScope(    NodeTraversal t){
       Node root1=t.getScopeRoot();
       Node root2=t.getScope().getRootNode();
@@ -15,7 +17,4 @@
     }
   }
 );
-  String code=Joiner.on('\n').join("var a;","function foo() {","  var b","}");
-  Node tree=parse(compiler,code);
-  t.traverse(tree);
 }
