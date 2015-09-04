@@ -1,0 +1,34 @@
+{
+  checkRange(fromIndex,toIndex);
+  int length=length();
+  if (fromIndex >= length) {
+    return;
+  }
+  if (toIndex >= length) {
+    int newLength=wordIndex(fromIndex + 31);
+    setLengthWords(array,newLength);
+    if ((bitIndex(newLength)) - fromIndex != 0) {
+      maskOutWord(array,newLength - 1,bitOffset(fromIndex),32);
+    }
+  }
+ else {
+    int first=wordIndex(fromIndex);
+    int last=wordIndex(toIndex);
+    int startBit=bitOffset(fromIndex);
+    int endBit=bitOffset(toIndex);
+    if (first == last) {
+      maskOutWord(array,first,startBit,endBit);
+    }
+ else {
+      if (startBit != 0) {
+        maskOutWord(array,first++,startBit,32);
+      }
+      if (endBit != 0) {
+        maskOutWord(array,last,0,endBit);
+      }
+      for (int i=first; i < last; i++) {
+        deleteWord(array,i);
+      }
+    }
+  }
+}

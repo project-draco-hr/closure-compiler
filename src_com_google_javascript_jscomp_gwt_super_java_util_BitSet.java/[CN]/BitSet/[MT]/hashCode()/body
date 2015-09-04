@@ -1,0 +1,14 @@
+{
+  final int fnvOffset=0x811c9dc5;
+  final int fnvPrime=0x1000193;
+  final int last=trimToSize(array);
+  int hash=fnvOffset ^ last;
+  for (int i=0; i <= last; i++) {
+    int value=getWord(array,i);
+    hash=(hash * fnvPrime) ^ (value & 0xff);
+    hash=(hash * fnvPrime) ^ ((value >>> 8) & 0xff);
+    hash=(hash * fnvPrime) ^ ((value >>> 16) & 0xff);
+    hash=(hash * fnvPrime) ^ (value >>> 24);
+  }
+  return hash;
+}
