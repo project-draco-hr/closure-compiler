@@ -4,6 +4,7 @@
   for (int i=0; i < paramList.getChildCount(); i++) {
     Node param=paramList.getChildAtIndex(i);
     if (param.isDefaultValue()) {
+      JSDocInfo jsDoc=param.getJSDocInfo();
       Node nameOrPattern=param.removeFirstChild();
       Node defaultValue=param.removeFirstChild();
       Node newParam;
@@ -30,6 +31,7 @@
       }
       paramList.replaceChild(param,newParam);
       newParam.setOptionalArg(true);
+      newParam.setJSDocInfo(jsDoc);
       compiler.reportCodeChange();
     }
  else     if (param.isDestructuringPattern()) {
