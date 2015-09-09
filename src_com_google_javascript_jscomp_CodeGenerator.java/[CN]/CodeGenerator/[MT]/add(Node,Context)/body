@@ -14,6 +14,10 @@
     Preconditions.checkState(childCount == 2,"Bad binary operator \"%s\": expected 2 arguments but got %s",opstr,childCount);
     int p=NodeUtil.precedence(type);
     Context rhsContext=getContextForNoInOperator(context);
+    boolean needsParens=(context == Context.START_OF_EXPR) && first.isObjectPattern();
+    if (n.isAssign() && needsParens) {
+      add("(");
+    }
     if (NodeUtil.isAssignmentOp(n) && NodeUtil.isAssignmentOp(last)) {
       addExpr(first,p,context);
       cc.addOp(opstr,true);
@@ -21,6 +25,9 @@
     }
  else {
       unrollBinaryOperator(n,type,opstr,context,rhsContext,p,p + 1);
+    }
+    if (n.isAssign() && needsParens) {
+      add(")");
     }
     return;
   }
@@ -721,7 +728,7 @@ Preconditions.checkState(n.getBooleanProp(Node.COMPUTED_PROP_VARIABLE));
 }
 break;
 case Token.OBJECT_PATTERN:
-addObjectPattern(n,context);
+addObjectPattern(n);
 maybeAddTypeDecl(n);
 break;
 case Token.SWITCH:
