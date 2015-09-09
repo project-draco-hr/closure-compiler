@@ -36,20 +36,19 @@
     }
     for (    Var var : object.vars) {
       for (      Node reference : referenceMap.get(var)) {
-        Node referenceParent=reference.getParent();
-        if (NodeUtil.isEnhancedFor(loopNode) && loopNode.getFirstChild() == referenceParent) {
+        if (NodeUtil.isEnhancedFor(loopNode) && loopNode.getFirstChild() == reference.getParent()) {
           loopNode.getLastChild().addChildToFront(IR.exprResult(IR.assign(IR.getprop(IR.name(object.name),IR.string(var.name)),IR.name(var.name))).useSourceInfoIfMissingFromForTree(reference));
         }
  else {
-          if (NodeUtil.isNameDeclaration(referenceParent)) {
-            Node declaration=referenceParent;
+          if (NodeUtil.isNameDeclaration(reference.getParent())) {
+            Node declaration=reference.getParent();
             Node grandParent=declaration.getParent();
             while (declaration.getChildCount() > 1) {
               Node name=declaration.getLastChild();
               grandParent.addChildAfter(IR.declaration(name.detachFromParent(),declaration.getType()).useSourceInfoIfMissingFromForTree(declaration),declaration);
             }
             if (reference.hasChildren()) {
-              declaration=referenceParent;
+              declaration=reference.getParent();
               Node newReference=IR.name(var.name);
               Node replacement=IR.exprResult(IR.assign(newReference,reference.removeFirstChild())).useSourceInfoIfMissingFromForTree(declaration);
               grandParent.replaceChild(declaration,replacement);
@@ -59,8 +58,8 @@
               grandParent.removeChild(declaration);
             }
           }
-          if (referenceParent.isCall()) {
-            referenceParent.putBooleanProp(Node.FREE_CALL,false);
+          if (reference.getParent().isCall() && reference.getParent().getFirstChild() == reference) {
+            reference.getParent().putBooleanProp(Node.FREE_CALL,false);
           }
           reference.getParent().replaceChild(reference,IR.getprop(IR.name(object.name),IR.string(var.name)).useSourceInfoIfMissingFromForTree(reference));
         }
