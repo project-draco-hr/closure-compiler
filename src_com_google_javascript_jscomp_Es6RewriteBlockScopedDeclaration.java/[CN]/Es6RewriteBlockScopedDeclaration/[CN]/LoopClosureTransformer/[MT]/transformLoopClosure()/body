@@ -36,19 +36,20 @@
     }
     for (    Var var : object.vars) {
       for (      Node reference : referenceMap.get(var)) {
-        if (NodeUtil.isEnhancedFor(loopNode) && loopNode.getFirstChild() == reference.getParent()) {
+        Node referenceParent=reference.getParent();
+        if (NodeUtil.isEnhancedFor(loopNode) && loopNode.getFirstChild() == referenceParent) {
           loopNode.getLastChild().addChildToFront(IR.exprResult(IR.assign(IR.getprop(IR.name(object.name),IR.string(var.name)),IR.name(var.name))).useSourceInfoIfMissingFromForTree(reference));
         }
  else {
-          if (NodeUtil.isNameDeclaration(reference.getParent())) {
-            Node declaration=reference.getParent();
+          if (NodeUtil.isNameDeclaration(referenceParent)) {
+            Node declaration=referenceParent;
             Node grandParent=declaration.getParent();
             while (declaration.getChildCount() > 1) {
               Node name=declaration.getLastChild();
               grandParent.addChildAfter(IR.declaration(name.detachFromParent(),declaration.getType()).useSourceInfoIfMissingFromForTree(declaration),declaration);
             }
             if (reference.hasChildren()) {
-              declaration=reference.getParent();
+              declaration=referenceParent;
               Node newReference=IR.name(var.name);
               Node replacement=IR.exprResult(IR.assign(newReference,reference.removeFirstChild())).useSourceInfoIfMissingFromForTree(declaration);
               grandParent.replaceChild(declaration,replacement);
@@ -57,6 +58,9 @@
  else {
               grandParent.removeChild(declaration);
             }
+          }
+          if (referenceParent.isCall()) {
+            referenceParent.putBooleanProp(Node.FREE_CALL,false);
           }
           reference.getParent().replaceChild(reference,IR.getprop(IR.name(object.name),IR.string(var.name)).useSourceInfoIfMissingFromForTree(reference));
         }
@@ -77,7 +81,14 @@
     Node iife=IR.function(IR.name(""),IR.paramList(objectNames),IR.block(returnNode));
     Node call=IR.call(iife,objectNamesForCall);
     call.putBooleanProp(Node.FREE_CALL,true);
-    function.getParent().replaceChild(function,call.useSourceInfoIfMissingFromForTree(function));
+    Node replacement;
+    if (NodeUtil.isFunctionDeclaration(function)) {
+      replacement=IR.var(IR.name(function.getFirstChild().getString()),call).useSourceInfoIfMissingFromForTree(function);
+    }
+ else {
+      replacement=call.useSourceInfoIfMissingFromForTree(function);
+    }
+    function.getParent().replaceChild(function,replacement);
     returnNode.addChildToFront(function);
   }
 }
