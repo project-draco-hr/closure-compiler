@@ -1,7 +1,12 @@
 {
   String required=codingConvention.extractClassNameIfRequire(call,parent);
   if (required != null) {
-    requires.put(required,call);
+    if (requires.containsKey(required)) {
+      reportDuplicateRequireWarning(call,required);
+    }
+ else {
+      requires.put(required,call);
+    }
   }
   Node callee=call.getFirstChild();
   if (callee.isName()) {
