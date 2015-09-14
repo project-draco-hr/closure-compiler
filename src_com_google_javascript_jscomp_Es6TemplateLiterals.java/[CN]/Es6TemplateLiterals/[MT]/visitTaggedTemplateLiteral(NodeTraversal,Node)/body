@@ -6,7 +6,7 @@
   Node var=IR.var(callsiteId,cooked).useSourceInfoIfMissingFromForTree(n);
   Node script=NodeUtil.getEnclosingType(n,Token.SCRIPT);
   script.addChildrenToFront(var);
-  Node defineRaw=IR.exprResult(IR.assign(IR.getelem(callsiteId.cloneNode(),IR.string("raw")),raw)).useSourceInfoIfMissingFromForTree(n);
+  Node defineRaw=IR.exprResult(IR.assign(IR.getprop(callsiteId.cloneNode(),IR.string("raw")),raw)).useSourceInfoIfMissingFromForTree(n);
   script.addChildAfter(defineRaw,var);
   Node call=IR.call(n.removeFirstChild(),callsiteId.cloneNode());
   for (Node child=templateLit.getFirstChild(); child != null; child=child.getNext()) {
