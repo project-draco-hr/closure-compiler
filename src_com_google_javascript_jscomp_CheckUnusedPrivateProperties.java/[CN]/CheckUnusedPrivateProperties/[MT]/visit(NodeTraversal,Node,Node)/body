@@ -1,0 +1,45 @@
+{
+switch (n.getType()) {
+case Token.SCRIPT:
+{
+      reportUnused(t);
+      break;
+    }
+case Token.GETPROP:
+{
+    String propName=n.getLastChild().getString();
+    if (compiler.getCodingConvention().isExported(propName) || isPinningPropertyUse(n) || !isCandidatePropertyDefinition(n)) {
+      used.add(propName);
+    }
+ else {
+      if (isPrivatePropDecl(n)) {
+        candidates.add(n);
+      }
+    }
+    break;
+  }
+case Token.MEMBER_FUNCTION_DEF:
+{
+  if (isPrivatePropDecl(n)) {
+    candidates.add(n);
+  }
+  break;
+}
+case Token.OBJECTLIT:
+{
+for (Node c : n.children()) {
+  used.add(c.getString());
+}
+break;
+}
+case Token.CALL:
+Node target=n.getFirstChild();
+if (n.hasMoreThanOneChild() && target.isName() && target.getString().equals(NodeUtil.JSC_PROPERTY_NAME_FN)) {
+Node propName=target.getNext();
+if (propName.isString()) {
+used.add(propName.getString());
+}
+}
+break;
+}
+}
