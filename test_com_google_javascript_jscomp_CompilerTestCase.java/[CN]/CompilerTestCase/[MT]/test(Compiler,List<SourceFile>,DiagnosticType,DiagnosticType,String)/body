@@ -141,7 +141,16 @@
  else {
           explanation=expectedRoot.checkTreeEquals(mainRoot);
         }
-        assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult:   "+ compiler.toSource(mainRoot)+ "\n"+ explanation,explanation);
+        if (explanation != null) {
+          String expectedAsSource=compiler.toSource(expectedRoot);
+          String mainAsSource=compiler.toSource(mainRoot);
+          if (expectedAsSource.equals(mainAsSource)) {
+            fail("In: " + expectedAsSource + "\n"+ explanation);
+          }
+ else {
+            fail("\nExpected: " + expectedAsSource + "\nResult:   "+ mainAsSource);
+          }
+        }
       }
  else       if (expected != null) {
         String[] expectedSources=new String[expected.size()];
