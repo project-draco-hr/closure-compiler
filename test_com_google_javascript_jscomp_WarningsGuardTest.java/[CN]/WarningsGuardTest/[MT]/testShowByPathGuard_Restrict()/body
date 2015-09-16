@@ -1,0 +1,11 @@
+{
+  WarningsGuard includeGuard=new ShowByPathWarningsGuard("/foo/",ShowType.INCLUDE);
+  assertNull(includeGuard.level(makeError("asasasd/foo/hello.js",WARNING)));
+  assertNull(includeGuard.level(makeError("asasasd/foo/hello.js",ERROR)));
+  assertEquals(OFF,includeGuard.level(makeError("asasasd/hello.js",WARNING)));
+  assertEquals(OFF,includeGuard.level(makeError("asasasd/hello.js",OFF)));
+  assertNull(includeGuard.level(makeError("asasasd/hello.js",ERROR)));
+  assertNull(includeGuard.level(makeError(null)));
+  assertNull(includeGuard.level(makeError(null,WARNING)));
+  assertFalse(includeGuard.disables(DiagnosticGroups.DEPRECATED));
+}

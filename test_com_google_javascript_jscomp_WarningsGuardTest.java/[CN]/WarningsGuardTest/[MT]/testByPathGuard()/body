@@ -1,0 +1,11 @@
+{
+  WarningsGuard strictGuard=ByPathWarningsGuard.forPath(ImmutableList.of("/foo/"),ERROR);
+  assertEquals(ERROR,strictGuard.level(makeError("asasasd/foo/hello.js",WARNING)));
+  assertNull(strictGuard.level(makeError("asasasd/foo/hello.js",ERROR)));
+  assertNull(strictGuard.level(makeError("asasasd/hello.js",WARNING)));
+  assertNull(strictGuard.level(makeError("asasasd/hello.js",OFF)));
+  assertNull(strictGuard.level(makeError("asasasd/hello.js",ERROR)));
+  assertNull(strictGuard.level(makeError(null)));
+  assertNull(strictGuard.level(makeError(null,WARNING)));
+  assertFalse(strictGuard.disables(DiagnosticGroups.DEPRECATED));
+}

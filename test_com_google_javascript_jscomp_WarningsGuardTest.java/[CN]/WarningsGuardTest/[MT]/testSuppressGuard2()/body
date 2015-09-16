@@ -1,0 +1,9 @@
+{
+  Map<String,DiagnosticGroup> map=new HashMap<>();
+  map.put("deprecated",new DiagnosticGroup(BAR_WARNING));
+  WarningsGuard guard=new SuppressDocWarningsGuard(map);
+  Compiler compiler=new Compiler();
+  Node code=compiler.parseTestCode("/** @fileoverview \n * @suppress {deprecated} */ function f() { a; } " + "function g() { b; }");
+  assertEquals(OFF,guard.level(JSError.make(findNameNode(code,"a"),BAR_WARNING)));
+  assertEquals(OFF,guard.level(JSError.make(findNameNode(code,"b"),BAR_WARNING)));
+}

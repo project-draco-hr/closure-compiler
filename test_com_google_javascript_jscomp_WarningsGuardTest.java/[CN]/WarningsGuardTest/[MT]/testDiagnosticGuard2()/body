@@ -1,0 +1,12 @@
+{
+  WarningsGuard guard=new DiagnosticGroupWarningsGuard(DiagnosticGroups.DEPRECATED,ERROR);
+  assertNull(guard.level(makeError("foo",VISIBILITY_MISMATCH)));
+  assertEquals(ERROR,guard.level(makeError("foo",DEPRECATED_NAME)));
+  assertFalse(guard.disables(DiagnosticGroups.DEPRECATED));
+  assertFalse(guard.disables(DiagnosticGroups.VISIBILITY));
+  assertFalse(guard.disables(DiagnosticGroups.ACCESS_CONTROLS));
+  assertEnables(guard,DiagnosticGroups.DEPRECATED);
+  assertNotEnables(guard,DiagnosticGroups.VISIBILITY);
+  assertEnables(guard,DiagnosticGroups.ACCESS_CONTROLS);
+  assertNotEnables(guard,DiagnosticGroups.MESSAGE_DESCRIPTIONS);
+}

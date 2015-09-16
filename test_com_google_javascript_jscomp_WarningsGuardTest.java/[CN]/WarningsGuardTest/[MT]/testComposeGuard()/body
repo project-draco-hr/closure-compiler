@@ -1,0 +1,29 @@
+{
+  WarningsGuard g1=new WarningsGuard(){
+    private static final long serialVersionUID=1L;
+    @Override public CheckLevel level(    JSError error){
+      return error.sourceName.equals("123456") ? ERROR : null;
+    }
+    @Override public boolean disables(    DiagnosticGroup otherGroup){
+      return false;
+    }
+  }
+;
+  WarningsGuard g2=new WarningsGuard(){
+    private static final long serialVersionUID=1L;
+    @Override public CheckLevel level(    JSError error){
+      return error.lineNumber == 12 ? WARNING : null;
+    }
+    @Override public boolean disables(    DiagnosticGroup otherGroup){
+      return true;
+    }
+  }
+;
+  WarningsGuard guard=new ComposeWarningsGuard(g1,g2);
+  assertNull(guard.level(makeError("aaa")));
+  assertNull(guard.level(makeError("12345")));
+  assertEquals(ERROR,guard.level(makeError("123456")));
+  assertEquals(WARNING,guard.level(makeError("12345",12)));
+  assertNull(guard.level(makeError("12345",13)));
+  assertTrue(guard.disables(DiagnosticGroups.DEPRECATED));
+}

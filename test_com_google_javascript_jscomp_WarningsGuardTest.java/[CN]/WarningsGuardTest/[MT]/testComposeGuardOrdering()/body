@@ -1,0 +1,14 @@
+{
+  WarningsGuard pathGuard1=new ShowByPathWarningsGuard("/foo/");
+  WarningsGuard pathGuard2=new ShowByPathWarningsGuard("/bar/");
+  WarningsGuard strictGuard=new StrictWarningsGuard();
+  WarningsGuard diagnosticGuard1=new DiagnosticGroupWarningsGuard(DiagnosticGroups.ACCESS_CONTROLS,CheckLevel.OFF);
+  WarningsGuard diagnosticGuard2=new DiagnosticGroupWarningsGuard(DiagnosticGroups.ACCESS_CONTROLS,CheckLevel.OFF);
+  WarningsGuard diagnosticGuard3=new DiagnosticGroupWarningsGuard(DiagnosticGroups.ACCESS_CONTROLS,CheckLevel.OFF);
+  ComposeWarningsGuard guard=new ComposeWarningsGuard(pathGuard1,diagnosticGuard1,strictGuard,diagnosticGuard2,pathGuard2,diagnosticGuard3);
+  List<WarningsGuard> guards=guard.getGuards();
+  assertThat(guards).hasSize(6);
+  for (int i=1; i < 6; i++) {
+    assertTrue(guards.get(i).getPriority() >= guards.get(i - 1).getPriority());
+  }
+}

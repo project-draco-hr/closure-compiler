@@ -1,0 +1,8 @@
+{
+  WarningsGuard typeGuard=new DiagnosticGroupWarningsGuard(DiagnosticGroups.DEPRECATED,WARNING);
+  WarningsGuard strictGuard=new StrictWarningsGuard();
+  WarningsGuard guard=new ComposeWarningsGuard(strictGuard,typeGuard);
+  assertEquals(WARNING,guard.level(JSError.make("example.js",1,0,CheckAccessControls.DEPRECATED_NAME)));
+  guard=new ComposeWarningsGuard(typeGuard,strictGuard);
+  assertEquals(WARNING,guard.level(JSError.make("example.js",1,0,CheckAccessControls.DEPRECATED_NAME)));
+}

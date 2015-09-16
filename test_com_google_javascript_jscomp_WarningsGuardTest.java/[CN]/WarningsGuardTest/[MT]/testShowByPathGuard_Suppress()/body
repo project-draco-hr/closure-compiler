@@ -1,0 +1,14 @@
+{
+  WarningsGuard excludeGuard=new ShowByPathWarningsGuard(new String[]{"/foo/","/bar/"},ShowType.EXCLUDE);
+  assertEquals(OFF,excludeGuard.level(makeError("asasasd/foo/hello.js",WARNING)));
+  assertEquals(OFF,excludeGuard.level(makeError("asasasd/foo/bar/hello.js",WARNING)));
+  assertEquals(OFF,excludeGuard.level(makeError("asasasd/bar/hello.js",WARNING)));
+  assertEquals(OFF,excludeGuard.level(makeError("asasasd/foo/bar/hello.js",WARNING)));
+  assertNull(excludeGuard.level(makeError("asasasd/foo/hello.js",ERROR)));
+  assertNull(excludeGuard.level(makeError("asasasd/hello.js",WARNING)));
+  assertNull(excludeGuard.level(makeError("asasasd/hello.js",OFF)));
+  assertNull(excludeGuard.level(makeError("asasasd/hello.js",ERROR)));
+  assertNull(excludeGuard.level(makeError(null)));
+  assertNull(excludeGuard.level(makeError(null,WARNING)));
+  assertFalse(excludeGuard.disables(DiagnosticGroups.DEPRECATED));
+}

@@ -1,0 +1,10 @@
+{
+  WarningsGuard pathGuard=new ShowByPathWarningsGuard("/foo/");
+  WarningsGuard strictGuard=new StrictWarningsGuard();
+  WarningsGuard guard=new ComposeWarningsGuard(strictGuard,pathGuard);
+  assertEquals(OFF,guard.level(makeError("asasasd/hello.js",WARNING)));
+  assertEquals(ERROR,guard.level(makeError("asasasd/foo/hello.js",WARNING)));
+  guard=new ComposeWarningsGuard(pathGuard,strictGuard);
+  assertEquals(OFF,guard.level(makeError("asasasd/hello.js",WARNING)));
+  assertEquals(ERROR,guard.level(makeError("asasasd/foo/hello.js",WARNING)));
+}
