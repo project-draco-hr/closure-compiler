@@ -2,18 +2,18 @@
   Preconditions.checkState(n.isName());
   Node parent=n.getParent();
   Var v=s.getVar(name);
-  if (v != null && s.isGlobal()) {
+  if (s.isGlobal()) {
     if (v.isExtern() && !input.isExtern()) {
       if (hasOkDuplicateDeclaration.add(v)) {
         return;
       }
     }
   }
-  if (v != null && v.getParentNode().isCatch()) {
+  if (v.isCatch()) {
     name=MakeDeclaredNamesUnique.ContextualRenameInverter.getOriginalName(name);
     compiler.report(JSError.make(n,CATCH_BLOCK_VAR_ERROR,name));
   }
- else   if (v != null && parent.isFunction()) {
+ else   if (parent.isFunction()) {
     if (v.getParentNode().isVar()) {
       s.undeclare(v);
       s.declare(name,n,v.input);
