@@ -1,3 +1,4 @@
 {
-  test("var a = {}; /** @constructor */ a.b = function (){}; a.b.x = 0;" + "var c = a; (function() {a.b.y = 1;})(); a.b.x; a.b.y;","var a = {}; var a$b = function (){}; var a$b$y; var a$b$x = 0;" + "var c = a; (function() {a$b$y = 1;})(); a$b$x; a$b$y;",null,CollapseProperties.UNSAFE_NAMESPACE_WARNING);
+  test(LINE_JOINER.join("var a = {};","/** @constructor */","a.b = function (){};","a.b.x = 0;","var c = a;","(function() {a.b.y = 1;})();","a.b.x;","a.b.y;"),LINE_JOINER.join("var a$b = function (){};","var a$b$y;","var a$b$x = 0;","var c = null;","(function() {a$b$y = 1;})();","a$b$x;","a$b$y;"));
+  test(LINE_JOINER.join("var a = {};","/** @constructor */","a.b = function (){};","a.b.x = 0;","var c = a;","(function() {a.b.y = 1;})();","a.b.x;","a.b.y;","use(c);"),LINE_JOINER.join("var a = {};","var a$b = function (){};","var a$b$y;","var a$b$x = 0;","var c = null;","(function() {a$b$y = 1;})();","a$b$x;","a$b$y;","use(a);"),null,UNSAFE_NAMESPACE_WARNING);
 }
