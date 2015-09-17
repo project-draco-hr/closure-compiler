@@ -1,0 +1,15 @@
+{
+  if (n.isFromExterns()) {
+    if (info != null && info.isNoCollapse()) {
+      reportMisplaced(n,"nocollapse","This JSDoc has no effect in externs.");
+    }
+    return;
+  }
+  if (!NodeUtil.isPrototypePropertyDeclaration(n.getParent())) {
+    return;
+  }
+  JSDocInfo jsdoc=n.getJSDocInfo();
+  if (jsdoc != null && jsdoc.isNoCollapse()) {
+    reportMisplaced(n,"nocollapse","This JSDoc has no effect on prototype properties.");
+  }
+}
