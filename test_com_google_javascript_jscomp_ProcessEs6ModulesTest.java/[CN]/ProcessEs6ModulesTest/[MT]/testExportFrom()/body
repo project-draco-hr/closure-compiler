@@ -1,4 +1,5 @@
 {
   testModules("export {name} from 'other';",LINE_JOINER.join("goog.provide('module$testcode');","goog.require('module$other');","module$testcode.name = module$other.name;"));
   testModules("export {a, b as c, d} from 'other';",LINE_JOINER.join("goog.provide('module$testcode');","goog.require('module$other');","module$testcode.a = module$other.a;","module$testcode.c = module$other.b;","module$testcode.d = module$other.d;"));
+  testModules(LINE_JOINER.join("export {default as a} from 'other';","export {a as a2, default as b} from 'other';"),LINE_JOINER.join("goog.provide('module$testcode');","goog.require('module$other');","module$testcode.a = module$other.default;","module$testcode.a2 = module$other.a;","module$testcode.b = module$other.default;"));
 }

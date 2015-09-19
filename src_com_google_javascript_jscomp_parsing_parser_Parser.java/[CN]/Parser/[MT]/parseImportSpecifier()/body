@@ -1,8 +1,9 @@
 {
   SourcePosition start=getTreeStartLocation();
-  IdentifierToken importedName=eatId();
+  boolean isKeyword=Keywords.isKeyword(peekType());
+  IdentifierToken importedName=eatIdOrKeywordAsId();
   IdentifierToken destinationName=null;
-  if (peekPredefinedString(PredefinedName.AS)) {
+  if (isKeyword || peekPredefinedString(PredefinedName.AS)) {
     eatPredefinedString(PredefinedName.AS);
     destinationName=eatId();
   }
