@@ -4,8 +4,11 @@
   maybeUpdateExportDeclToNode(t,parent,rhs);
   if (rhs.isObjectLit()) {
     for (Node c=rhs.getFirstChild(); c != null; c=c.getNext()) {
-      if (c.isStringKey()) {
-        Node value=c.getFirstChild();
+      if (c.isComputedProp()) {
+        t.report(c,INVALID_EXPORT_COMPUTED_PROPERTY);
+      }
+ else       if (c.isStringKey()) {
+        Node value=c.hasChildren() ? c.getFirstChild() : IR.name(c.getString());
         maybeUpdateExportDeclToNode(t,c,value);
       }
     }
