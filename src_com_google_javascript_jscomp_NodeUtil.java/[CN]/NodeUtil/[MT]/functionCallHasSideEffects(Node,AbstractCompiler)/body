@@ -54,19 +54,21 @@ case "tan":
 case "tanh":
 case "trunc":
         return false;
-    }
+case "random":
+      return !callNode.hasOneChild();
   }
-  if (compiler != null && !compiler.hasRegExpGlobalReferences()) {
-    if (nameNode.getFirstChild().isRegExp() && REGEXP_METHODS.contains(nameNode.getLastChild().getString())) {
+}
+if (compiler != null && !compiler.hasRegExpGlobalReferences()) {
+  if (nameNode.getFirstChild().isRegExp() && REGEXP_METHODS.contains(nameNode.getLastChild().getString())) {
+    return false;
+  }
+ else   if (nameNode.getFirstChild().isString() && STRING_REGEXP_METHODS.contains(nameNode.getLastChild().getString())) {
+    Node param=nameNode.getNext();
+    if (param != null && (param.isString() || param.isRegExp())) {
       return false;
     }
- else     if (nameNode.getFirstChild().isString() && STRING_REGEXP_METHODS.contains(nameNode.getLastChild().getString())) {
-      Node param=nameNode.getNext();
-      if (param != null && (param.isString() || param.isRegExp())) {
-        return false;
-      }
-    }
   }
+}
 }
 return true;
 }
