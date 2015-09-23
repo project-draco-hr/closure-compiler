@@ -9,6 +9,12 @@
  else     if (Keywords.isKeyword(name.asIdentifier().value) && !Keywords.isTypeScriptSpecificKeyword(name.asIdentifier().value)) {
       reportError(name,"Cannot use keyword in short object literal");
     }
+ else     if (peek(TokenType.EQUAL)) {
+      IdentifierExpressionTree idTree=new IdentifierExpressionTree(getTreeLocation(start),(IdentifierToken)name);
+      eat(TokenType.EQUAL);
+      ParseTree defaultValue=parseAssignmentExpression();
+      return new DefaultParameterTree(getTreeLocation(start),idTree,defaultValue);
+    }
   }
   ParseTree value=colon == null ? null : parseAssignmentExpression();
   return new PropertyNameAssignmentTree(getTreeLocation(start),name,value);

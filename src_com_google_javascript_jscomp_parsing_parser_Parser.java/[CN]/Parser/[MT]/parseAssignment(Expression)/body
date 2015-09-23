@@ -6,8 +6,9 @@
     return parseArrowFunction(expressionIn);
   }
   SourcePosition start=getTreeStartLocation();
-  ParseTree left=peekParenPatternAssignment() ? parseParenPattern() : parseConditional(expressionIn);
+  ParseTree left=parseConditional(expressionIn);
   if (peekAssignmentOperator()) {
+    left=transformLeftHandSideExpression(left);
     if (!left.isValidAssignmentTarget()) {
       reportError("invalid assignment target");
     }
