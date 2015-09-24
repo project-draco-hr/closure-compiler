@@ -1,7 +1,13 @@
 {
   if (n.isQualifiedName()) {
     Declaration decl=currentScope.getDeclaration(QualifiedName.fromNode(n),false);
-    if (decl != null && decl.getFunctionScope() != null) {
+    if (decl == null) {
+      JSType t=simpleInferExprType(n);
+      if (t != null) {
+        return t.getFunTypeIfSingletonObj();
+      }
+    }
+ else     if (decl.getFunctionScope() != null) {
       DeclaredFunctionType funType=decl.getFunctionScope().getDeclaredFunctionType();
       if (funType != null) {
         return funType.toFunctionType();
