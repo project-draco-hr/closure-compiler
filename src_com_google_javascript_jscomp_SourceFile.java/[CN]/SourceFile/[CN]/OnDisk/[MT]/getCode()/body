@@ -2,10 +2,7 @@
   String cachedCode=super.getCode();
   if (cachedCode == null) {
     cachedCode=Files.toString(file,this.getCharset());
-    if (cachedCode != null && this.getCharset() == StandardCharsets.UTF_8 && cachedCode.startsWith(UTF8_BOM)) {
-      cachedCode=cachedCode.substring(UTF8_BOM.length());
-    }
-    super.setCode(cachedCode);
+    super.setCode(cachedCode,this.getCharset() == StandardCharsets.UTF_8);
   }
   return cachedCode;
 }
