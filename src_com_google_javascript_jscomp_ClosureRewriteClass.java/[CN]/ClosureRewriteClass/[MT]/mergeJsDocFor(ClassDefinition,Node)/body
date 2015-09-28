@@ -35,6 +35,15 @@
     compiler.report(JSError.make(associatedNode,GOOG_CLASS_NG_INJECT_ON_CLASS));
     mergedInfo.recordNgInject(true);
   }
+  if (classInfo.makesUnrestricted() || ctorInfo.makesUnrestricted()) {
+    mergedInfo.recordUnrestricted();
+  }
+ else   if (classInfo.makesDicts() || ctorInfo.makesDicts()) {
+    mergedInfo.recordDict();
+  }
+ else {
+    mergedInfo.recordStruct();
+  }
   boolean isInterface=classInfo.isInterface() || ctorInfo.isInterface();
   if (isInterface) {
     mergedInfo.recordInterface();
@@ -53,15 +62,6 @@
   }
  else {
     mergedInfo.recordConstructor();
-    if (classInfo.makesUnrestricted() || ctorInfo.makesUnrestricted()) {
-      mergedInfo.recordUnrestricted();
-    }
- else     if (classInfo.makesDicts() || ctorInfo.makesDicts()) {
-      mergedInfo.recordDict();
-    }
- else {
-      mergedInfo.recordStruct();
-    }
     if (classInfo.getBaseType() != null) {
       mergedInfo.recordBaseType(classInfo.getBaseType());
     }

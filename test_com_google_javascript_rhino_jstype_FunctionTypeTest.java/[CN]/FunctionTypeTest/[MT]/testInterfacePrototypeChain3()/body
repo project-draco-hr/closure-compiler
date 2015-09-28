@@ -1,8 +1,8 @@
 {
   TemplateType templateT=registry.createTemplateType("T");
-  FunctionType iface=registry.createInterfaceType("I",null,ImmutableList.of(templateT));
+  FunctionType iface=registry.createInterfaceType("I",null,ImmutableList.of(templateT),false);
   iface.getPrototype().defineDeclaredProperty("genericProp",templateT,null);
-  FunctionType subIface=registry.createInterfaceType("SubI",null,ImmutableList.<TemplateType>of());
+  FunctionType subIface=registry.createInterfaceType("SubI",null,ImmutableList.<TemplateType>of(),false);
   subIface.setExtendedInterfaces(Lists.<ObjectType>newArrayList(iface.getInstanceType()));
   assertTypeEquals(subIface.getPrototype(),subIface.getInstanceType().getImplicitPrototype());
   assertTypeEquals(OBJECT_TYPE,subIface.getPrototype().getImplicitPrototype());
