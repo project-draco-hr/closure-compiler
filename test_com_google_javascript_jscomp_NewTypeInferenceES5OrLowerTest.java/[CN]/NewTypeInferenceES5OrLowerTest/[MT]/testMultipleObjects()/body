@@ -6,6 +6,6 @@
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @type {number} */ Foo.prototype.n = 5;","/** @param {{n : number}} x */ function reqRecord(x) {}","function f() {","  reqRecord(new Foo);","}"));
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @type {number} */ Foo.prototype.n = 5;","/** @param {{n : string}} x */ function reqRecord(x) {}","function f() {","  reqRecord(new Foo);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @param {{n : number}|!Foo} x */","function f(x) {","  x.n - 5;","}"),NewTypeInference.POSSIBLY_INEXISTENT_PROPERTY);
-  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @param {{n : number}|!Foo} x */","function f(x) {","  x.abc - 5;","}"),TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @param {{n : number}|!Foo} x */","function f(x) {","  x.abc - 5;","}"),NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","/** @constructor */ function Bar() {}","/** @param {!Bar|!Foo} x */","function f(x) {","  x.abc = 'str';","  if (x instanceof Foo) {","    x.abc - 5;","  }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

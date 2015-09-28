@@ -1,7 +1,7 @@
 {
   typeCheck("goog.bind(123, null);",NewTypeInference.GOOG_BIND_EXPECTS_FUNCTION);
-  typeCheck(Joiner.on('\n').join("function f(x) { return x; }","goog.bind(f, null, 1, 2);"),TypeCheck.WRONG_ARGUMENT_COUNT);
-  typeCheck(Joiner.on('\n').join("function f(x) { return x; }","goog.bind(f);"),TypeCheck.WRONG_ARGUMENT_COUNT);
+  typeCheck(Joiner.on('\n').join("function f(x) { return x; }","goog.bind(f, null, 1, 2);"),NewTypeInference.WRONG_ARGUMENT_COUNT);
+  typeCheck(Joiner.on('\n').join("function f(x) { return x; }","goog.bind(f);"),NewTypeInference.WRONG_ARGUMENT_COUNT);
   typeCheck(Joiner.on('\n').join("function f() {}","goog.bind(f, 1);"),NewTypeInference.INVALID_THIS_TYPE_IN_BIND);
   typeCheck(Joiner.on('\n').join("function f(/** number */ x, /** number */ y) { return x - y; }","var g = goog.bind(f, null, 123);","g('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("function f(/** number */ x) { return x - 1; }","var g = goog.partial(f, 'asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);

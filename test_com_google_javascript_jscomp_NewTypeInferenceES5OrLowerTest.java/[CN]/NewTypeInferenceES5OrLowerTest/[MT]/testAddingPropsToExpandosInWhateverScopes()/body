@@ -1,9 +1,9 @@
 {
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f(/** !Foo */ x) {","  x.prop = 123;","}","(new Foo).prop - 1;"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f() {","  (new Foo).prop = 123;","}","var s = (new Foo).prop;"),TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f() {","  (new Foo).prop = 123;","}","var s = (new Foo).prop;"),NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f(/** !Foo */ x) {","  x.prop = 'asdf';","}","(new Foo).prop - 1;"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f(/** !Foo */ x) {","  var y = x.prop;","}","var z = (new Foo).prop;"),TypeCheck.INEXISTENT_PROPERTY,TypeCheck.INEXISTENT_PROPERTY);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f() {","  var x = new Foo;","  x.prop = 123;","}","(new Foo).prop - 1;"),TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f(/** !Foo */ x) {","  var y = x.prop;","}","var z = (new Foo).prop;"),NewTypeInference.INEXISTENT_PROPERTY,NewTypeInference.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f() {","  var x = new Foo;","  x.prop = 123;","}","(new Foo).prop - 1;"),NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f(/** !Foo */ x) {","  /** @const */","  x.prop = 123;","}","(new Foo).prop - 1;"),GlobalTypeInfo.MISPLACED_CONST_ANNOTATION);
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f(/** !Foo */ x) {","  /** @type {string} */","  x.prop = 'asdf';","}","(new Foo).prop - 123;"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(Joiner.on('\n').join("/** @constructor */","function High() {}","function f(/** !High */ x) {","  /** @type {string} */","  x.prop = 'asdf';","}","/** @constructor @extends {High} */","function Low() {}","(new Low).prop - 123;"),NewTypeInference.INVALID_OPERAND_TYPE);

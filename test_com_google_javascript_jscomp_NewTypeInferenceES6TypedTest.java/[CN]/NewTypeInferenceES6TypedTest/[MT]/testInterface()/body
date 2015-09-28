@@ -1,7 +1,7 @@
 {
-  typeCheck(LINE_JOINER.join("interface Foo {}","(new Foo);"),TypeCheck.NOT_A_CONSTRUCTOR);
-  typeCheck(LINE_JOINER.join("interface Foo {","  prop: number;","}","class Bar implements Foo {","}"),TypeValidator.INTERFACE_METHOD_NOT_IMPLEMENTED);
-  typeCheck(LINE_JOINER.join("interface Foo {","  prop: number;","}","class Bar extends Foo {","}"),TypeCheck.CONFLICTING_EXTENDED_TYPE);
+  typeCheck(LINE_JOINER.join("interface Foo {}","(new Foo);"),NewTypeInference.NOT_A_CONSTRUCTOR);
+  typeCheck(LINE_JOINER.join("interface Foo {","  prop: number;","}","class Bar implements Foo {","}"),GlobalTypeInfo.INTERFACE_METHOD_NOT_IMPLEMENTED);
+  typeCheck(LINE_JOINER.join("interface Foo {","  prop: number;","}","class Bar extends Foo {","}"),JSTypeCreatorFromJSDoc.CONFLICTING_EXTENDED_TYPE);
   typeCheck("interface Foo extends Foo {}",JSTypeCreatorFromJSDoc.INHERITANCE_CYCLE);
-  typeCheck(LINE_JOINER.join("interface Foo {","  prop: number;","}","interface Bar {","  prop: string;","}","interface Baz extends Foo, Bar {}"),TypeCheck.INCOMPATIBLE_EXTENDED_PROPERTY_TYPE);
+  typeCheck(LINE_JOINER.join("interface Foo {","  prop: number;","}","interface Bar {","  prop: string;","}","interface Baz extends Foo, Bar {}"),GlobalTypeInfo.SUPER_INTERFACES_HAVE_INCOMPATIBLE_PROPERTIES);
 }

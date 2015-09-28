@@ -1,29 +1,29 @@
 {
   typeCheck(Joiner.on('\n').join("function f(f1, /** function(string=) */ f2, cond) {","  var y;","  if (cond) {","    f1();","    y = f1;","  } else {","    y = f2;","  }","  return y;","}"));
   typeCheck(Joiner.on('\n').join("function f(/** ...number */ fnum) {}","f(); f(1, 2, 3); f(1, 2, 'asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("function f(/** number= */ x, /** number */ y) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("function f(/** number= */ x, /** number */ y) {}",JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
   typeCheck(Joiner.on('\n').join("function f(/** number= */ x) {}","f(); f('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** number= */ x) {}","f(1, 2);"),TypeCheck.WRONG_ARGUMENT_COUNT);
+  typeCheck(Joiner.on('\n').join("function f(/** number= */ x) {}","f(1, 2);"),NewTypeInference.WRONG_ARGUMENT_COUNT);
   typeCheck(Joiner.on('\n').join("/** @param {function(...number)} fnum */","function f(fnum) {","  fnum(); fnum(1, 2, 3, 'asdf');","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {function(number=, number)} g */","function f(g) {}"),RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("/** @param {function(number=, number)} g */","function f(g) {}"),JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
   typeCheck(Joiner.on('\n').join("/** @param {number=} x */","function f(x) {}","f(); f('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {number=} x */","function f(x) {}","f(1, 2);"),TypeCheck.WRONG_ARGUMENT_COUNT);
+  typeCheck(Joiner.on('\n').join("/** @param {number=} x */","function f(x) {}","f(1, 2);"),NewTypeInference.WRONG_ARGUMENT_COUNT);
   typeCheck("/** @type {number|function()} */ function f(x) {}",GlobalTypeInfo.WRONG_PARAMETER_COUNT);
   typeCheck("/** @type {number|function(number)} */ function f() {}",GlobalTypeInfo.WRONG_PARAMETER_COUNT);
   typeCheck("/** @type {function(number)} */ function f(/** number */ x) {}");
-  typeCheck(Joiner.on('\n').join("/**"," * @param {number=} x"," * @param {number} y"," */","function f(x, y) {}"),RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("/**"," * @param {number=} x"," * @param {number} y"," */","function f(x, y) {}"),JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
   typeCheck(Joiner.on('\n').join("/** @type {function(number=)} */ function f(x) {}","f(); f('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck("/** @type {function(number=, number)} */ function f(x, y) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/** @type {function(number=, number)} */ function f(x, y) {}",JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
   typeCheck("function /** number */ f() { return 'asdf'; }",NewTypeInference.RETURN_NONDECLARED_TYPE);
-  typeCheck("/** @return {number} */ function /** number */ f() { return 1; }",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("/** @return {number} */ function /** number */ f() { return 1; }",JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
   typeCheck("/** @type {function(): number} */ function /** number */ f() { return 1; }");
   typeCheck(Joiner.on('\n').join("/** @type {function(...number)} */ function f() {}","f(); f(1, 2, 3); f(1, 2, 'asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/** @param {...number} var_args */ function f(var_args) {}","f(); f(1, 2, 3); f(1, 2, 'asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck("/** @type {function(...number)} */ function f(x) {}");
-  typeCheck(Joiner.on('\n').join("/**"," * @param {...number} var_args"," * @param {number=} x"," */","function f(var_args, x) {}"),RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("/**"," * @param {...number} var_args"," * @param {number=} x"," */","function f(var_args, x) {}"),JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
   typeCheck(Joiner.on('\n').join("/** @type {function(number=, ...number)} */","function f(x) {}","f('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("function f(/** function(number=) */ fnum,","  /** function(string=) */ fstr, cond) {","  var y;","  if (cond) {","    y = fnum;","  } else {","    y = fstr;","  }","  y();","  y(123);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** function(...number) */ fnum,","  /** function(...string) */ fstr, cond) {","  var y;","  if (cond) {","    y = fnum;","  } else {","    y = fstr;","  }","  y();","  y(123);","}"),TypeCheck.NOT_CALLABLE,TypeCheck.NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("function f(/** function(...number) */ fnum,","  /** function(...string) */ fstr, cond) {","  var y;","  if (cond) {","    y = fnum;","  } else {","    y = fstr;","  }","  y();","  y(123);","}"),NewTypeInference.NOT_CALLABLE,NewTypeInference.NOT_CALLABLE);
   typeCheck(Joiner.on('\n').join("function f(","  /** function() */ f1, /** function(string=) */ f2, cond) {","  var y;","  if (cond) {","    y = f1;","  } else {","    y = f2;","  }","  y(123);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/** @param {function(string): *} x */ function g(x) {}","/** @param {function(...number): string} x */ function f(x) {","  g(x);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/**"," * @param {number=} x"," * @param {number=} y"," */","function f(x, y) {}","f(undefined, 123);","f('str')"),NewTypeInference.INVALID_ARGUMENT_TYPE);
@@ -35,7 +35,7 @@
   typeCheck(Joiner.on('\n').join("function f(/** function(string=) */ x) {}","f(/** @type {function(...number)} */ (function(nums) {}));"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("function f(/** function(...number) */ x) {}","f(/** @type {function(string=)} */ (function(x) {}));"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/** @param {number} opt_num */ function f(opt_num) {}","f();"));
-  typeCheck("function f(opt_num, x) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("function f(opt_num, x) {}",JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
   typeCheck("function f(var_args) {} f(1, 2, 3);");
-  typeCheck("function f(var_args, x) {}",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
+  typeCheck("function f(var_args, x) {}",JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
 }

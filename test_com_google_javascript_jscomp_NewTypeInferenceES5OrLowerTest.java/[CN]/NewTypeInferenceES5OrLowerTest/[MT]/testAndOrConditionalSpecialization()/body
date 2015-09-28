@@ -4,7 +4,7 @@
   typeCheck(Joiner.on('\n').join("var x, y = 5;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x === null || x === undefined) {","  y = x;","}","var /** (number|null|undefined) **/ z = y;","(function(/** (number|null) */ x){})(y);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("var x, y;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x !== null && x !== undefined) {","  y = 5;","} else {","  y = x;","}","var /** (number|null|undefined) **/ z = y;","(function(/** (number|null) */ x){})(y);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("var x, y = 5;","if (true) {","  x = 5;","} else {","  x = 'str';","}","if (x === 7 || x === 8) {","  y = x;","}","y - 5"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */ function C(){}","var obj = new C;","if (obj || false) { 123, obj.asdf; }"),TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function C(){}","var obj = new C;","if (obj || false) { 123, obj.asdf; }"),NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck(Joiner.on('\n').join("function f(/** (number|string) */ x) {","  (typeof x === 'number') && (x - 5);","}"));
   typeCheck(Joiner.on('\n').join("function f(/** (number|string|null) */ x) {","  (x && (typeof x === 'number')) && (x - 5);","}"));
   typeCheck(Joiner.on('\n').join("function f(/** (number|string|null) */ x) {","  (x && (typeof x === 'string')) && (x - 5);","}"),NewTypeInference.INVALID_OPERAND_TYPE);

@@ -14,7 +14,7 @@
   calleePair=mayWarnAboutNullableReferenceAndTighten(callee,calleePair.type,inEnv,commonTypes.topFunction());
   JSType calleeType=calleePair.type;
   if (calleeType.isBottom() || !calleeType.isSubtypeOf(commonTypes.topFunction())) {
-    warnings.add(JSError.make(expr,TypeCheck.NOT_CALLABLE,calleeType.toString()));
+    warnings.add(JSError.make(expr,NOT_CALLABLE,calleeType.toString()));
   }
   FunctionType funType=calleeType.getFunTypeIfSingletonObj();
   if (funType == null || funType.isTopFunction() || funType.isQmarkFunction()) {
@@ -24,7 +24,7 @@
     return analyzeLooseCallNodeFwd(expr,inEnv,requiredType);
   }
  else   if (expr.isCall() && funType.isConstructor() && funType.getReturnType().isUnknown()) {
-    warnings.add(JSError.make(expr,TypeCheck.CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
+    warnings.add(JSError.make(expr,CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
     return analyzeCallNodeArgsFwdWhenError(expr,inEnv);
   }
  else   if (expr.isNew() && !funType.isConstructor()) {
@@ -35,7 +35,7 @@
   int minArity=funType.getMinArity();
   int numArgs=expr.getChildCount() - 1;
   if (numArgs < minArity || numArgs > maxArity) {
-    warnings.add(JSError.make(expr,TypeCheck.WRONG_ARGUMENT_COUNT,getReadableCalleeName(callee),Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
+    warnings.add(JSError.make(expr,WRONG_ARGUMENT_COUNT,getReadableCalleeName(callee),Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
     return analyzeCallNodeArgsFwdWhenError(expr,inEnv);
   }
   FunctionType origFunType=funType;

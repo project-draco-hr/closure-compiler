@@ -3,6 +3,6 @@
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @constructor"," */","function Foo(x) {}","/** @const */ var foo_str = new Foo('str');","function g() { var /** !Foo<number> */ foo_num = foo_str; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @return {T}"," */","function f(x) { return x; }","/** @const */ var x = f(f ? 'str' : 5);"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
   typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @param {T} y"," * @return {T}"," */","function f(x, y) { return true ? y : x; }","/** @const */ var x = f(5, 'str');","function g() { var /** null */ n = x; }"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE,NewTypeInference.NOT_UNIQUE_INSTANTIATION);
-  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @return {T}"," */","function f(x) { return x; }","/** @const */","var y = f(1, 2);"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE,TypeCheck.WRONG_ARGUMENT_COUNT);
-  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @return {T}"," */","function f(x) { return x; }","/** @const */","var y = f();"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE,TypeCheck.WRONG_ARGUMENT_COUNT);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @return {T}"," */","function f(x) { return x; }","/** @const */","var y = f(1, 2);"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE,NewTypeInference.WRONG_ARGUMENT_COUNT);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @param {T} x"," * @return {T}"," */","function f(x) { return x; }","/** @const */","var y = f();"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE,NewTypeInference.WRONG_ARGUMENT_COUNT);
 }

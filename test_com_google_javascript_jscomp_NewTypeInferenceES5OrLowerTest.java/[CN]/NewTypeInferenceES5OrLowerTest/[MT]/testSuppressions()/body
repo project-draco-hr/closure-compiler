@@ -1,8 +1,6 @@
 {
   typeCheck(Joiner.on('\n').join("/**"," * @fileoverview"," * @suppress {newCheckTypes}"," */","123();"));
-  typeCheck(Joiner.on('\n').join("123();","/** @suppress {newCheckTypes} */","function f() { 123(); }"),TypeCheck.NOT_CALLABLE);
-  typeCheck(Joiner.on('\n').join("123();","/** @suppress {newCheckTypes} */","function f() { 1 - 'str'; }"),TypeCheck.NOT_CALLABLE);
-  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @type {Object} */","ns.obj = { prop: 123 };","/**"," * @suppress {duplicate}"," * @type {Object}"," */","ns.obj = null;"));
-  typeCheck(Joiner.on('\n').join("function f() {","  /** @const */","  var ns = {};","  /** @type {number} */","  ns.prop = 1;","  /**","   * @type {number}","   * @suppress {duplicate}","   */","  ns.prop = 2;","}"));
+  typeCheck(Joiner.on('\n').join("123();","/** @suppress {newCheckTypes} */","function f() { 123(); }"),NewTypeInference.NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("123();","/** @suppress {newCheckTypes} */","function f() { 1 - 'str'; }"),NewTypeInference.NOT_CALLABLE);
   typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @suppress {constantProperty}"," */","function Foo() {","  /** @const */ this.bar = 3; this.bar += 4;","}"));
 }

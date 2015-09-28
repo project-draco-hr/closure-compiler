@@ -2,7 +2,7 @@
   typeCheck(Joiner.on('\n').join("function f(x) {","  if (x instanceof Function) { x(); }","}"));
   typeCheck(Joiner.on('\n').join("function f(x) {","  if (x instanceof Function) { x(1); x('str') }","}"));
   typeCheck(Joiner.on('\n').join("function f(/** (null|function()) */ x) {","  if (x instanceof Function) { x(); }","}"));
-  typeCheck(Joiner.on('\n').join("function f(/** (null|function()) */ x) {","  if (x instanceof Function) {} else { x(); }","}"),TypeCheck.NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("function f(/** (null|function()) */ x) {","  if (x instanceof Function) {} else { x(); }","}"),NewTypeInference.NOT_CALLABLE);
   typeCheck("(function(){}).call(null);");
   typeCheck(Joiner.on('\n').join("function greet(name) {}","greet.call(null, 'bob');","greet.apply(null, ['bob']);"));
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","Foo.prototype.greet = function(name){};","Foo.prototype.greet.call(new Foo, 'bob');"));

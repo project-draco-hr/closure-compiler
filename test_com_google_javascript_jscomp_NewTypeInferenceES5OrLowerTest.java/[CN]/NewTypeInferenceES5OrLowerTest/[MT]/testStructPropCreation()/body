@@ -1,15 +1,15 @@
 {
   typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() { this.prop = 1; }","(new Foo).prop = 2;"));
-  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.method = function() { this.prop = 1; };"),TypeCheck.ILLEGAL_PROPERTY_CREATION);
-  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.method = function() { this.prop = 1; };","(new Foo).prop = 2;"),TypeCheck.ILLEGAL_PROPERTY_CREATION,TypeCheck.ILLEGAL_PROPERTY_CREATION);
-  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","(new Foo).prop += 2;"),TypeCheck.INEXISTENT_PROPERTY);
-  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.method = function() { this.prop = 1; };","(new Foo).prop++;"),TypeCheck.ILLEGAL_PROPERTY_CREATION,TypeCheck.INEXISTENT_PROPERTY);
-  typeCheck("(/** @struct */ { prop: 1 }).prop2 = 123;",TypeCheck.ILLEGAL_PROPERTY_CREATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.method = function() { this.prop = 1; };"),NewTypeInference.ILLEGAL_PROPERTY_CREATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.method = function() { this.prop = 1; };","(new Foo).prop = 2;"),NewTypeInference.ILLEGAL_PROPERTY_CREATION,NewTypeInference.ILLEGAL_PROPERTY_CREATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","(new Foo).prop += 2;"),NewTypeInference.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.method = function() { this.prop = 1; };","(new Foo).prop++;"),NewTypeInference.ILLEGAL_PROPERTY_CREATION,NewTypeInference.INEXISTENT_PROPERTY);
+  typeCheck("(/** @struct */ { prop: 1 }).prop2 = 123;",NewTypeInference.ILLEGAL_PROPERTY_CREATION);
   typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","/** @constructor @struct @extends {Foo} */","function Bar() {}","Bar.prototype.prop = 123;"));
-  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","/** @constructor @struct @extends {Foo} */","function Bar() {}","Bar.prototype.prop = 123;","(new Foo).prop = 234;"),TypeCheck.ILLEGAL_PROPERTY_CREATION);
-  typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @struct"," */","function Foo() {","  var t = this;","  t.x = 123;","}"),TypeCheck.ILLEGAL_PROPERTY_CREATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","/** @constructor @struct @extends {Foo} */","function Bar() {}","Bar.prototype.prop = 123;","(new Foo).prop = 234;"),NewTypeInference.ILLEGAL_PROPERTY_CREATION);
+  typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @struct"," */","function Foo() {","  var t = this;","  t.x = 123;","}"),NewTypeInference.ILLEGAL_PROPERTY_CREATION);
   typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @struct"," */","function Foo() {}","Foo.someprop = 123;"));
   typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","Foo.prototype.bar = 123;","(new Foo).bar = 123;"));
   typeCheck(Joiner.on('\n').join("function f(obj) { obj.prop = 123; }","f(/** @struct */ {});"));
-  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","function f(obj) { obj.prop - 5; return obj; }","var s = (1 < 2) ? new Foo : f({ prop: 123 });","s.newprop = 123;"),TypeCheck.ILLEGAL_PROPERTY_CREATION);
+  typeCheck(Joiner.on('\n').join("/** @constructor @struct */","function Foo() {}","function f(obj) { obj.prop - 5; return obj; }","var s = (1 < 2) ? new Foo : f({ prop: 123 });","s.newprop = 123;"),NewTypeInference.ILLEGAL_PROPERTY_CREATION);
 }

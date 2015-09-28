@@ -2,5 +2,5 @@
   typeCheck(Joiner.on('\n').join("/** @param {{ n: number }} x */ function f(x) {","  if (x.p) {","    return x.p;","  }","}"));
   typeCheck(Joiner.on('\n').join("/** @param {{ p : string }} x */ function reqHasPropP(x){}","/** @param {{ n: number }} x */ function f(x, cond) {","  if (cond) {","    x.p = 'str';","  }","  reqHasPropP(x);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/** @param {{ n: number }} x */ function f(x, cond) {","  if (cond) { x.p = 'str'; }","  if (x.p) {","    x.p - 5;","  }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** { n : number } */ x) {","  x.s = 'str';","  return x.inexistentProp;","}"),TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("function f(/** { n : number } */ x) {","  x.s = 'str';","  return x.inexistentProp;","}"),NewTypeInference.INEXISTENT_PROPERTY);
 }

@@ -2,7 +2,7 @@
   typeCheck(Joiner.on('\n').join("function f() { return {}; }","f().x = 123;"));
   typeCheck(Joiner.on('\n').join("function f() { return {}; }","f().ns = {};"));
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() { /** @type {number} */ this.a = 123; }","/** @return {!Foo} */","function retFoo() { return new Foo(); }","function f(cond) {","  (retFoo()).a = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","(new Foo).x += 123;"),TypeCheck.INEXISTENT_PROPERTY);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","(new Foo).x += 123;"),NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() { /** @type {number} */ this.a = 123; }","function f(cond, /** !Foo */ foo1) {","  var /** { a: number } */ x = { a: 321 };","  (cond ? foo1 : x).a = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("function f(obj) { obj[1 - 'str'] = 3; }",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("function f(/** undefined */ n, pname) { n[pname] = 3; }",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);

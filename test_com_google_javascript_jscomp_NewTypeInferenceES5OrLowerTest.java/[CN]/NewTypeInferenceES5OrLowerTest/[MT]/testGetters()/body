@@ -1,14 +1,14 @@
 {
   typeCheck("var x = { /** @return {string} */ get a() { return 1; } };",NewTypeInference.RETURN_NONDECLARED_TYPE);
   typeCheck("var x = { /** @param {number} n */ get a() {} };",GlobalTypeInfo.INEXISTENT_PARAM);
-  typeCheck("var x = { /** @type {string} */ get a() {} };",RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
-  typeCheck(Joiner.on('\n').join("var x = {","  /**","   * @return {T|number} b","   * @template T","   */","  get a() {}","};"),RhinoErrorReporter.BAD_JSDOC_ANNOTATION);
-  typeCheck("var x = /** @dict */ { get a() {} };",TypeCheck.ILLEGAL_OBJLIT_KEY);
-  typeCheck("var x = /** @struct */ { get 'a'() {} };",TypeCheck.ILLEGAL_OBJLIT_KEY);
+  typeCheck("var x = { /** @type {string} */ get a() {} };",JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("var x = {","  /**","   * @return {T|number} b","   * @template T","   */","  get a() {}","};"),JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
+  typeCheck("var x = /** @dict */ { get a() {} };",NewTypeInference.ILLEGAL_OBJLIT_KEY);
+  typeCheck("var x = /** @struct */ { get 'a'() {} };",NewTypeInference.ILLEGAL_OBJLIT_KEY);
   typeCheck("var x = { get a() { 1 - 'asdf'; } };",NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(Joiner.on('\n').join("var x = { get a() { return 1; } };","x.a < 'str';"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("var x = { get a() { return 1; } };","x.a();"),TypeCheck.NOT_CALLABLE);
-  typeCheck(Joiner.on('\n').join("var x = { get 'a'() { return 1; } };","x['a']();"),TypeCheck.NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("var x = { get a() { return 1; } };","x.a();"),NewTypeInference.NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("var x = { get 'a'() { return 1; } };","x['a']();"),NewTypeInference.NOT_CALLABLE);
   typeCheck(Joiner.on('\n').join("var x = { get a() { return 1; } };","x.a = 'str';","x.a - 1;"));
-  typeCheck("var x = /** @struct */ { get a() {} }; x.a = 123;",TypeCheck.ILLEGAL_PROPERTY_CREATION);
+  typeCheck("var x = /** @struct */ { get a() {} }; x.a = 123;",NewTypeInference.ILLEGAL_PROPERTY_CREATION);
 }

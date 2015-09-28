@@ -1,12 +1,12 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @constructor */ ns.C = function() {};","ns.C();"),TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @constructor */ ns.C = function() {};","ns.C();"),NewTypeInference.CONSTRUCTOR_NOT_CALLABLE);
   typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @param {number} x */ ns.f = function(x) {};","ns.f('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @constructor */ ns.C = function(){}","ns.C.prototype.method = function(/** string */ x){};","(new ns.C).method(5);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @const */ ns.ns2 = {};","/** @constructor */ ns.ns2.C = function() {};","ns.ns2.C();"),TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @const */ ns.ns2 = {};","/** @constructor */ ns.ns2.C = function() {};","ns.ns2.C();"),NewTypeInference.CONSTRUCTOR_NOT_CALLABLE);
   typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @const */ ns.ns2 = {};","/** @constructor */ ns.ns2.C = function() {};","ns.ns2.C.prototype.method = function(/** string */ x){};","(new ns.ns2.C).method(11);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(Joiner.on('\n').join("/** @constructor */ function C1(){}","/** @constructor */ C1.C2 = function(){}","C1.C2.prototype.method = function(/** string */ x){};","(new C1.C2).method(1);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @constructor */ function C1(){};","/** @constructor */ C1.prototype.C2 = function(){};","(new C1).C2();"),TypeCheck.CONSTRUCTOR_NOT_CALLABLE);
-  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @type {number} */ ns.N = 5;","ns.N();"),TypeCheck.NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */ function C1(){};","/** @constructor */ C1.prototype.C2 = function(){};","(new C1).C2();"),NewTypeInference.CONSTRUCTOR_NOT_CALLABLE);
+  typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @type {number} */ ns.N = 5;","ns.N();"),NewTypeInference.NOT_CALLABLE);
   typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @type {number} */ ns.foo = 123;","/** @type {string} */ ns.foo = '';"),GlobalTypeInfo.REDECLARED_PROPERTY,NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @type {number} */ ns.foo;","/** @type {string} */ ns.foo;"),GlobalTypeInfo.REDECLARED_PROPERTY);
   typeCheck(Joiner.on('\n').join("/** @const */ var ns = {};","/** @type {number} */ ns.foo;","/** @type {number} */ ns.foo;"),GlobalTypeInfo.REDECLARED_PROPERTY);

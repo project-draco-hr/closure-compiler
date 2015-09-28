@@ -16,12 +16,12 @@
     return new EnvTypePair(env,JSType.UNKNOWN);
   }
   if (NodeUtil.isGoogBind(call.getFirstChild()) && call.getChildCount() <= 2 || !NodeUtil.isGoogPartial(call.getFirstChild()) && call.getChildCount() == 1) {
-    warnings.add(JSError.make(call,TypeCheck.WRONG_ARGUMENT_COUNT,getReadableCalleeName(call.getFirstChild()),"0","1",""));
+    warnings.add(JSError.make(call,WRONG_ARGUMENT_COUNT,getReadableCalleeName(call.getFirstChild()),"0","1",""));
   }
   int maxArity=boundFunType.hasRestFormals() ? Integer.MAX_VALUE : boundFunType.getMaxArity();
   int numArgs=bindComponents.getBoundParameterCount();
   if (numArgs > maxArity) {
-    warnings.add(JSError.make(call,TypeCheck.WRONG_ARGUMENT_COUNT,getReadableCalleeName(call.getFirstChild()),Integer.toString(numArgs),"0"," and at most " + maxArity));
+    warnings.add(JSError.make(call,WRONG_ARGUMENT_COUNT,getReadableCalleeName(call.getFirstChild()),Integer.toString(numArgs),"0"," and at most " + maxArity));
     return analyzeCallNodeArgsFwdWhenError(call,inEnv);
   }
   if (boundFunType.isGeneric()) {
