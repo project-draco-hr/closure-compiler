@@ -32,7 +32,7 @@ JSType namedType=getType(scope,n.getString(),sourceName,n.getLineno(),n.getCharn
 if ((namedType instanceof ObjectType) && !(namedType instanceof NamespaceType) && !(nonNullableTypeNames.contains(n.getString()))) {
 Node typeList=n.getFirstChild();
 int nAllowedTypes=namedType.getTemplateTypeMap().numUnfilledTemplateKeys();
-if (typeList != null && nAllowedTypes > 0) {
+if (!namedType.isUnknownType() && typeList != null) {
 ImmutableList.Builder<JSType> templateTypes=ImmutableList.builder();
 if (n.getString().equals("Object") && typeList.getFirstChild() == typeList.getLastChild()) {
 templateTypes.add(getNativeType(UNKNOWN_TYPE));
