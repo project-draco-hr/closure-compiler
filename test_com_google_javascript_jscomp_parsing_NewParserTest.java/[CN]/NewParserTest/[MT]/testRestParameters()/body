@@ -1,7 +1,10 @@
 {
   mode=LanguageMode.ECMASCRIPT6;
   parse("function f(...b) {}");
-  parseError("f = (...xs, x) => xs","A rest parameter must be last in a parameter list.");
+  parse("(...xs) => xs");
+  parse("(x, ...xs) => xs");
+  parse("(x, y, ...xs) => xs");
+  parseError("(...xs, x) => xs","')' expected");
   mode=LanguageMode.ECMASCRIPT5;
   parseWarning("function f(...b) {}","this language feature is only supported in es6 mode: rest parameters");
 }

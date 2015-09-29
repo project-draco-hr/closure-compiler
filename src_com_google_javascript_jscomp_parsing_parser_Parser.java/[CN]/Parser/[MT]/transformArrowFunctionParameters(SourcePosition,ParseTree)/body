@@ -1,0 +1,14 @@
+{
+switch (tree.type) {
+case IDENTIFIER_EXPRESSION:
+    return new FormalParameterListTree(getTreeLocation(start),ImmutableList.<ParseTree>of(tree));
+case PAREN_EXPRESSION:
+  resetScanner(tree);
+return parseFormalParameterList(ParamContext.IMPLEMENTATION);
+case FORMAL_PARAMETER_LIST:
+return tree.asFormalParameterList();
+default :
+reportError("invalid arrow function parameters");
+return null;
+}
+}

@@ -1,0 +1,23 @@
+{
+  if (peekType(1) == TokenType.FOR) {
+    return parseGeneratorComprehension();
+  }
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.OPEN_PAREN);
+  if (peek(TokenType.CLOSE_PAREN)) {
+    eat(TokenType.CLOSE_PAREN);
+    return new FormalParameterListTree(getTreeLocation(start),ImmutableList.<ParseTree>of());
+  }
+  if (peek(TokenType.SPREAD)) {
+    ParseTree result=new FormalParameterListTree(getTreeLocation(start),ImmutableList.of(parseParameter(ParamContext.IMPLEMENTATION)));
+    eat(TokenType.CLOSE_PAREN);
+    return result;
+  }
+  ParseTree result=parseExpression();
+  if (peek(TokenType.COMMA)) {
+    eat(TokenType.COMMA);
+    result=new CommaExpressionTree(getTreeLocation(start),ImmutableList.of(result,parseParameter(ParamContext.IMPLEMENTATION)));
+  }
+  eat(TokenType.CLOSE_PAREN);
+  return new ParenExpressionTree(getTreeLocation(start),result);
+}
