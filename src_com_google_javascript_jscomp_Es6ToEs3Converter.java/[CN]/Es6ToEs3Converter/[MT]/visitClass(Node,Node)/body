@@ -18,6 +18,7 @@
   JSDocInfo ctorJSDocInfo=null;
   Node classMembers=classNode.getLastChild();
   Map<String,JSDocInfo> prototypeMembersToDeclare=new LinkedHashMap<>();
+  Map<String,JSDocInfo> prototypeComputedPropsToDeclare=new LinkedHashMap<>();
   Map<String,JSDocInfo> classMembersToDeclare=new LinkedHashMap<>();
   for (  Node member : classMembers.children()) {
     if (member.isEmpty()) {
@@ -27,30 +28,40 @@
     if ((member.isComputedProp() && (member.getBooleanProp(Node.COMPUTED_PROP_GETTER) || member.getBooleanProp(Node.COMPUTED_PROP_SETTER))) || (member.isGetterDef() || member.isSetterDef())) {
       if (member.isComputedProp() && member.isStaticMember()) {
         cannotConvertYet(member,"Static computed property");
+        continue;
       }
       if (member.isComputedProp() && !member.getFirstChild().isQualifiedName()) {
         cannotConvert(member.getFirstChild(),"Computed property with non-qualified-name key");
+        continue;
       }
       JSTypeExpression typeExpr=getTypeFromGetterOrSetter(member).clone();
       addToDefinePropertiesObject(metadata,member);
-      if (!member.isComputedProp()) {
-        Map<String,JSDocInfo> membersToDeclare=member.isStaticMember() ? classMembersToDeclare : prototypeMembersToDeclare;
-        JSDocInfo existingJSDoc=membersToDeclare.get(member.getString());
-        JSTypeExpression existingType=existingJSDoc == null ? null : existingJSDoc.getType();
-        if (existingType != null && !existingType.equals(typeExpr)) {
-          compiler.report(JSError.make(member,CONFLICTING_GETTER_SETTER_TYPE,member.getString()));
-        }
+      Map<String,JSDocInfo> membersToDeclare;
+      String memberName;
+      if (member.isComputedProp()) {
+        Preconditions.checkState(!member.isStaticMember());
+        membersToDeclare=prototypeComputedPropsToDeclare;
+        memberName=member.getFirstChild().getQualifiedName();
+      }
  else {
-          JSDocInfoBuilder jsDoc=new JSDocInfoBuilder(false);
-          jsDoc.recordType(typeExpr);
-          if (member.getJSDocInfo() != null && member.getJSDocInfo().isExport()) {
-            jsDoc.recordExport();
-          }
-          if (member.isStaticMember()) {
-            jsDoc.recordNoCollapse();
-          }
-          membersToDeclare.put(member.getString(),jsDoc.build());
+        membersToDeclare=member.isStaticMember() ? classMembersToDeclare : prototypeMembersToDeclare;
+        memberName=member.getString();
+      }
+      JSDocInfo existingJSDoc=membersToDeclare.get(memberName);
+      JSTypeExpression existingType=existingJSDoc == null ? null : existingJSDoc.getType();
+      if (existingType != null && !existingType.equals(typeExpr)) {
+        compiler.report(JSError.make(member,CONFLICTING_GETTER_SETTER_TYPE,memberName));
+      }
+ else {
+        JSDocInfoBuilder jsDoc=new JSDocInfoBuilder(false);
+        jsDoc.recordType(typeExpr);
+        if (member.getJSDocInfo() != null && member.getJSDocInfo().isExport()) {
+          jsDoc.recordExport();
         }
+        if (member.isStaticMember() && !member.isComputedProp()) {
+          jsDoc.recordNoCollapse();
+        }
+        membersToDeclare.put(memberName,jsDoc.build());
       }
     }
  else     if (member.isMemberFunctionDef() && member.getString().equals("constructor")) {
@@ -87,6 +98,12 @@
   for (  Map.Entry<String,JSDocInfo> entry : classMembersToDeclare.entrySet()) {
     String declaredMember=entry.getKey();
     Node declaration=IR.getprop(classNameAccess.cloneTree(),IR.string(declaredMember));
+    declaration.setJSDocInfo(entry.getValue());
+    metadata.insertNodeAndAdvance(IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(classNode));
+  }
+  for (  Map.Entry<String,JSDocInfo> entry : prototypeComputedPropsToDeclare.entrySet()) {
+    String declaredMember=entry.getKey();
+    Node declaration=IR.getelem(prototypeAccess.cloneTree(),NodeUtil.newQName(compiler,declaredMember));
     declaration.setJSDocInfo(entry.getValue());
     metadata.insertNodeAndAdvance(IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(classNode));
   }

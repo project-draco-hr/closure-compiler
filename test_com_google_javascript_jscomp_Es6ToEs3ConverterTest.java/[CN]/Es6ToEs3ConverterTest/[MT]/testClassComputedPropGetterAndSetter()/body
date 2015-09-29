@@ -1,4 +1,5 @@
 {
   languageOut=LanguageMode.ECMASCRIPT5;
-  test(LINE_JOINER.join("/** @unrestricted */","class C {","  get [foo]() {}","  set [foo](val) {}","}"),LINE_JOINER.join("/** @constructor @unrestricted */","var C = function() {};","var $jscomp$compprop0={};","Object.defineProperties(","  C.prototype,","  ($jscomp$compprop0[foo] = {","    configurable:true,","    enumerable:true,","    /** @this {C} */","    get: function() {},","    /** @this {C} */","    set: function(val) {},","  }, $jscomp$compprop0));"));
+  test(LINE_JOINER.join("/** @unrestricted */","class C {","  /** @return {boolean} */","  get [foo]() {}","  /** @param {boolean} val */","  set [foo](val) {}","}"),LINE_JOINER.join("/** @constructor @unrestricted */","var C = function() {};","/** @type {boolean} */","C.prototype[foo];","var $jscomp$compprop0={};","Object.defineProperties(","  C.prototype,","  ($jscomp$compprop0[foo] = {","    configurable:true,","    enumerable:true,","    /** @this {C} */","    get: function() {},","    /** @this {C} */","    set: function(val) {},","  }, $jscomp$compprop0));"));
+  testError(LINE_JOINER.join("/** @unrestricted */","class C {","  /** @return {boolean} */","  get [foo]() {}","  /** @param {string} val */","  set [foo](val) {}","}"),CONFLICTING_GETTER_SETTER_TYPE);
 }
