@@ -4,7 +4,11 @@
   }
  else   if (contents.startsWith("{")) {
     try {
-      JsonObject sourceMapRoot=new Gson().fromJson(contents,JsonObject.class);
+      JsonElement jsonElement=PARSER.parse(contents);
+      if (!jsonElement.isJsonObject()) {
+        throw new SourceMapParseException("Expected a JSON Object.");
+      }
+      JsonObject sourceMapRoot=jsonElement.getAsJsonObject();
       int version=sourceMapRoot.get("version").getAsInt();
 switch (version) {
 case 3:
