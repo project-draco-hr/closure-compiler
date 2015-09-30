@@ -28,6 +28,11 @@
     compiler.report(JSError.make(description,GOOG_CLASS_CONSTRUCTOR_MISSING));
     return null;
   }
+ else {
+    if (!constructor.isFunction()) {
+      compiler.report(JSError.make(constructor,GOOG_CLASS_CONSTRUCTOR_NOT_VALID));
+    }
+  }
   if (constructor == null) {
     constructor=IR.function(IR.name("").srcref(callNode),IR.paramList().srcref(callNode),IR.block().srcref(callNode));
     constructor.srcref(callNode);
