@@ -1,0 +1,17 @@
+{
+  Node qualifiedMemberAccess=getQualifiedMemberAccess(compiler,member,NodeUtil.newQName(compiler,metadata.fullClassName),NodeUtil.newQName(compiler,metadata.fullClassName + ".prototype"));
+  Node method=member.getLastChild().detachFromParent();
+  Node assign=IR.assign(qualifiedMemberAccess,method);
+  assign.useSourceInfoIfMissingFromForTree(member);
+  JSDocInfo info=member.getJSDocInfo();
+  if (member.isStaticMember() && NodeUtil.referencesThis(assign.getLastChild())) {
+    JSDocInfoBuilder memberDoc=JSDocInfoBuilder.maybeCopyFrom(info);
+    memberDoc.recordThisType(new JSTypeExpression(new Node(Token.BANG,new Node(Token.QMARK)),member.getSourceFileName()));
+    info=memberDoc.build();
+  }
+  if (info != null) {
+    assign.setJSDocInfo(info);
+  }
+  Node newNode=NodeUtil.newExpr(assign);
+  metadata.insertNodeAndAdvance(newNode);
+}

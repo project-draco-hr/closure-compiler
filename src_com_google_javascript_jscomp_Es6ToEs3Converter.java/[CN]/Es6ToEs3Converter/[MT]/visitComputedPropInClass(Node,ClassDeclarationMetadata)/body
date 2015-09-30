@@ -1,0 +1,39 @@
+{
+  if (member.isComputedProp() && member.isStaticMember()) {
+    cannotConvertYet(member,"Static computed property");
+    return;
+  }
+  if (member.isComputedProp() && !member.getFirstChild().isQualifiedName()) {
+    cannotConvert(member.getFirstChild(),"Computed property with non-qualified-name key");
+    return;
+  }
+  JSTypeExpression typeExpr=getTypeFromGetterOrSetter(member).clone();
+  addToDefinePropertiesObject(metadata,member);
+  Map<String,JSDocInfo> membersToDeclare;
+  String memberName;
+  if (member.isComputedProp()) {
+    Preconditions.checkState(!member.isStaticMember());
+    membersToDeclare=metadata.prototypeComputedPropsToDeclare;
+    memberName=member.getFirstChild().getQualifiedName();
+  }
+ else {
+    membersToDeclare=member.isStaticMember() ? metadata.classMembersToDeclare : metadata.prototypeMembersToDeclare;
+    memberName=member.getString();
+  }
+  JSDocInfo existingJSDoc=membersToDeclare.get(memberName);
+  JSTypeExpression existingType=existingJSDoc == null ? null : existingJSDoc.getType();
+  if (existingType != null && !existingType.equals(typeExpr)) {
+    compiler.report(JSError.make(member,CONFLICTING_GETTER_SETTER_TYPE,memberName));
+  }
+ else {
+    JSDocInfoBuilder jsDoc=new JSDocInfoBuilder(false);
+    jsDoc.recordType(typeExpr);
+    if (member.getJSDocInfo() != null && member.getJSDocInfo().isExport()) {
+      jsDoc.recordExport();
+    }
+    if (member.isStaticMember() && !member.isComputedProp()) {
+      jsDoc.recordNoCollapse();
+    }
+    membersToDeclare.put(memberName,jsDoc.build());
+  }
+}
