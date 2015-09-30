@@ -3,6 +3,7 @@
   Preconditions.checkArgument(externs == null || externs.isSyntheticBlock());
   Preconditions.checkArgument(root.isSyntheticBlock());
   globalScope=new NTIScope(root,null,ImmutableList.<String>of(),commonTypes);
+  globalScope.addUnknownTypeNames(this.unknownTypeNames);
   scopes.add(globalScope);
   CollectNamedTypes rootCnt=new CollectNamedTypes(globalScope);
   if (externs != null) {
@@ -59,7 +60,6 @@
     warnings.add(warning);
   }
   typeParser=null;
-  compiler.setSymbolTable(this);
   warnings=null;
   Collections.reverse(scopes);
 }
