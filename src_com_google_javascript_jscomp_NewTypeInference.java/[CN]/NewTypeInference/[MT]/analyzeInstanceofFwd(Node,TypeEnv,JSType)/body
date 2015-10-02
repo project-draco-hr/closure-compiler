@@ -4,7 +4,7 @@
   EnvTypePair objPair, ctorPair;
   objPair=analyzeExprFwd(obj,inEnv);
   JSType objType=objPair.type;
-  if (!objType.isTop() && !objType.isUnknown() && !objType.hasNonScalar()) {
+  if (!objType.isTop() && !objType.isUnknown() && !objType.hasNonScalar()&& !objType.hasTypeVariable()) {
     warnInvalidOperand(obj,Token.INSTANCEOF,"an object or a union type that includes an object",objPair.type);
   }
   ctorPair=analyzeExprFwd(ctor,objPair.env,commonTypes.topFunction());
@@ -18,7 +18,7 @@
     return ctorPair;
   }
   JSType instanceType=ctorFunType.getInstanceTypeOfCtor();
-  JSType instanceSpecType=specializedType.isTrueOrTruthy() ? objPair.type.specialize(instanceType) : objPair.type.removeType(instanceType);
+  JSType instanceSpecType=specializedType.isTrueOrTruthy() ? objType.specialize(instanceType) : objType.removeType(instanceType);
   if (!instanceSpecType.isBottom()) {
     objPair=analyzeExprFwd(obj,inEnv,JSType.UNKNOWN,instanceSpecType);
     ctorPair=analyzeExprFwd(ctor,objPair.env,commonTypes.topFunction());
