@@ -1,9 +1,18 @@
 {
-  if (n.isGetProp() || n.isGetElem() || n.isNew()|| n.isCall()) {
-    JSType targetType=n.getFirstChild().getJSType();
-    if (targetType != null && !(targetType.isUnknownType() || targetType.isEmptyType()) && (targetType.isNullable() || targetType.isVoidable())) {
-      return ConformanceResult.VIOLATION;
-    }
-  }
-  return ConformanceResult.CONFORMANCE;
+  boolean valid;
+switch (n.getType()) {
+case Token.GETPROP:
+case Token.GETELEM:
+case Token.NEW:
+case Token.CALL:
+    valid=maybeValidDerefType(n.getFirstChild());
+  break;
+case Token.IN:
+valid=maybeValidDerefType(n.getLastChild());
+break;
+default :
+valid=true;
+break;
+}
+return valid ? ConformanceResult.CONFORMANCE : ConformanceResult.VIOLATION;
 }
