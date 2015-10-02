@@ -1,4 +1,4 @@
 {
-  enableTypeCheck(CheckLevel.WARNING);
+  enableTypeCheck();
   testRewrite("/** @unrestricted */" + "var y = goog.defineClass(null, {\n" + "  constructor: function(){}\n"+ "});\n"+ "var x = goog.defineClass(y, {\n"+ "  constructor: function(){this.a = 1}\n"+ "});\n"+ "use(new y().a);\n","/** @constructor @unrestricted */" + "var y = function () {};\n" + "/** @constructor @struct @extends {y} */"+ "var x = function() {this.a = 1};\n"+ "goog.inherits(x,y);\n"+ "use(new y().a);\n");
 }
