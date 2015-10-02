@@ -1,0 +1,11 @@
+{
+  Preconditions.checkArgument(propertyName.isString());
+  if (!renameProperties) {
+    return propertyName;
+  }
+  Node call=IR.call(IR.name(NodeUtil.JSC_PROPERTY_NAME_FN),propertyName);
+  call.srcrefTree(propertyName);
+  call.putBooleanProp(Node.FREE_CALL,true);
+  call.putBooleanProp(Node.IS_CONSTANT_NAME,true);
+  return call;
+}
