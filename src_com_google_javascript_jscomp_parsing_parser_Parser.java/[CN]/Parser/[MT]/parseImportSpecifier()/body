@@ -1,10 +1,13 @@
 {
   SourcePosition start=getTreeStartLocation();
-  IdentifierToken importedName=eatId();
+  IdentifierToken importedName=eatIdOrKeywordAsId();
   IdentifierToken destinationName=null;
   if (peekPredefinedString(PredefinedName.AS)) {
     eatPredefinedString(PredefinedName.AS);
     destinationName=eatId();
+  }
+ else   if (Keywords.isKeyword(importedName.value)) {
+    reportExpectedError(null,PredefinedName.AS);
   }
   return new ImportSpecifierTree(getTreeLocation(start),importedName,destinationName);
 }
