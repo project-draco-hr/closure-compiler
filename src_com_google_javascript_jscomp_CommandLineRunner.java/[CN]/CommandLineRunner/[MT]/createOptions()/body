@@ -47,5 +47,24 @@
     options.setWarningLevel(JsMessageVisitor.MSG_CONVENTIONS,CheckLevel.OFF);
   }
   options.setConformanceConfigs(loadConformanceConfigs(flags.conformanceConfigs));
+  if (!flags.instrumentationFile.isEmpty()) {
+    String instrumentationPb;
+    Instrumentation.Builder builder=Instrumentation.newBuilder();
+    try (BufferedReader br=new BufferedReader(new FileReader(flags.instrumentationFile))){
+      StringBuilder sb=new StringBuilder();
+      String line=br.readLine();
+      while (line != null) {
+        sb.append(line);
+        sb.append(System.lineSeparator());
+        line=br.readLine();
+      }
+      instrumentationPb=sb.toString();
+      TextFormat.merge(instrumentationPb,builder);
+      options.instrumentationTemplate=builder.build();
+    }
+ catch (    IOException e) {
+      throw new RuntimeException("Error reading instrumentation template",e);
+    }
+  }
   return options;
 }
