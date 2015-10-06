@@ -5,6 +5,6 @@
   typeCheck(Joiner.on('\n').join("var /** number */ n = 123;","n.prop = 0;","n.prop - 5;"),NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck(Joiner.on('\n').join("var /** number */ n = 123;","n['to' + 'String'];"));
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.prop = 123;","}","(new Foo).prop.newprop = 5;"));
-  typeCheck(Joiner.on('\n').join("/** @enum */","var E = { A: 1 };","function f(/** E */ x) {","  return x.toString();","}"),NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck(Joiner.on('\n').join("/** @enum {number} */","var E = { A: 1 };","function f(/** E */ x) {","  return x.toString();","}"));
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype.toString = function() { return ''; };","function f(/** (number|!Foo) */ x) {","  return x.toString();","}"));
 }

@@ -3,7 +3,7 @@
     return this;
   }
   int mask=getMask();
-  if ((mask & (NUMBER_MASK | STRING_MASK | BOOLEAN_MASK)) == BOTTOM_MASK) {
+  if ((mask & (NUMBER_MASK | STRING_MASK | BOOLEAN_MASK| ENUM_MASK)) == BOTTOM_MASK) {
     return this;
   }
 switch (mask) {
@@ -27,5 +27,9 @@ builder.add(commonTypes.getStringInstanceObjType());
 if ((mask & BOOLEAN_MASK) != 0) {
 builder.add(commonTypes.getBooleanInstanceObjType());
 }
-return makeType(mask & ~(NUMBER_MASK | STRING_MASK | BOOLEAN_MASK),builder.build(),getTypeVar(),getEnums());
+JSType result=makeType(mask & ~(NUMBER_MASK | STRING_MASK | BOOLEAN_MASK),builder.build(),getTypeVar(),ImmutableSet.<EnumType>of());
+for (EnumType e : getEnums()) {
+result=join(result,e.getEnumeratedType().autobox(commonTypes));
+}
+return result;
 }
