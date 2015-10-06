@@ -3,40 +3,7 @@
   if (jsDoc == null) {
     return;
   }
-  if (!jsDoc.isOverride()) {
-    Node paramList=function.getFirstChild().getNext();
-    for (    Node param : paramList.children()) {
-      boolean nameOptional;
-      if (param.isDefaultValue()) {
-        param=param.getFirstChild();
-        nameOptional=true;
-      }
- else       if (param.isName()) {
-        nameOptional=param.getString().startsWith("opt_");
-      }
- else {
-        Preconditions.checkState(param.isDestructuringPattern() || param.isRest(),param);
-        continue;
-      }
-      JSTypeExpression paramType=jsDoc.getParameterType(param.getString());
-      if (paramType == null) {
-        if (param.getJSDocInfo() != null) {
-          paramType=Preconditions.checkNotNull(param.getJSDocInfo().getType());
-        }
- else {
-          t.report(param,MISSING_PARAM_JSDOC,param.getString());
-          return;
-        }
-      }
-      boolean jsDocOptional=paramType.isOptionalArg();
-      if (nameOptional && !jsDocOptional) {
-        t.report(param,OPTIONAL_PARAM_NOT_MARKED_OPTIONAL,param.getString());
-      }
- else       if (!nameOptional && jsDocOptional) {
-        t.report(param,OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME,param.getString());
-      }
-    }
-  }
+  checkParams(t,function,jsDoc);
   String name=NodeUtil.getFunctionName(function);
   if (name != null && compiler.getCodingConvention().isPrivate(name) && !jsDoc.getVisibility().equals(Visibility.PRIVATE)) {
     t.report(function,MUST_BE_PRIVATE,name);

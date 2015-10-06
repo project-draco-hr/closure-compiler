@@ -1,0 +1,45 @@
+{
+  if (jsDoc.isOverride()) {
+    return;
+  }
+  List<String> paramsFromJsDoc=ImmutableList.copyOf(jsDoc.getParameterNames());
+  if (paramsFromJsDoc.isEmpty()) {
+    return;
+  }
+  Node paramList=function.getFirstChild().getNext();
+  if (paramsFromJsDoc.size() != paramList.getChildCount()) {
+    t.report(paramList,WRONG_NUMBER_OF_PARAMS);
+    return;
+  }
+  Node param=paramList.getFirstChild();
+  for (int i=0; i < paramsFromJsDoc.size(); i++) {
+    if (param.getJSDocInfo() != null) {
+      t.report(param,MIXED_PARAM_JSDOC_STYLES);
+    }
+    boolean nameOptional;
+    if (param.isDefaultValue()) {
+      param=param.getFirstChild();
+      nameOptional=true;
+    }
+ else     if (param.isName()) {
+      nameOptional=param.getString().startsWith("opt_");
+    }
+ else {
+      Preconditions.checkState(param.isDestructuringPattern() || param.isRest(),param);
+      nameOptional=false;
+    }
+    if (param.isName() && !param.getString().equals(paramsFromJsDoc.get(i))) {
+      t.report(param,INCORRECT_PARAM_NAME);
+      return;
+    }
+    JSTypeExpression paramType=jsDoc.getParameterType(paramsFromJsDoc.get(i));
+    boolean jsDocOptional=paramType.isOptionalArg();
+    if (nameOptional && !jsDocOptional) {
+      t.report(param,OPTIONAL_PARAM_NOT_MARKED_OPTIONAL,param.getString());
+    }
+ else     if (!nameOptional && jsDocOptional) {
+      t.report(param,OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME,param.getString());
+    }
+    param=param.getNext();
+  }
+}
