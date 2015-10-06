@@ -8,9 +8,9 @@
   typeCheck("null[123];",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
   typeCheck("function f(/** !Object */ x) { if (x[123]) { return 1; } }");
   typeCheck("function f(/** undefined */ x) { if (x[123]) { return 1; } }",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
-  typeCheck(Joiner.on('\n').join("function f(/** (number|null) */ n) {","  n.foo;","}"),NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
-  typeCheck(Joiner.on('\n').join("function f(/** (number|null|undefined) */ n) {","  n.foo;","}"),NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
-  typeCheck(Joiner.on('\n').join("function f(/** (!Object|number|null|undefined) */ n) {","  n.foo;","}"),NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck(Joiner.on('\n').join("function f(/** (number|null) */ n) {","  n.foo;","}"),NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck(Joiner.on('\n').join("function f(/** (number|null|undefined) */ n) {","  n.foo;","}"),NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck(Joiner.on('\n').join("function f(/** (!Object|number|null|undefined) */ n) {","  n.foo;","}"),NewTypeInference.NULLABLE_DEREFERENCE);
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","Foo.prototype.prop;","function f(/** (!Foo|undefined) */ n) {","  n.prop;","}"),NewTypeInference.NULLABLE_DEREFERENCE);
   typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo(){}","/** @type {string} */ Foo.prototype.prop1;","function g(/** Foo */ f) {","  f.prop1.prop2 = 'str';","};"),NewTypeInference.NULLABLE_DEREFERENCE);
 }
