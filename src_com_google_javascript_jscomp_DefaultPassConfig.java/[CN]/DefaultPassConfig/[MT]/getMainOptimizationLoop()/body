@@ -16,11 +16,14 @@
       passes.add(deadAssignmentsElimination);
     }
     if (!runOptimizeCalls) {
-      passes.add(removeUnusedVars);
+      passes.add(getRemoveUnusedVars("removeUnusedVars",false));
     }
   }
   if (runOptimizeCalls) {
-    passes.add(optimizeCallsAndRemoveUnusedVars);
+    passes.add(optimizeCalls);
+    if (options.optimizeCalls) {
+      passes.add(getRemoveUnusedVars("removeUnusedVars_afterOptimizeCalls",true));
+    }
   }
   assertAllLoopablePasses(passes);
   return passes;

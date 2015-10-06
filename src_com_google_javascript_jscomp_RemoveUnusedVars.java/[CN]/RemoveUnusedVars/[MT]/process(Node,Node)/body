@@ -1,9 +1,19 @@
 {
   Preconditions.checkState(compiler.getLifeCycleStage().isNormalized());
-  SimpleDefinitionFinder defFinder=null;
-  if (modifyCallSites) {
-    defFinder=new SimpleDefinitionFinder(compiler);
-    defFinder.process(externs,root);
+  SimpleDefinitionFinder defFinder=compiler.getSimpleDefinitionFinder();
+  if (this.modifyCallSites) {
+    if (defFinder == null) {
+      this.modifyCallSites=false;
+      this.mustResetModifyCallSites=true;
+    }
+ else {
+      defFinder.process(externs,root);
+    }
   }
   process(externs,root,defFinder);
+  compiler.setSimpleDefinitionFinder(null);
+  if (this.mustResetModifyCallSites) {
+    this.modifyCallSites=true;
+    this.mustResetModifyCallSites=false;
+  }
 }
