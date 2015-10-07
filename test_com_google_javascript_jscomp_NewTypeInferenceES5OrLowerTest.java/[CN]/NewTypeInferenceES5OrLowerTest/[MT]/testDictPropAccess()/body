@@ -8,4 +8,6 @@
   typeCheck("(/** @dict */ { prop : 1 });",NewTypeInference.ILLEGAL_OBJLIT_KEY);
   typeCheck("var lit = /** @dict */ { 'prop' : 1 }; lit.prop;",NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
   typeCheck("(/** @dict */ {}).toString();",NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck(Joiner.on('\n').join("function f(/** !Object */ o) {","  if ('num' in o) {","    o.num++;","  }","}"));
+  typeCheck(Joiner.on('\n').join("function f(/** !Object */ x, y) {","  if ((y in x) && x.otherProp) {","    x.otherProp++;","  }","}"));
 }
