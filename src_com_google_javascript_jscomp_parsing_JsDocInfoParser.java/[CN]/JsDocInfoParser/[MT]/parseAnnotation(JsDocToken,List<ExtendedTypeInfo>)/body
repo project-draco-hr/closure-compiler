@@ -137,7 +137,7 @@ return token;
 case FILE_OVERVIEW:
 String fileOverview="";
 if (jsdocBuilder.shouldParseDocumentation() && !lookAheadForAnnotation()) {
-ExtractionInfo fileOverviewInfo=extractMultilineTextualBlock(token,WhitespaceOption.TRIM);
+ExtractionInfo fileOverviewInfo=extractMultilineTextualBlock(token,getWhitespaceOption(WhitespaceOption.TRIM),false);
 fileOverview=fileOverviewInfo.string;
 token=fileOverviewInfo.token;
 }
@@ -150,7 +150,7 @@ addParserWarning("msg.jsdoc.fileoverview.extra");
 return token;
 case LICENSE:
 case PRESERVE:
-ExtractionInfo preserveInfo=extractMultilineTextualBlock(token,WhitespaceOption.PRESERVE);
+ExtractionInfo preserveInfo=extractMultilineTextualBlock(token,WhitespaceOption.PRESERVE,true);
 String preserve=preserveInfo.string;
 if (preserve.length() > 0) {
 if (fileLevelJsDocBuilder != null) {
@@ -446,7 +446,7 @@ case TEMPLATE:
 {
 int templateLineno=stream.getLineno();
 int templateCharno=stream.getCharno();
-ExtractionInfo templateInfo=extractMultilineTextualBlock(token,WhitespaceOption.TRIM);
+ExtractionInfo templateInfo=extractMultilineTextualBlock(token,WhitespaceOption.TRIM,false);
 String templateString=templateInfo.string;
 String ttlStartDelimiter=":=";
 String ttlEndDelimiter="=:";
