@@ -1,0 +1,21 @@
+{
+  if (s.isTopLevel()) {
+    return;
+  }
+  NTIScope parent=s.parent;
+  Set<String> outerVars=s.outerVars;
+  while (parent.isFunction()) {
+    boolean copiedOneVar=false;
+    for (    String v : outerVars) {
+      if (!parent.isDefinedLocally(v,false)) {
+        copiedOneVar=true;
+        parent.addOuterVar(v);
+      }
+    }
+    if (!copiedOneVar) {
+      break;
+    }
+    outerVars=parent.outerVars;
+    parent=parent.parent;
+  }
+}

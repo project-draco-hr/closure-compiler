@@ -1,5 +1,17 @@
 {
   typeCheck(Joiner.on('\n').join("function f() {","  x < 'str';","}","var x = 5;","f()"),NewTypeInference.CROSS_SCOPE_GOTCHA);
+  typeCheck(Joiner.on('\n').join("var x;","function f() {","  return x - 1;","}","f()"),NewTypeInference.CROSS_SCOPE_GOTCHA);
+  typeCheck(Joiner.on('\n').join("function f(y) {","  var x;","  y(function() { return x - 1; });","}"));
+  typeCheck(Joiner.on('\n').join("function f() {","  x = 'str';","}","var x = 5;","f()"));
+  typeCheck(Joiner.on('\n').join("function f() {","  var x;","  function g() { x = 123; }","  g();","  return x - 1;","}"));
+  typeCheck(Joiner.on('\n').join("function f(x) {","  function g() { return x; }","  var /** number */ n = x;","  g();","  var /** string */ s = x;","}"));
   typeCheck(Joiner.on('\n').join("/** @type {string} */ var s;","function f() {","  s = 123;","}","f();"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("function g(x) {","  function f() { x < 'str'; z < 'str'; x = 5; }","  var z = x;","  f();","  x - 5;","  z < 'str';","}"));
+  typeCheck(Joiner.on('\n').join("function f(g) {","  var x;","  g(function() { return x - 123; });","  return /** @type {number} */ (x) - 1;","}"));
+  typeCheck(Joiner.on('\n').join("function f(x) {","  function g(y) {","    y(function() { return x - 1; });","  }","}"));
+  typeCheck(Joiner.on('\n').join("function g(x) {","  function f() {","    var /** string */ s = x;","    x = 5;","  }","  f();","  x - 5;","}"),NewTypeInference.CROSS_SCOPE_GOTCHA,NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("function g(x) {","  function f() {","    var /** string */ s = x;","    x = 5;","  }","  var z = x;","  f();","  x - 5;","  var /** string */ y = z;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @type {string} */","Foo.prototype.prefix;","Foo.prototype.method = function() {","  var x = this;","  return function() {","    if (x.prefix.length) {","      return 123;","    }","  };","};"));
+  typeCheck(Joiner.on('\n').join("function f(x) {","  function g(condition) {","    if (condition) {","      return 'early';","    }","    return function() { return x.prop; };","  }","}"));
+  typeCheck(Joiner.on('\n').join("function f(x) {","  function g(condition) {","    if (condition) {","      return 'early';","    }","    (function() { return x - 1; })();","  }","  g(false);","  var /** string */ s = x;","}"));
+  typeCheck(Joiner.on('\n').join("var x;","function f(cond) {","  if (cond) {","    return;","  }","  return function g() {","    return function w() { x };","  };","}"));
 }

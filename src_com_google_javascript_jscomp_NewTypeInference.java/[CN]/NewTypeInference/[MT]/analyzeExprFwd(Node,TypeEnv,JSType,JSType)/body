@@ -10,7 +10,8 @@ case Token.FUNCTION:
   String fnName=symbolTable.getFunInternalName(expr);
   JSType fnType=envGetType(inEnv,fnName);
   Preconditions.checkState(fnType != null,"Could not find type for %s",fnName);
-  resultPair=new EnvTypePair(inEnv,fnType);
+  TypeEnv outEnv=collectTypesForFreeVarsFwd(expr,inEnv);
+  resultPair=new EnvTypePair(outEnv,fnType);
   break;
 }
 case Token.FALSE:

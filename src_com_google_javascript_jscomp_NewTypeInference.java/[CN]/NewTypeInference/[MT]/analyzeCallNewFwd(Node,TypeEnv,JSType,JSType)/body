@@ -11,7 +11,7 @@
     return analyzeAssertionCall(expr,inEnv,assertionFunctionSpec);
   }
   EnvTypePair calleePair=analyzeExprFwd(callee,inEnv,commonTypes.topFunction());
-  calleePair=mayWarnAboutNullableReferenceAndTighten(callee,calleePair.type,inEnv,commonTypes.topFunction());
+  calleePair=mayWarnAboutNullableReferenceAndTighten(callee,calleePair.type,inEnv);
   JSType calleeType=calleePair.type;
   if (calleeType.isBottom() || !calleeType.isSubtypeOf(commonTypes.topFunction())) {
     warnings.add(JSError.make(expr,NOT_CALLABLE,calleeType.toString()));
@@ -50,7 +50,7 @@
     String calleeName=callee.getString();
     if (currentScope.isKnownFunction(calleeName) && !currentScope.isExternalFunction(calleeName)) {
       if (currentScope.isLocalFunDef(calleeName)) {
-        collectTypesForFreeVarsFwd(callee,tmpEnv);
+        tmpEnv=collectTypesForFreeVarsFwd(callee,tmpEnv);
       }
  else       if (!origFunType.isGeneric()) {
         JSType expectedRetType=requiredType;

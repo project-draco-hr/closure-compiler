@@ -35,9 +35,6 @@
     Node arg=expr.getChildAtIndex(i + 1);
     tmpEnv=analyzeExprBwd(arg,tmpEnv,formalType).env;
   }
-  if (callee.isName() && currentScope.isLocalFunDef(callee.getString())) {
-    tmpEnv=collectTypesForFreeVarsBwd(callee,tmpEnv);
-  }
   JSType retType=expr.isNew() ? funType.getThisType() : funType.getReturnType();
   return new EnvTypePair(tmpEnv,retType);
 }
