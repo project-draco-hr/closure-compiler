@@ -20,10 +20,7 @@
   if (instanceType.isFunctionPrototypeType()) {
     if (instanceType.getOwnerFunction().hasInstanceType()) {
       instanceType=instanceType.getOwnerFunction().getInstanceType();
-      Set<String> set=new HashSet<>();
-      Iterables.addAll(set,propNames);
-      set.addAll(instanceType.getOwnPropertyNames());
-      propNames=set;
+      propNames=Iterables.concat(propNames,instanceType.getOwnPropertyNames());
     }
   }
   s.setPropertyScope(new SymbolScope(null,parentPropertyScope,type,s));

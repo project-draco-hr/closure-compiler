@@ -4,9 +4,7 @@
   Map<String,StaticTypedSlot<JSType>> slotsA=joinedScopeA.allFlowSlots();
   Map<String,StaticTypedSlot<JSType>> slotsB=joinedScopeB.allFlowSlots();
   symbols=slotsA;
-  Set<String> symbolNames=new HashSet<>(symbols.keySet());
-  symbolNames.addAll(slotsB.keySet());
-  for (  String name : symbolNames) {
+  for (  String name : Iterables.concat(symbols.keySet(),slotsB.keySet())) {
     StaticTypedSlot<JSType> slotA=slotsA.get(name);
     StaticTypedSlot<JSType> slotB=slotsB.get(name);
     JSType joinedType=null;
