@@ -25,28 +25,34 @@
     throw new IllegalStateException("Unexpected ARRAY_PATTERN parent: " + parent);
   }
   String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
-  Node tempDecl=IR.var(IR.name(tempVarName),rhs.detachFromParent()).useSourceInfoIfMissingFromForTree(arrayPattern);
+  Node tempDecl=IR.var(IR.name(tempVarName),makeIterator(compiler,rhs.detachFromParent()));
+  tempDecl.useSourceInfoIfMissingFromForTree(arrayPattern);
   nodeToDetach.getParent().addChildBefore(tempDecl,nodeToDetach);
-  int i=0;
-  for (Node child=arrayPattern.getFirstChild(), next; child != null; child=next, i++) {
+  for (Node child=arrayPattern.getFirstChild(), next; child != null; child=next) {
     next=child.getNext();
     if (child.isEmpty()) {
+      Node nextCall=IR.exprResult(IR.call(IR.getprop(IR.name(tempVarName),IR.string("next"))));
+      nextCall.useSourceInfoIfMissingFromForTree(child);
+      nodeToDetach.getParent().addChildBefore(nextCall,nodeToDetach);
       continue;
     }
     Node newLHS, newRHS;
     if (child.isDefaultValue()) {
-      Node getElem=IR.getelem(IR.name(tempVarName),IR.number(i));
+      String nextVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
+      Node var=IR.var(IR.name(nextVarName),IR.getprop(IR.call(IR.getprop(IR.name(tempVarName),IR.string("next"))),IR.string("value")));
+      var.useSourceInfoIfMissingFromForTree(child);
+      nodeToDetach.getParent().addChildBefore(var,nodeToDetach);
       newLHS=child.getFirstChild().detachFromParent();
-      newRHS=defaultValueHook(getElem,child.getLastChild().detachFromParent());
+      newRHS=defaultValueHook(IR.name(nextVarName),child.getLastChild().detachFromParent());
     }
  else     if (child.isRest()) {
       newLHS=child.detachFromParent();
       newLHS.setType(Token.NAME);
-      newRHS=IR.call(IR.getprop(IR.getprop(IR.arraylit(),IR.string("slice")),IR.string("call")),IR.name(tempVarName),IR.number(i));
+      newRHS=IR.call(NodeUtil.newQName(compiler,"$jscomp.arrayFromIterator"),IR.name(tempVarName));
     }
  else {
       newLHS=child.detachFromParent();
-      newRHS=IR.getelem(IR.name(tempVarName),IR.number(i));
+      newRHS=IR.getprop(IR.call(IR.getprop(IR.name(tempVarName),IR.string("next"))),IR.string("value"));
     }
     Node newNode;
     if (parent.isAssign()) {

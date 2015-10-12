@@ -16,9 +16,7 @@
     variableName=variable.getFirstChild().getQualifiedName();
   }
   Node iterResult=IR.name(ITER_RESULT + variableName);
-  Node makeIter=IR.call(NodeUtil.newQName(compiler,MAKE_ITER),iterable);
-  compiler.needsEs6Runtime=true;
-  Node init=IR.var(iterName.cloneTree(),makeIter);
+  Node init=IR.var(iterName.cloneTree(),makeIterator(compiler,iterable));
   Node initIterResult=iterResult.cloneTree();
   initIterResult.addChildToFront(getNext.cloneTree());
   init.addChildToBack(initIterResult);
