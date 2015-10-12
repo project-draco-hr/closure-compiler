@@ -11,6 +11,14 @@
  else       if (targetType.isSubtype(methodClassType)) {
         return ConformanceResult.VIOLATION;
       }
+ else       if (methodClassType.isSubtype(targetType)) {
+        if (matchesPrototype(methodClassType,targetType)) {
+          return ConformanceResult.VIOLATION;
+        }
+ else {
+          return ConformanceResult.POSSIBLE_VIOLATION_DUE_TO_LOOSE_TYPES;
+        }
+      }
     }
   }
   return ConformanceResult.CONFORMANCE;

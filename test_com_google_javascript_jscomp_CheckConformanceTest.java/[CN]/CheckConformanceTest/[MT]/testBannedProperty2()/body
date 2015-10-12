@@ -1,0 +1,10 @@
+{
+  configuration=LINE_JOINER.join("requirement: {","  type: BANNED_PROPERTY","  value: 'C.prototype.p'","  error_message: 'C.p is not allowed'","  whitelist: 'SRC1'","}");
+  String declarations=LINE_JOINER.join("/** @constructor */ function SC() {}","/** @constructor @extends {SC} */","function C() {}","/** @type {string} */","C.prototype.p;","/** @constructor */ function D() {}","/** @type {string} */","D.prototype.p;");
+  testConformance(declarations,"var d = new D(); d.p = 'boo';");
+  testConformance(declarations,"var c = new C(); c.p = 'boo';",CheckConformance.CONFORMANCE_VIOLATION);
+  testConformance(declarations,"var sc = new SC(); sc.p = 'boo';",CheckConformance.CONFORMANCE_POSSIBLE_VIOLATION);
+  testConformance(declarations,"var c = new C(); var foo = c.p;",CheckConformance.CONFORMANCE_VIOLATION);
+  testConformance(declarations,"var c = new C(); var foo = 'x' + c.p;",CheckConformance.CONFORMANCE_VIOLATION);
+  testConformance(declarations,"var c = new C(); c['p'] = 'boo';",CheckConformance.CONFORMANCE_VIOLATION);
+}
