@@ -8,5 +8,6 @@
     Property newProp=propsEntry.getValue().substituteGenerics(concreteTypes);
     newProps=newProps.with(pname,newProp);
   }
-  return makeObjectType(nominalType == null ? null : nominalType.instantiateGenerics(concreteTypes),newProps,fn == null ? null : fn.substituteGenerics(concreteTypes),isLoose,objectKind);
+  FunctionType newFn=fn == null ? null : fn.substituteGenerics(concreteTypes);
+  return makeObjectType(nominalType == null ? null : nominalType.instantiateGenerics(concreteTypes),newProps,newFn,newFn != null && newFn.isQmarkFunction() || isLoose,objectKind);
 }

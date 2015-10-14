@@ -3,28 +3,27 @@
     return this;
   }
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
-  for (  JSType reqFormal : requiredFormals) {
+  for (  JSType reqFormal : this.requiredFormals) {
     builder.addReqFormal(reqFormal.substituteGenerics(typeMap));
   }
-  for (  JSType optFormal : optionalFormals) {
+  for (  JSType optFormal : this.optionalFormals) {
     builder.addOptFormal(optFormal.substituteGenerics(typeMap));
   }
-  if (restFormals != null) {
+  if (this.restFormals != null) {
     builder.addRestFormals(restFormals.substituteGenerics(typeMap));
   }
-  builder.addRetType(returnType.substituteGenerics(typeMap));
+  builder.addRetType(this.returnType.substituteGenerics(typeMap));
   if (isLoose()) {
     builder.addLoose();
   }
-  if (nominalType != null) {
-    builder.addNominalType(nominalType.instantiateGenerics(typeMap));
-  }
-  if (receiverType != null) {
-    if (receiverType.isUninstantiatedGenericType()) {
-      builder.addReceiverType(receiverType);
+  builder.addNominalType(substGenericsInNomType(this.nominalType,typeMap));
+  if (this.receiverType != null) {
+    NominalType recvType=getNominalTypeIfSingletonObj(this.receiverType);
+    if (recvType.isUninstantiatedGenericType()) {
+      builder.addReceiverType(this.receiverType);
     }
  else {
-      builder.addReceiverType(receiverType.instantiateGenerics(typeMap));
+      builder.addReceiverType(substGenericsInNomType(this.receiverType,typeMap));
     }
   }
   for (  String var : outerVarPreconditions.keySet()) {

@@ -1,0 +1,15 @@
+{
+  if (nt1 == null) {
+    return nt2;
+  }
+  if (nt2 == null) {
+    return nt1;
+  }
+  NominalType n1=getNominalTypeIfSingletonObj(nt1);
+  NominalType n2=getNominalTypeIfSingletonObj(nt2);
+  if (n1 != null && n2 != null) {
+    NominalType tmp=NominalType.pickSubclass(n1,n2);
+    return tmp == null ? null : tmp.getInstanceAsJSType();
+  }
+  return JSType.meet(nt1,nt2);
+}

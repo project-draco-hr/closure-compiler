@@ -1,10 +1,6 @@
 {
   if (!isGeneric()) {
-    return nominalType.getInstanceAsJSType();
+    return this.nominalType;
   }
-  ImmutableMap.Builder<String,JSType> builder=ImmutableMap.builder();
-  for (  String typeVar : getTypeParameters()) {
-    builder.put(typeVar,JSType.UNKNOWN);
-  }
-  return instantiateGenerics(builder.build()).nominalType.getInstanceAsJSType();
+  return getNominalTypeIfSingletonObj(this.nominalType).instantiateGenerics(JSType.MAP_TO_UNKNOWN).getInstanceAsJSType();
 }

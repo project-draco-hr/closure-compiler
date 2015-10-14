@@ -23,11 +23,11 @@
  else   if (funType.isLoose()) {
     return analyzeLooseCallNodeFwd(expr,inEnv,requiredType);
   }
- else   if (expr.isCall() && funType.isConstructor() && funType.getReturnType().isUnknown()) {
+ else   if (expr.isCall() && funType.isSomeConstructorOrInterface() && funType.getReturnType().isUnknown()) {
     warnings.add(JSError.make(expr,CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
     return analyzeCallNodeArgsFwdWhenError(expr,inEnv);
   }
- else   if (expr.isNew() && !funType.isConstructor()) {
+ else   if (expr.isNew() && (!funType.isSomeConstructorOrInterface() || funType.isInterfaceDefinition())) {
     warnings.add(JSError.make(expr,NOT_A_CONSTRUCTOR,funType.toString()));
     return analyzeCallNodeArgsFwdWhenError(expr,inEnv);
   }

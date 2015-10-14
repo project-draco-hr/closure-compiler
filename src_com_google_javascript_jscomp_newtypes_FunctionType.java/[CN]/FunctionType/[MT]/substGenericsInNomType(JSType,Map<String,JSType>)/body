@@ -1,0 +1,16 @@
+{
+  if (nt == null) {
+    return null;
+  }
+  NominalType tmp=nt.getNominalTypeIfSingletonObj();
+  if (tmp == null) {
+    return nt.substituteGenerics(typeMap);
+  }
+  if (!tmp.isGeneric()) {
+    return tmp.getInstanceAsJSType();
+  }
+  if (typeMap.isEmpty()) {
+    return nt;
+  }
+  return JSType.fromObjectType(ObjectType.fromNominalType(tmp.instantiateGenerics(typeMap)));
+}

@@ -11,7 +11,7 @@
   if (boundFunType == null || boundFunType.isTopFunction() || boundFunType.isQmarkFunction() || boundFunType.isLoose()) {
     return analyzeCallNodeArgsFwdWhenError(call,env);
   }
-  if (boundFunType.isConstructor()) {
+  if (boundFunType.isSomeConstructorOrInterface()) {
     warnings.add(JSError.make(call,CANNOT_BIND_CTOR));
     return new EnvTypePair(env,JSType.UNKNOWN);
   }
@@ -32,7 +32,7 @@
   Node receiver=bindComponents.thisValue;
   if (receiver != null) {
     JSType reqThisType=boundFunType.getThisType();
-    if (reqThisType == null || boundFunType.isConstructor()) {
+    if (reqThisType == null || boundFunType.isSomeConstructorOrInterface()) {
       reqThisType=JSType.join(JSType.NULL,JSType.TOP_OBJECT);
     }
     pair=analyzeExprFwd(receiver,env,reqThisType);

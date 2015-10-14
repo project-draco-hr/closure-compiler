@@ -46,14 +46,8 @@
   if (jsdoc.hasThisType() && ownerType == null) {
     Node thisRoot=jsdoc.getThisType().getRoot();
     Preconditions.checkState(thisRoot.getType() == Token.BANG);
-    Node thisNode=thisRoot.getFirstChild();
-    JSType thisType=getMaybeTypeFromComment(thisNode,registry,typeParameters);
-    if (thisType != null) {
-      thisType=thisType.removeType(JSType.NULL);
-    }
-    NominalType nt=thisType == null ? null : thisType.getNominalTypeIfSingletonObj();
-    NominalType builtinObject=registry.getCommonTypes().getObjectType();
-    builder.addReceiverType(nt == null ? builtinObject : nt);
+    JSType t=getThisOrNewType(thisRoot.getFirstChild(),registry,typeParameters);
+    builder.addReceiverType(t == null ? JSType.TOP_OBJECT : t);
   }
   return builder.buildDeclaration();
 }

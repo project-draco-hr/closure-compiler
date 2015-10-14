@@ -1,0 +1,6 @@
+{
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @this {T|number}"," */","function f() {}"),JSTypeCreatorFromJSDoc.THIS_NEW_EXPECT_OBJECT_OR_TYPEVAR);
+  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @this {T|!Object}"," */","function f() {}"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  this.p = 123;","}","/** @interface */","function Bar() {}","Bar.prototype.p;","/** @this {Foo|Bar} */","function f() {","  return this.p - 1;","}"));
+  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.p = 123;","}","/** @interface */","function Bar() {}","/** @type {number} */","Bar.prototype.p;","/** @this {Foo|Bar} */","function f() {","  var /** string */ n = this.p;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+}
