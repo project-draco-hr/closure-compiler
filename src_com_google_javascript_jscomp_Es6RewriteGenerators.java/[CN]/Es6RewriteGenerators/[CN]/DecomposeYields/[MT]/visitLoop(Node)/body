@@ -4,7 +4,8 @@
     return;
   }
   Node enclosingBlock=NodeUtil.getEnclosingType(n,Token.BLOCK);
-  Node guard=null, incr=null;
+  Node guard=null;
+  Node incr=null;
 switch (n.getType()) {
 case Token.FOR:
     guard=n.getFirstChild().getNext();
@@ -23,6 +24,8 @@ guard=IR.or(firstEntry,n.getLastChild().detachFromParent());
 n.addChildToBack(guard);
 }
 incr=IR.empty();
+break;
+default :
 break;
 }
 if (!controlCanExit(guard) && !controlCanExit(incr)) {
