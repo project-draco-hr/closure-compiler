@@ -2,14 +2,17 @@
   Node child=jsdocNode.getFirstChild();
   if (child.getType() == Token.THIS) {
     if (ownerType == null) {
-      JSType t=getThisOrNewType(child.getFirstChild(),registry,typeParameters);
-      builder.addReceiverType(t == null ? JSType.TOP_OBJECT : t);
+      builder.addReceiverType(getThisOrNewType(child.getFirstChild(),registry,typeParameters));
     }
     child=child.getNext();
   }
  else   if (child.getType() == Token.NEW) {
-    JSType t=getThisOrNewType(child.getFirstChild(),registry,typeParameters);
-    builder.addNominalType(t == null ? JSType.TOP_OBJECT : t);
+    Node newTypeNode=child.getFirstChild();
+    JSType t=getThisOrNewType(newTypeNode,registry,typeParameters);
+    if (!t.isSubtypeOf(JSType.TOP_OBJECT) && (!t.hasTypeVariable() || t.hasScalar())) {
+      warnings.add(JSError.make(newTypeNode,NEW_EXPECTS_OBJECT_OR_TYPEVAR,t.toString()));
+    }
+    builder.addNominalType(t);
     child=child.getNext();
   }
   if (child.getType() == Token.PARAM_LIST) {

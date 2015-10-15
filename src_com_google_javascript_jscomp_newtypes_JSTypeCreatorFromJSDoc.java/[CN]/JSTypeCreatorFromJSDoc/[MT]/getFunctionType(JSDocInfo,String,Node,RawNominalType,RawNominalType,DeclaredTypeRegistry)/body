@@ -13,8 +13,8 @@
       if (funType != null) {
         JSType slotType=simpleType.isFunctionType() ? null : simpleType;
         DeclaredFunctionType declType=funType.toDeclaredFunctionType();
-        if (ownerType != null) {
-          declType=declType.withReceiverType(ownerType.getAsNominalType());
+        if (ownerType != null && funType.getThisType() == null) {
+          declType=declType.withReceiverType(ownerType.getInstanceAsJSType());
         }
         return new FunctionAndSlotType(slotType,declType);
       }

@@ -43,11 +43,10 @@
  else   if (!implementedIntfs.isEmpty()) {
     warnings.add(JSError.make(funNode,IMPLEMENTS_WITHOUT_CONSTRUCTOR,functionName));
   }
-  if (jsdoc.hasThisType() && ownerType == null) {
+  if (jsdoc.hasThisType()) {
     Node thisRoot=jsdoc.getThisType().getRoot();
     Preconditions.checkState(thisRoot.getType() == Token.BANG);
-    JSType t=getThisOrNewType(thisRoot.getFirstChild(),registry,typeParameters);
-    builder.addReceiverType(t == null ? JSType.TOP_OBJECT : t);
+    builder.addReceiverType(getThisOrNewType(thisRoot.getFirstChild(),registry,typeParameters));
   }
   return builder.buildDeclaration();
 }
