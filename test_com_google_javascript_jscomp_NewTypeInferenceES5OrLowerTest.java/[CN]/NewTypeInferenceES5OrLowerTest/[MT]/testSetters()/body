@@ -1,9 +1,9 @@
 {
   typeCheck("var x = { /** @return {string} */ set a(b) { return ''; } };",GlobalTypeInfo.SETTER_WITH_RETURN);
   typeCheck("var x = { /** @type{function(number):number} */ set a(b) { return 5; } };",GlobalTypeInfo.SETTER_WITH_RETURN);
-  typeCheck(Joiner.on('\n').join("var x = {","  /**","   * @param {T|number} b","   * @template T","   */","  set a(b) {}","};"),JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("var x = {","  /**","   * @param {T|number} b","   * @template T","   */","  set a(b) {}","};"),JSTypeCreatorFromJSDoc.TEMPLATED_GETTER_SETTER);
   typeCheck("var x = { set a(b) { return 1; } };",NewTypeInference.RETURN_NONDECLARED_TYPE);
-  typeCheck("var x = { /** @type {string} */ set a(b) {} };",JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
+  typeCheck("var x = { /** @type {string} */ set a(b) {} };",JSTypeCreatorFromJSDoc.FUNCTION_WITH_NONFUNC_JSDOC);
   typeCheck("var x = /** @dict */ { set a(b) {} };",NewTypeInference.ILLEGAL_OBJLIT_KEY);
   typeCheck("var x = /** @struct */ { set 'a'(b) {} };",NewTypeInference.ILLEGAL_OBJLIT_KEY);
   typeCheck("var x = { set a(b) { 1 - 'asdf'; } };",NewTypeInference.INVALID_OPERAND_TYPE);

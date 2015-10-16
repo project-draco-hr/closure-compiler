@@ -7,8 +7,8 @@
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Parent() {}","/** @type {string} */ Parent.prototype.prop = 'asdf';","/** @constructor @extends{Parent} */","function Child() {}","Child.prototype = new Parent();","/** @type {number} */ Child.prototype.prop = 5;"),GlobalTypeInfo.INVALID_PROP_OVERRIDE,NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Parent() {}","/** @extends {Parent} */ function Child() {}"),JSTypeCreatorFromJSDoc.EXTENDS_NOT_ON_CTOR_OR_INTERF);
   typeCheck("/** @constructor @extends{number} */ function Foo() {}",JSTypeCreatorFromJSDoc.EXTENDS_NON_OBJECT);
-  typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @implements {string}"," */","function Foo() {}"),JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
-  typeCheck(Joiner.on('\n').join("/**"," * @interface"," * @extends {number}"," */","function Foo() {}"),JSTypeCreatorFromJSDoc.BAD_JSDOC_ANNOTATION);
+  typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @implements {string}"," */","function Foo() {}"),JSTypeCreatorFromJSDoc.IMPLEMENTS_NON_INTERFACE);
+  typeCheck(Joiner.on('\n').join("/**"," * @interface"," * @extends {number}"," */","function Foo() {}"),JSTypeCreatorFromJSDoc.EXTENDS_NON_INTERFACE);
   typeCheck(Joiner.on('\n').join("/** @interface */ function Foo() {}","/** @implements {Foo} */ function bar() {}"),JSTypeCreatorFromJSDoc.IMPLEMENTS_WITHOUT_CONSTRUCTOR);
   typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype.method = function(x) { x - 1; };","/** @constructor @extends {Foo} */","function Bar() {}","Bar.prototype.method = function(x, y) { x - y; };","Bar.prototype.method2 = function(x, y) {};","Bar.prototype.method = Bar.prototype.method2;"),GlobalTypeInfo.INVALID_PROP_OVERRIDE);
 }

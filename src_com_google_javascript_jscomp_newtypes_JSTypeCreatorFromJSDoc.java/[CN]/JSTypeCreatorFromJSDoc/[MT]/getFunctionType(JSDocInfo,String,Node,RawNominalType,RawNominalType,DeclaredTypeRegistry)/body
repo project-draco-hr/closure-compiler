@@ -19,7 +19,7 @@
         return new FunctionAndSlotType(slotType,declType);
       }
  else {
-        warn("The function is annotated with a non-function jsdoc. " + "Ignoring jsdoc.",declNode);
+        warnings.add(JSError.make(declNode,FUNCTION_WITH_NONFUNC_JSDOC));
         jsdoc=null;
       }
     }
@@ -27,7 +27,7 @@
     return new FunctionAndSlotType(null,declType);
   }
  catch (  FunctionTypeBuilder.WrongParameterOrderException e) {
-    warn("Wrong parameter order: required parameters are first, " + "then optional, then varargs. Ignoring jsdoc.",declNode);
+    warnings.add(JSError.make(declNode,WRONG_PARAMETER_ORDER));
     return qmarkFunctionDeclared;
   }
 }

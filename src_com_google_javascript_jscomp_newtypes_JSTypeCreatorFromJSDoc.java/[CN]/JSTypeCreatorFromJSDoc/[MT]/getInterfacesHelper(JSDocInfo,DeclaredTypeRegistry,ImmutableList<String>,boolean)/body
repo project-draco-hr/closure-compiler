@@ -8,9 +8,11 @@
       if (nt != null && nt.isInterface()) {
         builder.add(nt);
       }
+ else       if (implementedIntfs) {
+        warnings.add(JSError.make(expRoot,IMPLEMENTS_NON_INTERFACE));
+      }
  else {
-        String errorMsg=implementedIntfs ? "Cannot implement non-interface" : "Cannot extend non-interface";
-        warn(errorMsg,expRoot);
+        warnings.add(JSError.make(expRoot,EXTENDS_NON_INTERFACE));
       }
     }
   }

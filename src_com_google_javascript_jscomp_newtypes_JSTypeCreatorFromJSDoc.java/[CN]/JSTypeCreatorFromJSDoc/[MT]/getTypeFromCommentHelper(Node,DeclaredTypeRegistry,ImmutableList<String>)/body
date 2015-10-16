@@ -11,7 +11,7 @@ case Token.EMPTY:
 case Token.VOID:
 return JSType.UNDEFINED;
 case Token.LB:
-warn("The [] type syntax is no longer supported." + " Please use Array.<T> instead.",n);
+warnings.add(JSError.make(n,BAD_ARRAY_TYPE_SYNTAX));
 return JSType.UNKNOWN;
 case Token.STRING:
 return getNamedTypeHelper(n,registry,typeParameters);
@@ -21,7 +21,7 @@ JSType union=JSType.BOTTOM;
 for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
 JSType nextType=getTypeFromCommentHelper(child,registry,typeParameters);
 if (nextType.isUnknown()) {
-warn("This union type is equivalent to '?'.",n);
+warnings.add(JSError.make(n,UNION_WITH_UNKNOWN));
 return JSType.UNKNOWN;
 }
 JSType nextUnion=JSType.join(union,nextType);
@@ -37,7 +37,7 @@ case Token.BANG:
 {
 JSType nullableType=getTypeFromCommentHelper(n.getFirstChild(),registry,typeParameters);
 if (nullableType.isTypeVariable()) {
-warn("Cannot use ! to restrict type variable type.\n" + "Prefer to make type argument non-nullable and add " + "null explicitly where needed (e.g. through ?T or T|null)",n);
+warnings.add(JSError.make(n,CANNOT_MAKE_TYPEVAR_NON_NULL));
 }
 return nullableType.removeType(JSType.NULL);
 }
