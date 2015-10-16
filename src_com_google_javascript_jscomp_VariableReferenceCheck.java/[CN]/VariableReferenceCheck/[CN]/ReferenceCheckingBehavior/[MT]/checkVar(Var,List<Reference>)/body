@@ -99,6 +99,17 @@
     }
   }
   if (unusedAssignment != null && !isRead && !hasErrors) {
-    compiler.report(JSError.make(unusedAssignment.getNode(),UNUSED_LOCAL_ASSIGNMENT,v.name));
+    Scope s=v.getScope();
+    Node function=null;
+    if (s.isFunctionBlockScope()) {
+      function=s.getRootNode().getParent();
+    }
+ else     if (s.isFunctionScope()) {
+      function=s.getRootNode();
+    }
+    boolean inGoogScope=function != null && function.getPrevious() != null && function.getPrevious().matchesQualifiedName("goog.scope");
+    if (!inGoogScope) {
+      compiler.report(JSError.make(unusedAssignment.getNode(),UNUSED_LOCAL_ASSIGNMENT,v.name));
+    }
   }
 }
