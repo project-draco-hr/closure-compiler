@@ -99,6 +99,7 @@
     }
   }
   if (unusedAssignment != null && !isRead && !hasErrors) {
+    boolean inGoogScope=false;
     Scope s=v.getScope();
     Node function=null;
     if (s.isFunctionBlockScope()) {
@@ -107,7 +108,10 @@
  else     if (s.isFunctionScope()) {
       function=s.getRootNode();
     }
-    boolean inGoogScope=function != null && function.getPrevious() != null && function.getPrevious().matchesQualifiedName("goog.scope");
+    if (function != null) {
+      Node callee=function.getParent().getChildBefore(function);
+      inGoogScope=callee != null && callee.matchesQualifiedName("goog.scope");
+    }
     if (!inGoogScope) {
       compiler.report(JSError.make(unusedAssignment.getNode(),UNUSED_LOCAL_ASSIGNMENT,v.name));
     }
