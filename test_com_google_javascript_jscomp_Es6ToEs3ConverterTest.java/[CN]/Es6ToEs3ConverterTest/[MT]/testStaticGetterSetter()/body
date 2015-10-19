@@ -1,5 +1,5 @@
 {
-  languageOut=LanguageMode.ECMASCRIPT5;
+  setLanguageOut(LanguageMode.ECMASCRIPT5);
   test("class C { static get foo() {} }",LINE_JOINER.join("/** @constructor @struct */","var C = function() {};","/** @nocollapse @type {?} */","C.foo;","Object.defineProperties(C, {","  foo: {","    configurable: true,","    enumerable: true,","    /** @this {C} */","    get: function() {}","  }","})"));
   test(LINE_JOINER.join("class C { static get foo() {} }","class Sub extends C {}"),LINE_JOINER.join("/** @constructor @struct */","var C = function() {};","/** @nocollapse @type {?} */","C.foo;","Object.defineProperties(C, {","  foo: {","    configurable: true,","    enumerable: true,","    /** @this {C} */","    get: function() {}","  }","})","","/** @constructor @struct @extends {C} */","var Sub = function(var_args) {","  C.apply(this, arguments);","};","$jscomp.inherits(Sub, C)"));
 }

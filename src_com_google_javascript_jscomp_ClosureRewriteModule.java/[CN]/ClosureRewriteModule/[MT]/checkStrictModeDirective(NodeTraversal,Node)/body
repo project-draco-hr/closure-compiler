@@ -1,0 +1,17 @@
+{
+  Preconditions.checkState(n.isScript());
+  Set<String> directives=n.getDirectives();
+  if (directives != null && directives.contains("use strict")) {
+    t.report(n,USELESS_USE_STRICT_DIRECTIVE);
+  }
+ else {
+    if (directives == null) {
+      n.setDirectives(USE_STRICT_ONLY);
+    }
+ else {
+      ImmutableSet.Builder<String> builder=new ImmutableSet.Builder<String>().add("use strict");
+      builder.addAll(directives);
+      n.setDirectives(builder.build());
+    }
+  }
+}

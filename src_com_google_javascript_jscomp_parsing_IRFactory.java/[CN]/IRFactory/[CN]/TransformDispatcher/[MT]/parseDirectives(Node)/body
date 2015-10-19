@@ -1,13 +1,17 @@
 {
-  Set<String> directives=null;
+  ImmutableSet.Builder<String> directives=null;
   while (isDirective(node.getFirstChild())) {
     String directive=node.removeFirstChild().getFirstChild().getString();
     if (directives == null) {
-      directives=new HashSet<>();
+      directives=new ImmutableSet.Builder<>();
     }
     directives.add(directive);
   }
   if (directives != null) {
-    node.setDirectives(directives);
+    ImmutableSet<String> result=directives.build();
+    if (result.size() == 1 && result.contains("use strict")) {
+      result=USE_STRICT_ONLY;
+    }
+    node.setDirectives(result);
   }
 }
