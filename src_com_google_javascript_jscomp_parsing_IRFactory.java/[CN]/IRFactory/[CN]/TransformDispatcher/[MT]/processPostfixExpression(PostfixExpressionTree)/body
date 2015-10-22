@@ -1,6 +1,9 @@
 {
   int type=transformPostfixTokenType(exprNode.operator.type);
-  Node node=newNode(type,transform(exprNode.operand));
-  node.putBooleanProp(Node.INCRDECR_PROP,true);
+  Node operand=transform(exprNode.operand);
+  if (type == Token.INC || type == Token.DEC) {
+    return createIncrDecrNode(type,true,operand);
+  }
+  Node node=newNode(type,operand);
   return node;
 }
