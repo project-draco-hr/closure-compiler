@@ -1,0 +1,4 @@
+{
+  test(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prop = 123;","var aliasFoo = Foo;","/** @constructor @extends {aliasFoo} */","function Bar() {}","$jscomp.inherits(Bar, aliasFoo);"),LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prop = 123;","var aliasFoo = Foo;","/** @constructor @extends {aliasFoo} */","function Bar() {}","$jscomp.inherits(Bar, aliasFoo);","/** @suppress {visibility} */","Bar.prop = aliasFoo.prop;"));
+  test(LINE_JOINER.join("/** @constructor */","function Foo() {}","var aliasFoo = Foo;","aliasFoo.prop = 123;","/** @constructor @extends {Foo} */","function Bar() {}","$jscomp.inherits(Bar, Foo);"),LINE_JOINER.join("/** @constructor */","function Foo() {}","var aliasFoo = Foo;","aliasFoo.prop = 123;","/** @constructor @extends {Foo} */","function Bar() {}","$jscomp.inherits(Bar, Foo);","/** @suppress {visibility} */","Bar.prop = Foo.prop;"));
+}

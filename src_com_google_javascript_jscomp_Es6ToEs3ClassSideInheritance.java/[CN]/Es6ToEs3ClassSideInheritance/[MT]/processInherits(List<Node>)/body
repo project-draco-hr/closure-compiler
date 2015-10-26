@@ -2,28 +2,18 @@
   for (  Node n : inheritsCalls) {
     Node parent=n.getParent();
     Node superclassNameNode=n.getLastChild();
+    String superclassQname=superclassNameNode.getQualifiedName();
     Node subclassNameNode=n.getChildBefore(superclassNameNode);
-    if (multiplyDefinedClasses.contains(superclassNameNode.getQualifiedName())) {
+    String subclassQname=subclassNameNode.getQualifiedName();
+    if (multiplyDefinedClasses.contains(superclassQname)) {
       compiler.report(JSError.make(n,DUPLICATE_CLASS));
       return;
     }
-    for (    Node staticMethod : staticMethods.get(superclassNameNode.getQualifiedName())) {
-      copyStaticMethod(staticMethod,superclassNameNode,subclassNameNode,parent);
+    for (    Node staticMethod : getSet(staticMethods,superclassQname)) {
+      copyStaticMethod(staticMethod,superclassNameNode,subclassNameNode,subclassQname,parent);
     }
-    for (    Node staticProperty : staticProperties.get(superclassNameNode.getQualifiedName())) {
-      Preconditions.checkState(staticProperty.isGetProp(),staticProperty);
-      String memberName=staticProperty.getLastChild().getString();
-      Node getprop=IR.getprop(subclassNameNode.cloneTree(),IR.string(memberName));
-      JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(staticProperty.getJSDocInfo());
-      JSTypeExpression unknown=new JSTypeExpression(new Node(Token.QMARK),"<synthetic>");
-      info.recordType(unknown);
-      info.addSuppression("visibility");
-      getprop.setJSDocInfo(info.build());
-      Node declaration=IR.exprResult(getprop);
-      declaration.useSourceInfoIfMissingFromForTree(n);
-      parent.getParent().addChildAfter(declaration,parent);
-      staticProperties.put(subclassNameNode.getQualifiedName(),staticProperty);
-      compiler.reportCodeChange();
+    for (    Node staticProperty : getSet(staticProperties,superclassQname)) {
+      copyStaticProperty(staticProperty,subclassNameNode,subclassQname,n);
     }
   }
 }
