@@ -4,6 +4,7 @@
   Preconditions.checkArgument(root.isSyntheticBlock());
   globalScope=new NTIScope(root,null,ImmutableList.<String>of(),commonTypes);
   globalScope.addUnknownTypeNames(this.unknownTypeNames);
+  this.unknownTypeNames=null;
   scopes.add(globalScope);
   CollectNamedTypes rootCnt=new CollectNamedTypes(globalScope);
   if (externs != null) {
@@ -32,9 +33,6 @@
   }
   NodeTraversal.traverseEs6(compiler,root,rootPs);
   rootPs.finishProcessingScope();
-  for (  String name : globalScope.getUnknownTypeNames()) {
-    globalScope.mayDeclareUnknownType(QualifiedName.fromQualifiedString(name));
-  }
   for (int i=1; i < scopes.size(); i++) {
     NTIScope s=scopes.get(i);
     ProcessScope ps=new ProcessScope(s);
