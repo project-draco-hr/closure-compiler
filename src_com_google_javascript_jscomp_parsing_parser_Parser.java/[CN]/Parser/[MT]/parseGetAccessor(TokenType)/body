@@ -6,14 +6,16 @@
     Token propertyName=eatObjectLiteralPropertyName();
     eat(TokenType.OPEN_PAREN);
     eat(TokenType.CLOSE_PAREN);
+    ParseTree returnType=maybeParseColonType();
     BlockTree body=parseFunctionBody();
-    return new GetAccessorTree(getTreeLocation(start),propertyName,isStatic,body);
+    return new GetAccessorTree(getTreeLocation(start),propertyName,isStatic,returnType,body);
   }
  else {
     ParseTree property=parseComputedPropertyName();
     eat(TokenType.OPEN_PAREN);
     eat(TokenType.CLOSE_PAREN);
+    ParseTree returnType=maybeParseColonType();
     BlockTree body=parseFunctionBody();
-    return new ComputedPropertyGetterTree(getTreeLocation(start),property,isStatic,access,body);
+    return new ComputedPropertyGetterTree(getTreeLocation(start),property,isStatic,access,returnType,body);
   }
 }

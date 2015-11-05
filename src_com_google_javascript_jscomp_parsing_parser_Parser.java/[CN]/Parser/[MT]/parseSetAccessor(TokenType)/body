@@ -6,16 +6,22 @@
     Token propertyName=eatObjectLiteralPropertyName();
     eat(TokenType.OPEN_PAREN);
     IdentifierToken parameter=eatId();
+    ParseTree type=maybeParseColonType();
     eat(TokenType.CLOSE_PAREN);
+    ParseTree returnType=maybeParseColonType();
+    if (returnType != null) {
+      reportError(scanner.peekToken(),"setter should not have any returns");
+    }
     BlockTree body=parseFunctionBody();
-    return new SetAccessorTree(getTreeLocation(start),propertyName,isStatic,parameter,body);
+    return new SetAccessorTree(getTreeLocation(start),propertyName,isStatic,parameter,type,body);
   }
  else {
     ParseTree property=parseComputedPropertyName();
     eat(TokenType.OPEN_PAREN);
     IdentifierToken parameter=eatId();
+    ParseTree type=maybeParseColonType();
     eat(TokenType.CLOSE_PAREN);
     BlockTree body=parseFunctionBody();
-    return new ComputedPropertySetterTree(getTreeLocation(start),property,isStatic,access,parameter,body);
+    return new ComputedPropertySetterTree(getTreeLocation(start),property,isStatic,access,parameter,type,body);
   }
 }
