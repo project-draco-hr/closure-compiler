@@ -4,10 +4,14 @@
   for (  Map.Entry<String,NamespaceLit> entry : localNamespaces.entrySet()) {
     String name=entry.getKey();
     NamespaceLit nslit=entry.getValue();
-    JSType t=nslit.toJSType(commonTypes);
+    JSType objToInclude=null;
     if (localFunDefs.containsKey(name)) {
-      t=t.withFunction(localFunDefs.get(name).getDeclaredFunctionType().toFunctionType(),commonTypes.getFunctionType());
+      objToInclude=commonTypes.fromFunctionType(localFunDefs.get(name).getDeclaredFunctionType().toFunctionType());
     }
+ else {
+      objToInclude=externs.get(name);
+    }
+    JSType t=nslit.toJSTypeIncludingObject(commonTypes,objToInclude);
     constVars.add(name);
     if (externs.containsKey(name)) {
       externs.put(name,t);

@@ -17,11 +17,11 @@
   if (namespaces != null) {
     for (    Map.Entry<String,NamespaceLit> entry : namespaces.entrySet()) {
       String name=entry.getKey();
-      JSType t=entry.getValue().toJSType(commonTypes);
+      JSType objToInclude=null;
       if (scopes.containsKey(name)) {
-        t=t.withFunction(scopes.get(name).getDeclaredFunctionType().toFunctionType(),commonTypes.getFunctionType());
+        objToInclude=commonTypes.fromFunctionType(scopes.get(name).getDeclaredFunctionType().toFunctionType());
       }
-      obj=obj.withProperty(new QualifiedName(name),t);
+      obj=obj.withProperty(new QualifiedName(name),entry.getValue().toJSTypeIncludingObject(commonTypes,objToInclude));
     }
   }
   this.duringComputeJSType=false;

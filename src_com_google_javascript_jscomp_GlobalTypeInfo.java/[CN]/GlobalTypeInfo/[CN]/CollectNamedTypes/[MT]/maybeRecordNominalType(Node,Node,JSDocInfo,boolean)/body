@@ -1,4 +1,5 @@
 {
+  Preconditions.checkState(nameNode == null || nameNode.isQualifiedName());
   if (fnDoc != null && fnDoc.isConstructorOrInterface()) {
     QualifiedName qname=QualifiedName.fromNode(nameNode);
     if (qname == null) {
@@ -23,7 +24,8 @@
     if (isRedeclaration) {
       return;
     }
-    if (nameNode.isName() || currentScope.isNamespace(nameNode.getFirstChild()) || mayCreateFunctionNamespace(nameNode.getFirstChild())) {
+    Node firstChild=nameNode.getFirstChild();
+    if (nameNode.isName() || currentScope.isNamespace(firstChild) || mayCreateFunctionNamespace(firstChild)|| mayCreateWindowNamespace(firstChild)) {
       if (nameNode.isGetProp()) {
         fn.getParent().getFirstChild().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
       }

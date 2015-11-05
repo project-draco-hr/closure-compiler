@@ -4,7 +4,10 @@ switch (parent.getType()) {
 case Token.NAME:
     return parent;
 case Token.ASSIGN:
-  return parent.getFirstChild();
+{
+    Node firstChild=parent.getFirstChild();
+    return firstChild.isQualifiedName() ? firstChild : null;
+  }
 default :
 Node funNameNode=n.getFirstChild();
 return (funNameNode.isEmpty() || funNameNode.getString().isEmpty()) ? null : funNameNode;
