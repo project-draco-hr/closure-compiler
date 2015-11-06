@@ -20,11 +20,12 @@
         parent.putBooleanProp(Node.FREE_CALL,false);
       }
       ModuleOriginalNamePair pair=importMap.get(name);
+      Node moduleAccess=NodeUtil.newQName(compiler,pair.module);
       if (pair.originalName.isEmpty()) {
-        n.getParent().replaceChild(n,IR.name(pair.module).useSourceInfoIfMissingFromForTree(n));
+        n.getParent().replaceChild(n,moduleAccess.useSourceInfoIfMissingFromForTree(n));
       }
  else {
-        n.getParent().replaceChild(n,IR.getprop(IR.name(pair.module),IR.string(pair.originalName)).useSourceInfoIfMissingFromForTree(n));
+        n.getParent().replaceChild(n,IR.getprop(moduleAccess,IR.string(pair.originalName)).useSourceInfoIfMissingFromForTree(n));
       }
     }
   }

@@ -1,24 +1,29 @@
 {
+  String moduleName;
   String importName=importDecl.getLastChild().getString();
-  URI loadAddress=loader.locateEs6Module(importName,t.getInput());
-  if (loadAddress == null) {
-    compiler.report(t.makeError(importDecl,ES6ModuleLoader.LOAD_ERROR,importName));
-    return;
+  boolean isNamespaceImport=importName.startsWith("goog:");
+  if (isNamespaceImport) {
+    moduleName=importName.substring("goog:".length());
   }
-  String moduleName=ES6ModuleLoader.toModuleName(loadAddress);
-  Set<String> namesToRequire=new LinkedHashSet<>();
+ else {
+    URI loadAddress=loader.locateEs6Module(importName,t.getInput());
+    if (loadAddress == null) {
+      compiler.report(t.makeError(importDecl,ES6ModuleLoader.LOAD_ERROR,importName));
+      return;
+    }
+    moduleName=ES6ModuleLoader.toModuleName(loadAddress);
+  }
   for (  Node child : importDecl.children()) {
     if (child.isEmpty() || child.isString()) {
       continue;
     }
  else     if (child.isName()) {
-      importMap.put(child.getString(),new ModuleOriginalNamePair(moduleName,"default"));
-      namesToRequire.add("default");
+      String name=isNamespaceImport ? "" : "default";
+      importMap.put(child.getString(),new ModuleOriginalNamePair(moduleName,name));
     }
  else     if (child.getType() == Token.IMPORT_SPECS) {
       for (      Node grandChild : child.children()) {
         String origName=grandChild.getFirstChild().getString();
-        namesToRequire.add(origName);
         if (grandChild.getChildCount() == 2) {
           importMap.put(grandChild.getLastChild().getString(),new ModuleOriginalNamePair(moduleName,origName));
         }
@@ -29,6 +34,9 @@
     }
  else {
       Preconditions.checkState(child.getType() == Token.IMPORT_STAR,"Expected an IMPORT_STAR node, but was: %s",child);
+      if (isNamespaceImport) {
+        compiler.report(t.makeError(importDecl,NAMESPACE_IMPORT_CANNOT_USE_STAR,child.getString(),moduleName));
+      }
       importMap.put(child.getString(),new ModuleOriginalNamePair(moduleName,""));
     }
   }
