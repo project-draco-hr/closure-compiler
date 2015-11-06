@@ -1,8 +1,9 @@
 {
   this.compiler=compiler;
+  this.runsAfterNTI=compiler.getOptions().getNewTypeInference();
   this.validator=compiler.getTypeValidator();
   this.codingConvention=codingConvention;
   this.typeRegistry=compiler.getTypeRegistry();
-  this.typeParsingErrorReporter=typeRegistry.getErrorReporter();
+  this.typeParsingErrorReporter=this.runsAfterNTI ? NullErrorReporter.forOldRhino() : typeRegistry.getErrorReporter();
   this.unknownType=typeRegistry.getNativeObjectType(UNKNOWN_TYPE);
 }

@@ -5,7 +5,7 @@
     String lendsName=info.getLendsName();
     TypedVar lendsVar=scope.getVar(lendsName);
     if (lendsVar == null) {
-      compiler.report(JSError.make(objectLit,UNKNOWN_LENDS,lendsName));
+      report(JSError.make(objectLit,UNKNOWN_LENDS,lendsName));
     }
  else {
       type=lendsVar.getType();
@@ -13,7 +13,7 @@
         type=unknownType;
       }
       if (!type.isSubtype(typeRegistry.getNativeType(OBJECT_TYPE))) {
-        compiler.report(JSError.make(objectLit,LENDS_ON_NON_OBJECT,lendsName,type.toString()));
+        report(JSError.make(objectLit,LENDS_ON_NON_OBJECT,lendsName,type.toString()));
         type=null;
       }
  else {
@@ -26,7 +26,7 @@
   String lValueName=NodeUtil.getBestLValueName(lValue);
   boolean createdEnumType=false;
   if (info != null && info.hasEnumParameterType()) {
-    type=createEnumTypeFromNodes(objectLit,lValueName,info,lValue);
+    type=createEnumTypeFromNodes(objectLit,lValueName,info);
     createdEnumType=true;
   }
   if (type == null) {
