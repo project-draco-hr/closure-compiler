@@ -1,0 +1,5 @@
+{
+  typeCheck(Joiner.on('\n').join("/** @enum {number} */","var E = { A: 1 };","/**"," * @template T"," * @param {T} x"," * @param {T} y"," */","function f(x, y) {}","f(123, E.A);"));
+  typeCheck(Joiner.on('\n').join("/** @enum {number} */","var E = { A: 1 };","/**"," * @template T"," * @param {T} x"," * @param {T} y"," */","function f(x, y) {}","f(E.A, 123);"));
+  typeCheck(Joiner.on('\n').join("/** @enum {number} */","var E = { A: 1 };","/**"," * @template T"," * @param {T} x"," * @param {T} y"," * @return {T}"," */","function f(x, y) {","  return x;","}","/** @type {E} */","var foo = f(123, E.A);"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+}
