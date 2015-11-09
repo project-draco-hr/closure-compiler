@@ -1,6 +1,9 @@
 {
   if (compiler.needsEs6Runtime) {
     compiler.ensureLibraryInjected("es6_runtime",false);
+    for (    String name : new String[]{"window","global"}) {
+      compiler.getSynthesizedExternsInput().getAstRoot(compiler).addChildToBack(IR.var(IR.name(name)));
+    }
   }
   if (compiler.needsEs6DartRuntime) {
     compiler.ensureLibraryInjected("es6_dart_runtime",false);
