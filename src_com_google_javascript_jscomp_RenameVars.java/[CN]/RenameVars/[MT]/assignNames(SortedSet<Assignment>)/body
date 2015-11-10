@@ -1,14 +1,9 @@
 {
   NameGenerator globalNameGenerator=null;
   NameGenerator localNameGenerator=null;
-  if (nameGeneratorGiven != null) {
-    globalNameGenerator=localNameGenerator=nameGeneratorGiven;
-    nameGeneratorGiven.restartNaming();
-  }
- else {
-    globalNameGenerator=new DefaultNameGenerator(reservedNames,prefix,reservedCharacters);
-    localNameGenerator=prefix.isEmpty() ? globalNameGenerator : new DefaultNameGenerator(reservedNames,"",reservedCharacters);
-  }
+  globalNameGenerator=nameGenerator;
+  nameGenerator.reset(reservedNames,prefix,reservedCharacters);
+  localNameGenerator=prefix.isEmpty() ? globalNameGenerator : nameGenerator.clone(reservedNames,"",reservedCharacters);
   List<Assignment> pendingAssignments=new ArrayList<>();
   List<String> generatedNamesForAssignments=new ArrayList<>();
   for (  Assignment a : varsToRename) {
