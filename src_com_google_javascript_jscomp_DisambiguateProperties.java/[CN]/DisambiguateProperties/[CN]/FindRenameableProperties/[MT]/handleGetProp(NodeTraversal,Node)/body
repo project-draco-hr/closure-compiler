@@ -1,6 +1,6 @@
 {
   String name=n.getLastChild().getString();
-  T type=typeSystem.getType(getScope(),n.getFirstChild(),name);
+  JSType type=typeSystem.getType(getScope(),n.getFirstChild(),name);
   Property prop=getProperty(name);
   if (!prop.scheduleRenaming(n.getLastChild(),processProperty(t,prop,type,null)) && propertiesToErrorFor.containsKey(name)) {
     String suggestion="";
@@ -24,6 +24,6 @@
         }
       }
     }
-    compiler.report(JSError.make(n,propertiesToErrorFor.get(name),Warnings.INVALIDATION,name,(String.valueOf(type)),n.toString(),suggestion));
+    compiler.report(JSError.make(n,propertiesToErrorFor.get(name),Warnings.INVALIDATION,name,String.valueOf(type),n.toString(),suggestion));
   }
 }

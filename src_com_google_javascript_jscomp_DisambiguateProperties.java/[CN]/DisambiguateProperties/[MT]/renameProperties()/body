@@ -3,11 +3,11 @@
   Set<String> reported=new HashSet<>();
   for (  Property prop : properties.values()) {
     if (prop.shouldRename()) {
-      Map<T,String> propNames=buildPropNames(prop.getTypes(),prop.name);
+      Map<JSType,String> propNames=buildPropNames(prop.getTypes(),prop.name);
       ++propsRenamed;
       prop.expandTypesToSkip();
       for (      Node node : prop.renameNodes) {
-        T rootType=prop.rootTypes.get(node);
+        JSType rootType=prop.rootTypes.get(node);
         if (prop.shouldRename(rootType)) {
           String newName=propNames.get(rootType);
           node.setString(newName);

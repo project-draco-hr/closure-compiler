@@ -3,20 +3,20 @@
     int count=0;
     while (true) {
       checkState(++count < 10,"Stuck in loop expanding types to skip.");
-      Set<T> rootTypesToSkip=new HashSet<>();
-      for (      T subType : typesToSkip) {
+      Set<JSType> rootTypesToSkip=new HashSet<>();
+      for (      JSType subType : typesToSkip) {
         rootTypesToSkip.add(types.find(subType));
       }
       typesToSkip.addAll(rootTypesToSkip);
-      Set<T> newTypesToSkip=new HashSet<>();
-      Set<T> allTypes=types.elements();
+      Set<JSType> newTypesToSkip=new HashSet<>();
+      Set<JSType> allTypes=types.elements();
       int originalTypesSize=allTypes.size();
-      for (      T subType : allTypes) {
+      for (      JSType subType : allTypes) {
         if (!typesToSkip.contains(subType) && typesToSkip.contains(types.find(subType))) {
           newTypesToSkip.add(subType);
         }
       }
-      for (      T newType : newTypesToSkip) {
+      for (      JSType newType : newTypesToSkip) {
         addTypeToSkip(newType);
       }
       if (types.elements().size() == originalTypesSize) {

@@ -1,0 +1,22 @@
+{
+  checkState(!skipRenaming,"Attempt to record skipped property: %s",name);
+  JSType top=typeSystem.getTypeWithProperty(this.name,type);
+  if (typeSystem.isInvalidatingType(top)) {
+    invalidate();
+    return false;
+  }
+  if (typeSystem.isTypeToSkip(top)) {
+    addTypeToSkip(top);
+  }
+  if (relatedType == null) {
+    getTypes().add(top);
+  }
+ else {
+    getTypes().union(top,relatedType);
+  }
+  if (!recordInterfacesCache.contains(type)) {
+    recordInterfacesCache.add(type);
+    typeSystem.recordInterfaces(type,top,this);
+  }
+  return true;
+}

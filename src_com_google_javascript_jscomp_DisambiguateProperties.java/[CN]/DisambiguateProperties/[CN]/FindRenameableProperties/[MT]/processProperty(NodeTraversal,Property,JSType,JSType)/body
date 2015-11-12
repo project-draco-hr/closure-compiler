@@ -1,0 +1,25 @@
+{
+  type=typeSystem.restrictByNotNullOrUndefined(type);
+  if (prop.skipRenaming || typeSystem.isInvalidatingType(type)) {
+    return null;
+  }
+  Iterable<JSType> alternatives=typeSystem.getTypeAlternatives(type);
+  if (alternatives != null) {
+    JSType firstType=relatedType;
+    for (    JSType subType : alternatives) {
+      JSType lastType=processProperty(t,prop,subType,firstType);
+      if (lastType != null) {
+        firstType=firstType == null ? lastType : firstType;
+      }
+    }
+    return firstType;
+  }
+ else {
+    JSType topType=typeSystem.getTypeWithProperty(prop.name,type);
+    if (typeSystem.isInvalidatingType(topType)) {
+      return null;
+    }
+    prop.addType(type,relatedType);
+    return topType;
+  }
+}
