@@ -6,10 +6,7 @@
     return this;
   }
   Node googRequireNode=IR.exprResult(IR.call(IR.getprop(IR.name("goog"),IR.string("require")),IR.string(namespace)));
-  Node script=node.getParent();
-  while (script != null && !script.isScript()) {
-    script=script.getParent();
-  }
+  Node script=NodeUtil.getEnclosingScript(node);
   if (script == null) {
     return this;
   }

@@ -1,9 +1,9 @@
 {
   int startPosition=n.getSourceOffset();
   int length=n.getLength();
-  JSDocInfo jsDoc=n.isExprResult() ? n.getFirstChild().getJSDocInfo() : n.getJSDocInfo();
+  JSDocInfo jsDoc=NodeUtil.getBestJSDocInfo(n);
   if (jsDoc != null) {
-    length=n.getLength() + (startPosition - jsDoc.getOriginalCommentPosition());
+    length+=(startPosition - jsDoc.getOriginalCommentPosition());
     startPosition=jsDoc.getOriginalCommentPosition();
   }
   if (n.isName() && n.getParent().isVar()) {
@@ -30,7 +30,7 @@
     }
   }
   Node parent=n.getParent();
-  if (deleteSurroundingWhitespace && parent != null && (parent.isScript() || parent.isBlock())) {
+  if (deleteWhitespaceBefore && parent != null && (parent.isScript() || parent.isBlock())) {
     Node previousSibling=parent.getChildBefore(n);
     if (previousSibling != null) {
       int previousSiblingEndPosition=previousSibling.getSourceOffset() + previousSibling.getLength();

@@ -1,8 +1,11 @@
 {
+  if (n.isExprResult()) {
+    return getBestJSDocInfo(n.getFirstChild());
+  }
   JSDocInfo info=n.getJSDocInfo();
   if (info == null) {
     Node parent=n.getParent();
-    if (parent == null) {
+    if (parent == null || n.isExprResult()) {
       return null;
     }
     if (parent.isName()) {
