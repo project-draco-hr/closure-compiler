@@ -19,6 +19,15 @@
         recordSet(ns.name,n);
       }
     }
+ else     if (isAnalyzableObjectDefinePropertiesDefinition(n)) {
+      Node object=n.getFirstChild().getNext();
+      Node props=n.getLastChild();
+      for (      Node prop : props.children()) {
+        NameInformation ns=createNameInformation(t,object,"." + prop.getString());
+        JsName name=getName(ns.name,true);
+        refNodes.add(new PropertyDefinitionNode(name,n));
+      }
+    }
   }
   if (n.isAssign()) {
     Node nameNode=n.getFirstChild();

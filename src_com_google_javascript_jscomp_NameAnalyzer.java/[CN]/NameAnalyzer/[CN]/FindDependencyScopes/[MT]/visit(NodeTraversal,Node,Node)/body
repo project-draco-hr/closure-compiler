@@ -8,6 +8,14 @@
       recordConsumers(t,n,n);
     }
   }
+ else   if (isAnalyzableObjectDefinePropertiesDefinition(n)) {
+    Node object=n.getFirstChild().getNext();
+    Node props=n.getLastChild();
+    for (    Node prop : props.children()) {
+      NameInformation ns=createNameInformation(t,object,"." + prop.getString());
+      recordDepScope(n,ns);
+    }
+  }
  else   if (NodeUtil.isVarDeclaration(n)) {
     NameInformation ns=createNameInformation(t,n);
     recordDepScope(n,ns);
