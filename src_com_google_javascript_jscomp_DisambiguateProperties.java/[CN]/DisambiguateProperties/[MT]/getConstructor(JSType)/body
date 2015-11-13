@@ -1,0 +1,17 @@
+{
+  ObjectType objType=ObjectType.cast(type);
+  if (objType == null) {
+    return null;
+  }
+  FunctionType constructor=null;
+  if (objType.isFunctionType()) {
+    constructor=objType.toMaybeFunctionType();
+  }
+ else   if (objType.isFunctionPrototypeType()) {
+    constructor=objType.getOwnerFunction();
+  }
+ else {
+    constructor=objType.getConstructor();
+  }
+  return constructor;
+}

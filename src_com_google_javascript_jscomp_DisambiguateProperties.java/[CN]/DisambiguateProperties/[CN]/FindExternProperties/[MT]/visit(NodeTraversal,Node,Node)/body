@@ -1,14 +1,14 @@
 {
   if (n.isGetProp()) {
     String field=n.getLastChild().getString();
-    JSType type=typeSystem.getType(getScope(),n.getFirstChild(),field);
+    JSType type=getType(n.getFirstChild(),field);
     Property prop=getProperty(field);
-    if (typeSystem.isInvalidatingType(type)) {
+    if (isInvalidatingType(type)) {
       prop.invalidate();
     }
  else {
       prop.addTypeToSkip(type);
-      if ((type=typeSystem.getInstanceFromPrototype(type)) != null) {
+      if ((type=getInstanceFromPrototype(type)) != null) {
         prop.getTypes().add(type);
         prop.typesToSkip.add(type);
       }
