@@ -21,18 +21,26 @@ switch (token) {
 case STAR:
       if (ignoreStar) {
         lineStartChar=stream.getCharno() + 1;
+        ignoreStar=false;
       }
  else {
-        if (builder.length() > 0) {
-          builder.append(' ');
-        }
+        padLine(builder,lineStartChar,option);
+        lineStartChar=-1;
         builder.append('*');
       }
     token=next();
-  continue;
+  while (token == JsDocToken.STAR) {
+    if (lineStartChar != -1) {
+      padLine(builder,lineStartChar,option);
+      lineStartChar=-1;
+    }
+    builder.append('*');
+    token=next();
+  }
+continue;
 case EOL:
 if (option != WhitespaceOption.SINGLE_LINE) {
-  builder.append('\n');
+builder.append('\n');
 }
 ignoreStar=true;
 lineStartChar=0;
@@ -43,16 +51,8 @@ ignoreStar=false;
 state=State.SEARCHING_ANNOTATION;
 boolean isEOC=token == JsDocToken.EOC;
 if (!isEOC) {
-if (lineStartChar != -1 && option == WhitespaceOption.PRESERVE) {
-int numSpaces=stream.getCharno() - lineStartChar;
-for (int i=0; i < numSpaces; i++) {
-builder.append(' ');
-}
+padLine(builder,lineStartChar,option);
 lineStartChar=-1;
-}
- else if (builder.length() > 0 && builder.charAt(builder.length() - 1) != '\n') {
-builder.append(' ');
-}
 }
 if (token == JsDocToken.EOC || token == JsDocToken.EOF || (token == JsDocToken.ANNOTATION && !includeAnnotations)) {
 String multilineText=builder.toString();

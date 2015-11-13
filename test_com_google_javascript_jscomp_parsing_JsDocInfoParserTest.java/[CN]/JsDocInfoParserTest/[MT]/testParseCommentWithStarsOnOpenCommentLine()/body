@@ -1,0 +1,9 @@
+{
+  Node script=parseFull("/******\n" + " * This is a typedef comment with ASCII art.\n" + " * @desc this is a description\n"+ " *****/\n"+ "function x() {}");
+  Preconditions.checkState(script.isScript());
+  Node fn=script.getFirstChild();
+  Preconditions.checkState(fn.isFunction());
+  JSDocInfo info=fn.getJSDocInfo();
+  assertThat(info.getBlockDescription()).isEqualTo("****\nThis is a typedef comment with ASCII art.");
+  assertThat(info.getDescription()).isEqualTo("this is a description ***");
+}
