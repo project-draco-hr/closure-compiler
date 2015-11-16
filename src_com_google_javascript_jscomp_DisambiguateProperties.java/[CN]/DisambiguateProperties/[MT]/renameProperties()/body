@@ -3,13 +3,15 @@
   Set<String> reported=new HashSet<>();
   for (  Property prop : properties.values()) {
     if (prop.shouldRename()) {
-      Map<JSType,String> propNames=buildPropNames(prop.getTypes(),prop.name);
+      UnionFind<JSType> pTypes=prop.getTypes();
+      Map<JSType,String> propNames=buildPropNames(prop);
       ++propsRenamed;
       prop.expandTypesToSkip();
-      for (      Node node : prop.renameNodes) {
-        JSType rootType=prop.rootTypes.get(node);
+      for (      Map.Entry<Node,JSType> entry : prop.rootTypesByNode.entrySet()) {
+        Node node=entry.getKey();
+        JSType rootType=entry.getValue();
         if (prop.shouldRename(rootType)) {
-          String newName=propNames.get(rootType);
+          String newName=propNames.get(pTypes.find(rootType));
           node.setString(newName);
           compiler.reportCodeChange();
           ++instancesRenamed;

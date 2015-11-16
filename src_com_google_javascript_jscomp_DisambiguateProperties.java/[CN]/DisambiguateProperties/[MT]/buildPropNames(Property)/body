@@ -1,0 +1,25 @@
+{
+  UnionFind<JSType> pTypes=prop.getTypes();
+  String pname=prop.name;
+  Map<JSType,String> names=new HashMap<>();
+  for (  Set<JSType> set : pTypes.allEquivalenceClasses()) {
+    checkState(!set.isEmpty());
+    JSType representative=pTypes.find(set.iterator().next());
+    String typeName=null;
+    for (    JSType type : set) {
+      String typeString=type.toString();
+      if (typeName == null || typeString.compareTo(typeName) < 0) {
+        typeName=typeString;
+      }
+    }
+    String newName;
+    if ("{...}".equals(typeName)) {
+      newName=pname;
+    }
+ else {
+      newName=NONWORD_PATTERN.matcher(typeName).replaceAll("_") + '$' + pname;
+    }
+    names.put(representative,newName);
+  }
+  return names;
+}
