@@ -1,0 +1,13 @@
+{
+  Preconditions.checkArgument(n.isCall());
+  if (NodeUtil.isObjectDefinePropertiesDefinition(n)) {
+    Node srcObj=n.getLastChild();
+    if (srcObj.isObjectLit() && !srcObj.hasChildren()) {
+      Node parent=n.getParent();
+      Node destObj=n.getChildAtIndex(1);
+      parent.replaceChild(n,destObj);
+      reportCodeChange();
+    }
+  }
+  return n;
+}
