@@ -13,8 +13,10 @@ case Token.GETPROP:
     }
 case Token.OBJECTLIT:
 {
-    for (    Node c : n.children()) {
-      used.add(c.getString());
+    if (!NodeUtil.isObjectDefinePropertiesDefinition(n.getParent())) {
+      for (      Node c : n.children()) {
+        used.add(c.getString());
+      }
     }
     break;
   }
@@ -24,6 +26,19 @@ if (n.hasMoreThanOneChild() && target.isName() && target.getString().equals(Node
 Node propName=target.getNext();
 if (propName.isString()) {
   used.add(propName.getString());
+}
+}
+ else if (NodeUtil.isObjectDefinePropertiesDefinition(n)) {
+if (n.getChildCount() == 3 && n.getLastChild().isObjectLit()) {
+  Node objlit=n.getLastChild();
+  for (  Node c : objlit.children()) {
+    if (!c.isQuotedString()) {
+      candidates.add(c);
+    }
+ else {
+      used.add(c.getString());
+    }
+  }
 }
 }
 break;
