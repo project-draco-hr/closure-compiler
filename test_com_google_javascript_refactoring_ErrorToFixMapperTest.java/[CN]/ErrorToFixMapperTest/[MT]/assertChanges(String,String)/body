@@ -1,0 +1,6 @@
+{
+  compiler.compile(ImmutableList.<SourceFile>of(),ImmutableList.of(SourceFile.fromCode("test",originalCode)),options);
+  Collection<SuggestedFix> fixes=errorManager.getAllFixes();
+  String newCode=ApplySuggestedFixes.applySuggestedFixesToCode(fixes,ImmutableMap.of("test",originalCode)).get("test");
+  assertThat(newCode).isEqualTo(expectedCode);
+}

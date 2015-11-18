@@ -1,40 +1,52 @@
 {
 switch (n.getType()) {
 case Token.SCRIPT:
-    if (!Ordering.natural().isOrdered(requiredNamespaces)) {
-      t.report(n,REQUIRES_NOT_SORTED);
+    if (!containsShorthandRequire) {
+      if (!Ordering.natural().isOrdered(requiredNamespaces)) {
+        t.report(n,REQUIRES_NOT_SORTED);
+      }
+      if (!Ordering.natural().isOrdered(providedNamespaces)) {
+        t.report(n,PROVIDES_NOT_SORTED);
+      }
     }
-  if (!Ordering.natural().isOrdered(providedNamespaces)) {
-    t.report(n,PROVIDES_NOT_SORTED);
+  if (!moduleNamespaces.isEmpty() && !providedNamespaces.isEmpty()) {
+    t.report(n,MODULE_AND_PROVIDES);
   }
-if (!moduleNamespaces.isEmpty() && !providedNamespaces.isEmpty()) {
-  t.report(n,MODULE_AND_PROVIDES);
-}
 if (moduleNamespaces.size() > 1) {
-t.report(n,MULTIPLE_MODULES_IN_FILE);
+  t.report(n,MULTIPLE_MODULES_IN_FILE);
 }
 requiredNamespaces.clear();
 providedNamespaces.clear();
 moduleNamespaces.clear();
+containsShorthandRequire=false;
 break;
 case Token.CALL:
-if (parent.isExprResult() && parent.getParent().isScript()) {
-String req=compiler.getCodingConvention().extractClassNameIfRequire(n,parent);
-if (req != null) {
-requiredNamespaces.add(req);
+Node callee=n.getFirstChild();
+if (!callee.matchesQualifiedName("goog.require") && !callee.matchesQualifiedName("goog.provide") && !callee.matchesQualifiedName("goog.module")) {
+return;
 }
-String prov=compiler.getCodingConvention().extractClassNameIfProvide(n,parent);
-if (prov != null) {
+if (parent.isExprResult() && parent.getParent().isScript()) {
+String namespace=n.getLastChild().getString();
+if (namespace == null) {
+return;
+}
+if (callee.matchesQualifiedName("goog.require")) {
+requiredNamespaces.add(namespace);
+}
+ else {
 if (!requiredNamespaces.isEmpty()) {
 t.report(n,PROVIDES_AFTER_REQUIRES);
 }
-if (n.getFirstChild().matchesQualifiedName("goog.module")) {
-moduleNamespaces.add(prov);
+if (callee.matchesQualifiedName("goog.module")) {
+moduleNamespaces.add(namespace);
 }
  else {
-providedNamespaces.add(prov);
+providedNamespaces.add(namespace);
 }
 }
+}
+ else if (NodeUtil.isNameDeclaration(parent.getParent()) && callee.matchesQualifiedName("goog.require")) {
+containsShorthandRequire=true;
 }
 break;
 }

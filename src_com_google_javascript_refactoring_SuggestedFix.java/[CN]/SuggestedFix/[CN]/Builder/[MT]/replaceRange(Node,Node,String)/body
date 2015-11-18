@@ -1,0 +1,15 @@
+{
+  Preconditions.checkState(first.getParent() == last.getParent());
+  int start;
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(first);
+  if (jsdoc == null) {
+    start=first.getSourceOffset();
+  }
+ else {
+    start=jsdoc.getOriginalCommentPosition();
+  }
+  int end=last.getSourceOffset() + last.getLength();
+  int length=end - start;
+  replacements.put(first.getSourceFileName(),new CodeReplacement(start,length,newContent));
+  return this;
+}

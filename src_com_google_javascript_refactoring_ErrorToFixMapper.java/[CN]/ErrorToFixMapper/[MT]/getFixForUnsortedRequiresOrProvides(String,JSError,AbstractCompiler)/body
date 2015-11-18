@@ -1,0 +1,21 @@
+{
+  SuggestedFix.Builder fix=new SuggestedFix.Builder();
+  fix.setOriginalMatchedNode(error.node);
+  Node script=NodeUtil.getEnclosingScript(error.node);
+  RequireProvideSorter cb=new RequireProvideSorter(closureFunction);
+  NodeTraversal.traverseEs6(compiler,script,cb);
+  Node first=cb.calls.get(0);
+  Node last=cb.calls.get(cb.calls.size() - 1);
+  cb.sortCallsAlphabetically();
+  StringBuilder sb=new StringBuilder();
+  for (  Node n : cb.calls) {
+    String statement=fix.generateCode(compiler,n);
+    JSDocInfo jsDoc=NodeUtil.getBestJSDocInfo(n);
+    if (jsDoc != null) {
+      statement=jsDoc.getOriginalCommentString() + "\n" + statement;
+    }
+    sb.append(statement);
+  }
+  String newContent=sb.toString().trim();
+  return fix.replaceRange(first,last,newContent).build();
+}
