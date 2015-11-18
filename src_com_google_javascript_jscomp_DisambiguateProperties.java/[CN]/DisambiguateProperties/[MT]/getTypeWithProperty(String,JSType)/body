@@ -2,21 +2,30 @@
   if (type == null) {
     return null;
   }
+  ObjectType foundType=gtwpCacheGet(field,type);
+  if (foundType != null) {
+    return foundType.equals(BOTTOM_OBJECT) ? null : foundType;
+  }
   if (type.isEnumElementType()) {
-    return getTypeWithProperty(field,type.toMaybeEnumElementType().getPrimitiveType());
+    foundType=getTypeWithProperty(field,type.toMaybeEnumElementType().getPrimitiveType());
+    gtwpCachePut(field,type,foundType == null ? BOTTOM_OBJECT : foundType);
+    return foundType;
   }
   if (!(type instanceof ObjectType)) {
     if (type.autoboxesTo() != null) {
-      type=type.autoboxesTo();
+      foundType=getTypeWithProperty(field,type.autoboxesTo());
+      gtwpCachePut(field,type,foundType == null ? BOTTOM_OBJECT : foundType);
+      return foundType;
     }
  else {
+      gtwpCachePut(field,type,BOTTOM_OBJECT);
       return null;
     }
   }
   if ("prototype".equals(field)) {
+    gtwpCachePut(field,type,BOTTOM_OBJECT);
     return null;
   }
-  ObjectType foundType=null;
   ObjectType objType=ObjectType.cast(type);
   if (objType != null && objType.getConstructor() != null && objType.getConstructor().isInterface()) {
     ObjectType topInterface=FunctionType.getTopDefiningInterface(objType,field);
@@ -44,5 +53,6 @@
   if (foundType != null && foundType.isNamedType()) {
     foundType=foundType.toMaybeNamedType().getReferencedType().toMaybeObjectType();
   }
+  gtwpCachePut(field,type,foundType == null ? BOTTOM_OBJECT : foundType);
   return foundType;
 }
