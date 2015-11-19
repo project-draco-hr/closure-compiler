@@ -1,5 +1,6 @@
 {
   blocksWithDeclarations.clear();
+  ImmutableSet<Reference> referenceSet=ImmutableSet.copyOf(references);
   boolean isDeclaredInScope=false;
   boolean isUnhoistedNamedFunction=false;
   boolean hasErrors=false;
@@ -35,6 +36,7 @@
         if (declaredBlock.provablyExecutesBefore(basicBlock)) {
           shadowDetected=true;
           DiagnosticType diagnosticType;
+          Node warningNode=referenceNode;
           if (v.isLet() || v.isConst() || v.isClass()|| letConstShadowsVar|| shadowCatchVar|| shadowParam) {
             diagnosticType=REDECLARED_VARIABLE_ERROR;
           }
@@ -42,9 +44,12 @@
             return;
           }
  else {
-            diagnosticType=REDECLARED_VARIABLE;
+            diagnosticType=v.getScope().isGlobal() ? VarCheck.VAR_MULTIPLY_DECLARED_ERROR : REDECLARED_VARIABLE;
+            if (referenceNode == v.getNode() && hoistedFn != null && v.name.equals(hoistedFn.getNode().getString())) {
+              warningNode=hoistedFn.getNode();
+            }
           }
-          compiler.report(JSError.make(referenceNode,diagnosticType,v.name));
+          compiler.report(JSError.make(warningNode,diagnosticType,v.name,v.input != null ? v.input.getName() : "??"));
           hasErrors=true;
           break;
         }
