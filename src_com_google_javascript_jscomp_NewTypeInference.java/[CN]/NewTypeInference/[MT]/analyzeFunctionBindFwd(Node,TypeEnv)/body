@@ -24,12 +24,12 @@
     warnings.add(JSError.make(call,WRONG_ARGUMENT_COUNT,getReadableCalleeName(call.getFirstChild()),Integer.toString(numArgs),"0"," and at most " + maxArity));
     return analyzeCallNodeArgsFwdWhenError(call,inEnv);
   }
+  Node receiver=bindComponents.thisValue;
   if (boundFunType.isGeneric()) {
-    Map<String,JSType> typeMap=calcTypeInstantiationFwd(call,bindComponents.parameters,boundFunType,env);
+    Map<String,JSType> typeMap=calcTypeInstantiationFwd(call,receiver,bindComponents.parameters,boundFunType,env);
     boundFunType=boundFunType.instantiateGenerics(typeMap);
   }
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
-  Node receiver=bindComponents.thisValue;
   if (receiver != null) {
     JSType reqThisType=boundFunType.getThisType();
     if (reqThisType == null || boundFunType.isSomeConstructorOrInterface()) {

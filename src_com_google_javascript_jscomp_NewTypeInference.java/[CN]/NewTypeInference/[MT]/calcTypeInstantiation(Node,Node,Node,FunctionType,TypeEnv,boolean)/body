@@ -1,18 +1,18 @@
 {
+  Preconditions.checkState(receiver == null || isFwd);
   List<String> typeParameters=funType.getTypeParameters();
   Multimap<String,JSType> typeMultimap=LinkedHashMultimap.create();
+  JSType funRecvType=funType.getThisType();
+  if (receiver != null && funRecvType != null && !funRecvType.isSingletonObj()) {
+    EnvTypePair pair=analyzeExprFwd(receiver,typeEnv);
+    unifyWithSubtypeWarnIfFail(funRecvType,pair.type,typeParameters,typeMultimap,receiver,isFwd);
+    typeEnv=pair.env;
+  }
   Node arg=firstArg;
   int i=0;
   while (arg != null) {
     EnvTypePair pair=isFwd ? analyzeExprFwd(arg,typeEnv) : analyzeExprBwd(arg,typeEnv);
-    JSType formalType=funType.getFormalType(i);
-    JSType passedArgType=pair.type;
-    if (!formalType.unifyWithSubtype(passedArgType,typeParameters,typeMultimap)) {
-      JSType formalAfterInstantiation=formalType.substituteGenericsWithUnknown();
-      if (!formalType.equals(formalAfterInstantiation) && passedArgType.isSubtypeOf(formalAfterInstantiation)) {
-        warnings.add(JSError.make(arg,FAILED_TO_UNIFY,formalType.toString(),passedArgType.toString()));
-      }
-    }
+    unifyWithSubtypeWarnIfFail(funType.getFormalType(i),pair.type,typeParameters,typeMultimap,arg,isFwd);
     arg=arg.getNext();
     typeEnv=pair.env;
     i++;
