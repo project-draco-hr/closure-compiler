@@ -1,0 +1,10 @@
+{
+  compiler.getSourceMap().reset();
+  StringBuilder output=new StringBuilder();
+  writeModuleOutput(output,module);
+  JsonFileSpec jsonFile=new JsonFileSpec(output.toString(),getModuleOutputFileName(module));
+  StringBuilder moduleSourceMap=new StringBuilder();
+  compiler.getSourceMap().appendTo(moduleSourceMap,getModuleOutputFileName(module));
+  jsonFile.setSourceMap(moduleSourceMap.toString());
+  return jsonFile;
+}

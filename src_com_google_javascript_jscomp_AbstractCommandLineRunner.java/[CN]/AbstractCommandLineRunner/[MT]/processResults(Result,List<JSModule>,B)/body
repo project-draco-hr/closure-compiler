@@ -47,8 +47,10 @@
  else   if (!options.checksOnly && result.success) {
     outputModuleGraphJson();
     if (modules == null) {
-      outputSingleBinary();
-      outputSourceMap(options,config.jsOutputFile);
+      outputSingleBinary(options);
+      if (!config.useJsonStreams) {
+        outputSourceMap(options,config.jsOutputFile);
+      }
     }
  else {
       outputModuleBinaryAndSourceMaps(modules,options);
@@ -61,6 +63,9 @@
     outputNameMaps();
     outputManifest();
     outputBundle();
+    if (config.useJsonStreams) {
+      outputJsonStream();
+    }
   }
   return Math.min(result.errors.length,0x7f);
 }

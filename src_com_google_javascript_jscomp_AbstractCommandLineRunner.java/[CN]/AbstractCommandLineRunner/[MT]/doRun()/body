@@ -13,13 +13,32 @@
   }
   List<String> jsFiles=config.js;
   List<String> moduleSpecs=config.module;
+  List<JsonFileSpec> jsonFiles=null;
+  if (config.useJsonStreams) {
+    jsonFiles=parseJsonFilesFromInputStream();
+    ImmutableMap.Builder<String,SourceMapInput> inputSourceMaps=new ImmutableMap.Builder<>();
+    boolean foundJsonInputSourceMap=false;
+    for (    JsonFileSpec jsonFile : jsonFiles) {
+      if (jsonFile.getSourceMap() != null && jsonFile.getSourceMap().length() > 0) {
+        String sourceMapPath=jsonFile.getPath() + ".map";
+        SourceFile sourceMap=SourceFile.fromCode(sourceMapPath,jsonFile.getSourceMap());
+        inputSourceMaps.put(sourceMapPath,new SourceMapInput(sourceMap));
+        foundJsonInputSourceMap=true;
+      }
+    }
+    if (foundJsonInputSourceMap) {
+      inputSourceMaps.putAll(options.inputSourceMaps);
+      options.inputSourceMaps=inputSourceMaps.build();
+    }
+  }
   boolean createCommonJsModules=false;
   if (options.processCommonJSModules && (moduleSpecs.size() == 1 && "auto".equals(moduleSpecs.get(0)))) {
     createCommonJsModules=true;
     moduleSpecs.remove(0);
   }
+  List<SourceFile> inputs=createSourceInputs(jsFiles,config.jsZip,jsonFiles);
   if (!moduleSpecs.isEmpty()) {
-    modules=createJsModules(moduleSpecs,jsFiles);
+    modules=createJsModules(moduleSpecs,inputs);
     for (    JSModule m : modules) {
       outputFileNames.add(getModuleOutputFileName(m));
     }
@@ -31,7 +50,6 @@
     }
   }
  else {
-    List<SourceFile> inputs=createSourceInputs(jsFiles,config.jsZip);
     if (config.skipNormalOutputs) {
       compiler.init(externs,inputs,options);
       compiler.hoistExterns();

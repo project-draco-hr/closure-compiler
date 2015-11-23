@@ -1,0 +1,11 @@
+{
+  Appendable jsOutput=new StringBuilder();
+  writeOutput(jsOutput,compiler,compiler.toSource(),config.outputWrapper,outputMarker,escaper);
+  JsonFileSpec jsonOutput=new JsonFileSpec(jsOutput.toString(),Strings.isNullOrEmpty(config.jsOutputFile) ? "compiled.js" : config.jsOutputFile);
+  if (!Strings.isNullOrEmpty(options.sourceMapOutputPath)) {
+    StringBuilder sourcemap=new StringBuilder();
+    compiler.getSourceMap().appendTo(sourcemap,jsonOutput.getPath());
+    jsonOutput.setSourceMap(sourcemap.toString());
+  }
+  return jsonOutput;
+}

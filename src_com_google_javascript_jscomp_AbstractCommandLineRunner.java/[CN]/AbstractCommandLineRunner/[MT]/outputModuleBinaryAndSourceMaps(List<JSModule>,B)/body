@@ -1,29 +1,34 @@
 {
   parsedModuleWrappers=parseModuleWrappers(config.moduleWrapper,modules);
   maybeCreateDirsForPath(config.moduleOutputPathPrefix);
-  Writer mapOut=null;
-  if (!shouldGenerateMapPerModule(options)) {
-    mapOut=fileNameToOutputWriter2(expandSourceMapPath(options,null));
+  Writer mapFileOut=null;
+  if (!(shouldGenerateMapPerModule(options) || config.useJsonStreams)) {
+    mapFileOut=fileNameToOutputWriter2(expandSourceMapPath(options,null));
   }
   for (  JSModule m : modules) {
-    if (shouldGenerateMapPerModule(options)) {
-      mapOut=fileNameToOutputWriter2(expandSourceMapPath(options,m));
+    if (config.useJsonStreams) {
+      this.filesToStreamOut.add(createJsonFileFromModule(m));
     }
-    try (Writer writer=fileNameToLegacyOutputWriter(getModuleOutputFileName(m))){
-      if (options.sourceMapOutputPath != null) {
-        compiler.getSourceMap().reset();
+ else {
+      if (shouldGenerateMapPerModule(options)) {
+        mapFileOut=fileNameToOutputWriter2(expandSourceMapPath(options,m));
       }
-      writeModuleOutput(writer,m);
-      if (options.sourceMapOutputPath != null) {
-        compiler.getSourceMap().appendTo(mapOut,m.getName());
+      try (Writer writer=fileNameToLegacyOutputWriter(getModuleOutputFileName(m))){
+        if (options.sourceMapOutputPath != null) {
+          compiler.getSourceMap().reset();
+        }
+        writeModuleOutput(writer,m);
+        if (options.sourceMapOutputPath != null) {
+          compiler.getSourceMap().appendTo(mapFileOut,m.getName());
+        }
       }
-    }
-     if (shouldGenerateMapPerModule(options) && mapOut != null) {
-      mapOut.close();
-      mapOut=null;
+       if (shouldGenerateMapPerModule(options) && mapFileOut != null) {
+        mapFileOut.close();
+        mapFileOut=null;
+      }
     }
   }
-  if (mapOut != null) {
-    mapOut.close();
+  if (mapFileOut != null) {
+    mapFileOut.close();
   }
 }
