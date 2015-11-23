@@ -10,7 +10,7 @@
   FunctionAndSlotType result=typeParser.getFunctionType(fnDoc,functionName,declNode,ctorType,ownerType,parentScope);
   Node qnameNode=declNode.isGetProp() ? declNode : NodeUtil.getFunctionNameNode(declNode);
   if (result.slotType != null && qnameNode != null && qnameNode.isName()) {
-    parentScope.addSimpleType(qnameNode,result.slotType);
+    parentScope.addLocal(qnameNode.getString(),result.slotType,false,qnameNode.isFromExterns());
   }
   if (ctorType != null) {
     ctorType.setCtorFunction(result.functionType.toFunctionType(),commonTypes);

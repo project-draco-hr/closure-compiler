@@ -1,16 +1,17 @@
 {
   String name=nameNode.getString();
-  if (this.currentScope.isNamespace(name) || NodeUtil.isTypedefDecl(nameNode) || NodeUtil.isEnumDecl(nameNode)) {
-    if (!this.currentScope.isDefinedLocally(name,false)) {
+  boolean isDefinedLocally=this.currentScope.isDefinedLocally(name,false);
+  if (isDefinedLocally && this.currentScope.isNamespace(name)) {
+    return;
+  }
+  if (NodeUtil.isTypedefDecl(nameNode) || NodeUtil.isEnumDecl(nameNode)) {
+    if (!isDefinedLocally) {
       this.currentScope.addLocal(name,JSType.UNKNOWN,false,nameNode.isFromExterns());
     }
     return;
   }
   Node initializer=nameNode.getFirstChild();
   if (initializer != null && initializer.isFunction()) {
-    return;
-  }
- else   if (this.currentScope.isDefinedLocally(name,false)) {
     return;
   }
   if (parent.isCatch()) {

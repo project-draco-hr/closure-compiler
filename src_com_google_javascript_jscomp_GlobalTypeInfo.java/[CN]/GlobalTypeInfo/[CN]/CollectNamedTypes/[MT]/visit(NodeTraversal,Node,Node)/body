@@ -8,6 +8,7 @@ case Token.FUNCTION:
 case Token.VAR:
 {
     Node nameNode=n.getFirstChild();
+    String varName=nameNode.getString();
     if (NodeUtil.isNamespaceDecl(nameNode)) {
       visitObjlitNamespace(nameNode);
     }
@@ -20,8 +21,11 @@ case Token.VAR:
  else     if (isAliasedNamespaceDefinition(nameNode)) {
       visitAliasedNamespace(nameNode);
     }
- else     if (nameNode.getString().equals(WINDOW) && nameNode.isFromExterns() && !this.currentScope.isDefinedLocally(WINDOW,false)) {
+ else     if (varName.equals(WINDOW) && nameNode.isFromExterns() && !this.currentScope.isDefinedLocally(WINDOW,false)) {
       this.currentScope.addLocal(WINDOW,getVarTypeFromAnnotation(nameNode,this.currentScope),false,true);
+    }
+ else     if (this.currentScope.isFunction() && !this.currentScope.isDefinedLocally(varName,false)) {
+      this.currentScope.addLocal(varName,JSType.UNKNOWN,false,false);
     }
     break;
   }

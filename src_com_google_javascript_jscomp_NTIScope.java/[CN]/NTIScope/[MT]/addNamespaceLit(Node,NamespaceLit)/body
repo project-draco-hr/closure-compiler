@@ -1,13 +1,14 @@
 {
-  Preconditions.checkArgument(!isNamespace(qnameNode));
   if (qnameNode.isName()) {
     String varName=qnameNode.getString();
+    Preconditions.checkArgument(!isDefinedLocally(varName,false) || !isNamespace(qnameNode));
     localNamespaces.put(varName,nslit);
     if (qnameNode.isFromExterns() && !externs.containsKey(varName)) {
       externs.put(qnameNode.getString(),null);
     }
   }
  else {
+    Preconditions.checkArgument(!isNamespace(qnameNode));
     QualifiedName qname=QualifiedName.fromNode(qnameNode);
     Namespace ns=getNamespace(qname.getLeftmostName());
     ns.addSubnamespace(qname.getAllButLeftmost(),nslit);
