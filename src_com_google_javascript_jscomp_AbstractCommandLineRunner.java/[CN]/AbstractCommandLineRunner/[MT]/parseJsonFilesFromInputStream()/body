@@ -1,12 +1,12 @@
 {
   List<JsonFileSpec> jsonFiles=new ArrayList<>();
-  JsonReader reader=new JsonReader(new InputStreamReader(System.in,inputCharset));
-  reader.beginArray();
-  while (reader.hasNext()) {
-    JsonFileSpec jsonFile=gson.fromJson(reader,JsonFileSpec.class);
-    jsonFiles.add(jsonFile);
+  try (JsonReader reader=new JsonReader(new InputStreamReader(System.in,inputCharset))){
+    reader.beginArray();
+    while (reader.hasNext()) {
+      JsonFileSpec jsonFile=gson.fromJson(reader,JsonFileSpec.class);
+      jsonFiles.add(jsonFile);
+    }
+    reader.endArray();
   }
-  reader.endArray();
-  reader.close();
-  return jsonFiles;
+   return jsonFiles;
 }

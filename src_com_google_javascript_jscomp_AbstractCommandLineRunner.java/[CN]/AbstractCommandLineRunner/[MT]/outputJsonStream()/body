@@ -1,15 +1,15 @@
 {
-  JsonWriter jsonWriter=new JsonWriter(new BufferedWriter(new OutputStreamWriter(defaultJsOutput,"UTF-8")));
-  jsonWriter.beginArray();
-  for (  JsonFileSpec jsonFile : this.filesToStreamOut) {
-    jsonWriter.beginObject();
-    jsonWriter.name("src").value(jsonFile.getSrc());
-    jsonWriter.name("path").value(jsonFile.getPath());
-    if (!Strings.isNullOrEmpty(jsonFile.getSourceMap())) {
-      jsonWriter.name("source_map").value(jsonFile.getSourceMap());
+  try (JsonWriter jsonWriter=new JsonWriter(new BufferedWriter(new OutputStreamWriter(defaultJsOutput,"UTF-8")))){
+    jsonWriter.beginArray();
+    for (    JsonFileSpec jsonFile : this.filesToStreamOut) {
+      jsonWriter.beginObject();
+      jsonWriter.name("src").value(jsonFile.getSrc());
+      jsonWriter.name("path").value(jsonFile.getPath());
+      if (!Strings.isNullOrEmpty(jsonFile.getSourceMap())) {
+        jsonWriter.name("source_map").value(jsonFile.getSourceMap());
+      }
+      jsonWriter.endObject();
     }
-    jsonWriter.endObject();
+    jsonWriter.endArray();
   }
-  jsonWriter.endArray();
-  jsonWriter.close();
-}
+ }
