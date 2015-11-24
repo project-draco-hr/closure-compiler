@@ -4,7 +4,7 @@
   }
   Preconditions.checkState(specs != null);
   Preconditions.checkState(!specs.isEmpty());
-  Preconditions.checkState(jsFiles != null);
+  Preconditions.checkState(inputs != null);
   List<String> moduleNames=new ArrayList<>(specs.size());
   Map<String,JSModule> modulesByName=new LinkedHashMap<>();
   Map<String,Integer> modulesFileCountMap=new LinkedHashMap<>();
@@ -64,7 +64,7 @@
     modulesFileCountMap.put(name,numJsFiles);
     modulesByName.put(name,module);
   }
-  final int totalNumJsFiles=jsFiles.size();
+  final int totalNumJsFiles=inputs.size();
   if (numJsFilesExpected >= 0 || minJsFilesRequired > totalNumJsFiles) {
     if (minJsFilesRequired > totalNumJsFiles) {
       numJsFilesExpected=minJsFilesRequired;
@@ -83,8 +83,8 @@
     if (moduleIndex == moduleNames.size() - 1 && numJsFiles == -1) {
       numJsFiles=numJsFilesLeft;
     }
-    List<String> moduleJsFiles=jsFiles.subList(numJsFilesLeft - numJsFiles,numJsFilesLeft);
-    for (    SourceFile input : createInputs(moduleJsFiles,false)) {
+    List<SourceFile> moduleFiles=inputs.subList(numJsFilesLeft - numJsFiles,numJsFilesLeft);
+    for (    SourceFile input : moduleFiles) {
       module.add(input);
     }
     numJsFilesLeft-=numJsFiles;

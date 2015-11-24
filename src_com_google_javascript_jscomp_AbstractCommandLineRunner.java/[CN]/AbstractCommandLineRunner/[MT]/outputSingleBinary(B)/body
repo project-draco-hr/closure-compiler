@@ -1,0 +1,16 @@
+{
+  Function<String,String> escaper=null;
+  String marker=OUTPUT_MARKER;
+  if (config.outputWrapper.contains(OUTPUT_MARKER_JS_STRING)) {
+    marker=OUTPUT_MARKER_JS_STRING;
+    escaper=getJavascriptEscaper();
+  }
+  if (config.useJsonStreams) {
+    this.filesToStreamOut.add(createJsonFile(options,marker,escaper));
+  }
+ else {
+    Appendable jsOutput=createDefaultOutput();
+    writeOutput(jsOutput,compiler,compiler.toSource(),config.outputWrapper,marker,escaper);
+    closeAppendable(jsOutput);
+  }
+}
