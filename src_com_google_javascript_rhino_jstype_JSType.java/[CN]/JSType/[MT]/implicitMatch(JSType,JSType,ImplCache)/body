@@ -1,26 +1,15 @@
 {
-  if (rightType.isUnionType() || leftType.isUnionType()) {
+  Preconditions.checkState(!subType.isUnionType());
+  Preconditions.checkState(!superType.isUnionType());
+  if (!subType.isObject() || !superType.isObject()) {
     return false;
   }
-  if (!rightType.isObject() || !leftType.isObject()) {
+  if (superType.isTemplatizedType()) {
     return false;
   }
-  if (leftType.isTemplatizedType()) {
+  FunctionType superConstructor=superType.toMaybeObjectType().getConstructor();
+  if (superConstructor == null || !superConstructor.isStructuralInterface()) {
     return false;
   }
-  if (leftType.isStructuralInterface() && rightType.isFunctionType()) {
-    return checkConstructorImplicitMatch(rightType.toMaybeFunctionType(),leftType.toMaybeFunctionType(),implicitImplCache);
-  }
-  if (leftType.isStructuralInterface() && rightType.isRecordType()) {
-    return checkObjectImplicitMatch(rightType.toMaybeObjectType(),leftType.toMaybeFunctionType(),implicitImplCache);
-  }
-  FunctionType leftConstructor=leftType.toMaybeObjectType().getConstructor();
-  FunctionType rightConstructor=rightType.toMaybeObjectType().getConstructor();
-  if (leftConstructor == null || !leftConstructor.isStructuralInterface()) {
-    return false;
-  }
-  if (rightConstructor != null) {
-    return checkConstructorImplicitMatch(rightConstructor,leftConstructor,implicitImplCache);
-  }
-  return checkObjectImplicitMatch(rightType.toMaybeObjectType(),leftConstructor,implicitImplCache);
+  return checkObjectImplicitMatch(subType.toMaybeObjectType(),superType.toMaybeObjectType(),implicitImplCache);
 }
