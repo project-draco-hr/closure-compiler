@@ -30,7 +30,10 @@
     templateMatch=thisTypeParams.checkEquivalenceHelper(thatTypeParams,EquivalenceMethod.INVARIANT);
   }
   if (!templateMatch) {
-    return implicitImplCache.isStructuralTyping() && implicitMatch(thisType,thatType,implicitImplCache);
+    return false;
+  }
+  if (implicitImplCache.isStructuralTyping() && thatType.isStructuralInterfaceInstance()) {
+    return implicitMatch(thisType,thatType,implicitImplCache);
   }
   if (thisType.isTemplatizedType()) {
     return thisType.toMaybeTemplatizedType().getReferencedType().isSubtype(thatType,implicitImplCache);
@@ -38,5 +41,5 @@
   if (thatType instanceof ProxyObjectType) {
     return thisType.isSubtype(((ProxyObjectType)thatType).getReferencedTypeInternal(),implicitImplCache);
   }
-  return implicitImplCache.isStructuralTyping() && implicitMatch(thisType,thatType,implicitImplCache);
+  return false;
 }
