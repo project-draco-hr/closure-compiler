@@ -32,8 +32,8 @@
   if (!templateMatch) {
     return false;
   }
-  if (implicitImplCache.isStructuralTyping() && thatType.isStructuralInterfaceInstance()) {
-    return implicitMatch(thisType,thatType,implicitImplCache);
+  if (implicitImplCache.isStructuralTyping() && thisType.isObject() && thatType.isStructuralInterfaceInstance()) {
+    return thisType.toMaybeObjectType().isStructuralSubtype(thatType.toMaybeObjectType(),implicitImplCache);
   }
   if (thisType.isTemplatizedType()) {
     return thisType.toMaybeTemplatizedType().getReferencedType().isSubtype(thatType,implicitImplCache);

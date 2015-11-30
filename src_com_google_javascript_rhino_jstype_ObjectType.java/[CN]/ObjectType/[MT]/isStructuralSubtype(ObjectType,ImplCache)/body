@@ -1,0 +1,18 @@
+{
+  Preconditions.checkArgument(!this.isUnionType());
+  Preconditions.checkArgument(!structuralInterface.isUnionType());
+  Preconditions.checkArgument(structuralInterface.getConstructor().isStructuralInterface());
+  MatchStatus result=implicitImplCache.checkCache(this,structuralInterface);
+  if (result != null) {
+    return result.subtypeValue();
+  }
+  for (  String propName : structuralInterface.getPropertyNames()) {
+    if (this.hasProperty(propName) && this.getPropertyType(propName).isSubtype(structuralInterface.getPropertyType(propName),implicitImplCache)) {
+      continue;
+    }
+    implicitImplCache.updateCache(this,structuralInterface,MatchStatus.NOT_MATCH);
+    return false;
+  }
+  implicitImplCache.updateCache(this,structuralInterface,MatchStatus.MATCH);
+  return true;
+}
