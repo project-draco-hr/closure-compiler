@@ -1,0 +1,17 @@
+{
+  if (!n.isCall()) {
+    return;
+  }
+  Node qualifiedNameNode=n.getFirstChild();
+  if (!qualifiedNameNode.isGetProp() || !qualifiedNameNode.isQualifiedName()) {
+    return;
+  }
+  String qualifiedFnName=qualifiedNameNode.getQualifiedName();
+  String fnName=qualifiedNameNode.getLastChild().getString();
+  Node fnImpl=fnsToInlineByQualifiedName.get(qualifiedFnName);
+  if (fnImpl == null) {
+    return;
+  }
+  Node inlinedCall=injector.inline(new Reference(n,t.getScope(),t.getModule(),InliningMode.DIRECT),fnName,fnImpl);
+  t.getCompiler().reportChangeToEnclosingScope(inlinedCall);
+}

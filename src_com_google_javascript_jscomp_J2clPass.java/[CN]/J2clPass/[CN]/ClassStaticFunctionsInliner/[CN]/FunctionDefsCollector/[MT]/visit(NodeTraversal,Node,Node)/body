@@ -1,0 +1,15 @@
+{
+  if (!n.isAssign() || !n.getLastChild().isFunction()) {
+    return;
+  }
+  Node qualifiedNameNode=n.getFirstChild();
+  if (!qualifiedNameNode.isGetProp() || !qualifiedNameNode.isQualifiedName()) {
+    return;
+  }
+  Node fnNode=n.getLastChild();
+  String qualifiedFnName=qualifiedNameNode.getQualifiedName();
+  String fnName=qualifiedNameNode.getLastChild().getString();
+  if (fnNamesToInline.contains(fnName)) {
+    fnsToInlineByQualifiedName.put(qualifiedFnName,fnNode);
+  }
+}
