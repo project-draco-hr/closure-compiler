@@ -1,0 +1,11 @@
+{
+  if (node.isString()) {
+    Polyfill polyfill=polyfills.statics.get(node.getString());
+    if (polyfill != null && scope.getVar(node.getString()) == null && !languageOutIsAtLeast(polyfill.nativeVersion)) {
+      node.setString(polyfill.rewrite);
+    }
+  }
+  for (Node child=node.getFirstChild(); child != null; child=child.getNext()) {
+    fixJsdocType(scope,child);
+  }
+}
