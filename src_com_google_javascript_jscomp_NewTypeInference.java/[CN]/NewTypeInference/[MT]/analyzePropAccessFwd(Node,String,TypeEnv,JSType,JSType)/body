@@ -4,7 +4,7 @@
   EnvTypePair pair;
   JSType reqObjType=pickReqObjType(propAccessNode).withLoose();
   JSType recvReqType, recvSpecType;
-  if (specializedType.isTrueOrTruthy() || propAccessNode.getParent().isTypeOf()) {
+  if (NodeUtil.isPropertyTest(compiler,propAccessNode) && !specializedType.isFalseOrFalsy()) {
     recvReqType=reqObjType;
     recvSpecType=reqObjType.withProperty(propQname,specializedType);
   }
@@ -28,7 +28,7 @@
   if (ft != null && pname.equals("apply")) {
     return new EnvTypePair(pair.env,commonTypes.fromFunctionType(ft.transformByApplyProperty(commonTypes)));
   }
-  if (convention.isSuperClassReference(pname)) {
+  if (this.convention.isSuperClassReference(pname)) {
     if (ft != null && ft.isUniqueConstructor()) {
       JSType result=ft.getSuperPrototype();
       pair.type=result != null ? result : JSType.UNDEFINED;
