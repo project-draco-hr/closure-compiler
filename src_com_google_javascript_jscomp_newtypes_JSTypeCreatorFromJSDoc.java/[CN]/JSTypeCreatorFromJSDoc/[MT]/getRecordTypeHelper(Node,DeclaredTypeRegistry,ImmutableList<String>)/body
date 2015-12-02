@@ -9,7 +9,7 @@
     }
     JSType propType=!isPropDeclared ? JSType.UNKNOWN : getTypeFromCommentHelper(propNode.getLastChild(),registry,typeParameters);
     Property prop;
-    if (!propType.isUnknown() && !propType.isTop() && JSType.UNDEFINED.isSubtypeOf(propType)) {
+    if (propType.equals(JSType.UNDEFINED) || isUnionWithUndefined(propNode.getLastChild())) {
       prop=Property.makeOptional(null,propType,propType);
     }
  else {

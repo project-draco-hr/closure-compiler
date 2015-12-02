@@ -4,4 +4,6 @@
   typeCheck(Joiner.on('\n').join("function f(/** { a: (number|undefined) } */ x) {}","f({});"));
   typeCheck(Joiner.on('\n').join("function f(/** { a: (number|undefined) } */ x) {}","f({ a: undefined });"));
   typeCheck(Joiner.on('\n').join("function f(/** { a: (number|undefined) } */ x) {}","f({ a: 'asdf' });"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(Joiner.on('\n').join("/** @param {{foo: (?|undefined)}} x */","function g(x) {}","g({bar:123});"));
+  typeCheck(Joiner.on('\n').join("/** @param {{foo: ?}} x */","function g(x) {}","g({bar:123});"),NewTypeInference.INVALID_ARGUMENT_TYPE);
 }
