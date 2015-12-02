@@ -1,9 +1,9 @@
 {
   if (this.matchCache == null) {
-    this.matchCache=HashBasedTable.create();
+    this.matchCache=new IdentityHashMap<>();
   }
-  if (this.matchCache.contains(subType,superType)) {
-    return this.matchCache.get(subType,superType);
+  if (this.matchCache.containsKey(subType) && this.matchCache.get(subType).containsKey(superType)) {
+    return this.matchCache.get(subType).get(superType);
   }
  else {
     this.updateCache(subType,superType,MatchStatus.PROCESSING);
