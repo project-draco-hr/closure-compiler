@@ -1,0 +1,13 @@
+{
+  SourceFile externFile=SourceFile.fromCode("externs",externs.getValue());
+  SourceFile srcFile=SourceFile.fromCode("input0",input0.getValue());
+  Compiler compiler=new Compiler();
+  options.getDependencyOptions().setEs6ModuleOrder(false);
+  try {
+    Result result=compiler.compile(externFile,srcFile,options);
+    updateUi(compiler.toSource(),Arrays.asList(result.warnings),Arrays.asList(result.errors));
+  }
+ catch (  Exception e) {
+    updateUiException(e);
+  }
+}
