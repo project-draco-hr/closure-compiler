@@ -1,11 +1,12 @@
 {
-  testExternChanges("declare var x: number;","var /** number */ x;");
-  testExternChanges("declare let x;","let x;");
-  testExternChanges("declare const x;","/** @const */ var x;");
-  testExternChanges("declare function f(): number;","/** @return {number} */ function f() {}");
-  testExternChanges("declare enum Foo {}","/** @enum {number} */ var Foo = {}");
-  testExternChanges("declare class C { constructor(); };","class C { constructor() {} }");
-  testExternChanges("declare class C { foo(): number; };","class C { /** @return {number} */ foo() {} }");
-  testExternChanges("declare module foo {}","/** @const */ var foo = {};");
-  testExternChanges("declare namespace foo {}","/** @const */ var foo = {};");
+  testDts("declare var x: number;","var /** number */ x;");
+  testDts("declare let x;","let x;");
+  testDts("declare const x;","/** @const */ var x;");
+  testDts("declare function f(): number;","/** @return {number} */ function f() {}");
+  testDts("declare enum Foo {}","/** @enum {number} */ var Foo = {}");
+  testDts("declare class C { constructor(); }","class C { constructor() {} }");
+  testDts("declare class C { foo(): number; }","class C { /** @return {number} */ foo() {} }");
+  testDts("declare module foo {}","/** @const */ var foo = {}");
+  testDts("declare namespace foo {}","/** @const */ var foo = {}");
+  testWarning("declare var x;",Es6TypedToEs6Converter.DECLARE_IN_NON_EXTERNS);
 }

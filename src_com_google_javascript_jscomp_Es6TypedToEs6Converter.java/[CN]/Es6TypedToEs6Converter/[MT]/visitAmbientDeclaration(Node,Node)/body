@@ -1,21 +1,27 @@
 {
+  if (!n.isFromExterns()) {
+    compiler.report(JSError.make(n,DECLARE_IN_NON_EXTERNS));
+  }
+  Node insertionPoint=n;
+  Node topLevel=parent;
+  boolean insideExport=parent.getType() == Token.EXPORT;
+  if (insideExport) {
+    insertionPoint=parent;
+    topLevel=parent.getParent();
+  }
   for (  Node c : n.children()) {
-    JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(c.getJSDocInfo());
     if (c.getType() == Token.CONST) {
+      JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(c.getJSDocInfo());
       builder.recordConstancy();
       c.setType(Token.VAR);
+      c.setJSDocInfo(builder.build());
     }
-    c.setJSDocInfo(builder.build());
-    Node toAdd;
-    if (parent.getType() == Token.EXPORT && !c.isExprResult()) {
-      toAdd=parent.detachFromParent();
-      toAdd.addChildToFront(c.detachFromParent());
+    Node toAdd=c.detachFromParent();
+    if (insideExport && !toAdd.isExprResult()) {
+      toAdd=new Node(Token.EXPORT,toAdd).srcref(parent);
     }
- else {
-      toAdd=c.detachFromParent();
-    }
-    compiler.getSynthesizedExternsInput().getAstRoot(compiler).addChildToBack(toAdd);
+    topLevel.addChildBefore(toAdd,insertionPoint);
   }
-  n.detachFromParent();
+  insertionPoint.detachFromParent();
   compiler.reportCodeChange();
 }
