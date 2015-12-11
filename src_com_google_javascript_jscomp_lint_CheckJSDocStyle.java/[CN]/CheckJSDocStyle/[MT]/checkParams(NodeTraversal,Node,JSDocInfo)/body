@@ -17,8 +17,9 @@
       t.report(param,MIXED_PARAM_JSDOC_STYLES);
     }
     boolean nameOptional;
+    Node nodeToCheck=param;
     if (param.isDefaultValue()) {
-      param=param.getFirstChild();
+      nodeToCheck=param.getFirstChild();
       nameOptional=true;
     }
  else     if (param.isName()) {
@@ -28,17 +29,17 @@
       Preconditions.checkState(param.isDestructuringPattern() || param.isRest(),param);
       nameOptional=false;
     }
-    if (param.isName() && !param.getString().equals(paramsFromJsDoc.get(i))) {
-      t.report(param,INCORRECT_PARAM_NAME);
+    if (nodeToCheck.isName() && !nodeToCheck.getString().equals(paramsFromJsDoc.get(i))) {
+      t.report(nodeToCheck,INCORRECT_PARAM_NAME);
       return;
     }
     JSTypeExpression paramType=jsDoc.getParameterType(paramsFromJsDoc.get(i));
     boolean jsDocOptional=paramType != null && paramType.isOptionalArg();
     if (nameOptional && !jsDocOptional) {
-      t.report(param,OPTIONAL_PARAM_NOT_MARKED_OPTIONAL,param.getString());
+      t.report(nodeToCheck,OPTIONAL_PARAM_NOT_MARKED_OPTIONAL,nodeToCheck.getString());
     }
  else     if (!nameOptional && jsDocOptional) {
-      t.report(param,OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME,param.getString());
+      t.report(nodeToCheck,OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME,nodeToCheck.getString());
     }
     param=param.getNext();
   }
