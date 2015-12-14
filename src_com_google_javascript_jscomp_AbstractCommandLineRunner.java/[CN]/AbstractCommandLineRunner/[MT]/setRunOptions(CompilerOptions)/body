@@ -18,6 +18,9 @@
   if (!config.warningsWhitelistFile.isEmpty()) {
     addWhitelistWarningsGuard(options,new File(config.warningsWhitelistFile));
   }
+  if (!config.hideWarningsFor.isEmpty()) {
+    options.addWarningsGuard(new ShowByPathWarningsGuard(config.hideWarningsFor.toArray(new String[]{}),ShowByPathWarningsGuard.ShowType.EXCLUDE));
+  }
   createDefineOrTweakReplacements(config.define,options,false);
   options.setTweakProcessing(config.tweakProcessing);
   createDefineOrTweakReplacements(config.tweak,options,true);
