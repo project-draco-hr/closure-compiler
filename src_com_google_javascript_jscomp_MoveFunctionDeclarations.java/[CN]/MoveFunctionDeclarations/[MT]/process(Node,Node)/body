@@ -1,8 +1,7 @@
 {
   NodeTraversal.traverseEs6(compiler,root,this);
-  for (  Entry<JSModule,List<Node>> entry : functions.entrySet()) {
-    JSModule module=entry.getKey();
-    Node addingRoot=compiler.getNodeForCodeInsertion(module);
+  for (  Entry<JSModule,List<Node>> entry : Multimaps.asMap(functions).entrySet()) {
+    Node addingRoot=compiler.getNodeForCodeInsertion(entry.getKey());
     for (    Node n : Lists.reverse(entry.getValue())) {
       addingRoot.addChildToFront(n);
     }
