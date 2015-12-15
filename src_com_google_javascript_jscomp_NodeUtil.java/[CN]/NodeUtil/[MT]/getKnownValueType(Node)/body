@@ -20,6 +20,9 @@ ValueType first=getKnownValueType(n.getFirstChild());
 if (first == ValueType.STRING) {
 return ValueType.STRING;
 }
+if (first == ValueType.OBJECT || last == ValueType.OBJECT) {
+return ValueType.UNDETERMINED;
+}
 if (!mayBeString(first) && !mayBeString(last)) {
 return ValueType.NUMBER;
 }
@@ -76,6 +79,11 @@ case Token.NULL:
 return ValueType.NULL;
 case Token.VOID:
 return ValueType.VOID;
+case Token.NEW:
+case Token.ARRAYLIT:
+case Token.OBJECTLIT:
+case Token.REGEXP:
+return ValueType.OBJECT;
 default :
 return ValueType.UNDETERMINED;
 }
