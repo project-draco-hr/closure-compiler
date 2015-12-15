@@ -1,12 +1,12 @@
 {
-  typeCheck(Joiner.on('\n').join("function f(/** function():number */ x) {","  var /** string */ s = x();","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("function f(/** function(number) */ x) {","  x(true);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function g(x, y, /** function(number) */ f) {","  y < x;","  f(x);","  var /** string */ s = y;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(x) {","  var y = x(); y - 5; y < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {function():?} x */ function f(x) {","  var y = x(); y - 5; y < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** function():number */ x) {","  var /** string */ s = x();","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("function f(/** function(number) */ x) {","  x(true);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function g(x, y, /** function(number) */ f) {","  y < x;","  f(x);","  var /** string */ s = y;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(x) {","  var y = x(); y - 5; y < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {function():?} x */ function f(x) {","  var y = x(); y - 5; y < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("function f(/** ? */ x) { x < 'asdf'; x - 5; }",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {function(number): string} x */ function g(x) {}","/** @param {function(number): string} x */ function f(x) {","  g(x);","}"));
-  typeCheck(Joiner.on('\n').join("/** @param {function(number): *} x */ function g(x) {}","/** @param {function(*): string} x */ function f(x) {","  g(x);","}"));
-  typeCheck(Joiner.on('\n').join("/** @param {function(*): string} x */ function g(x) {}","/** @param {function(number): string} x */ function f(x) {","  g(x);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {function(number): string} x */ function g(x) {}","/** @param {function(number): *} x */ function f(x) {","  g(x);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {function(number): string} x */ function g(x) {}","/** @param {function(number): string} x */ function f(x) {","  g(x);","}"));
+  typeCheck(LINE_JOINER.join("/** @param {function(number): *} x */ function g(x) {}","/** @param {function(*): string} x */ function f(x) {","  g(x);","}"));
+  typeCheck(LINE_JOINER.join("/** @param {function(*): string} x */ function g(x) {}","/** @param {function(number): string} x */ function f(x) {","  g(x);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {function(number): string} x */ function g(x) {}","/** @param {function(number): *} x */ function f(x) {","  g(x);","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
 }

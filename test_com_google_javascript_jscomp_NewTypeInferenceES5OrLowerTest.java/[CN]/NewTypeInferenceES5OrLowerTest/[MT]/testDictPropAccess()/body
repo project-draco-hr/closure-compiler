@@ -1,13 +1,13 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @constructor @dict */ function Foo() { this['prop'] = 123; }","(new Foo)['prop'];"));
-  typeCheck(Joiner.on('\n').join("/** @constructor @dict */ function Foo() { this['prop'] = 123; }","(new Foo).prop;"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
-  typeCheck(Joiner.on('\n').join("/** @constructor @dict */ function Foo() {","  this['prop'] = 123;","  this.prop - 123;","}"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
-  typeCheck(Joiner.on('\n').join("/** @constructor @dict */ function Foo() { this['prop'] = 123; }","(new Foo).prop = 123;"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
-  typeCheck(Joiner.on('\n').join("/** @constructor @dict */ function Foo() { this['prop'] = {}; }","(new Foo).prop.newprop = 123;"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
-  typeCheck(Joiner.on('\n').join("/** @constructor @dict */ function Foo() {}","/** @constructor */ function Bar() {}","function f(cond) {","  var x;","  if (cond) {","    x = new Foo;","  }","  else {","    x = new Bar;","  }","  x.prop = 123;","}"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck(LINE_JOINER.join("/** @constructor @dict */ function Foo() { this['prop'] = 123; }","(new Foo)['prop'];"));
+  typeCheck(LINE_JOINER.join("/** @constructor @dict */ function Foo() { this['prop'] = 123; }","(new Foo).prop;"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck(LINE_JOINER.join("/** @constructor @dict */ function Foo() {","  this['prop'] = 123;","  this.prop - 123;","}"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck(LINE_JOINER.join("/** @constructor @dict */ function Foo() { this['prop'] = 123; }","(new Foo).prop = 123;"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck(LINE_JOINER.join("/** @constructor @dict */ function Foo() { this['prop'] = {}; }","(new Foo).prop.newprop = 123;"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck(LINE_JOINER.join("/** @constructor @dict */ function Foo() {}","/** @constructor */ function Bar() {}","function f(cond) {","  var x;","  if (cond) {","    x = new Foo;","  }","  else {","    x = new Bar;","  }","  x.prop = 123;","}"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
   typeCheck("(/** @dict */ { prop : 1 });",NewTypeInference.ILLEGAL_OBJLIT_KEY);
   typeCheck("var lit = /** @dict */ { 'prop' : 1 }; lit.prop;",NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
   typeCheck("(/** @dict */ {}).toString();",NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
-  typeCheck(Joiner.on('\n').join("function f(/** !Object */ o) {","  if ('num' in o) {","    o.num++;","  }","}"));
-  typeCheck(Joiner.on('\n').join("function f(/** !Object */ x, y) {","  if ((y in x) && x.otherProp) {","    x.otherProp++;","  }","}"));
+  typeCheck(LINE_JOINER.join("function f(/** !Object */ o) {","  if ('num' in o) {","    o.num++;","  }","}"));
+  typeCheck(LINE_JOINER.join("function f(/** !Object */ x, y) {","  if ((y in x) && x.otherProp) {","    x.otherProp++;","  }","}"));
 }

@@ -1,9 +1,9 @@
 {
-  typeCheck(Joiner.on('\n').join("function f(/** string */ y) {","  for (var x in { a: 1, b: 2 }) { y = x; }","  x = 234;","  return 123;","}"));
-  typeCheck(Joiner.on('\n').join("function f(y) {","  var z = x + 234;","  for (var x in { a: 1, b: 2 }) {}","  return 123;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** number */ y) {","  for (var x in { a: 1, b: 2 }) { y = x; }","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("function f(/** string */ y) {","  for (var x in { a: 1, b: 2 }) { y = x; }","  x = 234;","  return 123;","}"));
+  typeCheck(LINE_JOINER.join("function f(y) {","  var z = x + 234;","  for (var x in { a: 1, b: 2 }) {}","  return 123;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** number */ y) {","  for (var x in { a: 1, b: 2 }) { y = x; }","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("function f(/** Object? */ o) { for (var x in o); }",NewTypeInference.NULLABLE_DEREFERENCE);
   typeCheck("for (var x in 123) ;",NewTypeInference.FORIN_EXPECTS_OBJECT);
   typeCheck("var /** number */ x = 5; for (x in {a : 1});",NewTypeInference.FORIN_EXPECTS_STRING_KEY);
-  typeCheck(Joiner.on('\n').join("function f(/** undefined */ y) {","  var x;","  for (x in { a: 1, b: 2 }) { y = x; }","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("function f(/** undefined */ y) {","  var x;","  for (x in { a: 1, b: 2 }) { y = x; }","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

@@ -1,9 +1,9 @@
 {
   typeCheck("var /** { a: (number|undefined) } */ obj = {};");
-  typeCheck(Joiner.on('\n').join("var /** { a: (number|undefined) } */ obj;","var x;","if (1 < 2) {","  x = { a: 1 };","} else {","  x = {};","}","obj = x;"));
-  typeCheck(Joiner.on('\n').join("function f(/** { a: (number|undefined) } */ x) {}","f({});"));
-  typeCheck(Joiner.on('\n').join("function f(/** { a: (number|undefined) } */ x) {}","f({ a: undefined });"));
-  typeCheck(Joiner.on('\n').join("function f(/** { a: (number|undefined) } */ x) {}","f({ a: 'asdf' });"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {{foo: (?|undefined)}} x */","function g(x) {}","g({bar:123});"));
-  typeCheck(Joiner.on('\n').join("/** @param {{foo: ?}} x */","function g(x) {}","g({bar:123});"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("var /** { a: (number|undefined) } */ obj;","var x;","if (1 < 2) {","  x = { a: 1 };","} else {","  x = {};","}","obj = x;"));
+  typeCheck(LINE_JOINER.join("function f(/** { a: (number|undefined) } */ x) {}","f({});"));
+  typeCheck(LINE_JOINER.join("function f(/** { a: (number|undefined) } */ x) {}","f({ a: undefined });"));
+  typeCheck(LINE_JOINER.join("function f(/** { a: (number|undefined) } */ x) {}","f({ a: 'asdf' });"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {{foo: (?|undefined)}} x */","function g(x) {}","g({bar:123});"));
+  typeCheck(LINE_JOINER.join("/** @param {{foo: ?}} x */","function g(x) {}","g({bar:123});"),NewTypeInference.INVALID_ARGUMENT_TYPE);
 }

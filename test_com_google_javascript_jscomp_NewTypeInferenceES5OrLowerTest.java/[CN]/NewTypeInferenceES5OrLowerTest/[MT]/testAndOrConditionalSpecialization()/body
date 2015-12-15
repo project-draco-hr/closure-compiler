@@ -1,19 +1,19 @@
 {
-  typeCheck(Joiner.on('\n').join("var x, y = 5;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x !== null && x !== undefined) {","  y = x;","}","y - 5"));
-  typeCheck(Joiner.on('\n').join("var x, y;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x === null || x === void 0) {","  y = 5;","} else {","  y = x;","}","y - 5"));
-  typeCheck(Joiner.on('\n').join("var x, y = 5;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x === null || x === undefined) {","  y = x;","}","var /** (number|null|undefined) **/ z = y;","(function(/** (number|null) */ x){})(y);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("var x, y;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x !== null && x !== undefined) {","  y = 5;","} else {","  y = x;","}","var /** (number|null|undefined) **/ z = y;","(function(/** (number|null) */ x){})(y);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("var x, y = 5;","if (true) {","  x = 5;","} else {","  x = 'str';","}","if (x === 7 || x === 8) {","  y = x;","}","y - 5"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */ function C(){}","var obj = new C;","if (obj || false) { 123, obj.asdf; }"),NewTypeInference.INEXISTENT_PROPERTY);
-  typeCheck(Joiner.on('\n').join("function f(/** (number|string) */ x) {","  (typeof x === 'number') && (x - 5);","}"));
-  typeCheck(Joiner.on('\n').join("function f(/** (number|string|null) */ x) {","  (x && (typeof x === 'number')) && (x - 5);","}"));
-  typeCheck(Joiner.on('\n').join("function f(/** (number|string|null) */ x) {","  (x && (typeof x === 'string')) && (x - 5);","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** (number|string|null) */ x) {","  typeof x === 'string' && x;","  x < 'asdf';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** (null|number) */ x, /** (null|number) */ y) {","  if (x == y) {","    return x - 1;","  }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** (null|number) */ x, /** (null|number) */ y) {","  if (x == y) {","    return y - 1;","  }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("var x, y = 5;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x !== null && x !== undefined) {","  y = x;","}","y - 5"));
+  typeCheck(LINE_JOINER.join("var x, y;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x === null || x === void 0) {","  y = 5;","} else {","  y = x;","}","y - 5"));
+  typeCheck(LINE_JOINER.join("var x, y = 5;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x === null || x === undefined) {","  y = x;","}","var /** (number|null|undefined) **/ z = y;","(function(/** (number|null) */ x){})(y);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("var x, y;","if (true) {","  x = 5;","} else if (true) {","  x = null;","}","if (x !== null && x !== undefined) {","  y = 5;","} else {","  y = x;","}","var /** (number|null|undefined) **/ z = y;","(function(/** (number|null) */ x){})(y);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("var x, y = 5;","if (true) {","  x = 5;","} else {","  x = 'str';","}","if (x === 7 || x === 8) {","  y = x;","}","y - 5"));
+  typeCheck(LINE_JOINER.join("/** @constructor */ function C(){}","var obj = new C;","if (obj || false) { 123, obj.asdf; }"),NewTypeInference.INEXISTENT_PROPERTY);
+  typeCheck(LINE_JOINER.join("function f(/** (number|string) */ x) {","  (typeof x === 'number') && (x - 5);","}"));
+  typeCheck(LINE_JOINER.join("function f(/** (number|string|null) */ x) {","  (x && (typeof x === 'number')) && (x - 5);","}"));
+  typeCheck(LINE_JOINER.join("function f(/** (number|string|null) */ x) {","  (x && (typeof x === 'string')) && (x - 5);","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** (number|string|null) */ x) {","  typeof x === 'string' && x;","  x < 'asdf';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** (null|number) */ x, /** (null|number) */ y) {","  if (x == y) {","    return x - 1;","  }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** (null|number) */ x, /** (null|number) */ y) {","  if (x == y) {","    return y - 1;","  }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("var /** boolean */ x = true || 123;");
   typeCheck("var /** number */ x = undefined || 123;");
   typeCheck("var /** null */ x = null && 123;");
   typeCheck("var /** number */ x = { a: 1 } && 123;");
-  typeCheck(Joiner.on('\n').join("function f(/** Object|undefined */ opt_obj) {","  var x = opt_obj && 'asdf';","  if (opt_obj && x in opt_obj) {}","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** Object|undefined */ opt_obj) {","  var x = opt_obj && 'asdf';","  if (opt_obj && x in opt_obj) {}","}"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

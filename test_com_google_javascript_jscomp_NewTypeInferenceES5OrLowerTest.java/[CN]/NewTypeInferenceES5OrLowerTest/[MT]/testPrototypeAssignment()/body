@@ -1,7 +1,7 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype = { a: 1, b: 2 };","var x = (new Foo).a;"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype = { a: 1, b: 2 - 'asdf' };","var x = (new Foo).a;"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype = { a: 1, /** @const */ b: 2 };","(new Foo).b = 3;"),NewTypeInference.CONST_PROPERTY_REASSIGNED);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype = { method: function(/** number */ x) {} };","(new Foo).method('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","Foo.prototype = { method: function(/** number */ x) {} };","/** @constructor @extends {Foo} */","function Bar() {}","(new Bar).method('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prototype = { a: 1, b: 2 };","var x = (new Foo).a;"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prototype = { a: 1, b: 2 - 'asdf' };","var x = (new Foo).a;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prototype = { a: 1, /** @const */ b: 2 };","(new Foo).b = 3;"),NewTypeInference.CONST_PROPERTY_REASSIGNED);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prototype = { method: function(/** number */ x) {} };","(new Foo).method('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prototype = { method: function(/** number */ x) {} };","/** @constructor @extends {Foo} */","function Bar() {}","(new Bar).method('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
 }

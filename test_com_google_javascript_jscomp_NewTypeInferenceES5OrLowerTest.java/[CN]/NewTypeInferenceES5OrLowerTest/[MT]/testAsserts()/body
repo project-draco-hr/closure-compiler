@@ -1,9 +1,9 @@
 {
-  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"function f(/** ({ p : string }|null|undefined) */ o) {","  goog.asserts.assert(o);","  o.p - 5;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"/** @constructor */ function Foo() {}","function f(/** (Array<string>|Foo) */ o) {","  goog.asserts.assert(o instanceof Array);","  var /** string */ s = o.length;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join(CLOSURE_BASE,"/** @constructor */ function Foo() {}","Foo.prototype.p = function(/** number */ x){};","function f(/** (function(new:Foo)) */ ctor,","           /** ?Foo */ o) {","  goog.asserts.assertInstanceof(o, ctor);","  o.p('str');","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/**"," * @template T"," * @param {T} x"," */","function f(x) {","  var y = x;","  goog.asserts.assertInstanceof(y, Foo);","}"));
-  typeCheck(Joiner.on('\n').join("function f(/** { p: (number|null) } */ x) {","  goog.asserts.assertNumber(x.p) - 1;","}"));
-  typeCheck(Joiner.on('\n').join("function f(/** function():(number|null) */ x) {","  goog.asserts.assertNumber(x()) - 1;","}"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar(x) {}","/** @return {?Foo} */","Bar.prototype.method = function() { return null; };","var /** !Foo */ x = goog.asserts.assertInstanceOf((new Bar).method(), Foo);"));
+  typeCheck(LINE_JOINER.join(CLOSURE_BASE,"function f(/** ({ p : string }|null|undefined) */ o) {","  goog.asserts.assert(o);","  o.p - 5;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join(CLOSURE_BASE,"/** @constructor */ function Foo() {}","function f(/** (Array<string>|Foo) */ o) {","  goog.asserts.assert(o instanceof Array);","  var /** string */ s = o.length;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join(CLOSURE_BASE,"/** @constructor */ function Foo() {}","Foo.prototype.p = function(/** number */ x){};","function f(/** (function(new:Foo)) */ ctor,","           /** ?Foo */ o) {","  goog.asserts.assertInstanceof(o, ctor);","  o.p('str');","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/**"," * @template T"," * @param {T} x"," */","function f(x) {","  var y = x;","  goog.asserts.assertInstanceof(y, Foo);","}"));
+  typeCheck(LINE_JOINER.join("function f(/** { p: (number|null) } */ x) {","  goog.asserts.assertNumber(x.p) - 1;","}"));
+  typeCheck(LINE_JOINER.join("function f(/** function():(number|null) */ x) {","  goog.asserts.assertNumber(x()) - 1;","}"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar(x) {}","/** @return {?Foo} */","Bar.prototype.method = function() { return null; };","var /** !Foo */ x = goog.asserts.assertInstanceOf((new Bar).method(), Foo);"));
 }

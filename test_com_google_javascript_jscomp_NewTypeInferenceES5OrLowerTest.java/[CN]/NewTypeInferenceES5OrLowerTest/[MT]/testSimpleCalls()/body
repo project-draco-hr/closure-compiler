@@ -1,10 +1,10 @@
 {
   typeCheck("function f() {}; f(5);",NewTypeInference.WRONG_ARGUMENT_COUNT);
   typeCheck("function f(x) { x-5; }; f();",NewTypeInference.WRONG_ARGUMENT_COUNT);
-  typeCheck(Joiner.on('\n').join("/** @return {number} */ function f() { return 1; }","var /** string */ s = f();"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @return {number} */ function f() { return 1; }","var /** string */ s = f();"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("function f(/** number */ x) {}; f(true);",NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** boolean */ x) {}","function g() { f(123); }"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** void */ x) {}","function g() { f(123); }"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** boolean */ x) {}","function g(x) {","  var /** string */ s = x;","  f(x < 7);","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(/** number */ x) {}","function g(x, y) {","  y < x;","  f(x);","  var /** string */ s = y;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** boolean */ x) {}","function g() { f(123); }"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** void */ x) {}","function g() { f(123); }"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** boolean */ x) {}","function g(x) {","  var /** string */ s = x;","  f(x < 7);","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** number */ x) {}","function g(x, y) {","  y < x;","  f(x);","  var /** string */ s = y;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

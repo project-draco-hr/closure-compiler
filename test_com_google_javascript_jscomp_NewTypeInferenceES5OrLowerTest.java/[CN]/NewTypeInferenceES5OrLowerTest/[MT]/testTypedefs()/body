@@ -1,15 +1,15 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @typedef {number} */","var num = 1;"),GlobalTypeInfo.CANNOT_INIT_TYPEDEF);
-  typeCheck(Joiner.on('\n').join("/** @typedef {NonExistentType} */","var t;","function f(/** t */ x) { x - 1; }"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
-  typeCheck(Joiner.on('\n').join("/** @typedef {number} */","var dup;","/** @typedef {string} */","var dup;","var /** dup */ n = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @typedef {number} */","var num;","/** @type {num} */","var n = 1;"));
-  typeCheck(Joiner.on('\n').join("/** @typedef {number} */","var num;","/** @type {num} */","var n = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @type {num} */","var n = 'str';","/** @typedef {number} */","var num;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @typedef {number} */","var num;","function f() {","  /** @type {num} */","  var n = 'str';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @type {num2} */","var n = 'str';","/** @typedef {num} */","var num2;","/** @typedef {number} */","var num;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @typedef {rec2} */","var rec1;","/** @typedef {rec1} */","var rec2;"),JSTypeCreatorFromJSDoc.CIRCULAR_TYPEDEF_ENUM);
-  typeCheck(Joiner.on('\n').join("/** @typedef {{ prop: rec2 }} */","var rec1;","/** @typedef {{ prop: rec1 }} */","var rec2;"),JSTypeCreatorFromJSDoc.CIRCULAR_TYPEDEF_ENUM);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @typedef {Foo} */","var Bar;","var /** Bar */ x = null;"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @typedef {Foo} */","var Bar;","var /** !Bar */ x = null;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @typedef {number} */","var N;","function f() {","  /** @constructor */","  function N() {}","  function g(/** N */ obj) { obj - 5; }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @typedef {number} */","var num = 1;"),GlobalTypeInfo.CANNOT_INIT_TYPEDEF);
+  typeCheck(LINE_JOINER.join("/** @typedef {NonExistentType} */","var t;","function f(/** t */ x) { x - 1; }"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
+  typeCheck(LINE_JOINER.join("/** @typedef {number} */","var dup;","/** @typedef {string} */","var dup;","var /** dup */ n = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @typedef {number} */","var num;","/** @type {num} */","var n = 1;"));
+  typeCheck(LINE_JOINER.join("/** @typedef {number} */","var num;","/** @type {num} */","var n = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @type {num} */","var n = 'str';","/** @typedef {number} */","var num;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @typedef {number} */","var num;","function f() {","  /** @type {num} */","  var n = 'str';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @type {num2} */","var n = 'str';","/** @typedef {num} */","var num2;","/** @typedef {number} */","var num;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @typedef {rec2} */","var rec1;","/** @typedef {rec1} */","var rec2;"),JSTypeCreatorFromJSDoc.CIRCULAR_TYPEDEF_ENUM);
+  typeCheck(LINE_JOINER.join("/** @typedef {{ prop: rec2 }} */","var rec1;","/** @typedef {{ prop: rec1 }} */","var rec2;"),JSTypeCreatorFromJSDoc.CIRCULAR_TYPEDEF_ENUM);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @typedef {Foo} */","var Bar;","var /** Bar */ x = null;"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @typedef {Foo} */","var Bar;","var /** !Bar */ x = null;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @typedef {number} */","var N;","function f() {","  /** @constructor */","  function N() {}","  function g(/** N */ obj) { obj - 5; }","}"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

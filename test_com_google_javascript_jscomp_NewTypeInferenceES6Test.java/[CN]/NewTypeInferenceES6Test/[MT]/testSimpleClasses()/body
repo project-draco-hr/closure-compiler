@@ -1,5 +1,5 @@
 {
   typeCheck("class Foo {}");
-  typeCheck("class Foo {}\n" + "class Bar {}\n" + "/** @type {!Foo} */ var x = new Bar;",NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck("class Foo {\n" + "  constructor(x) {\n" + "    /** @type {string} */\n"+ "    this.x = x;\n"+ "  }\n"+ "}\n"+ "(new Foo('')).x - 5;\n",NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("class Foo {}","class Bar {}","/** @type {!Foo} */ var x = new Bar;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("class Foo {","  constructor(x) {","    /** @type {string} */","    this.x = x;","  }","}","(new Foo('')).x - 5;"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

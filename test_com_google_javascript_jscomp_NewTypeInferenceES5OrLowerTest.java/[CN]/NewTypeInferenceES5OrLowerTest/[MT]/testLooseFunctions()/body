@@ -1,18 +1,18 @@
 {
-  typeCheck(Joiner.on('\n').join("function f(x) {","  x(1);","}"));
-  typeCheck(Joiner.on('\n').join("function f(x) {","  x(1);","}","function g(/** string */ y) {}","f(g);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(x) {","  x(1);","}","function g(/** number */ y) {}","f(g);"));
-  typeCheck(Joiner.on('\n').join("function f(x) {","  x(1);","}","function g(/** (number|string) */ y) {}","f(g);"));
-  typeCheck(Joiner.on('\n').join("function f(x) {","  5 - x(1);","}","/** @return {string} */","function g(/** number */ y) { return ''; }","f(g);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(x) {","  5 - x(1);","}","/** @return {(number|string)} */","function g(/** number */ y) { return 5; }","f(g);"));
-  typeCheck(Joiner.on('\n').join("function f(x, y) {","  x(5);","  y(5);","  return x(y);","}"));
-  typeCheck(Joiner.on('\n').join("function f(x) {","  x();","  return x;","}","function g() {}","function h() { f(g) - 5; }"),NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(x, cond) {","  x();","  return cond ? 5 : x;","}","function g() {}","function h() { f(g, true) - 5; }"),NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(x) {","  x(5);","  return x;","}","function g(x) {}","function h() {","  var /** function((number|string)) */ fun = f(g);","}"));
-  typeCheck(Joiner.on('\n').join("function g(/** string */ x) {}","function f(x, y) {","  y - 5;","  x(y);","  y + y;","}","f(g, 5)"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @return {string} */","function g(/** number */ x) { return 'str'; }","/** @return {number} */","function f(x) {","  var y = 5;","  var z = x(y);","  return z;","}","f(g)"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @return {number} */","function g(/** number */ y) { return 6; }","function f(x, cond) {","  if (cond) {","    5 - x(1);","  } else {","    x('str') < 'str';","  }","}","f(g, true)"));
-  typeCheck(Joiner.on('\n').join("function f(g, cond) {","  if (cond) {","    g(5, cond);","  }","}"));
-  typeCheck(Joiner.on('\n').join("/**"," * @param {function (number)|Function} x"," */","function f(x) {};","f(function () {});"));
-  typeCheck(Joiner.on('\n').join("function f(x) {","  x(true, 'asdf');","  x(false);","}"));
+  typeCheck(LINE_JOINER.join("function f(x) {","  x(1);","}"));
+  typeCheck(LINE_JOINER.join("function f(x) {","  x(1);","}","function g(/** string */ y) {}","f(g);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function f(x) {","  x(1);","}","function g(/** number */ y) {}","f(g);"));
+  typeCheck(LINE_JOINER.join("function f(x) {","  x(1);","}","function g(/** (number|string) */ y) {}","f(g);"));
+  typeCheck(LINE_JOINER.join("function f(x) {","  5 - x(1);","}","/** @return {string} */","function g(/** number */ y) { return ''; }","f(g);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function f(x) {","  5 - x(1);","}","/** @return {(number|string)} */","function g(/** number */ y) { return 5; }","f(g);"));
+  typeCheck(LINE_JOINER.join("function f(x, y) {","  x(5);","  y(5);","  return x(y);","}"));
+  typeCheck(LINE_JOINER.join("function f(x) {","  x();","  return x;","}","function g() {}","function h() { f(g) - 5; }"),NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
+  typeCheck(LINE_JOINER.join("function f(x, cond) {","  x();","  return cond ? 5 : x;","}","function g() {}","function h() { f(g, true) - 5; }"),NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
+  typeCheck(LINE_JOINER.join("function f(x) {","  x(5);","  return x;","}","function g(x) {}","function h() {","  var /** function((number|string)) */ fun = f(g);","}"));
+  typeCheck(LINE_JOINER.join("function g(/** string */ x) {}","function f(x, y) {","  y - 5;","  x(y);","  y + y;","}","f(g, 5)"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @return {string} */","function g(/** number */ x) { return 'str'; }","/** @return {number} */","function f(x) {","  var y = 5;","  var z = x(y);","  return z;","}","f(g)"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @return {number} */","function g(/** number */ y) { return 6; }","function f(x, cond) {","  if (cond) {","    5 - x(1);","  } else {","    x('str') < 'str';","  }","}","f(g, true)"));
+  typeCheck(LINE_JOINER.join("function f(g, cond) {","  if (cond) {","    g(5, cond);","  }","}"));
+  typeCheck(LINE_JOINER.join("/**"," * @param {function (number)|Function} x"," */","function f(x) {};","f(function () {});"));
+  typeCheck(LINE_JOINER.join("function f(x) {","  x(true, 'asdf');","  x(false);","}"));
 }

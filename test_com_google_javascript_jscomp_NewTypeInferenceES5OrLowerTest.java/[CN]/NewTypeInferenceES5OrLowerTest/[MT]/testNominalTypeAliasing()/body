@@ -1,9 +1,9 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @constructor */","var Bar = Foo;","var /** !Bar */ x = new Foo();"));
-  typeCheck(Joiner.on('\n').join("/** @const */","var ns = {};","/** @constructor */","ns.Foo = function() {};","/** @constructor */","ns.Bar = ns.Foo;","function g() {","  var /** !ns.Bar */ x = new ns.Foo();","  var /** !ns.Bar */ y = new ns.Bar();","}"));
-  typeCheck(Joiner.on('\n').join("/** @type {number} */","var n = 123;","/** @constructor */","var Foo = n;"),GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
-  typeCheck(Joiner.on('\n').join("/** @type {number} */","var n = 123;","/** @interface */","var Foo = n;"),GlobalTypeInfo.EXPECTED_INTERFACE);
-  typeCheck(Joiner.on('\n').join("/** @interface */","function Foo() {}","/** @constructor */","var Bar = Foo;"),GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @interface */","var Bar = Foo;"),GlobalTypeInfo.EXPECTED_INTERFACE);
-  typeCheckCustomExterns(DEFAULT_EXTERNS + "var Bar;",Joiner.on('\n').join("/**"," * @constructor"," * @final"," */","var Foo = Bar;","var /** !Foo */ x;"),GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @constructor */","var Bar = Foo;","var /** !Bar */ x = new Foo();"));
+  typeCheck(LINE_JOINER.join("/** @const */","var ns = {};","/** @constructor */","ns.Foo = function() {};","/** @constructor */","ns.Bar = ns.Foo;","function g() {","  var /** !ns.Bar */ x = new ns.Foo();","  var /** !ns.Bar */ y = new ns.Bar();","}"));
+  typeCheck(LINE_JOINER.join("/** @type {number} */","var n = 123;","/** @constructor */","var Foo = n;"),GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
+  typeCheck(LINE_JOINER.join("/** @type {number} */","var n = 123;","/** @interface */","var Foo = n;"),GlobalTypeInfo.EXPECTED_INTERFACE);
+  typeCheck(LINE_JOINER.join("/** @interface */","function Foo() {}","/** @constructor */","var Bar = Foo;"),GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @interface */","var Bar = Foo;"),GlobalTypeInfo.EXPECTED_INTERFACE);
+  typeCheckCustomExterns(DEFAULT_EXTERNS + "var Bar;",LINE_JOINER.join("/**"," * @constructor"," * @final"," */","var Foo = Bar;","var /** !Foo */ x;"),GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
 }

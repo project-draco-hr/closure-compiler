@@ -1,10 +1,10 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.prop = 123;","}","/** @type {function(this:{prop:number})} */","Foo.prototype.method = function() {};","Foo.prototype.method.call({prop:234});"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.prop = 123;","}","/** @this {{prop:number}} */","Foo.prototype.method = function() {};","Foo.prototype.method.call({prop:234});"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Obj() {}","/** @this {?} */","Obj.prototype.toString = function() { return ''; };","Obj.prototype.toString.call(123);"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Obj() {}","/** @this {?} */","Obj.prototype.toString1 = function() { return ''; };","Obj.prototype.toString1.call(123);"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Arr() {}","/** @this {{length: number}|string} // same as {length: number} */","Arr.prototype.join = function() {};","Arr.prototype.join.call('asdf');"));
-  typeCheck(Joiner.on('\n').join("/** @this {!Array|{length:number}} */","Array.prototype.method = function() {};","function f() {","  Array.prototype.method.call(arguments);","}"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar() {}","/**"," * @template T"," * @this {T}"," * @param {T} x"," */","Foo.prototype.f = function(x) {};","(new Foo).f(new Foo);"));
-  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @this {{length:number}|Array<T>}"," */","Array.prototype.g = function(x) {};","Array.prototype.g.call({}, 2);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.prop = 123;","}","/** @type {function(this:{prop:number})} */","Foo.prototype.method = function() {};","Foo.prototype.method.call({prop:234});"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.prop = 123;","}","/** @this {{prop:number}} */","Foo.prototype.method = function() {};","Foo.prototype.method.call({prop:234});"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Obj() {}","/** @this {?} */","Obj.prototype.toString = function() { return ''; };","Obj.prototype.toString.call(123);"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Obj() {}","/** @this {?} */","Obj.prototype.toString1 = function() { return ''; };","Obj.prototype.toString1.call(123);"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Arr() {}","/** @this {{length: number}|string} // same as {length: number} */","Arr.prototype.join = function() {};","Arr.prototype.join.call('asdf');"));
+  typeCheck(LINE_JOINER.join("/** @this {!Array|{length:number}} */","Array.prototype.method = function() {};","function f() {","  Array.prototype.method.call(arguments);","}"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar() {}","/**"," * @template T"," * @this {T}"," * @param {T} x"," */","Foo.prototype.f = function(x) {};","(new Foo).f(new Foo);"));
+  typeCheck(LINE_JOINER.join("/**"," * @template T"," * @this {{length:number}|Array<T>}"," */","Array.prototype.g = function(x) {};","Array.prototype.g.call({}, 2);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
 }

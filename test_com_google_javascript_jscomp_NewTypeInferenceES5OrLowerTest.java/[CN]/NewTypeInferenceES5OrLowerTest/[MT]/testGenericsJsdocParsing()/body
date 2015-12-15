@@ -1,10 +1,10 @@
 {
   typeCheck("/** @template T\n@param {T} x */ function f(x) {}");
-  typeCheck(Joiner.on('\n').join("/** @template T\n @param {T} x\n @return {T} */","function f(x) { return x; };"));
-  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @constructor"," * @param {T} x"," * @extends {Bar<T>} // error, Bar is not templatized "," */","function Foo(x) {}","/** @constructor */","function Bar() {}"),JSTypeCreatorFromJSDoc.INVALID_GENERICS_INSTANTIATION);
-  typeCheck(Joiner.on('\n').join("/**"," * @template T"," * @constructor"," * @param {T} x"," */","function Foo(x) {}","/** @param {Foo<number, string>} x */","function f(x) {}"),JSTypeCreatorFromJSDoc.INVALID_GENERICS_INSTANTIATION);
+  typeCheck(LINE_JOINER.join("/** @template T\n @param {T} x\n @return {T} */","function f(x) { return x; };"));
+  typeCheck(LINE_JOINER.join("/**"," * @template T"," * @constructor"," * @param {T} x"," * @extends {Bar<T>} // error, Bar is not templatized "," */","function Foo(x) {}","/** @constructor */","function Bar() {}"),JSTypeCreatorFromJSDoc.INVALID_GENERICS_INSTANTIATION);
+  typeCheck(LINE_JOINER.join("/**"," * @template T"," * @constructor"," * @param {T} x"," */","function Foo(x) {}","/** @param {Foo<number, string>} x */","function f(x) {}"),JSTypeCreatorFromJSDoc.INVALID_GENERICS_INSTANTIATION);
   typeCheck("/** @type {Array<number>} */ var x;");
   typeCheck("/** @type {Object<number>} */ var x;");
-  typeCheck(Joiner.on('\n').join("function f(/** !Object<string, string> */ x) {","  return x['dont-warn-about-inexistent-property'];","}"));
+  typeCheck(LINE_JOINER.join("function f(/** !Object<string, string> */ x) {","  return x['dont-warn-about-inexistent-property'];","}"));
   typeCheck("/** @template T\n@param {!T} x */ function f(x) {}",JSTypeCreatorFromJSDoc.CANNOT_MAKE_TYPEVAR_NON_NULL);
 }

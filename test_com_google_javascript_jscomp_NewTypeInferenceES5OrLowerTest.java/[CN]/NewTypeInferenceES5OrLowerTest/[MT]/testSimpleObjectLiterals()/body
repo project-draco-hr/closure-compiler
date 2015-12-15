@@ -1,11 +1,11 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} obj */","function f(obj) {","  obj = { p: 123 };","}"));
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number, p2: string }} obj */","function f(obj) {","  obj = { p: 123 };","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} obj */","function f(obj) {","  obj = { p: 'str' };","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("var obj;","obj = { p: 123 };","obj.p < 'str';"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} obj */","function f(obj, x) {","  obj = { p: x };","  x < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} obj */","function f(obj, x) {","  obj = { p: 123, q: x };","  obj.q - 5;","  x < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} obj */","function f(obj) {","  obj.q = 123;","}","/** @param {{ p: number, q: string }} obj */","function g(obj) { f(obj); }"));
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} obj */","function f(obj) {}","var obj = {p: 5};","if (true) {","  obj.q = 123;","}","f(obj);"));
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} obj */","function f(obj) {","  obj = { p: 123 };","}"));
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number, p2: string }} obj */","function f(obj) {","  obj = { p: 123 };","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} obj */","function f(obj) {","  obj = { p: 'str' };","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("var obj;","obj = { p: 123 };","obj.p < 'str';"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} obj */","function f(obj, x) {","  obj = { p: x };","  x < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} obj */","function f(obj, x) {","  obj = { p: 123, q: x };","  obj.q - 5;","  x < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} obj */","function f(obj) {","  obj.q = 123;","}","/** @param {{ p: number, q: string }} obj */","function g(obj) { f(obj); }"));
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} obj */","function f(obj) {}","var obj = {p: 5};","if (true) {","  obj.q = 123;","}","f(obj);"));
   typeCheck("function f(/** number */ n) {}; f({});",NewTypeInference.INVALID_ARGUMENT_TYPE);
 }

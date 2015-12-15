@@ -1,8 +1,8 @@
 {
   typeCheck("throw 123;");
   typeCheck("var msg = 'hello'; throw msg;");
-  typeCheck(Joiner.on('\n').join("function f(cond, x, y) {","  if (cond) {","    x < y;","    throw 123;","  } else {","    x < 2;","  }","}"));
-  typeCheck(Joiner.on('\n').join("function f() { }","function g() {","  throw f();","}"));
+  typeCheck(LINE_JOINER.join("function f(cond, x, y) {","  if (cond) {","    x < y;","    throw 123;","  } else {","    x < 2;","  }","}"));
+  typeCheck(LINE_JOINER.join("function f() { }","function g() {","  throw f();","}"));
   typeCheck("throw (1 - 'asdf');",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(x) { throw x - 1; }","f('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function f(x) { throw x - 1; }","f('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
 }

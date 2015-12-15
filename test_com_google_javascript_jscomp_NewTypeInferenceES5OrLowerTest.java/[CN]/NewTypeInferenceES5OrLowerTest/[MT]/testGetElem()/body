@@ -1,9 +1,9 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function C(){ /** @type {number} */ this.prop = 1; }","(new C)['prop'] < 'asdf';"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(x, y) {","  x < y;","  ({})[y - 5];","}","f('asdf', 123);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(x, y) {","  x < y;","  ({})[y - 5];","  x = 'asdf';","}","f('asdf', 123);"));
-  typeCheck(Joiner.on('\n').join("function f(x, y) {","  ({})[y - 5];","  x < y;","}","f('asdf', 123);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("function f(x) {","  x['prop'] = 'str';","  return x['prop'] - 5;","}","f({});"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function C(){ /** @type {number} */ this.prop = 1; }","(new C)['prop'] < 'asdf';"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("function f(x, y) {","  x < y;","  ({})[y - 5];","}","f('asdf', 123);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function f(x, y) {","  x < y;","  ({})[y - 5];","  x = 'asdf';","}","f('asdf', 123);"));
+  typeCheck(LINE_JOINER.join("function f(x, y) {","  ({})[y - 5];","  x < y;","}","f('asdf', 123);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function f(x) {","  x['prop'] = 'str';","  return x['prop'] - 5;","}","f({});"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck("function f(/** ? */ o) { return o[0].prop; }");
-  typeCheck(Joiner.on('\n').join("function f(x) {","  x['prop'] = 7;","  var p = 'prop';","  x[p] = 'str';","  return x['prop'] - 5;","}","f({});"));
+  typeCheck(LINE_JOINER.join("function f(x) {","  x['prop'] = 7;","  var p = 'prop';","  x[p] = 'str';","  return x['prop'] - 5;","}","f({});"));
 }

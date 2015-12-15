@@ -1,6 +1,6 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @constructor */ function Foo() {}","function h(/** function(new:Foo, ...number):number */ f) {","  (new f()) - 5;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/**"," * @constructor"," * @template T"," * @param {T} x"," */","function Foo(x) {}","/**"," * @template T"," * @param {function(new:Foo<T>)} fun"," */","function f(fun) { return fun; }","/** @type {function(new:Foo<number>)} */","function f2() {}","var /** function(new:Foo<string>) */ x = f(f2);"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","function f(x) {","  x();","  var /** !Foo */ y = new x();","  var /** function(new:Foo, number) */ z = x;","}"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @type {number} */","Foo.num = 123;","function f(/** function(new:Foo, string) */ x) {","  var /** string */ s = x.num;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @constructor */ function Foo() {}","function h(/** function(new:Foo, ...number):number */ f) {","  (new f()) - 5;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @template T"," * @param {T} x"," */","function Foo(x) {}","/**"," * @template T"," * @param {function(new:Foo<T>)} fun"," */","function f(fun) { return fun; }","/** @type {function(new:Foo<number>)} */","function f2() {}","var /** function(new:Foo<string>) */ x = f(f2);"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","function f(x) {","  x();","  var /** !Foo */ y = new x();","  var /** function(new:Foo, number) */ z = x;","}"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @type {number} */","Foo.num = 123;","function f(/** function(new:Foo, string) */ x) {","  var /** string */ s = x.num;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

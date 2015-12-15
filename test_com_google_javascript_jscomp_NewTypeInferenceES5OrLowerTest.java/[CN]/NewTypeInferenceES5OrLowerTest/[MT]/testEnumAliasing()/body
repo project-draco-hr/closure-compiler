@@ -1,11 +1,11 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = e1;"));
-  typeCheck(Joiner.on('\n').join("var x;","/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = x;"),GlobalTypeInfo.MALFORMED_ENUM);
-  typeCheck(Joiner.on('\n').join("/** @const */","var ns1 = {};","/** @enum {number} */","ns1.e1 = { A: 1 };","/** @const */","var ns2 = {};","/** @enum {number} */","ns2.e2 = ns1.e1;"));
-  typeCheck(Joiner.on('\n').join("/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = e1;","function f(/** e2 */ x) {}","f(e1.A);"));
-  typeCheck(Joiner.on('\n').join("/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = e1;","function f(/** e2 */ x) {}","f(e2.A);"));
-  typeCheck(Joiner.on('\n').join("/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = e1;","function f(/** e2 */ x) {}","f('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @const */","var ns1 = {};","/** @enum {number} */","ns1.e1 = { A: 1 };","/** @const */","var ns2 = {};","/** @enum {number} */","ns2.e2 = ns1.e1;","function f(/** ns2.e2 */ x) {}","f(ns1.e1.A);"));
-  typeCheck(Joiner.on('\n').join("/** @const */","var ns1 = {};","/** @enum {number} */","ns1.e1 = { A: 1 };","/** @const */","var ns2 = {};","/** @enum {number} */","ns2.e2 = ns1.e1;","function f(/** ns1.e1 */ x) {}","f(ns2.e2.A);"));
-  typeCheck(Joiner.on('\n').join("/** @const */","var ns1 = {};","/** @enum {number} */","ns1.e1 = { A: 1 };","function g() {","  /** @const */","  var ns2 = {};","  /** @enum {number} */","  ns2.e2 = ns1.e1;","  function f(/** ns1.e1 */ x) {}","  f(ns2.e2.A);","}"));
+  typeCheck(LINE_JOINER.join("/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = e1;"));
+  typeCheck(LINE_JOINER.join("var x;","/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = x;"),GlobalTypeInfo.MALFORMED_ENUM);
+  typeCheck(LINE_JOINER.join("/** @const */","var ns1 = {};","/** @enum {number} */","ns1.e1 = { A: 1 };","/** @const */","var ns2 = {};","/** @enum {number} */","ns2.e2 = ns1.e1;"));
+  typeCheck(LINE_JOINER.join("/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = e1;","function f(/** e2 */ x) {}","f(e1.A);"));
+  typeCheck(LINE_JOINER.join("/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = e1;","function f(/** e2 */ x) {}","f(e2.A);"));
+  typeCheck(LINE_JOINER.join("/** @enum {number} */","var e1 = { A: 1 };","/** @enum {number} */","var e2 = e1;","function f(/** e2 */ x) {}","f('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @const */","var ns1 = {};","/** @enum {number} */","ns1.e1 = { A: 1 };","/** @const */","var ns2 = {};","/** @enum {number} */","ns2.e2 = ns1.e1;","function f(/** ns2.e2 */ x) {}","f(ns1.e1.A);"));
+  typeCheck(LINE_JOINER.join("/** @const */","var ns1 = {};","/** @enum {number} */","ns1.e1 = { A: 1 };","/** @const */","var ns2 = {};","/** @enum {number} */","ns2.e2 = ns1.e1;","function f(/** ns1.e1 */ x) {}","f(ns2.e2.A);"));
+  typeCheck(LINE_JOINER.join("/** @const */","var ns1 = {};","/** @enum {number} */","ns1.e1 = { A: 1 };","function g() {","  /** @const */","  var ns2 = {};","  /** @enum {number} */","  ns2.e2 = ns1.e1;","  function f(/** ns1.e1 */ x) {}","  f(ns2.e2.A);","}"));
 }

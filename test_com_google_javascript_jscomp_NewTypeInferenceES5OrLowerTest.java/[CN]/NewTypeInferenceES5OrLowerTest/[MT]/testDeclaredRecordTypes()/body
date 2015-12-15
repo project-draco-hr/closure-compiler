@@ -1,17 +1,17 @@
 {
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  return x.p - 3;","}"));
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: string }} x */ function f(x) {","  return x.p - 3;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {{ 'p': string }} x */ function f(x) {","  return x.p - 3;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  return x.q;","}"),NewTypeInference.INEXISTENT_PROPERTY);
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: string }} obj */ function f(obj, x, y) {","  x < y;","  x - 5;","  obj.p < y;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.p = 3;","}"));
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.p = 'str';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","}"));
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","}","/** @param {{ p: number }} x */ function g(x) {","  f(x);","}"));
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","  return x.q;","}","/** @param {{ p: number }} x */ function g(x) {","  f(x) - 5;","}"),NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","  x.q = 7;","}"));
-  typeCheck(Joiner.on('\n').join("function f(/** { prop: number} */ obj) {","  obj.prop = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("function f(/** { prop: number} */ obj, cond) {","  if (cond) { obj.prop = 123; } else { obj.prop = 234; }","  obj.prop = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(Joiner.on('\n').join("function f(/** {p: number} */ x, /** {p: (number|null)} */ y) {","  var z;","  if (true) { z = x; } else { z = y; }","}"));
-  typeCheck(Joiner.on('\n').join("var /** { a: number } */ obj1 = { a: 321};","var /** { a: number, b: number } */ obj2 = obj1;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} x */ function f(x) {","  return x.p - 3;","}"));
+  typeCheck(LINE_JOINER.join("/** @param {{ p: string }} x */ function f(x) {","  return x.p - 3;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {{ 'p': string }} x */ function f(x) {","  return x.p - 3;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} x */ function f(x) {","  return x.q;","}"),NewTypeInference.INEXISTENT_PROPERTY);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: string }} obj */ function f(obj, x, y) {","  x < y;","  x - 5;","  obj.p < y;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} x */ function f(x) {","  x.p = 3;","}"));
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} x */ function f(x) {","  x.p = 'str';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","}"));
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","}","/** @param {{ p: number }} x */ function g(x) {","  f(x);","}"));
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","  return x.q;","}","/** @param {{ p: number }} x */ function g(x) {","  f(x) - 5;","}"),NewTypeInference.INVALID_INFERRED_RETURN_TYPE);
+  typeCheck(LINE_JOINER.join("/** @param {{ p: number }} x */ function f(x) {","  x.q = 'str';","  x.q = 7;","}"));
+  typeCheck(LINE_JOINER.join("function f(/** { prop: number} */ obj) {","  obj.prop = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("function f(/** { prop: number} */ obj, cond) {","  if (cond) { obj.prop = 123; } else { obj.prop = 234; }","  obj.prop = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("function f(/** {p: number} */ x, /** {p: (number|null)} */ y) {","  var z;","  if (true) { z = x; } else { z = y; }","}"));
+  typeCheck(LINE_JOINER.join("var /** { a: number } */ obj1 = { a: 321};","var /** { a: number, b: number } */ obj2 = obj1;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }

@@ -1,10 +1,10 @@
 {
-  typeCheck(Joiner.on('\n').join("var obj = {};","/** @type {?number} */ obj.n = 123;","if (obj.n === null) {","} else {","  obj.n - 5;","}"));
-  typeCheck(Joiner.on('\n').join("var obj = {};","/** @type {?number} */ obj.n = 123;","if (obj.n !== null) {","  obj.n - 5;","}"));
-  typeCheck(Joiner.on('\n').join("var obj = { n: (1 < 2 ? null : 123) };","if (obj.n !== null) {","  obj.n - 123;","}"));
-  typeCheck(Joiner.on('\n').join("var obj = { n: (1 < 2 ? null : 123) };","if (obj.n !== null) {","  obj.n - 123;","}","obj.n - 123;"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  this.a = 123;","}","/** @constructor */","function Bar(x) {","  /** @type {Foo} */","  this.b = x;","  if (this.b != null) {","    return this.b.a;","  }","}"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {}","/** @type {?boolean} */","Foo.prototype.prop = true;","function f(/** !Foo */ x) {","  var /** boolean */ b = x.prop || true;","}"));
-  typeCheck(Joiner.on('\n').join("/** @constructor */","function Foo() {","  /** @type {?boolean} */","  this.prop = true;","}","function f(/** !Foo */ x) {","  var /** boolean */ b = x.prop || true;","}"));
-  typeCheck(Joiner.on('\n').join("function f(x) {","  if (x.call) {","    x.call(null);","  } else {","    x();","  }","}"));
+  typeCheck(LINE_JOINER.join("var obj = {};","/** @type {?number} */ obj.n = 123;","if (obj.n === null) {","} else {","  obj.n - 5;","}"));
+  typeCheck(LINE_JOINER.join("var obj = {};","/** @type {?number} */ obj.n = 123;","if (obj.n !== null) {","  obj.n - 5;","}"));
+  typeCheck(LINE_JOINER.join("var obj = { n: (1 < 2 ? null : 123) };","if (obj.n !== null) {","  obj.n - 123;","}"));
+  typeCheck(LINE_JOINER.join("var obj = { n: (1 < 2 ? null : 123) };","if (obj.n !== null) {","  obj.n - 123;","}","obj.n - 123;"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  this.a = 123;","}","/** @constructor */","function Bar(x) {","  /** @type {Foo} */","  this.b = x;","  if (this.b != null) {","    return this.b.a;","  }","}"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @type {?boolean} */","Foo.prototype.prop = true;","function f(/** !Foo */ x) {","  var /** boolean */ b = x.prop || true;","}"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {?boolean} */","  this.prop = true;","}","function f(/** !Foo */ x) {","  var /** boolean */ b = x.prop || true;","}"));
+  typeCheck(LINE_JOINER.join("function f(x) {","  if (x.call) {","    x.call(null);","  } else {","    x();","  }","}"));
 }
