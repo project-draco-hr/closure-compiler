@@ -15,14 +15,16 @@
   boolean isSimpleOp=NodeUtil.isSimpleOperator(n);
   if (!isResultUsed) {
     if (isSimpleOp || !NodeUtil.mayHaveSideEffects(n,t.getCompiler())) {
-      String msg="This code lacks side-effects. Is there a bug?";
-      if (n.isString() || n.isTemplateLit()) {
-        msg="Is there a missing '+' on the previous line?";
+      if (report) {
+        String msg="This code lacks side-effects. Is there a bug?";
+        if (n.isString() || n.isTemplateLit()) {
+          msg="Is there a missing '+' on the previous line?";
+        }
+ else         if (isSimpleOp) {
+          msg="The result of the '" + Token.name(n.getType()).toLowerCase() + "' operator is not being used.";
+        }
+        t.report(n,USELESS_CODE_ERROR,msg);
       }
- else       if (isSimpleOp) {
-        msg="The result of the '" + Token.name(n.getType()).toLowerCase() + "' operator is not being used.";
-      }
-      t.getCompiler().report(t.makeError(n,level,USELESS_CODE_ERROR,msg));
       if (!NodeUtil.isStatement(n)) {
         problemNodes.add(n);
       }
@@ -41,8 +43,10 @@
       }
       if (qname != null && noSideEffectExterns.containsKey(qname) && !isDefinedInSrc) {
         problemNodes.add(n);
-        String msg="The result of the extern function call '" + qname + "' is not being used.";
-        t.getCompiler().report(t.makeError(n,level,USELESS_CODE_ERROR,msg));
+        if (report) {
+          String msg="The result of the extern function call '" + qname + "' is not being used.";
+          t.report(n,USELESS_CODE_ERROR,msg);
+        }
       }
     }
   }
