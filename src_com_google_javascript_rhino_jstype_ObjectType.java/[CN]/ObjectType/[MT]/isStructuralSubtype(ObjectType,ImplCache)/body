@@ -1,19 +1,12 @@
 {
   Preconditions.checkArgument(!this.isUnionType());
-  Preconditions.checkArgument(!structuralInterface.isUnionType());
-  Preconditions.checkArgument(structuralInterface.getConstructor().isStructuralInterface());
-  MatchStatus result=implicitImplCache.checkCache(this,structuralInterface);
-  if (result != null) {
-    return result.subtypeValue();
+  Preconditions.checkArgument(!superType.isUnionType());
+  Preconditions.checkArgument(superType.isStructuralType(),"isStructuralSubtype should be called with structural supertype. Found %s",superType);
+  MatchStatus cachedResult=implicitImplCache.checkCache(this,superType);
+  if (cachedResult != null) {
+    return cachedResult.subtypeValue();
   }
-  for (  String propName : structuralInterface.getPropertyNames()) {
-    JSType superPropType=structuralInterface.getPropertyType(propName);
-    boolean subHasProp=this.hasProperty(propName);
-    if (subHasProp && !this.getPropertyType(propName).isSubtype(superPropType,implicitImplCache) || !subHasProp && !superPropType.isVoidable()) {
-      implicitImplCache.updateCache(this,structuralInterface,MatchStatus.NOT_MATCH);
-      return false;
-    }
-  }
-  implicitImplCache.updateCache(this,structuralInterface,MatchStatus.MATCH);
-  return true;
+  boolean result=isStructuralSubtypeHelper(this,superType,implicitImplCache);
+  implicitImplCache.updateCache(this,superType,result ? MatchStatus.MATCH : MatchStatus.NOT_MATCH);
+  return result;
 }

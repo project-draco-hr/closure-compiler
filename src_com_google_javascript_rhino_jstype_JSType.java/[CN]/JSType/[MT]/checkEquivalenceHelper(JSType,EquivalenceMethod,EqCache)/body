@@ -21,14 +21,11 @@
   if (isFunctionType() && that.isFunctionType()) {
     return toMaybeFunctionType().checkFunctionEquivalenceHelper(that.toMaybeFunctionType(),eqMethod,eqCache);
   }
-  if (isRecordType() && that.isRecordType()) {
-    return toMaybeRecordType().checkStructuralEquivalenceHelper(that.toMaybeRecordType(),eqMethod,eqCache);
-  }
   if (!getTemplateTypeMap().checkEquivalenceHelper(that.getTemplateTypeMap(),eqMethod,eqCache)) {
     return false;
   }
   if (eqCache.isStructuralTyping() && this.isStructuralType() && that.isStructuralType()) {
-    return checkStructuralEquivalenceHelper(that,eqMethod,eqCache);
+    return toMaybeObjectType().checkStructuralEquivalenceHelper(that.toMaybeObjectType(),eqMethod,eqCache);
   }
   if (isNominalType() && that.isNominalType()) {
     return getConcreteNominalTypeName(this.toObjectType()).equals(getConcreteNominalTypeName(that.toObjectType()));

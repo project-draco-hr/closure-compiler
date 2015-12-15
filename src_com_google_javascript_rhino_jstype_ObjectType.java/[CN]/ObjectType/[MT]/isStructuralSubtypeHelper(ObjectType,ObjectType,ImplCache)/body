@@ -1,0 +1,16 @@
+{
+  for (  String property : typeB.getPropertyNames()) {
+    JSType propB=typeB.getPropertyType(property);
+    if (!typeA.hasProperty(property)) {
+      if (propB.isVoidable() && !propB.isUnknownType()) {
+        continue;
+      }
+      return false;
+    }
+    JSType propA=typeA.getPropertyType(property);
+    if (!propA.isSubtype(propB,implicitImplCache)) {
+      return false;
+    }
+  }
+  return true;
+}
