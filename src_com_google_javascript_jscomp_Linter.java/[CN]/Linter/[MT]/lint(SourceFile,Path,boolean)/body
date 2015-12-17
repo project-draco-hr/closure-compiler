@@ -7,10 +7,21 @@
   CompilerOptions options=new CompilerOptions();
   options.setLanguage(LanguageMode.ECMASCRIPT6_STRICT);
   options.setSkipTranspilationAndCrash(true);
+  options.setIdeMode(fix);
   options.setCodingConvention(new GoogleCodingConvention());
   options.setWarningLevel(DiagnosticGroups.MISSING_REQUIRE,CheckLevel.WARNING);
   options.setWarningLevel(DiagnosticGroups.EXTRA_REQUIRE,CheckLevel.WARNING);
   compiler.setPassConfig(new LintPassConfig(options));
   compiler.disableThreads();
   compiler.compile(ImmutableList.<SourceFile>of(externs),ImmutableList.of(file),options);
+  if (fix) {
+    List<SuggestedFix> fixes=new ArrayList<>();
+    for (    JSError warning : compiler.getWarnings()) {
+      SuggestedFix suggestedFix=ErrorToFixMapper.getFixForJsError(warning,compiler);
+      if (suggestedFix != null) {
+        fixes.add(suggestedFix);
+      }
+    }
+    ApplySuggestedFixes.applySuggestedFixesToFiles(fixes);
+  }
 }
