@@ -2,22 +2,22 @@
 switch (n.getType()) {
 case Token.SCRIPT:
     if (!containsShorthandRequire) {
-      if (!Ordering.natural().isOrdered(requiredNamespaces)) {
-        t.report(n,REQUIRES_NOT_SORTED);
+      if (!alphabetical.isOrdered(requires)) {
+        t.report(requires.get(0),REQUIRES_NOT_SORTED);
       }
-      if (!Ordering.natural().isOrdered(providedNamespaces)) {
-        t.report(n,PROVIDES_NOT_SORTED);
+      if (!alphabetical.isOrdered(provides)) {
+        t.report(provides.get(0),PROVIDES_NOT_SORTED);
       }
     }
-  if (!moduleNamespaces.isEmpty() && !providedNamespaces.isEmpty()) {
-    t.report(n,MODULE_AND_PROVIDES);
+  if (!modules.isEmpty() && !provides.isEmpty()) {
+    t.report(provides.get(0),MODULE_AND_PROVIDES);
   }
-if (moduleNamespaces.size() > 1) {
-  t.report(n,MULTIPLE_MODULES_IN_FILE);
+if (modules.size() > 1) {
+  t.report(modules.get(1),MULTIPLE_MODULES_IN_FILE);
 }
-requiredNamespaces.clear();
-providedNamespaces.clear();
-moduleNamespaces.clear();
+requires.clear();
+provides.clear();
+modules.clear();
 containsShorthandRequire=false;
 break;
 case Token.CALL:
@@ -31,17 +31,17 @@ if (namespace == null) {
 return;
 }
 if (callee.matchesQualifiedName("goog.require")) {
-requiredNamespaces.add(namespace);
+requires.add(n);
 }
  else {
-if (!requiredNamespaces.isEmpty()) {
+if (!requires.isEmpty()) {
 t.report(n,PROVIDES_AFTER_REQUIRES);
 }
 if (callee.matchesQualifiedName("goog.module")) {
-moduleNamespaces.add(namespace);
+modules.add(n);
 }
  else {
-providedNamespaces.add(namespace);
+provides.add(n);
 }
 }
 }
