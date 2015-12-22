@@ -1,0 +1,15 @@
+{
+  String inputString="[{\"src\": \"alert('foo');\", \"path\":\"foo.js\"}]";
+  args.add("--json_streams=IN");
+  CommandLineRunner runner=new CommandLineRunner(args.toArray(new String[]{}),new ByteArrayInputStream(inputString.getBytes()),new PrintStream(outReader),new PrintStream(errReader));
+  lastCompiler=runner.getCompiler();
+  try {
+    runner.doRun();
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+    fail("Unexpected exception " + e);
+  }
+  String output=runner.getCompiler().toSource();
+  assertThat(output).isEqualTo("alert(\"foo\");");
+}
