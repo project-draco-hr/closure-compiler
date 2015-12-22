@@ -17,14 +17,6 @@
   if (type instanceof NamedType) {
     return isStringifiable(((NamedType)type).getReferencedType());
   }
-  if (type.isObject()) {
-    ObjectType objectType=type.toMaybeObjectType();
-    JSType constructor=objectType.getConstructor();
-    if (constructor != null && constructor.isInterface()) {
-      return true;
-    }
-    return classHasToString(objectType);
-  }
   if (type.isUnionType()) {
     for (    JSType alternateType : type.toMaybeUnionType().getAlternates()) {
       if (!isStringifiable(alternateType)) {
@@ -32,6 +24,14 @@
       }
     }
     return true;
+  }
+  if (type.isObject()) {
+    ObjectType objectType=type.toMaybeObjectType();
+    JSType constructor=objectType.getConstructor();
+    if (constructor != null && constructor.isInterface()) {
+      return true;
+    }
+    return classHasToString(objectType);
   }
   return false;
 }
