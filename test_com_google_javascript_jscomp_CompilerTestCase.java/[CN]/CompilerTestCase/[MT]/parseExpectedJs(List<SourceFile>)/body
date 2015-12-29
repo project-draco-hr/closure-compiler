@@ -12,5 +12,13 @@
   if (closurePassEnabled && closurePassEnabledForExpected && !compiler.hasErrors()) {
     new ProcessClosurePrimitives(compiler,null,CheckLevel.ERROR,false).process(null,mainRoot);
   }
+  if (rewriteClosureCode) {
+    new ClosureRewriteClass(compiler).process(externsRoot,mainRoot);
+    new ClosureRewriteModule(compiler).process(externsRoot,mainRoot);
+    new ScopedAliases(compiler,null,CompilerOptions.NULL_ALIAS_TRANSFORMATION_HANDLER).process(externsRoot,mainRoot);
+  }
+  if (transpileEnabled && transpileExpected && !compiler.hasErrors()) {
+    transpileToEs5(compiler,externsRoot,mainRoot);
+  }
   return mainRoot;
 }
