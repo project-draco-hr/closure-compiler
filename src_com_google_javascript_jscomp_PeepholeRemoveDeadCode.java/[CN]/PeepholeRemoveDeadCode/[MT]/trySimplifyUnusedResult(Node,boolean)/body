@@ -6,11 +6,11 @@ case Token.HOOK:
   Node falseNode=trySimplifyUnusedResult(n.getLastChild());
 if (trueNode == null && falseNode != null) {
   n.setType(Token.OR);
-  Preconditions.checkState(n.getChildCount() == 2);
+  Preconditions.checkState(n.getChildCount() == 2,n);
 }
  else if (trueNode != null && falseNode == null) {
   n.setType(Token.AND);
-  Preconditions.checkState(n.getChildCount() == 2);
+  Preconditions.checkState(n.getChildCount() == 2,n);
 }
  else if (trueNode == null && falseNode == null) {
   result=trySimplifyUnusedResult(n.getFirstChild());
@@ -23,7 +23,7 @@ case Token.AND:
 case Token.OR:
 Node conditionalResultNode=trySimplifyUnusedResult(n.getLastChild());
 if (conditionalResultNode == null) {
-Preconditions.checkState(n.hasOneChild());
+Preconditions.checkState(n.hasOneChild(),n);
 result=trySimplifyUnusedResult(n.getFirstChild());
 }
 break;
