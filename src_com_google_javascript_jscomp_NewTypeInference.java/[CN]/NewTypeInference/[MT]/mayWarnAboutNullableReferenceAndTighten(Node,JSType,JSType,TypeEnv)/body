@@ -6,6 +6,9 @@
       TypeEnv outEnv=inEnv;
       if (obj.isQualifiedName()) {
         QualifiedName qname=QualifiedName.fromNode(obj);
+        if (maybeSpecType != null && maybeSpecType.isSubtypeOf(minusNull)) {
+          minusNull=maybeSpecType;
+        }
         outEnv=updateLvalueTypeInEnv(inEnv,obj,qname,minusNull);
       }
       return new EnvTypePair(outEnv,minusNull);
