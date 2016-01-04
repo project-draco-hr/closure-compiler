@@ -6,8 +6,7 @@
   Node cur;
   Node previous=null;
   Node lastJump;
-  Node parent=node.getParent();
-  for (cur=node, lastJump=node; !isContinueTarget(cur,parent,label); cur=parent, parent=parent.getParent()) {
+  for (cur=node, lastJump=node; !isContinueTarget(cur,label); cur=cur.getParent()) {
     if (cur.isTry() && NodeUtil.hasFinally(cur) && cur.getLastChild() != previous) {
       if (lastJump == node) {
         createEdge(lastJump,Branch.UNCOND,cur.getLastChild());
@@ -17,7 +16,7 @@
       }
       lastJump=cur;
     }
-    Preconditions.checkState(parent != null,"Cannot find continue target.");
+    Preconditions.checkState(cur.getParent() != null,"Cannot find continue target.");
     previous=cur;
   }
   Node iter=cur;
