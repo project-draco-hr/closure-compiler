@@ -1,5 +1,5 @@
 {
-  createEdge(node,Branch.ON_TRUE,node.getFirstChild().getNext());
+  createEdge(node,Branch.ON_TRUE,node.getSecondChild());
   Node next=getNextSiblingOfType(node.getNext(),Token.CASE);
   if (next != null) {
     Preconditions.checkState(next.isCase());
@@ -7,7 +7,7 @@
   }
  else {
     Node parent=node.getParent();
-    Node deflt=getNextSiblingOfType(parent.getFirstChild().getNext(),Token.DEFAULT_CASE);
+    Node deflt=getNextSiblingOfType(parent.getSecondChild(),Token.DEFAULT_CASE);
     if (deflt != null) {
       createEdge(node,Branch.ON_FALSE,deflt);
     }

@@ -5,7 +5,7 @@
     return;
   }
   if (n.isIf()) {
-    Node ifBlock=n.getFirstChild().getNext();
+    Node ifBlock=n.getSecondChild();
     tryMinimizeExits(ifBlock,exitType,labelName);
     Node elseBlock=ifBlock.getNext();
     if (elseBlock != null) {
@@ -35,10 +35,10 @@
     if (c.isIf()) {
       Node ifTree=c;
       Node trueBlock, falseBlock;
-      trueBlock=ifTree.getFirstChild().getNext();
+      trueBlock=ifTree.getSecondChild();
       falseBlock=trueBlock.getNext();
       tryMinimizeIfBlockExits(trueBlock,falseBlock,ifTree,exitType,labelName);
-      trueBlock=ifTree.getFirstChild().getNext();
+      trueBlock=ifTree.getSecondChild();
       falseBlock=trueBlock.getNext();
       if (falseBlock != null) {
         tryMinimizeIfBlockExits(falseBlock,trueBlock,ifTree,exitType,labelName);

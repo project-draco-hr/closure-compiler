@@ -57,7 +57,7 @@
   if (n.getChildCount() == 2) {
     Preconditions.checkState(type == Token.IF);
     if (condTrue) {
-      Node thenStmt=n.getFirstChild().getNext();
+      Node thenStmt=n.getSecondChild();
       n.removeChild(thenStmt);
       parent.replaceChild(n,thenStmt);
       reportCodeChange();
@@ -71,7 +71,7 @@
     }
   }
  else {
-    Node trueBranch=n.getFirstChild().getNext();
+    Node trueBranch=n.getSecondChild();
     Node falseBranch=trueBranch.getNext();
     Node branchToKeep=condTrue ? trueBranch : falseBranch;
     Node branchToRemove=condTrue ? falseBranch : trueBranch;

@@ -3,7 +3,7 @@
   Node n=ref.getParent();
 switch (n.getType()) {
 case Token.GETPROP:
-    Node dest=n.getFirstChild().getNext();
+    Node dest=n.getSecondChild();
   Node parent=n.getParent();
 Node grandParent=parent.getParent();
 if (dest.isString() && NodeUtil.isExprAssign(grandParent) && NodeUtil.isVarOrSimpleAssignLhs(n,parent)) {
@@ -14,7 +14,7 @@ return true;
 }
 break;
 case Token.ASSIGN:
-Node map=n.getFirstChild().getNext();
+Node map=n.getSecondChild();
 if (map.isObjectLit()) {
 for (Node key=map.getFirstChild(); key != null; key=key.getNext()) {
 if (!key.isQuotedString()) {
