@@ -40,12 +40,12 @@
   }
   FunctionType origFunType=funType;
   if (funType.isGeneric()) {
-    Map<String,JSType> typeMap=calcTypeInstantiationFwd(expr,callee.isGetProp() ? callee.getFirstChild() : null,expr.getChildAtIndex(1),funType,inEnv);
+    Map<String,JSType> typeMap=calcTypeInstantiationFwd(expr,callee.isGetProp() ? callee.getFirstChild() : null,expr.getSecondChild(),funType,inEnv);
     funType=funType.instantiateGenerics(typeMap);
     println("Instantiated function type: " + funType);
   }
   List<JSType> argTypes=new ArrayList<>();
-  TypeEnv tmpEnv=analyzeCallNodeArgumentsFwd(expr,expr.getChildAtIndex(1),funType,argTypes,inEnv);
+  TypeEnv tmpEnv=analyzeCallNodeArgumentsFwd(expr,expr.getSecondChild(),funType,argTypes,inEnv);
   if (callee.isName()) {
     String calleeName=callee.getString();
     if (currentScope.isKnownFunction(calleeName) && !currentScope.isExternalFunction(calleeName)) {
