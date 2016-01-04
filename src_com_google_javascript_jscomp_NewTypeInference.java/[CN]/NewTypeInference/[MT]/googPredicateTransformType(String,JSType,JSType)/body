@@ -2,11 +2,15 @@
 switch (typeHint) {
 case "array":
 case "isArray":
-    JSType arrayType=commonTypes.getArrayInstance();
-  if (arrayType.isUnknown()) {
-    return JSType.UNKNOWN;
-  }
-return booleanContext.isTrueOrTruthy() ? arrayType : beforeType.removeType(arrayType);
+{
+      JSType arrayType=commonTypes.getArrayInstance();
+      if (arrayType.isUnknown()) {
+        return JSType.UNKNOWN;
+      }
+      return booleanContext.isTrueOrTruthy() ? arrayType : beforeType.removeType(arrayType);
+    }
+case "isArrayLike":
+  return JSType.TOP_OBJECT.withProperty(new QualifiedName("length"),JSType.NUMBER);
 case "boolean":
 case "isBoolean":
 return booleanContext.isTrueOrTruthy() ? JSType.BOOLEAN : beforeType.removeType(JSType.BOOLEAN);
