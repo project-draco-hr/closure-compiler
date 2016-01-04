@@ -1,35 +1,56 @@
 {
-  boolean leftLiteral=NodeUtil.isLiteralValue(left,true);
-  boolean rightLiteral=NodeUtil.isLiteralValue(right,true);
-  if (!leftLiteral || !rightLiteral) {
-    if (op != Token.GT && op != Token.LT) {
-      return TernaryValue.UNKNOWN;
-    }
+  if (NodeUtil.mayHaveSideEffects(left) || NodeUtil.mayHaveSideEffects(right)) {
+    return TernaryValue.UNKNOWN;
   }
-  boolean undefinedRight=NodeUtil.isUndefined(right) && rightLiteral;
-  boolean nullRight=right.isNull();
-  int lhType=getNormalizedNodeType(left);
-  int rhType=getNormalizedNodeType(right);
-switch (lhType) {
-case Token.VOID:
-    if (!leftLiteral) {
-      return TernaryValue.UNKNOWN;
+  ValueType leftValueType=NodeUtil.getKnownValueType(left);
+  ValueType rightValueType=NodeUtil.getKnownValueType(right);
+  if (leftValueType != ValueType.UNDETERMINED && rightValueType != ValueType.UNDETERMINED) {
+    if (op == Token.SHEQ || op == Token.SHNE) {
+      if (leftValueType != rightValueType) {
+        return TernaryValue.forBoolean(op != Token.SHEQ);
+      }
+ else       if (rightValueType == ValueType.NULL || rightValueType == ValueType.VOID) {
+        return TernaryValue.forBoolean(op == Token.SHEQ);
+      }
     }
- else     if (!rightLiteral) {
-      return TernaryValue.UNKNOWN;
+    if (op == Token.EQ || op == Token.NE) {
+switch (leftValueType) {
+case OBJECT:
+case NUMBER:
+case BOOLEAN:
+case STRING:
+        if (rightValueType == ValueType.NULL || rightValueType == ValueType.VOID) {
+          return TernaryValue.forBoolean(op != Token.EQ);
+        }
+      break;
+case NULL:
+case VOID:
+    if (rightValueType == ValueType.NULL || rightValueType == ValueType.VOID) {
+      return TernaryValue.forBoolean(op == Token.EQ);
     }
  else {
-      return TernaryValue.forBoolean(compareToUndefined(right,op));
+      return TernaryValue.forBoolean(op != Token.EQ);
     }
+default :
+  throw new IllegalStateException("unexpected");
+}
+}
+}
+if (leftValueType == ValueType.VOID || rightValueType == ValueType.VOID) {
+switch (op) {
+case Token.GE:
+case Token.LE:
+case Token.GT:
+case Token.LT:
+return TernaryValue.FALSE;
+}
+}
+int lhType=getNormalizedNodeType(left);
+int rhType=getNormalizedNodeType(right);
+switch (lhType) {
 case Token.NULL:
-  if (rightLiteral && isEqualityOp(op)) {
-    return TernaryValue.forBoolean(compareToNull(right,op));
-  }
 case Token.TRUE:
 case Token.FALSE:
-if (undefinedRight) {
-  return TernaryValue.forBoolean(compareToUndefined(left,op));
-}
 if (rhType != Token.TRUE && rhType != Token.FALSE && rhType != Token.NULL) {
 return TernaryValue.UNKNOWN;
 }
@@ -48,9 +69,7 @@ return compareAsNumbers(op,left,right);
 }
 return TernaryValue.UNKNOWN;
 case Token.THIS:
-if (!right.isThis()) {
-return TernaryValue.UNKNOWN;
-}
+if (right.isThis()) {
 switch (op) {
 case Token.SHEQ:
 case Token.EQ:
@@ -59,17 +78,10 @@ case Token.SHNE:
 case Token.NE:
 return TernaryValue.FALSE;
 }
+}
 return TernaryValue.UNKNOWN;
 case Token.STRING:
-if (undefinedRight) {
-return TernaryValue.forBoolean(compareToUndefined(left,op));
-}
-if (nullRight && isEqualityOp(op)) {
-return TernaryValue.forBoolean(compareToNull(left,op));
-}
-if (Token.STRING != right.getType()) {
-return TernaryValue.UNKNOWN;
-}
+if (right.isString()) {
 switch (op) {
 case Token.SHEQ:
 case Token.EQ:
@@ -78,65 +90,21 @@ case Token.SHNE:
 case Token.NE:
 return areStringsEqual(left.getString(),right.getString()).not();
 }
+}
 return TernaryValue.UNKNOWN;
 case Token.NUMBER:
-if (undefinedRight) {
-return TernaryValue.forBoolean(compareToUndefined(left,op));
-}
-if (nullRight && isEqualityOp(op)) {
-return TernaryValue.forBoolean(compareToNull(left,op));
-}
-if (Token.NUMBER != right.getType()) {
-return TernaryValue.UNKNOWN;
-}
+if (right.isNumber()) {
 return compareAsNumbers(op,left,right);
+}
+return TernaryValue.UNKNOWN;
 case Token.NAME:
-if (leftLiteral && undefinedRight) {
-return TernaryValue.forBoolean(compareToUndefined(left,op));
-}
-if (rightLiteral) {
-boolean undefinedLeft=(left.getString().equals("undefined"));
-if (undefinedLeft) {
-return TernaryValue.forBoolean(compareToUndefined(right,op));
-}
-if (leftLiteral && nullRight && isEqualityOp(op)) {
-return TernaryValue.forBoolean(compareToNull(left,op));
-}
-}
-if (Token.NAME != right.getType()) {
-return TernaryValue.UNKNOWN;
-}
-String ln=left.getString();
-String rn=right.getString();
-if (!ln.equals(rn)) {
-return TernaryValue.UNKNOWN;
-}
+if (right.isName()) {
+if (left.getString().equals(right.getString())) {
 switch (op) {
 case Token.LT:
 case Token.GT:
 return TernaryValue.FALSE;
 }
-return TernaryValue.UNKNOWN;
-case Token.NEG:
-if (leftLiteral) {
-if (undefinedRight) {
-return TernaryValue.forBoolean(compareToUndefined(left,op));
-}
-if (nullRight && isEqualityOp(op)) {
-return TernaryValue.forBoolean(compareToNull(left,op));
-}
-}
-return TernaryValue.UNKNOWN;
-case Token.ARRAYLIT:
-case Token.OBJECTLIT:
-case Token.REGEXP:
-case Token.FUNCTION:
-if (leftLiteral) {
-if (undefinedRight) {
-return TernaryValue.forBoolean(compareToUndefined(left,op));
-}
-if (nullRight && isEqualityOp(op)) {
-return TernaryValue.forBoolean(compareToNull(left,op));
 }
 }
 return TernaryValue.UNKNOWN;
