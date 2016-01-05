@@ -1,0 +1,22 @@
+{
+  Node refParent=getBaseQualifiedNameNode(n);
+  if (refParent == null) {
+    return;
+  }
+  String qName=refParent.getQualifiedName();
+  if (qName.startsWith("module.exports.")) {
+    qName=qName.substring(15);
+  }
+ else   if (qName.startsWith("exports.")) {
+    qName=qName.substring(8);
+  }
+ else {
+    return;
+  }
+  int assignCount=1;
+  if (propertyExportRefCount.containsKey(qName)) {
+    assignCount=propertyExportRefCount.get(qName) + 1;
+    propertyExportRefCount.remove(qName);
+  }
+  propertyExportRefCount.put(qName,assignCount);
+}
