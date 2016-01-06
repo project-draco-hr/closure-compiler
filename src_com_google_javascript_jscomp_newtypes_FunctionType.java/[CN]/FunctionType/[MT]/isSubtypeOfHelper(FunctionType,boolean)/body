@@ -12,27 +12,29 @@
     }
     return instantiateGenericsWithUnknown(this).isSubtypeOfHelper(other,checkThisType);
   }
-  if (requiredFormals.size() > other.requiredFormals.size()) {
-    return false;
-  }
-  int otherMaxTotalArity=other.requiredFormals.size() + other.optionalFormals.size();
-  for (int i=0; i < otherMaxTotalArity; i++) {
-    JSType thisFormal=getFormalType(i);
-    JSType otherFormal=other.getFormalType(i);
-    if (thisFormal != null && !thisFormal.isUnknown() && !otherFormal.isUnknown() && !otherFormal.isSubtypeOf(thisFormal)) {
+  if (!other.acceptsAnyArguments()) {
+    if (requiredFormals.size() > other.requiredFormals.size()) {
       return false;
     }
-  }
-  if (other.restFormals != null) {
-    int thisMaxTotalArity=this.requiredFormals.size() + this.optionalFormals.size();
-    if (this.restFormals != null) {
-      thisMaxTotalArity++;
-    }
-    for (int i=otherMaxTotalArity; i < thisMaxTotalArity; i++) {
+    int otherMaxTotalArity=other.requiredFormals.size() + other.optionalFormals.size();
+    for (int i=0; i < otherMaxTotalArity; i++) {
       JSType thisFormal=getFormalType(i);
       JSType otherFormal=other.getFormalType(i);
       if (thisFormal != null && !thisFormal.isUnknown() && !otherFormal.isUnknown() && !otherFormal.isSubtypeOf(thisFormal)) {
         return false;
+      }
+    }
+    if (other.restFormals != null) {
+      int thisMaxTotalArity=this.requiredFormals.size() + this.optionalFormals.size();
+      if (this.restFormals != null) {
+        thisMaxTotalArity++;
+      }
+      for (int i=otherMaxTotalArity; i < thisMaxTotalArity; i++) {
+        JSType thisFormal=getFormalType(i);
+        JSType otherFormal=other.getFormalType(i);
+        if (thisFormal != null && !thisFormal.isUnknown() && !otherFormal.isUnknown() && !otherFormal.isSubtypeOf(thisFormal)) {
+          return false;
+        }
       }
     }
   }
