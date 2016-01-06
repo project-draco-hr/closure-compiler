@@ -1,6 +1,6 @@
 {
   typeCheck(LINE_JOINER.join("/**"," * @template T"," * @param {function(new:(T|number))} x"," */","function f(x) {}"),JSTypeCreatorFromJSDoc.NEW_EXPECTS_OBJECT_OR_TYPEVAR);
   typeCheck(LINE_JOINER.join("/**"," * @template T"," * @this {T|Object}"," */","function f() {}"));
-  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  this.p = 123;","}","/** @interface */","function Bar() {}","Bar.prototype.p;","/** @this {Foo|Bar} */","function f() {","  return this.p - 1;","}"));
-  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.p = 123;","}","/** @interface */","function Bar() {}","/** @type {number} */","Bar.prototype.p;","/** @this {Foo|Bar} */","function f() {","  var /** string */ n = this.p;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  this.p = 123;","}","/** @interface */","function Bar() {}","Bar.prototype.p;","/** @this {Foo|Bar} */","function f() {","  return this.p - 1;","}"),NewTypeInference.NULLABLE_DEREFERENCE);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.p = 123;","}","/** @interface */","function Bar() {}","/** @type {number} */","Bar.prototype.p;","/** @this {!Foo|!Bar} */","function f() {","  var /** string */ n = this.p;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }
