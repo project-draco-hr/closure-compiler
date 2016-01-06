@@ -1,3 +1,10 @@
 {
-  return NodeUtil.isExprAssign(n) && isPrototypeProperty(n.getFirstChild().getFirstChild());
+  if (NodeUtil.isExprAssign(n) && isPrototypeProperty(n.getFirstChild().getFirstChild())) {
+    return true;
+  }
+  if (n.isObjectLit()) {
+    JSDocInfo jsdoc=n.getJSDocInfo();
+    return jsdoc != null && jsdoc.getLendsName() != null && jsdoc.getLendsName().endsWith("prototype");
+  }
+  return false;
 }

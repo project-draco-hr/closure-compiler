@@ -3,7 +3,10 @@
   String internalName=getFunInternalName(fn);
   NTIScope fnScope=currentScope.getScope(internalName);
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(fn);
-  DeclaredFunctionType declFunType=computeFnDeclaredType(jsdoc,internalName,fn,ownerType,currentScope);
-  fnScope.setDeclaredType(declFunType);
+  DeclaredFunctionType declFunType=fnScope.getDeclaredFunctionType();
+  if (declFunType == null) {
+    declFunType=computeFnDeclaredType(jsdoc,internalName,fn,ownerType,currentScope);
+    fnScope.setDeclaredType(declFunType);
+  }
   return fnScope;
 }

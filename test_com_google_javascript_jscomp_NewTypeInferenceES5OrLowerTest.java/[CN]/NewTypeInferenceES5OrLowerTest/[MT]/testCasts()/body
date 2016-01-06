@@ -8,4 +8,6 @@
   typeCheck(LINE_JOINER.join("/** @constructor */","function Parent() {}","/** @constructor @extends {Parent} */","function Child() {}","/** @type {Child|null} */ (new Parent);"));
   typeCheck(LINE_JOINER.join("function f(/** (number|string) */ x) {","  return /** @type {number|boolean} */ (x);","}"));
   typeCheck(LINE_JOINER.join("/** @constructor */","function High() {}","/** @constructor @extends {High} */","function Low() {}","/** @constructor */","function Foo() {}","function f(/** (!Foo|!Low) */ x) {","  return /** @type {!High} */ (x);","}"));
+  typeCheck(LINE_JOINER.join("function f(/** function(function(number)=) */ f1) {","  return /** @type {function(function(string)=)} */ (f1);","}"),NewTypeInference.INVALID_CAST);
+  typeCheck(LINE_JOINER.join("function f(/** function(... function(number)) */ f1) {","  return /** @type {function(... function(string))} */ (f1);","}"),NewTypeInference.INVALID_CAST);
 }
