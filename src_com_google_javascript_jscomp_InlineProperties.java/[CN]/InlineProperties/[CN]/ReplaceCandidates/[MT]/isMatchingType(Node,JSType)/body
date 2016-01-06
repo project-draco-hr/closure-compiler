@@ -1,5 +1,13 @@
 {
   src=src.restrictByNotNullOrUndefined();
   JSType dest=getJSType(n).restrictByNotNullOrUndefined();
-  return !isInvalidatingType(dest) && dest.isSubtype(src);
+  if (!isInvalidatingType(dest)) {
+    if (dest.isConstructor()) {
+      return dest.isEquivalentTo(src);
+    }
+ else {
+      return dest.isSubtype(src);
+    }
+  }
+  return false;
 }
