@@ -1,5 +1,6 @@
 {
   Preconditions.checkArgument(callNode.isCall() || callNode.isNew());
+  Preconditions.checkArgument(calleeType.isLoose());
   Node callee=callNode.getFirstChild();
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   TypeEnv tmpEnv=inEnv;
@@ -8,8 +9,8 @@
     tmpEnv=pair.env;
     builder.addReqFormal(pair.type);
   }
-  JSType looseRetType=retType.isUnknown() ? JSType.BOTTOM : retType;
+  JSType looseRetType=requiredType.isUnknown() ? JSType.BOTTOM : requiredType;
   JSType looseFunctionType=commonTypes.fromFunctionType(builder.addRetType(looseRetType).addLoose().buildFunction());
   EnvTypePair calleePair=analyzeExprFwd(callee,tmpEnv,commonTypes.topFunction(),looseFunctionType);
-  return new EnvTypePair(calleePair.env,retType);
+  return new EnvTypePair(calleePair.env,calleeType.getReturnType().isNonLooseSubtypeOf(requiredType) ? calleeType.getReturnType() : requiredType);
 }
