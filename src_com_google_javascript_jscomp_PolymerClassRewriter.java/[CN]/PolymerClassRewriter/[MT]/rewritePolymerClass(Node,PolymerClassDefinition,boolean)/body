@@ -17,6 +17,11 @@
   addTypesToFunctions(objLit,cls.target.getQualifiedName());
   PolymerPassStaticUtils.switchDollarSignPropsToBrackets(objLit,compiler);
   PolymerPassStaticUtils.quoteListenerAndHostAttributeKeys(objLit);
+  for (  MemberDefinition prop : cls.props) {
+    if (prop.value.isObjectLit()) {
+      PolymerPassStaticUtils.switchDollarSignPropsToBrackets(prop.value,compiler);
+    }
+  }
   Node block=IR.block();
   JSDocInfoBuilder constructorDoc=this.getConstructorDoc(cls);
   Node ctorKey=cls.constructor.value.getParent();
