@@ -4,5 +4,10 @@
     return false;
   }
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(qnameNode);
-  return jsdoc != null && (jsdoc.isConstructorOrInterface() || jsdoc.hasConstAnnotation());
+  if (jsdoc == null) {
+    return qnameNode.isFromExterns() && (qnameNode.getParent().isVar() || !qnameNode.isName()) && this.currentScope.getNamespace(QualifiedName.fromNode(rhs)) != null;
+  }
+ else {
+    return jsdoc.isConstructorOrInterface() || jsdoc.hasConstAnnotation();
+  }
 }
