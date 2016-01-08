@@ -10,6 +10,12 @@
   if (reach == CoverageReach.CONDITIONAL && parent != null && parent.isScript()) {
     return;
   }
+  if (node.isFunction() && !NodeUtil.getFunctionBody(node).isBlock()) {
+    Node returnValue=NodeUtil.getFunctionBody(node);
+    Node body=IR.block(IR.returnNode(returnValue.detachFromParent()));
+    body.useSourceInfoIfMissingFromForTree(returnValue);
+    node.addChildToBack(body);
+  }
   if (node.isFunction() || node.isWith() || node.isCase()|| node.isDefaultCase()|| node.isCatch()) {
     Node codeBlock=node.getLastChild();
     codeBlock.addChildToFront(newInstrumentationNode(traversal,node));
