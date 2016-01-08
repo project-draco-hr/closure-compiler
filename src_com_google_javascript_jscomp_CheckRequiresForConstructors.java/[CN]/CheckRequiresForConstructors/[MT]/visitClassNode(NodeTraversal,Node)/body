@@ -4,16 +4,15 @@
     constructors.add(name);
   }
   Node extendClass=classNode.getSecondChild();
-  if (extendClass.isQualifiedName()) {
-    Node root=NodeUtil.getRootOfQualifiedName(extendClass);
-    if (root.isName()) {
-      String rootName=root.getString();
-      Var var=t.getScope().getVar(rootName);
-      if (var != null && (var.isLocal() || var.isExtern())) {
-      }
+  if (!extendClass.isQualifiedName())   return;
+  Node root=NodeUtil.getRootOfQualifiedName(extendClass);
+  if (root.isName()) {
+    String rootName=root.getString();
+    Var var=t.getScope().getVar(rootName);
+    if (var != null && (var.isLocal() || var.isExtern())) {
+    }
  else {
-        usages.put(extendClass.getQualifiedName(),extendClass);
-      }
+      usages.put(extendClass.getQualifiedName(),extendClass);
     }
   }
 }
