@@ -33,7 +33,12 @@
     Preconditions.checkState(!methodTypes.isEmpty());
     PropertyDef localPropDef=propertyDefs.get(rawType,pname);
     DeclaredFunctionType superMethodType=DeclaredFunctionType.meet(methodTypes);
-    DeclaredFunctionType updatedMethodType=localPropDef.methodType.withTypeInfoFromSuper(superMethodType,getsTypeInfoFromParentMethod(localPropDef));
+    DeclaredFunctionType localMethodType=localPropDef.methodType;
+    boolean getsTypeFromParent=getsTypeInfoFromParentMethod(localPropDef);
+    if (getsTypeFromParent && localMethodType.getMaxArity() > superMethodType.getMaxArity()) {
+      warnings.add(JSError.make(localPropDef.defSite,INVALID_PROP_OVERRIDE,pname,superMethodType.toFunctionType().toString(),localMethodType.toFunctionType().toString()));
+    }
+    DeclaredFunctionType updatedMethodType=localMethodType.withTypeInfoFromSuper(superMethodType,getsTypeFromParent);
     localPropDef.updateMethodType(updatedMethodType);
     propTypesToProcess.put(pname,commonTypes.fromFunctionType(updatedMethodType.toFunctionType()));
   }
