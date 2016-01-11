@@ -7,4 +7,6 @@
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @type {?boolean} */","Foo.prototype.prop = true;","function f(/** !Foo */ x) {","  var /** boolean */ b = x.prop || true;","}"));
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {?boolean} */","  this.prop = true;","}","function f(/** !Foo */ x) {","  var /** boolean */ b = x.prop || true;","}"));
   typeCheck(LINE_JOINER.join("function f(x) {","  if (x.call) {","    x.call(null);","  } else {","    x();","  }","}"));
+  typeCheck(LINE_JOINER.join("function f(/** !Object */ x) {","  if (x.prop === undefined) {}","}"));
+  typeCheck(LINE_JOINER.join("function f(/** !Object */ x) {","  if (x.prop !== undefined) {","    x.prop();","  }","}"));
 }
