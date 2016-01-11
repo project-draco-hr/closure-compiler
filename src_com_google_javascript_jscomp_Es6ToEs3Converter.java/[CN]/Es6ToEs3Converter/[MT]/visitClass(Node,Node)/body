@@ -32,7 +32,6 @@
       visitClassMember(member,metadata);
     }
   }
-  addDeclarations(metadata);
   if (metadata.definePropertiesObjForPrototype.hasChildren()) {
     Node definePropsCall=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"Object.defineProperties"),NodeUtil.newQName(compiler,metadata.fullClassName + ".prototype"),metadata.definePropertiesObjForPrototype));
     definePropsCall.useSourceInfoIfMissingFromForTree(classNode);
@@ -49,6 +48,7 @@
   JSDocInfo classJSDoc=NodeUtil.getBestJSDocInfo(classNode);
   JSDocInfoBuilder newInfo=JSDocInfoBuilder.maybeCopyFrom(classJSDoc);
   newInfo.recordConstructor();
+  Node enclosingStatement=NodeUtil.getEnclosingStatement(classNode);
   if (metadata.hasSuperClass()) {
     String superClassString=metadata.superClassNameNode.getQualifiedName();
     if (newInfo.isInterfaceRecorded()) {
@@ -60,12 +60,12 @@
         Node inheritsCall=IR.exprResult(inherits);
         compiler.needsEs6Runtime=true;
         inheritsCall.useSourceInfoIfMissingFromForTree(classNode);
-        Node enclosingStatement=NodeUtil.getEnclosingStatement(classNode);
         enclosingStatement.getParent().addChildAfter(inheritsCall,enclosingStatement);
       }
       newInfo.recordBaseType(new JSTypeExpression(new Node(Token.BANG,IR.string(superClassString)),metadata.superClassNameNode.getSourceFileName()));
     }
   }
+  addTypeDeclarations(metadata,enclosingStatement);
   if (!newInfo.isUnrestrictedRecorded() && !newInfo.isDictRecorded() && !newInfo.isStructRecorded()) {
     newInfo.recordStruct();
   }

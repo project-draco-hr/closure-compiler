@@ -3,18 +3,24 @@
     String declaredMember=entry.getKey();
     Node declaration=IR.getprop(NodeUtil.newQName(compiler,metadata.fullClassName + ".prototype"),IR.string(declaredMember));
     declaration.setJSDocInfo(entry.getValue());
-    metadata.insertNodeAndAdvance(IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(metadata.classNameNode));
+    declaration=IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(metadata.classNameNode);
+    insertionPoint.getParent().addChildAfter(declaration,insertionPoint);
+    insertionPoint=declaration;
   }
   for (  Map.Entry<String,JSDocInfo> entry : metadata.classMembersToDeclare.entrySet()) {
     String declaredMember=entry.getKey();
     Node declaration=IR.getprop(NodeUtil.newQName(compiler,metadata.fullClassName),IR.string(declaredMember));
     declaration.setJSDocInfo(entry.getValue());
-    metadata.insertNodeAndAdvance(IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(metadata.classNameNode));
+    declaration=IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(metadata.classNameNode);
+    insertionPoint.getParent().addChildAfter(declaration,insertionPoint);
+    insertionPoint=declaration;
   }
   for (  Map.Entry<String,JSDocInfo> entry : metadata.prototypeComputedPropsToDeclare.entrySet()) {
     String declaredMember=entry.getKey();
     Node declaration=IR.getelem(NodeUtil.newQName(compiler,metadata.fullClassName + ".prototype"),NodeUtil.newQName(compiler,declaredMember));
     declaration.setJSDocInfo(entry.getValue());
-    metadata.insertNodeAndAdvance(IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(metadata.classNameNode));
+    declaration=IR.exprResult(declaration).useSourceInfoIfMissingFromForTree(metadata.classNameNode);
+    insertionPoint.getParent().addChildAfter(declaration,insertionPoint);
+    insertionPoint=declaration;
   }
 }
