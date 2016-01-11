@@ -1,28 +1,46 @@
 {
-  if (jsDoc != null && jsDoc.isOverride()) {
+  if (jsDoc.isOverride()) {
     return;
   }
-  List<String> paramsFromJsDoc=jsDoc == null ? ImmutableList.<String>of() : ImmutableList.<String>copyOf(jsDoc.getParameterNames());
+  List<String> paramsFromJsDoc=ImmutableList.copyOf(jsDoc.getParameterNames());
   if (paramsFromJsDoc.isEmpty()) {
-    checkInlineParams(t,function);
+    return;
   }
+  Node paramList=function.getSecondChild();
+  if (paramsFromJsDoc.size() != paramList.getChildCount()) {
+    t.report(paramList,WRONG_NUMBER_OF_PARAMS);
+    return;
+  }
+  Node param=paramList.getFirstChild();
+  for (int i=0; i < paramsFromJsDoc.size(); i++) {
+    if (param.getJSDocInfo() != null) {
+      t.report(param,MIXED_PARAM_JSDOC_STYLES);
+    }
+    boolean nameOptional;
+    Node nodeToCheck=param;
+    if (param.isDefaultValue()) {
+      nodeToCheck=param.getFirstChild();
+      nameOptional=true;
+    }
+ else     if (param.isName()) {
+      nameOptional=param.getString().startsWith("opt_");
+    }
  else {
-    Node paramList=NodeUtil.getFunctionParameters(function);
-    if (paramsFromJsDoc.size() != paramList.getChildCount()) {
-      t.report(paramList,WRONG_NUMBER_OF_PARAMS);
+      Preconditions.checkState(param.isDestructuringPattern() || param.isRest(),param);
+      nameOptional=false;
+    }
+    if (nodeToCheck.isName() && !nodeToCheck.getString().equals(paramsFromJsDoc.get(i))) {
+      t.report(nodeToCheck,INCORRECT_PARAM_NAME);
       return;
     }
-    Node param=paramList.getFirstChild();
-    for (int i=0; i < paramsFromJsDoc.size(); i++) {
-      if (param.getJSDocInfo() != null) {
-        t.report(param,MIXED_PARAM_JSDOC_STYLES);
-      }
-      String name=paramsFromJsDoc.get(i);
-      JSTypeExpression paramType=jsDoc.getParameterType(name);
-      if (checkParam(t,param,name,paramType)) {
-        return;
-      }
-      param=param.getNext();
+    JSTypeExpression paramType=jsDoc.getParameterType(paramsFromJsDoc.get(i));
+    boolean jsDocOptional=paramType != null && paramType.isOptionalArg();
+    if (nameOptional && !jsDocOptional) {
+      t.report(nodeToCheck,OPTIONAL_PARAM_NOT_MARKED_OPTIONAL,nodeToCheck.getString());
     }
+ else     if (!nameOptional && jsDocOptional) {
+      t.report(nodeToCheck,OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME,nodeToCheck.getString());
+    }
+    param=param.getNext();
   }
 }
