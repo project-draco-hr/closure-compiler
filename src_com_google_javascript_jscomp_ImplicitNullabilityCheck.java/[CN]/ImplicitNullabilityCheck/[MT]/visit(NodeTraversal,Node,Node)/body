@@ -4,10 +4,19 @@
     return;
   }
   final TypeIRegistry registry=compiler.getTypeIRegistry();
+  final List<Node> thrownTypes=transform(info.getThrownTypes(),new Function<JSTypeExpression,Node>(){
+    public Node apply(    JSTypeExpression expr){
+      return expr.getRoot();
+    }
+  }
+);
   for (  Node typeRoot : info.getTypeNodes()) {
     NodeUtil.visitPreOrder(typeRoot,new NodeUtil.Visitor(){
       public void visit(      Node node){
         if (!node.isString()) {
+          return;
+        }
+        if (thrownTypes.contains(node)) {
           return;
         }
         Node parent=node.getParent();
