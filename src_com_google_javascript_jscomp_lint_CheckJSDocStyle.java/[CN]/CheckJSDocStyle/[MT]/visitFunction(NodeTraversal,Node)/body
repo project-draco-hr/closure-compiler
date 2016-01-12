@@ -1,11 +1,10 @@
 {
   JSDocInfo jsDoc=NodeUtil.getBestJSDocInfo(function);
-  if (jsDoc == null) {
-    return;
+  if (jsDoc != null || hasAnyInlineJsDoc(function)) {
+    checkParams(t,function,jsDoc);
   }
-  checkParams(t,function,jsDoc);
   String name=NodeUtil.getName(function);
-  if (name != null && compiler.getCodingConvention().isPrivate(name) && !jsDoc.getVisibility().equals(Visibility.PRIVATE)) {
+  if (jsDoc != null && name != null && compiler.getCodingConvention().isPrivate(name) && !jsDoc.getVisibility().equals(Visibility.PRIVATE)) {
     t.report(function,MUST_BE_PRIVATE,name);
   }
 }
