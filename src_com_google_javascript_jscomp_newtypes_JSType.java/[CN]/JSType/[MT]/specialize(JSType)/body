@@ -1,31 +1,10 @@
 {
-  if (other.isTop() || other.isUnknown() || this == other) {
-    return this;
+  JSType t=specializeHelper(other);
+  if (t.isBottom() && (isLoose() || other.isLoose())) {
+    t=autobox().specializeHelper(other.autobox());
+    if (!t.isBottom()) {
+      return this;
+    }
   }
-  if (other.hasTruthyMask()) {
-    return makeTruthy();
-  }
-  if (hasTruthyMask()) {
-    return other.makeTruthy();
-  }
-  if (other.hasFalsyMask()) {
-    return makeFalsy();
-  }
-  Preconditions.checkState(!hasFalsyMask());
-  if (this.isTop() || this.isUnknown()) {
-    return other;
-  }
-  int newMask=getMask() & other.getMask();
-  String newTypevar;
-  if (Objects.equals(getTypeVar(),other.getTypeVar())) {
-    newTypevar=getTypeVar();
-  }
- else   if (getTypeVar() != null && other.getTypeVar() == null) {
-    return other;
-  }
- else {
-    newTypevar=null;
-    newMask&=~TYPEVAR_MASK;
-  }
-  return meetEnums(newMask,getMask() | other.getMask(),ObjectType.specializeSet(getObjs(),other.getObjs()),newTypevar,getObjs(),other.getObjs(),getEnums(),other.getEnums());
+  return t;
 }
