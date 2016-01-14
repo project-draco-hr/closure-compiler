@@ -1,0 +1,12 @@
+{
+  if (dependencyMode == CompilerOptions.DependencyMode.STRICT) {
+    if (entryPoints.isEmpty()) {
+      throw new FlagUsageException("When dependency_mode=STRICT, you must " + "specify at least one entry_point");
+    }
+    return new DependencyOptions().setDependencyPruning(true).setDependencySorting(true).setMoocherDropping(true).setEntryPoints(entryPoints);
+  }
+ else   if (dependencyMode == CompilerOptions.DependencyMode.LOOSE || !entryPoints.isEmpty()) {
+    return new DependencyOptions().setDependencyPruning(true).setDependencySorting(true).setMoocherDropping(false).setEntryPoints(entryPoints);
+  }
+  return null;
+}
