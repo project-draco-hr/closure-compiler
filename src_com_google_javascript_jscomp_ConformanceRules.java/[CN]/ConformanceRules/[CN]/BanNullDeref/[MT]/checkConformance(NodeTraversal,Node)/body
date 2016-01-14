@@ -1,18 +1,18 @@
 {
-  boolean valid;
+  boolean violation;
 switch (n.getType()) {
 case Token.GETPROP:
 case Token.GETELEM:
 case Token.NEW:
 case Token.CALL:
-    valid=maybeValidDerefType(n.getFirstChild());
+    violation=report(n.getFirstChild());
   break;
 case Token.IN:
-valid=maybeValidDerefType(n.getLastChild());
+violation=report(n.getLastChild());
 break;
 default :
-valid=true;
+violation=false;
 break;
 }
-return valid ? ConformanceResult.CONFORMANCE : ConformanceResult.VIOLATION;
+return violation ? ConformanceResult.VIOLATION : ConformanceResult.CONFORMANCE;
 }

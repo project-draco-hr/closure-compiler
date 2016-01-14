@@ -1,0 +1,7 @@
+{
+  configuration=config(rule("BanNullDeref"),"My rule message");
+  final String code="/** @param {?String} n */ function f(n) { alert(n.prop); }";
+  testSame(EXTERNS,code,CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
+  configuration=config(rule("BanNullDeref"),"My rule message",value("String"));
+  testSame(EXTERNS,code,null);
+}
