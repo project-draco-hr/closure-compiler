@@ -1,11 +1,17 @@
 {
   Scope scope=t.getScope();
+  if (scope.isFunctionBlockScope()) {
+    varsInFunctionBody.clear();
+    for (Iterator<Var> it=scope.getVars(); it.hasNext(); ) {
+      varsInFunctionBody.add(it.next().name);
+    }
+  }
   for (Iterator<Var> it=scope.getVars(); it.hasNext(); ) {
     Var v=it.next();
     ReferenceCollection referenceCollection=referenceMap.getReferences(v);
     if (referenceCollection != null) {
       if (scope.getRootNode().isFunction() && v.isDefaultParam()) {
-        checkDefaultParam(v,scope);
+        checkDefaultParam(v,scope,varsInFunctionBody);
       }
       if (scope.getRootNode().isFunction()) {
         checkShadowParam(v,scope,referenceCollection.references);
