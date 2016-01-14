@@ -1,6 +1,6 @@
 {
   setLanguage(CompilerOptions.LanguageMode.ECMASCRIPT6,CompilerOptions.LanguageMode.ECMASCRIPT5);
   setFilename("test");
-  testModules("function foo() {}" + "module.exports = {" + "  prop: 'value',"+ "  foo"+ "}","goog.provide('module$test');" + "function foo$$module$test() {}" + "module$test = { prop: 'value', foo }");
-  testModules("module.exports = {\n" + "  prop: 'value',\n" + "  foo() {\n"+ "    console.log('bar');\n"+ "  }\n"+ "};","goog.provide('module$test');" + "module$test = { prop: 'value', foo() { console.log('bar'); }}");
+  testModules(LINE_JOINER.join("function foo() {}","module.exports = {","  prop: 'value',","  foo","};"),LINE_JOINER.join("goog.provide('module$test');","function foo$$module$test() {}","/** @const */ module$test = {","  /** @const */ prop: 'value',","  /** @const */ foo","};"));
+  testModules(LINE_JOINER.join("module.exports = {","  prop: 'value',","  foo() {","    console.log('bar');","  }","};"),LINE_JOINER.join("goog.provide('module$test');","/** @const */ module$test = {","  /** @const */ prop: 'value',","  /** @const */ foo() {","    console.log('bar');","  }","};"));
 }
