@@ -1,44 +1,64 @@
 {
   if (hasOneTopLevelModuleExportAssign()) {
     Node ref=moduleExportRefs.get(0);
-    Node newName=IR.name(moduleName);
+    Node newName=IR.name(moduleName).srcref(ref);
     newName.putProp(Node.ORIGINALNAME_PROP,ref.getQualifiedName());
-    Node rhsValue=ref.getNext().detachFromParent();
-    Node newExprResult=IR.exprResult(IR.assign(newName,rhsValue).useSourceInfoIfMissingFromForTree(ref.getParent()));
+    Node rhsValue=ref.getNext();
     if (rhsValue.isObjectLit()) {
-      Scope globalScope=SyntacticScopeCreator.makeUntyped(compiler).createScope(script,null);
-      for (Node key=rhsValue.getFirstChild(); key != null; key=key.getNext()) {
-        if (key.getJSDocInfo() == null && (key.getFirstChild() == null || key.getFirstChild().isName())) {
-          String aliasedVarName=key.getFirstChild() == null ? key.getString() : key.getFirstChild().getString();
-          Var aliasedVar=globalScope.getVar(aliasedVarName);
-          JSDocInfo info=aliasedVar == null ? null : aliasedVar.getJSDocInfo();
-          if (info != null && info.getVisibility() != JSDocInfo.Visibility.PRIVATE) {
-            key.setJSDocInfo(info);
-          }
-        }
-      }
+      addConstToObjLitKeys(rhsValue);
     }
     Node assign=ref.getParent();
-    Node exprResult=assign.getParent();
-    script.replaceChild(exprResult,newExprResult);
+    assign.replaceChild(ref,newName);
+    JSDocInfoBuilder builder=new JSDocInfoBuilder(true);
+    builder.recordConstancy();
+    JSDocInfo info=builder.build();
+    assign.setJSDocInfo(info);
     return;
   }
-  if (!hasExportLValues()) {
-    for (    Node ref : Iterables.concat(moduleExportRefs,exportRefs)) {
-      Node newRef=IR.name(moduleName).useSourceInfoIfMissingFrom(ref);
-      newRef.putProp(Node.ORIGINALNAME_PROP,ref.getQualifiedName());
-      ref.getParent().replaceChild(ref,newRef);
-    }
-    return;
+  Iterable<Node> exports;
+  boolean hasLValues=hasExportLValues();
+  if (hasLValues) {
+    exports=moduleExportRefs;
+  }
+ else {
+    exports=Iterables.concat(moduleExportRefs,exportRefs);
   }
   boolean declaredModuleExports=false;
-  for (  Node ref : moduleExportRefs) {
+  for (  Node ref : exports) {
     if (ref.getParent().isAssign() && !ref.getParent().getParent().isExprResult() && !declaredModuleExports) {
       script.addChildToFront(IR.var(IR.name(moduleName)).useSourceInfoIfMissingFromForTree(ref));
       declaredModuleExports=true;
     }
-    Node newRef=IR.name(moduleName).useSourceInfoIfMissingFrom(ref);
-    ref.getParent().replaceChild(ref,newRef);
+    String qName=null;
+    if (ref.isQualifiedName()) {
+      Node baseName=getBaseQualifiedNameNode(ref);
+      if (baseName != null) {
+        qName=baseName.getQualifiedName();
+        if (qName.startsWith("module.exports.")) {
+          qName=qName.substring("module.exports.".length());
+        }
+ else {
+          qName=qName.substring("exports.".length());
+        }
+      }
+    }
+    Node rhsValue=ref.getNext();
+    Node newName=IR.name(moduleName).srcref(ref);
+    newName.putProp(Node.ORIGINALNAME_PROP,qName);
+    Node parent=ref.getParent();
+    parent.replaceChild(ref,newName);
+    if (parent.isAssign() && qName != null && propertyExportRefCount.count(qName) == 1) {
+      if (rhsValue != null && rhsValue.isObjectLit()) {
+        addConstToObjLitKeys(rhsValue);
+      }
+      JSDocInfoBuilder builder=new JSDocInfoBuilder(true);
+      builder.recordConstancy();
+      JSDocInfo info=builder.build();
+      parent.setJSDocInfo(info);
+    }
+  }
+  if (!hasLValues) {
+    return;
   }
   if (!exportRefs.isEmpty()) {
     String aliasName="exports$$" + moduleName;
