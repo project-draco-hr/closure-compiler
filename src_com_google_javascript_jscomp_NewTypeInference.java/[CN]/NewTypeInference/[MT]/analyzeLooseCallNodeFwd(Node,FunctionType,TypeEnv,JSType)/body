@@ -12,5 +12,6 @@
   JSType looseRetType=requiredType.isUnknown() ? JSType.BOTTOM : requiredType;
   JSType looseFunctionType=commonTypes.fromFunctionType(builder.addRetType(looseRetType).addLoose().buildFunction());
   EnvTypePair calleePair=analyzeExprFwd(callee,tmpEnv,commonTypes.topFunction(),looseFunctionType);
-  return new EnvTypePair(calleePair.env,calleeType.getReturnType().isNonLooseSubtypeOf(requiredType) ? calleeType.getReturnType() : requiredType);
+  JSType retType=calleeType.getReturnType();
+  return new EnvTypePair(calleePair.env,!retType.isBottom() && retType.isNonLooseSubtypeOf(requiredType) ? retType : requiredType);
 }

@@ -4,14 +4,13 @@
     return other;
   }
   NominalType resultNomType=NominalType.pickSubclass(this.nominalType,other.nominalType);
-  ObjectKind ok=ObjectKind.meet(this.objectKind,other.objectKind);
   if (resultNomType != null && resultNomType.isClassy()) {
     Preconditions.checkState(this.fn == null && other.fn == null);
     PersistentMap<String,Property> newProps=meetPropsHelper(true,resultNomType,this.props,other.props);
     if (newProps == BOTTOM_MAP) {
       return BOTTOM_OBJECT;
     }
-    return new ObjectType(resultNomType,newProps,null,false,ok);
+    return new ObjectType(resultNomType,newProps,null,false,this.objectKind);
   }
   FunctionType thisFn=this.fn;
   boolean isLoose=this.isLoose;
@@ -27,5 +26,5 @@
   if (!FunctionType.isInhabitable(newFn)) {
     return BOTTOM_OBJECT;
   }
-  return new ObjectType(resultNomType,newProps,newFn,isLoose,ok);
+  return new ObjectType(resultNomType,newProps,newFn,isLoose,this.objectKind);
 }

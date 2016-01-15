@@ -1,0 +1,11 @@
+{
+  PersistentMap<String,Property> newProps=props;
+  for (  Map.Entry<String,Property> entry : props.entrySet()) {
+    JSType propType=entry.getValue().getType();
+    ObjectType objType=propType.getObjTypeIfSingletonObj();
+    if (objType != null && !objType.getNominalType().isClassy() && !objType.isLoose()) {
+      newProps=newProps.with(entry.getKey(),Property.make(propType.withLoose(),null));
+    }
+  }
+  return newProps;
+}

@@ -1,0 +1,4 @@
+{
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {number} */ this.prop = 123;","}","function f(x) {","  x.prop = 234;","  return x;","}","/**"," * @template T"," * @param {T} x"," * @param {T} y"," * @return {T}"," */","function g(x, y) { return x; }","var /** !Foo */ obj = g(new Foo, f(new Foo));"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {number} */ this.prop = 123;","}","/** @constructor */","function Bar() {","  /** @type {number} */ this.prop = 456;","}","function f(x) {","  x.prop = 234;","  return x;","}","/**"," * @template T"," * @param {T} x"," * @param {T} y"," * @return {T}"," */","function g(x, y) { return x; }","var /** !Bar */ obj = g(new Foo, f(new Foo));"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+}
