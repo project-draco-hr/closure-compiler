@@ -1,6 +1,10 @@
 {
   String name=nameNode.getString();
   boolean isDefinedLocally=this.currentScope.isDefinedLocally(name,false);
+  if (isCtorDefinedByCall(nameNode)) {
+    computeFnDeclaredType(NodeUtil.getBestJSDocInfo(nameNode),name,nameNode.getFirstChild(),null,this.currentScope);
+    return;
+  }
   if (isDefinedLocally && this.currentScope.isNamespace(name)) {
     return;
   }

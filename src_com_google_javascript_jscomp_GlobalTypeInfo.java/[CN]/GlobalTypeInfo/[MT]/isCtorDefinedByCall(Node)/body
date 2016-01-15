@@ -1,0 +1,8 @@
+{
+  if (!qnameNode.isName() && !qnameNode.isGetProp()) {
+    return false;
+  }
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(qnameNode);
+  Node rhs=NodeUtil.getRValueOfLValue(qnameNode);
+  return jsdoc != null && jsdoc.isConstructor() && rhs != null && rhs.isCall();
+}

@@ -1,14 +1,23 @@
 {
-  Preconditions.checkArgument(declNode.isFunction() || declNode.isGetProp());
+  Preconditions.checkArgument(declNode.isFunction() || declNode.isGetProp() || declNode.isCall());
   if (fnDoc == null && !NodeUtil.functionHasInlineJsdocs(declNode)) {
     DeclaredFunctionType t=getDeclaredFunctionTypeFromContext(functionName,declNode,parentScope);
     if (t != null) {
       return t;
     }
   }
-  RawNominalType ctorType=declNode.isFunction() ? nominaltypesByNode.get(declNode) : null;
+  RawNominalType ctorType=!declNode.isGetProp() ? nominaltypesByNode.get(declNode) : null;
   FunctionAndSlotType result=typeParser.getFunctionType(fnDoc,functionName,declNode,ctorType,ownerType,parentScope);
-  Node qnameNode=declNode.isGetProp() ? declNode : NodeUtil.getNameNode(declNode);
+  Node qnameNode;
+  if (declNode.isGetProp()) {
+    qnameNode=declNode;
+  }
+ else   if (declNode.isFunction()) {
+    qnameNode=NodeUtil.getNameNode(declNode);
+  }
+ else {
+    qnameNode=NodeUtil.getBestLValue(declNode);
+  }
   if (result.slotType != null && qnameNode != null && qnameNode.isName()) {
     parentScope.addLocal(qnameNode.getString(),result.slotType,false,qnameNode.isFromExterns());
   }

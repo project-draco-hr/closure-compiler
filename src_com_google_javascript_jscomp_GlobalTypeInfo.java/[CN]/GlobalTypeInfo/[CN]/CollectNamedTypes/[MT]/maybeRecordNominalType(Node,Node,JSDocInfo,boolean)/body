@@ -3,31 +3,31 @@
   if (fnDoc != null && fnDoc.isConstructorOrInterface()) {
     QualifiedName qname=QualifiedName.fromNode(nameNode);
     if (qname == null) {
-      warnings.add(JSError.make(fn,ANONYMOUS_NOMINAL_TYPE));
+      warnings.add(JSError.make(defSite,ANONYMOUS_NOMINAL_TYPE));
       return;
     }
     ImmutableList<String> typeParameters=fnDoc.getTemplateTypeNames();
     RawNominalType rawNominalType;
     if (fnDoc.isInterface()) {
-      rawNominalType=RawNominalType.makeInterface(fn,qname,typeParameters);
+      rawNominalType=RawNominalType.makeInterface(defSite,qname,typeParameters);
     }
  else     if (fnDoc.makesStructs()) {
-      rawNominalType=RawNominalType.makeStructClass(fn,qname,typeParameters);
+      rawNominalType=RawNominalType.makeStructClass(defSite,qname,typeParameters);
     }
  else     if (fnDoc.makesDicts()) {
-      rawNominalType=RawNominalType.makeDictClass(fn,qname,typeParameters);
+      rawNominalType=RawNominalType.makeDictClass(defSite,qname,typeParameters);
     }
  else {
-      rawNominalType=RawNominalType.makeUnrestrictedClass(fn,qname,typeParameters);
+      rawNominalType=RawNominalType.makeUnrestrictedClass(defSite,qname,typeParameters);
     }
-    nominaltypesByNode.put(fn,rawNominalType);
+    nominaltypesByNode.put(defSite,rawNominalType);
     if (isRedeclaration) {
       return;
     }
     Node firstChild=nameNode.getFirstChild();
     if (nameNode.isName() || currentScope.isNamespace(firstChild) || mayCreateFunctionNamespace(firstChild)|| mayCreateWindowNamespace(firstChild)) {
       if (nameNode.isGetProp()) {
-        fn.getParent().getFirstChild().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+        defSite.getParent().getFirstChild().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
       }
  else       if (currentScope.isTopLevel()) {
         maybeRecordBuiltinType(nameNode.getString(),rawNominalType);
@@ -37,10 +37,10 @@
   }
  else   if (fnDoc != null) {
     if (fnDoc.makesStructs()) {
-      warnings.add(JSError.make(fn,STRUCTDICT_WITHOUT_CTOR,"@struct"));
+      warnings.add(JSError.make(defSite,STRUCTDICT_WITHOUT_CTOR,"@struct"));
     }
  else     if (fnDoc.makesDicts()) {
-      warnings.add(JSError.make(fn,STRUCTDICT_WITHOUT_CTOR,"@dict"));
+      warnings.add(JSError.make(defSite,STRUCTDICT_WITHOUT_CTOR,"@dict"));
     }
   }
 }

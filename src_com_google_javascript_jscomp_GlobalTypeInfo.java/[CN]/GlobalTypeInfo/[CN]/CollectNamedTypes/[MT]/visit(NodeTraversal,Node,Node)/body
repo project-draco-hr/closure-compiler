@@ -27,6 +27,9 @@ case Token.VAR:
  else     if (this.currentScope.isFunction() && !this.currentScope.isDefinedLocally(varName,false)) {
       this.currentScope.addLocal(varName,JSType.UNKNOWN,false,false);
     }
+ else     if (isCtorDefinedByCall(nameNode)) {
+      visitNewCtorDefinedByCall(nameNode);
+    }
     break;
   }
 case Token.EXPR_RESULT:
@@ -34,13 +37,18 @@ case Token.EXPR_RESULT:
   Node expr=n.getFirstChild();
 switch (expr.getType()) {
 case Token.ASSIGN:
-    if (!expr.getFirstChild().isGetProp()) {
-      return;
-    }
-  expr=expr.getFirstChild();
+    Node lhs=expr.getFirstChild();
+  if (isCtorDefinedByCall(lhs)) {
+    visitNewCtorDefinedByCall(lhs);
+    return;
+  }
+if (!lhs.isGetProp()) {
+  return;
+}
+expr=lhs;
 case Token.GETPROP:
 if (isPrototypeProperty(expr) || NodeUtil.referencesThis(expr) || !expr.isQualifiedName()) {
-  return;
+return;
 }
 processQualifiedDefinition(expr);
 break;

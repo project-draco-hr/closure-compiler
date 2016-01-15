@@ -1,0 +1,6 @@
+{
+  typeCheckCustomExterns(LINE_JOINER.join(DEFAULT_EXTERNS,"var TestCase;"),LINE_JOINER.join("/** @constructor */","var Foo = TestCase('asdf');","Foo.prototype.method = function() {","  /** @type {number} */","  this.prop = 123;","}","var /** string */ s = (new Foo).prop;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheckCustomExterns(LINE_JOINER.join(DEFAULT_EXTERNS,"var TestCase;"),LINE_JOINER.join("/** @constructor */","var Foo = TestCase('asdf');","function f() { var /** !Foo */ obj = 123; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheckCustomExterns(LINE_JOINER.join(DEFAULT_EXTERNS,"var TestCase;"),LINE_JOINER.join("/** @const */ var ns = {}","/** @constructor */","ns.Foo = TestCase('asdf');","ns.Foo.prototype.method = function() {","  /** @type {number} */","  this.prop = 123;","}","var /** string */ s = (new ns.Foo).prop;"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheckCustomExterns(LINE_JOINER.join(DEFAULT_EXTERNS,"var TestCase;"),LINE_JOINER.join("/** @const */ var ns = {}","/** @constructor */","ns.Foo = TestCase('asdf');","function f() { var /** !ns.Foo */ obj = 123; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+}
