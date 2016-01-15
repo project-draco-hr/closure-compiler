@@ -66,22 +66,13 @@
     checks.add(objectPropertyStringPreprocess);
   }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
-    checks.add(es6RewriteArrowFunction);
-    checks.add(es6RenameVariablesInParamLists);
-    checks.add(es6SplitVariableDeclarations);
-    checks.add(es6RewriteDestructuring);
+    TranspilationPasses.addEs6EarlyPasses(checks);
   }
   if (options.dartPass && !options.getLanguageOut().isEs6OrHigher()) {
     checks.add(dartSuperAccessorsPass);
   }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
-    checks.add(es6ConvertSuper);
-    checks.add(convertEs6ToEs3);
-    checks.add(rewriteBlockScopedDeclaration);
-    checks.add(rewriteGenerators);
-    if (!options.getLanguageOut().isEs6OrHigher() && options.rewritePolyfills) {
-      checks.add(rewritePolyfills);
-    }
+    TranspilationPasses.addEs6LatePasses(checks);
     checks.add(markTranspilationDone);
   }
   if (options.raiseToEs6Typed()) {
