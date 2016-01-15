@@ -2,8 +2,12 @@
   if (files.isEmpty()) {
     return ImmutableList.of(SourceFile.fromCode("/dev/null",""));
   }
+  List<FlagEntry<JsSourceType>> externFiles=new ArrayList<>();
+  for (  String file : files) {
+    externFiles.add(new FlagEntry<JsSourceType>(JsSourceType.EXTERN,file));
+  }
   try {
-    return createInputs(files,false);
+    return createInputs(externFiles,false);
   }
  catch (  FlagUsageException e) {
     throw new FlagUsageException("Bad --externs flag. " + e.getMessage());

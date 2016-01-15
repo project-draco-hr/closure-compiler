@@ -1,0 +1,40 @@
+{
+  List<SourceFile> inputs=new ArrayList<>(files.size());
+  boolean usingStdin=false;
+  for (  FlagEntry<JsSourceType> file : files) {
+    String filename=file.value;
+    if (file.flag == JsSourceType.JS_ZIP) {
+      if (!"-".equals(filename)) {
+        List<SourceFile> newFiles=SourceFile.fromZipFile(filename,inputCharset);
+        inputs.addAll(newFiles);
+      }
+    }
+ else     if (!"-".equals(filename)) {
+      SourceFile newFile=SourceFile.fromFile(filename,inputCharset);
+      inputs.add(newFile);
+    }
+ else {
+      if (!allowStdIn) {
+        throw new FlagUsageException("Can't specify stdin.");
+      }
+      if (usingStdin) {
+        throw new FlagUsageException("Can't specify stdin twice.");
+      }
+      if (!config.outputManifests.isEmpty()) {
+        throw new FlagUsageException("Manifest files cannot be generated " + "when the input is from stdin.");
+      }
+      if (!config.outputBundles.isEmpty()) {
+        throw new FlagUsageException("Bundle files cannot be generated " + "when the input is from stdin.");
+      }
+      this.err.println(WAITING_FOR_INPUT_WARNING);
+      inputs.add(SourceFile.fromInputStream("stdin",this.in,inputCharset));
+      usingStdin=true;
+    }
+  }
+  if (jsonFiles != null) {
+    for (    JsonFileSpec jsonFile : jsonFiles) {
+      inputs.add(SourceFile.fromCode(jsonFile.getPath(),jsonFile.getSrc()));
+    }
+  }
+  return inputs;
+}

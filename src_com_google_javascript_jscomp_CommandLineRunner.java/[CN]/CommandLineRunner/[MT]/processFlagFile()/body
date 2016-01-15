@@ -47,10 +47,13 @@
   }
   flags.flagFile="";
   tokens=processArgs(tokens.toArray(new String[tokens.size()]));
-  List<GuardLevel> previous=new ArrayList<>(Flags.guardLevels);
+  List<FlagEntry<CheckLevel>> previousGuardLevels=new ArrayList<>(Flags.guardLevels);
+  List<FlagEntry<JsSourceType>> previousMixedJsSources=new ArrayList<>(Flags.mixedJsSources);
   Flags.guardLevels.clear();
+  Flags.mixedJsSources.clear();
   flags.parse(tokens);
-  Flags.guardLevels.addAll(previous);
+  Flags.guardLevels.addAll(previousGuardLevels);
+  Flags.mixedJsSources.addAll(previousMixedJsSources);
   if (!flags.flagFile.isEmpty()) {
     reportError("ERROR - Arguments in the file cannot contain " + "--flagfile option.");
   }
