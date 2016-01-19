@@ -12,8 +12,12 @@
     return makeFalsy();
   }
   Preconditions.checkState(!hasFalsyMask());
-  if (this.isTop() || this.isUnknown()) {
+  if (this.isTop()) {
     return other;
+  }
+  if (this.isUnknown()) {
+    NominalType otherNt=other.getNominalTypeIfSingletonObj();
+    return otherNt != null && otherNt.isBuiltinObject() ? other.withLoose() : other;
   }
   int newMask=getMask() & other.getMask();
   String newTypevar;

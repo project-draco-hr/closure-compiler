@@ -12,7 +12,7 @@
     return new EnvTypePair(outEnv,inferredType);
   }
   JSType preciseType=inferredType.specialize(requiredType);
-  if (currentScope.isUndeclaredFormal(varName) && preciseType.hasNonScalar()) {
+  if ((currentScope.isUndeclaredFormal(varName) || currentScope.isUndeclaredOuterVar(varName)) && preciseType.hasNonScalar()) {
     preciseType=preciseType.withLoose();
   }
   println(varName,"'s preciseType: ",preciseType);

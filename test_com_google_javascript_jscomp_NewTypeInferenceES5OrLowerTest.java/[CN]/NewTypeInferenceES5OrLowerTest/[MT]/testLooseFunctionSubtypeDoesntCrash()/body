@@ -1,4 +1,5 @@
 {
   typeCheck(LINE_JOINER.join("/** @constructor */","var Foo = function() {};","/** @param {function(!Foo)} fooFun */","var reqFooFun = function(fooFun) {};","/** @type {function(!Foo)} */","var declaredFooFun;","function f(opt_fooFun) {","  reqFooFun(opt_fooFun);","  var fooFun = opt_fooFun || declaredFooFun;","  reqFooFun(fooFun);","};"));
   typeCheck(LINE_JOINER.join("var /** @type {function(number)} */ f;","f = (function(x) {","  x(1, 2);","  return x;","})(function(x, y) {});"));
+  typeCheck(LINE_JOINER.join("/**"," * @template T,U"," * @param {function(T,U):T} x"," */","function f(x) {}","function g(arr, fun) {","  arr.push(fun());","  return arr;","}","f(g);"));
 }
