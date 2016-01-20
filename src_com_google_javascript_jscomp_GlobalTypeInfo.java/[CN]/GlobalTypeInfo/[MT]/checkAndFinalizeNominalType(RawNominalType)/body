@@ -59,10 +59,14 @@
     rawType.addProtoProperty(pname,null,resultType,false);
   }
   for (  String pname : nonInheritedPropNames) {
-    Node propDefsite=propertyDefs.get(rawType,pname).defSite;
-    JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(propDefsite);
-    if (jsdoc != null && jsdoc.isOverride()) {
-      warnings.add(JSError.make(propDefsite,UNKNOWN_OVERRIDE,pname,rawType.getName()));
+    PropertyDef propDef=propertyDefs.get(rawType,pname);
+    Preconditions.checkState(propDef != null || rawType.getName().equals(WINDOW_CLASS));
+    if (propDef != null) {
+      Node propDefsite=propDef.defSite;
+      JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(propDefsite);
+      if (jsdoc != null && jsdoc.isOverride()) {
+        warnings.add(JSError.make(propDefsite,UNKNOWN_OVERRIDE,pname,rawType.getName()));
+      }
     }
   }
   rawType.finalize();

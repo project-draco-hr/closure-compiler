@@ -2,17 +2,17 @@
   Preconditions.checkNotNull(warnings,"Cannot rerun GlobalTypeInfo.process");
   Preconditions.checkArgument(externs == null || externs.isSyntheticBlock());
   Preconditions.checkArgument(root.isSyntheticBlock());
-  globalScope=new NTIScope(root,null,ImmutableList.<String>of(),commonTypes);
-  globalScope.addUnknownTypeNames(this.unknownTypeNames);
+  this.globalScope=new NTIScope(root,null,ImmutableList.<String>of(),commonTypes);
+  this.globalScope.addUnknownTypeNames(this.unknownTypeNames);
   this.unknownTypeNames=null;
-  scopes.add(globalScope);
-  CollectNamedTypes rootCnt=new CollectNamedTypes(globalScope);
+  scopes.add(this.globalScope);
+  CollectNamedTypes rootCnt=new CollectNamedTypes(this.globalScope);
   if (externs != null) {
     NodeTraversal.traverseEs6(compiler,externs,rootCnt);
   }
   NodeTraversal.traverseEs6(compiler,root,rootCnt);
-  globalScope.resolveTypedefs(typeParser);
-  globalScope.resolveEnums(typeParser);
+  this.globalScope.resolveTypedefs(typeParser);
+  this.globalScope.resolveEnums(typeParser);
   for (int i=1; i < scopes.size(); i++) {
     NTIScope s=scopes.get(i);
     CollectNamedTypes cnt=new CollectNamedTypes(s);
@@ -27,7 +27,7 @@
     warnings.add(JSError.make(root,FUNCTION_CONSTRUCTOR_NOT_DEFINED));
     return;
   }
-  ProcessScope rootPs=new ProcessScope(globalScope);
+  ProcessScope rootPs=new ProcessScope(this.globalScope);
   if (externs != null) {
     NodeTraversal.traverseEs6(compiler,externs,rootPs);
   }
@@ -42,8 +42,21 @@
       NewTypeInference.updatePeakMem();
     }
   }
-  for (  RawNominalType rawType : nominaltypesByNode.values()) {
+  RawNominalType win=null;
+  for (  Map.Entry<Node,RawNominalType> entry : nominaltypesByNode.entrySet()) {
+    RawNominalType rawType=entry.getValue();
+    if (rawType.getName().equals(WINDOW_CLASS) && entry.getKey().isFromExterns()) {
+      win=rawType;
+      continue;
+    }
     checkAndFinalizeNominalType(rawType);
+  }
+  if (win != null) {
+    Namespace winNs=this.globalScope.getNamespace(WINDOW_INSTANCE);
+    if (winNs != null) {
+      winNs.copyWindowProperties(this.commonTypes,win);
+    }
+    checkAndFinalizeNominalType(win);
   }
   nominaltypesByNode=null;
   propertyDefs=null;
