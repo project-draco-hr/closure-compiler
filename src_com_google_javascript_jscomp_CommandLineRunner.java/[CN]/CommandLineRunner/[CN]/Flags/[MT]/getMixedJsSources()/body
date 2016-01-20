@@ -1,0 +1,21 @@
+{
+  List<FlagEntry<JsSourceType>> mixedSources=new ArrayList<>();
+  for (  FlagEntry<JsSourceType> source : Flags.mixedJsSources) {
+    if (source.value.endsWith(".zip")) {
+      mixedSources.add(source);
+    }
+ else {
+      for (      String filename : findJsFiles(Collections.singletonList(source.value))) {
+        mixedSources.add(new FlagEntry<>(JsSourceType.JS,filename));
+      }
+    }
+  }
+  List<String> fromArguments=findJsFiles(arguments);
+  for (  String filename : fromArguments) {
+    mixedSources.add(new FlagEntry<>(JsSourceType.JS,filename));
+  }
+  if (!Flags.mixedJsSources.isEmpty() && !arguments.isEmpty() && mixedSources.isEmpty()) {
+    throw new CmdLineException(parser,"No inputs matched");
+  }
+  return mixedSources;
+}
