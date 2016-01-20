@@ -28,6 +28,10 @@
     Node labelBlock=n.getLastChild();
     tryMinimizeExits(labelBlock,exitType,labelName);
   }
+  if (n.isSwitch() && (exitType != Token.BREAK || labelName != null)) {
+    tryMinimizeSwitchExits(n,exitType,labelName);
+    return;
+  }
   if (!n.isBlock() || n.getLastChild() == null) {
     return;
   }

@@ -1,0 +1,18 @@
+{
+  Preconditions.checkState(NodeUtil.isSwitchCase(n));
+  Preconditions.checkState(n != n.getParent().getLastChild());
+  Node block=n.getLastChild();
+  Node maybeBreak=block.getLastChild();
+  if (maybeBreak == null || !maybeBreak.isBreak() || maybeBreak.hasChildren()) {
+    return;
+  }
+  Node childBeforeBreak=block.getChildBefore(maybeBreak);
+  while (childBeforeBreak != null) {
+    Node c=childBeforeBreak;
+    tryMinimizeExits(c,exitType,labelName);
+    childBeforeBreak=block.getChildBefore(maybeBreak);
+    if (c == childBeforeBreak) {
+      break;
+    }
+  }
+}
