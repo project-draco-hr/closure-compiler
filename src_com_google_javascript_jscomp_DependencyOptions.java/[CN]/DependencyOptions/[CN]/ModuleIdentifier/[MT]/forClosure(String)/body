@@ -1,0 +1,14 @@
+{
+  String normalizedName=name;
+  if (normalizedName.startsWith("goog:")) {
+    normalizedName=normalizedName.substring("goog:".length());
+  }
+  String namespace=normalizedName;
+  String moduleName=normalizedName;
+  int splitPoint=normalizedName.indexOf(':');
+  if (splitPoint != -1) {
+    moduleName=normalizedName.substring(0,splitPoint);
+    namespace=normalizedName.substring(Math.min(splitPoint + 1,normalizedName.length() - 1));
+  }
+  return new ModuleIdentifier(normalizedName,namespace,moduleName);
+}
