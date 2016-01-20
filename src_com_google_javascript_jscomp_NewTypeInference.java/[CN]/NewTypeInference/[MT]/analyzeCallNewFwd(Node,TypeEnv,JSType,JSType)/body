@@ -11,41 +11,42 @@
     return analyzeAssertionCall(expr,inEnv,assertionFunctionSpec);
   }
   EnvTypePair calleePair=analyzeExprFwd(callee,inEnv,commonTypes.topFunction());
-  calleePair=mayWarnAboutNullableReferenceAndTighten(callee,calleePair.type,null,inEnv);
+  TypeEnv envAfterCallee=calleePair.env;
+  calleePair=mayWarnAboutNullableReferenceAndTighten(callee,calleePair.type,null,envAfterCallee);
   JSType calleeType=calleePair.type;
   if (calleeType.isBottom() || !calleeType.isSubtypeOf(commonTypes.topFunction())) {
     warnings.add(JSError.make(expr,NOT_CALLABLE,calleeType.toString()));
   }
   FunctionType funType=calleeType.getFunTypeIfSingletonObj();
   if (funType == null || funType.isTopFunction() || funType.isQmarkFunction()) {
-    return analyzeCallNodeArgsFwdWhenError(expr,inEnv);
+    return analyzeCallNodeArgsFwdWhenError(expr,envAfterCallee);
   }
  else   if (funType.isLoose()) {
-    return analyzeLooseCallNodeFwd(expr,funType,inEnv,requiredType);
+    return analyzeLooseCallNodeFwd(expr,envAfterCallee,requiredType);
   }
  else   if (expr.isCall() && funType.isSomeConstructorOrInterface() && funType.getReturnType().isUnknown()) {
     warnings.add(JSError.make(expr,CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
-    return analyzeCallNodeArgsFwdWhenError(expr,inEnv);
+    return analyzeCallNodeArgsFwdWhenError(expr,envAfterCallee);
   }
  else   if (expr.isNew() && (!funType.isSomeConstructorOrInterface() || funType.isInterfaceDefinition())) {
     warnings.add(JSError.make(expr,NOT_A_CONSTRUCTOR,funType.toString()));
-    return analyzeCallNodeArgsFwdWhenError(expr,inEnv);
+    return analyzeCallNodeArgsFwdWhenError(expr,envAfterCallee);
   }
   int maxArity=funType.getMaxArity();
   int minArity=funType.getMinArity();
   int numArgs=expr.getChildCount() - 1;
   if (numArgs < minArity || numArgs > maxArity) {
     warnings.add(JSError.make(expr,WRONG_ARGUMENT_COUNT,getReadableCalleeName(callee),Integer.toString(numArgs),Integer.toString(minArity)," and at most " + maxArity));
-    return analyzeCallNodeArgsFwdWhenError(expr,inEnv);
+    return analyzeCallNodeArgsFwdWhenError(expr,envAfterCallee);
   }
   FunctionType origFunType=funType;
   if (funType.isGeneric()) {
-    Map<String,JSType> typeMap=calcTypeInstantiationFwd(expr,callee.isGetProp() ? callee.getFirstChild() : null,expr.getSecondChild(),funType,inEnv);
+    Map<String,JSType> typeMap=calcTypeInstantiationFwd(expr,callee.isGetProp() ? callee.getFirstChild() : null,expr.getSecondChild(),funType,envAfterCallee);
     funType=funType.instantiateGenerics(typeMap);
     println("Instantiated function type: " + funType);
   }
   List<JSType> argTypes=new ArrayList<>();
-  TypeEnv tmpEnv=analyzeCallNodeArgumentsFwd(expr,expr.getSecondChild(),funType,argTypes,inEnv);
+  TypeEnv tmpEnv=analyzeCallNodeArgumentsFwd(expr,expr.getSecondChild(),funType,argTypes,envAfterCallee);
   if (callee.isName()) {
     String calleeName=callee.getString();
     if (currentScope.isKnownFunction(calleeName) && !currentScope.isExternalFunction(calleeName)) {

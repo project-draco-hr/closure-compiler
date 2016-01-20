@@ -6,8 +6,10 @@
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   for (int i=callNode.getChildCount() - 2; i >= 0; i--) {
     Node arg=callNode.getChildAtIndex(i + 1);
-    tmpEnv=analyzeExprBwd(arg,tmpEnv).env;
-    builder.addReqFormal(JSType.BOTTOM);
+    EnvTypePair pair=analyzeExprBwd(arg,tmpEnv);
+    JSType argType=pair.type;
+    tmpEnv=pair.env;
+    builder.addReqFormal(isImpreciseType(argType) ? JSType.BOTTOM : argType);
   }
   JSType looseRetType=retType.isUnknown() ? JSType.BOTTOM : retType;
   JSType looseFunctionType=commonTypes.fromFunctionType(builder.addRetType(looseRetType).addLoose().buildFunction());

@@ -1,32 +1,33 @@
 {
   Preconditions.checkArgument(expr.isNew() || expr.isCall());
   Node callee=expr.getFirstChild();
-  JSType calleeTypeGeneral=analyzeExprBwd(callee,outEnv,commonTypes.topFunction()).type;
-  FunctionType funType=calleeTypeGeneral.getFunType();
+  EnvTypePair pair=analyzeExprBwd(callee,outEnv,commonTypes.topFunction());
+  TypeEnv envAfterCallee=pair.env;
+  FunctionType funType=pair.type.getFunType();
   if (funType == null) {
-    return analyzeCallNodeArgumentsBwd(expr,outEnv);
+    return analyzeCallNodeArgumentsBwd(expr,envAfterCallee);
   }
  else   if (funType.isLoose()) {
-    return analyzeLooseCallNodeBwd(expr,outEnv,requiredType);
+    return analyzeLooseCallNodeBwd(expr,envAfterCallee,requiredType);
   }
  else   if (expr.isCall() && funType.isSomeConstructorOrInterface() || expr.isNew() && !funType.isSomeConstructorOrInterface()) {
-    return analyzeCallNodeArgumentsBwd(expr,outEnv);
+    return analyzeCallNodeArgumentsBwd(expr,envAfterCallee);
   }
  else   if (funType.isTopFunction()) {
-    return analyzeCallNodeArgumentsBwd(expr,outEnv);
+    return analyzeCallNodeArgumentsBwd(expr,envAfterCallee);
   }
   if (callee.isName() && !funType.isGeneric() && expr.isCall()) {
     createDeferredCheckBwd(expr,requiredType);
   }
   int numArgs=expr.getChildCount() - 1;
   if (numArgs < funType.getMinArity() || numArgs > funType.getMaxArity()) {
-    return analyzeCallNodeArgumentsBwd(expr,outEnv);
+    return analyzeCallNodeArgumentsBwd(expr,envAfterCallee);
   }
   if (funType.isGeneric()) {
-    Map<String,JSType> typeMap=calcTypeInstantiationBwd(expr,funType,outEnv);
+    Map<String,JSType> typeMap=calcTypeInstantiationBwd(expr,funType,envAfterCallee);
     funType=funType.instantiateGenerics(typeMap);
   }
-  TypeEnv tmpEnv=outEnv;
+  TypeEnv tmpEnv=envAfterCallee;
   for (int i=expr.getChildCount() - 2; i >= 0; i--) {
     JSType formalType=funType.getFormalType(i);
     if (formalType.isBottom()) {
