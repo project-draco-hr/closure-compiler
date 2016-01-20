@@ -21,17 +21,13 @@
 catch (  IOException ioErr) {
     reportError("ERROR - " + flags.flagFile + " read error.");
   }
-  List<DependencyOptions.ModuleIdentifier> entryPoints=new ArrayList<>();
   if (flags.processCommonJsModules) {
     flags.processClosurePrimitives=true;
-    if (flags.commonJsEntryModule != null) {
-      if (flags.entryPoints.isEmpty()) {
-        entryPoints.add(DependencyOptions.ModuleIdentifier.forFile(flags.commonJsEntryModule));
-      }
- else {
-        reportError("--common_js_entry_module cannot be used with --entry_point.");
-      }
+    flags.manageClosureDependencies=true;
+    if (flags.commonJsEntryModule == null) {
+      reportError("Please specify --common_js_entry_module.");
     }
+    flags.closureEntryPoint=ImmutableList.of(ES6ModuleLoader.toModuleName(URI.create(flags.commonJsEntryModule)));
   }
   if (flags.outputWrapperFile != null && !flags.outputWrapperFile.isEmpty()) {
     flags.outputWrapper="";
@@ -67,53 +63,14 @@ catch (  IOException ioErr) {
  else {
       conv=new ClosureCodingConvention();
     }
-    List<String> moduleRoots=new ArrayList<>();
+    List<String> moduleRoots=new ArrayList<>(flags.commonJsPathPrefix);
     if (!flags.moduleRoot.isEmpty()) {
       moduleRoots.addAll(flags.moduleRoot);
-      if (!flags.commonJsPathPrefix.isEmpty()) {
-        reportError("--commonJsPathPrefix cannot be used with --js_module_root.");
-      }
-    }
- else     if (flags.commonJsPathPrefix != null) {
-      moduleRoots.addAll(flags.commonJsPathPrefix);
     }
  else {
       moduleRoots.add(ES6ModuleLoader.DEFAULT_FILENAME_PREFIX);
     }
-    for (    String entryPoint : flags.entryPoints) {
-      if (entryPoint.startsWith("goog:")) {
-        entryPoints.add(DependencyOptions.ModuleIdentifier.forClosure(entryPoint));
-      }
- else {
-        entryPoints.add(DependencyOptions.ModuleIdentifier.forFile(entryPoint));
-      }
-    }
-    if (flags.dependencyMode == CompilerOptions.DependencyMode.STRICT && entryPoints.isEmpty()) {
-      reportError("When --dependency_mode=STRICT, you must specify at least " + "one --entry_point.");
-    }
-    CompilerOptions.DependencyMode depMode=flags.dependencyMode;
-    if (flags.onlyClosureDependencies || flags.manageClosureDependencies) {
-      if (flags.dependencyMode != CompilerOptions.DependencyMode.NONE) {
-        reportError((flags.onlyClosureDependencies ? "--only_closure_dependencies" : "--manage_closure_dependencies") + " cannot be used with --dependency_mode.");
-      }
- else {
-        if (flags.manageClosureDependencies) {
-          depMode=CompilerOptions.DependencyMode.LOOSE;
-        }
- else         if (flags.onlyClosureDependencies) {
-          depMode=CompilerOptions.DependencyMode.STRICT;
-        }
-        if (!flags.closureEntryPoint.isEmpty() && !flags.entryPoints.isEmpty()) {
-          reportError("--closure_entry_point cannot be used with --entry_point.");
-        }
- else {
-          for (          String entryPoint : flags.closureEntryPoint) {
-            entryPoints.add(DependencyOptions.ModuleIdentifier.forClosure(entryPoint));
-          }
-        }
-      }
-    }
-    getCommandLineConfig().setPrintTree(flags.printTree).setPrintAst(flags.printAst).setPrintPassGraph(flags.printPassGraph).setJscompDevMode(flags.jscompDevMode).setLoggingLevel(flags.loggingLevel).setExterns(flags.externs).setJs(jsFiles).setJsZip(flags.jszip).setMixedJsSources(Flags.mixedJsSources).setJsOutputFile(flags.jsOutputFile).setModule(flags.module).setVariableMapOutputFile(flags.variableMapOutputFile).setCreateNameMapFiles(flags.createNameMapFiles).setPropertyMapOutputFile(flags.propertyMapOutputFile).setCodingConvention(conv).setSummaryDetailLevel(flags.summaryDetailLevel).setOutputWrapper(flags.outputWrapper).setModuleWrapper(flags.moduleWrapper).setModuleOutputPathPrefix(flags.moduleOutputPathPrefix).setCreateSourceMap(flags.createSourceMap).setSourceMapFormat(flags.sourceMapFormat).setSourceMapLocationMappings(mappings).setSourceMapInputFiles(sourceMapInputs).setWarningGuards(Flags.guardLevels).setDefine(flags.define).setCharset(flags.charset).setDependencyMode(depMode).setEntryPoints(entryPoints).setOutputManifest(ImmutableList.of(flags.outputManifest)).setOutputModuleDependencies(flags.outputModuleDependencies).setLanguageIn(flags.languageIn).setLanguageOut(flags.languageOut).setProcessCommonJSModules(flags.processCommonJsModules).setModuleRoots(moduleRoots).setTransformAMDToCJSModules(flags.transformAmdModules).setWarningsWhitelistFile(flags.warningsWhitelistFile).setHideWarningsFor(flags.hideWarningsFor).setAngularPass(flags.angularPass).setTracerMode(flags.tracerMode).setInstrumentationTemplateFile(flags.instrumentationFile).setNewTypeInference(flags.useNewTypeInference).setJsonStreamMode(flags.jsonStreamMode);
+    getCommandLineConfig().setPrintTree(flags.printTree).setPrintAst(flags.printAst).setPrintPassGraph(flags.printPassGraph).setJscompDevMode(flags.jscompDevMode).setLoggingLevel(flags.loggingLevel).setExterns(flags.externs).setJs(jsFiles).setJsZip(flags.jszip).setMixedJsSources(Flags.mixedJsSources).setJsOutputFile(flags.jsOutputFile).setModule(flags.module).setVariableMapOutputFile(flags.variableMapOutputFile).setCreateNameMapFiles(flags.createNameMapFiles).setPropertyMapOutputFile(flags.propertyMapOutputFile).setCodingConvention(conv).setSummaryDetailLevel(flags.summaryDetailLevel).setOutputWrapper(flags.outputWrapper).setModuleWrapper(flags.moduleWrapper).setModuleOutputPathPrefix(flags.moduleOutputPathPrefix).setCreateSourceMap(flags.createSourceMap).setSourceMapFormat(flags.sourceMapFormat).setSourceMapLocationMappings(mappings).setSourceMapInputFiles(sourceMapInputs).setWarningGuards(Flags.guardLevels).setDefine(flags.define).setCharset(flags.charset).setManageClosureDependencies(flags.manageClosureDependencies).setOnlyClosureDependencies(flags.onlyClosureDependencies).setClosureEntryPoints(flags.closureEntryPoint).setOutputManifest(ImmutableList.of(flags.outputManifest)).setOutputModuleDependencies(flags.outputModuleDependencies).setLanguageIn(flags.languageIn).setLanguageOut(flags.languageOut).setProcessCommonJSModules(flags.processCommonJsModules).setModuleRoots(moduleRoots).setTransformAMDToCJSModules(flags.transformAmdModules).setWarningsWhitelistFile(flags.warningsWhitelistFile).setHideWarningsFor(flags.hideWarningsFor).setAngularPass(flags.angularPass).setTracerMode(flags.tracerMode).setInstrumentationTemplateFile(flags.instrumentationFile).setNewTypeInference(flags.useNewTypeInference).setJsonStreamMode(flags.jsonStreamMode);
   }
   errorStream=null;
 }

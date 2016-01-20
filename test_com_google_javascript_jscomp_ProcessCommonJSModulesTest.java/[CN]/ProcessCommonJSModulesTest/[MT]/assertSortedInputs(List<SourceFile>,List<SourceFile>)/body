@@ -1,0 +1,14 @@
+{
+  Compiler compiler=new Compiler(System.err);
+  compiler.initCompilerOptionsIfTesting();
+  compiler.getOptions().setProcessCommonJSModules(true);
+  compiler.getOptions().dependencyOptions.setEntryPoints(ImmutableList.of(ES6ModuleLoader.toModuleName(URI.create("a"))));
+  compiler.compile(ImmutableList.of(SourceFile.fromCode("externs.js","")),shuffled,compiler.getOptions());
+  List<SourceFile> result=new ArrayList<>();
+  for (  JSModule m : compiler.getModuleGraph().getAllModules()) {
+    for (    CompilerInput i : m.getInputs()) {
+      result.add(i.getSourceFile());
+    }
+  }
+  assertEquals(expected,result);
+}
