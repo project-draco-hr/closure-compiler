@@ -1,0 +1,26 @@
+{
+  String[] parts=specString.split(":");
+  if (parts.length < 2 || parts.length > 4) {
+    throw new FlagUsageException("Expected 2-4 colon-delimited parts in " + "js module spec: " + specString);
+  }
+  String name=parts[0];
+  String[] deps=parts.length > 2 && parts[2].length() > 0 ? parts[2].split(",") : new String[0];
+  int numInputs=-1;
+  try {
+    numInputs=Integer.parseInt(parts[1]);
+  }
+ catch (  NumberFormatException ignored) {
+    numInputs=-1;
+  }
+  if (numInputs < 0) {
+    if (parts.length == 2 && "auto".equals(parts[1])) {
+      if (!isFirstModule) {
+        throw new FlagUsageException("Invalid JS file count '" + parts[1] + "' for module: "+ name+ ". Only the first module may specify "+ "a size of 'auto' and it must have no dependencies.");
+      }
+    }
+ else {
+      throw new FlagUsageException("Invalid JS file count '" + parts[1] + "' for module: "+ name);
+    }
+  }
+  return new JsModuleSpec(name,numInputs,deps);
+}

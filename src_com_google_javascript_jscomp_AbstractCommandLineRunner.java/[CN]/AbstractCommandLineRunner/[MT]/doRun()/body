@@ -11,7 +11,15 @@
   if (writeOutputToFile) {
     outputFileNames.add(config.jsOutputFile);
   }
-  List<String> moduleSpecs=config.module;
+  boolean createCommonJsModules=false;
+  if (options.processCommonJSModules && (config.module.size() == 1 && "auto".equals(config.module.get(0)))) {
+    createCommonJsModules=true;
+    config.module.remove(0);
+  }
+  List<JsModuleSpec> jsModuleSpecs=new ArrayList<>();
+  for (int i=0; i < config.module.size(); i++) {
+    jsModuleSpecs.add(JsModuleSpec.create(config.module.get(i),i == 0));
+  }
   List<JsonFileSpec> jsonFiles=null;
   if (config.jsonStreamMode == JsonStreamMode.IN || config.jsonStreamMode == JsonStreamMode.BOTH) {
     jsonFiles=parseJsonFilesFromInputStream();
@@ -30,14 +38,9 @@
       options.inputSourceMaps=inputSourceMaps.build();
     }
   }
-  boolean createCommonJsModules=false;
-  if (options.processCommonJSModules && (moduleSpecs.size() == 1 && "auto".equals(moduleSpecs.get(0)))) {
-    createCommonJsModules=true;
-    moduleSpecs.remove(0);
-  }
-  List<SourceFile> inputs=createSourceInputs(config.mixedJsSources,jsonFiles);
-  if (!moduleSpecs.isEmpty()) {
-    modules=createJsModules(moduleSpecs,inputs);
+  List<SourceFile> inputs=createSourceInputs(jsModuleSpecs,config.mixedJsSources,jsonFiles);
+  if (!jsModuleSpecs.isEmpty()) {
+    modules=createJsModules(jsModuleSpecs,inputs);
     for (    JSModule m : modules) {
       outputFileNames.add(getModuleOutputFileName(m));
     }

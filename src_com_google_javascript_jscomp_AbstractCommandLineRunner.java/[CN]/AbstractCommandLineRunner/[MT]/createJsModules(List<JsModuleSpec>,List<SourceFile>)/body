@@ -1,0 +1,65 @@
+{
+  if (isInTestMode()) {
+    return modulesSupplierForTesting.get();
+  }
+  Preconditions.checkState(specs != null);
+  Preconditions.checkState(!specs.isEmpty());
+  Preconditions.checkState(inputs != null);
+  List<String> moduleNames=new ArrayList<>(specs.size());
+  Map<String,JSModule> modulesByName=new LinkedHashMap<>();
+  Map<String,Integer> modulesFileCountMap=new LinkedHashMap<>();
+  int numJsFilesExpected=0, minJsFilesRequired=0;
+  for (  JsModuleSpec spec : specs) {
+    checkModuleName(spec.name);
+    if (modulesByName.containsKey(spec.name)) {
+      throw new FlagUsageException("Duplicate module name: " + spec.name);
+    }
+    JSModule module=new JSModule(spec.name);
+    for (    String dep : spec.deps) {
+      JSModule other=modulesByName.get(dep);
+      if (other == null) {
+        throw new FlagUsageException("Module '" + spec.name + "' depends on unknown module '"+ dep+ "'. Be sure to list modules in dependency order.");
+      }
+      module.addDependency(other);
+    }
+    if (spec.numJsFiles < 0) {
+      numJsFilesExpected=-1;
+    }
+ else {
+      minJsFilesRequired+=spec.numJsFiles;
+    }
+    if (numJsFilesExpected >= 0) {
+      numJsFilesExpected+=spec.numJsFiles;
+    }
+    moduleNames.add(0,spec.name);
+    modulesFileCountMap.put(spec.name,spec.numJsFiles);
+    modulesByName.put(spec.name,module);
+  }
+  final int totalNumJsFiles=inputs.size();
+  if (numJsFilesExpected >= 0 || minJsFilesRequired > totalNumJsFiles) {
+    if (minJsFilesRequired > totalNumJsFiles) {
+      numJsFilesExpected=minJsFilesRequired;
+    }
+    if (numJsFilesExpected > totalNumJsFiles) {
+      throw new FlagUsageException("Not enough JS files specified. Expected " + numJsFilesExpected + " but found "+ totalNumJsFiles);
+    }
+ else     if (numJsFilesExpected < totalNumJsFiles) {
+      throw new FlagUsageException("Too many JS files specified. Expected " + numJsFilesExpected + " but found "+ totalNumJsFiles);
+    }
+  }
+  int numJsFilesLeft=totalNumJsFiles, moduleIndex=0;
+  for (  String moduleName : moduleNames) {
+    int numJsFiles=modulesFileCountMap.get(moduleName);
+    JSModule module=modulesByName.get(moduleName);
+    if (moduleIndex == moduleNames.size() - 1 && numJsFiles == -1) {
+      numJsFiles=numJsFilesLeft;
+    }
+    List<SourceFile> moduleFiles=inputs.subList(numJsFilesLeft - numJsFiles,numJsFilesLeft);
+    for (    SourceFile input : moduleFiles) {
+      module.add(input);
+    }
+    numJsFilesLeft-=numJsFiles;
+    moduleIndex++;
+  }
+  return new ArrayList<>(modulesByName.values());
+}
