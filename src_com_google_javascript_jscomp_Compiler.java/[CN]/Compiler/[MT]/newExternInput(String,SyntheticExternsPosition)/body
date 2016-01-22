@@ -5,7 +5,13 @@
   }
   CompilerInput input=new CompilerInput(ast,true);
   putCompilerInput(input.getInputId(),input);
-  externsRoot.addChildToFront(ast.getAstRoot(this));
-  externs.add(0,input);
+  if (pos == SyntheticExternsPosition.START) {
+    externsRoot.addChildToFront(ast.getAstRoot(this));
+    externs.add(0,input);
+  }
+ else {
+    externsRoot.addChildToBack(ast.getAstRoot(this));
+    externs.add(input);
+  }
   return input;
 }
