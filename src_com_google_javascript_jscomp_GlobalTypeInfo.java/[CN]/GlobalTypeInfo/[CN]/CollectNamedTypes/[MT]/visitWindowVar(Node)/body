@@ -1,0 +1,11 @@
+{
+  JSType typeInJsdoc=getVarTypeFromAnnotation(nameNode,this.currentScope);
+  if (!this.currentScope.isDefinedLocally(WINDOW_INSTANCE,false)) {
+    this.currentScope.addLocal(WINDOW_INSTANCE,typeInJsdoc,false,true);
+    return;
+  }
+  NominalType maybeWin=typeInJsdoc == null ? null : typeInJsdoc.getNominalTypeIfSingletonObj();
+  if (maybeWin != null && maybeWin.getName().equals(WINDOW_CLASS)) {
+    this.currentScope.addLocal(WINDOW_INSTANCE,typeInJsdoc,false,true);
+  }
+}
