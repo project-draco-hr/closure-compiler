@@ -1,10 +1,13 @@
 {
   Node functionBody=paramList.getLastSibling();
-  restParam.setType(Token.NAME);
-  restParam.setVarArgs(true);
+  int restIndex=paramList.getIndexOfChild(restParam);
+  String paramName=restParam.getFirstChild().getString();
+  Node nameNode=IR.name(paramName);
+  nameNode.setVarArgs(true);
+  nameNode.setJSDocInfo(restParam.getJSDocInfo());
+  paramList.replaceChild(restParam,nameNode);
   JSTypeExpression type=null;
   JSDocInfo info=restParam.getJSDocInfo();
-  String paramName=restParam.getString();
   if (info != null) {
     type=info.getType();
   }
@@ -37,7 +40,6 @@
     builder.recordType(new JSTypeExpression(new Node(Token.BANG,arrayType),restParam.getSourceFileName()));
     name.setJSDocInfo(builder.build());
   }
-  int restIndex=paramList.getIndexOfChild(restParam);
   Node newArr=IR.var(IR.name(REST_PARAMS),IR.arraylit());
   functionBody.addChildToFront(newArr.useSourceInfoIfMissingFromForTree(restParam));
   Node init=IR.var(IR.name(REST_INDEX),IR.number(restIndex));
