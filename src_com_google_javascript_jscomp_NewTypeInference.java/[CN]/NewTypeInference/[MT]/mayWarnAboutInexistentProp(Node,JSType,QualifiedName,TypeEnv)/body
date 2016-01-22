@@ -3,6 +3,10 @@
     return false;
   }
   Node recv=propAccessNode.getFirstChild();
+  if (recvType.isLoose()) {
+    updateLvalueTypeInEnv(env,recv,QualifiedName.fromNode(recv),JSType.UNKNOWN);
+    return false;
+  }
   String recvTypeAsString=recvType.toString();
   String pname=propQname.toString();
   String errorMsg;

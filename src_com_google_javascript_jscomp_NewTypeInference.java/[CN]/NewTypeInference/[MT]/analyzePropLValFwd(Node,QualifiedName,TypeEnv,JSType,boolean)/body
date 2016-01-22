@@ -10,6 +10,9 @@
     warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,pnameAsString,lvalueType.toString()));
     return new LValueResultFwd(lvalueEnv,type,null,null);
   }
+  if (!lvalueType.isUnion() && !lvalueType.isSingletonObj()) {
+    lvalueType=JSType.TOP_OBJECT.withLoose();
+  }
   Node propAccessNode=obj.getParent();
   if (propAccessNode.isGetProp() && propAccessNode.getParent().isAssign() && mayWarnAboutPropCreation(pname,propAccessNode,lvalueType)) {
     return new LValueResultFwd(lvalueEnv,type,null,null);
@@ -17,24 +20,15 @@
   if (!insideQualifiedName && mayWarnAboutConstProp(propAccessNode,lvalueType,pname)) {
     return new LValueResultFwd(lvalueEnv,type,null,null);
   }
-  if (lvalueType.isUnknown()) {
-    return new LValueResultFwd(lvalueEnv,type,null,null);
-  }
   if (!lvalueType.hasProp(pname)) {
-    if (insideQualifiedName && lvalueType.isLoose()) {
+    if (lvalueType.isLoose()) {
       lvalueType=lvalueType.withProperty(pname,JSType.TOP_OBJECT.withLoose());
-      if (lvalueType.isDict() && propAccessNode.isGetProp()) {
-        lvalueType=lvalueType.specialize(JSType.TOP_STRUCT);
-      }
- else       if (lvalueType.isStruct() && propAccessNode.isGetElem()) {
-        lvalueType=lvalueType.specialize(JSType.TOP_DICT);
-      }
       lvalueEnv=updateLvalueTypeInEnv(lvalueEnv,obj,lvalue.ptr,lvalueType);
     }
  else {
       boolean warnForInexistentProp=insideQualifiedName || propAccessNode.getParent().getType() != Token.ASSIGN;
       if (warnForInexistentProp && !lvalueType.isUnknown() && !lvalueType.mayBeDict()) {
-        mayWarnAboutInexistentProp(propAccessNode,lvalueType,pname);
+        mayWarnAboutInexistentProp(propAccessNode,lvalueType,pname,lvalueEnv);
         return new LValueResultFwd(lvalueEnv,type,null,null);
       }
     }

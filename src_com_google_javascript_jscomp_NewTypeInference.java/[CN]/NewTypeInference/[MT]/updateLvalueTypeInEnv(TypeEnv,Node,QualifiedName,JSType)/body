@@ -1,21 +1,28 @@
 {
   Preconditions.checkNotNull(type);
-  if (lvalue.isName()) {
+switch (lvalue.getType()) {
+case Token.NAME:
     return envPutType(env,lvalue.getString(),type);
+case Token.THIS:
+{
+    JSType t=envGetType(env,THIS_ID);
+    return t == null ? env : envPutType(env,THIS_ID,type);
   }
- else   if (lvalue.isThis()) {
-    return envPutType(env,THIS_ID,type);
-  }
- else   if (lvalue.isVar()) {
-    Preconditions.checkState(NodeUtil.isForIn(lvalue.getParent()));
-    return envPutType(env,lvalue.getFirstChild().getString(),type);
-  }
-  Preconditions.checkState(lvalue.isGetProp() || lvalue.isGetElem(),"Expected getprop/getelem but found: %s",lvalue);
-  if (qname != null) {
-    String objName=qname.getLeftmostName();
-    QualifiedName props=qname.getAllButLeftmost();
-    JSType objType=envGetType(env,objName);
-    env=envPutType(env,objName,objType.withProperty(props,type));
-  }
-  return env;
+case Token.VAR:
+Preconditions.checkState(NodeUtil.isForIn(lvalue.getParent()));
+return envPutType(env,lvalue.getFirstChild().getString(),type);
+case Token.GETPROP:
+case Token.GETELEM:
+{
+if (qname != null) {
+String objName=qname.getLeftmostName();
+QualifiedName props=qname.getAllButLeftmost();
+JSType objType=envGetType(env,objName);
+env=envPutType(env,objName,objType.withProperty(props,type));
+}
+return env;
+}
+default :
+return env;
+}
 }
