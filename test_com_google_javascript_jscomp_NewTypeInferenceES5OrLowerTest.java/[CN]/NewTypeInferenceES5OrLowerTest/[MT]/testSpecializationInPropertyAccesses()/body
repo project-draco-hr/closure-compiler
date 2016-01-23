@@ -10,4 +10,5 @@
   typeCheck(LINE_JOINER.join("function f(/** !Object */ x) {","  if (x.prop === undefined) {}","}"));
   typeCheck(LINE_JOINER.join("function f(/** !Object */ x) {","  if (x.prop !== undefined) {","    x.prop();","  }","}"));
   typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @struct"," */","function Foo() {","  /** @type {?Foo} */","  this.prop;","}","function f(x) {","  /**@type {!Foo} */","  var y = x;","  function g() {","    if (y.prop == null) {","      return;","    }","    var /** !Foo */ z = y.prop;","  }","}"));
+  typeCheck(LINE_JOINER.join("/** @param {{x: (string|undefined)}} opts */","function takeOptions(opts) {","  var /** string */ x = opts.x || 'some string';","}"));
 }
