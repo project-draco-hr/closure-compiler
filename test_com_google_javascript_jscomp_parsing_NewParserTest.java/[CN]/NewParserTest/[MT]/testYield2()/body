@@ -1,14 +1,19 @@
 {
   mode=LanguageMode.ECMASCRIPT6_STRICT;
+  expectedFeatures=FeatureSet.ES6_IMPL;
   parse("function * f() { yield; }");
   parse("function * f() { yield /a/i; }");
+  expectedFeatures=FeatureSet.ES3;
   parseError("function * f() { 1 + yield; }","primary expression expected");
   parseError("function * f() { 1 + yield 2; }","primary expression expected");
   parseError("function * f() { yield 1 + yield 2; }","primary expression expected");
   parseError("function * f() { yield(1) + yield(2); }","primary expression expected");
+  expectedFeatures=FeatureSet.ES6_IMPL;
   parse("function * f() { (yield 1) + (yield 2); }");
   parse("function * f() { yield * yield; }");
+  expectedFeatures=FeatureSet.ES3;
   parseError("function * f() { yield + yield; }","primary expression expected");
+  expectedFeatures=FeatureSet.ES6_IMPL;
   parse("function * f() { (yield) + (yield); }");
   parse("function * f() { return yield; }");
   parse("function * f() { return yield 1; }");

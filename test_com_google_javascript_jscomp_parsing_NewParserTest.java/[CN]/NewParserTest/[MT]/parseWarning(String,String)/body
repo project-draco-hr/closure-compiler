@@ -1,7 +1,11 @@
 {
   TestErrorReporter testErrorReporter=new TestErrorReporter(null,warnings);
   StaticSourceFile file=new SimpleSourceFile("input",false);
-  Node script=ParserRunner.parse(file,string,ParserRunner.createConfig(isIdeMode,mode,null),testErrorReporter).ast;
+  ParserRunner.ParseResult result=ParserRunner.parse(file,string,ParserRunner.createConfig(isIdeMode,mode,null),testErrorReporter);
+  Node script=result.ast;
+  if (expectedFeatures != null) {
+    assertThat(result.features).isEqualTo(expectedFeatures);
+  }
   testErrorReporter.assertHasEncounteredAllErrors();
   testErrorReporter.assertHasEncounteredAllWarnings();
   return script;

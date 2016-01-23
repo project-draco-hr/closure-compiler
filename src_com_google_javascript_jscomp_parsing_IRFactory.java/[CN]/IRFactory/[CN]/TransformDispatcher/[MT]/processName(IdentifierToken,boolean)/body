@@ -5,9 +5,7 @@
   }
  else {
     JSDocInfo info=handleJsDoc(identifierToken);
-    if (isReservedKeyword(identifierToken.toString())) {
-      errorReporter.error("identifier is a reserved word",sourceName,lineno(identifierToken.location.start),charno(identifierToken.location.start));
-    }
+    maybeWarnReservedKeyword(identifierToken);
     node=newStringNode(Token.NAME,identifierToken.value);
     if (info != null) {
       node.setJSDocInfo(info);

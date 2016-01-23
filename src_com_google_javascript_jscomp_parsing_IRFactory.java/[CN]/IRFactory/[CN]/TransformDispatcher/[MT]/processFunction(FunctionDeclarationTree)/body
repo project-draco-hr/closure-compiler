@@ -4,16 +4,14 @@
   boolean isArrow=(functionTree.kind == FunctionDeclarationTree.Kind.ARROW);
   boolean isGenerator=functionTree.isGenerator;
   boolean isSignature=(functionTree.functionBody.type == ParseTreeType.EMPTY_STATEMENT);
-  if (!isEs6Mode()) {
-    if (isGenerator) {
-      maybeWarnEs6Feature(functionTree,"generators");
-    }
-    if (isMember) {
-      maybeWarnEs6Feature(functionTree,"member declarations");
-    }
-    if (isArrow) {
-      maybeWarnEs6Feature(functionTree,"short function syntax");
-    }
+  if (isGenerator) {
+    maybeWarnEs6Feature(functionTree,Feature.GENERATORS);
+  }
+  if (isMember) {
+    maybeWarnEs6Feature(functionTree,Feature.MEMBER_DECLARATIONS);
+  }
+  if (isArrow) {
+    maybeWarnEs6Feature(functionTree,Feature.ARROW_FUNCTIONS);
   }
   IdentifierToken name=functionTree.name;
   Node newName;

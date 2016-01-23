@@ -6,19 +6,15 @@
       errorReporter.error("Default value cannot appear at top level of an object literal.",sourceName,lineno(el),0);
       continue;
     }
-    if (config.languageMode == LanguageMode.ECMASCRIPT3) {
-      if (el.type == ParseTreeType.GET_ACCESSOR) {
-        reportGetter(el);
-        continue;
-      }
- else       if (el.type == ParseTreeType.SET_ACCESSOR) {
-        reportSetter(el);
-        continue;
-      }
+ else     if (el.type == ParseTreeType.GET_ACCESSOR && maybeReportGetter(el)) {
+      continue;
+    }
+ else     if (el.type == ParseTreeType.SET_ACCESSOR && maybeReportSetter(el)) {
+      continue;
     }
     Node key=transform(el);
-    if (!key.isComputedProp() && !key.isQuotedString() && !currentFileIsExterns&& !isAllowedProp(key.getString())) {
-      errorReporter.warning(INVALID_ES3_PROP_NAME,sourceName,key.getLineno(),key.getCharno());
+    if (!key.isComputedProp() && !key.isQuotedString() && !currentFileIsExterns) {
+      maybeWarnKeywordProperty(key);
     }
     if (key.getFirstChild() == null) {
       maybeWarn=true;
@@ -26,7 +22,7 @@
     node.addChildToBack(key);
   }
   if (maybeWarn) {
-    maybeWarnEs6Feature(objTree,"extended object literals");
+    maybeWarnEs6Feature(objTree,Feature.EXTENDED_OBJECT_LITERALS);
   }
   return node;
 }

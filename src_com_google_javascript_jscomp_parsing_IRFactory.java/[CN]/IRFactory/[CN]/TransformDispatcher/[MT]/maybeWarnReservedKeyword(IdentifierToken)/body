@@ -1,0 +1,14 @@
+{
+  String identifier=token.toString();
+  boolean isIdentifier=false;
+  if (TokenStream.isKeyword(identifier)) {
+    features=features.require(Feature.ES3_KEYWORDS_AS_IDENTIFIERS);
+    isIdentifier=config.languageMode == LanguageMode.ECMASCRIPT3;
+  }
+  if (reservedKeywords != null && reservedKeywords.contains(identifier)) {
+    isIdentifier=true;
+  }
+  if (isIdentifier) {
+    errorReporter.error("identifier is a reserved word",sourceName,lineno(token.location.start),charno(token.location.start));
+  }
+}

@@ -1,0 +1,9 @@
+{
+  SourceFile file=new SourceFile(sourcePath,sourceString);
+  ErrorReporter reporter=IRFactory.NULL_REPORTER;
+  com.google.javascript.jscomp.parsing.parser.Parser.Config config=new com.google.javascript.jscomp.parsing.parser.Parser.Config(mode(IRFactory.NULL_CONFIG.languageMode));
+  Parser p=new Parser(config,new Es6ErrorReporter(reporter,false),file);
+  ProgramTree tree=p.parseProgram();
+  StaticSourceFile simpleSourceFile=new SimpleSourceFile(sourcePath,false);
+  return IRFactory.detectFeatures(tree,simpleSourceFile,sourceString).require(p.getFeatures());
+}
