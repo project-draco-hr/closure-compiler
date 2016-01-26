@@ -24,6 +24,11 @@
   }
   String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
   Node tempDecl=IR.var(IR.name(tempVarName),rhs.detachFromParent()).useSourceInfoIfMissingFromForTree(objectPattern);
+  if (parent.isConst()) {
+    JSDocInfoBuilder jsDoc=new JSDocInfoBuilder(false);
+    jsDoc.recordConstancy();
+    tempDecl.setJSDocInfo(jsDoc.build());
+  }
   nodeToDetach.getParent().addChildBefore(tempDecl,nodeToDetach);
   for (Node child=objectPattern.getFirstChild(), next; child != null; child=next) {
     next=child.getNext();
