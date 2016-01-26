@@ -1,28 +1,28 @@
 {
   Node varNode=parse("/** @type {number} */var a;").getFirstChild();
-  assertThat(varNode.getType()).isEqualTo(Token.VAR);
+  assertNode(varNode).hasType(Token.VAR);
   JSDocInfo varInfo=varNode.getJSDocInfo();
   assertThat(varInfo).isNotNull();
   assertTypeEquals(NUMBER_TYPE,varInfo.getType());
   Node varNameNode=varNode.getFirstChild();
-  assertThat(varNameNode.getType()).isEqualTo(Token.NAME);
+  assertNode(varNameNode).hasType(Token.NAME);
   assertThat(varNameNode.getJSDocInfo()).isNull();
   mode=LanguageMode.ECMASCRIPT6;
   expectedFeatures=FeatureSet.ES6_IMPL;
   Node letNode=parse("/** @type {number} */let a;").getFirstChild();
-  assertThat(letNode.getType()).isEqualTo(Token.LET);
+  assertNode(letNode).hasType(Token.LET);
   JSDocInfo letInfo=letNode.getJSDocInfo();
   assertThat(letInfo).isNotNull();
   assertTypeEquals(NUMBER_TYPE,letInfo.getType());
   Node letNameNode=letNode.getFirstChild();
-  assertThat(letNameNode.getType()).isEqualTo(Token.NAME);
+  assertNode(letNameNode).hasType(Token.NAME);
   assertThat(letNameNode.getJSDocInfo()).isNull();
   Node constNode=parse("/** @type {number} */const a = 0;").getFirstChild();
-  assertThat(constNode.getType()).isEqualTo(Token.CONST);
+  assertNode(constNode).hasType(Token.CONST);
   JSDocInfo constInfo=constNode.getJSDocInfo();
   assertThat(constInfo).isNotNull();
   assertTypeEquals(NUMBER_TYPE,constInfo.getType());
   Node constNameNode=constNode.getFirstChild();
-  assertThat(constNameNode.getType()).isEqualTo(Token.NAME);
+  assertNode(constNameNode).hasType(Token.NAME);
   assertThat(constNameNode.getJSDocInfo()).isNull();
 }
