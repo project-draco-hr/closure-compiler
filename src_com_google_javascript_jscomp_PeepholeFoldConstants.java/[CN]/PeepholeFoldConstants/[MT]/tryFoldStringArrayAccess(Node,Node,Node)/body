@@ -1,0 +1,35 @@
+{
+  if (NodeUtil.isAssignmentTarget(n)) {
+    return n;
+  }
+  if (!right.isNumber()) {
+    return n;
+  }
+  double index=right.getDouble();
+  int intIndex=(int)index;
+  if (intIndex != index) {
+    report(INVALID_GETELEM_INDEX_ERROR,right);
+    return n;
+  }
+  if (intIndex < 0) {
+    report(INDEX_OUT_OF_BOUNDS_ERROR,right);
+    return n;
+  }
+  Preconditions.checkState(left.isString());
+  String value=left.getString();
+  if (intIndex >= value.length()) {
+    report(INDEX_OUT_OF_BOUNDS_ERROR,right);
+    return n;
+  }
+  char c=0;
+  for (int i=0; i <= intIndex; i++) {
+    c=value.charAt(i);
+    if (c < 32 || c > 127) {
+      return n;
+    }
+  }
+  Node elem=IR.string(Character.toString(c));
+  n.getParent().replaceChild(n,elem);
+  reportCodeChange();
+  return elem;
+}
