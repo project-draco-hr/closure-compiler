@@ -15,8 +15,9 @@
   registerNativeType(JSTypeNative.VOID_TYPE,VOID_TYPE);
   AllType ALL_TYPE=new AllType(this);
   registerNativeType(JSTypeNative.ALL_TYPE,ALL_TYPE);
-  iObjectIndexTemplateKey=new TemplateType(this,I_OBJECT_INDEX_TEMPLATE);
+  iObjectIndexTemplateKey=new TemplateType(this,"IObject#KEY1");
   iObjectElementTemplateKey=new TemplateType(this,I_OBJECT_ELEMENT_TEMPLATE);
+  arrayElementTemplateKey=new TemplateType(this,"T");
   PrototypeObjectType TOP_LEVEL_PROTOTYPE=new PrototypeObjectType(this,null,null,true,null);
   registerNativeType(JSTypeNative.TOP_LEVEL_PROTOTYPE,TOP_LEVEL_PROTOTYPE);
   FunctionType OBJECT_FUNCTION_TYPE=new FunctionType(this,"Object",null,createArrowType(createOptionalParameters(ALL_TYPE),null),null,createTemplateTypeMap(ImmutableList.of(iObjectIndexTemplateKey,iObjectElementTemplateKey),null),true,true);
@@ -38,7 +39,7 @@
   registerNativeType(JSTypeNative.NO_OBJECT_TYPE,NO_OBJECT_TYPE);
   NoObjectType NO_RESOLVED_TYPE=new NoResolvedType(this);
   registerNativeType(JSTypeNative.NO_RESOLVED_TYPE,NO_RESOLVED_TYPE);
-  FunctionType ARRAY_FUNCTION_TYPE=new FunctionType(this,"Array",null,createArrowType(createParametersWithVarArgs(ALL_TYPE),null),null,createTemplateTypeMap(ImmutableList.of(iObjectElementTemplateKey),null),true,true);
+  FunctionType ARRAY_FUNCTION_TYPE=new FunctionType(this,"Array",null,createArrowType(createParametersWithVarArgs(ALL_TYPE),null),null,createTemplateTypeMap(ImmutableList.of(arrayElementTemplateKey),null).extend(createTemplateTypeMap(ImmutableList.of(iObjectElementTemplateKey),ImmutableList.<JSType>of(arrayElementTemplateKey))),true,true);
   ARRAY_FUNCTION_TYPE.getInternalArrowType().returnType=ARRAY_FUNCTION_TYPE.getInstanceType();
   ARRAY_FUNCTION_TYPE.getPrototype();
   registerNativeType(JSTypeNative.ARRAY_FUNCTION_TYPE,ARRAY_FUNCTION_TYPE);
