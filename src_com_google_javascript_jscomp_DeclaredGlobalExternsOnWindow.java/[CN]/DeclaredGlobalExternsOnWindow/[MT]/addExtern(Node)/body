@@ -1,7 +1,9 @@
 {
   String name=node.getString();
   JSDocInfo oldJSDocInfo=NodeUtil.getBestJSDocInfo(node);
-  Node getprop=NodeUtil.newQName(compiler,"Window.prototype." + name);
+  Node window=IR.name("window");
+  Node string=IR.string(name);
+  Node getprop=IR.getprop(window,string);
   Node newNode=getprop;
   if (oldJSDocInfo != null) {
     JSDocInfoBuilder builder;
@@ -20,6 +22,8 @@
       }
       if (oldJSDocInfo.hasEnumParameterType()) {
         builder.recordEnumParameterType(oldJSDocInfo.getEnumParameterType());
+      }
+      if (NodeUtil.isNamespaceDecl(node)) {
       }
     }
  else {

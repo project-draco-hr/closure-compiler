@@ -1,9 +1,10 @@
 {
-  if (!n.isFromExterns()) {
-    JSDocInfo jsdoc=getBestJSDocInfo(n);
-    if (jsdoc == null || !jsdoc.isConstant() || !jsdoc.getTypeNodes().isEmpty()) {
-      return false;
-    }
+  JSDocInfo jsdoc=getBestJSDocInfo(n);
+  if (jsdoc != null && !jsdoc.getTypeNodes().isEmpty()) {
+    return false;
+  }
+  if (!n.isFromExterns() && (jsdoc == null || !jsdoc.isConstant())) {
+    return false;
   }
   Node qnameNode;
   Node initializer;
