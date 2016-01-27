@@ -6,7 +6,11 @@
       warnings.add(JSError.make(defSite,ANONYMOUS_NOMINAL_TYPE));
       return;
     }
-    ImmutableList<String> typeParameters=fnDoc.getTemplateTypeNames();
+    ImmutableList.Builder<String> builder=ImmutableList.builder();
+    for (    String typeParam : fnDoc.getTemplateTypeNames()) {
+      builder.add(varNameGen.getNextName(typeParam));
+    }
+    ImmutableList<String> typeParameters=builder.build();
     RawNominalType rawNominalType;
     if (fnDoc.isInterface()) {
       rawNominalType=RawNominalType.makeInterface(defSite,qname,typeParameters);

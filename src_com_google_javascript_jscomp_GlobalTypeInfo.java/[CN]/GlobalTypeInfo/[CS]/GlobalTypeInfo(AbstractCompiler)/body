@@ -2,7 +2,9 @@
   this.warnings=new WarningReporter(compiler);
   this.compiler=compiler;
   this.convention=compiler.getCodingConvention();
-  this.typeParser=new JSTypeCreatorFromJSDoc(this.convention);
+  this.varNameGen=new UniqueNameGenerator();
+  this.funNameGen=new DefaultNameGenerator(ImmutableSet.<String>of(),"",null);
+  this.typeParser=new JSTypeCreatorFromJSDoc(this.convention,this.varNameGen);
   this.commonTypes=JSTypes.make();
   JSType.setCommonTypes(this.commonTypes);
 }

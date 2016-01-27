@@ -1,12 +1,20 @@
 {
-  ImmutableList.Builder<String> typeParamsBuilder=new ImmutableList.Builder<>();
-  ;
+  ImmutableList.Builder<String> typeParamsBuilder=ImmutableList.builder();
   ImmutableList<String> typeParameters=ImmutableList.of();
   Node parent=funNode.getParent();
   boolean ignoreJsdoc=false;
   if (jsdoc != null) {
-    typeParamsBuilder.addAll(jsdoc.getTemplateTypeNames());
-    typeParamsBuilder.addAll(jsdoc.getTypeTransformations().keySet());
+    if (constructorType != null) {
+      typeParamsBuilder.addAll(constructorType.getTypeParameters());
+    }
+ else {
+      for (      String typeParam : jsdoc.getTemplateTypeNames()) {
+        typeParamsBuilder.add(this.nameGen.getNextName(typeParam));
+      }
+    }
+    for (    String typeParam : jsdoc.getTypeTransformations().keySet()) {
+      typeParamsBuilder.add(this.nameGen.getNextName(typeParam));
+    }
     typeParameters=typeParamsBuilder.build();
     if (!typeParameters.isEmpty()) {
       if (parent.isSetterDef() || parent.isGetterDef()) {

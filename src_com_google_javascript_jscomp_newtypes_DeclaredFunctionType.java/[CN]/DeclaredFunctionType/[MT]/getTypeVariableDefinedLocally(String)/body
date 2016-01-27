@@ -1,0 +1,17 @@
+{
+  String tmp=UniqueNameGenerator.findGeneratedName(tvar,this.typeParameters);
+  if (tmp != null) {
+    return tmp;
+  }
+  if (this.receiverType != null) {
+    NominalType recvType=this.receiverType.getNominalTypeIfSingletonObj();
+    if (recvType != null && recvType.isUninstantiatedGenericType()) {
+      RawNominalType rawType=recvType.getRawNominalType();
+      tmp=UniqueNameGenerator.findGeneratedName(tvar,rawType.getTypeParameters());
+      if (tmp != null) {
+        return tmp;
+      }
+    }
+  }
+  return null;
+}
