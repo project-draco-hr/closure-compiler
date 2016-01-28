@@ -2,6 +2,9 @@
   List<PassFactory> checks=new ArrayList<>();
   checks.add(createEmptyPass("beforeStandardChecks"));
   checks.add(checkJsDoc);
+  if (options.enables(DiagnosticGroups.LINT_CHECKS)) {
+    checks.add(lintChecks);
+  }
   if (!options.skipNonTranspilationPasses && options.closurePass && options.enables(DiagnosticGroups.LINT_CHECKS)) {
     checks.add(checkRequiresAndProvidesSorted);
   }
@@ -113,8 +116,8 @@
   if (options.checkTypes && (!options.disables(DiagnosticGroups.ACCESS_CONTROLS) || options.enables(DiagnosticGroups.CONSTANT_PROPERTY))) {
     checks.add(checkAccessControls);
   }
-  if (options.enables(DiagnosticGroups.LINT_CHECKS)) {
-    checks.add(lintChecks);
+  if (options.enables(DiagnosticGroups.ANALYZER_CHECKS)) {
+    checks.add(analyzerChecks);
   }
   if (options.checkEventfulObjectDisposalPolicy != CheckEventfulObjectDisposal.DisposalCheckingPolicy.OFF) {
     checks.add(checkEventfulObjectDisposal);
