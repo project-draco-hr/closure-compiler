@@ -35,7 +35,11 @@
     DeclaredFunctionType superMethodType=DeclaredFunctionType.meet(methodTypes);
     DeclaredFunctionType localMethodType=localPropDef.methodType;
     boolean getsTypeFromParent=getsTypeInfoFromParentMethod(localPropDef);
-    if (getsTypeFromParent && localMethodType.getMaxArity() > superMethodType.getMaxArity()) {
+    if (superMethodType == null) {
+      superMethodType=methodTypes.iterator().next();
+      warnings.add(JSError.make(localPropDef.defSite,SUPER_INTERFACES_HAVE_INCOMPATIBLE_PROPERTIES,rawType.getName(),pname,methodTypes.toString()));
+    }
+ else     if (getsTypeFromParent && localMethodType.getMaxArity() > superMethodType.getMaxArity()) {
       warnings.add(JSError.make(localPropDef.defSite,INVALID_PROP_OVERRIDE,pname,superMethodType.toFunctionType().toString(),localMethodType.toFunctionType().toString()));
     }
     DeclaredFunctionType updatedMethodType=localMethodType.withTypeInfoFromSuper(superMethodType,getsTypeFromParent);
@@ -52,7 +56,7 @@
         resultType=inheritedType;
       }
  else {
-        warnings.add(JSError.make(rawType.getDefSite(),SUPER_INTERFACES_HAVE_INCOMPATIBLE_PROPERTIES,rawType.getName(),pname,inheritedType.toString(),resultType.toString()));
+        warnings.add(JSError.make(rawType.getDefSite(),SUPER_INTERFACES_HAVE_INCOMPATIBLE_PROPERTIES,rawType.getName(),pname,defs.toString()));
         continue add_interface_props;
       }
     }
