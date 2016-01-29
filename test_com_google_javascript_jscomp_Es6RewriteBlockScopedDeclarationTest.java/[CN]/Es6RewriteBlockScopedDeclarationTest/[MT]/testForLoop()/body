@@ -2,5 +2,6 @@
   test(LINE_JOINER.join("function f() {","  const y = 0;","  for (let x = 0; x < 10; x++) {","    const y = x * 2;","    const z = y;","  }","  console.log(y);","}"),LINE_JOINER.join("function f() {","  /** @const */ var y = 0;","  for (var x = 0; x < 10; x++) {","    /** @const */ var y$0 = x * 2;","    /** @const */ var z = y$0;","  }","  console.log(y);","}"));
   test(LINE_JOINER.join("for (let i in [0, 1]) {","  function f() {","    let i = 0;","    if (true) {","      let i = 1;","    }","  }","}"),LINE_JOINER.join("for (var i in [0, 1]) {","  var f = function() {","    var i = 0;","    if (true) {","      var i$0 = 1;","    }","  }","}"));
   test("for (let i = 0;;) { let i; }","for (var i = 0;;) { var i$0 = undefined; }");
-  test("for (let i = 0;;) {} let i;","for (var i$0 = 0;;) {} var i = undefined;");
+  test("for (let i = 0;;) {} let i;","for (var i$0 = 0;;) {} var i;");
+  test(LINE_JOINER.join("for (var x in y) {","  /** @type {number} */","  let i;","}"),LINE_JOINER.join("for (var x in y) {","  /** @type {number} */","  var i = /** @type {?} */ (undefined);","}"));
 }
