@@ -1,7 +1,9 @@
 {
   FileSystem fs=FileSystems.getDefault();
   final boolean remove=pattern.indexOf('!') == 0;
-  if (remove)   pattern=pattern.substring(1);
+  if (remove) {
+    pattern=pattern.substring(1);
+  }
   if (File.separator.equals("\\")) {
     pattern=pattern.replace('\\','/');
   }
@@ -13,15 +15,15 @@
         break;
       }
  else {
-        prefix=Joiner.on("/").join(patternParts.subList(0,i));
-        pattern=Joiner.on("/").join(patternParts.subList(i,patternParts.size()));
+        prefix=Joiner.on(File.separator).join(patternParts.subList(0,i));
+        pattern=Joiner.on(File.separator).join(patternParts.subList(i,patternParts.size()));
       }
     }
   }
-  final PathMatcher matcher=fs.getPathMatcher("glob:" + pattern);
+  final PathMatcher matcher=fs.getPathMatcher("glob:" + (prefix.equals(".") ? pattern : prefix + File.separator + pattern));
   java.nio.file.Files.walkFileTree(fs.getPath(prefix),new SimpleFileVisitor<Path>(){
     @Override public FileVisitResult visitFile(    Path p,    BasicFileAttributes attrs){
-      if (matcher.matches(p)) {
+      if (matcher.matches(p.normalize())) {
         if (remove) {
           allJsInputs.remove(p.toString());
         }

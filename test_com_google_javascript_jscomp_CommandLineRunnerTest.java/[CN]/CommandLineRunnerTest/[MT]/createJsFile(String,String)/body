@@ -1,6 +1,7 @@
 {
-  File tempJsFile=File.createTempFile(filename,".js");
-  FileOutputStream fileOutputStream=new FileOutputStream(tempJsFile);
-  fileOutputStream.write(fileContent.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-  return new FlagEntry<>(JsSourceType.JS,tempJsFile.getAbsolutePath());
+  File tempJsFile=File.createTempFile(filename,".js",Files.createTempDirectory("jscomp").toFile());
+  try (FileOutputStream fileOutputStream=new FileOutputStream(tempJsFile)){
+    fileOutputStream.write(fileContent.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+  }
+   return new FlagEntry<>(JsSourceType.JS,tempJsFile.getAbsolutePath());
 }
