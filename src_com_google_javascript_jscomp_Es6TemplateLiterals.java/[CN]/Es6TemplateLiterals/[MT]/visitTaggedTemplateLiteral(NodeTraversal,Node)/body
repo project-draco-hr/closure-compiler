@@ -4,7 +4,7 @@
   Node cooked=createCookedStringArray(templateLit);
   Node callsiteId=IR.name(TEMPLATELIT_VAR + t.getCompiler().getUniqueNameIdSupplier().get());
   Node var=IR.var(callsiteId,cooked).useSourceInfoIfMissingFromForTree(n);
-  Node script=NodeUtil.getEnclosingType(n,Token.SCRIPT);
+  Node script=NodeUtil.getEnclosingScript(n);
   script.addChildrenToFront(var);
   Node defineRaw=IR.exprResult(IR.assign(IR.getprop(callsiteId.cloneNode(),IR.string("raw")),raw)).useSourceInfoIfMissingFromForTree(n);
   script.addChildAfter(defineRaw,var);
