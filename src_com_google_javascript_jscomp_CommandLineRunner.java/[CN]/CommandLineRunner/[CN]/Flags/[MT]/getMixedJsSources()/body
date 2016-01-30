@@ -1,12 +1,21 @@
 {
   List<FlagEntry<JsSourceType>> mixedSources=new ArrayList<>();
+  Set<String> excludes=new HashSet<>();
   for (  FlagEntry<JsSourceType> source : Flags.mixedJsSources) {
     if (source.value.endsWith(".zip")) {
       mixedSources.add(source);
     }
+ else     if (source.value.startsWith("!")) {
+      for (      String filename : findJsFiles(Collections.singletonList(source.value.substring(1)))) {
+        excludes.add(filename);
+        mixedSources.remove(new FlagEntry<>(JsSourceType.JS,filename));
+      }
+    }
  else {
       for (      String filename : findJsFiles(Collections.singletonList(source.value))) {
-        mixedSources.add(new FlagEntry<>(JsSourceType.JS,filename));
+        if (!excludes.contains(filename)) {
+          mixedSources.add(new FlagEntry<>(JsSourceType.JS,filename));
+        }
       }
     }
   }

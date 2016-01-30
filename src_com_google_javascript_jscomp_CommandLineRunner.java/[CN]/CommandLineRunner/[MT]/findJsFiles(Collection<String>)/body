@@ -1,17 +1,18 @@
 {
   Set<String> allJsInputs=new TreeSet<>();
+  Set<String> excludes=new HashSet<>();
   for (  String pattern : patterns) {
     if (!pattern.contains("*") && !pattern.startsWith("!")) {
       File matchedFile=new File(pattern);
       if (matchedFile.isDirectory()) {
-        matchPaths(new File(matchedFile,"**.js").toString(),allJsInputs);
+        matchPaths(new File(matchedFile,"**.js").toString(),allJsInputs,excludes);
       }
- else {
+ else       if (!excludes.contains(pattern)) {
         allJsInputs.add(pattern);
       }
     }
  else {
-      matchPaths(pattern,allJsInputs);
+      matchPaths(pattern,allJsInputs,excludes);
     }
   }
   return new ArrayList<>(allJsInputs);
