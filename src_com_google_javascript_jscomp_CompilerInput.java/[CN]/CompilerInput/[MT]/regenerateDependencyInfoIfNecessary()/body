@@ -7,14 +7,21 @@
       return;
     }
     finder.visitTree(getAstRoot(compiler));
-    isModuleFile=finder.isModuleFile;
+    loadFlags=ImmutableMap.copyOf(finder.loadFlags);
     provides.addAll(finder.provides);
     requires.addAll(finder.requires);
   }
  else {
     if (!generatedDependencyInfoFromSource) {
       DependencyInfo info=(new JsFileParser(compiler.getErrorManager())).setIncludeGoogBase(true).parseFile(getName(),getName(),getCode());
-      isModuleFile=info.isModule();
+      FeatureSet features=((JsAst)ast).getFeatures(compiler);
+      Map<String,String> loadFlagsBuilder=new TreeMap<>();
+      loadFlagsBuilder.putAll(info.getLoadFlags());
+      loadFlagsBuilder.put("lang",features.version());
+      if (features.hasEs6Modules()) {
+        loadFlagsBuilder.put("module","es6");
+      }
+      loadFlags=ImmutableMap.copyOf(loadFlagsBuilder);
       provides.addAll(info.getProvides());
       requires.addAll(info.getRequires());
       generatedDependencyInfoFromSource=true;
