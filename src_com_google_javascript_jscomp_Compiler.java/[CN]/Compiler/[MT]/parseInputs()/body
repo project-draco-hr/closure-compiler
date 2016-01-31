@@ -22,6 +22,26 @@
     if (options.transformAMDToCJSModules || options.processCommonJSModules) {
       processAMDAndCommonJSModules();
     }
+    if (options.lowerFromEs6() || options.transformAMDToCJSModules || options.processCommonJSModules) {
+      Map<String,CompilerInput> inputModuleIdentifiers=new HashMap<>();
+      for (      CompilerInput input : inputs) {
+        if (input.getKnownProvides().isEmpty()) {
+          ModuleIdentifier modInfo=ModuleIdentifier.forFile(input.getSourceFile().getOriginalPath());
+          inputModuleIdentifiers.put(modInfo.getClosureNamespace(),input);
+        }
+      }
+      Map<String,CompilerInput> inputsToRewrite=new HashMap<>();
+      for (      CompilerInput input : inputs) {
+        for (        String require : input.getKnownRequires()) {
+          if (inputModuleIdentifiers.containsKey(require) && !inputsToRewrite.containsKey(require)) {
+            inputsToRewrite.put(require,inputModuleIdentifiers.get(require));
+          }
+        }
+      }
+      if (!inputsToRewrite.isEmpty()) {
+        processEs6Modules(new ArrayList<>(inputsToRewrite.values()),true);
+      }
+    }
     orderInputs();
     if (hasErrors()) {
       return null;

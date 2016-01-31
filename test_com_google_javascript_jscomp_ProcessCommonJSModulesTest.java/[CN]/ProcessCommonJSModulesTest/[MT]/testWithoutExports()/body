@@ -1,6 +1,5 @@
 {
   setFilename("test");
   testModules(LINE_JOINER.join("var name = require('other');","name()"),LINE_JOINER.join("goog.require('module$other');","var name = module$other;","name();"));
-  setFilename("test/sub");
-  ProcessEs6ModulesTest.testModules(this,ImmutableList.of(SourceFile.fromCode(Compiler.joinPathParts("mod","name.js"),""),SourceFile.fromCode(Compiler.joinPathParts("test","sub.js"),LINE_JOINER.join("var name = require('mod/name');","(function() { name(); })();"))),LINE_JOINER.join("goog.require('module$mod$name');","var name = module$mod$name;","(function() { name(); })();"));
+  test(ImmutableList.of(SourceFile.fromCode(Compiler.joinPathParts("mod","name.js"),""),SourceFile.fromCode(Compiler.joinPathParts("test","sub.js"),LINE_JOINER.join("var name = require('mod/name');","(function() { name(); })();"))),ImmutableList.of(SourceFile.fromCode(Compiler.joinPathParts("mod","name.js"),LINE_JOINER.join("/** @fileoverview"," * @suppress {missingProvide|missingRequire}"," */","goog.provide('module$mod$name');")),SourceFile.fromCode(Compiler.joinPathParts("test","sub.js"),LINE_JOINER.join("goog.require('module$mod$name');","var name = module$mod$name;","(function() { name(); })();"))));
 }
