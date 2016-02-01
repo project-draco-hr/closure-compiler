@@ -6,12 +6,12 @@
   parse("var n: () => () => number;");
   parse("var n: (p1: string) => {};");
   Node ast=parse("var n: (p1: string, p2: number) => boolean[];");
-  TypeDeclarationNode function=(TypeDeclarationNode)(ast.getFirstGrandchild().getProp(Node.DECLARED_TYPE_EXPR));
+  TypeDeclarationNode function=(TypeDeclarationNode)(ast.getFirstFirstChild().getProp(Node.DECLARED_TYPE_EXPR));
   assertNode(function).hasType(Token.FUNCTION_TYPE);
   Node ast2=parse("var n: (p1: string, p2: number) => boolean | number;");
-  TypeDeclarationNode function2=(TypeDeclarationNode)(ast2.getFirstGrandchild().getProp(Node.DECLARED_TYPE_EXPR));
+  TypeDeclarationNode function2=(TypeDeclarationNode)(ast2.getFirstFirstChild().getProp(Node.DECLARED_TYPE_EXPR));
   assertNode(function2).hasType(Token.FUNCTION_TYPE);
   Node ast3=parse("var n: (p1: string, p2: number) => Array<Foo>;");
-  TypeDeclarationNode function3=(TypeDeclarationNode)(ast3.getFirstGrandchild().getProp(Node.DECLARED_TYPE_EXPR));
+  TypeDeclarationNode function3=(TypeDeclarationNode)(ast3.getFirstFirstChild().getProp(Node.DECLARED_TYPE_EXPR));
   assertNode(function3).hasType(Token.FUNCTION_TYPE);
 }

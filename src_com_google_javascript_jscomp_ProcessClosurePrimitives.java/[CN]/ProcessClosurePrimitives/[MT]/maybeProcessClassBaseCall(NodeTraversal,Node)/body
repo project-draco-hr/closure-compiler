@@ -58,7 +58,7 @@
     if (!knownClosureSubclasses.contains(baseContainer)) {
       return;
     }
-    boolean misuseOfBase=!enclosingFnNameNode.getFirstGrandchild().matchesQualifiedName(baseContainer);
+    boolean misuseOfBase=!enclosingFnNameNode.getFirstFirstChild().matchesQualifiedName(baseContainer);
     if (misuseOfBase) {
       reportBadBaseMethodUse(t,n,baseContainer,"Must be used within " + baseContainer + " methods");
       return;
@@ -80,7 +80,7 @@
       reportBadBaseMethodUse(t,n,baseContainer,"Enclosing method does not match " + methodName);
       return;
     }
-    Node className=enclosingFnNameNode.getFirstGrandchild();
+    Node className=enclosingFnNameNode.getFirstFirstChild();
     n.replaceChild(callee,NodeUtil.newQName(compiler,SimpleFormat.format("%s.superClass_.%s.call",className.getQualifiedName(),methodName),callee,enclosingQname + ".base"));
     n.removeChild(methodNameNode);
     compiler.reportCodeChange();

@@ -2,12 +2,12 @@
   String externs="" + "function foo() {};\n" + "function bar(arg) {};\n";
   String template="" + "function template() {\n" + "  foo();\n"+ "}\n";
   TestNodePair pair=compile(externs,template,"foo();");
-  assertMatch(pair.templateNode,pair.testNode.getFirstGrandchild());
+  assertMatch(pair.templateNode,pair.testNode.getFirstFirstChild());
   pair=compile(externs,template,"bar();");
   assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
-  assertNotMatch(pair.templateNode,pair.testNode.getFirstGrandchild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstFirstChild());
   pair=compile(externs,template,"bar(foo());");
   assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
-  assertNotMatch(pair.templateNode,pair.testNode.getFirstGrandchild());
-  assertMatch(pair.templateNode,pair.testNode.getFirstGrandchild().getLastChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstFirstChild());
+  assertMatch(pair.templateNode,pair.testNode.getFirstFirstChild().getLastChild());
 }

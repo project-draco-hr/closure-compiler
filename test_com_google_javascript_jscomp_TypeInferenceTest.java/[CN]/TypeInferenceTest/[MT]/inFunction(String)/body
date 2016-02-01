@@ -2,7 +2,7 @@
   String thisBlock=assumedThisType == null ? "" : "/** @this {" + assumedThisType + "} */";
   Node root=compiler.parseTestCode("(" + thisBlock + " function() {"+ js+ "});");
   assertEquals("parsing error: " + Joiner.on(", ").join(compiler.getErrors()),0,compiler.getErrorCount());
-  Node n=root.getFirstGrandchild();
+  Node n=root.getFirstFirstChild();
   TypedScopeCreator scopeCreator=new TypedScopeCreator(compiler);
   TypedScope assumedScope=scopeCreator.createScope(n,scopeCreator.createScope(root,null));
   for (  Map.Entry<String,JSType> entry : assumptions.entrySet()) {
