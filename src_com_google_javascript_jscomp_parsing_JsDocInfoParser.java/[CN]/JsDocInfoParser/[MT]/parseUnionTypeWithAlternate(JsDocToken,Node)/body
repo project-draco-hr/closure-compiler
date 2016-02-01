@@ -8,10 +8,7 @@
     if (expr != null) {
       skipEOLs();
       token=next();
-      Preconditions.checkState(token == JsDocToken.PIPE || token == JsDocToken.COMMA);
-      if (token == JsDocToken.COMMA) {
-        reportTypeSyntaxWarning("msg.jsdoc.union.comma");
-      }
+      Preconditions.checkState(token == JsDocToken.PIPE);
       skipEOLs();
       token=next();
     }
@@ -21,7 +18,7 @@
     }
     union.addChildToBack(expr);
   }
- while (match(JsDocToken.PIPE,JsDocToken.COMMA));
+ while (match(JsDocToken.PIPE));
   if (alternate == null) {
     skipEOLs();
     if (!match(JsDocToken.RIGHT_PAREN)) {
