@@ -1,0 +1,15 @@
+{
+  FlagEntry<JsSourceType> jsFile1=createJsFile("test1","var a;");
+  FlagEntry<JsSourceType> jsFile2=createJsFile("test2","var b;");
+  File temp1=Files.createTempDir();
+  File temp2=Files.createTempDir();
+  File jscompTempDir=new File(jsFile1.value).getParentFile();
+  File newTemp1=new File(jscompTempDir + File.separator + "temp1");
+  File newTemp2=new File(jscompTempDir + File.separator + "temp2");
+  temp1.renameTo(newTemp1);
+  temp2.renameTo(newTemp2);
+  new File(jsFile1.value).renameTo(new File(newTemp1 + File.separator + "test1.js"));
+  new File(jsFile2.value).renameTo(new File(newTemp2 + File.separator + "test2.js"));
+  String glob=jscompTempDir + File.separator + "**"+ File.separator+ "*.js";
+  compileFiles("var a;var b;",new FlagEntry<>(JsSourceType.JS,glob));
+}

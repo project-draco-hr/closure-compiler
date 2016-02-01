@@ -7,8 +7,11 @@
       if (matchedFile.isDirectory()) {
         matchPaths(new File(matchedFile,"**.js").toString(),allJsInputs,excludes);
       }
- else       if (!excludes.contains(pattern)) {
-        allJsInputs.add(pattern);
+ else {
+        String pathString=Paths.get(pattern).normalize().toString();
+        if (!excludes.contains(pathString)) {
+          allJsInputs.add(pathString);
+        }
       }
     }
  else {
