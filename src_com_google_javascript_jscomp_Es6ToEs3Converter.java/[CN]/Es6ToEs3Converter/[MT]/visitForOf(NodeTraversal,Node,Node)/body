@@ -24,10 +24,10 @@
   Node incr=IR.assign(iterResult.cloneTree(),getNext.cloneTree());
   Node declarationOrAssign;
   if (declType == Token.NAME) {
-    declarationOrAssign=IR.exprResult(IR.assign(IR.name(variableName),IR.getprop(iterResult.cloneTree(),IR.string("value"))));
+    declarationOrAssign=IR.exprResult(IR.assign(IR.name(variableName).useSourceInfoFrom(variable),IR.getprop(iterResult.cloneTree(),IR.string("value"))));
   }
  else {
-    declarationOrAssign=new Node(declType,IR.name(variableName));
+    declarationOrAssign=new Node(declType,IR.name(variableName).useSourceInfoFrom(variable.getFirstChild()));
     declarationOrAssign.getFirstChild().addChildToBack(IR.getprop(iterResult.cloneTree(),IR.string("value")));
   }
   body.addChildToFront(declarationOrAssign);
