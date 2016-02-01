@@ -1,12 +1,12 @@
 {
-  assertLValueNamedX(parse("var x;").getFirstChild().getFirstChild());
+  assertLValueNamedX(parse("var x;").getFirstGrandchild());
   assertLValueNamedX(parse("var w, x;").getFirstChild().getLastChild());
-  assertLValueNamedX(parse("var [...x] = y;").getFirstChild().getFirstChild().getFirstChild().getFirstChild());
-  assertLValueNamedX(parse("var x = y;").getFirstChild().getFirstChild());
-  assertLValueNamedX(parse("x++;").getFirstChild().getFirstChild().getFirstChild());
+  assertLValueNamedX(parse("var [...x] = y;").getFirstGrandchild().getFirstGrandchild());
+  assertLValueNamedX(parse("var x = y;").getFirstGrandchild());
+  assertLValueNamedX(parse("x++;").getFirstGrandchild().getFirstChild());
   assertLValueNamedX(NodeUtil.getFunctionParameters(parse("function f(x) {}").getFirstChild()).getFirstChild());
   Node x=NodeUtil.getFunctionParameters(parse("function f(x = 3) {}").getFirstChild()).getFirstChild().getFirstChild();
   assertLValueNamedX(x);
-  assertLValueNamedX(parse("({x} = obj)").getFirstChild().getFirstChild().getFirstChild().getFirstChild());
-  assertLValueNamedX(parse("([x] = obj)").getFirstChild().getFirstChild().getFirstChild().getFirstChild());
+  assertLValueNamedX(parse("({x} = obj)").getFirstGrandchild().getFirstGrandchild());
+  assertLValueNamedX(parse("([x] = obj)").getFirstGrandchild().getFirstGrandchild());
 }

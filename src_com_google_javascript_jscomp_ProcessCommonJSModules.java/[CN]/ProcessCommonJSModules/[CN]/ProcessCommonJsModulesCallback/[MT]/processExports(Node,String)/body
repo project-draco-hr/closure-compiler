@@ -25,7 +25,7 @@
   }
   boolean declaredModuleExports=false;
   for (  Node ref : exports) {
-    if (ref.getParent().isAssign() && !ref.getParent().getParent().isExprResult() && !declaredModuleExports) {
+    if (ref.getParent().isAssign() && !ref.getGrandparent().isExprResult() && !declaredModuleExports) {
       script.addChildToFront(IR.var(IR.name(moduleName)).useSourceInfoIfMissingFromForTree(ref));
       declaredModuleExports=true;
     }

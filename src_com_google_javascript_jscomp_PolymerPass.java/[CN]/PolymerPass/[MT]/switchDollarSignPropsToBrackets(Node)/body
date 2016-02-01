@@ -5,8 +5,8 @@
     if (value != null && value.isFunction()) {
       NodeUtil.visitPostOrder(value.getLastChild(),new NodeUtil.Visitor(){
         @Override public void visit(        Node n){
-          if (n.isString() && n.getString().equals("$") && n.getParent().isGetProp()&& n.getParent().getParent().isGetProp()) {
-            Node dollarChildProp=n.getParent().getParent();
+          if (n.isString() && n.getString().equals("$") && n.getParent().isGetProp()&& n.getGrandparent().isGetProp()) {
+            Node dollarChildProp=n.getGrandparent();
             dollarChildProp.setType(Token.GETELEM);
             compiler.reportCodeChange();
           }

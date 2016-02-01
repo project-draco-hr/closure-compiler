@@ -3,7 +3,7 @@
   String expectedCode="" + "var x = function() {\n" + "  // Inline comment that should be preserved.\n"+ "  var blah = bleh;\n"+ "};";
   Compiler compiler=getCompiler(input);
   Node root=compileToScriptRoot(compiler);
-  Node castNode=root.getFirstChild().getFirstChild().getFirstChild();
+  Node castNode=root.getFirstGrandchild().getFirstChild();
   assertTrue(castNode.isCast());
   SuggestedFix fix=new SuggestedFix.Builder().removeCast(castNode,compiler).build();
   assertChanges(fix,"",input,expectedCode);

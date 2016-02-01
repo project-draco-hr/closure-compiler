@@ -3,11 +3,11 @@
   String template="" + "/**\n" + " * @param {AppContext} context\n"+ " * @param {string} str\n"+ " */\n"+ "function template(context, str) {\n"+ "  context.location = str;\n"+ "  delete context.location;\n"+ "}\n";
   TestNodePair pair=compile(externs,template,"var context = new AppContext(); context.location = '3';");
   assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
-  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
-  assertNotMatch(pair.templateNode,pair.testNode.getLastChild().getFirstChild().getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstGrandchild());
+  assertNotMatch(pair.templateNode,pair.testNode.getLastChild().getFirstGrandchild());
   pair=compile(externs,template,"var ac = new AppContext(); ac.location = '3'; delete ac.location;");
   assertNotMatch(pair.templateNode,pair.testNode.getFirstChild());
-  assertNotMatch(pair.templateNode,pair.testNode.getFirstChild().getFirstChild());
+  assertNotMatch(pair.templateNode,pair.testNode.getFirstGrandchild());
   assertMatch(pair.templateNode,pair.testNode.getSecondChild());
   externs="" + "/** @param {string} arg */\n" + "function bar(arg) {};\n";
   template="" + "function template() {\n" + "  var a = 'string';\n"+ "  bar(a);\n"+ "}\n";
