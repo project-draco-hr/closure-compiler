@@ -29,14 +29,10 @@
     setSourceInfo(newName,functionTree);
   }
   Node node=newNode(Token.FUNCTION);
-  if (!isMember) {
-    node.addChildToBack(newName);
+  if (isMember) {
+    newName.setString("");
   }
- else {
-    Node emptyName=newStringNode(Token.NAME,"");
-    setSourceInfo(emptyName,functionTree);
-    node.addChildToBack(emptyName);
-  }
+  node.addChildToBack(newName);
   maybeProcessGenerics(node.getFirstChild(),functionTree.generics);
   node.addChildToBack(transform(functionTree.formalParameterList));
   maybeProcessType(node,functionTree.returnType);
