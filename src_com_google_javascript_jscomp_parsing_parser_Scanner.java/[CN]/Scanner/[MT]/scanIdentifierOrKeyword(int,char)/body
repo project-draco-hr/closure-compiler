@@ -2,10 +2,22 @@
   StringBuilder valueBuilder=new StringBuilder();
   valueBuilder.append(ch);
   boolean containsUnicodeEscape=ch == '\\';
+  boolean bracedUnicodeEscape=false;
+  int unicodeEscapeLen=containsUnicodeEscape ? 1 : 0;
   ch=peekChar();
-  while (isIdentifierPart(ch) || ch == '\\' || (ch == '{' && containsUnicodeEscape) || (ch == '}' && containsUnicodeEscape)) {
+  while (isIdentifierPart(ch) || ch == '\\' || (ch == '{' && unicodeEscapeLen == 2) || (ch == '}' && bracedUnicodeEscape)) {
     if (ch == '\\') {
       containsUnicodeEscape=true;
+    }
+    if (ch == '\\' || unicodeEscapeLen > 0) {
+      unicodeEscapeLen++;
+    }
+    if (ch == '{') {
+      bracedUnicodeEscape=true;
+    }
+    if (ch == '}' || (unicodeEscapeLen >= 6 && !bracedUnicodeEscape)) {
+      bracedUnicodeEscape=false;
+      unicodeEscapeLen=0;
     }
     valueBuilder.append(nextChar());
     ch=peekChar();
