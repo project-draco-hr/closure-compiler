@@ -4,27 +4,23 @@
   if (remove) {
     pattern=pattern.substring(1);
   }
-  if (File.separator.equals("\\")) {
-    pattern=pattern.replace('\\','/');
-  }
-  List<String> patternParts=Splitter.on('/').splitToList(pattern);
+  String separator=File.separator.equals("\\") ? "\\\\" : File.separator;
+  List<String> patternParts=Splitter.on(File.separator).splitToList(pattern);
   String prefix=".";
   for (int i=0; i < patternParts.size(); i++) {
     if (patternParts.get(i).contains("*")) {
-      if (i == 0) {
-        break;
+      if (i > 0) {
+        prefix=Joiner.on(separator).join(patternParts.subList(0,i));
+        pattern=Joiner.on(separator).join(patternParts.subList(i,patternParts.size()));
       }
- else {
-        prefix=Joiner.on(File.separator).join(patternParts.subList(0,i));
-        pattern=Joiner.on(File.separator).join(patternParts.subList(i,patternParts.size()));
-      }
+      break;
     }
   }
-  final PathMatcher matcher=fs.getPathMatcher("glob:" + (prefix.equals(".") ? pattern : prefix + File.separator + pattern));
+  final PathMatcher matcher=fs.getPathMatcher("glob:" + prefix + separator+ pattern);
   java.nio.file.Files.walkFileTree(fs.getPath(prefix),new SimpleFileVisitor<Path>(){
     @Override public FileVisitResult visitFile(    Path p,    BasicFileAttributes attrs){
-      if (matcher.matches(p.normalize())) {
-        String pathString=p.toString();
+      if (matcher.matches(p) || matcher.matches(p.normalize())) {
+        String pathString=p.normalize().toString();
         if (remove) {
           excludes.add(pathString);
           allJsInputs.remove(pathString);
