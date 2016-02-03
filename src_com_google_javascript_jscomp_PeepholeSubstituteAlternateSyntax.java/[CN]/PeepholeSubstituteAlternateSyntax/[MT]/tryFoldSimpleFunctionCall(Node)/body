@@ -23,39 +23,17 @@ case "Boolean":
       }
       break;
     }
-case "Number":
+case "String":
 {
-    int paramCount=n.getChildCount() - 1;
-    if (paramCount == 0 || paramCount == 1) {
-      Node replacement;
-      if (paramCount == 0) {
-        replacement=IR.number(0);
-      }
- else {
-        Node value=n.getLastChild().detachFromParent();
-        if (NodeUtil.isNumericResult(value)) {
-          replacement=value;
-        }
- else {
-          replacement=IR.pos(value);
-        }
-      }
-      n.getParent().replaceChild(n,replacement);
+    Node value=callTarget.getNext();
+    if (value != null && value.getNext() == null && NodeUtil.isImmutableValue(value)) {
+      Node addition=IR.add(IR.string("").srcref(callTarget),value.detachFromParent());
+      n.getParent().replaceChild(n,addition);
       reportCodeChange();
+      return addition;
     }
     break;
   }
-case "String":
-{
-  Node value=callTarget.getNext();
-  if (value != null && value.getNext() == null && NodeUtil.isImmutableValue(value)) {
-    Node addition=IR.add(IR.string("").srcref(callTarget),value.detachFromParent());
-    n.getParent().replaceChild(n,addition);
-    reportCodeChange();
-    return addition;
-  }
-  break;
-}
 default :
 break;
 }
