@@ -1,12 +1,21 @@
 {
+  if (n.isCast()) {
+    add(getTypeAnnotation(n));
+  }
   Node parent=n.getParent();
   if (parent != null && (parent.isBlock() || parent.isScript())) {
     if (n.isFunction()) {
       add(getFunctionAnnotation(n));
     }
- else     if (n.isExprResult() && n.getFirstChild().isAssign()) {
-      Node rhs=n.getFirstChild().getLastChild();
-      add(getTypeAnnotation(rhs));
+ else     if (n.isExprResult()) {
+      Node firstChild=n.getFirstChild();
+      if (firstChild.isAssign() && firstChild.getLastChild().isFunction()) {
+        Node rhs=firstChild.getLastChild();
+        add(getTypeAnnotation(rhs));
+      }
+ else {
+        add(getTypeAnnotation(firstChild));
+      }
     }
  else     if (n.isVar() && n.getFirstFirstChild() != null) {
       add(getTypeAnnotation(n.getFirstFirstChild()));
