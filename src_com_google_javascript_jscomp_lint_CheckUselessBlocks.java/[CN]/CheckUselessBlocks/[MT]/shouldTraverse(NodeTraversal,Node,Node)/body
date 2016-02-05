@@ -1,0 +1,24 @@
+{
+switch (n.getType()) {
+case Token.BLOCK:
+    if (isLoneBlock(n)) {
+      loneBlocks.push(n);
+    }
+  break;
+case Token.LET:
+case Token.CONST:
+allowLoneBlock(parent);
+break;
+case Token.CLASS:
+if (NodeUtil.isClassDeclaration(n)) {
+allowLoneBlock(parent);
+}
+break;
+case Token.FUNCTION:
+if (NodeUtil.isFunctionDeclaration(n)) {
+allowLoneBlock(parent);
+}
+break;
+}
+return true;
+}

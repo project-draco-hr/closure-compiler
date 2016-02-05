@@ -1,0 +1,12 @@
+{
+  testWarning("{}",USELESS_BLOCK);
+  testWarning("{ var f = function() {}; }",USELESS_BLOCK);
+  testWarning("{ var x = 1; }",USELESS_BLOCK);
+  testWarning(LINE_JOINER.join("function f() {","  return","    {foo: 'bar'};","}"),USELESS_BLOCK);
+  testWarning(LINE_JOINER.join("if (foo) {","  bar();","  {","    baz();","  }","}"),USELESS_BLOCK);
+  testWarning(LINE_JOINER.join("if (foo) {","  bar();","} {","  baz();","}"),USELESS_BLOCK);
+  testWarning("function bar() { { baz(); } }",USELESS_BLOCK);
+  testWarningEs6("{ let x = function() {}; {} }",USELESS_BLOCK);
+  testWarningEs6("{ let x = function() { {} }; }",USELESS_BLOCK);
+  testWarningEs6("{ var f = class {}; }",USELESS_BLOCK);
+}
