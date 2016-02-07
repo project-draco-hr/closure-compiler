@@ -1,0 +1,32 @@
+{
+  JvmMetrics.maybeWriteJvmMetrics(this.printStream,"verbose:pretty:all");
+  try {
+    calcTotalStats();
+    ArrayList<Entry<String,Stats>> statEntries=new ArrayList<>();
+    statEntries.addAll(summary.entrySet());
+    Collections.sort(statEntries,new Comparator<Entry<String,Stats>>(){
+      @Override public int compare(      Entry<String,Stats> e1,      Entry<String,Stats> e2){
+        return Long.compare(e1.getValue().runtime,e2.getValue().runtime);
+      }
+    }
+);
+    this.output.write("Summary:\n" + "pass,runtime,runs,changingRuns,reduction,gzReduction\n");
+    for (    Entry<String,Stats> entry : statEntries) {
+      String key=entry.getKey();
+      Stats stats=entry.getValue();
+      this.output.write(String.format("%s,%d,%d,%d,%d,%d\n",key,stats.runtime,stats.runs,stats.changes,stats.diff,stats.gzDiff));
+    }
+    double meanMem=meanMemUsed();
+    double stdDev=usedMemStandardDeviation(meanMem);
+    this.output.write("\nTOTAL:" + "\nRuntime(ms): " + runtime + String.format("\nMem usage after each pass(MB): %.2f +/- %.2f",meanMem,stdDev)+ "\n#Runs: "+ runs+ "\n#Changing runs: "+ changes+ "\n#Loopable runs: "+ loopRuns+ "\n#Changing loopable runs: "+ loopChanges+ "\nEstimated Reduction(bytes): "+ diff+ "\nEstimated GzReduction(bytes): "+ gzDiff+ "\nEstimated Size(bytes): "+ codeSize+ "\nEstimated GzSize(bytes): "+ gzCodeSize+ "\n\n");
+    this.output.write("Log:\n" + "pass,runtime,runs,changingRuns,reduction,gzReduction,size,gzSize\n");
+    for (    Stats stats : log) {
+      this.output.write(String.format("%s,%d,%d,%d,%d,%d,%d,%d\n",stats.pass,stats.runtime,stats.runs,stats.changes,stats.diff,stats.gzDiff,stats.size,stats.gzSize));
+    }
+    this.output.write("\n");
+    this.output.flush();
+  }
+ catch (  IOException e) {
+    throw new RuntimeException("Failed to write statistics to output.",e);
+  }
+}
