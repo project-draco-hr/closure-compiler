@@ -3,6 +3,7 @@
   typeCheck(LINE_JOINER.join("/**"," * @param {!Array<number|string>} x"," * @return {!Array<number>}"," */","function f(x) {","  return /** @type {!Array<number>} */ (x);","}"));
   typeCheck(LINE_JOINER.join("/** @constructor */ function Foo() {}","/** @constructor @extends {Foo} */ function Bar() {}","var /** Array<Bar> */ a = [new Foo];"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/**"," * @template T"," * @param {T} x"," * @param {!Array<null|T>} y"," */","function f(x, y) {}","f(new Foo, [new Foo]);"));
-  typeCheck(LINE_JOINER.join("/** @constructor @param {T} x @template T */ function Gen(x){}","/** @constructor */ function Foo() {}","/** @constructor @extends {Foo} */ function Bar() {}","var /** Gen<Foo> */ a = new Gen(new Bar);"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @constructor @param {T} x @template T */ function Gen(x){}","/** @constructor */ function Foo() {}","/** @constructor @extends {Foo} */ function Bar() {}","var /** Gen<Foo> */ a = new Gen(new Bar);"));
   typeCheck(LINE_JOINER.join("/** @constructor @param {T} x @template T */ function Gen(x){}","/** @constructor */ function Foo() {}","/** @constructor @extends {Foo} */ function Bar() {}","var /** Gen<Bar> */ a = new Gen(new Foo);"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/**"," * @param {!Object} x"," * @return {!Promise<?Object>}"," */","function foo(x) {","  return Promise.resolve(x);","}"));
 }

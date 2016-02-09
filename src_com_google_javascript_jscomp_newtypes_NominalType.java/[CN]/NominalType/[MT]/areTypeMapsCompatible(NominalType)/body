@@ -11,12 +11,7 @@
     Preconditions.checkState(other.typeMap.containsKey(typeVar),"Other (%s) doesn't contain mapping (%s->%s) from this (%s)",other,typeVar,this.typeMap.get(typeVar),this);
     JSType thisType=this.typeMap.get(typeVar);
     JSType otherType=other.typeMap.get(typeVar);
-    if (allowCovariantGenerics(this)) {
-      if (!thisType.isSubtypeOf(otherType)) {
-        return false;
-      }
-    }
- else     if (!thisType.equals(otherType) && JSType.unifyUnknowns(thisType,otherType) == null) {
+    if (!thisType.isSubtypeOf(otherType)) {
       return false;
     }
   }

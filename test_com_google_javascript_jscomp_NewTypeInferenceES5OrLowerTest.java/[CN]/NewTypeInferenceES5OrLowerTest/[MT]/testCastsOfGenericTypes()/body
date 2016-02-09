@@ -1,0 +1,5 @@
+{
+  typeCheck(LINE_JOINER.join("/** @constructor @struct */","function Bar() {","  this.prop = 123;","}","function g(/** !Array<!Bar> */ x) {","  return /** @type {!Array<{prop}>} */ (x);","}"));
+  typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @template T"," * @param {T} x"," */","function Bar(x) {}","var x = /** @type {!Bar<(number|null)>} */ (new Bar(null));"));
+  typeCheck(LINE_JOINER.join("/** @constructor @struct */","function Foo() {}","/** @constructor @struct @extends {Foo} */","function Bar() {}","/** @constructor @template T,U */","function Baz() {}","function f(/** !Baz<!Bar,?> */ x) {","  return /** @type {!Baz<!Foo,?>} */ (x);","}"));
+}
