@@ -59,21 +59,32 @@ case '4':
 case '5':
 case '6':
 case '7':
-errorReporter.warning(INVALID_ES5_STRICT_OCTAL,sourceName,lineno(location.start),charno(location.start));
 if (!inStrictContext()) {
 double v=0;
 int c=0;
 while (++c < length) {
-v=(v * 8) + octaldigit(value.charAt(c));
+  char digit=value.charAt(c);
+  if (isOctalDigit(digit)) {
+    v=(v * 8) + octaldigit(digit);
+  }
+ else {
+    errorReporter.error(INVALID_OCTAL_DIGIT,sourceName,lineno(location.start),charno(location.start));
+    return 0;
+  }
 }
+errorReporter.warning(INVALID_ES5_STRICT_OCTAL,sourceName,lineno(location.start),charno(location.start));
 return v;
 }
  else {
+errorReporter.warning(INVALID_ES5_STRICT_OCTAL,sourceName,lineno(location.start),charno(location.start));
 return Double.valueOf(value);
 }
-default :
-errorReporter.error(INVALID_NUMBER_LITERAL,sourceName,lineno(location.start),charno(location.start));
+case '8':
+case '9':
+errorReporter.error(INVALID_OCTAL_DIGIT,sourceName,lineno(location.start),charno(location.start));
 return 0;
+default :
+throw new IllegalStateException("Unexpected character in number literal: " + value.charAt(1));
 }
 }
  else {
