@@ -104,6 +104,7 @@ return caseIn(condition.getLastChild(),condition.getFirstChild().getString(),bli
 }
 break;
 case Token.CASE:
+{
 Node left=condition.getParent().getFirstChild();
 Node right=condition.getFirstChild();
 if (outcome) {
@@ -111,6 +112,16 @@ return caseEquality(left,right,blindScope,SHEQ);
 }
  else {
 return caseEquality(left,right,blindScope,SHNE);
+}
+}
+case Token.CALL:
+{
+Node left=condition.getFirstChild();
+String leftName=left.getQualifiedName();
+if ("Array.isArray".equals(leftName) && left.getNext() != null) {
+return caseIsArray(left.getNext(),blindScope,outcome);
+}
+break;
 }
 }
 return nextPreciserScopeKnowingConditionOutcome(condition,blindScope,outcome);
