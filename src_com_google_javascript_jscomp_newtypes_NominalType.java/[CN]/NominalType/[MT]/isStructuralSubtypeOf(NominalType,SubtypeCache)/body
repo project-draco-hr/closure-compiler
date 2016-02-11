@@ -1,0 +1,16 @@
+{
+  Preconditions.checkArgument(other.isStructuralInterface());
+  for (  String pname : other.getAllPropsOfInterface()) {
+    Property prop2=other.getProp(pname);
+    Property prop1=this.getProp(pname);
+    if (prop2.isOptional()) {
+      if (prop1 != null && !prop1.getType().isSubtypeOf(prop2.getType(),subSuperMap)) {
+        return false;
+      }
+    }
+ else     if (prop1 == null || prop1.isOptional() || !prop1.getType().isSubtypeOf(prop2.getType(),subSuperMap)) {
+      return false;
+    }
+  }
+  return true;
+}

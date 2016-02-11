@@ -1,0 +1,14 @@
+{
+  RawNominalType thisRaw=this.rawType;
+  if (thisRaw == other.rawType) {
+    return areTypeMapsCompatible(other);
+  }
+  if (other.isInterface()) {
+    for (    NominalType i : thisRaw.getInterfaces()) {
+      if (i.instantiateGenerics(this.typeMap).isNominalSubtypeOf(other)) {
+        return true;
+      }
+    }
+  }
+  return isClass() && thisRaw.getSuperClass() != null && thisRaw.getSuperClass().instantiateGenerics(this.typeMap).isNominalSubtypeOf(other);
+}

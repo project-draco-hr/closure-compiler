@@ -1,0 +1,43 @@
+{
+  if (other == TOP_OBJECT) {
+    return true;
+  }
+  if ((keepLoosenessOfThis && this.isLoose) || other.isLoose) {
+    return this.isLooseSubtypeOf(other,subSuperMap);
+  }
+  NominalType thisNt=this.nominalType;
+  NominalType otherNt=other.nominalType;
+  boolean checkOnlyLocalProps=true;
+  if (otherNt != null && otherNt.isStructuralInterface()) {
+    if (otherNt.equals(subSuperMap.get(thisNt))) {
+      return true;
+    }
+    subSuperMap=subSuperMap.with(thisNt,otherNt);
+    if (thisNt == null || !thisNt.isNominalSubtypeOf(otherNt)) {
+      checkOnlyLocalProps=false;
+    }
+  }
+ else   if (otherNt != null && !otherNt.isStructuralInterface() && (thisNt == null || !thisNt.isNominalSubtypeOf(otherNt))) {
+    return false;
+  }
+  Set<String> otherPropNames;
+  if (checkOnlyLocalProps) {
+    otherPropNames=other.props.keySet();
+  }
+ else {
+    otherPropNames=otherNt.getAllPropsOfInterface();
+    if (otherPropNames == null) {
+      return false;
+    }
+  }
+  if (!arePropertiesSubtypes(other,otherPropNames,subSuperMap)) {
+    return false;
+  }
+  if (other.fn == null) {
+    return true;
+  }
+ else   if (this.fn == null) {
+    return false;
+  }
+  return this.fn.isSubtypeOf(other.fn,subSuperMap);
+}

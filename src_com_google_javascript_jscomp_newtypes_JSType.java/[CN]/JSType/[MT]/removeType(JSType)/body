@@ -15,13 +15,13 @@
   ObjectType otherObj=Iterables.getOnlyElement(other.getObjs());
   ImmutableSet.Builder<ObjectType> objsBuilder=ImmutableSet.builder();
   for (  ObjectType obj : getObjs()) {
-    if (!obj.isSubtypeOf(otherObj)) {
+    if (!obj.isSubtypeOf(otherObj,SubtypeCache.create())) {
       objsBuilder.add(obj);
     }
   }
   ImmutableSet.Builder<EnumType> enumBuilder=ImmutableSet.builder();
   for (  EnumType e : getEnums()) {
-    if (!e.getEnumeratedType().isSubtypeOf(other)) {
+    if (!e.getEnumeratedType().isSubtypeOf(other,SubtypeCache.create())) {
       enumBuilder.add(e);
     }
   }

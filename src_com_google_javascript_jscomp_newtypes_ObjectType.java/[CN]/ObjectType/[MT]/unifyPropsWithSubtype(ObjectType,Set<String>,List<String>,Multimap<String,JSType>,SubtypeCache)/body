@@ -1,0 +1,16 @@
+{
+  for (  String pname : thisProps) {
+    QualifiedName qname=new QualifiedName(pname);
+    Property thisProp=getLeftmostProp(qname);
+    Property otherProp=other.getLeftmostProp(qname);
+    if (thisProp.isOptional()) {
+      if (otherProp != null && !thisProp.getType().unifyWithSubtype(otherProp.getType(),typeParameters,typeMultimap,subSuperMap)) {
+        return false;
+      }
+    }
+ else     if (otherProp == null || otherProp.isOptional() || !thisProp.getType().unifyWithSubtype(otherProp.getType(),typeParameters,typeMultimap,subSuperMap)) {
+      return false;
+    }
+  }
+  return true;
+}

@@ -9,5 +9,15 @@
   if (this.randomProps.containsKey(pname)) {
     this.randomProps=this.randomProps.without(pname);
   }
-  this.protoProps=this.protoProps.with(pname,isConstant ? Property.makeConstant(defSite,type,type) : Property.makeWithDefsite(defSite,type,type));
+  Property newProp;
+  if (isConstant) {
+    newProp=Property.makeConstant(defSite,type,type);
+  }
+ else   if (isStructuralInterface() && type != null && !type.isUnknown() && JSType.UNDEFINED.isSubtypeOf(type)) {
+    newProp=Property.makeOptional(defSite,type,type);
+  }
+ else {
+    newProp=Property.makeWithDefsite(defSite,type,type);
+  }
+  this.protoProps=this.protoProps.with(pname,newProp);
 }

@@ -1,0 +1,51 @@
+{
+  Preconditions.checkNotNull(other);
+  if (this.isUnknown() || this.isTop()) {
+    return true;
+  }
+ else   if (getMask() == TYPEVAR_MASK && typeParameters.contains(getTypeVar())) {
+    updateTypemap(typeMultimap,getTypeVar(),other);
+    return true;
+  }
+ else   if (other.isUnknown()) {
+    return true;
+  }
+ else   if (other.isTop()) {
+    return false;
+  }
+  Set<EnumType> ununifiedEnums=ImmutableSet.of();
+  if (!other.getEnums().isEmpty()) {
+    ununifiedEnums=new LinkedHashSet<>();
+    for (    EnumType e : other.getEnums()) {
+      if (!fromEnum(e).isSubtypeOf(this,SubtypeCache.create())) {
+        ununifiedEnums.add(e);
+      }
+    }
+  }
+  Set<ObjectType> ununifiedObjs=new LinkedHashSet<>(other.getObjs());
+  for (  ObjectType targetObj : getObjs()) {
+    for (    ObjectType sourceObj : other.getObjs()) {
+      if (targetObj.unifyWithSubtype(sourceObj,typeParameters,typeMultimap,subSuperMap)) {
+        ununifiedObjs.remove(sourceObj);
+      }
+    }
+  }
+  String thisTypevar=getTypeVar();
+  String otherTypevar=other.getTypeVar();
+  if (thisTypevar == null || !typeParameters.contains(thisTypevar)) {
+    return ununifiedObjs.isEmpty() && ununifiedEnums.isEmpty() && (otherTypevar == null || otherTypevar.equals(thisTypevar))&& getMask() == (getMask() | (other.getMask() & ~ENUM_MASK));
+  }
+ else {
+    int thisScalarBits=getMask() & ~NON_SCALAR_MASK & ~TYPEVAR_MASK;
+    int templateMask=other.getMask() & ~thisScalarBits;
+    if (ununifiedObjs.isEmpty()) {
+      templateMask&=~NON_SCALAR_MASK;
+    }
+    if (templateMask == BOTTOM_MASK) {
+      return ununifiedObjs.isEmpty() && ununifiedEnums.isEmpty();
+    }
+    JSType templateType=makeType(promoteBoolean(templateMask),ImmutableSet.copyOf(ununifiedObjs),otherTypevar,ImmutableSet.copyOf(ununifiedEnums));
+    updateTypemap(typeMultimap,getTypeVar(),templateType);
+    return true;
+  }
+}

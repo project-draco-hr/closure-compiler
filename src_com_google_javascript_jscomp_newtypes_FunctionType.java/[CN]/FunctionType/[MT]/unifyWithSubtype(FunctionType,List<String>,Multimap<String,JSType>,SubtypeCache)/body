@@ -1,0 +1,37 @@
+{
+  Preconditions.checkState(this.typeParameters.isEmpty());
+  Preconditions.checkState(this.outerVarPreconditions.isEmpty());
+  Preconditions.checkState(this != TOP_FUNCTION);
+  if (this == LOOSE_TOP_FUNCTION || other.isTopFunction() || other.isLoose()) {
+    return true;
+  }
+  if (!acceptsAnyArguments()) {
+    if (other.requiredFormals.size() > this.requiredFormals.size()) {
+      return false;
+    }
+    int maxNonInfiniteArity=getMaxArityWithoutRestFormals();
+    for (int i=0; i < maxNonInfiniteArity; i++) {
+      JSType thisFormal=getFormalType(i);
+      JSType otherFormal=other.getFormalType(i);
+      if (otherFormal != null && !thisFormal.unifyWithSubtype(otherFormal,typeParameters,typeMultimap,subSuperMap) && !thisFormal.isSubtypeOf(otherFormal,SubtypeCache.create())) {
+        return false;
+      }
+    }
+    if (this.restFormals != null) {
+      JSType otherRestFormals=other.getFormalType(maxNonInfiniteArity);
+      if (otherRestFormals != null && !this.restFormals.unifyWithSubtype(otherRestFormals,typeParameters,typeMultimap,subSuperMap) && !this.restFormals.isSubtypeOf(otherRestFormals,SubtypeCache.create())) {
+        return false;
+      }
+    }
+  }
+  if (nominalType == null && other.nominalType != null || nominalType != null && other.nominalType == null) {
+    return false;
+  }
+  if (nominalType != null && !nominalType.unifyWithSubtype(other.nominalType,typeParameters,typeMultimap,subSuperMap)) {
+    return false;
+  }
+  if (this.receiverType != null && other.receiverType != null && !this.receiverType.unifyWithSubtype(other.receiverType,typeParameters,typeMultimap,subSuperMap) && !this.receiverType.isSubtypeOf(other.receiverType,SubtypeCache.create())) {
+    return false;
+  }
+  return this.returnType.unifyWithSubtype(other.returnType,typeParameters,typeMultimap,subSuperMap);
+}

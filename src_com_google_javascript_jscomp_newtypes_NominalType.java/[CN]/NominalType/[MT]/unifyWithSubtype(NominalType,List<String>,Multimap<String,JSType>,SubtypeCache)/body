@@ -1,0 +1,20 @@
+{
+  other=other.findMatchingAncestorWith(this);
+  if (other == null) {
+    return false;
+  }
+  if (!isGeneric()) {
+    return true;
+  }
+  Preconditions.checkState(!typeMap.isEmpty());
+  if (other.typeMap.isEmpty()) {
+    return true;
+  }
+  boolean hasUnified=true;
+  for (  String typeParam : this.rawType.getTypeParameters()) {
+    JSType fromOtherMap=other.typeMap.get(typeParam);
+    Preconditions.checkNotNull(fromOtherMap,"Type variable %s not found in map %s",typeParam,other.typeMap);
+    hasUnified=hasUnified && this.typeMap.get(typeParam).unifyWithSubtype(fromOtherMap,typeParameters,typeMultimap,subSuperMap);
+  }
+  return hasUnified;
+}

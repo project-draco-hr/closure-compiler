@@ -1,0 +1,28 @@
+{
+  if (fn != null) {
+    if (other.fn == null || !fn.unifyWithSubtype(other.fn,typeParameters,typeMultimap,subSuperMap)) {
+      return false;
+    }
+  }
+  NominalType thisNt=this.nominalType;
+  NominalType otherNt=other.nominalType;
+  if (thisNt != null && otherNt != null) {
+    if (thisNt.unifyWithSubtype(otherNt,typeParameters,typeMultimap,subSuperMap)) {
+      return true;
+    }
+    if (thisNt.isClass()) {
+      return false;
+    }
+    if (thisNt.isStructuralInterface()) {
+      if (thisNt.equals(subSuperMap.get(otherNt))) {
+        return true;
+      }
+      subSuperMap=subSuperMap.with(otherNt,thisNt);
+    }
+  }
+  if (thisNt != null && !thisNt.isStructuralInterface() && otherNt == null) {
+    return false;
+  }
+  Set<String> thisProps=thisNt != null && thisNt.isStructuralInterface() ? thisNt.getAllPropsOfInterface() : this.props.keySet();
+  return unifyPropsWithSubtype(other,thisProps,typeParameters,typeMultimap,subSuperMap);
+}
