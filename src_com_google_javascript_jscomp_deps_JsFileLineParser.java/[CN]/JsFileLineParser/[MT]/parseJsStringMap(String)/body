@@ -1,0 +1,26 @@
+{
+  input=CharMatcher.WHITESPACE.trimFrom(input);
+  check(!input.isEmpty() && input.charAt(0) == '{' && input.charAt(input.length() - 1) == '}',"Syntax error when parsing JS object");
+  input=input.substring(1,input.length() - 1).trim();
+  Map<String,String> results=new LinkedHashMap<>();
+  boolean done=input.isEmpty();
+  valueMatcher.reset(input);
+  while (!done) {
+    check(valueMatcher.lookingAt(),"Bad key in JS object literal");
+    String key=valueMatcher.group(1) != null ? valueMatcher.group(1) : valueMatcher.group(2);
+    check(!valueMatcher.hitEnd(),"Missing value in JS object literal");
+    check(input.charAt(valueMatcher.end()) == ':',"Missing colon in JS object literal");
+    valueMatcher.region(valueMatcher.end() + 1,valueMatcher.regionEnd());
+    check(valueMatcher.lookingAt(),"Bad value in JS object literal");
+    String val=valueMatcher.group(1) != null ? valueMatcher.group(1) : valueMatcher.group(2);
+    results.put(key,val);
+    if (!valueMatcher.hitEnd()) {
+      check(input.charAt(valueMatcher.end()) == ',',"Missing comma in JS object literal");
+      valueMatcher.region(valueMatcher.end() + 1,valueMatcher.regionEnd());
+    }
+ else {
+      done=true;
+    }
+  }
+  return results;
+}

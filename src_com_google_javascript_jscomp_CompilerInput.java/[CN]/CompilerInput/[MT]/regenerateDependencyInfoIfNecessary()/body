@@ -7,14 +7,15 @@
       return;
     }
     finder.visitTree(getAstRoot(compiler));
-    isModuleFile=finder.isModuleFile;
+    loadFlags.putAll(finder.loadFlags);
     provides.addAll(finder.provides);
     requires.addAll(finder.requires);
+    generatedLoadFlags=true;
   }
  else {
     if (!generatedDependencyInfoFromSource) {
       DependencyInfo info=(new JsFileParser(compiler.getErrorManager())).setIncludeGoogBase(true).parseFile(getName(),getName(),getCode());
-      isModuleFile=info.isModule();
+      loadFlags.putAll(info.getLoadFlags());
       provides.addAll(info.getProvides());
       requires.addAll(info.getRequires());
       generatedDependencyInfoFromSource=true;
