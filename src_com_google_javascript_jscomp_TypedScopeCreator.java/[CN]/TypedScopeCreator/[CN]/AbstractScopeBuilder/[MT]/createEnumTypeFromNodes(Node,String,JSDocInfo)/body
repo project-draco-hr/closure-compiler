@@ -14,16 +14,9 @@
     if (rValue != null && rValue.isObjectLit()) {
       Node key=rValue.getFirstChild();
       while (key != null) {
-        String keyName=NodeUtil.getStringValue(key);
-        if (keyName == null) {
-          report(JSError.make(key,ENUM_NOT_CONSTANT,keyName));
-        }
- else         if (!codingConvention.isValidEnumKey(keyName)) {
-          report(JSError.make(key,ENUM_NOT_CONSTANT,keyName));
-        }
- else {
-          enumType.defineElement(keyName,key);
-        }
+        String keyName=key.getString();
+        Preconditions.checkNotNull(keyName,"Invalid enum key: %s",key);
+        enumType.defineElement(keyName,key);
         key=key.getNext();
       }
     }

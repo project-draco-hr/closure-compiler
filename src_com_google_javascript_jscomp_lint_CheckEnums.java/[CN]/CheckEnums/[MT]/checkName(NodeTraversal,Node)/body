@@ -1,0 +1,12 @@
+{
+  if (node.isComputedProp()) {
+    t.report(node,COMPUTED_PROP_NAME_IN_ENUM);
+    return;
+  }
+  if (node.isStringKey() && !node.hasChildren()) {
+    t.report(node,SHORTHAND_ASSIGNMENT_IN_ENUM);
+  }
+  if (!compiler.getCodingConvention().isValidEnumKey(node.getString())) {
+    t.report(node,ENUM_PROP_NOT_CONSTANT);
+  }
+}
