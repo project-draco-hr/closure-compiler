@@ -1,3 +1,15 @@
 {
-  return t.inGlobalScope() && (NodeUtil.isFunctionDeclaration(function) || NodeUtil.isNameDeclaration(function.getGrandparent()) || function.getParent().isAssign()|| (function.getParent().isMemberFunctionDef() && function.getGrandparent().isClassMembers()));
+  if (!t.inGlobalScope()) {
+    return false;
+  }
+  if (NodeUtil.isFunctionDeclaration(function)) {
+    return true;
+  }
+  if (NodeUtil.isNameDeclaration(function.getGrandparent()) || function.getParent().isAssign()) {
+    return true;
+  }
+  if (function.getParent().isMemberFunctionDef() && function.getGrandparent().isClassMembers()) {
+    return !(function.getParent().matchesQualifiedName("constructor") && !NodeUtil.getFunctionParameters(function).hasChildren());
+  }
+  return false;
 }
