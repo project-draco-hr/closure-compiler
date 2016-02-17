@@ -4,6 +4,9 @@
   }
   Preconditions.checkArgument(fnNode.isFunction());
   Node block=fnNode.getLastChild();
+  int argCount=argMap.size();
+  boolean isTrivialBody=(!block.hasChildren() || (block.hasOneChild() && !bodyMayHaveConditionalCode(block.getLastChild())));
+  boolean hasMinimalParameters=NodeUtil.isUndefined(argMap.get(THIS_MARKER)) && argCount <= 2;
   Set<String> parameters=argMap.keySet();
   Set<String> namesAfterSideEffects=findParametersReferencedAfterSideEffect(parameters,block);
   for (  Map.Entry<String,Node> entry : argMap.entrySet()) {
@@ -14,10 +17,17 @@
     Node cArg=entry.getValue();
     boolean safe=true;
     int references=NodeUtil.getNameReferenceCount(block,argName);
-    if (NodeUtil.mayEffectMutableState(cArg) && references > 0) {
+    boolean argSideEffects=NodeUtil.mayHaveSideEffects(cArg);
+    if (!argSideEffects && references == 0) {
+      safe=true;
+    }
+ else     if (isTrivialBody && hasMinimalParameters && references == 1 && !(NodeUtil.canBeSideEffected(cArg) && namesAfterSideEffects.contains(argName))) {
+      safe=true;
+    }
+ else     if (NodeUtil.mayEffectMutableState(cArg) && references > 0) {
       safe=false;
     }
- else     if (NodeUtil.mayHaveSideEffects(cArg)) {
+ else     if (argSideEffects) {
       safe=false;
     }
  else     if (NodeUtil.canBeSideEffected(cArg) && namesAfterSideEffects.contains(argName)) {
