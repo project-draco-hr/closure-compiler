@@ -1,0 +1,7 @@
+{
+  allowExternsChanges(true);
+  String code=LINE_JOINER.join("var foo = function() { /** @export */ this.foo = 1; };","/** @export */ foo.method = function(){};");
+  String result=LINE_JOINER.join("var foo = function() { /** @export */ this.foo = 1; };","/** @export */ foo.method = function(){};","google_exportSymbol('foo.method', foo.method);");
+  test(code,result);
+  testExternChanges(code,"Object.prototype.foo;");
+}
