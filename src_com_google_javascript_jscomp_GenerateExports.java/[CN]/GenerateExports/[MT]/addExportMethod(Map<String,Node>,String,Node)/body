@@ -1,7 +1,7 @@
 {
   String parent=null;
   String grandparent=null;
-  Node node=context.getNode().getFirstChild();
+  Node node=context.getFirstChild();
   if (node.isGetProp()) {
     Node parentNode=node.getFirstChild();
     parent=parentNode.getQualifiedName();
@@ -28,11 +28,11 @@
   Node call;
   if (useExportSymbol) {
     recordExportSymbol(export);
-    call=IR.call(NodeUtil.newQName(compiler,exportSymbolFunction,context.getNode(),export),IR.string(export),NodeUtil.newQName(compiler,export,context.getNode(),export));
+    call=IR.call(NodeUtil.newQName(compiler,exportSymbolFunction,context,export),IR.string(export),NodeUtil.newQName(compiler,export,context,export));
   }
  else {
     String property=getPropertyName(node);
-    call=IR.call(NodeUtil.newQName(compiler,exportPropertyFunction,context.getNode(),exportPropertyFunction),NodeUtil.newQName(compiler,parent,context.getNode(),exportPropertyFunction),IR.string(property),NodeUtil.newQName(compiler,export,context.getNode(),exportPropertyFunction));
+    call=IR.call(NodeUtil.newQName(compiler,exportPropertyFunction,context,exportPropertyFunction),NodeUtil.newQName(compiler,parent,context,exportPropertyFunction),IR.string(property),NodeUtil.newQName(compiler,export,context,exportPropertyFunction));
   }
   Node expression=IR.exprResult(call).useSourceInfoIfMissingFromForTree(node);
   annotate(expression);

@@ -7,31 +7,35 @@
         return;
       }
     }
+    Mode mode=null;
     String export=null;
-    GenerateNodeContext context=null;
+    Node context=null;
 switch (n.getType()) {
 case Token.FUNCTION:
 case Token.CLASS:
       if (parent.isScript()) {
         export=NodeUtil.getName(n);
-        context=new GenerateNodeContext(n,Mode.EXPORT);
+        context=n;
+        mode=Mode.EXPORT;
       }
     break;
 case Token.MEMBER_FUNCTION_DEF:
   export=n.getString();
-context=new GenerateNodeContext(n,Mode.EXPORT);
+context=n;
+mode=Mode.EXPORT;
 break;
 case Token.ASSIGN:
 Node grandparent=parent.getParent();
 if (parent.isExprResult() && !n.getLastChild().isAssign()) {
 if (grandparent != null && grandparent.isScript() && n.getFirstChild().isQualifiedName()) {
 export=n.getFirstChild().getQualifiedName();
-context=new GenerateNodeContext(n,Mode.EXPORT);
+context=n;
+mode=Mode.EXPORT;
 }
  else if (allowLocalExports && n.getFirstChild().isGetProp()) {
 Node target=n.getFirstChild();
 export=target.getLastChild().getString();
-context=new GenerateNodeContext(n,Mode.EXTERN);
+mode=Mode.EXTERN;
 }
 }
 break;
@@ -41,14 +45,16 @@ case Token.CONST:
 if (parent.isScript()) {
 if (n.getFirstChild().hasChildren() && !n.getFirstFirstChild().isAssign()) {
 export=n.getFirstChild().getString();
-context=new GenerateNodeContext(n,Mode.EXPORT);
+context=n;
+mode=Mode.EXPORT;
 }
 }
 break;
 case Token.GETPROP:
 if (allowLocalExports && parent.isExprResult()) {
+mode=Mode.EXTERN;
 export=n.getLastChild().getString();
-context=new GenerateNodeContext(n,Mode.EXTERN);
+mode=Mode.EXTERN;
 }
 break;
 case Token.STRING_KEY:
@@ -56,16 +62,20 @@ case Token.GETTER_DEF:
 case Token.SETTER_DEF:
 if (allowLocalExports) {
 export=n.getString();
-context=new GenerateNodeContext(n,Mode.EXTERN);
+mode=Mode.EXTERN;
 }
 break;
 }
 if (export != null) {
-if (context.getMode() == Mode.EXPORT) {
+if (mode == Mode.EXPORT) {
+Preconditions.checkNotNull(context);
 exports.put(export,context);
 }
  else {
-localExports.put(export,context);
+Preconditions.checkState(context == null);
+Preconditions.checkState(mode == Mode.EXTERN);
+Preconditions.checkState(!export.isEmpty());
+localExports.add(export);
 }
 }
  else {

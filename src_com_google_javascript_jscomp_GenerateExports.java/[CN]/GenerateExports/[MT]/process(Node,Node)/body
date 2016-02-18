@@ -1,18 +1,14 @@
 {
   FindExportableNodes findExportableNodes=new FindExportableNodes(compiler,allowNonGlobalExports);
   NodeTraversal.traverseEs6(compiler,root,findExportableNodes);
-  Map<String,GenerateNodeContext> exports=findExportableNodes.getExports();
-  Map<String,GenerateNodeContext> localExports=findExportableNodes.getLocalExports();
-  for (  Map.Entry<String,GenerateNodeContext> entry : exports.entrySet()) {
+  Map<String,Node> exports=findExportableNodes.getExports();
+  Set<String> localExports=findExportableNodes.getLocalExports();
+  for (  Map.Entry<String,Node> entry : exports.entrySet()) {
     String export=entry.getKey();
-    GenerateNodeContext context=entry.getValue();
-    Preconditions.checkState(context.getMode() == Mode.EXPORT);
+    Node context=entry.getValue();
     addExportMethod(exports,export,context);
   }
-  for (  Map.Entry<String,GenerateNodeContext> entry : localExports.entrySet()) {
-    String export=entry.getKey();
-    GenerateNodeContext context=entry.getValue();
-    Preconditions.checkState(context.getMode() == Mode.EXTERN);
+  for (  String export : localExports) {
     addExtern(export);
   }
 }
