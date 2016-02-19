@@ -1,0 +1,31 @@
+{
+switch (n.getType()) {
+case Token.CALL:
+    Node callee=n.getFirstChild();
+  if (callee.matchesQualifiedName("goog.module")) {
+    if (currentModule == null) {
+      currentModule=n;
+    }
+ else {
+      t.report(n,MULTIPLE_MODULES_IN_FILE);
+    }
+  }
+ else   if (callee.matchesQualifiedName("goog.provide")) {
+    t.report(n,MODULE_AND_PROVIDES);
+  }
+break;
+case Token.THIS:
+if (t.inGlobalHoistScope()) {
+t.report(n,GOOG_MODULE_REFERENCES_THIS);
+}
+break;
+case Token.THROW:
+if (t.inGlobalHoistScope()) {
+t.report(n,GOOG_MODULE_USES_THROW);
+}
+break;
+case Token.SCRIPT:
+currentModule=null;
+break;
+}
+}
