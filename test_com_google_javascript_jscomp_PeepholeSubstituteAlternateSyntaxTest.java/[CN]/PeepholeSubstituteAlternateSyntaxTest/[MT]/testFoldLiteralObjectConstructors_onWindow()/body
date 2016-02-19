@@ -1,0 +1,12 @@
+{
+  enableNormalize();
+  fold("x = new window.Object","x = ({})");
+  fold("x = new window.Object()","x = ({})");
+  fold("x = window.Object()","x = ({})");
+  disableNormalize();
+  foldSame("x = new window.Object");
+  foldSame("x = new window.Object()");
+  foldSame("x = window.Object()");
+  enableNormalize();
+  fold("x = (function f(){function Object(){this.x=4};return new window.Object;})();","x = (function f(){function Object(){this.x=4};return {};})();");
+}

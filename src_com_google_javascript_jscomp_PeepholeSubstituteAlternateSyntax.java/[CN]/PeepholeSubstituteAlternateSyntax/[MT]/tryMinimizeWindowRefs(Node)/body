@@ -1,0 +1,22 @@
+{
+  if (!isASTNormalized() || !areDeclaredGlobalExternsOnWindow()) {
+    return node;
+  }
+  Preconditions.checkArgument(node.isGetProp());
+  if (node.getFirstChild().isName()) {
+    Node nameNode=node.getFirstChild();
+    Node stringNode=node.getLastChild();
+    if ("window".equals(nameNode.getString()) && STANDARD_OBJECT_CONSTRUCTORS.contains(stringNode.getString())) {
+      Node newNameNode=IR.name(stringNode.getString());
+      Node parentNode=node.getParent();
+      newNameNode.useSourceInfoFrom(stringNode);
+      parentNode.replaceChild(node,newNameNode);
+      if (parentNode.isCall()) {
+        parentNode.putBooleanProp(Node.FREE_CALL,true);
+      }
+      reportCodeChange();
+      return newNameNode;
+    }
+  }
+  return node;
+}
