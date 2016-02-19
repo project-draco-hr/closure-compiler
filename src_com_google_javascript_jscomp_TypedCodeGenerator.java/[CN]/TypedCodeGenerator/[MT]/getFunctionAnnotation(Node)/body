@@ -9,16 +9,20 @@
     return "/** @type {!Function} */\n";
   }
   StringBuilder sb=new StringBuilder("/**\n");
-  if (fnNode != null) {
-    Node paramNode=NodeUtil.getFunctionParameters(fnNode).getFirstChild();
-    for (    Node n : funType.getParameters()) {
-      if (paramNode == null) {
-        break;
-      }
-      sb.append(" * ");
-      appendAnnotation(sb,"param",getParameterNodeJSDocType(n));
-      sb.append(" ").append(paramNode.getString()).append("\n");
+  Node paramNode=null;
+  if (fnNode != null && fnNode.isFunction()) {
+    paramNode=NodeUtil.getFunctionParameters(fnNode).getFirstChild();
+  }
+  int i=0;
+  for (  Node n : funType.getParameters()) {
+    sb.append(" * ");
+    appendAnnotation(sb,"param",getParameterNodeJSDocType(n));
+    sb.append(" ").append(paramNode == null ? "p" + i : paramNode.getString()).append("\n");
+    if (paramNode != null) {
       paramNode=paramNode.getNext();
+    }
+ else {
+      i++;
     }
   }
   JSType retType=funType.getReturnType();
