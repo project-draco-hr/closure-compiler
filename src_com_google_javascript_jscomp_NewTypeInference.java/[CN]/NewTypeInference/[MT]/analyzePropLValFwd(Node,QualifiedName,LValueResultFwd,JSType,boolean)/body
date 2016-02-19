@@ -1,0 +1,44 @@
+{
+  Preconditions.checkArgument(pname.isIdentifier());
+  TypeEnv inEnv=recvLvalue.env;
+  JSType recvType=recvLvalue.type;
+  if (!recvType.isUnion() && !recvType.isSingletonObj()) {
+    recvType=JSType.TOP_OBJECT.withLoose();
+  }
+  Node propAccessNode=obj.getParent();
+  if (propAccessNode.isGetProp() && propAccessNode.getParent().isAssign() && mayWarnAboutPropCreation(pname,propAccessNode,recvType)) {
+    return new LValueResultFwd(inEnv,requiredType,null,null);
+  }
+  if (!insideQualifiedName && mayWarnAboutConstProp(propAccessNode,recvType,pname)) {
+    return new LValueResultFwd(inEnv,requiredType,null,null);
+  }
+  if (!recvType.hasProp(pname)) {
+    if (recvType.isLoose()) {
+      recvType=recvType.withProperty(pname,JSType.TOP_OBJECT.withLoose());
+      inEnv=updateLvalueTypeInEnv(inEnv,obj,recvLvalue.ptr,recvType);
+    }
+ else {
+      boolean warnForInexistentProp=insideQualifiedName || propAccessNode.getParent().getType() != Token.ASSIGN;
+      if (warnForInexistentProp && !recvType.isUnknown() && !recvType.mayBeDict()) {
+        mayWarnAboutInexistentProp(propAccessNode,recvType,pname,inEnv);
+        return new LValueResultFwd(inEnv,requiredType,null,null);
+      }
+    }
+  }
+  if (propAccessNode.isGetElem()) {
+    mayWarnAboutStructPropAccess(obj,recvType);
+  }
+ else   if (propAccessNode.isGetProp()) {
+    mayWarnAboutDictPropAccess(obj,recvType);
+  }
+  QualifiedName setterPname=new QualifiedName(SETTER_PREFIX + pname.getLeftmostName());
+  if (recvType.hasProp(setterPname)) {
+    FunctionType funType=recvType.getProp(setterPname).getFunType();
+    Preconditions.checkNotNull(funType);
+    JSType formalType=funType.getFormalType(0);
+    Preconditions.checkState(!formalType.isBottom());
+    return new LValueResultFwd(inEnv,formalType,formalType,null);
+  }
+  QualifiedName ptr=recvLvalue.ptr == null ? null : QualifiedName.join(recvLvalue.ptr,pname);
+  return recvType.mayHaveProp(pname) ? new LValueResultFwd(inEnv,recvType.getProp(pname),recvType.getDeclaredProp(pname),ptr) : new LValueResultFwd(inEnv,JSType.UNKNOWN,null,ptr);
+}

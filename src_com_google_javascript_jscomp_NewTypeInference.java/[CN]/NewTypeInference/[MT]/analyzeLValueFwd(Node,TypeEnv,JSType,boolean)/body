@@ -20,29 +20,28 @@ case Token.NAME:
     break;
   }
 case Token.GETPROP:
-{
-  Node obj=expr.getFirstChild();
-  QualifiedName pname=new QualifiedName(expr.getLastChild().getString());
-  lvalResult=analyzePropLValFwd(obj,pname,inEnv,type,insideQualifiedName);
-  break;
-}
 case Token.GETELEM:
 {
-Node obj=expr.getFirstChild();
-Node prop=expr.getLastChild();
-if (prop.isString()) {
-  QualifiedName pname=new QualifiedName(prop.getString());
-  lvalResult=analyzePropLValFwd(obj,pname,inEnv,type,insideQualifiedName);
+  Node obj=expr.getFirstChild();
+  Node prop=expr.getLastChild();
+  QualifiedName pname=expr.isGetProp() || prop.isString() ? new QualifiedName(prop.getString()) : null;
+  LValueResultFwd recvLvalue=analyzeReceiverLvalFwd(obj,pname,inEnv,type);
+  if (!recvLvalue.type.isSubtypeOf(JSType.TOP_OBJECT)) {
+    EnvTypePair pair=analyzeExprFwd(prop,recvLvalue.env,type);
+    lvalResult=new LValueResultFwd(pair.env,type,null,null);
+    break;
+  }
+  if (isArrayType(recvLvalue.type)) {
+    lvalResult=analyzeArrayElmLvalFwd(prop,recvLvalue);
+    break;
+  }
+  if (expr.isGetProp() || prop.isString()) {
+    lvalResult=analyzePropLValFwd(obj,pname,recvLvalue,type,insideQualifiedName);
+    break;
+  }
+  EnvTypePair pair=analyzeExprFwd(expr,recvLvalue.env,type);
+  lvalResult=new LValueResultFwd(pair.env,pair.type,null,null);
   break;
-}
-LValueResultFwd lvalue=analyzeLValueFwd(obj,inEnv,JSType.UNKNOWN,true);
-if (isArrayType(lvalue.type)) {
-  lvalResult=analyzeArrayElmLvalFwd(prop,lvalue);
-  break;
-}
-EnvTypePair pair=analyzeExprFwd(expr,inEnv,type);
-lvalResult=new LValueResultFwd(pair.env,pair.type,null,null);
-break;
 }
 case Token.VAR:
 {

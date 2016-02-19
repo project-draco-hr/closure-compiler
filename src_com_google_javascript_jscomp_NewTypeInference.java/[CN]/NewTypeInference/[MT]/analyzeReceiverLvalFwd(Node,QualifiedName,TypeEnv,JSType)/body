@@ -1,0 +1,16 @@
+{
+  Preconditions.checkArgument(pname == null || pname.isIdentifier());
+  JSType reqObjType=pickReqObjType(obj.getParent());
+  if (pname != null) {
+    reqObjType=reqObjType.withProperty(pname,propType);
+  }
+  LValueResultFwd lvalue=analyzeLValueFwd(obj,inEnv,reqObjType,true);
+  EnvTypePair pair=mayWarnAboutNullableReferenceAndTighten(obj,lvalue.type,null,lvalue.env);
+  JSType lvalueType=pair.type.autobox();
+  if (!lvalueType.isSubtypeOf(JSType.TOP_OBJECT)) {
+    warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,getPropNameForErrorMsg(obj.getParent()),lvalueType.toString()));
+  }
+  lvalue.type=lvalueType;
+  lvalue.env=pair.env;
+  return lvalue;
+}
