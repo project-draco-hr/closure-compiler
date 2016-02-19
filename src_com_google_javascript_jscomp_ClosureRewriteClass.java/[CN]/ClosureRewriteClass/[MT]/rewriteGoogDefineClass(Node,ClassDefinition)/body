@@ -24,7 +24,10 @@
   }
   for (  MemberDefinition def : cls.props) {
     def.value.setJSDocInfo(null);
-    block.addChildToBack(fixupSrcref(IR.exprResult(fixupSrcref(IR.assign(IR.getprop(fixupSrcref(IR.getprop(cls.name.cloneTree(),IR.string("prototype").srcref(def.name))),IR.string(def.name.getString()).srcref(def.name)).srcref(def.name),def.value)).setJSDocInfo(def.info))));
+    Node exprResult=IR.exprResult(IR.assign(NodeUtil.newQName(compiler,cls.name.getQualifiedName() + ".prototype." + def.name.getString()),def.value).setJSDocInfo(def.info));
+    exprResult.useSourceInfoIfMissingFromForTree(def.name);
+    exprResult.setLength(def.value.getSourceOffset() + def.value.getLength() - def.name.getSourceOffset());
+    block.addChildToBack(exprResult);
     maybeRewriteClassDefinition(block.getLastChild());
   }
   if (cls.classModifier != null) {
