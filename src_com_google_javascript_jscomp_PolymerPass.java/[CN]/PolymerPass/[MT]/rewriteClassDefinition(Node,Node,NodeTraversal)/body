@@ -1,12 +1,13 @@
 {
-  if (parent.getParent().isConst() || parent.getParent().isLet()) {
+  Node grandparent=parent.getParent();
+  if (grandparent.isConst()) {
     compiler.report(JSError.make(n,POLYMER_INVALID_DECLARATION));
     return;
   }
   ClassDefinition def=extractClassDefinition(n);
   if (def != null) {
-    if (NodeUtil.isNameDeclaration(parent.getParent()) || parent.isAssign()) {
-      rewritePolymerClass(parent.getParent(),def,t);
+    if (NodeUtil.isNameDeclaration(grandparent) || parent.isAssign()) {
+      rewritePolymerClass(grandparent,def,t);
     }
  else {
       rewritePolymerClass(parent,def,t);
