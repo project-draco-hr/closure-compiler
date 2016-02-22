@@ -1,6 +1,7 @@
 {
   exitCodes.clear();
   Compiler compiler=compile(original);
+  assertThat(exitCodes).containsExactly(0);
   if (warning == null) {
     assertEquals("Expected no warnings or errors\n" + "Errors: \n" + Joiner.on("\n").join(compiler.getErrors()) + "Warnings: \n"+ Joiner.on("\n").join(compiler.getWarnings()),0,compiler.getErrors().length + compiler.getWarnings().length);
   }
@@ -17,5 +18,4 @@
     String explanation=expectedRoot.checkTreeEquals(root);
     assertNull("\nExpected: " + compiler.toSource(expectedRoot) + "\nResult: "+ compiler.toSource(root)+ "\n"+ explanation,explanation);
   }
-  assertThat(exitCodes).containsExactly(0);
 }

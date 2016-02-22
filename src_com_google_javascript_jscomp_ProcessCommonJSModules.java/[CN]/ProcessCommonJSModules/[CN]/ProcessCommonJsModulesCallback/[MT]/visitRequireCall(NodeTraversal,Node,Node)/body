@@ -6,14 +6,9 @@
     return;
   }
   String moduleName=ES6ModuleLoader.toModuleName(loadAddress);
+  Node moduleRef=IR.name(moduleName).srcref(require);
+  parent.replaceChild(require,moduleRef);
   Node script=getCurrentScriptNode(parent);
-  if (!NodeUtil.isExpressionResultUsed(require) && parent.isExprResult() && NodeUtil.isStatementBlock(parent.getParent())) {
-    parent.getParent().removeChild(parent);
-  }
- else {
-    Node moduleRef=IR.name(moduleName).srcref(require);
-    parent.replaceChild(require,moduleRef);
-  }
   if (reportDependencies) {
     t.getInput().addRequire(moduleName);
   }

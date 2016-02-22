@@ -2,7 +2,7 @@
   if (!isEs6Module) {
     return;
   }
-  setStrictModeDirective(t,script);
+  checkStrictModeDirective(t,script);
   Preconditions.checkArgument(scriptNodeCount == 1,"ProcessEs6Modules supports only one invocation per " + "CompilerInput / script node");
   rewriteRequires(script);
   URI normalizedAddress=loader.normalizeInputAddress(t.getInput());
@@ -34,7 +34,7 @@
     }
   }
   NodeTraversal.traverseEs6(compiler,script,new RenameGlobalVars(moduleName));
-  if (!exportMap.isEmpty() || forceRewrite) {
+  if (!exportMap.isEmpty()) {
     Node googProvide=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.provide"),IR.string(moduleName)));
     script.addChildToFront(googProvide.copyInformationFromForTree(script));
     if (reportDependencies) {
