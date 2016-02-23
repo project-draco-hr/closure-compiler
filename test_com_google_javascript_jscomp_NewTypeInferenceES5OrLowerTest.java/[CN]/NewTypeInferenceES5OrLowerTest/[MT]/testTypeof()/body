@@ -22,4 +22,5 @@
   typeCheck("switch (typeof 123) { case 'foo': }",NewTypeInference.UNKNOWN_TYPEOF_VALUE);
   typeCheck(LINE_JOINER.join("/** @constructor */ function Foo() {}","/** @param {(number|null|Foo)} x */","function f(x) {","  if (!(typeof x === 'object')) {","    var /** number */ n = x;","  }","}"));
   typeCheck(LINE_JOINER.join("/** @param {(number|function(number):number)} x */","function f(x) {","  if (!(typeof x === 'function')) {","    var /** number */ n = x;","  }","}"));
+  typeCheck(LINE_JOINER.join("function f(/** {prop: {prop2: (string|number)}} */ x) {","  if (typeof x.prop.prop2 === 'string') {","  } else if (typeof x.prop.prop2 === 'number') {","  }","}"));
 }

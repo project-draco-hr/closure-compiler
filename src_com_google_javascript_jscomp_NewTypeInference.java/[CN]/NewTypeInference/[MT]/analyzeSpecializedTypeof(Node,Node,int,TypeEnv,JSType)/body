@@ -12,7 +12,10 @@
   }
  else {
     pair=analyzeExprFwd(typeofRand,inEnv);
-    pair=analyzeExprFwd(typeofRand,inEnv,JSType.UNKNOWN,pair.type.removeType(comparedType));
+    JSType rmType=pair.type.removeType(comparedType);
+    if (!rmType.isBottom()) {
+      pair=analyzeExprFwd(typeofRand,inEnv,JSType.UNKNOWN,rmType);
+    }
   }
   pair.type=specializedType.toBoolean();
   return pair;
