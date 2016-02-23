@@ -1,0 +1,13 @@
+{
+  EnvTypePair pair=analyzeExprFwd(prop,recvLvalue.env,indexType.isBottom() ? JSType.UNKNOWN : indexType);
+  if (mayWarnAboutBadIObjectIndex(prop,recvLvalue.type,pair.type,indexType)) {
+    return new LValueResultFwd(pair.env,JSType.UNKNOWN,null,null);
+  }
+  JSType inferred=recvLvalue.type.getIndexedType();
+  JSType declared=null;
+  if (recvLvalue.declType != null) {
+    JSType receiverAdjustedDeclType=recvLvalue.declType.removeType(JSType.NULL_OR_UNDEF);
+    declared=receiverAdjustedDeclType.getIndexedType();
+  }
+  return new LValueResultFwd(pair.env,inferred,declared,null);
+}

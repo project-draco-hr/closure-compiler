@@ -31,8 +31,9 @@ case Token.GETELEM:
     lvalResult=new LValueResultFwd(pair.env,type,null,null);
     break;
   }
-  if (isArrayType(recvLvalue.type)) {
-    lvalResult=analyzeArrayElmLvalFwd(prop,recvLvalue);
+  JSType indexType=recvLvalue.type.getIndexType();
+  if (expr.isGetElem() && indexType != null) {
+    lvalResult=analyzeIObjectElmLvalFwd(prop,recvLvalue,indexType);
     break;
   }
   if (expr.isGetProp() || prop.isString()) {

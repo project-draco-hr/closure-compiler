@@ -1,0 +1,6 @@
+{
+  typeCheck(LINE_JOINER.join("function f(/** !IObject */ x) {}","f({});"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/**"," * @param {!IObject<number, number>} x"," * @param {!IObject<string, number>} y"," */","function f(x, y) {","  x = y;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/**"," * @param {!IObject<number, number>} x"," * @param {!IObject<(number|string), number>} y"," */","function f(x, y) {","  x = y;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/**"," * @param {!IObject<number, (number|string)>} x"," * @param {!IObject<number, number>} y"," */","function f(x, y) {","  x = y;","}"));
+}

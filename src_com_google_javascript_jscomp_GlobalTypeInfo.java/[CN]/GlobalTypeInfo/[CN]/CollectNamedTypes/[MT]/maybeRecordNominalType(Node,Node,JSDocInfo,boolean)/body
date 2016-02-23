@@ -1,11 +1,11 @@
 {
   Preconditions.checkState(nameNode == null || nameNode.isQualifiedName());
   if (fnDoc != null && fnDoc.isConstructorOrInterface()) {
-    QualifiedName qname=QualifiedName.fromNode(nameNode);
-    if (qname == null) {
+    if (nameNode == null) {
       warnings.add(JSError.make(defSite,ANONYMOUS_NOMINAL_TYPE));
       return;
     }
+    String qname=nameNode.getQualifiedName();
     ImmutableList.Builder<String> builder=ImmutableList.builder();
     for (    String typeParam : fnDoc.getTemplateTypeNames()) {
       builder.add(varNameGen.getNextName(typeParam));
@@ -37,7 +37,7 @@
         defSite.getParent().getFirstChild().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
       }
  else       if (currentScope.isTopLevel()) {
-        maybeRecordBuiltinType(nameNode.getString(),rawNominalType);
+        maybeRecordBuiltinType(qname,rawNominalType);
       }
       currentScope.addNominalType(nameNode,rawNominalType);
     }

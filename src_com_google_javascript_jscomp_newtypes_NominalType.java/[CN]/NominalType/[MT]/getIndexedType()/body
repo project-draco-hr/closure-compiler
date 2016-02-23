@@ -1,0 +1,15 @@
+{
+  if (isIObject()) {
+    return this.typeMap.get(this.rawType.getTypeParameters().get(1));
+  }
+  JSType result=JSType.TOP;
+  boolean foundIObject=false;
+  for (  NominalType interf : getInstantiatedInterfaces()) {
+    JSType tmp=interf.getIndexedType();
+    if (tmp != null) {
+      foundIObject=true;
+      result=JSType.meet(result,tmp);
+    }
+  }
+  return foundIObject ? result : null;
+}

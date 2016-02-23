@@ -4,7 +4,7 @@
   typeCheck(LINE_JOINER.join("function foo (/** Array<string> */ a) {}","/** @type {Array<number>} */","var b = [1];","foo(b);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(LINE_JOINER.join("function foo (/** Array<string> */ a) {}","foo([1]);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(LINE_JOINER.join("/** @type {!Array<number>} */","var arr = [1, 2, 3];","arr[0] = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
-  typeCheck(LINE_JOINER.join("/** @type {!Array<number>} */","var arr = [1, 2, 3];","arr['0'] = 'str';"));
+  typeCheck(LINE_JOINER.join("/** @type {!Array<number>} */","var arr = [1, 2, 3];","arr['0'] = 'str';"),NewTypeInference.INVALID_INDEX_TYPE);
   typeCheck(LINE_JOINER.join("/** @type {Array<number>} */","var arr = [1, 2, 3];","arr[0] = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("function f(/** Array<number> */ arr) {","  arr[0] = 'str';","}"),NewTypeInference.NULLABLE_DEREFERENCE,NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("/** @const */","var arr = [1, 2, 3];","arr[0] = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);

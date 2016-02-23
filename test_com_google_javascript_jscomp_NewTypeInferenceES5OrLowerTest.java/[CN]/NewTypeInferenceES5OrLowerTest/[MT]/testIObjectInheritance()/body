@@ -1,0 +1,8 @@
+{
+  typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @implements {IObject<number,number>}"," */","function Foo() {}","function f(/** !Foo */ x, /** string */ s) {","  x[s];","}"),NewTypeInference.INVALID_INDEX_TYPE);
+  typeCheck(LINE_JOINER.join("/**"," * @interface"," * @extends {IObject<number,number>}"," */","function Bar() {}","/**"," * @constructor"," * @implements {Bar}"," */","function Foo() {}","function f(/** !Foo */ x, /** string */ s) {","  x[s];","}"),NewTypeInference.INVALID_INDEX_TYPE);
+  typeCheck(LINE_JOINER.join("/** @interface */","function Foo() {}","/**"," * @constructor"," * @implements {Foo}"," * @implements {IObject<number, number>}"," */","function Bar() {}","(new Bar)['asdf'];"),NewTypeInference.INVALID_INDEX_TYPE);
+  typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @implements {IObject<string, number>}"," * @implements {IArrayLike<number>}"," */","function Foo() {","  this.length = 0;","}","(new Foo)['asdf'];","(new Foo)[123];","(new Foo)[true];"),NewTypeInference.INVALID_INDEX_TYPE);
+  typeCheck(LINE_JOINER.join("/**"," * @interface"," * @extends {IObject<number, (number|string)>}"," */","function Foo() {}","/**"," * @interface"," * @extends {IObject<number, (number|boolean)>}"," */","function Bar() {}","/**"," * @constructor"," * @implements {Foo}"," * @implements {Bar}"," */","function Baz() {}","var /** string */ s = (new Baz)[123];","var /** boolean */ b = (new Baz)[123];","var /** number */ n = (new Baz)[123];"),NewTypeInference.MISTYPED_ASSIGN_RHS,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @implements {IObject<*,number>}"," */","function Foo() {}","function f(/** !Foo */ x, /** string */ s) {","  x[s];","}"));
+}

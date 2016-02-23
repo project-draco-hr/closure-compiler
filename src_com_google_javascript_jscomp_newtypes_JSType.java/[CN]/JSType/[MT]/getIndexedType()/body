@@ -1,0 +1,14 @@
+{
+  if ((getMask() & NON_SCALAR_MASK) == 0) {
+    return null;
+  }
+  JSType result=BOTTOM;
+  for (  ObjectType objType : getObjs()) {
+    JSType tmp=objType.getNominalType().getIndexedType();
+    if (tmp == null) {
+      return null;
+    }
+    result=join(result,tmp);
+  }
+  return result.isBottom() ? null : result;
+}

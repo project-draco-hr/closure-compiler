@@ -4,14 +4,10 @@
   JSType reqObjType=pickReqObjType(expr);
   EnvTypePair pair=analyzeExprBwd(receiver,outEnv,reqObjType);
   JSType recvType=pair.type;
-  if (isArrayType(recvType) || recvType.equals(commonTypes.getArgumentsArrayType())) {
-    pair=analyzeExprBwd(index,pair.env,JSType.NUMBER);
-    if (isArrayType(recvType)) {
-      pair.type=getArrayElementType(recvType);
-    }
- else {
-      pair.type=envGetType(pair.env,ARGSARRAYELM_ID);
-    }
+  JSType indexType=recvType.getIndexType();
+  if (indexType != null) {
+    pair=analyzeExprBwd(index,pair.env,indexType);
+    pair.type=recvType.getIndexedType();
     return pair;
   }
   if (index.isString()) {

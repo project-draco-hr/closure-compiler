@@ -1,0 +1,13 @@
+{
+  if (isIObject()) {
+    return this.typeMap.get(this.rawType.getTypeParameters().get(0));
+  }
+  JSType result=JSType.BOTTOM;
+  for (  NominalType interf : getInstantiatedInterfaces()) {
+    JSType tmp=interf.getIndexType();
+    if (tmp != null) {
+      result=JSType.join(result,tmp);
+    }
+  }
+  return result.isBottom() ? null : result;
+}

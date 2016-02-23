@@ -1,0 +1,13 @@
+{
+  typeCheck(LINE_JOINER.join("function f(/** !IObject<number,string> */ x) {","  return x['asdf'];","}"),NewTypeInference.INVALID_INDEX_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** !IObject<number, number> */ x) {","  x['asdf'] = 123;","}"),NewTypeInference.INVALID_INDEX_TYPE);
+  typeCheck(LINE_JOINER.join("function f(/** !IObject<number, string> */ x, /** number */ i) {","  x[i] - 123;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","function f(/** !Foo|!IObject<number,number> */ x, /** string */ s) {","  x[s];","}"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","function f(/** !Foo|!IObject<number,number> */ x, /** string */ s) {","  s = x[0];","}"));
+  typeCheck(LINE_JOINER.join("/** @type {!Array<number>|number} */","var x = [1,2,3];","x[0] = 'asdf';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @type {!Object} */","var x = [1,2,3];","x[0] = 'asdf';"));
+  typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @implements {IObject<number,number>}"," */","function Foo() {}","/**"," * @constructor"," * @implements {IObject<string,number>}"," */","function Bar() {}","function f(/** !Foo|!Bar */ x) {","  x[123];","  x['asdf'];","}"),NewTypeInference.BOTTOM_INDEX_TYPE,NewTypeInference.BOTTOM_INDEX_TYPE);
+  typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @implements {IObject<number,(number|string)>}"," */","function Foo() {}","/**"," * @constructor"," * @implements {IObject<number,(number|boolean)>}"," */","function Bar() {}","function f(/** !Foo|!Bar */ x) {","  var /** string */ s = x[123];","  var /** boolean */ b = x[123];","  var /** number */ n = x[123];","}"),NewTypeInference.MISTYPED_ASSIGN_RHS,NewTypeInference.MISTYPED_ASSIGN_RHS,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("function f(/** !IObject<*,string> */ x) {","  return x[123];","}"));
+  typeCheck(LINE_JOINER.join("function f(/** !IObject<string,number> */ x, s) {","  x[s];","  var /** number */ n = s;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+}
