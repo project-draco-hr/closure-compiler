@@ -2,7 +2,12 @@
   Preconditions.checkNotNull(type);
   Set<JSType> typesToRemove=new LinkedHashSet<>();
   for (  JSType other : typeMultimap.get(typeParam)) {
-    if (type == null) {
+    if (type.isUnknown()) {
+      typesToRemove.add(other);
+      continue;
+    }
+    if (other.isUnknown()) {
+      type=null;
       break;
     }
     if (type.isLoose()) {
@@ -23,6 +28,7 @@
     }
  else     if (type.isSubtypeOf(other,SubtypeCache.create())) {
       type=null;
+      break;
     }
   }
   for (  JSType typeToRemove : typesToRemove) {
