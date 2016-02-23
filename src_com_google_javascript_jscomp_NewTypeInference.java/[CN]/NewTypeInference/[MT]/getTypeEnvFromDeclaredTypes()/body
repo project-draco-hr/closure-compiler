@@ -12,7 +12,15 @@
     if (currentScope.hasThis()) {
       varNames.add(THIS_ID);
     }
-    env=envPutType(env,"arguments",commonTypes.getArgumentsArrayType());
+    JSType argumentsType;
+    DeclaredFunctionType dft=currentScope.getDeclaredFunctionType();
+    if (dft.getOptionalArity() == 0 && dft.hasRestFormals()) {
+      argumentsType=dft.getRestFormalsType();
+    }
+ else {
+      argumentsType=JSType.UNKNOWN;
+    }
+    env=envPutType(env,"arguments",commonTypes.getArgumentsArrayType(argumentsType));
   }
   for (  String varName : varNames) {
     if (!locals.contains(varName) || !currentScope.isFunctionNamespace(varName)) {
