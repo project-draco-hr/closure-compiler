@@ -7,7 +7,7 @@
   Node newNode=getprop;
   if (oldJSDocInfo != null) {
     JSDocInfoBuilder builder;
-    if (oldJSDocInfo.isConstructorOrInterface() || oldJSDocInfo.hasEnumParameterType() || NodeUtil.isNamespaceDecl(node)) {
+    if (oldJSDocInfo.isConstructorOrInterface() || oldJSDocInfo.hasEnumParameterType()) {
       Node nameNode=IR.name(name);
       newNode=IR.assign(getprop,nameNode);
       builder=new JSDocInfoBuilder(false);
@@ -23,10 +23,11 @@
       if (oldJSDocInfo.hasEnumParameterType()) {
         builder.recordEnumParameterType(oldJSDocInfo.getEnumParameterType());
       }
-      if (NodeUtil.isNamespaceDecl(node)) {
-      }
     }
  else {
+      if (NodeUtil.isNamespaceDecl(node)) {
+        newNode=IR.assign(getprop,IR.name(name));
+      }
       builder=JSDocInfoBuilder.copyFrom(oldJSDocInfo);
     }
     builder.recordSuppressions(ImmutableSet.of("duplicate"));
