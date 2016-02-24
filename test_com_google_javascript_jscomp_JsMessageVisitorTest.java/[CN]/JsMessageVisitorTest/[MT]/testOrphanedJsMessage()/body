@@ -1,7 +1,7 @@
 {
   extractMessagesSafely("goog.getMsg('a')");
-  assertEquals(1,compiler.getWarningCount());
+  assertThat(compiler.getWarnings()).hasLength(1);
   assertThat(messages).isEmpty();
   JSError warn=compiler.getWarnings()[0];
-  assertEquals(JsMessageVisitor.MESSAGE_NODE_IS_ORPHANED,warn.getType());
+  assertError(warn).hasType(JsMessageVisitor.MESSAGE_NODE_IS_ORPHANED);
 }

@@ -2,7 +2,7 @@
   if (hasOneTopLevelModuleExportAssign()) {
     Node ref=moduleExportRefs.get(0);
     Node newName=IR.name(moduleName).srcref(ref);
-    newName.putProp(Node.ORIGINALNAME_PROP,ref.getQualifiedName());
+    newName.setOriginalName(ref.getQualifiedName());
     Node rhsValue=ref.getNext();
     if (rhsValue.isObjectLit()) {
       addConstToObjLitKeys(rhsValue);
@@ -44,7 +44,7 @@
     }
     Node rhsValue=ref.getNext();
     Node newName=IR.name(moduleName).srcref(ref);
-    newName.putProp(Node.ORIGINALNAME_PROP,qName);
+    newName.setOriginalName(qName);
     Node parent=ref.getParent();
     parent.replaceChild(ref,newName);
     if (parent.isAssign() && qName != null && propertyExportRefCount.count(qName) == 1) {
@@ -65,7 +65,7 @@
     Node aliasNode=IR.var(IR.name(aliasName),IR.name(moduleName)).useSourceInfoIfMissingFromForTree(script);
     script.addChildToFront(aliasNode);
     for (    Node ref : exportRefs) {
-      ref.putProp(Node.ORIGINALNAME_PROP,ref.getString());
+      ref.setOriginalName(ref.getString());
       ref.setString(aliasName);
     }
   }
