@@ -1,0 +1,60 @@
+{
+  if (behaviorArray == null) {
+    return ImmutableList.of();
+  }
+  if (!behaviorArray.isArrayLit()) {
+    compiler.report(JSError.make(behaviorArray,PolymerPassErrors.POLYMER_INVALID_BEHAVIOR_ARRAY));
+    return ImmutableList.of();
+  }
+  ImmutableList.Builder<BehaviorDefinition> behaviors=ImmutableList.builder();
+  for (  Node behaviorName : behaviorArray.children()) {
+    if (behaviorName.isObjectLit()) {
+      PolymerPassStaticUtils.switchDollarSignPropsToBrackets(behaviorName,compiler);
+      PolymerPassStaticUtils.quoteListenerAndHostAttributeKeys(behaviorName);
+      behaviors.add(new BehaviorDefinition(PolymerPassStaticUtils.extractProperties(behaviorName),getBehaviorFunctionsToCopy(behaviorName),getNonPropertyMembersToCopy(behaviorName),!NodeUtil.isInFunction(behaviorName)));
+      continue;
+    }
+    Name behaviorGlobalName=globalNames.getSlot(behaviorName.getQualifiedName());
+    boolean isGlobalDeclaration=true;
+    if (behaviorGlobalName == null) {
+      compiler.report(JSError.make(behaviorName,PolymerPassErrors.POLYMER_UNQUALIFIED_BEHAVIOR));
+      continue;
+    }
+    Ref behaviorDeclaration=behaviorGlobalName.getDeclaration();
+    if (behaviorDeclaration == null) {
+      List<Ref> behaviorRefs=behaviorGlobalName.getRefs();
+      for (      Ref ref : behaviorRefs) {
+        if (ref.isSet()) {
+          isGlobalDeclaration=false;
+          behaviorDeclaration=ref;
+          break;
+        }
+      }
+    }
+    if (behaviorDeclaration == null) {
+      compiler.report(JSError.make(behaviorName,PolymerPassErrors.POLYMER_UNQUALIFIED_BEHAVIOR));
+      continue;
+    }
+    Node behaviorDeclarationNode=behaviorDeclaration.getNode();
+    JSDocInfo behaviorInfo=NodeUtil.getBestJSDocInfo(behaviorDeclarationNode);
+    if (behaviorInfo == null || !behaviorInfo.isPolymerBehavior()) {
+      compiler.report(JSError.make(behaviorDeclarationNode,PolymerPassErrors.POLYMER_UNANNOTATED_BEHAVIOR));
+    }
+    Node behaviorValue=NodeUtil.getRValueOfLValue(behaviorDeclarationNode);
+    if (behaviorValue == null) {
+      compiler.report(JSError.make(behaviorName,PolymerPassErrors.POLYMER_UNQUALIFIED_BEHAVIOR));
+    }
+ else     if (behaviorValue.isArrayLit()) {
+      behaviors.addAll(extractBehaviors(behaviorValue));
+    }
+ else     if (behaviorValue.isObjectLit()) {
+      PolymerPassStaticUtils.switchDollarSignPropsToBrackets(behaviorValue,compiler);
+      PolymerPassStaticUtils.quoteListenerAndHostAttributeKeys(behaviorValue);
+      behaviors.add(new BehaviorDefinition(PolymerPassStaticUtils.extractProperties(behaviorValue),getBehaviorFunctionsToCopy(behaviorValue),getNonPropertyMembersToCopy(behaviorValue),isGlobalDeclaration));
+    }
+ else {
+      compiler.report(JSError.make(behaviorName,PolymerPassErrors.POLYMER_UNQUALIFIED_BEHAVIOR));
+    }
+  }
+  return behaviors.build();
+}

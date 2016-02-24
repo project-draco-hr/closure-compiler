@@ -1,0 +1,26 @@
+{
+  Node block=IR.block();
+  String interfaceName=getInterfaceName(cls);
+  Node fnNode=IR.function(IR.name(""),IR.paramList(),IR.block());
+  Node varNode=IR.var(NodeUtil.newQName(compiler,interfaceName),fnNode);
+  JSDocInfoBuilder info=new JSDocInfoBuilder(true);
+  info.recordInterface();
+  varNode.setJSDocInfo(info.build());
+  block.addChildToBack(varNode);
+  appendPropertiesToBlock(cls,block,interfaceName + ".prototype.");
+  for (  MemberDefinition prop : readOnlyProps) {
+    String propName=prop.name.getString();
+    String setterName="_set" + propName.substring(0,1).toUpperCase() + propName.substring(1);
+    Node setterExprNode=IR.exprResult(NodeUtil.newQName(compiler,interfaceName + ".prototype." + setterName));
+    JSDocInfoBuilder setterInfo=new JSDocInfoBuilder(true);
+    JSTypeExpression propType=PolymerPassStaticUtils.getTypeFromProperty(prop,compiler);
+    setterInfo.recordParameter(propName,propType);
+    setterExprNode.getFirstChild().setJSDocInfo(setterInfo.build());
+    block.addChildToBack(setterExprNode);
+  }
+  block.useSourceInfoIfMissingFromForTree(polymerElementExterns);
+  Node parent=polymerElementExterns.getParent();
+  Node stmts=block.removeChildren();
+  parent.addChildrenToBack(stmts);
+  compiler.reportCodeChange();
+}

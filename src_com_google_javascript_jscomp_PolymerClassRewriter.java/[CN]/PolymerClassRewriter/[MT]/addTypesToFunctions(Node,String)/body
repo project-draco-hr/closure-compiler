@@ -1,0 +1,29 @@
+{
+  Preconditions.checkState(objLit.isObjectLit());
+  for (  Node keyNode : objLit.children()) {
+    Node value=keyNode.getLastChild();
+    if (value != null && value.isFunction()) {
+      JSDocInfoBuilder fnDoc=JSDocInfoBuilder.maybeCopyFrom(keyNode.getJSDocInfo());
+      fnDoc.recordThisType(new JSTypeExpression(new Node(Token.BANG,IR.string(thisType)),PolymerPass.VIRTUAL_FILE));
+      keyNode.setJSDocInfo(fnDoc.build());
+    }
+  }
+  for (  MemberDefinition property : PolymerPassStaticUtils.extractProperties(objLit)) {
+    if (!property.value.isObjectLit()) {
+      continue;
+    }
+    if (hasShorthandAssignment(property.value)) {
+      compiler.report(JSError.make(property.value,PolymerPassErrors.POLYMER_SHORTHAND_NOT_SUPPORTED));
+      return;
+    }
+    Node defaultValue=NodeUtil.getFirstPropMatchingKey(property.value,"value");
+    if (defaultValue == null || !defaultValue.isFunction()) {
+      continue;
+    }
+    Node defaultValueKey=defaultValue.getParent();
+    JSDocInfoBuilder fnDoc=JSDocInfoBuilder.maybeCopyFrom(defaultValueKey.getJSDocInfo());
+    fnDoc.recordThisType(new JSTypeExpression(new Node(Token.BANG,IR.string(thisType)),PolymerPass.VIRTUAL_FILE));
+    fnDoc.recordReturnType(PolymerPassStaticUtils.getTypeFromProperty(property,compiler));
+    defaultValueKey.setJSDocInfo(fnDoc.build());
+  }
+}

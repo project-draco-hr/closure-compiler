@@ -1,0 +1,14 @@
+{
+  Node root=compiler.parseTestCode(code);
+  GlobalNamespace globalNamespace=new GlobalNamespace(compiler,root);
+  extractor=new PolymerBehaviorExtractor(compiler,globalNamespace);
+  NodeUtil.visitPostOrder(root,new NodeUtil.Visitor(){
+    @Override public void visit(    Node node){
+      if (isBehaviorArrayDeclaration(node)) {
+        behaviorArray=node;
+      }
+    }
+  }
+,Predicates.<Node>alwaysTrue());
+  assertNotNull(behaviorArray);
+}

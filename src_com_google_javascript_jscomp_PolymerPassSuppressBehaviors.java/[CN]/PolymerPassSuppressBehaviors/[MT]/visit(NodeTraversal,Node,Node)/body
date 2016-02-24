@@ -1,0 +1,16 @@
+{
+  if (isBehavior(n)) {
+    if (!n.isVar() && !n.isAssign()) {
+      compiler.report(JSError.make(n,PolymerPassErrors.POLYMER_UNQUALIFIED_BEHAVIOR));
+      return;
+    }
+    JSDocInfoBuilder newDocs=JSDocInfoBuilder.maybeCopyFrom(n.getJSDocInfo());
+    newDocs.recordNoCollapse();
+    n.setJSDocInfo(newDocs.build());
+    Node behaviorValue=n.getSecondChild();
+    if (n.isVar()) {
+      behaviorValue=n.getFirstFirstChild();
+    }
+    suppressBehavior(behaviorValue);
+  }
+}

@@ -1,0 +1,26 @@
+{
+  rootNode=compiler.parseTestCode(code);
+  globalNamespace=new GlobalNamespace(compiler,rootNode);
+  PolymerPassFindExterns findExternsCallback=new PolymerPassFindExterns();
+  Node externs=compiler.parseTestCode(EXTERNS);
+  NodeTraversal.traverseEs6(compiler,externs,findExternsCallback);
+  rewriter=new PolymerClassRewriter(compiler,findExternsCallback.getPolymerElementExterns());
+  NodeUtil.visitPostOrder(rootNode,new NodeUtil.Visitor(){
+    @Override public void visit(    Node node){
+      if (PolymerPass.isPolymerCall(node)) {
+        polymerCall=node;
+      }
+    }
+  }
+,Predicates.<Node>alwaysTrue());
+  assertNotNull(polymerCall);
+  PolymerClassDefinition classDef=PolymerClassDefinition.extractFromCallNode(polymerCall,compiler,globalNamespace);
+  Node parent=polymerCall.getParent();
+  Node grandparent=parent.getParent();
+  if (NodeUtil.isNameDeclaration(grandparent) || parent.isAssign()) {
+    rewriter.rewritePolymerClass(grandparent,classDef,true);
+  }
+ else {
+    rewriter.rewritePolymerClass(parent,classDef,true);
+  }
+}

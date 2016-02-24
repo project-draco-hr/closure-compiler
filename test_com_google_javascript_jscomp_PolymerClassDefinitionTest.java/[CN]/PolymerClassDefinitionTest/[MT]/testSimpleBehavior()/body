@@ -1,0 +1,9 @@
+{
+  PolymerClassDefinition def=parseAndExtractClassDef(LINE_JOINER.join("/** @polymerBehavior */","var FunBehavior = {","  properties: {","    /** @type {boolean} */","    isFun: {","      type: Boolean,","      value: true,","    }","  },","  listeners: {","    click: 'doSomethingFun',","  },","  /** @type {string} */","  foo: 'hooray',","","  /** @param {string} funAmount */","  doSomethingFun: function(funAmount) { alert('Something ' + funAmount + ' fun!'); },","  /** @override */","  created: function() {}","};","var A = Polymer({","  is: 'x-element',","  properties: {","    pets: {","      type: Array,","      notify: true,","    },","    name: String,","  },","  behaviors: [ FunBehavior ],","});"));
+  assertNotNull(def);
+  assertTrue(def.target.isName());
+  assertEquals("A",def.target.getString());
+  assertNull(def.nativeBaseElement);
+  assertThat(def.behaviors).hasSize(1);
+  assertThat(def.props).hasSize(3);
+}

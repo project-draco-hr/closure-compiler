@@ -1,16 +1,20 @@
 {
   Node grandparent=parent.getParent();
   if (grandparent.isConst()) {
-    compiler.report(JSError.make(n,POLYMER_INVALID_DECLARATION));
+    compiler.report(JSError.make(node,PolymerPassErrors.POLYMER_INVALID_DECLARATION));
     return;
   }
-  ClassDefinition def=extractClassDefinition(n);
+  PolymerClassDefinition def=PolymerClassDefinition.extractFromCallNode(node,compiler,globalNames);
   if (def != null) {
+    if (def.nativeBaseElement != null) {
+      appendPolymerElementExterns(def);
+    }
+    PolymerClassRewriter rewriter=new PolymerClassRewriter(compiler,polymerElementExterns);
     if (NodeUtil.isNameDeclaration(grandparent) || parent.isAssign()) {
-      rewritePolymerClass(grandparent,def,t);
+      rewriter.rewritePolymerClass(grandparent,def,traversal.getScope().isGlobal());
     }
  else {
-      rewritePolymerClass(parent,def,t);
+      rewriter.rewritePolymerClass(parent,def,traversal.getScope().isGlobal());
     }
   }
 }

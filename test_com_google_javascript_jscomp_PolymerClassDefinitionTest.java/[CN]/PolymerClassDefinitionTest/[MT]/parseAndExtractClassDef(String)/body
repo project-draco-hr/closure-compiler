@@ -1,0 +1,14 @@
+{
+  Node rootNode=compiler.parseTestCode(code);
+  GlobalNamespace globalNamespace=new GlobalNamespace(compiler,rootNode);
+  NodeUtil.visitPostOrder(rootNode,new NodeUtil.Visitor(){
+    @Override public void visit(    Node node){
+      if (PolymerPass.isPolymerCall(node)) {
+        polymerCall=node;
+      }
+    }
+  }
+,Predicates.<Node>alwaysTrue());
+  assertNotNull(polymerCall);
+  return PolymerClassDefinition.extractFromCallNode(polymerCall,compiler,globalNamespace);
+}

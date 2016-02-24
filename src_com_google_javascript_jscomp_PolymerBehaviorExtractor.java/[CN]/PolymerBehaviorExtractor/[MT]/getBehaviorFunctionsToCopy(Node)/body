@@ -1,0 +1,11 @@
+{
+  Preconditions.checkState(behaviorObjLit.isObjectLit());
+  ImmutableList.Builder<MemberDefinition> functionsToCopy=ImmutableList.builder();
+  for (  Node keyNode : behaviorObjLit.children()) {
+    boolean isFunctionDefinition=(keyNode.isStringKey() && keyNode.getFirstChild().isFunction()) || keyNode.isMemberFunctionDef();
+    if (isFunctionDefinition && !BEHAVIOR_NAMES_NOT_TO_COPY.contains(keyNode.getString())) {
+      functionsToCopy.add(new MemberDefinition(NodeUtil.getBestJSDocInfo(keyNode),keyNode,keyNode.getFirstChild()));
+    }
+  }
+  return functionsToCopy.build();
+}
