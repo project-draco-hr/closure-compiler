@@ -14,6 +14,9 @@
     warningsByType.put(warning.getType(),formatWarning(warning,true));
   }
   for (  DiagnosticType type : warningsByType.keySet()) {
+    if (DiagnosticGroups.DEPRECATED.matches(type)) {
+      continue;
+    }
     out.append("\n# Warning ").append(type.key).append(": ").println(Iterables.get(LINE_SPLITTER.split(type.format.toPattern()),0));
     for (    String warning : warningsByType.get(type)) {
       out.println(warning);
