@@ -14,4 +14,5 @@
   typeCheck(LINE_JOINER.join("/** @const */ var ns = {};","ns.x = 5;","/** @type {string} */","ns.x = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("/** @const */ var ns = {};","ns.prop = 1;","function f() { var /** string */ s = ns.prop; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("/** @const */","var ns = {};","/**"," * @constructor"," * @param {number} x"," */","ns.Foo = function (x) {};","function f() {","  return new ns.Foo('asdf');","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function f() {","/** @const */","var a = {};","a.b = {};","/** @const */","a.b.c = {};","/** @constructor */","a.b = function() {};","}"),NewTypeInference.UNKNOWN_NAMESPACE_PROPERTY);
 }

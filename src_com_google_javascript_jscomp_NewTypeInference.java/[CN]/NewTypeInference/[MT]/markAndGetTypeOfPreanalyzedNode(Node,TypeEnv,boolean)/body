@@ -18,6 +18,10 @@ case Token.GETPROP:
       FunctionType ft=recvType.getFunTypeIfSingletonObj();
       result=ft.getInstanceTypeOfCtor();
     }
+    if (result == null) {
+      warnings.add(JSError.make(qnameNode,UNKNOWN_NAMESPACE_PROPERTY,qnameNode.getQualifiedName()));
+      return JSType.UNKNOWN;
+    }
     Preconditions.checkNotNull(result,"Null declared type@%s",qnameNode);
     if (isFwd) {
       maybeSetTypeI(qnameNode,result);
