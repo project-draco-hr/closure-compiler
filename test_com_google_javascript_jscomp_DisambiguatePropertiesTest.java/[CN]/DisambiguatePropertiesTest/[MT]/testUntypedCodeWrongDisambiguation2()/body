@@ -1,0 +1,5 @@
+{
+  String js="" + "/** @constructor */\n" + "function Foo() { this.p1 = 0; }\n"+ "/** @constructor */\n"+ "function Bar() { this.p1 = 1; }\n"+ "function select(cond, x, y) { return cond ? x : y; }\n"+ "/**\n"+ " * @param {!Foo} x\n"+ " * @param {!Bar} y\n"+ " * @return {!Foo}\n"+ " */\n"+ "function f(x, y) {\n"+ "  var /** !Foo */ z = select(false, x, y);\n"+ "  return z;\n"+ "}\n"+ "f(new Foo, new Bar).p1;\n";
+  String output="" + "/** @constructor */ function Foo() { this.Foo$p1 = 0; }\n" + "/** @constructor */ function Bar() { this.Bar$p1 = 1; }\n"+ "function select(cond, x, y) { return cond ? x : y; }\n"+ "/**\n"+ " * @param {!Foo} x\n"+ " * @param {!Bar} y\n"+ " * @return {!Foo}\n"+ " */\n"+ "function f(x, y) {\n"+ "  var /** !Foo */ z = select(false, x, y);\n"+ "  return z;\n"+ "}\n"+ "f(new Foo, new Bar).Foo$p1;\n";
+  testSets(js,output,"{p1=[[Bar], [Foo]]}");
+}
