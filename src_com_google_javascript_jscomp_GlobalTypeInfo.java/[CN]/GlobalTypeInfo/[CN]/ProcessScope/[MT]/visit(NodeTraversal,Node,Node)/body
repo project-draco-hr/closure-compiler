@@ -2,7 +2,7 @@
 switch (n.getType()) {
 case Token.FUNCTION:
     Node grandparent=parent.getParent();
-  if (grandparent == null || !isPrototypePropertyDeclaration(grandparent)) {
+  if (grandparent == null || (!isPrototypePropertyDeclaration(grandparent) && !isClassPropertyDeclaration(parent.getFirstChild(),currentScope))) {
     RawNominalType ownerType=maybeGetOwnerType(n,parent);
     visitFunctionLate(n,ownerType);
   }

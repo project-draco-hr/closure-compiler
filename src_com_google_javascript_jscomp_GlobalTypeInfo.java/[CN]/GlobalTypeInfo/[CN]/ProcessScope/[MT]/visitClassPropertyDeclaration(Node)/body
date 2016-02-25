@@ -5,26 +5,37 @@
   if (thisType == null) {
     return;
   }
-  RawNominalType rawNominalType=thisType.getRawNominalType();
+  RawNominalType rawType=thisType.getRawNominalType();
   String pname=getProp.getLastChild().getString();
-  JSType declType=getDeclaredTypeOfNode(NodeUtil.getBestJSDocInfo(getProp),currentScope);
+  Node parent=getProp.getParent();
+  Node initializer=parent.isAssign() ? parent.getLastChild() : null;
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
+  JSType propDeclType=null;
+  if (initializer != null && initializer.isFunction()) {
+    parent.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+    DeclaredFunctionType dft=visitFunctionLate(initializer,rawType).getDeclaredFunctionType();
+    propDeclType=commonTypes.fromFunctionType(dft.toFunctionType());
+  }
+  if (jsdoc != null && jsdoc.hasType()) {
+    propDeclType=getDeclaredTypeOfNode(jsdoc,currentScope);
+  }
   boolean isConst=isConst(getProp);
-  if (declType != null || isConst) {
-    mayWarnAboutExistingProp(rawNominalType,pname,getProp,declType);
-    if (declType == null) {
-      declType=mayInferFromRhsIfConst(getProp);
+  if (propDeclType != null || isConst) {
+    mayWarnAboutExistingProp(rawType,pname,getProp,propDeclType);
+    if (propDeclType == null) {
+      propDeclType=mayInferFromRhsIfConst(getProp);
     }
-    if (mayAddPropToType(getProp,rawNominalType)) {
-      rawNominalType.addClassProperty(pname,getProp,declType,isConst);
+    if (mayAddPropToType(getProp,rawType)) {
+      rawType.addClassProperty(pname,getProp,propDeclType,isConst);
     }
     if (isConst) {
       getProp.putBooleanProp(Node.CONSTANT_PROPERTY_DEF,true);
     }
   }
- else   if (mayAddPropToType(getProp,rawNominalType)) {
-    rawNominalType.addUndeclaredClassProperty(pname,getProp);
+ else   if (mayAddPropToType(getProp,rawType)) {
+    rawType.addUndeclaredClassProperty(pname,getProp);
   }
-  if (!propertyDefs.contains(rawNominalType,pname)) {
-    propertyDefs.put(rawNominalType,pname,new PropertyDef(getProp,null,null));
+  if (!propertyDefs.contains(rawType,pname)) {
+    propertyDefs.put(rawType,pname,new PropertyDef(getProp,null,null));
   }
 }

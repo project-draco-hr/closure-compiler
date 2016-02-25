@@ -11,23 +11,23 @@
       builder.add(varNameGen.getNextName(typeParam));
     }
     ImmutableList<String> typeParameters=builder.build();
-    RawNominalType rawNominalType;
+    RawNominalType rawType;
     if (fnDoc.usesImplicitMatch()) {
-      rawNominalType=RawNominalType.makeStructuralInterface(defSite,qname,typeParameters);
+      rawType=RawNominalType.makeStructuralInterface(defSite,qname,typeParameters);
     }
  else     if (fnDoc.isInterface()) {
-      rawNominalType=RawNominalType.makeNominalInterface(defSite,qname,typeParameters);
+      rawType=RawNominalType.makeNominalInterface(defSite,qname,typeParameters);
     }
  else     if (fnDoc.makesStructs()) {
-      rawNominalType=RawNominalType.makeStructClass(defSite,qname,typeParameters);
+      rawType=RawNominalType.makeStructClass(defSite,qname,typeParameters);
     }
  else     if (fnDoc.makesDicts()) {
-      rawNominalType=RawNominalType.makeDictClass(defSite,qname,typeParameters);
+      rawType=RawNominalType.makeDictClass(defSite,qname,typeParameters);
     }
  else {
-      rawNominalType=RawNominalType.makeUnrestrictedClass(defSite,qname,typeParameters);
+      rawType=RawNominalType.makeUnrestrictedClass(defSite,qname,typeParameters);
     }
-    nominaltypesByNode.put(defSite,rawNominalType);
+    nominaltypesByNode.put(defSite,rawType);
     if (isRedeclaration) {
       return;
     }
@@ -37,9 +37,9 @@
         defSite.getParent().getFirstChild().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
       }
  else       if (currentScope.isTopLevel()) {
-        maybeRecordBuiltinType(qname,rawNominalType);
+        maybeRecordBuiltinType(qname,rawType);
       }
-      currentScope.addNominalType(nameNode,rawNominalType);
+      currentScope.addNominalType(nameNode,rawType);
     }
   }
  else   if (fnDoc != null) {
