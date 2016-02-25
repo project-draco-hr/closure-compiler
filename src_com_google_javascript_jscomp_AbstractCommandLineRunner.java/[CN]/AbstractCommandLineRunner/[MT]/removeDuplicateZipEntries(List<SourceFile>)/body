@@ -1,0 +1,29 @@
+{
+  ImmutableList.Builder<JSError> errors=ImmutableList.builder();
+  Map<String,SourceFile> sourceFilesByName=new HashMap<>();
+  Iterator<SourceFile> fileIterator=sourceFiles.listIterator();
+  while (fileIterator.hasNext()) {
+    SourceFile sourceFile=fileIterator.next();
+    String fullPath=sourceFile.getName();
+    if (!fullPath.contains("!/")) {
+      continue;
+    }
+    String relativePath=fullPath.split("!")[1];
+    if (!sourceFilesByName.containsKey(relativePath)) {
+      sourceFilesByName.put(relativePath,sourceFile);
+    }
+ else {
+      SourceFile firstSourceFile=sourceFilesByName.get(relativePath);
+      System.err.println("Traversing files: " + firstSourceFile + " and "+ sourceFile);
+      if (firstSourceFile.getCode().equals(sourceFile.getCode())) {
+        Logger.getLogger(AbstractCommandLineRunner.class.getName()).warning("Found duplicate zip entries with the same contents.\n" + "Entry 1: " + firstSourceFile.getName() + "\n"+ "Entry 2: "+ sourceFile.getName()+ "\n");
+        errors.add(JSError.make(SourceFile.DUPLICATE_ZIP_CONTENTS,firstSourceFile.getName(),sourceFile.getName()));
+        fileIterator.remove();
+      }
+ else {
+        errors.add(JSError.make(CONFLICTING_DUPLICATE_ZIP_CONTENTS,firstSourceFile.getName(),sourceFile.getName()));
+      }
+    }
+  }
+  return errors.build();
+}

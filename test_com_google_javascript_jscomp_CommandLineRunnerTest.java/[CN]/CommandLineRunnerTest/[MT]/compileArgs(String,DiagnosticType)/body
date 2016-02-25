@@ -1,0 +1,23 @@
+{
+  String[] argStrings=args.toArray(new String[]{});
+  CommandLineRunner runner=new CommandLineRunner(argStrings,new PrintStream(outReader),new PrintStream(errReader));
+  lastCompiler=runner.getCompiler();
+  try {
+    runner.doRun();
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+    fail("Unexpected exception " + e);
+  }
+  Compiler compiler=runner.getCompiler();
+  String output=compiler.toSource();
+  if (expectedError == null) {
+    assertThat(compiler.getErrors()).isEmpty();
+    assertThat(compiler.getWarnings()).isEmpty();
+    assertThat(output).isEqualTo(expectedOutput);
+  }
+ else {
+    assertThat(compiler.getErrors()).hasLength(1);
+    assertError(compiler.getErrors()[0]).hasType(expectedError);
+  }
+}
