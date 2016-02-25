@@ -1,11 +1,13 @@
 {
   String messageKey;
+  String originalMessageKey;
   boolean isVar;
   Node msgNode;
 switch (node.getType()) {
 case Token.NAME:
     if ((parent != null) && (NodeUtil.isNameDeclaration(parent))) {
       messageKey=node.getString();
+      originalMessageKey=node.getOriginalName();
       isVar=true;
     }
  else {
@@ -21,6 +23,7 @@ return;
 }
 Node propNode=getProp.getLastChild();
 messageKey=propNode.getString();
+originalMessageKey=getProp.getOriginalName();
 msgNode=node.getLastChild();
 break;
 case Token.STRING_KEY:
@@ -29,6 +32,7 @@ return;
 }
 isVar=false;
 messageKey=node.getString();
+originalMessageKey=node.getOriginalName();
 msgNode=node.getFirstChild();
 break;
 case Token.CALL:
@@ -41,6 +45,9 @@ visitFallbackFunctionCall(traversal,node);
 return;
 default :
 return;
+}
+if (originalMessageKey != null) {
+messageKey=originalMessageKey;
 }
 boolean isNewStyleMessage=msgNode != null && msgNode.isCall();
 if (!isMessageName(messageKey,isNewStyleMessage)) {

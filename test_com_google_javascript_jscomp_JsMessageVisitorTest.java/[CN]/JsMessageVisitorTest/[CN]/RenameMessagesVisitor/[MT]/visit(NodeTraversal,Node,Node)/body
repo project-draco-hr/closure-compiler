@@ -1,0 +1,12 @@
+{
+  if (n.isName() && n.getString() != null && n.getString().startsWith("MSG_")) {
+    String originalName=n.getString();
+    n.setOriginalName(originalName);
+    n.setString("some_prefix_" + originalName);
+  }
+ else   if (n.isGetProp() && parent.isAssign() && n.getQualifiedName().contains(".MSG_")) {
+    String originalName=n.getLastChild().getString();
+    n.setOriginalName(originalName);
+    n.getLastChild().setString("some_prefix_" + originalName);
+  }
+}
