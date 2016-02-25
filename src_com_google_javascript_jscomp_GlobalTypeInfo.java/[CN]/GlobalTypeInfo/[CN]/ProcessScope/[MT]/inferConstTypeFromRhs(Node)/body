@@ -5,7 +5,8 @@
   }
   Node rhs=NodeUtil.getRValueOfLValue(constExpr);
   JSType rhsType=simpleInferExprType(rhs);
-  if (rhsType == null || rhsType.isUnknown()) {
+  boolean isUnescapedVar=constExpr.isName() && constExpr.getParent().isVar() && !this.currentScope.isEscapedVar(constExpr.getString());
+  if ((rhsType == null || rhsType.isUnknown()) && !isUnescapedVar) {
     warnings.add(JSError.make(constExpr,COULD_NOT_INFER_CONST_TYPE));
     return null;
   }

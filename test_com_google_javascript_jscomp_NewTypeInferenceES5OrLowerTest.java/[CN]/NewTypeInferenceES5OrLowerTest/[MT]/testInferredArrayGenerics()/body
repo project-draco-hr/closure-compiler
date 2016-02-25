@@ -1,7 +1,7 @@
 {
   typeCheck("/** @const */ var x = [];");
-  typeCheck("/** @const */ var x = [1, 'str'];",GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
-  typeCheck(LINE_JOINER.join("/** @constructor */ function Foo() {}","/** @constructor @extends {Foo} */ function Bar() {}","/** @const */ var x = [new Foo, new Bar];"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
+  typeCheck(LINE_JOINER.join("/** @const */ var x = [1, 'str'];","function g() { x; }"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */ function Foo() {}","/** @constructor @extends {Foo} */ function Bar() {}","/** @const */ var x = [new Foo, new Bar];","function g() { x; }"),GlobalTypeInfo.COULD_NOT_INFER_CONST_TYPE);
   typeCheck("var /** Array<string> */ a = [1, 2];",NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("var arr = [];","var /** Array<string> */ as = arr;"));
   typeCheck(LINE_JOINER.join("var arr = [1, 2, 3];","var /** Array<string> */ as = arr;"),NewTypeInference.MISTYPED_ASSIGN_RHS);

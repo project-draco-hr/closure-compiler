@@ -24,26 +24,33 @@ case Token.VAR:
  else     if (varName.equals(WINDOW_INSTANCE) && nameNode.isFromExterns()) {
       visitWindowVar(nameNode);
     }
- else     if (this.currentScope.isFunction() && !this.currentScope.isDefinedLocally(varName,false)) {
-      this.currentScope.addLocal(varName,JSType.UNKNOWN,false,false);
-    }
  else     if (isCtorDefinedByCall(nameNode)) {
       visitNewCtorDefinedByCall(nameNode);
     }
+    if (!n.isFromExterns() && !this.currentScope.isDefinedLocally(varName,false)) {
+      this.currentScope.addLocal(varName,JSType.UNKNOWN,false,false);
+    }
     break;
   }
+case Token.NAME:
+{
+  if (this.currentScope.isFunction()) {
+    NTIScope.mayRecordEscapedVar(this.currentScope,n.getString());
+  }
+  break;
+}
 case Token.EXPR_RESULT:
 {
-  Node expr=n.getFirstChild();
+Node expr=n.getFirstChild();
 switch (expr.getType()) {
 case Token.ASSIGN:
-    Node lhs=expr.getFirstChild();
-  if (isCtorDefinedByCall(lhs)) {
-    visitNewCtorDefinedByCall(lhs);
-    return;
-  }
-if (!lhs.isGetProp()) {
+  Node lhs=expr.getFirstChild();
+if (isCtorDefinedByCall(lhs)) {
+  visitNewCtorDefinedByCall(lhs);
   return;
+}
+if (!lhs.isGetProp()) {
+return;
 }
 expr=lhs;
 case Token.GETPROP:
