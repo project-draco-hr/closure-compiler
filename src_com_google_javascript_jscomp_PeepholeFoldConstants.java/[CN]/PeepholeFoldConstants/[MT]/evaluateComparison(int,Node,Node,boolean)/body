@@ -51,21 +51,19 @@ switch (lhType) {
 case Token.NULL:
 case Token.TRUE:
 case Token.FALSE:
-if (rhType != Token.TRUE && rhType != Token.FALSE && rhType != Token.NULL) {
-return TernaryValue.UNKNOWN;
-}
+boolean rhIsBooleanLike=rhType == Token.TRUE || rhType == Token.FALSE || rhType == Token.NULL;
 switch (op) {
 case Token.SHEQ:
 case Token.EQ:
-return TernaryValue.forBoolean(lhType == rhType);
+return rhIsBooleanLike ? TernaryValue.forBoolean(lhType == rhType) : TernaryValue.UNKNOWN;
 case Token.SHNE:
 case Token.NE:
-return TernaryValue.forBoolean(lhType != rhType);
+return rhIsBooleanLike ? TernaryValue.forBoolean(lhType != rhType) : TernaryValue.UNKNOWN;
 case Token.GE:
 case Token.LE:
 case Token.GT:
 case Token.LT:
-return compareAsNumbers(op,left,right);
+return compareAsNumbers(op,left,right,useTypes);
 }
 return TernaryValue.UNKNOWN;
 case Token.THIS:
@@ -94,7 +92,7 @@ return areStringsEqual(left.getString(),right.getString()).not();
 return TernaryValue.UNKNOWN;
 case Token.NUMBER:
 if (right.isNumber()) {
-return compareAsNumbers(op,left,right);
+return compareAsNumbers(op,left,right,useTypes);
 }
 return TernaryValue.UNKNOWN;
 case Token.NAME:

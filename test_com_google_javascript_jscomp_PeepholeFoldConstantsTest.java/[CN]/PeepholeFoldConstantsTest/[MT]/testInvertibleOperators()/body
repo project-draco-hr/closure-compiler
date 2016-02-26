@@ -11,9 +11,11 @@
         String b=LITERAL_OPERANDS.get(iOperandB);
         String op=operators.get(iOp);
         String inverse=inverses.get(op);
-        if (comparators.contains(op) && (uncomparables.contains(a) || uncomparables.contains(b))) {
-          assertSameResults(join(a,op,b),"false");
-          assertSameResults(join(a,inverse,b),"false");
+        if (comparators.contains(op)) {
+          if (uncomparables.contains(a) || uncomparables.contains(b) || (a.equals("null") && NodeUtil.getStringNumberValue(b) == null)) {
+            assertSameResults(join(a,op,b),"false");
+            assertSameResults(join(a,inverse,b),"false");
+          }
         }
  else         if (a.equals(b) && equalitors.contains(op)) {
           if (a.equals("NaN") || a.equals("Infinity") || a.equals("-Infinity")) {
