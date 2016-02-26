@@ -1,0 +1,4 @@
+{
+  configuration=config(rule("BanUnknownTypedClassPropsReferences"),"My rule message",value("String"));
+  testSame(EXTERNS,LINE_JOINER.join("/** @typedef {?} */ var Unk;","/** @constructor */ function f() { /** @type {?Unk} */ this.prop = null; };","f.prototype.method = function() { alert(this.prop); }"),CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message\nThe property \"prop\" on type \"f\"");
+}
