@@ -78,6 +78,9 @@
     passes.add(getCustomPasses(CustomPassExecutionTime.BEFORE_OPTIMIZATION_LOOP));
   }
   passes.add(createEmptyPass("beforeMainOptimizations"));
+  if (options.flowSensitiveInlineVariables) {
+    passes.add(flowSensitiveInlineVariables);
+  }
   passes.addAll(getMainOptimizationLoop());
   passes.add(createEmptyPass("beforeModuleMotion"));
   if (options.crossModuleCodeMotion) {
