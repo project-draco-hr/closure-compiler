@@ -10,9 +10,9 @@
   pbBuilder.append("report_call: \"$$testInstrument\"").append("report_defined: \"$$testDefine\"").append("declaration_to_remove: \"$$toRemoveDefinition1\"").append("declaration_to_remove: \"$$toRemoveDefinition2\"").append("declaration_to_remove: \"$$toRemoveDefinition3\"");
   final String initCode=initCodeBuilder.toString();
   this.instrumentationPb=pbBuilder.toString();
-  test("function a(){b}",initCode + "$$testDefine(0);" + "function a(){$$testInstrument(0);b}");
-  test(kPreamble + "function a(){b}",initCode + "$$testDefine(0);" + "var $$notToRemove;"+ "function a(){$$testInstrument(0);b}");
-  test(kPreamble + "var a = { b: function(){c} }",initCode + "var $$notToRemove;" + "$$testDefine(0);"+ "var a = { b: function(){$$testInstrument(0);c} }");
-  test(kPreamble + "var a = { b: function(){c}, d: function(){e} }",initCode + "var $$notToRemove;" + "$$testDefine(0);"+ "$$testDefine(1);"+ "var a={b:function(){$$testInstrument(0);c},"+ "d:function(){$$testInstrument(1);e}}");
-  test(kPreamble + "var a = { b: { f: function(){c} }, d: function(){e} }",initCode + "var $$notToRemove;" + "$$testDefine(0);"+ "$$testDefine(1);"+ "var a={b:{f:function(){$$testInstrument(0);c}},"+ "d:function(){$$testInstrument(1);e}}");
+  test("function a(){b}",initCode + "$$testDefine(0,\"a\");" + "function a(){$$testInstrument(0,\"a\",arguments);b}");
+  test(kPreamble + "function a(){b}",initCode + "$$testDefine(0,\"a\");" + "var $$notToRemove;"+ "function a(){$$testInstrument(0,\"a\",arguments);b}");
+  test(kPreamble + "var a = { b: function(){c} }",initCode + "var $$notToRemove;" + "$$testDefine(0,\"<anonymous>\");"+ "var a = { b: function(){"+ "$$testInstrument(0,\"<anonymous>\",arguments);c} }");
+  test(kPreamble + "var a = { b: function(){c}, d: function(){e} }",initCode + "var $$notToRemove;" + "$$testDefine(0,\"<anonymous>\");"+ "$$testDefine(1,\"<anonymous>\");"+ "var a={b:function(){"+ "$$testInstrument(0,\"<anonymous>\",arguments);c},"+ "d:function(){$$testInstrument(1,\"<anonymous>\",arguments);e}}");
+  test(kPreamble + "var a = { b: { f: function(){c} }, d: function(){e} }",initCode + "var $$notToRemove;" + "$$testDefine(0,\"<anonymous>\");"+ "$$testDefine(1,\"<anonymous>\");"+ "var a={b:{f:function(){"+ "$$testInstrument(0,\"<anonymous>\",arguments);c}},"+ "d:function(){$$testInstrument(1,\"<anonymous>\",arguments);e}}");
 }
