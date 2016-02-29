@@ -1,3 +1,6 @@
 {
-  testSameEs6(LINE_JOINER.join("import {Foo} from 'bar';","goog.require('example.ExtraRequire');"));
+  testErrorEs6("import {Foo} from 'bar';",EXTRA_REQUIRE_WARNING);
+  testErrorEs6(LINE_JOINER.join("import {Foo} from 'bar';","import {Bar as Foo} from 'bar';","new Foo;"),DUPLICATE_REQUIRE_WARNING);
+  testErrorEs6(LINE_JOINER.join("import Foo from 'bar';","import {Bar as Foo} from 'bar';","new Foo;"),DUPLICATE_REQUIRE_WARNING);
+  testErrorEs6(LINE_JOINER.join("import {Foo} from 'bar';","goog.require('example.ExtraRequire');","new Foo;"),EXTRA_REQUIRE_WARNING);
 }

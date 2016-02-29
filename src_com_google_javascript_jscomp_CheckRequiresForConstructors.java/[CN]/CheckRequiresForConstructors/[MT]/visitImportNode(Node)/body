@@ -1,0 +1,12 @@
+{
+  Node defaultImport=importNode.getFirstChild();
+  if (defaultImport.isName()) {
+    visitRequire(defaultImport.getString(),importNode);
+  }
+  Node namedImports=defaultImport.getNext();
+  if (namedImports.getType() == Token.IMPORT_SPECS) {
+    for (    Node importSpec : namedImports.children()) {
+      visitRequire(importSpec.getLastChild().getString(),importNode);
+    }
+  }
+}
