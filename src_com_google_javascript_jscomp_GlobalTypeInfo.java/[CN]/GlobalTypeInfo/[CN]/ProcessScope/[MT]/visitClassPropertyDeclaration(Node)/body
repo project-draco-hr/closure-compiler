@@ -10,16 +10,13 @@
   Node parent=getProp.getParent();
   Node initializer=parent.isAssign() ? parent.getLastChild() : null;
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(getProp);
-  JSType propDeclType=null;
+  PropertyType pt=getPropTypeHelper(jsdoc,initializer,rawType);
+  JSType propDeclType=pt.declType;
+  JSType propInferredFunType=pt.inferredFunType;
+  boolean isConst=isConst(getProp);
   if (initializer != null && initializer.isFunction()) {
     parent.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
-    DeclaredFunctionType dft=visitFunctionLate(initializer,rawType).getDeclaredFunctionType();
-    propDeclType=commonTypes.fromFunctionType(dft.toFunctionType());
   }
-  if (jsdoc != null && jsdoc.hasType()) {
-    propDeclType=getDeclaredTypeOfNode(jsdoc,currentScope);
-  }
-  boolean isConst=isConst(getProp);
   if (propDeclType != null || isConst) {
     mayWarnAboutExistingProp(rawType,pname,getProp,propDeclType);
     if (propDeclType == null) {
@@ -33,7 +30,12 @@
     }
   }
  else   if (mayAddPropToType(getProp,rawType)) {
-    rawType.addUndeclaredClassProperty(pname,getProp);
+    if (propInferredFunType != null) {
+      rawType.addUndeclaredClassProperty(pname,propInferredFunType,getProp);
+    }
+ else {
+      rawType.addUndeclaredClassProperty(pname,JSType.UNKNOWN,getProp);
+    }
   }
   if (!propertyDefs.contains(rawType,pname)) {
     propertyDefs.put(rawType,pname,new PropertyDef(getProp,null,null));

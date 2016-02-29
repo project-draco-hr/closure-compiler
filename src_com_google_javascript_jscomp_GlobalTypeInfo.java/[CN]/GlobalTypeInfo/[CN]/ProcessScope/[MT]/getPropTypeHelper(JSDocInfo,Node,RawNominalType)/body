@@ -1,0 +1,20 @@
+{
+  PropertyType result=new PropertyType();
+  DeclaredFunctionType dft=null;
+  if (initializer != null && initializer.isFunction()) {
+    dft=visitFunctionLate(initializer,thisType).getDeclaredFunctionType();
+  }
+  if (jsdoc != null && jsdoc.hasType()) {
+    result.declType=getDeclaredTypeOfNode(jsdoc,currentScope);
+  }
+ else   if (initializer != null && initializer.isFunction()) {
+    JSType funType=commonTypes.fromFunctionType(dft.toFunctionType());
+    if ((jsdoc != null && jsdoc.containsFunctionDeclaration()) || NodeUtil.functionHasInlineJsdocs(initializer)) {
+      result.declType=funType;
+    }
+ else {
+      result.inferredFunType=funType;
+    }
+  }
+  return result;
+}

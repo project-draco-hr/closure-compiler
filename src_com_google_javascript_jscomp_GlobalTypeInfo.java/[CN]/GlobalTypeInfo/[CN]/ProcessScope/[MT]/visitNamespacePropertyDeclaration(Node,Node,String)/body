@@ -8,14 +8,9 @@
   Namespace ns=currentScope.getNamespace(QualifiedName.fromNode(recv));
   JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(declNode);
   Node initializer=NodeUtil.getRValueOfLValue(declNode);
-  JSType propDeclType=null;
-  if (jsdoc != null && jsdoc.hasType()) {
-    propDeclType=getDeclaredTypeOfNode(jsdoc,currentScope);
-  }
- else   if (initializer != null && initializer.isFunction()) {
-    DeclaredFunctionType declType=visitFunctionLate(initializer,null).getDeclaredFunctionType();
-    propDeclType=commonTypes.fromFunctionType(declType.toFunctionType());
-  }
+  PropertyType pt=getPropTypeHelper(jsdoc,initializer,null);
+  JSType propDeclType=pt.declType;
+  JSType propInferredFunType=pt.inferredFunType;
   boolean isConst=isConst(declNode);
   if (propDeclType != null || isConst) {
     JSType previousPropType=ns.getPropDeclaredType(pname);
@@ -31,6 +26,9 @@
     if (declNode.isGetProp() && isConst) {
       declNode.putBooleanProp(Node.CONSTANT_PROPERTY_DEF,true);
     }
+  }
+ else   if (propInferredFunType != null) {
+    ns.addUndeclaredProperty(pname,declNode,propInferredFunType,false);
   }
  else {
     JSType t=initializer == null ? null : simpleInferExprType(initializer);
