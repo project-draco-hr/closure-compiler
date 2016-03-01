@@ -10,4 +10,7 @@
   if (jsDoc != null && name != null && compiler.getCodingConvention().isPrivate(name) && !jsDoc.getVisibility().equals(Visibility.PRIVATE)) {
     t.report(function,MUST_BE_PRIVATE,name);
   }
+  if (parent.isMemberFunctionDef() && "constructor".equals(parent.getString()) && jsDoc != null && !jsDoc.getVisibility().equals(Visibility.INHERITED)) {
+    t.report(function,CONSTRUCTOR_DISALLOWED_JSDOC);
+  }
 }
