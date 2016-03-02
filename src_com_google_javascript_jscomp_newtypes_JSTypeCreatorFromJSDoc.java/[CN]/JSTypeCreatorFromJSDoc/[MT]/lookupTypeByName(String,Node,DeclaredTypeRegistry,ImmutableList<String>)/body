@@ -1,6 +1,7 @@
 {
   String tvar=UniqueNameGenerator.findGeneratedName(name,outerTypeParameters);
   if (tvar != null) {
+    checkInvalidGenericsInstantiation(n);
     return JSType.fromTypeVar(tvar);
   }
   Declaration decl=registry.getDeclaration(QualifiedName.fromQualifiedString(name),true);
@@ -9,12 +10,15 @@
     throw new UnknownTypeException("Unhandled type: " + name);
   }
   if (decl.getTypedef() != null) {
+    checkInvalidGenericsInstantiation(n);
     return getTypedefType(decl.getTypedef(),registry);
   }
   if (decl.getEnum() != null) {
+    checkInvalidGenericsInstantiation(n);
     return getEnumPropType(decl.getEnum(),registry);
   }
   if (decl.isTypeVar()) {
+    checkInvalidGenericsInstantiation(n);
     howmanyTypeVars++;
     return decl.getTypeOfSimpleDecl();
   }
