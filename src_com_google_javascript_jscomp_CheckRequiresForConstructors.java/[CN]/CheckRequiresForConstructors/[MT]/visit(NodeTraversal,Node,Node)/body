@@ -12,8 +12,13 @@ if (NodeUtil.isStatement(n)) {
   maybeAddConstructor(n);
 }
 break;
+case Token.NAME:
+if (!NodeUtil.isLValue(n)) {
+visitQualifiedName(n);
+}
+break;
 case Token.GETPROP:
-visitGetProp(n);
+visitQualifiedName(n);
 break;
 case Token.CALL:
 visitCallNode(n,parent);
