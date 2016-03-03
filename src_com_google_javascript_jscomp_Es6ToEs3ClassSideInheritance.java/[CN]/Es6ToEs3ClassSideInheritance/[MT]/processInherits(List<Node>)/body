@@ -1,19 +1,19 @@
 {
-  for (  Node n : inheritsCalls) {
-    Node parent=n.getParent();
-    Node superclassNameNode=n.getLastChild();
+  for (  Node inheritsCall : inheritsCalls) {
+    Node superclassNameNode=inheritsCall.getLastChild();
     String superclassQname=superclassNameNode.getQualifiedName();
-    Node subclassNameNode=n.getChildBefore(superclassNameNode);
+    Node subclassNameNode=inheritsCall.getChildBefore(superclassNameNode);
     String subclassQname=subclassNameNode.getQualifiedName();
-    if (multiplyDefinedClasses.contains(superclassQname)) {
-      compiler.report(JSError.make(n,DUPLICATE_CLASS));
+    JavascriptClass superClass=classByAlias.get(superclassQname);
+    JavascriptClass subClass=classByAlias.get(subclassQname);
+    if (duplicateClassNames.contains(superclassQname)) {
+      compiler.report(JSError.make(inheritsCall,DUPLICATE_CLASS));
       return;
     }
-    for (    Node staticMethod : getSet(staticMethods,superclassQname)) {
-      copyStaticMethod(staticMethod,superclassNameNode,subclassNameNode,subclassQname,parent);
+    if (superClass == null || subClass == null) {
+      continue;
     }
-    for (    Node staticProperty : getSet(staticProperties,superclassQname)) {
-      copyStaticProperty(staticProperty,subclassNameNode,subclassQname,n);
-    }
+    copyStaticMembers(superClass,subClass,inheritsCall);
+    copyDeclarations(superClass,subClass,inheritsCall);
   }
 }

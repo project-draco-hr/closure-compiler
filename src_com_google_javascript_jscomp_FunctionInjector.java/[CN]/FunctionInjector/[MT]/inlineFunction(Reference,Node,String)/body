@@ -4,7 +4,6 @@
   Node grandParent=parent.getParent();
   CallSiteType callSiteType=classifyCallSite(ref);
   Preconditions.checkArgument(callSiteType != CallSiteType.UNSUPPORTED);
-  boolean isCallInLoop=NodeUtil.isWithinLoop(callNode);
   String resultName=null;
   boolean needsDefaultReturnResult=true;
 switch (callSiteType) {
@@ -28,6 +27,7 @@ default :
 throw new IllegalStateException("Unexpected call site type.");
 }
 FunctionToBlockMutator mutator=new FunctionToBlockMutator(compiler,this.safeNameIdSupplier);
+boolean isCallInLoop=NodeUtil.isWithinLoop(callNode);
 Node newBlock=mutator.mutate(fnName,fnNode,callNode,resultName,needsDefaultReturnResult,isCallInLoop);
 Node greatGrandParent=grandParent.getParent();
 switch (callSiteType) {

@@ -1,17 +1,16 @@
 {
   String existingClassQname=n.getLastChild().getQualifiedName();
-  if (classNames.contains(existingClassQname)) {
-    String maybeAlias=n.getFirstChild().getQualifiedName();
-    if (maybeAlias != null) {
-      classNames.add(maybeAlias);
-      staticMethods.put(maybeAlias,getSet(staticMethods,existingClassQname));
+  if (existingClassQname != null && classByAlias.containsKey(existingClassQname)) {
+    String alias=n.getFirstChild().getQualifiedName();
+    if (alias != null) {
+      setAlias(existingClassQname,alias);
     }
   }
  else   if (n.getFirstChild().isGetProp()) {
     Node getProp=n.getFirstChild();
     Node classNode=getProp.getFirstChild();
     if (isReferenceToClass(t,classNode)) {
-      getSet(staticMethods,classNode.getQualifiedName()).add(n);
+      classByAlias.get(classNode.getQualifiedName()).staticMembers.add(n);
     }
   }
 }

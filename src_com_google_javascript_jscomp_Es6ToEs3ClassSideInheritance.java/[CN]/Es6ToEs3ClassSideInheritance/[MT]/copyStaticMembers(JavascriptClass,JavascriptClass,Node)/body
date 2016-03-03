@@ -1,0 +1,37 @@
+{
+  for (  Node staticMember : superClass.staticMembers) {
+    Preconditions.checkState(staticMember.isAssign(),staticMember);
+    String memberName=staticMember.getFirstChild().getLastChild().getString();
+    if (superClass.definedProperties.contains(memberName)) {
+      continue;
+    }
+    if (isOverriden(subClass,memberName)) {
+      continue;
+    }
+    JSDocInfoBuilder info=JSDocInfoBuilder.maybeCopyFrom(staticMember.getJSDocInfo());
+    Node function=staticMember.getLastChild();
+    Node sourceInfoNode=function;
+    if (function.isFunction()) {
+      sourceInfoNode=function.getFirstChild();
+      Node params=NodeUtil.getFunctionParameters(function);
+      Preconditions.checkState(params.isParamList(),params);
+      for (      Node param : params.children()) {
+        if (param.getJSDocInfo() != null) {
+          String name=param.getString();
+          info.recordParameter(name,param.getJSDocInfo().getType());
+        }
+      }
+    }
+    Node subclassNameNode=inheritsCall.getSecondChild();
+    Node superclassNameNode=subclassNameNode.getNext();
+    Node assign=IR.assign(IR.getprop(subclassNameNode.cloneTree(),IR.string(memberName)),IR.getprop(superclassNameNode.cloneTree(),IR.string(memberName)));
+    info.addSuppression("visibility");
+    assign.setJSDocInfo(info.build());
+    Node exprResult=IR.exprResult(assign);
+    exprResult.useSourceInfoIfMissingFromForTree(sourceInfoNode);
+    Node inheritsExpressionResult=inheritsCall.getParent();
+    inheritsExpressionResult.getParent().addChildAfter(exprResult,inheritsExpressionResult);
+    compiler.reportCodeChange();
+    subClass.staticMembers.add(assign);
+  }
+}

@@ -4,7 +4,10 @@ case Token.CALL:
     if (n.getFirstChild().matchesQualifiedName(Es6ToEs3Converter.INHERITS)) {
       inheritsCalls.add(n);
     }
-  break;
+  if (NodeUtil.isObjectDefinePropertiesDefinition(n)) {
+    visitDefinedPropertiesCall(t,n);
+  }
+break;
 case Token.VAR:
 visitVar(n);
 break;
