@@ -5,14 +5,8 @@
     }
  else {
       JSType replacement=replacements.getUnresolvedOriginalTemplateType(type);
-      JSType restrictedReplacement=replacement.restrictByNotNullOrUndefined();
-      if (restrictedReplacement.isTemplatizedType()) {
-        Iterable<JSType> replacementTemplateTypes=restrictedReplacement.toMaybeTemplatizedType().getTemplateTypes();
-        for (        JSType replacementTemplateType : replacementTemplateTypes) {
-          if (!replacementTemplateType.differsFrom(type)) {
-            return type;
-          }
-        }
+      if (isRecursive(type,replacement)) {
+        return type;
       }
       visitedTypes.push(type);
       JSType visitedReplacement=replacement.visit(this);

@@ -1,0 +1,13 @@
+{
+  TemplatizedType replacementTemplatizedType=replacementType.restrictByNotNullOrUndefined().toMaybeTemplatizedType();
+  if (replacementTemplatizedType == null) {
+    return false;
+  }
+  Iterable<JSType> replacementTemplateTypes=replacementTemplatizedType.getTemplateTypes();
+  for (  JSType replacementTemplateType : replacementTemplateTypes) {
+    if (replacementTemplateType.isTemplateType() && isSameType(currentType,replacementTemplateType.toMaybeTemplateType())) {
+      return true;
+    }
+  }
+  return false;
+}
