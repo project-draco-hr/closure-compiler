@@ -1,0 +1,16 @@
+{
+  Preconditions.checkNotNull(cacheCall);
+  Preconditions.checkNotNull(definitionProvider);
+  List<Definition> defs=new ArrayList<>();
+  Collection<Definition> valueFnDefs=getCallableDefinitions(definitionProvider,cacheCall.valueFn);
+  if (valueFnDefs != null) {
+    defs.addAll(valueFnDefs);
+  }
+  if (cacheCall.keyFn != null) {
+    Collection<Definition> keyFnDefs=getCallableDefinitions(definitionProvider,cacheCall.keyFn);
+    if (keyFnDefs != null) {
+      defs.addAll(keyFnDefs);
+    }
+  }
+  return defs;
+}

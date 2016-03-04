@@ -9,7 +9,8 @@
     }
     for (    Node callSite : functionInfo.getCallsInFunctionBody()) {
       Node callee=callSite.getFirstChild();
-      Collection<Definition> defs=getCallableDefinitions(definitionProvider,callee);
+      Cache cacheCall=compiler.getCodingConvention().describeCachingCall(callSite);
+      Collection<Definition> defs=cacheCall != null ? getGoogCacheCallableDefinitions(definitionProvider,cacheCall) : getCallableDefinitions(definitionProvider,callee);
       if (defs == null) {
         functionInfo.setTaintsUnknown();
         break;

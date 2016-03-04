@@ -1,0 +1,11 @@
+{
+  String source="var valueFn = function(x) { return x * 2; };" + "var helper = function(x) { return goog.reflect.cache(externObj, x, valueFn); };" + "helper(10);";
+  checkMarkedCalls(source,ImmutableList.of("goog.reflect.cache","helper"));
+  Node lastRoot=getLastCompiler().getRoot().getLastChild();
+  Node cacheCall=findQualifiedNameNode("goog.reflect.cache",lastRoot).getParent();
+  assertThat(cacheCall.isNoSideEffectsCall()).isTrue();
+  assertThat(cacheCall.mayMutateGlobalStateOrThrow()).isFalse();
+  Node helperCall=Iterables.getLast(findQualifiedNameNodes("helper",lastRoot)).getParent();
+  assertThat(helperCall.isNoSideEffectsCall()).isTrue();
+  assertThat(helperCall.mayMutateGlobalStateOrThrow()).isFalse();
+}

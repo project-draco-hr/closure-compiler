@@ -1,0 +1,8 @@
+{
+  String source="var x = 0;" + "var valueFn = function() { return (x+=1); };" + "goog.reflect.cache(externObj, \"foo\", valueFn)";
+  checkMarkedCalls(source,ImmutableList.<String>of());
+  Node lastRoot=getLastCompiler().getRoot().getLastChild();
+  Node call=findQualifiedNameNode("goog.reflect.cache",lastRoot).getParent();
+  assertThat(call.isNoSideEffectsCall()).isFalse();
+  assertThat(call.mayMutateGlobalStateOrThrow()).isTrue();
+}
