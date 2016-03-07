@@ -2,5 +2,6 @@
   Preconditions.checkArgument(qnameNode.isGetProp());
   Preconditions.checkArgument(qnameNode.isQualifiedName());
   Node parent=qnameNode.getParent();
-  return parent.isAssign() && parent.getParent().isExprResult() && parent.getLastChild().isFunction();
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(qnameNode);
+  return parent.isAssign() && parent.getParent().isExprResult() && parent.getLastChild().isFunction()&& (jsdoc == null || jsdoc.containsFunctionDeclaration());
 }

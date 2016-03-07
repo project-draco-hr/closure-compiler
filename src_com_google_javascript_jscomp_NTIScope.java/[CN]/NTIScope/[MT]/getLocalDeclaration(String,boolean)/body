@@ -4,7 +4,6 @@
     return null;
   }
   JSType type=null;
-  boolean isForwardDeclaration=false;
   boolean isTypeVar=false;
   if ("this".equals(name)) {
     type=getDeclaredTypeOf("this");
@@ -26,7 +25,7 @@
       type=externs.get(name);
     }
   }
- else   if (localTypedefs.containsKey(name) || localNamespaces.containsKey(name) || localEnums.containsKey(name)|| localClassDefs.containsKey(name)) {
+ else   if (localTypedefs.containsKey(name) || localNamespaces.containsKey(name)) {
   }
  else   if (declaredType != null && declaredType.isTypeVariableDefinedLocally(name)) {
     isTypeVar=true;
@@ -35,8 +34,5 @@
  else   if (externs.containsKey(name)) {
     type=externs.get(name);
   }
- else   if (unknownTypeNames.contains(name)) {
-    isForwardDeclaration=true;
-  }
-  return new Declaration(type,localTypedefs.get(name),localNamespaces.get(name),localEnums.get(name),localFunDefs.get(name),localClassDefs.get(name),isTypeVar,constVars.contains(name),isForwardDeclaration);
+  return new Declaration(type,localTypedefs.get(name),localNamespaces.get(name),localFunDefs.get(name),isTypeVar,constVars.contains(name));
 }

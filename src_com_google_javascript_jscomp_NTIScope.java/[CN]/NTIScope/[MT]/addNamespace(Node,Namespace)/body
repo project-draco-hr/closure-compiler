@@ -1,11 +1,19 @@
 {
-  if (ns instanceof RawNominalType) {
-    addNominalType(qnameNode,(RawNominalType)ns);
+  if (ns instanceof EnumType) {
+    this.localEnums.add((EnumType)ns);
   }
- else   if (ns instanceof EnumType) {
-    addEnum(qnameNode,(EnumType)ns);
+  if (qnameNode.isName()) {
+    String varName=qnameNode.getString();
+    Preconditions.checkState(!this.localNamespaces.containsKey(varName));
+    this.localNamespaces.put(varName,ns);
+    if (qnameNode.isFromExterns() && !this.externs.containsKey(varName)) {
+      this.externs.put(qnameNode.getString(),null);
+    }
   }
  else {
-    addNamespaceLit(qnameNode,(NamespaceLit)ns);
+    Preconditions.checkState(!isDefined(qnameNode));
+    QualifiedName qname=QualifiedName.fromNode(qnameNode);
+    Namespace rootns=getNamespace(qname.getLeftmostName());
+    rootns.addNamespace(qname.getAllButLeftmost(),ns);
   }
 }

@@ -1,6 +1,9 @@
 {
   Preconditions.checkState(nameNode == null || nameNode.isQualifiedName());
-  if (fnDoc != null && fnDoc.isConstructorOrInterface()) {
+  if (fnDoc == null) {
+    return;
+  }
+  if (fnDoc.isConstructorOrInterface()) {
     if (nameNode == null) {
       warnings.add(JSError.make(defSite,ANONYMOUS_NOMINAL_TYPE));
       return;
@@ -39,15 +42,13 @@
  else       if (currentScope.isTopLevel()) {
         maybeRecordBuiltinType(qname,rawType);
       }
-      currentScope.addNominalType(nameNode,rawType);
+      currentScope.addNamespace(nameNode,rawType);
     }
   }
- else   if (fnDoc != null) {
-    if (fnDoc.makesStructs()) {
-      warnings.add(JSError.make(defSite,STRUCTDICT_WITHOUT_CTOR,"@struct"));
-    }
- else     if (fnDoc.makesDicts()) {
-      warnings.add(JSError.make(defSite,STRUCTDICT_WITHOUT_CTOR,"@dict"));
-    }
+ else   if (fnDoc.makesStructs()) {
+    warnings.add(JSError.make(defSite,STRUCTDICT_WITHOUT_CTOR,"@struct"));
+  }
+ else   if (fnDoc.makesDicts()) {
+    warnings.add(JSError.make(defSite,STRUCTDICT_WITHOUT_CTOR,"@dict"));
   }
 }

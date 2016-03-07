@@ -1,18 +1,19 @@
 {
   unknownTypeNames=ImmutableSet.of();
   JSTypes commonTypes=getCommonTypes();
-  for (  Map.Entry<String,NamespaceLit> entry : localNamespaces.entrySet()) {
+  for (  Map.Entry<String,Namespace> entry : localNamespaces.entrySet()) {
     String name=entry.getKey();
-    NamespaceLit nslit=entry.getValue();
-    JSType objToInclude=null;
-    if (localFunDefs.containsKey(name)) {
-      objToInclude=commonTypes.fromFunctionType(localFunDefs.get(name).getDeclaredFunctionType().toFunctionType());
+    Namespace ns=entry.getValue();
+    JSType t;
+    if (ns instanceof NamespaceLit) {
+      constVars.add(name);
+      NamespaceLit nslit=(NamespaceLit)ns;
+      JSType objToInclude=externs.get(name);
+      t=nslit.toJSTypeIncludingObject(commonTypes,objToInclude);
     }
  else {
-      objToInclude=externs.get(name);
+      t=ns.toJSType(commonTypes);
     }
-    JSType t=nslit.toJSTypeIncludingObject(commonTypes,objToInclude);
-    constVars.add(name);
     if (externs.containsKey(name)) {
       externs.put(name,t);
     }
@@ -20,23 +21,12 @@
       locals.put(name,t);
     }
   }
-  for (  Map.Entry<String,EnumType> entry : localEnums.entrySet()) {
-    locals.put(entry.getKey(),entry.getValue().toJSType(commonTypes));
-  }
   for (  String typedefName : localTypedefs.keySet()) {
     locals.put(typedefName,JSType.UNDEFINED);
   }
-  for (  Map.Entry<String,RawNominalType> entry : localClassDefs.entrySet()) {
-    String name=entry.getKey();
-    if (!localFunDefs.containsKey(name)) {
-      locals.put(name,entry.getValue().toJSType(commonTypes));
-    }
-  }
   copyOuterVarsTransitively(this);
   localNamespaces=ImmutableMap.of();
-  localClassDefs=ImmutableMap.of();
   localTypedefs=ImmutableMap.of();
-  localEnums=ImmutableMap.of();
   escapedVars=ImmutableSet.of();
   isFinalized=true;
 }

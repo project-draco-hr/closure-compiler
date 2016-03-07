@@ -4,25 +4,8 @@
     return this.namespaceType;
   }
   this.duringComputeJSType=true;
-  if (nominals != null) {
-    for (    Map.Entry<String,RawNominalType> entry : nominals.entrySet()) {
-      obj=obj.withProperty(new QualifiedName(entry.getKey()),entry.getValue().toJSType(commonTypes));
-    }
-  }
-  if (enums != null) {
-    for (    Map.Entry<String,EnumType> entry : enums.entrySet()) {
-      obj=obj.withProperty(new QualifiedName(entry.getKey()),entry.getValue().toJSType(commonTypes));
-    }
-  }
-  if (namespaces != null) {
-    for (    Map.Entry<String,NamespaceLit> entry : namespaces.entrySet()) {
-      String name=entry.getKey();
-      JSType objToInclude=null;
-      if (scopes.containsKey(name)) {
-        objToInclude=commonTypes.fromFunctionType(scopes.get(name).getDeclaredFunctionType().toFunctionType());
-      }
-      obj=obj.withProperty(new QualifiedName(name),entry.getValue().toJSTypeIncludingObject(commonTypes,objToInclude));
-    }
+  for (  Map.Entry<String,Namespace> entry : this.namespaces.entrySet()) {
+    obj=obj.withProperty(new QualifiedName(entry.getKey()),entry.getValue().toJSType(commonTypes));
   }
   this.duringComputeJSType=false;
   return JSType.fromObjectType(obj);

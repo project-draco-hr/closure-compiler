@@ -7,11 +7,7 @@
   if (!recv.isDefined(name)) {
     return null;
   }
-  JSType simpleType=recv.getPropDeclaredType(name);
-  Typedef typedef=recv.typedefs.get(name);
-  EnumType enumType=recv.enums.get(name);
-  RawNominalType rawType=recv.nominals.get(name);
-  DeclaredTypeRegistry scope=recv.scopes.get(name);
-  NamespaceLit ns=recv.namespaces.get(name);
-  return new Declaration(simpleType,typedef,ns,enumType,scope,rawType,false,false,false);
+  Namespace ns=recv.namespaces.get(name);
+  DeclaredTypeRegistry scope=ns instanceof FunctionNamespace ? ((FunctionNamespace)ns).getScope() : null;
+  return new Declaration(recv.getPropDeclaredType(name),recv.typedefs.get(name),ns,scope,false,false);
 }
