@@ -13,8 +13,8 @@
     if (separatorIndex > 0) {
       parentNamespace=nonNullClassName.substring(0,separatorIndex);
     }
-    boolean notProvidedByConstructors=(constructors == null || (!constructors.contains(className) && !constructors.contains(outermostClassName)));
-    boolean notProvidedByRequires=(requires == null || (!requires.containsKey(className) && !requires.containsKey(outermostClassName) && !requires.containsKey(parentNamespace)));
+    boolean notProvidedByConstructors=!constructors.contains(className) && !constructors.contains(outermostClassName);
+    boolean notProvidedByRequires=!requires.containsKey(className) && !requires.containsKey(outermostClassName) && !requires.containsKey(parentNamespace);
     if (notProvidedByConstructors && notProvidedByRequires && !classNames.contains(className)) {
       compiler.report(t.makeError(node,MISSING_REQUIRE_WARNING,className));
       classNames.add(className);
