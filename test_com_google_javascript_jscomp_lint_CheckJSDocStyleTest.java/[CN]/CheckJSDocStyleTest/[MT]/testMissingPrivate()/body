@@ -1,4 +1,9 @@
 {
-  testSame(LINE_JOINER.join("/**"," * @return {number}"," */","X.prototype.foo_ = function() { return 0; }"),MUST_BE_PRIVATE);
+  testWarning(LINE_JOINER.join("/** @return {number} */","X.prototype.foo_ = function() { return 0; }"),MUST_BE_PRIVATE);
+  testWarning(LINE_JOINER.join("/** @type {?number} */","X.prototype.foo_ = null;"),MUST_BE_PRIVATE);
+  testWarning(LINE_JOINER.join("/**"," * @return {number}"," * @private"," */","X.prototype.foo = function() { return 0; }"),MUST_HAVE_TRAILING_UNDERSCORE);
+  testWarning(LINE_JOINER.join("/**"," * @type {number}"," * @private"," */","X.prototype.foo = 0;"),MUST_HAVE_TRAILING_UNDERSCORE);
   testSame(LINE_JOINER.join("/**"," * @return {number}"," * @private"," */","X.prototype.foo_ = function() { return 0; }"));
+  testSame(LINE_JOINER.join("/**"," * @type {number}"," * @private"," */","X.prototype.foo_ = 0;"));
+  testSame(LINE_JOINER.join("/** @type {number} */","X.prototype['@some_special_property'] = 0;"));
 }

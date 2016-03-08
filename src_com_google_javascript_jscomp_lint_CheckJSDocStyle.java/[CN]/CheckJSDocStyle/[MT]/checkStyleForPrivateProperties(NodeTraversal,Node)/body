@@ -1,0 +1,26 @@
+{
+  JSDocInfo jsDoc=NodeUtil.getBestJSDocInfo(n);
+  String name;
+  if (n.isMemberFunctionDef() || n.isGetterDef() || n.isSetterDef()) {
+    name=n.getString();
+  }
+ else {
+    Preconditions.checkState(n.isAssign());
+    Node lhs=n.getFirstChild();
+    if (!lhs.isGetProp()) {
+      return;
+    }
+    name=lhs.getLastChild().getString();
+  }
+  if (name.equals("constructor")) {
+    return;
+  }
+  if (jsDoc != null && name != null) {
+    if (compiler.getCodingConvention().isPrivate(name) && !jsDoc.getVisibility().equals(Visibility.PRIVATE)) {
+      t.report(n,MUST_BE_PRIVATE,name);
+    }
+ else     if (!compiler.getCodingConvention().isPrivate(name) && jsDoc.getVisibility().equals(Visibility.PRIVATE)) {
+      t.report(n,MUST_HAVE_TRAILING_UNDERSCORE,name);
+    }
+  }
+}
