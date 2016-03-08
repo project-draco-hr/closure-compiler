@@ -9,7 +9,10 @@
       CompilerInput entryPointInput=null;
       try {
         if (entryPoint.getClosureNamespace().equals(entryPoint.getModuleName())) {
-          entryPointInput=sorter.getInputProviding(entryPoint.getClosureNamespace());
+          entryPointInput=sorter.maybeGetInputProviding(entryPoint.getClosureNamespace());
+          if (entryPointInput == null) {
+            entryPointInput=sorter.getInputProviding(entryPoint.getName());
+          }
         }
  else {
           JSModule module=modulesByName.get(entryPoint.getModuleName());
