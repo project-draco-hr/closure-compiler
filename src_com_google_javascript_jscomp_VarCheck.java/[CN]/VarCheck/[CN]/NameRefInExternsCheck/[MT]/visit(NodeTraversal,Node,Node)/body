@@ -19,11 +19,11 @@ case Token.GETPROP:
     }
   break;
 case Token.ASSIGN:
-if (n == parent.getLastChild() && parent.getFirstChild().isGetProp() && parent.getFirstChild().getLastChild().getString().equals(n.getString())) {
+if (n == parent.getLastChild() && n.isQualifiedName() && parent.getFirstChild().isQualifiedName()) {
   break;
 }
 default :
-if (parent.getType() != Token.NAME || parent.getParent() == null || !NodeUtil.isNameDeclaration(parent.getParent())) {
+if (!parent.isName() || parent.getParent() == null || !NodeUtil.isNameDeclaration(parent.getParent())) {
 t.report(n,NAME_REFERENCE_IN_EXTERNS_ERROR,n.getString());
 }
 Scope scope=t.getScope();
