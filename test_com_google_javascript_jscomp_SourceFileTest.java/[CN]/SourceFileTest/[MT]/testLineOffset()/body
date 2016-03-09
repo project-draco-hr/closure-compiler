@@ -1,0 +1,10 @@
+{
+  ResetableSourceFile sf=new ResetableSourceFile("test.js","'1';\n'2';\n'3'\n");
+  assertThat(sf.getLineOffset(1)).isEqualTo(0);
+  assertThat(sf.getLineOffset(2)).isEqualTo(5);
+  assertThat(sf.getLineOffset(3)).isEqualTo(10);
+  sf.updateCode("'100';\n'200;'\n'300'\n");
+  assertThat(sf.getLineOffset(1)).isEqualTo(0);
+  assertThat(sf.getLineOffset(2)).isEqualTo(7);
+  assertThat(sf.getLineOffset(3)).isEqualTo(14);
+}
