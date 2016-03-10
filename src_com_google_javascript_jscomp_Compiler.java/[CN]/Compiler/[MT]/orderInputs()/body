@@ -1,0 +1,28 @@
+{
+  hoistExterns();
+  boolean staleInputs=false;
+  if (options.dependencyOptions.needsManagement()) {
+    for (    CompilerInput input : inputs) {
+      for (      String provide : input.getProvides()) {
+        getTypeRegistry().forwardDeclareType(provide);
+      }
+    }
+    try {
+      inputs=(moduleGraph == null ? new JSModuleGraph(modules) : moduleGraph).manageDependencies(options.dependencyOptions,inputs);
+      staleInputs=true;
+    }
+ catch (    CircularDependencyException e) {
+      report(JSError.make(JSModule.CIRCULAR_DEPENDENCY_ERROR,e.getMessage()));
+    }
+catch (    MissingProvideException e) {
+      report(JSError.make(MISSING_ENTRY_ERROR,e.getMessage()));
+    }
+catch (    JSModuleGraph.MissingModuleException e) {
+      report(JSError.make(MISSING_MODULE_ERROR,e.getMessage()));
+    }
+  }
+  hoistNoCompileFiles();
+  if (staleInputs) {
+    repartitionInputs();
+  }
+}

@@ -22,34 +22,9 @@
     if (options.transformAMDToCJSModules || options.processCommonJSModules) {
       processAMDAndCommonJSModules();
     }
-    hoistExterns();
-    boolean staleInputs=false;
-    if (options.dependencyOptions.needsManagement()) {
-      for (      CompilerInput input : inputs) {
-        for (        String provide : input.getProvides()) {
-          getTypeRegistry().forwardDeclareType(provide);
-        }
-      }
-      try {
-        inputs=(moduleGraph == null ? new JSModuleGraph(modules) : moduleGraph).manageDependencies(options.dependencyOptions,inputs);
-        staleInputs=true;
-      }
- catch (      CircularDependencyException e) {
-        report(JSError.make(JSModule.CIRCULAR_DEPENDENCY_ERROR,e.getMessage()));
-      }
-catch (      MissingProvideException e) {
-        report(JSError.make(MISSING_ENTRY_ERROR,e.getMessage()));
-      }
-catch (      JSModuleGraph.MissingModuleException e) {
-        report(JSError.make(MISSING_MODULE_ERROR,e.getMessage()));
-      }
-      if (hasErrors()) {
-        return null;
-      }
-    }
-    hoistNoCompileFiles();
-    if (staleInputs) {
-      repartitionInputs();
+    orderInputs();
+    if (hasErrors()) {
+      return null;
     }
     for (    CompilerInput input : inputs) {
       Node n=input.getAstRoot(this);
