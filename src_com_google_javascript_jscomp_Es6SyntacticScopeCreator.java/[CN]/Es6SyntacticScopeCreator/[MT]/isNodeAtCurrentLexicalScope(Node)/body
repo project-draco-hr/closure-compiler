@@ -1,7 +1,12 @@
 {
   Node parent=n.getParent();
+  Node grandparent=parent.getParent();
   Preconditions.checkState(parent.isBlock() || parent.isFor() || parent.isForOf()|| parent.isScript()|| parent.isLabel());
-  if (parent == scope.getRootNode() || parent.isScript() || (parent.getParent().isCatch() && parent.getGrandparent() == scope.getRootNode())) {
+  if (parent.isSyntheticBlock() && grandparent != null && (grandparent.isCase() || grandparent.isDefaultCase())) {
+    Node switchNode=grandparent.getParent();
+    return scope.getRootNode() == switchNode;
+  }
+  if (parent == scope.getRootNode() || parent.isScript() || (grandparent.isCatch() && parent.getGrandparent() == scope.getRootNode())) {
     return true;
   }
   while (parent.isLabel()) {
