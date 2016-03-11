@@ -5,15 +5,22 @@
       fixTypeNode(t,typeNode);
     }
   }
-  if (n.isName()) {
+  boolean isShorthandObjLitKey=n.isStringKey() && !n.hasChildren();
+  if (n.isName() || isShorthandObjLitKey) {
     String name=n.getString();
     if (suffix.equals(name)) {
       return;
     }
     Var var=t.getScope().getVar(name);
     if (var != null && var.isGlobal()) {
-      n.setString(name + "$$" + suffix);
-      n.setOriginalName(name);
+      String newName=name + "$$" + suffix;
+      if (isShorthandObjLitKey) {
+        n.addChildToBack(IR.name(newName).useSourceInfoIfMissingFrom(n));
+      }
+ else {
+        n.setString(newName);
+        n.setOriginalName(name);
+      }
     }
  else     if (var == null && importMap.containsKey(name)) {
       if (parent.isCall() && parent.getFirstChild() == n) {
