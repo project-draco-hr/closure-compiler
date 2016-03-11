@@ -27,8 +27,9 @@
     boolean isAssignment=isDeclaration || reference.isLvalue();
     boolean allowDupe=VarCheck.hasDuplicateDeclarationSuppression(referenceNode,v);
     boolean letConstShadowsVar=v.getParentNode().isVar() && (reference.isLetDeclaration() || reference.isConstDeclaration());
-    boolean shadowCatchVar=isDeclaration && compiler.getLanguageMode().isEs6OrHigher() && v.getParentNode().isCatch()&& reference.getNode() != v.getNode();
-    boolean shadowParam=isDeclaration && NodeUtil.isBlockScopedDeclaration(referenceNode) && v.isParam()&& v.getScope() == reference.getScope().getParentScope();
+    boolean isVarNodeSameAsReferenceNode=v.getNode() == reference.getNode();
+    boolean shadowCatchVar=isDeclaration && compiler.getLanguageMode().isEs6OrHigher() && v.getParentNode().isCatch()&& !isVarNodeSameAsReferenceNode;
+    boolean shadowParam=isDeclaration && v.isParam() && NodeUtil.isBlockScopedDeclaration(referenceNode)&& v.getScope() == reference.getScope().getParent();
     boolean shadowDetected=false;
     if (isDeclaration && !allowDupe) {
       for (      BasicBlock declaredBlock : blocksWithDeclarations) {
@@ -44,7 +45,7 @@
           }
  else {
             diagnosticType=v.getScope().isGlobal() ? VarCheck.VAR_MULTIPLY_DECLARED_ERROR : REDECLARED_VARIABLE;
-            if (referenceNode == v.getNode() && hoistedFn != null && v.name.equals(hoistedFn.getNode().getString())) {
+            if (isVarNodeSameAsReferenceNode && hoistedFn != null && v.name.equals(hoistedFn.getNode().getString())) {
               warningNode=hoistedFn.getNode();
             }
           }
