@@ -25,16 +25,11 @@
   for (  String varName : varNames) {
     if (!locals.contains(varName) || !currentScope.isFunctionNamespace(varName)) {
       JSType declType=currentScope.getDeclaredTypeOf(varName);
-      env=envPutType(env,varName,declType == null ? JSType.UNKNOWN : pickInitialType(declType));
+      env=envPutType(env,varName,declType == null ? JSType.UNKNOWN : declType);
     }
   }
   for (  String fnName : currentScope.getLocalFunDefs()) {
-    JSType summaryType=getSummaryOfLocalFunDef(fnName);
-    FunctionType fnType=summaryType.getFunType();
-    if (fnType.isUniqueConstructor() || fnType.isInterfaceDefinition()) {
-      summaryType=fnType.getConstructorObject();
-    }
-    env=envPutType(env,fnName,summaryType);
+    env=envPutType(env,fnName,getSummaryOfLocalFunDef(fnName));
   }
   return env;
 }

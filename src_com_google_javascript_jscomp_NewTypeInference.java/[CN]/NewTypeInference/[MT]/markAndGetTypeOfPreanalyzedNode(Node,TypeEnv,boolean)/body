@@ -13,7 +13,10 @@ case Token.GETPROP:
 {
     JSType recvType=markAndGetTypeOfPreanalyzedNode(qnameNode.getFirstChild(),env,isFwd);
     String pname=qnameNode.getLastChild().getString();
-    JSType result=recvType.getProp(new QualifiedName(pname));
+    JSType result=null;
+    if (recvType.isSubtypeOf(JSType.TOP_OBJECT)) {
+      result=recvType.getProp(new QualifiedName(pname));
+    }
     if (pname.equals("prototype") && (recvType.isConstructor() || recvType.isInterfaceDefinition())) {
       FunctionType ft=recvType.getFunTypeIfSingletonObj();
       result=ft.getInstanceTypeOfCtor();

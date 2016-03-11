@@ -10,7 +10,12 @@
     isRedeclaration=currentScope.isDefinedLocally(nameNode.getString(),false);
   }
  else {
+    Preconditions.checkState(nameNode.isGetProp(),"Expected getprop, found %s",Token.name(nameNode.getType()));
     isRedeclaration=currentScope.isDefined(nameNode);
+    if (isRedeclaration && fnDoc != null) {
+      nameNode.getParent().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
+      warnings.add(JSError.make(nameNode,REDECLARED_PROPERTY,nameNode.getLastChild().getString(),nameNode.getFirstChild().getQualifiedName()));
+    }
   }
   NTIScope fnScope=new NTIScope(fn,this.currentScope,collectFormals(fn,fnDoc),null);
   if (!fn.isFromExterns()) {

@@ -1,6 +1,15 @@
 {
   if (this.namespaceType == null) {
-    this.namespaceType=computeJSType(commonTypes);
+    Preconditions.checkNotNull(commonTypes);
+    for (    Namespace ns : this.namespaces.values()) {
+      if (this.duringComputeJSType) {
+        return null;
+      }
+      this.duringComputeJSType=true;
+      ns.toJSType(commonTypes);
+      this.duringComputeJSType=false;
+    }
+    this.namespaceType=Preconditions.checkNotNull(computeJSType(commonTypes));
   }
   return this.namespaceType;
 }

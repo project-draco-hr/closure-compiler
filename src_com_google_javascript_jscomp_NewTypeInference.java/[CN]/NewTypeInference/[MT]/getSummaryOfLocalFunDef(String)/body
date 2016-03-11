@@ -1,8 +1,10 @@
 {
-  JSType summaryType=summaries.get(currentScope.getScope(name));
-  if (summaryType == null) {
-    summaryType=currentScope.getDeclaredTypeOf(name);
-    Preconditions.checkState(summaryType.getFunType() != null,"Needed function but found %s",summaryType);
+  NTIScope fnScope=currentScope.getScope(name);
+  JSType fnType=summaries.get(fnScope);
+  if (fnType != null) {
+    return fnType;
   }
-  return summaryType;
+  fnType=currentScope.getDeclaredTypeOf(name);
+  Preconditions.checkState(fnType.getFunType() != null,"Needed function but found %s",fnType);
+  return changeTypeIfFunctionNamespace(fnScope,fnType);
 }

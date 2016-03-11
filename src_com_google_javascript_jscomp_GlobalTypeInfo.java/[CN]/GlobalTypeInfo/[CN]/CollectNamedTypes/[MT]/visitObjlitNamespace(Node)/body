@@ -1,9 +1,12 @@
 {
-  if (currentScope.isDefined(qnameNode)) {
-    return;
-  }
   if (qnameNode.isGetProp()) {
     markAssignNodeAsAnalyzed(qnameNode.getParent());
+  }
+  if (currentScope.isDefined(qnameNode)) {
+    if (qnameNode.isGetProp() && !NodeUtil.getRValueOfLValue(qnameNode).isOr()) {
+      warnings.add(JSError.make(qnameNode,REDECLARED_PROPERTY,qnameNode.getLastChild().getString(),qnameNode.getFirstChild().getQualifiedName()));
+    }
+    return;
   }
   currentScope.addNamespaceLit(qnameNode);
 }

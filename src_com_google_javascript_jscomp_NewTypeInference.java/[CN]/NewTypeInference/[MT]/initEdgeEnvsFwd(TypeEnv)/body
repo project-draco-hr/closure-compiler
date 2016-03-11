@@ -17,7 +17,7 @@
   }
   for (  String name : nonLocals) {
     JSType declType=currentScope.getDeclaredTypeOf(name);
-    JSType initType=declType == null ? envGetType(entryEnv,name) : pickInitialType(declType);
+    JSType initType=declType == null ? envGetType(entryEnv,name) : declType;
     println("Adding non-local ",name," with decltype: ",declType," and inittype: ",initType);
     entryEnv=envPutType(entryEnv,name,initType);
   }
@@ -27,12 +27,7 @@
     }
   }
   for (  String fnName : currentScope.getLocalFunDefs()) {
-    JSType summaryType=getSummaryOfLocalFunDef(fnName);
-    FunctionType fnType=summaryType.getFunType();
-    if (fnType.isUniqueConstructor() || fnType.isInterfaceDefinition()) {
-      summaryType=fnType.getConstructorObject();
-    }
-    entryEnv=envPutType(entryEnv,fnName,summaryType);
+    entryEnv=envPutType(entryEnv,fnName,getSummaryOfLocalFunDef(fnName));
   }
   println("Keeping env: ",entryEnv);
   setOutEnv(cfg.getEntry(),entryEnv);

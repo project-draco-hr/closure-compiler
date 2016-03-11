@@ -1,0 +1,23 @@
+{
+  NTIScope enclosingScope=fnScope.getParent();
+  Node fnNameNode=NodeUtil.getNameNode(fnScope.getRoot());
+  JSType namespaceType=null;
+  if (fnNameNode == null) {
+    return fnType;
+  }
+  if (fnNameNode.isName()) {
+    String fnName=fnNameNode.getString();
+    if (enclosingScope.isFunctionNamespace(fnName)) {
+      namespaceType=enclosingScope.getDeclaredTypeOf(fnName);
+    }
+  }
+ else   if (fnNameNode.isQualifiedName()) {
+    QualifiedName qname=QualifiedName.fromNode(fnNameNode);
+    JSType rootNs=enclosingScope.getDeclaredTypeOf(qname.getLeftmostName());
+    namespaceType=rootNs == null ? null : rootNs.getProp(qname.getAllButLeftmost());
+  }
+  if (namespaceType != null && namespaceType.isNamespace()) {
+    return namespaceType.withFunction(fnType.getFunTypeIfSingletonObj(),commonTypes.getFunctionType());
+  }
+  return fnType;
+}

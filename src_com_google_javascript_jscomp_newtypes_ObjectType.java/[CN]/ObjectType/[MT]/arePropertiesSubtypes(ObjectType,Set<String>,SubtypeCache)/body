@@ -1,16 +1,17 @@
 {
   for (  String pname : otherPropNames) {
     QualifiedName qname=new QualifiedName(pname);
-    Property prop2=other.getLeftmostProp(qname);
-    Property prop1=this.getLeftmostProp(qname);
-    if (prop2.isOptional()) {
-      if (prop1 != null && !prop1.getType().isSubtypeOf(prop2.getType(),subSuperMap)) {
-        return false;
-      }
+    if (!isPropertySubtype(this.getLeftmostProp(qname),other.getLeftmostProp(qname),subSuperMap)) {
+      return false;
     }
- else {
-      if (prop1 == null || prop1.isOptional() || !prop1.getType().isSubtypeOf(prop2.getType(),subSuperMap)) {
-        return false;
+  }
+  if (other.ns != null) {
+    for (    String pname : other.ns.getAllPropsOfNamespace()) {
+      if (!otherPropNames.contains(pname)) {
+        QualifiedName qname=new QualifiedName(pname);
+        if (!isPropertySubtype(this.getLeftmostProp(qname),other.getLeftmostProp(qname),subSuperMap)) {
+          return false;
+        }
       }
     }
   }

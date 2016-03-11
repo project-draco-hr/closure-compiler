@@ -14,8 +14,9 @@
   boolean isConst=isConst(declNode);
   if (propDeclType != null || isConst) {
     JSType previousPropType=ns.getPropDeclaredType(pname);
-    if (ns.hasProp(pname) && previousPropType != null && !suppressDupPropWarning(jsdoc,propDeclType,previousPropType)) {
+    if (ns.hasSubnamespace(new QualifiedName(pname)) || ns.hasProp(pname) && previousPropType != null && !suppressDupPropWarning(jsdoc,propDeclType,previousPropType)) {
       warnings.add(JSError.make(declNode,REDECLARED_PROPERTY,pname,"namespace " + ns));
+      declNode.getParent().putBooleanProp(Node.ANALYZED_DURING_GTI,true);
       return;
     }
     if (propDeclType == null) {

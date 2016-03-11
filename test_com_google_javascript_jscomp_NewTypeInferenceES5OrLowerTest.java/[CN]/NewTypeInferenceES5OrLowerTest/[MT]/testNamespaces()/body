@@ -7,12 +7,12 @@
   typeCheck(LINE_JOINER.join("/** @constructor */ function C1(){}","/** @constructor */ C1.C2 = function(){}","C1.C2.prototype.method = function(/** string */ x){};","(new C1.C2).method(1);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(LINE_JOINER.join("/** @constructor */ function C1(){};","/** @constructor */ C1.prototype.C2 = function(){};","(new C1).C2();"),NewTypeInference.CONSTRUCTOR_NOT_CALLABLE);
   typeCheck(LINE_JOINER.join("/** @const */ var ns = {};","/** @type {number} */ ns.N = 5;","ns.N();"),NewTypeInference.NOT_CALLABLE);
-  typeCheck(LINE_JOINER.join("/** @const */ var ns = {};","/** @type {number} */ ns.foo = 123;","/** @type {string} */ ns.foo = '';"),GlobalTypeInfo.REDECLARED_PROPERTY,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @const */ var ns = {};","/** @type {number} */ ns.foo = 123;","/** @type {string} */ ns.foo = '';"),GlobalTypeInfo.REDECLARED_PROPERTY);
   typeCheck(LINE_JOINER.join("/** @const */ var ns = {};","/** @type {number} */ ns.foo;","/** @type {string} */ ns.foo;"),GlobalTypeInfo.REDECLARED_PROPERTY);
   typeCheck(LINE_JOINER.join("/** @const */ var ns = {};","/** @type {number} */ ns.foo;","/** @type {number} */ ns.foo;"),GlobalTypeInfo.REDECLARED_PROPERTY);
   typeCheck(LINE_JOINER.join("var ns = {};","/** @type {number} */ ns.foo = 123;","/** @type {string} */ ns.foo = '';"));
   typeCheck(LINE_JOINER.join("/** @const */ var ns = {};","ns.x = 5;","/** @type {string} */","ns.x = 'str';"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("/** @const */ var ns = {};","ns.prop = 1;","function f() { var /** string */ s = ns.prop; }"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("/** @const */","var ns = {};","/**"," * @constructor"," * @param {number} x"," */","ns.Foo = function (x) {};","function f() {","  return new ns.Foo('asdf');","}"),NewTypeInference.INVALID_ARGUMENT_TYPE);
-  typeCheck(LINE_JOINER.join("function f() {","/** @const */","var a = {};","a.b = {};","/** @const */","a.b.c = {};","/** @constructor */","a.b = function() {};","}"),NewTypeInference.UNKNOWN_NAMESPACE_PROPERTY);
+  typeCheck(LINE_JOINER.join("function f() {","/** @const */","var a = {};","a.b = {};","/** @const */","a.b.c = {};","/** @constructor */","a.b = function() {};","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
 }
