@@ -4,15 +4,20 @@ case Token.EXPR_RESULT:
     return getRhsSubexpressions(n.getFirstChild());
 case Token.FUNCTION:
   return ImmutableList.of();
+case Token.CALL:
+{
+  Preconditions.checkState(isAnalyzableObjectDefinePropertiesDefinition(n));
+  return ImmutableList.of(n.getLastChild());
+}
 case Token.NAME:
 {
-  Node rhs=n.getFirstChild();
-  if (rhs != null) {
-    return ImmutableList.of(rhs);
-  }
+Node rhs=n.getFirstChild();
+if (rhs != null) {
+  return ImmutableList.of(rhs);
+}
  else {
-    return ImmutableList.of();
-  }
+  return ImmutableList.of();
+}
 }
 case Token.ASSIGN:
 {

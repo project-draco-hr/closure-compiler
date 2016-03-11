@@ -18,6 +18,10 @@ replaceWithRhs(containingNode,parent);
 break;
 case Token.OBJECTLIT:
 break;
+case Token.EXPR_RESULT:
+Preconditions.checkState(isAnalyzableObjectDefinePropertiesDefinition(parent.getFirstChild()));
+replaceWithRhs(containingNode,parent);
+break;
 default :
 throw new IllegalArgumentException("Unsupported parent node type in JsNameRefNode.remove: " + Token.name(parent.getType()));
 }
