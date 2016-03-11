@@ -1,0 +1,29 @@
+{
+  if (!NodeUtil.isObjectDefinePropertiesDefinition(n)) {
+    return;
+  }
+  for (  Node p : NodeUtil.getObjectDefinedPropertiesKeys(n)) {
+    String name=p.getString();
+    if (!matchesJ2clStaticFieldName(name)) {
+      continue;
+    }
+    Node propertyLiteral=p.getFirstChild();
+    Node getKey=null;
+    Node setKey=null;
+    for (    Node innerKey : propertyLiteral.children()) {
+      if (!innerKey.isStringKey()) {
+        continue;
+      }
+switch (innerKey.getString()) {
+case "get":
+        getKey=innerKey;
+      break;
+case "set":
+    setKey=innerKey;
+  break;
+}
+}
+Preconditions.checkArgument(getKey != null && setKey != null,"J2cl Properties should have both a getter and setter");
+propertiesByName.put(name,new J2clProperty(getKey,setKey));
+}
+}

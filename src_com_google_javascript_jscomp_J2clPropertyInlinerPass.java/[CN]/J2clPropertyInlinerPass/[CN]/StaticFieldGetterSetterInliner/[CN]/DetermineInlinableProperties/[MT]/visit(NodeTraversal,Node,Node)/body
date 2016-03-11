@@ -1,0 +1,12 @@
+{
+  if (NodeUtil.isCompoundAssignementOp(n) || n.isInc() || n.isDec()) {
+    Node assignmentTarget=n.getFirstChild();
+    if (assignmentTarget.isGetProp()) {
+      String accessName=assignmentTarget.getLastChild().getString();
+      J2clProperty prop=propertiesByName.get(accessName);
+      if (prop != null) {
+        prop.isSafeToInline=false;
+      }
+    }
+  }
+}

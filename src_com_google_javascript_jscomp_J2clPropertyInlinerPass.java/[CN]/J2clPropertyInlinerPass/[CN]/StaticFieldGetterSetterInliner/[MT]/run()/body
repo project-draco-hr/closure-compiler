@@ -1,0 +1,7 @@
+{
+  GatherJ2CLClassGetterSetters gatherer=new GatherJ2CLClassGetterSetters();
+  NodeTraversal.traverseEs6(compiler,root,gatherer);
+  Map<String,J2clProperty> result=gatherer.getResults();
+  NodeTraversal.traverseEs6(compiler,root,new DetermineInlinableProperties(result));
+  new InlinePropertiesPass(result).run();
+}

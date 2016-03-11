@@ -1,0 +1,35 @@
+{
+  if (n.isGetProp()) {
+    if (parent.isExprResult()) {
+      return;
+    }
+    if (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) {
+      return;
+    }
+    String accessName=n.getLastChild().getString();
+    J2clProperty prop=propertiesByName.get(accessName);
+    if (prop != null && prop.isSafeToInline) {
+      FunctionInjector injector=new FunctionInjector(compiler,compiler.getUniqueNameIdSupplier(),true,true,true);
+      Node inlinedCall=injector.inline(new Reference(n,t.getScope(),t.getModule(),InliningMode.DIRECT),null,prop.getKey.getFirstChild());
+      t.getCompiler().reportChangeToEnclosingScope(inlinedCall);
+    }
+  }
+  if (n.isAssign()) {
+    Node assignmentTarget=n.getFirstChild();
+    Node assignmentValue=n.getLastChild();
+    if (assignmentTarget.isGetProp()) {
+      String accessName=assignmentTarget.getLastChild().getString();
+      J2clProperty prop=propertiesByName.get(accessName);
+      if (prop != null && prop.isSafeToInline) {
+        FunctionInjector injector=new FunctionInjector(compiler,compiler.getUniqueNameIdSupplier(),true,true,true);
+        assignmentValue.detachFromParent();
+        Node functionCall=IR.call(IR.empty(),assignmentValue);
+        parent.replaceChild(n,functionCall);
+        Reference reference=new Reference(functionCall,t.getScope(),t.getModule(),InliningMode.BLOCK);
+        injector.maybePrepareCall(reference);
+        Node inlinedCall=injector.inline(reference,null,prop.setKey.getFirstChild());
+        t.getCompiler().reportChangeToEnclosingScope(inlinedCall);
+      }
+    }
+  }
+}
