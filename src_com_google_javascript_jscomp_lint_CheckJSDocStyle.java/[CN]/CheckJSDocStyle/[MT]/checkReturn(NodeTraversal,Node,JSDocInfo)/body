@@ -1,0 +1,13 @@
+{
+  if (jsDoc != null && (jsDoc.hasReturnType() || jsDoc.isOverride() || jsDoc.isConstructor())) {
+    return;
+  }
+  if (function.getFirstChild().getJSDocInfo() != null) {
+    return;
+  }
+  FindNonTrivialReturn finder=new FindNonTrivialReturn();
+  NodeTraversal.traverseEs6(compiler,function.getLastChild(),finder);
+  if (finder.found) {
+    t.report(function,MISSING_RETURN_JSDOC);
+  }
+}

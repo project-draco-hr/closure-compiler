@@ -3,8 +3,11 @@
   if (jsDoc == null && !hasAnyInlineJsDoc(function)) {
     checkMissingJsDoc(t,function);
   }
- else   if (t.inGlobalScope() || hasAnyInlineJsDoc(function) || !jsDoc.getParameterNames().isEmpty()|| jsDoc.hasReturnType()) {
-    checkParams(t,function,jsDoc);
+ else {
+    if (t.inGlobalScope() || hasAnyInlineJsDoc(function) || !jsDoc.getParameterNames().isEmpty()|| jsDoc.hasReturnType()) {
+      checkParams(t,function,jsDoc);
+    }
+    checkReturn(t,function,jsDoc);
   }
   if (parent.isMemberFunctionDef() && "constructor".equals(parent.getString()) && jsDoc != null && !jsDoc.getVisibility().equals(Visibility.INHERITED)) {
     t.report(function,CONSTRUCTOR_DISALLOWED_JSDOC);
