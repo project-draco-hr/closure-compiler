@@ -53,7 +53,11 @@
       }
     }
  else {
-      outputModuleBinaryAndSourceMaps(modules,options);
+      DiagnosticType error=outputModuleBinaryAndSourceMaps(modules,options);
+      if (error != null) {
+        compiler.report(JSError.make(error));
+        return 1;
+      }
     }
     if (options.externExportsPath != null) {
       try (Writer eeOut=openExternExportsStream(options,config.jsOutputFile)){

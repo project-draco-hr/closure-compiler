@@ -2,8 +2,8 @@
   parsedModuleWrappers=parseModuleWrappers(config.moduleWrapper,modules);
   maybeCreateDirsForPath(config.moduleOutputPathPrefix);
   Writer mapFileOut=null;
-  if (!(shouldGenerateMapPerModule(options) || isOutputInJson())) {
-    mapFileOut=fileNameToOutputWriter2(expandSourceMapPath(options,null));
+  if (!(shouldGenerateMapPerModule(options) || options.sourceMapOutputPath == null || config.jsonStreamMode == JsonStreamMode.OUT || config.jsonStreamMode == JsonStreamMode.BOTH)) {
+    return INVALID_MODULE_SOURCEMAP_PATTERN;
   }
   for (  JSModule m : modules) {
     if (isOutputInJson()) {
@@ -13,13 +13,14 @@
       if (shouldGenerateMapPerModule(options)) {
         mapFileOut=fileNameToOutputWriter2(expandSourceMapPath(options,m));
       }
-      try (Writer writer=fileNameToLegacyOutputWriter(getModuleOutputFileName(m))){
+      String moduleFilename=getModuleOutputFileName(m);
+      try (Writer writer=fileNameToLegacyOutputWriter(moduleFilename)){
         if (options.sourceMapOutputPath != null) {
           compiler.getSourceMap().reset();
         }
         writeModuleOutput(writer,m);
         if (options.sourceMapOutputPath != null) {
-          compiler.getSourceMap().appendTo(mapFileOut,m.getName());
+          compiler.getSourceMap().appendTo(mapFileOut,moduleFilename);
         }
       }
        if (shouldGenerateMapPerModule(options) && mapFileOut != null) {
@@ -31,4 +32,5 @@
   if (mapFileOut != null) {
     mapFileOut.close();
   }
+  return null;
 }
