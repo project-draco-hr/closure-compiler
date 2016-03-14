@@ -1,0 +1,19 @@
+{
+  Preconditions.checkState(n.getChildCount() == 3,n);
+  Preconditions.checkState(n.isClass());
+  final Node className=n.getFirstChild();
+  boolean isClassExpression=NodeUtil.isClassExpression(n);
+  if (!isClassExpression) {
+    traverseBranch(className,n);
+  }
+  curNode=n;
+  pushScope(n);
+  if (isClassExpression) {
+    traverseBranch(className,n);
+  }
+  final Node extendsClause=className.getNext();
+  final Node body=extendsClause.getNext();
+  traverseBranch(extendsClause,n);
+  traverseBranch(body,n);
+  popScope();
+}

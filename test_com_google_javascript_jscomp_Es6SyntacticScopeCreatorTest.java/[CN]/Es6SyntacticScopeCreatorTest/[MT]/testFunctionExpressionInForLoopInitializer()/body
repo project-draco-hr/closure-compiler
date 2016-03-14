@@ -1,0 +1,11 @@
+{
+  Node root=getRoot("for (function foo() {};;) {}");
+  Scope globalScope=scopeCreator.createScope(root,null);
+  assertFalse(globalScope.isDeclared("foo",false));
+  Node forNode=root.getFirstChild();
+  Scope forScope=scopeCreator.createScope(forNode,globalScope);
+  assertFalse(forScope.isDeclared("foo",false));
+  Node fNode=forNode.getFirstChild();
+  Scope fScope=scopeCreator.createScope(fNode,forScope);
+  assertTrue(fScope.isDeclared("foo",false));
+}

@@ -1,0 +1,11 @@
+{
+  String js="var Clazz = class Foo {}";
+  Node root=getRoot(js);
+  Scope globalScope=scopeCreator.createScope(root,null);
+  assertTrue(globalScope.isDeclared("Clazz",false));
+  assertFalse(globalScope.isDeclared("Foo",false));
+  Node classNode=root.getFirstChild().getFirstChild().getFirstChild();
+  Scope classScope=scopeCreator.createScope(classNode,globalScope);
+  assertFalse(classScope.isDeclared("Clazz",false));
+  assertTrue(classScope.isDeclared("Foo",false));
+}

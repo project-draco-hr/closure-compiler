@@ -1,0 +1,11 @@
+{
+  Node root=getRoot("for (class Clazz {};;) {}");
+  Scope globalScope=scopeCreator.createScope(root,null);
+  assertFalse(globalScope.isDeclared("Clazz",false));
+  Node forNode=root.getFirstChild();
+  Scope forScope=scopeCreator.createScope(forNode,globalScope);
+  assertFalse(forScope.isDeclared("Clazz",false));
+  Node classNode=forNode.getFirstChild();
+  Scope classScope=scopeCreator.createScope(classNode,forScope);
+  assertTrue(classScope.isDeclared("Clazz",false));
+}

@@ -1,12 +1,12 @@
 {
-  String js="if (true) { if (true) { let x; } }";
+  String js="if (true) { if (true) { class X {} } }";
   Node root=getRoot(js);
   Scope globalScope=scopeCreator.createScope(root,null);
-  assertFalse(globalScope.isDeclared("x",false));
+  assertFalse(globalScope.isDeclared("X",false));
   Node firstLevelBlock=root.getFirstChild().getLastChild();
   Scope firstLevelBlockScope=scopeCreator.createScope(firstLevelBlock,globalScope);
-  assertFalse(firstLevelBlockScope.isDeclared("x",false));
+  assertFalse(firstLevelBlockScope.isDeclared("X",false));
   Node secondLevelBlock=firstLevelBlock.getFirstChild().getLastChild();
   Scope secondLevelBLockScope=scopeCreator.createScope(secondLevelBlock,firstLevelBlockScope);
-  assertTrue(secondLevelBLockScope.isDeclared("x",false));
+  assertTrue(secondLevelBLockScope.isDeclared("X",false));
 }
