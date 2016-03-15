@@ -1,0 +1,23 @@
+{
+  Preconditions.checkState(callNode.isCall());
+switch (parent.getType()) {
+case Token.EXPR_RESULT:
+    return;
+case Token.GETPROP:
+  if (parent.getParent().isName()) {
+    checkRequireCall(t,callNode,parent.getParent());
+    return;
+  }
+break;
+case Token.NAME:
+case Token.OBJECT_PATTERN:
+{
+Node declaration=parent.getParent();
+if (declaration.getChildCount() != 1) {
+  t.report(declaration,ONE_REQUIRE_PER_DECLARATION);
+}
+return;
+}
+}
+t.report(callNode,REQUIRE_NOT_AT_TOP_LEVEL);
+}
