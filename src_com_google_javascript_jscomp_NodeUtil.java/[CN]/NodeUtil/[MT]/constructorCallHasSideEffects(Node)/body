@@ -1,3 +1,13 @@
 {
-  return constructorCallHasSideEffects(callNode,null);
+  if (!callNode.isNew()) {
+    throw new IllegalStateException("Expected NEW node, got " + Token.name(callNode.getType()));
+  }
+  if (callNode.isNoSideEffectsCall()) {
+    return false;
+  }
+  if (callNode.isOnlyModifiesArgumentsCall() && allArgsUnescapedLocal(callNode)) {
+    return false;
+  }
+  Node nameNode=callNode.getFirstChild();
+  return !nameNode.isName() || !CONSTRUCTORS_WITHOUT_SIDE_EFFECTS.contains(nameNode.getString());
 }
