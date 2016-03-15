@@ -1,6 +1,6 @@
 {
   setFilename("test");
-  testModules("var name = require('other');" + "name()","goog.provide('module$test');" + "goog.require('module$other');" + "var name$$module$test = module$other;"+ "name$$module$test();");
+  testModules(LINE_JOINER.join("var name = require('other');","name()"),LINE_JOINER.join("goog.require('module$other');","var name = module$other;","name();"));
   setFilename("test/sub");
-  ProcessEs6ModulesTest.testModules(this,ImmutableList.of(SourceFile.fromCode(Compiler.joinPathParts("mod","name.js"),""),SourceFile.fromCode(Compiler.joinPathParts("test","sub.js"),"var name = require('mod/name');" + "(function() { name(); })();")),"goog.provide('module$test$sub');" + "goog.require('module$mod$name');" + "var name$$module$test$sub = module$mod$name;"+ "(function() { name$$module$test$sub(); })();");
+  ProcessEs6ModulesTest.testModules(this,ImmutableList.of(SourceFile.fromCode(Compiler.joinPathParts("mod","name.js"),""),SourceFile.fromCode(Compiler.joinPathParts("test","sub.js"),LINE_JOINER.join("var name = require('mod/name');","(function() { name(); })();"))),LINE_JOINER.join("goog.require('module$mod$name');","var name = module$mod$name;","(function() { name(); })();"));
 }

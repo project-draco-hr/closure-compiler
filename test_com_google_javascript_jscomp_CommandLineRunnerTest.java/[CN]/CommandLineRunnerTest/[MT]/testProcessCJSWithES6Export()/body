@@ -5,5 +5,5 @@
   args.add("--language_in=ECMASCRIPT6");
   setFilename(0,"foo.js");
   setFilename(1,"app.js");
-  test(new String[]{"export default class Foo {" + "  bar() { console.log('bar'); }" + "}","var FooBar = require('./foo');" + "var baz = new FooBar.default();" + "console.log(baz.bar());"},new String[]{"var module$foo={}," + "Foo$$module$foo=function(){};" + "Foo$$module$foo.prototype.bar=function(){console.log(\"bar\")};"+ "module$foo.default=Foo$$module$foo;","var module$app={}," + "FooBar$$module$app=module$foo," + "baz$$module$app=new FooBar$$module$app.default();"+ "console.log(baz$$module$app.bar());"});
+  test(new String[]{LINE_JOINER.join("export default class Foo {","  bar() { console.log('bar'); }","}"),LINE_JOINER.join("var FooBar = require('./foo');","var baz = new FooBar.default();","console.log(baz.bar());")},new String[]{LINE_JOINER.join("var module$foo={},","Foo$$module$foo=function(){};","Foo$$module$foo.prototype.bar=function(){console.log(\"bar\")};","module$foo.default=Foo$$module$foo;"),LINE_JOINER.join("var FooBar = module$foo,","    baz = new FooBar.default();","console.log(baz.bar());")});
 }
