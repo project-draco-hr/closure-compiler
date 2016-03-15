@@ -1,0 +1,16 @@
+{
+  RefasterJsScanner scanner=new RefasterJsScanner();
+  scanner.loadRefasterJsTemplate(refasterJsTemplate);
+  final String originalFilePath=testDataPathPrefix + File.separator + originalFile;
+  final String expectedFilePath=testDataPathPrefix + File.separator + expectedFile;
+  RefactoringDriver.Builder driverBuilder=new RefactoringDriver.Builder(scanner).addExterns(CommandLineRunner.getBuiltinExterns(CompilerOptions.Environment.BROWSER));
+  for (  String additionalSource : additionalSourceFiles) {
+    driverBuilder.addInputsFromFile(testDataPathPrefix + File.separator + additionalSource);
+  }
+  RefactoringDriver driver=driverBuilder.addInputsFromFile(originalFilePath).build();
+  List<SuggestedFix> fixes=driver.drive();
+  assertThat(driver.getCompiler().getErrors()).isEmpty();
+  assertThat(driver.getCompiler().getWarnings()).isEmpty();
+  String newCode=ApplySuggestedFixes.applySuggestedFixesToCode(fixes,ImmutableMap.of(originalFilePath,slurpFile(originalFilePath))).get(originalFilePath);
+  assertThat(newCode).isEqualTo(slurpFile(expectedFilePath));
+}
