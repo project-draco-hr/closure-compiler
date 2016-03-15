@@ -2,6 +2,7 @@
   if (!letConsts.isEmpty()) {
     for (    Node n : letConsts) {
       if (n.isConst()) {
+        Node insertPoint=n;
         for (        Node child : n.children()) {
           Node declaration=IR.var(child.detachFromParent());
           declaration.useSourceInfoFrom(n);
@@ -14,7 +15,8 @@
           builder.recordConstancy();
           JSDocInfo info=builder.build();
           declaration.setJSDocInfo(info);
-          n.getParent().addChildAfter(declaration,n);
+          n.getParent().addChildAfter(declaration,insertPoint);
+          insertPoint=declaration;
         }
         n.detachFromParent();
       }
