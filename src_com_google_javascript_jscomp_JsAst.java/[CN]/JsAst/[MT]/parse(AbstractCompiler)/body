@@ -1,5 +1,7 @@
 {
-  int startErrorCount=compiler.getErrorManager().getErrorCount();
+  ErrorManager errorManager=compiler.getErrorManager();
+  int startErrorCount=errorManager.getErrorCount();
+  int startWarningCount=errorManager.getWarningCount();
   try {
     ParserRunner.ParseResult result=ParserRunner.parse(sourceFile,sourceFile.getCode(),compiler.getParserConfig(sourceFile.isExtern() ? AbstractCompiler.ConfigContext.EXTERNS : AbstractCompiler.ConfigContext.DEFAULT),compiler.getDefaultErrorReporter());
     root=result.ast;
@@ -11,11 +13,15 @@
  catch (  IOException e) {
     compiler.report(JSError.make(AbstractCompiler.READ_ERROR,sourceFile.getName()));
   }
-  if (root == null || (compiler.getErrorManager().getErrorCount() > startErrorCount && !compiler.isIdeMode())) {
+  if (root == null || (errorManager.getErrorCount() > startErrorCount && !compiler.isIdeMode())) {
     root=IR.script();
   }
  else {
     compiler.prepareAst(root);
+  }
+  if (errorManager.getErrorCount() > startErrorCount || errorManager.getWarningCount() > startWarningCount) {
+    ParseResult result=new ParseResult(slice(errorManager.getErrors(),startErrorCount),slice(errorManager.getWarnings(),startWarningCount));
+    root.putProp(Node.PARSE_RESULTS,result);
   }
   root.setStaticSourceFile(sourceFile);
 }
