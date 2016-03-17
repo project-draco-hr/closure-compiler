@@ -1,0 +1,18 @@
+{
+  JSDocInfo info=new JSDocInfo();
+  info.setDescription("The source info");
+  info.setConstant(true);
+  info.setConstructor(true);
+  info.setHidden(true);
+  info.setBaseType(new JSTypeExpression(new Node(Token.BANG,Node.newString("Number")),""));
+  info.setReturnType(fromString("string"));
+  info.declareParam(fromString("string"),"a");
+  JSDocInfo cloned=info.clone(true);
+  assertNotSame(info.getBaseType().getRoot(),cloned.getBaseType().getRoot());
+  assertTypeEquals(NUMBER_OBJECT_TYPE,resolve(cloned.getBaseType()));
+  assertEquals("The source info",cloned.getDescription());
+  assertNotSame(info.getReturnType().getRoot(),cloned.getReturnType().getRoot());
+  assertTypeEquals(STRING_TYPE,resolve(cloned.getReturnType()));
+  assertNotSame(info.getParameterType("a").getRoot(),cloned.getParameterType("a").getRoot());
+  assertTypeEquals(STRING_TYPE,resolve(cloned.getParameterType("a")));
+}

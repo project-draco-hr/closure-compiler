@@ -1,0 +1,15 @@
+{
+  Node original=IR.var(IR.name("varName"));
+  JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
+  builder.recordType(new JSTypeExpression(IR.name("TypeName"),"blah"));
+  JSDocInfo info=builder.build();
+  original.getFirstChild().setJSDocInfo(info);
+  Node clone=original.cloneTree();
+  assertSame(original.getFirstChild().getJSDocInfo(),clone.getFirstChild().getJSDocInfo());
+  assertSame(original.getFirstChild().getJSDocInfo().getType(),clone.getFirstChild().getJSDocInfo().getType());
+  assertSame(original.getFirstChild().getJSDocInfo().getType().getRoot(),clone.getFirstChild().getJSDocInfo().getType().getRoot());
+  clone=original.cloneTree(true);
+  assertNotSame(original.getFirstChild().getJSDocInfo(),clone.getFirstChild().getJSDocInfo());
+  assertNotSame(original.getFirstChild().getJSDocInfo().getType(),clone.getFirstChild().getJSDocInfo().getType());
+  assertNotSame(original.getFirstChild().getJSDocInfo().getType().getRoot(),clone.getFirstChild().getJSDocInfo().getType().getRoot());
+}
