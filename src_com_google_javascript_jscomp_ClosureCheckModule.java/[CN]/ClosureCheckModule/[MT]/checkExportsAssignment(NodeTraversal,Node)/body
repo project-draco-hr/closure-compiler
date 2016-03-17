@@ -1,0 +1,11 @@
+{
+  Node rhs=assign.getLastChild();
+  if (!rhs.isObjectLit()) {
+    return;
+  }
+  for (Node child=rhs.getFirstChild(); child != null; child=child.getNext()) {
+    if (child.isStringKey() && !child.hasChildren()) {
+      t.report(child,SHORTHAND_OBJLIT_NOT_ALLOWED);
+    }
+  }
+}
