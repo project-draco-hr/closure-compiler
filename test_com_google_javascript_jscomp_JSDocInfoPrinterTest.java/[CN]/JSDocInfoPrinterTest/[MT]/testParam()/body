@@ -2,14 +2,14 @@
   builder.recordParameter("foo",new JSTypeExpression(JsDocInfoParser.parseTypeString("number"),""));
   builder.recordParameter("bar",new JSTypeExpression(JsDocInfoParser.parseTypeString("string"),""));
   JSDocInfo info=builder.buildAndReset();
-  assertEquals("/**\n@param {number} foo \n@param {string} bar */",JSDocInfoPrinter.print(info));
+  assertEquals("/**\n @param {number} foo\n @param {string} bar\n */\n",JSDocInfoPrinter.print(info));
   builder.recordParameter("foo",new JSTypeExpression(new Node(Token.EQUALS,IR.string("number")),""));
   info=builder.buildAndReset();
-  assertEquals("/**\n@param {number=} foo */",JSDocInfoPrinter.print(info));
+  assertEquals("/**\n @param {number=} foo\n */\n",JSDocInfoPrinter.print(info));
   builder.recordParameter("foo",new JSTypeExpression(new Node(Token.ELLIPSIS,IR.string("number")),""));
   info=builder.buildAndReset();
-  assertEquals("/**\n@param {...number} foo */",JSDocInfoPrinter.print(info));
+  assertEquals("/**\n @param {...number} foo\n */\n",JSDocInfoPrinter.print(info));
   builder.recordParameter("foo",null);
   info=builder.buildAndReset();
-  assertEquals("/**\n@param foo */",JSDocInfoPrinter.print(info));
+  assertEquals("/**\n @param foo\n */\n",JSDocInfoPrinter.print(info));
 }
