@@ -1,0 +1,20 @@
+{
+switch (n.getType()) {
+case Token.BREAK:
+case Token.CONTINUE:
+    if (n.hasChildren()) {
+      LabelContext temp=currentContext;
+      while (temp != null) {
+        if (temp.name.equals(n.getFirstChild().getString())) {
+          temp.used=true;
+          break;
+        }
+        temp=temp.parent;
+      }
+    }
+  return false;
+case Token.LABEL:
+currentContext=new LabelContext(n.getFirstChild().getString(),currentContext);
+}
+return true;
+}
