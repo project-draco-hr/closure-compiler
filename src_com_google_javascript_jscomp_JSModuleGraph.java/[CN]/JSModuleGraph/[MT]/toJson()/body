@@ -2,28 +2,23 @@
   JsonArray modules=new JsonArray();
   for (  JSModule module : getAllModules()) {
     JsonObject node=new JsonObject();
-    try {
-      node.add("name",new JsonPrimitive(module.getName()));
-      JsonArray deps=new JsonArray();
-      node.add("dependencies",deps);
-      for (      JSModule m : module.getDependencies()) {
-        deps.add(new JsonPrimitive(m.getName()));
-      }
-      JsonArray transitiveDeps=new JsonArray();
-      node.add("transitive-dependencies",transitiveDeps);
-      for (      JSModule m : getTransitiveDepsDeepestFirst(module)) {
-        transitiveDeps.add(new JsonPrimitive(m.getName()));
-      }
-      JsonArray inputs=new JsonArray();
-      node.add("inputs",inputs);
-      for (      CompilerInput input : module.getInputs()) {
-        inputs.add(new JsonPrimitive(input.getSourceFile().getOriginalPath()));
-      }
-      modules.add(node);
+    node.add("name",new JsonPrimitive(module.getName()));
+    JsonArray deps=new JsonArray();
+    node.add("dependencies",deps);
+    for (    JSModule m : module.getDependencies()) {
+      deps.add(new JsonPrimitive(m.getName()));
     }
- catch (    JsonParseException e) {
-      Throwables.propagate(e);
+    JsonArray transitiveDeps=new JsonArray();
+    node.add("transitive-dependencies",transitiveDeps);
+    for (    JSModule m : getTransitiveDepsDeepestFirst(module)) {
+      transitiveDeps.add(new JsonPrimitive(m.getName()));
     }
+    JsonArray inputs=new JsonArray();
+    node.add("inputs",inputs);
+    for (    CompilerInput input : module.getInputs()) {
+      inputs.add(new JsonPrimitive(input.getSourceFile().getOriginalPath()));
+    }
+    modules.add(node);
   }
   return modules;
 }
