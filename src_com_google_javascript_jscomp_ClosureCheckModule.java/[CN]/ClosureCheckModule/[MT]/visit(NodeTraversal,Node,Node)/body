@@ -3,8 +3,9 @@ switch (n.getType()) {
 case Token.CALL:
     Node callee=n.getFirstChild();
   if (callee.matchesQualifiedName("goog.module")) {
-    if (currentModule == null) {
-      currentModule=n;
+    if (currentModuleName == null) {
+      Node moduleNameNode=n.getSecondChild();
+      currentModuleName=moduleNameNode.isString() ? moduleNameNode.getString() : "";
     }
  else {
       t.report(n,MULTIPLE_MODULES_IN_FILE);
@@ -32,8 +33,13 @@ if (t.inGlobalHoistScope()) {
 t.report(n,GOOG_MODULE_USES_THROW);
 }
 break;
+case Token.GETPROP:
+if (currentModuleName != null && n.matchesQualifiedName(currentModuleName)) {
+t.report(n,REFERENCE_TO_MODULE_GLOBAL_NAME);
+}
+break;
 case Token.SCRIPT:
-currentModule=null;
+currentModuleName=null;
 break;
 }
 }
