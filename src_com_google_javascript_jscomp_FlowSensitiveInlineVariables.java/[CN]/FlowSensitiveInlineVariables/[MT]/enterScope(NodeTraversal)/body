@@ -11,16 +11,26 @@
   cfg=cfa.getCfg();
   reachingDef=new MustBeReachingVariableDef(cfg,t.getScope(),compiler);
   reachingDef.analyze();
-  candidates=new LinkedList<>();
+  candidates=new LinkedHashSet<>();
   NodeTraversal.traverseEs6(compiler,t.getScopeRoot().getLastChild(),new GatherCandiates());
   reachingUses=new MaybeReachingVariableUse(cfg,t.getScope(),compiler);
   reachingUses.analyze();
-  for (  Candidate c : candidates) {
+  while (!candidates.isEmpty()) {
+    Candidate c=candidates.iterator().next();
     if (c.canInline(t.getScope())) {
       c.inlineVariable();
+      candidates.remove(c);
       if (!c.defMetadata.depends.isEmpty()) {
-        inlinedNewDependencies.add(t.getScope().getVar(c.varName));
+        for (Iterator<Candidate> it=candidates.iterator(); it.hasNext(); ) {
+          Candidate other=it.next();
+          if (other.defMetadata.depends.contains(t.getScope().getVar(c.varName)) && !other.defMetadata.depends.containsAll(c.defMetadata.depends)) {
+            it.remove();
+          }
+        }
       }
+    }
+ else {
+      candidates.remove(c);
     }
   }
 }
