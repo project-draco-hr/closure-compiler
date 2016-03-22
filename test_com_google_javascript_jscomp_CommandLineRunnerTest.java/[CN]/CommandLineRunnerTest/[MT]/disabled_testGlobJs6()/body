@@ -1,0 +1,16 @@
+{
+  FlagEntry<JsSourceType> jsFile1=createJsFile("test1","var a;");
+  FlagEntry<JsSourceType> jsFile2=createJsFile("test2","var b;");
+  File ignoredJs=new File("." + File.separator + "ignored.js");
+  if (ignoredJs.isDirectory()) {
+    for (    File f : ignoredJs.listFiles()) {
+      f.delete();
+    }
+  }
+  ignoredJs.delete();
+  assertTrue(new File(jsFile2.value).renameTo(ignoredJs));
+  String glob1="!**\\." + File.separator + "ignored**.js";
+  String glob2=new File(jsFile1.value).getParent() + File.separator + "**.js";
+  compileFiles("var a;",new FlagEntry<>(JsSourceType.JS,glob1),new FlagEntry<>(JsSourceType.JS,glob2));
+  ignoredJs.delete();
+}

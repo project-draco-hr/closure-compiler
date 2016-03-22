@@ -1,5 +1,5 @@
 {
-  Set<String> allJsInputs=sortAlphabetically ? new TreeSet<String>() : new LinkedHashSet<String>();
+  Map<String,String> allJsInputs=sortAlphabetically ? new TreeMap<String,String>() : new LinkedHashMap<String,String>();
   Set<String> excludes=new HashSet<>();
   for (  String pattern : patterns) {
     if (!pattern.contains("*") && !pattern.startsWith("!")) {
@@ -8,9 +8,10 @@
         matchPaths(new File(matchedFile,"**.js").toString(),allJsInputs,excludes);
       }
  else {
-        String pathString=Paths.get(pattern).normalize().toString();
-        if (!excludes.contains(pathString)) {
-          allJsInputs.add(pathString);
+        Path original=Paths.get(pattern);
+        String pathStringAbsolute=original.normalize().toAbsolutePath().toString();
+        if (!excludes.contains(pathStringAbsolute)) {
+          allJsInputs.put(pathStringAbsolute,original.toString());
         }
       }
     }
@@ -18,5 +19,5 @@
       matchPaths(pattern,allJsInputs,excludes);
     }
   }
-  return new ArrayList<>(allJsInputs);
+  return new ArrayList<>(allJsInputs.values());
 }
