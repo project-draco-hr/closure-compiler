@@ -1,7 +1,4 @@
 {
-  if (externs == null) {
-    externs=SourceFile.fromCode("<Linter externs>","");
-  }
   SourceFile file=SourceFile.fromFile(path.toString());
   Compiler compiler=new Compiler(System.out);
   CompilerOptions options=new CompilerOptions();
@@ -15,6 +12,7 @@
   options.setWarningLevel(DiagnosticGroups.EXTRA_REQUIRE,CheckLevel.WARNING);
   compiler.setPassConfig(new LintPassConfig(options));
   compiler.disableThreads();
+  SourceFile externs=SourceFile.fromCode("<Linter externs>","");
   compiler.compile(ImmutableList.<SourceFile>of(externs),ImmutableList.of(file),options);
   if (fix) {
     List<SuggestedFix> fixes=new ArrayList<>();

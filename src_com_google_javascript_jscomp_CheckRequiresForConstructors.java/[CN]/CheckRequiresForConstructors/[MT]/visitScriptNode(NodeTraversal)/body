@@ -20,8 +20,11 @@
     boolean notProvidedByConstructors=!constructors.contains(className) && !constructors.contains(outermostClassName);
     boolean notProvidedByRequires=!requires.containsKey(className) && !requires.containsKey(outermostClassName) && !requires.containsKey(parentNamespace);
     if (notProvidedByConstructors && notProvidedByRequires && !classNames.contains(className)) {
-      compiler.report(t.makeError(node,MISSING_REQUIRE_WARNING,className));
-      classNames.add(className);
+      String rootName=Splitter.on('.').split(className).iterator().next();
+      if (mode != Mode.SINGLE_FILE || closurizedNamespaces.contains(rootName)) {
+        compiler.report(t.makeError(node,MISSING_REQUIRE_WARNING,className));
+        classNames.add(className);
+      }
     }
   }
   for (  Map.Entry<String,Node> entry : requires.entrySet()) {
