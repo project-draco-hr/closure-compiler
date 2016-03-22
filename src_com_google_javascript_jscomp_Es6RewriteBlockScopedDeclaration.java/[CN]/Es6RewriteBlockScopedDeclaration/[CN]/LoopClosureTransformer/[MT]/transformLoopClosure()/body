@@ -45,24 +45,14 @@
           if (NodeUtil.isNameDeclaration(reference.getParent())) {
             Node declaration=reference.getParent();
             Node grandParent=declaration.getParent();
-            while (declaration.getChildCount() > 1) {
-              Node name=declaration.getLastChild();
-              grandParent.addChildAfter(IR.declaration(name.detachFromParent(),declaration.getType()).useSourceInfoIfMissingFromForTree(declaration),declaration);
-            }
+            handleDeclarationList(declaration,grandParent);
             declaration=reference.getParent();
             if (reference.hasChildren()) {
-              JSDocInfo existingInfo=declaration.getJSDocInfo();
-              if (existingInfo == null) {
-                existingInfo=reference.getJSDocInfo();
-                reference.setJSDocInfo(null);
-              }
-              JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(existingInfo);
-              if (declaration.isConst()) {
-                builder.recordConstancy();
-              }
               Node newReference=reference.cloneNode();
               Node assign=IR.assign(newReference,reference.removeFirstChild());
-              assign.setJSDocInfo(builder.build());
+              extractInlineJSDoc(declaration,reference,declaration);
+              maybeAddConstJSDoc(declaration,grandParent,reference,declaration);
+              assign.setJSDocInfo(declaration.getJSDocInfo());
               Node replacement=IR.exprResult(assign).useSourceInfoIfMissingFromForTree(declaration);
               grandParent.replaceChild(declaration,replacement);
               reference=newReference;

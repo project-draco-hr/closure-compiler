@@ -4,4 +4,5 @@
   test("for (let i = 0;;) { let i; }","for (var i = 0;;) { var i$0 = undefined; }");
   test("for (let i = 0;;) {} let i;","for (var i$0 = 0;;) {} var i;");
   test(LINE_JOINER.join("for (var x in y) {","  /** @type {number} */","  let i;","}"),LINE_JOINER.join("for (var x in y) {","  /** @type {number} */","  var i = /** @type {?} */ (undefined);","}"));
+  test(LINE_JOINER.join("for (const i in [0, 1]) {","  function f() {","    let i = 0;","    if (true) {","      let i = 1;","    }","  }","}"),LINE_JOINER.join("for (var i in [0, 1]) {","  var f = function() {","    var i = 0;","    if (true) {","      var i$0 = 1;","    }","  }","}"));
 }

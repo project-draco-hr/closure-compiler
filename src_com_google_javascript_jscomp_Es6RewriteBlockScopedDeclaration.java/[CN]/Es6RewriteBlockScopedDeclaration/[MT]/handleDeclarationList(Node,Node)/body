@@ -1,0 +1,10 @@
+{
+  while (declarationList.hasMoreThanOneChild()) {
+    Node name=declarationList.getLastChild();
+    Node newDeclaration=IR.var(name.detachFromParent()).useSourceInfoFrom(declarationList);
+    maybeAddConstJSDoc(declarationList,parent,name,newDeclaration);
+    parent.addChildAfter(newDeclaration,declarationList);
+  }
+  maybeAddConstJSDoc(declarationList,parent,declarationList.getFirstChild(),declarationList);
+  declarationList.setType(Token.VAR);
+}
