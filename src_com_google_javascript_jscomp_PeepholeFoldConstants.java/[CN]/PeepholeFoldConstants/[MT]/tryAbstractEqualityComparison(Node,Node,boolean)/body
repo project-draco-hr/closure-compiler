@@ -1,0 +1,28 @@
+{
+  ValueType leftValueType=NodeUtil.getKnownValueType(left);
+  ValueType rightValueType=NodeUtil.getKnownValueType(right);
+  if (leftValueType != ValueType.UNDETERMINED && rightValueType != ValueType.UNDETERMINED) {
+    if (leftValueType == rightValueType) {
+      return tryStrictEqualityComparison(left,right,useTypes);
+    }
+    if ((leftValueType == ValueType.NULL && rightValueType == ValueType.VOID) || (leftValueType == ValueType.VOID && rightValueType == ValueType.NULL)) {
+      return TernaryValue.TRUE;
+    }
+    if ((leftValueType == ValueType.NUMBER && rightValueType == ValueType.STRING) || rightValueType == ValueType.BOOLEAN) {
+      Double rv=NodeUtil.getNumberValue(right,useTypes);
+      return rv == null ? TernaryValue.UNKNOWN : tryAbstractEqualityComparison(left,IR.number(rv),useTypes);
+    }
+    if ((leftValueType == ValueType.STRING && rightValueType == ValueType.NUMBER) || leftValueType == ValueType.BOOLEAN) {
+      Double lv=NodeUtil.getNumberValue(left,useTypes);
+      return lv == null ? TernaryValue.UNKNOWN : tryAbstractEqualityComparison(IR.number(lv),right,useTypes);
+    }
+    if ((leftValueType == ValueType.STRING || leftValueType == ValueType.NUMBER) && rightValueType == ValueType.OBJECT) {
+      return TernaryValue.UNKNOWN;
+    }
+    if (leftValueType == ValueType.OBJECT && (rightValueType == ValueType.STRING || rightValueType == ValueType.NUMBER)) {
+      return TernaryValue.UNKNOWN;
+    }
+    return TernaryValue.FALSE;
+  }
+  return TernaryValue.UNKNOWN;
+}

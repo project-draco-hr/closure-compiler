@@ -2,111 +2,23 @@
   if (NodeUtil.mayHaveSideEffects(left) || NodeUtil.mayHaveSideEffects(right)) {
     return TernaryValue.UNKNOWN;
   }
-  ValueType leftValueType=NodeUtil.getKnownValueType(left);
-  ValueType rightValueType=NodeUtil.getKnownValueType(right);
-  if (leftValueType != ValueType.UNDETERMINED && rightValueType != ValueType.UNDETERMINED) {
-    if (op == Token.SHEQ || op == Token.SHNE) {
-      if (leftValueType != rightValueType) {
-        return TernaryValue.forBoolean(op != Token.SHEQ);
-      }
- else       if (rightValueType == ValueType.NULL || rightValueType == ValueType.VOID) {
-        return TernaryValue.forBoolean(op == Token.SHEQ);
-      }
-    }
-    if (op == Token.EQ || op == Token.NE) {
-switch (leftValueType) {
-case OBJECT:
-case NUMBER:
-case BOOLEAN:
-case STRING:
-        if (rightValueType == ValueType.NULL || rightValueType == ValueType.VOID) {
-          return TernaryValue.forBoolean(op != Token.EQ);
-        }
-      break;
-case NULL:
-case VOID:
-    if (rightValueType == ValueType.NULL || rightValueType == ValueType.VOID) {
-      return TernaryValue.forBoolean(op == Token.EQ);
-    }
- else {
-      return TernaryValue.forBoolean(op != Token.EQ);
-    }
-default :
-  throw new IllegalStateException("unexpected");
-}
-}
-}
-if (leftValueType == ValueType.VOID || rightValueType == ValueType.VOID) {
 switch (op) {
-case Token.GE:
+case Token.EQ:
+    return tryAbstractEqualityComparison(left,right,useTypes);
+case Token.NE:
+  return tryAbstractEqualityComparison(left,right,useTypes).not();
+case Token.SHEQ:
+return tryStrictEqualityComparison(left,right,useTypes);
+case Token.SHNE:
+return tryStrictEqualityComparison(left,right,useTypes).not();
+case Token.LT:
+return tryAbstractRelationalComparison(left,right,useTypes,false);
+case Token.GT:
+return tryAbstractRelationalComparison(right,left,useTypes,false);
 case Token.LE:
-case Token.GT:
-case Token.LT:
-return TernaryValue.FALSE;
-}
-}
-int lhType=getNormalizedNodeType(left);
-int rhType=getNormalizedNodeType(right);
-switch (lhType) {
-case Token.NULL:
-case Token.TRUE:
-case Token.FALSE:
-boolean rhIsBooleanLike=rhType == Token.TRUE || rhType == Token.FALSE || rhType == Token.NULL;
-switch (op) {
-case Token.SHEQ:
-case Token.EQ:
-return rhIsBooleanLike ? TernaryValue.forBoolean(lhType == rhType) : TernaryValue.UNKNOWN;
-case Token.SHNE:
-case Token.NE:
-return rhIsBooleanLike ? TernaryValue.forBoolean(lhType != rhType) : TernaryValue.UNKNOWN;
+return tryAbstractRelationalComparison(right,left,useTypes,true).not();
 case Token.GE:
-case Token.LE:
-case Token.GT:
-case Token.LT:
-return compareAsNumbers(op,left,right,useTypes);
+return tryAbstractRelationalComparison(left,right,useTypes,true).not();
 }
-return TernaryValue.UNKNOWN;
-case Token.THIS:
-if (right.isThis()) {
-switch (op) {
-case Token.SHEQ:
-case Token.EQ:
-return TernaryValue.TRUE;
-case Token.SHNE:
-case Token.NE:
-return TernaryValue.FALSE;
-}
-}
-return TernaryValue.UNKNOWN;
-case Token.STRING:
-if (right.isString()) {
-switch (op) {
-case Token.SHEQ:
-case Token.EQ:
-return areStringsEqual(left.getString(),right.getString());
-case Token.SHNE:
-case Token.NE:
-return areStringsEqual(left.getString(),right.getString()).not();
-}
-}
-return TernaryValue.UNKNOWN;
-case Token.NUMBER:
-if (right.isNumber()) {
-return compareAsNumbers(op,left,right,useTypes);
-}
-return TernaryValue.UNKNOWN;
-case Token.NAME:
-if (right.isName()) {
-if (left.getString().equals(right.getString())) {
-switch (op) {
-case Token.LT:
-case Token.GT:
-return TernaryValue.FALSE;
-}
-}
-}
-return TernaryValue.UNKNOWN;
-default :
-return TernaryValue.UNKNOWN;
-}
+throw new IllegalStateException("Unexpected operator for comparison");
 }

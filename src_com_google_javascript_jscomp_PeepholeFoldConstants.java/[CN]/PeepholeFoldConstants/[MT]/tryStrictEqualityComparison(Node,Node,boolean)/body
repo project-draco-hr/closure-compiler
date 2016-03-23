@@ -1,0 +1,58 @@
+{
+  ValueType leftValueType=NodeUtil.getKnownValueType(left);
+  ValueType rightValueType=NodeUtil.getKnownValueType(right);
+  if (leftValueType != ValueType.UNDETERMINED && rightValueType != ValueType.UNDETERMINED) {
+    if (leftValueType != rightValueType) {
+      return TernaryValue.FALSE;
+    }
+switch (leftValueType) {
+case VOID:
+case NULL:
+      return TernaryValue.TRUE;
+case NUMBER:
+{
+      if (NodeUtil.isNaN(left)) {
+        return TernaryValue.FALSE;
+      }
+      if (NodeUtil.isNaN(right)) {
+        return TernaryValue.FALSE;
+      }
+      Double lv=NodeUtil.getNumberValue(left,useTypes);
+      Double rv=NodeUtil.getNumberValue(right,useTypes);
+      if (lv != null && rv != null) {
+        return TernaryValue.forBoolean(lv.doubleValue() == rv.doubleValue());
+      }
+      break;
+    }
+case STRING:
+{
+    String lv=NodeUtil.getStringValue(left);
+    String rv=NodeUtil.getStringValue(right);
+    if (lv != null && rv != null) {
+      if (lv.indexOf('\u000B') != -1 || rv.indexOf('\u000B') != -1) {
+        return TernaryValue.UNKNOWN;
+      }
+ else {
+        return lv.equals(rv) ? TernaryValue.TRUE : TernaryValue.FALSE;
+      }
+    }
+ else     if (left.isTypeOf() && right.isTypeOf() && left.getFirstChild().isName()&& right.getFirstChild().isName()&& left.getFirstChild().getString().equals(right.getFirstChild().getString())) {
+      return TernaryValue.TRUE;
+    }
+    break;
+  }
+case BOOLEAN:
+{
+  TernaryValue lv=NodeUtil.getPureBooleanValue(left);
+  TernaryValue rv=NodeUtil.getPureBooleanValue(right);
+  return lv.and(rv).or(lv.not().and(rv.not()));
+}
+default :
+return TernaryValue.UNKNOWN;
+}
+}
+if (NodeUtil.isNaN(left) || NodeUtil.isNaN(right)) {
+return TernaryValue.FALSE;
+}
+return TernaryValue.UNKNOWN;
+}

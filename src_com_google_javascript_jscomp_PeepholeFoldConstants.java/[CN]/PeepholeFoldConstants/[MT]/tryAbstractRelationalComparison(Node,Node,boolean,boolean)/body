@@ -1,0 +1,37 @@
+{
+  ValueType leftValueType=NodeUtil.getKnownValueType(left);
+  ValueType rightValueType=NodeUtil.getKnownValueType(right);
+  if (leftValueType != ValueType.UNDETERMINED && rightValueType != ValueType.UNDETERMINED) {
+    if (leftValueType == ValueType.STRING && rightValueType == ValueType.STRING) {
+      String lv=NodeUtil.getStringValue(left);
+      String rv=NodeUtil.getStringValue(right);
+      if (lv != null && rv != null) {
+        if (lv.indexOf('\u000B') != -1 || rv.indexOf('\u000B') != -1) {
+          return TernaryValue.UNKNOWN;
+        }
+ else {
+          return TernaryValue.forBoolean(lv.compareTo(rv) < 0);
+        }
+      }
+ else       if (left.isTypeOf() && right.isTypeOf() && left.getFirstChild().isName()&& right.getFirstChild().isName()&& left.getFirstChild().getString().equals(right.getFirstChild().getString())) {
+        return TernaryValue.FALSE;
+      }
+    }
+  }
+  Double lv=NodeUtil.getNumberValue(left,useTypes);
+  Double rv=NodeUtil.getNumberValue(right,useTypes);
+  if (lv == null || rv == null) {
+    if (!willNegate && left.isName() && right.isName()) {
+      if (left.getString().equals(right.getString())) {
+        return TernaryValue.FALSE;
+      }
+    }
+    return TernaryValue.UNKNOWN;
+  }
+  if (Double.isNaN(lv) || Double.isNaN(rv)) {
+    return TernaryValue.forBoolean(willNegate);
+  }
+ else {
+    return TernaryValue.forBoolean(lv.doubleValue() < rv.doubleValue());
+  }
+}
