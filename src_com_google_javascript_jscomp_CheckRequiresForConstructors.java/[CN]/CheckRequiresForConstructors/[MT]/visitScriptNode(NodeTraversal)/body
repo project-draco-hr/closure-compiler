@@ -2,28 +2,39 @@
   if (mode == Mode.SINGLE_FILE && requires.isEmpty()) {
     return;
   }
-  Set<String> classNames=new HashSet<>();
+  Set<String> namespaces=new HashSet<>();
   for (  Map.Entry<String,Node> entry : usages.entrySet()) {
-    String className=entry.getKey();
+    String namespace=entry.getKey();
+    if (namespace.endsWith(".call") || namespace.endsWith(".apply")) {
+      namespace=namespace.substring(0,namespace.lastIndexOf('.'));
+    }
+    if (namespace.startsWith("goog.global.")) {
+      continue;
+    }
     Node node=entry.getValue();
-    JSDocInfo info=NodeUtil.getEnclosingStatement(node).getJSDocInfo();
+    JSDocInfo info=NodeUtil.getBestJSDocInfo(NodeUtil.getEnclosingStatement(node));
     if (info != null && info.getSuppressions().contains("missingRequire")) {
       continue;
     }
-    String outermostClassName=getOutermostClassName(className);
-    String nonNullClassName=outermostClassName != null ? outermostClassName : className;
+    String outermostClassName=getOutermostClassName(namespace);
+    String nonNullClassName=outermostClassName != null ? outermostClassName : namespace;
     String parentNamespace=null;
     int separatorIndex=nonNullClassName.lastIndexOf('.');
     if (separatorIndex > 0) {
       parentNamespace=nonNullClassName.substring(0,separatorIndex);
     }
-    boolean notProvidedByConstructors=!constructors.contains(className) && !constructors.contains(outermostClassName);
-    boolean notProvidedByRequires=!requires.containsKey(className) && !requires.containsKey(outermostClassName) && !requires.containsKey(parentNamespace);
-    if (notProvidedByConstructors && notProvidedByRequires && !classNames.contains(className)) {
-      String rootName=Splitter.on('.').split(className).iterator().next();
+    boolean notProvidedByConstructors=!providedNames.contains(namespace) && !providedNames.contains(outermostClassName) && !providedNames.contains(parentNamespace);
+    boolean notProvidedByRequires=!requires.containsKey(namespace) && !requires.containsKey(outermostClassName) && !requires.containsKey(parentNamespace);
+    if (notProvidedByConstructors && notProvidedByRequires && !namespaces.contains(namespace)&& !"goog".equals(parentNamespace)) {
+      String rootName=Splitter.on('.').split(namespace).iterator().next();
       if (mode != Mode.SINGLE_FILE || closurizedNamespaces.contains(rootName)) {
-        compiler.report(t.makeError(node,MISSING_REQUIRE_WARNING,className));
-        classNames.add(className);
+        if (node.isCall()) {
+          compiler.report(t.makeError(node,MISSING_REQUIRE_CALL_WARNING,namespace));
+        }
+ else {
+          compiler.report(t.makeError(node,MISSING_REQUIRE_WARNING,namespace));
+        }
+        namespaces.add(namespace);
       }
     }
   }

@@ -1,0 +1,37 @@
+{
+  String required=codingConvention.extractClassNameIfRequire(call,parent);
+  if (required != null) {
+    visitRequire(required,call);
+    return;
+  }
+  String provided=codingConvention.extractClassNameIfProvide(call,parent);
+  if (provided != null) {
+    providedNames.add(provided);
+    return;
+  }
+  if (codingConvention.isClassFactoryCall(call)) {
+    if (parent.isName()) {
+      providedNames.add(parent.getString());
+    }
+ else     if (parent.isAssign()) {
+      providedNames.add(parent.getFirstChild().getQualifiedName());
+    }
+  }
+  Node callee=call.getFirstChild();
+  if (callee.isName()) {
+    weakUsages.put(callee.getString(),callee);
+  }
+ else   if (callee.isQualifiedName()) {
+    Node root=NodeUtil.getRootOfQualifiedName(callee);
+    if (root.isName()) {
+      Var var=t.getScope().getVar(root.getString());
+      if (var == null || (!var.isExtern() && !var.isLocal())) {
+        String name=getOutermostClassName(callee.getQualifiedName());
+        if (name == null) {
+          name=callee.getQualifiedName();
+        }
+        usages.put(name,call);
+      }
+    }
+  }
+}
