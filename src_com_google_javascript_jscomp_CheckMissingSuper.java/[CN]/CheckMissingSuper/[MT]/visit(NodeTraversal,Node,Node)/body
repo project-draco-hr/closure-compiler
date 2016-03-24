@@ -1,0 +1,17 @@
+{
+  if (n.isClass()) {
+    Node superclass=n.getSecondChild();
+    if (superclass.isEmpty()) {
+      return;
+    }
+    Node constructor=NodeUtil.getFirstPropMatchingKey(NodeUtil.getClassMembers(n),"constructor");
+    if (constructor == null) {
+      return;
+    }
+    FindSuper finder=new FindSuper();
+    NodeTraversal.traverseEs6(compiler,NodeUtil.getFunctionBody(constructor),finder);
+    if (!finder.found) {
+      t.report(constructor,MISSING_CALL_TO_SUPER);
+    }
+  }
+}
