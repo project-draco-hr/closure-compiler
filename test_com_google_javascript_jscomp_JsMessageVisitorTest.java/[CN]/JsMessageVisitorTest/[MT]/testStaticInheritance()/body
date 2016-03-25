@@ -1,0 +1,8 @@
+{
+  extractMessagesSafely(LINE_JOINER.join("/** @desc a */","foo.bar.BaseClass.MSG_MENU = goog.getMsg('hi');","/**"," * @desc a"," * @suppress {visibility}"," */","foo.bar.Subclass.MSG_MENU = foo.bar.BaseClass.MSG_MENU;"));
+  assertThat(compiler.getWarnings()).isEmpty();
+  assertThat(messages).hasSize(1);
+  JsMessage msg=messages.get(0);
+  assertEquals("MSG_MENU",msg.getKey());
+  assertEquals("a",msg.getDesc());
+}
