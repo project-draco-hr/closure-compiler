@@ -4,7 +4,8 @@
   if (currentScope.isLocalFunDef(varName)) {
     return inEnv;
   }
-  if (NodeUtil.isNamespaceDecl(nameNode)) {
+  if (NodeUtil.isNamespaceDecl(nameNode) || nameNode.getParent().getBooleanProp(Node.ANALYZED_DURING_GTI)) {
+    Preconditions.checkNotNull(declType,"Can't skip var declaration with undeclared type at: %s",nameNode);
     maybeSetTypeI(nameNode,declType);
     return envPutType(inEnv,varName,declType);
   }

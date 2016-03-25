@@ -10,7 +10,8 @@
   ctorPair=analyzeExprFwd(ctor,objPair.env,commonTypes.topFunction());
   JSType ctorType=ctorPair.type;
   FunctionType ctorFunType=ctorType.getFunType();
-  if (!ctorType.isUnknown() && (!ctorType.isSubtypeOf(commonTypes.topFunction()) || (!ctorFunType.isQmarkFunction() && !ctorFunType.isSomeConstructorOrInterface()))) {
+  boolean mayBeConstructorFunction=ctorFunType != null && (ctorFunType.isLoose() || ctorFunType.isQmarkFunction() || ctorFunType.isSomeConstructorOrInterface());
+  if (!(ctorType.isUnknown() || mayBeConstructorFunction)) {
     warnInvalidOperand(ctor,Token.INSTANCEOF,"a constructor function",ctorType);
   }
   if (ctorFunType == null || !ctorFunType.isUniqueConstructor() || (!specializedType.isTrueOrTruthy() && !specializedType.isFalseOrFalsy())) {
