@@ -1,0 +1,17 @@
+{
+  Preconditions.checkNotNull(this.ns);
+  if (this == other || other.ns != null || !other.getNominalType().equals(builtinObject)) {
+    return this;
+  }
+  QualifiedName propPath=getPropertyPath(other);
+  if (propPath == null) {
+    return this;
+  }
+  JSType otherPropType=other.getProp(propPath);
+  JSType thisPropType=mayHaveProp(propPath) ? getProp(propPath) : null;
+  JSType newPropType=thisPropType == null ? null : thisPropType.specialize(otherPropType);
+  if (thisPropType != null && thisPropType.isUnion() && !newPropType.isBottom() && newPropType.isSubtypeOf(thisPropType) && !thisPropType.isSubtypeOf(newPropType)) {
+    return withProperty(propPath,newPropType);
+  }
+  return this;
+}

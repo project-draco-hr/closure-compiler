@@ -1,9 +1,9 @@
 {
   PersistentMap<String,Property> newProps=props1;
-  if (resultNominalType != null || resultNs != null) {
+  if (resultNominalType != null) {
     for (    Map.Entry<String,Property> propsEntry : props1.entrySet()) {
       String pname=propsEntry.getKey();
-      Property otherProp=getPropHelper(pname,resultNs,resultNominalType);
+      Property otherProp=resultNominalType.getProp(pname);
       if (otherProp != null) {
         newProps=addOrRemoveProp(specializeProps1,newProps,pname,otherProp,propsEntry.getValue());
         if (newProps == BOTTOM_MAP) {
@@ -26,7 +26,7 @@
       }
       newProp=specializeProps1 ? prop1.specialize(prop2) : Property.meet(prop1,prop2);
     }
-    Property otherProp=getPropHelper(pname,resultNs,resultNominalType);
+    Property otherProp=resultNominalType == null ? null : resultNominalType.getProp(pname);
     if (otherProp != null) {
       newProps=addOrRemoveProp(specializeProps1,newProps,pname,otherProp,newProp);
       if (newProps == BOTTOM_MAP) {

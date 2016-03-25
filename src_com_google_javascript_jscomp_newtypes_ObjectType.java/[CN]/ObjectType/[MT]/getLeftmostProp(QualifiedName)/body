@@ -1,12 +1,17 @@
 {
-  String objName=qname.getLeftmostName();
-  Property p=props.get(objName);
+  String pname=qname.getLeftmostName();
+  Property p=props.get(pname);
   if (p != null) {
     return p;
   }
-  p=getPropHelper(objName,this.ns,this.nominalType);
-  if (p != null) {
-    return p;
+  if (this.ns != null) {
+    p=this.ns.getNsProp(pname);
+    if (p != null) {
+      return p;
+    }
   }
-  return builtinObject == null ? null : builtinObject.getProp(objName);
+  if (this.nominalType != null) {
+    return this.nominalType.getProp(pname);
+  }
+  return builtinObject == null ? null : builtinObject.getProp(pname);
 }

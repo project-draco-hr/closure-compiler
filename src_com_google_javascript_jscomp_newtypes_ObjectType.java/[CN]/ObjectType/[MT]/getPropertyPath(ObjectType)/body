@@ -1,0 +1,16 @@
+{
+  if (obj.props.size() != 1) {
+    return null;
+  }
+  Map.Entry<String,Property> entry=obj.props.entrySet().iterator().next();
+  QualifiedName leftmostPname=new QualifiedName(entry.getKey());
+  ObjectType propAsObj=entry.getValue().getType().getObjTypeIfSingletonObj();
+  if (propAsObj == null) {
+    return leftmostPname;
+  }
+  QualifiedName restPath=getPropertyPath(propAsObj);
+  if (restPath == null) {
+    return leftmostPname;
+  }
+  return QualifiedName.join(leftmostPname,restPath);
+}

@@ -8,9 +8,6 @@
   if (inferredType == null) {
     return new EnvTypePair(outEnv,JSType.UNKNOWN);
   }
-  if (currentScope.isKnownFunction(varName) || maybeIsNamespace(varName,inferredType)) {
-    return new EnvTypePair(outEnv,inferredType);
-  }
   JSType preciseType=inferredType.specialize(requiredType);
   if ((currentScope.isUndeclaredFormal(varName) || currentScope.isUndeclaredOuterVar(varName)) && preciseType.hasNonScalar()) {
     preciseType=preciseType.withLoose();

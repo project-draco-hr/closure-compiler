@@ -7,7 +7,6 @@
     return obj1;
   }
   NominalType resultNomType=NominalType.pickSubclass(obj1.nominalType,obj2.nominalType);
-  Namespace resultNs=Objects.equals(obj1.ns,obj2.ns) ? obj1.ns : null;
   FunctionType fn=FunctionType.meet(obj1.fn,obj2.fn);
   if (!FunctionType.isInhabitable(fn)) {
     return BOTTOM_OBJECT;
@@ -22,11 +21,12 @@
     props=joinPropsLoosely(obj1.props,obj2.props);
   }
  else {
-    props=meetPropsHelper(false,resultNomType,resultNs,obj1.props,obj2.props);
+    props=meetPropsHelper(false,resultNomType,obj1.props,obj2.props);
   }
   if (props == BOTTOM_MAP) {
     return BOTTOM_OBJECT;
   }
   ObjectKind ok=ObjectKind.meet(obj1.objectKind,obj2.objectKind);
+  Namespace resultNs=Objects.equals(obj1.ns,obj2.ns) ? obj1.ns : null;
   return new ObjectType(resultNomType,props,fn,resultNs,isLoose,ok);
 }
