@@ -1,0 +1,7 @@
+{
+  String externs="" + "/** @constructor */\n" + "function T() {};\n"+ "/** @type {string} */\n"+ "T.prototype.p;\n"+ "/** @constructor @extends {T} */\n"+ "function S() {};\n"+ "/** @param {!T} someT */\n"+ "function setP(someT) {};\n"+ "/** @param {!S} someS */\n"+ "function setPonS(someS) {};\n"+ "/** @type {!T} */ var theT;"+ "/** @type {!S} */ var theS;";
+  String template="" + "/** @param {!S} s */\n" + "function before_template_S(s) {\n"+ "  s.p = 'foo';\n"+ "}\n"+ "/** @param {!S} s */\n"+ "function after_template_S(t) {\n"+ "  setPonS(s);\n"+ "}\n"+ "\n"+ "/** @param {!T} t */\n"+ "function before_template_T(t) {\n"+ "  t.p = 'foo';\n"+ "}\n"+ "/** @param {!T} t */\n"+ "function after_template_T(t) {\n"+ "  setP(t);\n"+ "}\n";
+  String originalCode="theT.p = 'foo'; theS.p = 'foo';";
+  String expectedCode="setP(theT); setPonS(theS);";
+  assertChanges(externs,originalCode,expectedCode,template);
+}
