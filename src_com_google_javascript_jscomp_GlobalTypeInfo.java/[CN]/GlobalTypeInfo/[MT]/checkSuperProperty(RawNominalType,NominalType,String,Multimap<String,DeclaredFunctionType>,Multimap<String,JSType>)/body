@@ -20,13 +20,13 @@
     warnings.add(JSError.make(localPropDef.defSite,CANNOT_OVERRIDE_FINAL_METHOD,pname));
     return;
   }
-  if (localPropType == null) {
+  if (localPropType == null && superType.isInterface()) {
     propTypesToProcess.put(pname,inheritedPropType);
   }
- else   if (!getsTypeInfoFromParentMethod(localPropDef) && !isValidOverride(localPropType,inheritedPropType)) {
+ else   if (localPropType != null && !getsTypeInfoFromParentMethod(localPropDef) && !isValidOverride(localPropType,inheritedPropType)) {
     warnings.add(JSError.make(localPropDef.defSite,INVALID_PROP_OVERRIDE,pname,inheritedPropType.toString(),localPropType.toString()));
   }
- else   if (localPropDef.methodType != null) {
+ else   if (localPropType != null && localPropDef.methodType != null) {
     for (    PropertyDef inheritedPropDef : inheritedPropDefs) {
       if (inheritedPropDef.methodType != null) {
         propMethodTypesToProcess.put(pname,inheritedPropDef.methodType.substituteNominalGenerics(superType));
