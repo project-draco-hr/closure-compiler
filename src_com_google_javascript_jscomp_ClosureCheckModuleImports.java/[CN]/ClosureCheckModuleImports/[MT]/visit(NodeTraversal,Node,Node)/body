@@ -1,21 +1,14 @@
 {
 switch (n.getType()) {
 case Token.CALL:
-    Node callee=n.getFirstChild();
-  if (callee.matchesQualifiedName("goog.module")) {
-    recordModuleCall(n,parent);
-  }
- else   if (callee.matchesQualifiedName("goog.require")) {
-    recordRequireCall(n);
-  }
-break;
+    if (n.getFirstChild().matchesQualifiedName("goog.module")) {
+      recordModuleCall(n,parent);
+    }
+  break;
 case Token.GETPROP:
 if (n.isQualifiedName()) {
-checkQualifiedName(t,n);
+  checkQualifiedName(t,n);
 }
-break;
-case Token.SCRIPT:
-localRequiresOfModules.clear();
 break;
 }
 }
