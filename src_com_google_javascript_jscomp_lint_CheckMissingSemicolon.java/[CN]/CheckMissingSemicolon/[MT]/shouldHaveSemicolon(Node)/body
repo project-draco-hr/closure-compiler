@@ -1,3 +1,9 @@
 {
-  return !(statement.isFunction() || statement.isClass() || statement.isBlock()|| statement.isLabelName()|| (NodeUtil.isControlStructure(statement) && !statement.isDo()));
+  if (statement.isFunction() || statement.isClass() || statement.isBlock()|| statement.isLabelName()|| (NodeUtil.isControlStructure(statement) && !statement.isDo())) {
+    return false;
+  }
+  if (statement.isExport()) {
+    return shouldHaveSemicolon(statement.getFirstChild());
+  }
+  return true;
 }
