@@ -1,4 +1,17 @@
 {
-  parser.printUsage(new OutputStreamWriter(ps,UTF_8),null,OptionHandlerFilter.PUBLIC);
+  OutputStreamWriter outputStream=new OutputStreamWriter(ps,UTF_8);
+  boolean isFirst=true;
+  for (  Map.Entry<String,Collection<String>> entry : categories.asMap().entrySet()) {
+    String prefix="\n\n";
+    String suffix="";
+    if (isFirst) {
+      isFirst=false;
+      prefix="";
+    }
+    if (entry.getKey().equals("Warning and Error Management")) {
+      suffix="\n" + boldPrefix + "Available Error Groups: "+ normalPrefix+ DiagnosticGroups.DIAGNOSTIC_GROUP_NAMES;
+    }
+    printCategoryUsage(entry.getKey(),entry.getValue(),outputStream,prefix,suffix);
+  }
   ps.flush();
 }

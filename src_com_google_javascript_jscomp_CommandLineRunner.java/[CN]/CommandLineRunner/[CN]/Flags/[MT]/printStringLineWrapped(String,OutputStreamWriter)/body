@@ -1,0 +1,16 @@
+{
+  if (input.length() < maxLineLength) {
+    outputStream.write(input);
+    return;
+  }
+  int endIndex=maxLineLength;
+  String subString=input.substring(0,maxLineLength);
+  Matcher whitespaceMatcher=whitespacePattern.matcher(subString);
+  boolean foundMatch=false;
+  while (whitespaceMatcher.find()) {
+    endIndex=whitespaceMatcher.start();
+    foundMatch=true;
+  }
+  outputStream.write(input.substring(0,endIndex) + "\n");
+  printStringLineWrapped("    " + input.substring(foundMatch ? endIndex + 1 : endIndex),outputStream);
+}

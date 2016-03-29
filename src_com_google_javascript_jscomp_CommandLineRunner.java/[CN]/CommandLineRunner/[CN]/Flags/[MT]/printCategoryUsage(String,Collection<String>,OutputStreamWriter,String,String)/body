@@ -1,0 +1,22 @@
+{
+  try {
+    if (prefix != null) {
+      printStringLineWrapped(prefix,outputStream);
+    }
+    outputStream.write(boldPrefix + categoryName + ":\n"+ normalPrefix);
+    parser.printUsage(outputStream,null,new OptionHandlerFilter(){
+      @Override public boolean select(      OptionHandler optionHandler){
+        if (optionHandler.option instanceof NamedOptionDef) {
+          return !optionHandler.option.hidden() && options.contains(((NamedOptionDef)optionHandler.option).name().replaceFirst("^--",""));
+        }
+        return false;
+      }
+    }
+);
+    if (suffix != null) {
+      printStringLineWrapped(suffix,outputStream);
+    }
+  }
+ catch (  IOException e) {
+  }
+}
