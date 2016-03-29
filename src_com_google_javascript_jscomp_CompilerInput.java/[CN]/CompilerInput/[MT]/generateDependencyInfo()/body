@@ -1,0 +1,23 @@
+{
+  Preconditions.checkNotNull(compiler,"Expected setCompiler to be called first: %s",this);
+  Preconditions.checkNotNull(compiler.getErrorManager(),"Expected compiler to call an error manager: %s",this);
+  if (!(ast instanceof JsAst)) {
+    DepsFinder finder=new DepsFinder();
+    Node root=getAstRoot(compiler);
+    if (root == null) {
+      return SimpleDependencyInfo.EMPTY;
+    }
+    finder.visitTree(getAstRoot(compiler));
+    return new SimpleDependencyInfo("","",finder.provides,finder.requires,finder.loadFlags);
+  }
+ else {
+    try {
+      DependencyInfo info=(new JsFileParser(compiler.getErrorManager())).setIncludeGoogBase(true).parseFile(getName(),getName(),getCode());
+      return new LazyParsedDependencyInfo(info,(JsAst)ast,compiler);
+    }
+ catch (    IOException e) {
+      compiler.getErrorManager().report(CheckLevel.ERROR,JSError.make(AbstractCompiler.READ_ERROR,getName()));
+      return SimpleDependencyInfo.EMPTY;
+    }
+  }
+}

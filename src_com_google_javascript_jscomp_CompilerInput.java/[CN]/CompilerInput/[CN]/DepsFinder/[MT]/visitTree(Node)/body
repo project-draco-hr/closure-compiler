@@ -1,3 +1,11 @@
 {
   visitSubtree(n,null);
+  Preconditions.checkArgument(n.isScript());
+  FeatureSet features=(FeatureSet)n.getProp(Node.FEATURE_SET);
+  if (features != null) {
+    String version=features.version();
+    if (!version.equals("es3")) {
+      loadFlags.put("lang",version);
+    }
+  }
 }

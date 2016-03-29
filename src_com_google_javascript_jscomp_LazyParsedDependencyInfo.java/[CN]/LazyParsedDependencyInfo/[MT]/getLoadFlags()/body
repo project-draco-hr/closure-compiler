@@ -1,0 +1,19 @@
+{
+  if (loadFlags == null) {
+    Map<String,String> loadFlagsBuilder=new TreeMap<>();
+    loadFlagsBuilder.putAll(delegate.getLoadFlags());
+    FeatureSet features=((JsAst)ast).getFeatures(compiler);
+    if (features.hasEs6Modules()) {
+      if (loadFlagsBuilder.containsKey("module")) {
+        compiler.report(JSError.make(MODULE_CONFLICT,getName()));
+      }
+      loadFlagsBuilder.put("module","es6");
+    }
+    String version=features.version();
+    if (!version.equals("es3")) {
+      loadFlagsBuilder.put("lang",version);
+    }
+    loadFlags=ImmutableMap.copyOf(loadFlagsBuilder);
+  }
+  return loadFlags;
+}

@@ -1,0 +1,10 @@
+{
+  Compiler compiler=new Compiler();
+  compiler.initOptions(new CompilerOptions());
+  JsAst ast=new JsAst(SourceFile.fromCode("file.js","export let foo = 42;"));
+  SimpleDependencyInfo delegate=new SimpleDependencyInfo("","my/js.js",EMPTY,EMPTY,ImmutableMap.of("module","goog"));
+  DependencyInfo info=new LazyParsedDependencyInfo(delegate,ast,compiler);
+  assertThat(Arrays.asList(compiler.getErrorManager().getWarnings())).isEmpty();
+  assertThat(info.getLoadFlags()).isEqualTo(ImmutableMap.of("module","es6","lang","es6"));
+  assertThat(Arrays.asList(compiler.getErrorManager().getWarnings())).containsExactly(JSError.make(LazyParsedDependencyInfo.MODULE_CONFLICT,"my/js.js"));
+}

@@ -1,0 +1,14 @@
+{
+  Compiler compiler=new Compiler();
+  compiler.initOptions(new CompilerOptions());
+  JsAst ast=new JsAst(SourceFile.fromCode("file.js","parse error"));
+  SimpleDependencyInfo delegate=new SimpleDependencyInfo("","",EMPTY,EMPTY,ImmutableMap.<String,String>of());
+  DependencyInfo info=new LazyParsedDependencyInfo(delegate,ast,compiler);
+  info.getName();
+  info.getPathRelativeToClosureBase();
+  info.getProvides();
+  info.getRequires();
+  assertThat(compiler.getErrorManager().getErrorCount()).isEqualTo(0);
+  info.getLoadFlags();
+  assertThat(compiler.getErrorManager().getErrorCount()).isAtLeast(1);
+}

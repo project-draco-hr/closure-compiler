@@ -1,0 +1,10 @@
+{
+  Compiler compiler=new Compiler();
+  JsAst ast=new JsAst(SourceFile.fromCode("file.js","// nothing here"));
+  SimpleDependencyInfo delegate=new SimpleDependencyInfo("path/to/1.js","path/2.js",ImmutableList.of("foo","bar"),ImmutableList.of("baz","qux"),ImmutableMap.<String,String>of());
+  DependencyInfo info=new LazyParsedDependencyInfo(delegate,ast,compiler);
+  assertThat(info.getName()).isEqualTo("path/2.js");
+  assertThat(info.getPathRelativeToClosureBase()).isEqualTo("path/to/1.js");
+  assertThat(info.getProvides()).containsExactly("foo","bar");
+  assertThat(info.getRequires()).containsExactly("baz","qux");
+}
