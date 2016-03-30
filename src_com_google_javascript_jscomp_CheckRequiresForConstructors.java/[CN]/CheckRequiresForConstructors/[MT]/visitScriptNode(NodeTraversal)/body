@@ -23,9 +23,12 @@
     if (separatorIndex > 0) {
       parentNamespace=nonNullClassName.substring(0,separatorIndex);
     }
+    if ("goog".equals(parentNamespace) && !isClassName(nonNullClassName.substring(separatorIndex + 1))) {
+      continue;
+    }
     boolean notProvidedByConstructors=!providedNames.contains(namespace) && !providedNames.contains(outermostClassName) && !providedNames.contains(parentNamespace);
     boolean notProvidedByRequires=!requires.containsKey(namespace) && !requires.containsKey(outermostClassName) && !requires.containsKey(parentNamespace);
-    if (notProvidedByConstructors && notProvidedByRequires && !namespaces.contains(namespace)&& !"goog".equals(parentNamespace)) {
+    if (notProvidedByConstructors && notProvidedByRequires && !namespaces.contains(namespace)) {
       String rootName=Splitter.on('.').split(namespace).iterator().next();
       if (mode != Mode.SINGLE_FILE || closurizedNamespaces.contains(rootName)) {
         if (node.isCall()) {
