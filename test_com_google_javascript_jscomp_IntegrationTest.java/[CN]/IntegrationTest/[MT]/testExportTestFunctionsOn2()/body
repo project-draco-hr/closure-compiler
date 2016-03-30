@@ -5,5 +5,5 @@
   options.setRenamingPolicy(VariableRenamingPolicy.ALL,PropertyRenamingPolicy.ALL_UNQUOTED);
   options.setGeneratePseudoNames(true);
   options.setCollapseProperties(true);
-  test(options,new String[]{"var goog = {};","goog.provide('goog.testing.testSuite');\n" + "goog.testing.testSuite = function(a) {};\n"," goog.module('testing');\n" + "var testSuite = goog.require('goog.testing.testSuite');\n" + "testSuite({testMethod:function(){}});\n"},new String[]{"","var $goog$testing$testSuite$$=function($a$$){};","$goog$testing$testSuite$$({\"testMethod\":function(){}})"});
+  test(options,new String[]{LINE_JOINER.join("var goog = {};","goog.provide('goog.testing.testSuite');","goog.testing.testSuite = function(a) {};"),LINE_JOINER.join("goog.module('testing');","var testSuite = goog.require('goog.testing.testSuite');","testSuite({testMethod:function(){}});")},new String[]{"var $goog$testing$testSuite$$ = function($a$$) {};","$goog$testing$testSuite$$({'testMethod':function(){}})"});
 }

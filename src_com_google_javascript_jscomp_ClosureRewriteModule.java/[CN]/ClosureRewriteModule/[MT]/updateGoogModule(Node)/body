@@ -1,0 +1,14 @@
+{
+  Preconditions.checkState(currentScript.isModule);
+  if (currentScript.declareLegacyNamespace) {
+    call.getFirstChild().getLastChild().setString("provide");
+  }
+  if (!currentScript.willCreateExportsObject) {
+    Preconditions.checkState(!currentScript.hasCreatedExportObject);
+    exportTheEmptyBinaryNamespaceAt(NodeUtil.getEnclosingStatement(call),AddAt.AFTER);
+  }
+  if (!currentScript.declareLegacyNamespace) {
+    NodeUtil.getEnclosingStatement(call).detachFromParent();
+  }
+  compiler.reportCodeChange();
+}

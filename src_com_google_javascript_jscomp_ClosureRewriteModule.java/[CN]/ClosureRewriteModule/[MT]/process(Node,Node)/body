@@ -1,6 +1,20 @@
 {
+  Deque<ScriptDescription> scriptDefinitions=new LinkedList<>();
   for (Node c=root.getFirstChild(); c != null; c=c.getNext()) {
-    Preconditions.checkState(c.isScript());
-    hotSwapScript(c,null);
+    pushScript(new ScriptDescription());
+    currentScript.rootNode=c;
+    scriptDefinitions.addLast(currentScript);
+    NodeTraversal.traverseEs6(compiler,c,new ScriptRecorder());
+    popScript();
   }
+  if (compiler.hasHaltingErrors()) {
+    return;
+  }
+  for (Node c=root.getFirstChild(); c != null; c=c.getNext()) {
+    pushScript(scriptDefinitions.removeFirst());
+    NodeTraversal.traverseEs6(compiler,c,new ScriptUpdater());
+    popScript();
+    inlineGoogLoadModuleCalls();
+  }
+  reportUnrecognizedRequires();
 }

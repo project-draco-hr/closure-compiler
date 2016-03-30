@@ -1,0 +1,10 @@
+{
+  for (  Node loadModuleStatement : loadModuleStatements) {
+    Node moduleBlockNode=loadModuleStatement.getFirstChild().getLastChild().getLastChild();
+    moduleBlockNode.detachFromParent();
+    loadModuleStatement.getParent().replaceChild(loadModuleStatement,moduleBlockNode);
+    NodeUtil.tryMergeBlock(moduleBlockNode);
+    compiler.reportCodeChange();
+  }
+  loadModuleStatements.clear();
+}

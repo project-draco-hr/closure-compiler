@@ -1,0 +1,10 @@
+{
+  Node statementNode=rhsNode.getParent().getParent();
+  if (!statementNode.isVar() || !statementNode.hasMoreThanOneChild()) {
+    return;
+  }
+  Node nameNode=rhsNode.getParent();
+  nameNode.detachFromParent();
+  rhsNode.detachFromParent();
+  statementNode.getParent().addChildBefore(IR.var(nameNode,rhsNode),statementNode);
+}

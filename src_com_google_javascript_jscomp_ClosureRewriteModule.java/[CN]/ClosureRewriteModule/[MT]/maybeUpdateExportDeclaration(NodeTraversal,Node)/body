@@ -1,0 +1,21 @@
+{
+  if (!currentScript.isModule || !n.getString().equals("exports") || !isAssignTarget(n)) {
+    return;
+  }
+  Node assignNode=n.getParent();
+  Node exprResultNode=assignNode.getParent();
+  Node rhs=assignNode.getLastChild();
+  rhs.detachFromParent();
+  Node binaryNamespaceName=IR.name(currentScript.binaryNamespace);
+  binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,currentScript.legacyNamespace);
+  Node exportsObjectCreationNode=IR.var(binaryNamespaceName,rhs);
+  exportsObjectCreationNode.srcrefTree(exprResultNode);
+  exportsObjectCreationNode.putBooleanProp(Node.IS_NAMESPACE,true);
+  exprResultNode.getParent().replaceChild(exprResultNode,exportsObjectCreationNode);
+  compiler.reportCodeChange();
+  currentScript.hasCreatedExportObject=true;
+  markConstAndCopyJsDoc(assignNode,exportsObjectCreationNode,rhs);
+  maybeExportLegacyNamespaceAfter(exportsObjectCreationNode,assignNode);
+  maybeUpdateExportObjectLiteral(t,rhs);
+  return;
+}

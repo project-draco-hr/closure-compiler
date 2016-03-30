@@ -1,0 +1,52 @@
+{
+  if (NodeUtil.isModuleFile(n)) {
+    checkStrictModeDirective(t,n);
+  }
+switch (n.getType()) {
+case Token.CALL:
+    if (isCallTo(n,"goog.loadModule")) {
+      recordGoogLoadModule(n);
+    }
+  if (isCallTo(n,"goog.module")) {
+    recordGoogModule(t,n);
+  }
+if (isCallTo(n,"goog.module.declareLegacyNamespace")) {
+  recordGoogDeclareLegacyNamespace();
+}
+if (isCallTo(n,"goog.provide")) {
+recordGoogProvide(t,n);
+}
+if (isCallTo(n,"goog.require")) {
+recordGoogRequire(t,n,true);
+}
+if (isCallTo(n,"goog.forwardDeclare")) {
+recordGoogForwardDeclare(t,n);
+}
+if (isCallTo(n,"goog.module.get")) {
+recordGoogModuleGet(t,n);
+}
+break;
+case Token.CLASS:
+case Token.FUNCTION:
+if (isTopLevel(t,n,ScopeType.BLOCK)) {
+recordTopLevelClassOrFunctionName(n);
+}
+break;
+case Token.CONST:
+case Token.LET:
+case Token.VAR:
+if (isTopLevel(t,n,n.isVar() ? ScopeType.EXEC_CONTEXT : ScopeType.BLOCK)) {
+recordTopLevelVarNames(n);
+}
+break;
+case Token.NAME:
+maybeRecordExportDeclaration(n);
+break;
+case Token.RETURN:
+if (isTopLevel(t,n,ScopeType.BLOCK)) {
+recordModuleReturn();
+}
+break;
+}
+return true;
+}

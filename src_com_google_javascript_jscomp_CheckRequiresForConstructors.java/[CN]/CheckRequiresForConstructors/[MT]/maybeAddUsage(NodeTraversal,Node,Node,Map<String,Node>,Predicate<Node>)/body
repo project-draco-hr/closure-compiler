@@ -9,7 +9,7 @@
         }
         String rootName=Splitter.on('.').split(typeString).iterator().next();
         Var var=t.getScope().getVar(rootName);
-        if (var == null || !var.isExtern()) {
+        if ((var == null || !var.isExtern()) && !ClosureRewriteModule.isModuleExport(rootName)) {
           usagesMap.put(typeString,n);
           Node getprop=NodeUtil.newQName(compiler,typeString);
           getprop.useSourceInfoIfMissingFromForTree(typeNode);

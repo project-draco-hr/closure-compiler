@@ -1,0 +1,17 @@
+{
+  Node binaryNamespaceName=IR.name(currentScript.binaryNamespace);
+  binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,currentScript.legacyNamespace);
+  Node binaryNamespaceExportNode=IR.var(binaryNamespaceName,IR.objectlit());
+  if (addAt == AddAt.BEFORE) {
+    atNode.getParent().addChildBefore(binaryNamespaceExportNode,atNode);
+  }
+ else   if (addAt == AddAt.AFTER) {
+    atNode.getParent().addChildAfter(binaryNamespaceExportNode,atNode);
+  }
+  binaryNamespaceExportNode.putBooleanProp(Node.IS_NAMESPACE,true);
+  binaryNamespaceExportNode.srcrefTree(atNode);
+  markConst(binaryNamespaceExportNode);
+  compiler.reportCodeChange();
+  currentScript.hasCreatedExportObject=true;
+  maybeExportLegacyNamespaceAfter(binaryNamespaceExportNode,null);
+}

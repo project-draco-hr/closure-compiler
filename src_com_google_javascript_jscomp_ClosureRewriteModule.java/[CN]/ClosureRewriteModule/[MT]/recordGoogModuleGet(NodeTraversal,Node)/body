@@ -1,0 +1,41 @@
+{
+  Node legacyNamespaceNode=call.getLastChild();
+  if (call.getChildCount() != 2 || !legacyNamespaceNode.isString()) {
+    t.report(legacyNamespaceNode,INVALID_GET_NAMESPACE);
+    return;
+  }
+  if (!currentScript.isModule && t.inGlobalScope()) {
+    t.report(legacyNamespaceNode,INVALID_GET_CALL_SCOPE);
+    return;
+  }
+  String legacyNamespace=legacyNamespaceNode.getString();
+  if (!filePathByGoogModuleNamespace.containsKey(legacyNamespace)) {
+    if (!currentScript.isModule) {
+      boolean mustBeGoogModule=true;
+      unrecognizedRequires.add(new UnrecognizedRequire(call,legacyNamespace,mustBeGoogModule));
+    }
+  }
+  currentScript.googModuleGettedNamespaces.add(legacyNamespace);
+  String aliasName=null;
+  boolean isFillingAnAlias=call.getParent().isAssign() && call.getParent().getFirstChild().isName();
+  if (isFillingAnAlias && currentScript.isModule) {
+    aliasName=call.getParent().getFirstChild().getString();
+    Var aliasVar=t.getScope().getVar(aliasName);
+    if (aliasVar == null) {
+      t.report(call,INVALID_GET_ALIAS);
+      return;
+    }
+    Node aliasVarNodeRhs=NodeUtil.getRValueOfLValue(aliasVar.getNode());
+    if (aliasVarNodeRhs == null || !isCallTo(aliasVarNodeRhs,"goog.forwardDeclare")) {
+      t.report(call,INVALID_GET_ALIAS);
+      return;
+    }
+    if (!legacyNamespace.equals(aliasVarNodeRhs.getLastChild().getString())) {
+      t.report(call,INVALID_GET_ALIAS);
+      return;
+    }
+  }
+  if (aliasName != null && isTopLevel(t,NodeUtil.getEnclosingStatement(call),ScopeType.EXEC_CONTEXT)) {
+    recordImportAlias(aliasName,legacyNamespace);
+  }
+}

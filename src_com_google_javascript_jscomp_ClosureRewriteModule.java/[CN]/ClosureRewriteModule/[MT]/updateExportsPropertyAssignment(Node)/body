@@ -1,0 +1,13 @@
+{
+  if (!currentScript.isModule) {
+    return;
+  }
+  Node parent=getpropNode.getParent();
+  Node exportsNameNode=parent.getFirstFirstChild();
+  safeSetString(exportsNameNode,currentScript.binaryNamespace);
+  Node jsdocNode=parent.isAssign() ? parent : getpropNode;
+  markConstAndCopyJsDoc(jsdocNode,jsdocNode,parent.getLastChild());
+  if (!currentScript.hasCreatedExportObject) {
+    exportTheEmptyBinaryNamespaceAt(NodeUtil.getEnclosingStatement(parent),AddAt.BEFORE);
+  }
+}

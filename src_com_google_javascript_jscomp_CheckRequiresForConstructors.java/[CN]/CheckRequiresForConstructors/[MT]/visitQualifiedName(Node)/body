@@ -1,5 +1,24 @@
 {
-  for (; getprop != null; getprop=getprop.getFirstChild()) {
-    weakUsages.put(getprop.getQualifiedName(),getprop);
+  if (getpropOrName.isName() && getpropOrName.getString() != null) {
+    if (getpropOrName.getBooleanProp(Node.GOOG_MODULE_REQUIRE)) {
+      Node declStatement=NodeUtil.getEnclosingStatement(getpropOrName);
+      if (NodeUtil.isNameDeclaration(declStatement)) {
+        for (        Node varChild : declStatement.children()) {
+          if (varChild.isName()) {
+            requires.put(varChild.getString(),getpropOrName);
+          }
+          if (varChild.isObjectPattern()) {
+            for (            Node objectChild : varChild.children()) {
+              if (objectChild.isStringKey()) {
+                requires.put(objectChild.getString(),getpropOrName);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  for (; getpropOrName != null; getpropOrName=getpropOrName.getFirstChild()) {
+    weakUsages.put(getpropOrName.getQualifiedName(),getpropOrName);
   }
 }

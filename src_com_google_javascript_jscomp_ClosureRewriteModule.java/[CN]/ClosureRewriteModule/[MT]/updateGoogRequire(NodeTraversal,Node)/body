@@ -1,0 +1,46 @@
+{
+  Node legacyNamespaceNode=call.getLastChild();
+  Node statementNode=NodeUtil.getEnclosingStatement(call);
+  String legacyNamespace=legacyNamespaceNode.getString();
+  boolean targetIsGoogModule=filePathByGoogModuleNamespace.containsKey(legacyNamespace);
+  boolean targetIsAGoogModuleGetted=currentScript.googModuleGettedNamespaces.contains(legacyNamespaceNode.getString());
+  boolean importHasAlias=currentScript.legacyNamespacesByAlias.values().contains(legacyNamespace);
+  boolean isDestructuring=statementNode.getFirstChild().isObjectPattern();
+  boolean immediatePropertyAccess=call.getParent().isGetProp() && call.getGrandparent().isName() && NodeUtil.isNameDeclaration(call.getGrandparent().getParent());
+  if (currentScript.isModule || (targetIsGoogModule && targetIsAGoogModuleGetted)) {
+    if (isDestructuring) {
+      Node replacementNamespaceName=NodeUtil.newQName(compiler,targetIsGoogModule ? toBinaryNamespace(legacyNamespace) : legacyNamespace);
+      replacementNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
+      replacementNamespaceName.putBooleanProp(Node.GOOG_MODULE_REQUIRE,true);
+      replacementNamespaceName.srcrefTree(call);
+      call.getParent().replaceChild(call,replacementNamespaceName);
+      markConst(statementNode);
+    }
+ else     if (targetIsGoogModule) {
+      if (immediatePropertyAccess || !isTopLevel(t,statementNode,ScopeType.EXEC_CONTEXT)) {
+        Node binaryNamespaceName=IR.name(toBinaryNamespace(legacyNamespace));
+        binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
+        call.getParent().replaceChild(call,binaryNamespaceName);
+      }
+ else       if (!currentScript.isModule || currentScript.isModule && importHasAlias) {
+        statementNode.detachFromParent();
+      }
+    }
+ else {
+      if (immediatePropertyAccess) {
+        Node legacyNamespaceName=NodeUtil.newQName(compiler,legacyNamespace);
+        legacyNamespaceName.srcrefTree(call);
+        call.getParent().replaceChild(call,legacyNamespaceName);
+        Node callStatement=IR.exprResult(call);
+        callStatement.srcref(call);
+        statementNode.getParent().addChildBefore(callStatement,statementNode);
+        markConst(statementNode);
+      }
+ else {
+        call.detachFromParent();
+        statementNode.getParent().replaceChild(statementNode,IR.exprResult(call));
+      }
+    }
+    compiler.reportCodeChange();
+  }
+}

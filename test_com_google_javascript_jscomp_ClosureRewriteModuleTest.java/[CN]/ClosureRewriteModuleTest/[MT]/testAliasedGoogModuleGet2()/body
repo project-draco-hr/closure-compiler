@@ -1,3 +1,3 @@
 {
-  test(LINE_JOINER.join("goog.module('a');","","var x = goog.forwardDeclare('x.y.z');","function f() { x = goog.module.get('x.y.z'); }"),LINE_JOINER.join("goog.provide('a'); goog.scope(function(){","  var x = x.y.z;","  function f() {}","});"));
+  test(new String[]{"goog.module('x.y.z');",LINE_JOINER.join("goog.module('a');","var x = goog.forwardDeclare('x.y.z');","function f() {","  x = goog.module.get('x.y.z');","  new x;","}")},new String[]{"/** @const */ var module$exports$x$y$z = {};",LINE_JOINER.join("/** @const */ var module$exports$a = {};","function module$contents$a_f() {","  new module$exports$x$y$z;","}")});
 }

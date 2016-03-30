@@ -1,0 +1,26 @@
+{
+  String name=nameNode.getString();
+  if (!currentScript.isModule || !currentScript.topLevelNames.contains(name)) {
+    return;
+  }
+  Var var=t.getScope().getVar(name);
+  if (var == null || var.getScope().getRootNode() != currentScript.rootNode) {
+    return;
+  }
+  boolean nameIsAnAlias=currentScript.legacyNamespacesByAlias.containsKey(name);
+  if (nameIsAnAlias && var.getNode() != nameNode) {
+    String legacyNamespace=currentScript.legacyNamespacesByAlias.get(name);
+    boolean targetNamespaceIsAGoogModule=filePathByGoogModuleNamespace.containsKey(legacyNamespace);
+    String namespaceToInline=targetNamespaceIsAGoogModule ? toBinaryNamespace(legacyNamespace) : legacyNamespace;
+    safeSetMaybeQualifiedString(nameNode,namespaceToInline);
+    if (namespaceToInline.indexOf('.') != -1) {
+      String firstQualifiedName=namespaceToInline.substring(0,namespaceToInline.indexOf('.'));
+      Var shadowedVar=t.getScope().getVar(firstQualifiedName);
+      if (shadowedVar != null && shadowedVar.isLocal()) {
+        t.report(shadowedVar.getNode(),IMPORT_INLINING_SHADOWS_VAR,shadowedVar.getName(),legacyNamespace);
+      }
+    }
+    return;
+  }
+  safeSetString(nameNode,currentScript.contentsPrefix + name);
+}

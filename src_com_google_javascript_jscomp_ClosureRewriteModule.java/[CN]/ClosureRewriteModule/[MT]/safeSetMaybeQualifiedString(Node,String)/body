@@ -1,0 +1,13 @@
+{
+  if (newString.contains(".")) {
+    Node newQualifiedNameNode=NodeUtil.newQName(compiler,newString);
+    newQualifiedNameNode.srcrefTree(nameNode);
+    nameNode.getParent().replaceChild(nameNode,newQualifiedNameNode);
+  }
+ else {
+    String originalName=nameNode.getString();
+    nameNode.setString(newString);
+    nameNode.putProp(Node.ORIGINALNAME_PROP,originalName);
+  }
+  compiler.reportCodeChange();
+}

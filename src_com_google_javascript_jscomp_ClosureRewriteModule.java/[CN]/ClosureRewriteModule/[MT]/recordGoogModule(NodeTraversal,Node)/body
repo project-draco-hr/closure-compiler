@@ -1,0 +1,20 @@
+{
+  Node legacyNamespaceNode=call.getLastChild();
+  if (!legacyNamespaceNode.isString()) {
+    t.report(legacyNamespaceNode,INVALID_MODULE_NAMESPACE);
+    return;
+  }
+  String legacyNamespace=legacyNamespaceNode.getString();
+  currentScript.isModule=true;
+  currentScript.rootNode=NodeUtil.getEnclosingStatement(call).getParent();
+  currentScript.legacyNamespace=legacyNamespace;
+  currentScript.binaryNamespace=toBinaryNamespace(legacyNamespace);
+  currentScript.contentsPrefix=toModuleContentsPrefix(legacyNamespace);
+  if (filePathByGoogModuleNamespace.containsKey(legacyNamespace) && !filePathByGoogModuleNamespace.get(legacyNamespace).equals(call.getSourceFileName())) {
+    t.report(call,DUPLICATE_MODULE);
+  }
+  if (legacyScriptNamespaces.contains(legacyNamespace)) {
+    t.report(call,DUPLICATE_NAMESPACE);
+  }
+  filePathByGoogModuleNamespace.put(legacyNamespace,call.getSourceFileName());
+}

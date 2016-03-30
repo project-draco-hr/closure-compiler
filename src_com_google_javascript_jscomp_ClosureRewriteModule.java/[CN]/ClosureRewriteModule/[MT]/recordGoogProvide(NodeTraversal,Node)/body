@@ -1,0 +1,20 @@
+{
+  Node legacyNamespaceNode=call.getLastChild();
+  if (!legacyNamespaceNode.isString()) {
+    t.report(legacyNamespaceNode,INVALID_PROVIDE_NAMESPACE);
+    return;
+  }
+  String legacyNamespace=legacyNamespaceNode.getString();
+  if (currentScript.isModule) {
+    t.report(legacyNamespaceNode,INVALID_PROVIDE_CALL);
+  }
+  if (filePathByGoogModuleNamespace.containsKey(legacyNamespace)) {
+    t.report(call,DUPLICATE_NAMESPACE);
+  }
+  legacyScriptNamespaces.add(legacyNamespace);
+  LinkedList<String> parts=Lists.newLinkedList(Splitter.on('.').split(legacyNamespace));
+  while (!parts.isEmpty()) {
+    legacyScriptNamespacesAndPrefixes.add(Joiner.on('.').join(parts));
+    parts.removeLast();
+  }
+}

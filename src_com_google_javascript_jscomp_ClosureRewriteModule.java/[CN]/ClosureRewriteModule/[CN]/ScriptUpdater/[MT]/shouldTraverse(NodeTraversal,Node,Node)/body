@@ -1,0 +1,43 @@
+{
+switch (n.getType()) {
+case Token.CALL:
+    if (isCallTo(n,"goog.loadModule")) {
+      updateGoogLoadModule(n);
+    }
+  if (isCallTo(n,"goog.module")) {
+    updateGoogModule(n);
+  }
+if (isCallTo(n,"goog.module.declareLegacyNamespace")) {
+  updateGoogDeclareLegacyNamespace(n);
+}
+if (isCallTo(n,"goog.require")) {
+updateGoogRequire(t,n);
+}
+if (isCallTo(n,"goog.forwardDeclare")) {
+updateGoogForwardDeclare(t,n);
+}
+if (isCallTo(n,"goog.module.get")) {
+updateGoogModuleGetCall(t,n);
+}
+break;
+case Token.GETPROP:
+if (isExportPropertyAssignment(n)) {
+updateExportsPropertyAssignment(n);
+}
+break;
+case Token.NAME:
+maybeUpdateTopLevelName(t,n);
+maybeUpdateExportDeclaration(t,n);
+maybeUpdateExportNameRef(n);
+break;
+case Token.RETURN:
+if (isTopLevel(t,n,ScopeType.EXEC_CONTEXT)) {
+updateModuleReturn(n);
+}
+break;
+}
+if (n.getJSDocInfo() != null) {
+rewriteJsdoc(n.getJSDocInfo());
+}
+return true;
+}

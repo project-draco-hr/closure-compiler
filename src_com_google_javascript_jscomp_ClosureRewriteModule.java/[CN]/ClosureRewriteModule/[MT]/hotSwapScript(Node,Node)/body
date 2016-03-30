@@ -1,3 +1,13 @@
 {
-  NodeTraversal.traverseEs6(compiler,scriptRoot,this);
+  Preconditions.checkState(scriptRoot.isScript());
+  pushScript(new ScriptDescription());
+  currentScript.rootNode=scriptRoot;
+  NodeTraversal.traverseEs6(compiler,scriptRoot,new ScriptRecorder());
+  if (compiler.hasHaltingErrors()) {
+    return;
+  }
+  NodeTraversal.traverseEs6(compiler,scriptRoot,new ScriptUpdater());
+  popScript();
+  inlineGoogLoadModuleCalls();
+  reportUnrecognizedRequires();
 }
