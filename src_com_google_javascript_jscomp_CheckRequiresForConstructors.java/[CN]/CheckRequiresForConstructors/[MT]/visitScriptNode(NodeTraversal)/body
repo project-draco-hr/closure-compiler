@@ -1,5 +1,5 @@
 {
-  if (mode == Mode.SINGLE_FILE && requires.isEmpty()) {
+  if (mode == Mode.SINGLE_FILE && requires.isEmpty() && closurizedNamespaces.isEmpty()) {
     return;
   }
   Set<String> namespaces=new HashSet<>();
@@ -8,7 +8,7 @@
     if (namespace.endsWith(".call") || namespace.endsWith(".apply")) {
       namespace=namespace.substring(0,namespace.lastIndexOf('.'));
     }
-    if (namespace.startsWith("goog.global.") || namespace.equals("goog.module.get")) {
+    if (namespace.startsWith("goog.global.") || namespace.equals("goog.module.get") || namespace.equals("goog.module.declareLegacyNamespace")) {
       continue;
     }
     Node node=entry.getValue();
@@ -44,10 +44,6 @@
   for (  Map.Entry<String,Node> entry : requires.entrySet()) {
     String require=entry.getKey();
     Node call=entry.getValue();
-    Node parent=call.getParent();
-    if (parent.isAssign()) {
-      continue;
-    }
     if (!usages.containsKey(require) && !weakUsages.containsKey(require)) {
       reportExtraRequireWarning(call,require);
     }
