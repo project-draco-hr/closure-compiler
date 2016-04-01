@@ -2,12 +2,7 @@
   for (  CompilerInput input : inputs) {
     input.setCompiler(compiler);
   }
-  try {
-    List<CompilerInput> sortedList=(compiler.getOptions().getDependencyOptions().isEs6ModuleOrder() ? new Es6SortedDependencies<>(inputs) : new ClosureSortedDependencies<>(inputs)).getSortedList();
-    inputs.clear();
-    inputs.addAll(sortedList);
-  }
- catch (  CircularDependencyException e) {
-    compiler.report(JSError.make(CIRCULAR_DEPENDENCY_ERROR,e.getMessage()));
-  }
+  List<CompilerInput> sortedList=new Es6SortedDependencies<>(inputs).getSortedList();
+  inputs.clear();
+  inputs.addAll(sortedList);
 }
