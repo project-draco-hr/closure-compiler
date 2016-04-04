@@ -1,0 +1,9 @@
+{
+  typeCheck(LINE_JOINER.join("function h(x) {","  return x.name.toLowerCase().startsWith('a');","}","h({name: 'asdf'});"));
+  typeCheck(LINE_JOINER.join("function h(x) {","  return x.name.toLowerCase().startsWith('a');","}","h({name: {}});"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function h(x) {","  return x.name.toString();","}","h({name: 'asdf'});","h({name: {}});"));
+  typeCheck(LINE_JOINER.join("function h(x) {","  return x.name.length;","}","h({name: 'asdf'});","h({name: {}});"));
+  typeCheck(LINE_JOINER.join("function h(x) {","  return x.num.toExponential();","}","h({num: 123});"));
+  typeCheck(LINE_JOINER.join("function h(x) {","  return x.num.toExponential();","}","h({num: {}});"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("/** @constructor */ function Foo() {}","Foo.prototype.toLowerCase = function() {};","Foo.prototype.getProp = function() {};","var foo = new Foo;","foo.f = function() {","  if (foo.toLowerCase() > 'asdf') { throw new Error; }","  foo.getProp();","};"),NewTypeInference.INEXISTENT_PROPERTY,NewTypeInference.CROSS_SCOPE_GOTCHA);
+}
