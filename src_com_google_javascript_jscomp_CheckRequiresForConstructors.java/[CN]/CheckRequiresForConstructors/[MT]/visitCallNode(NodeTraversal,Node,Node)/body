@@ -25,6 +25,10 @@
     providedNames.add(provided);
     return;
   }
+  Node callee=call.getFirstChild();
+  if (callee.matchesQualifiedName("goog.module.get") && call.getSecondChild().isString()) {
+    weakUsages.put(call.getSecondChild().getString(),call);
+  }
   if (codingConvention.isClassFactoryCall(call)) {
     if (parent.isName()) {
       providedNames.add(parent.getString());
@@ -33,7 +37,6 @@
       providedNames.add(parent.getFirstChild().getQualifiedName());
     }
   }
-  Node callee=call.getFirstChild();
   if (callee.isName()) {
     weakUsages.put(callee.getString(),callee);
   }
