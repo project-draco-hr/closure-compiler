@@ -1,28 +1,26 @@
 {
-  Node forNode;
-  int declarationType;
-  if (NodeUtil.isEnhancedFor(pattern.getParent())) {
-    forNode=pattern.getParent();
-    declarationType=Token.ASSIGN;
-  }
- else {
-    forNode=pattern.getGrandparent();
-    declarationType=pattern.getParent().getType();
-    Preconditions.checkState(NodeUtil.isEnhancedFor(forNode));
-  }
+  Preconditions.checkArgument(pattern.isDestructuringPattern());
   String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
-  Node block=forNode.getLastChild();
-  if (declarationType == Token.ASSIGN) {
-    Node decl=IR.declaration(IR.name(tempVarName),Token.LET);
+  if (NodeUtil.isEnhancedFor(pattern.getParent())) {
+    Node forNode=pattern.getParent();
+    Node block=forNode.getLastChild();
+    Node decl=IR.var(IR.name(tempVarName));
     decl.useSourceInfoIfMissingFromForTree(pattern);
-    pattern.getParent().replaceChild(pattern,decl);
+    forNode.replaceChild(pattern,decl);
     Node exprResult=IR.exprResult(IR.assign(pattern,IR.name(tempVarName)));
     exprResult.useSourceInfoIfMissingFromForTree(pattern);
     block.addChildToFront(exprResult);
   }
  else {
-    pattern.getParent().replaceChild(pattern,IR.name(tempVarName).useSourceInfoFrom(pattern));
-    Node decl=IR.declaration(pattern,IR.name(tempVarName),declarationType);
+    Node destructuringLhs=pattern.getParent();
+    Preconditions.checkState(destructuringLhs.isDestructuringLhs());
+    Node declarationNode=destructuringLhs.getParent();
+    Node forNode=declarationNode.getParent();
+    Preconditions.checkState(NodeUtil.isEnhancedFor(forNode));
+    Node block=forNode.getLastChild();
+    declarationNode.replaceChild(destructuringLhs,IR.name(tempVarName).useSourceInfoFrom(pattern));
+    int declarationType=declarationNode.getType();
+    Node decl=IR.declaration(pattern.detachFromParent(),IR.name(tempVarName),declarationType);
     decl.useSourceInfoIfMissingFromForTree(pattern);
     block.addChildToFront(decl);
   }

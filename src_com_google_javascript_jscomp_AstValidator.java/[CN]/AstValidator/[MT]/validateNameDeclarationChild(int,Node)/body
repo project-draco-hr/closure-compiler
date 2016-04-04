@@ -1,22 +1,9 @@
 {
   if (n.isName()) {
-    validateNonEmptyString(n);
-    validateMaximumChildCount(n,1);
-    if (n.hasChildren()) {
-      validateExpression(n.getFirstChild());
-    }
+    validateLHS(type,n);
   }
- else   if (n.isArrayPattern()) {
-    validateArrayPattern(type,n);
-  }
- else   if (n.isObjectPattern()) {
-    validateObjectPattern(type,n);
-  }
- else   if (n.isDefaultValue()) {
-    validateDefaultValue(type,n);
-  }
- else   if (n.isComputedProp()) {
-    validateObjectPatternComputedPropKey(type,n);
+ else   if (n.isDestructuringLhs()) {
+    validateLHS(type,n.getFirstChild());
   }
  else {
     violation("Invalid child for " + Token.name(type) + " node",n);

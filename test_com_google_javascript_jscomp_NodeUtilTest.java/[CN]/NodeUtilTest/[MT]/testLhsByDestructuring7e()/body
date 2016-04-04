@@ -1,6 +1,8 @@
 {
   Node root=parse("for (const [a] = [1];;) {}");
-  Node destructPat=root.getFirstFirstChild().getFirstChild();
+  Node destructLhs=root.getFirstFirstChild().getFirstChild();
+  Preconditions.checkArgument(destructLhs.isDestructuringLhs());
+  Node destructPat=destructLhs.getFirstChild();
   Preconditions.checkArgument(destructPat.isArrayPattern());
   Node nameNodeA=destructPat.getFirstChild();
   Preconditions.checkState(nameNodeA.getString().equals("a"),nameNodeA);

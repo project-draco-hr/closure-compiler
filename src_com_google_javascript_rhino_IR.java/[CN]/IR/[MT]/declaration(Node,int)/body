@@ -1,4 +1,7 @@
 {
-  Preconditions.checkState(lhs.isName() || lhs.isArrayPattern() || lhs.isObjectPattern());
+  Preconditions.checkState(lhs.isName() || lhs.isDestructuringPattern() || lhs.isDestructuringLhs(),lhs);
+  if (lhs.isDestructuringPattern()) {
+    lhs=new Node(Token.DESTRUCTURING_LHS,lhs);
+  }
   return new Node(type,lhs);
 }

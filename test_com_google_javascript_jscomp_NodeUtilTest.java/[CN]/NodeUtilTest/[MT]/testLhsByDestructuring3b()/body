@@ -1,6 +1,8 @@
 {
   Node root=parse("var {a: c, b: d} = {a: 1, b: 2};");
-  Node destructPat=root.getFirstFirstChild();
+  Node destructLhs=root.getFirstFirstChild();
+  Preconditions.checkArgument(destructLhs.isDestructuringLhs());
+  Node destructPat=destructLhs.getFirstChild();
   Preconditions.checkArgument(destructPat.isObjectPattern());
   Node strKeyNodeA=destructPat.getFirstChild();
   Node strKeyNodeB=strKeyNodeA.getNext();

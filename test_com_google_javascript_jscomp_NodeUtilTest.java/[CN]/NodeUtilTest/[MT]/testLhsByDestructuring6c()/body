@@ -1,6 +1,8 @@
 {
   Node root=parse("for (var [{a: b}] = [{a: 1}];;) {}");
-  Node destructPat=root.getFirstFirstChild().getFirstFirstChild();
+  Node destructArr=root.getFirstFirstChild().getFirstFirstChild();
+  Preconditions.checkArgument(destructArr.isArrayPattern());
+  Node destructPat=destructArr.getFirstChild();
   Preconditions.checkArgument(destructPat.isObjectPattern() && destructPat.getParent().isArrayPattern());
   Node strKeyNodeA=destructPat.getFirstChild();
   Node nameNodeB=strKeyNodeA.getFirstChild();

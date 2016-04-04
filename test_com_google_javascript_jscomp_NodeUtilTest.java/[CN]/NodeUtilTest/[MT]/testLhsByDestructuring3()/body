@@ -1,13 +1,15 @@
 {
   Node root=parse("var [a, b] = [c, d];");
-  Node destructPat=root.getFirstFirstChild();
+  Node destructLhs=root.getFirstFirstChild();
+  Preconditions.checkArgument(destructLhs.isDestructuringLhs());
+  Node destructPat=destructLhs.getFirstChild();
   Preconditions.checkArgument(destructPat.isArrayPattern());
   Node nameNodeA=destructPat.getFirstChild();
   Node nameNodeB=nameNodeA.getNext();
-  Node nameNodeC=destructPat.getLastChild().getFirstChild();
-  Node nameNodeD=nameNodeC.getNext();
   Preconditions.checkState(nameNodeA.getString().equals("a"),nameNodeA);
   Preconditions.checkState(nameNodeB.getString().equals("b"),nameNodeB);
+  Node nameNodeC=destructLhs.getLastChild().getFirstChild();
+  Node nameNodeD=nameNodeC.getNext();
   Preconditions.checkState(nameNodeC.getString().equals("c"),nameNodeC);
   Preconditions.checkState(nameNodeD.getString().equals("d"),nameNodeD);
   assertLhsByDestructuring(nameNodeA);

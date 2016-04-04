@@ -96,6 +96,14 @@ case Token.LABEL_NAME:
 Preconditions.checkState(!n.getString().isEmpty());
 addIdentifier(n.getString());
 break;
+case Token.DESTRUCTURING_LHS:
+add(first);
+if (first != last) {
+Preconditions.checkState(childCount == 2);
+cc.addOp("=",true);
+add(last);
+}
+break;
 case Token.NAME:
 addIdentifier(n.getString());
 maybeAddOptional(n);
@@ -117,7 +125,9 @@ addArrayList(first);
 add("]");
 break;
 case Token.ARRAY_PATTERN:
-addArrayPattern(n);
+add("[");
+addArrayList(first);
+add("]");
 maybeAddTypeDecl(n);
 break;
 case Token.PARAM_LIST:

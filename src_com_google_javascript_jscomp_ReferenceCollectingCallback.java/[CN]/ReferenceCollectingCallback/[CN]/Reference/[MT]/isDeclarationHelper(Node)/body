@@ -6,12 +6,10 @@
   if (parent.getParent() == null) {
     return false;
   }
-  if (NodeUtil.isNameDeclaration(parent.getParent()) && node == parent.getLastChild()) {
-    if (parent.getGrandparent() == null || !parent.getGrandparent().isForOf()) {
-      return false;
-    }
+  if (NodeUtil.isNameDeclaration(parent.getParent()) && node == parent.getSecondChild()) {
+    return false;
   }
-  if (parent.isDestructuringPattern() || (parent.isStringKey() && parent.getParent().isObjectPattern()) || (parent.isComputedProp() && parent.getParent().isObjectPattern() && node == parent.getLastChild())|| (parent.isDefaultValue() && node == parent.getFirstChild())) {
+  if (parent.isDestructuringLhs() || parent.isDestructuringPattern() || (parent.isStringKey() && parent.getParent().isObjectPattern())|| (parent.isComputedProp() && parent.getParent().isObjectPattern() && node == parent.getLastChild())|| (parent.isDefaultValue() && node == parent.getFirstChild())) {
     return isDeclarationHelper(parent);
   }
   if (parent.isArrowFunction()) {
