@@ -2,6 +2,9 @@
   if (n.isCall() && n.getChildCount() == 2 && n.getFirstChild().matchesQualifiedName("require") && n.getSecondChild().isString()) {
     visitRequireCall(t,n,parent);
   }
+  if (n.isCall() && n.getChildCount() == 3 && n.getFirstChild().matchesQualifiedName("require.ensure")) {
+    visitRequireEnsureCall(n);
+  }
   if (allowFullRewrite && n.isIf()) {
     FindModuleExportStatements commonjsFinder=new FindModuleExportStatements();
     Node condition=n.getFirstChild();
