@@ -16,8 +16,8 @@
     if (info != null && info.getSuppressions().contains("missingRequire")) {
       continue;
     }
-    String outermostClassName=getOutermostClassName(namespace);
-    String nonNullClassName=outermostClassName != null ? outermostClassName : namespace;
+    List<String> classNames=getClassNames(namespace);
+    String nonNullClassName=classNames.isEmpty() ? namespace : classNames.get(0);
     String parentNamespace=null;
     int separatorIndex=nonNullClassName.lastIndexOf('.');
     if (separatorIndex > 0) {
@@ -26,13 +26,22 @@
     if ("goog".equals(parentNamespace) && !isClassName(nonNullClassName.substring(separatorIndex + 1))) {
       continue;
     }
-    boolean notProvidedByConstructors=!providedNames.contains(namespace) && !providedNames.contains(outermostClassName) && !providedNames.contains(parentNamespace);
-    boolean notProvidedByRequires=!requires.containsKey(namespace) && !requires.containsKey(outermostClassName) && !requires.containsKey(parentNamespace);
-    if (notProvidedByConstructors && notProvidedByRequires && !namespaces.contains(namespace)) {
+    boolean providedByConstructors=providedNames.contains(namespace) || providedNames.contains(parentNamespace);
+    boolean providedByRequires=requires.containsKey(namespace) || requires.containsKey(parentNamespace);
+    for (    String className : classNames) {
+      if (providedNames.contains(className)) {
+        providedByConstructors=true;
+      }
+      if (requires.containsKey(className)) {
+        providedByRequires=true;
+      }
+    }
+    if (!providedByConstructors && !providedByRequires && !namespaces.contains(namespace)) {
       String rootName=Splitter.on('.').split(namespace).iterator().next();
       if (mode != Mode.SINGLE_FILE || closurizedNamespaces.contains(rootName)) {
         if (node.isCall()) {
-          compiler.report(t.makeError(node,MISSING_REQUIRE_CALL_WARNING,namespace));
+          String nameToReport=classNames.isEmpty() ? namespace : classNames.get(0);
+          compiler.report(t.makeError(node,MISSING_REQUIRE_CALL_WARNING,nameToReport));
         }
  else {
           compiler.report(t.makeError(node,MISSING_REQUIRE_WARNING,namespace));
