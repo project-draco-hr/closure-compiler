@@ -1,0 +1,31 @@
+{
+  if (n.isExprResult()) {
+    return getBestJSDocInfoNode(n.getFirstChild());
+  }
+  JSDocInfo info=n.getJSDocInfo();
+  if (info == null) {
+    Node parent=n.getParent();
+    if (parent == null || n.isExprResult()) {
+      return null;
+    }
+    if (parent.isName()) {
+      return getBestJSDocInfoNode(parent);
+    }
+ else     if (parent.isAssign()) {
+      return getBestJSDocInfoNode(parent);
+    }
+ else     if (isObjectLitKey(parent)) {
+      return parent;
+    }
+ else     if ((parent.isFunction() || parent.isClass()) && n == parent.getFirstChild()) {
+      return getBestJSDocInfoNode(parent);
+    }
+ else     if (NodeUtil.isNameDeclaration(parent) && parent.hasOneChild()) {
+      return parent;
+    }
+ else     if ((parent.isHook() && parent.getFirstChild() != n) || parent.isOr() || parent.isAnd()|| (parent.isComma() && parent.getFirstChild() != n)) {
+      return getBestJSDocInfoNode(parent);
+    }
+  }
+  return n;
+}

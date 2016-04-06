@@ -1,31 +1,4 @@
 {
-  if (n.isExprResult()) {
-    return getBestJSDocInfo(n.getFirstChild());
-  }
-  JSDocInfo info=n.getJSDocInfo();
-  if (info == null) {
-    Node parent=n.getParent();
-    if (parent == null || n.isExprResult()) {
-      return null;
-    }
-    if (parent.isName()) {
-      return getBestJSDocInfo(parent);
-    }
- else     if (parent.isAssign()) {
-      return getBestJSDocInfo(parent);
-    }
- else     if (isObjectLitKey(parent)) {
-      return parent.getJSDocInfo();
-    }
- else     if ((parent.isFunction() || parent.isClass()) && n == parent.getFirstChild()) {
-      return getBestJSDocInfo(parent);
-    }
- else     if (NodeUtil.isNameDeclaration(parent) && parent.hasOneChild()) {
-      return parent.getJSDocInfo();
-    }
- else     if ((parent.isHook() && parent.getFirstChild() != n) || parent.isOr() || parent.isAnd()|| (parent.isComma() && parent.getFirstChild() != n)) {
-      return getBestJSDocInfo(parent);
-    }
-  }
-  return info;
+  Node jsdocNode=getBestJSDocInfoNode(n);
+  return jsdocNode == null ? null : jsdocNode.getJSDocInfo();
 }
