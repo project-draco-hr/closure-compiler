@@ -1,8 +1,10 @@
 {
   ImmutableList.Builder<String> classNames=ImmutableList.builder();
-  for (  String part : Splitter.on('.').split(qualifiedName)) {
+  List<String> parts=DOT_SPLITTER.splitToList(qualifiedName);
+  for (int i=0; i < parts.size(); i++) {
+    String part=parts.get(i);
     if (isClassOrConstantName(part)) {
-      classNames.add(qualifiedName.substring(0,qualifiedName.indexOf(part) + part.length()));
+      classNames.add(DOT_JOINER.on('.').join(parts.subList(0,i + 1)));
     }
   }
   return classNames.build();
