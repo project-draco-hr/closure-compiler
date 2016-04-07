@@ -1,30 +1,5 @@
 {
-  if (lhs.isStringKey()) {
-    if (lhs.hasChildren()) {
-      declareLHS(declarationScope,lhs.getFirstChild());
-    }
- else {
-      declareVar(declarationScope,lhs);
-    }
-  }
- else   if (lhs.isComputedProp()) {
-    declareLHS(declarationScope,lhs.getLastChild());
-  }
- else   if (lhs.isName()) {
+  for (  Node lhs : NodeUtil.getLhsNodesOfDeclaration(n)) {
     declareVar(declarationScope,lhs);
-  }
- else   if (lhs.isDefaultValue() || lhs.isRest()) {
-    declareLHS(declarationScope,lhs.getFirstChild());
-  }
- else   if (lhs.isDestructuringLhs()) {
-    declareLHS(declarationScope,lhs.getFirstChild());
-  }
- else   if (lhs.isDestructuringPattern()) {
-    for (Node child=lhs.getFirstChild(); child != null; child=child.getNext()) {
-      declareLHS(declarationScope,child);
-    }
-  }
- else {
-    Preconditions.checkState(lhs.isEmpty(),"Invalid left-hand side: %s",lhs);
   }
 }
