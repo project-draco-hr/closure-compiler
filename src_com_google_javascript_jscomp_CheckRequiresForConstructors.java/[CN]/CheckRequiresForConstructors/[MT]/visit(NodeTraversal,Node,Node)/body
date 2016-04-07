@@ -2,14 +2,17 @@
   maybeAddJsDocUsages(t,n);
 switch (n.getType()) {
 case Token.ASSIGN:
+    maybeAddProvidedName(n);
+  break;
 case Token.VAR:
 case Token.LET:
 case Token.CONST:
-    maybeAddProvidedName(n);
-  break;
+maybeAddProvidedName(n);
+maybeAddGoogScopeUsage(n,parent);
+break;
 case Token.FUNCTION:
 if (NodeUtil.isStatement(n)) {
-  maybeAddProvidedName(n);
+maybeAddProvidedName(n);
 }
 break;
 case Token.NAME:
