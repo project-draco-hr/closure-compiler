@@ -1,0 +1,44 @@
+{
+  Compiler compiler=new Compiler();
+  compiler.disableThreads();
+  JSModule module=new JSModule("m0");
+  module.add(new CompilerInput(ast));
+  compiler.compileModules(ImmutableList.<SourceFile>of(),ImmutableList.of(module),createCompilerOptions());
+  Node mainRoot=compiler.getRoot().getLastChild();
+  Node expectedRoot=null;
+  if (expected != null) {
+    expectedRoot=parseExpectedJs(ImmutableList.of(SourceFile.fromCode("expected.js",expected)));
+    expectedRoot.detachFromParent();
+  }
+  if (expectedRoot == null) {
+    assertTrue(mainRoot.isBlock() && !mainRoot.hasChildren());
+  }
+ else {
+    String explanation=expectedRoot.checkTreeEqualsIncludingJsDoc(mainRoot);
+    if (explanation != null) {
+      String expectedAsSource=compiler.toSource(expectedRoot);
+      String mainAsSource=compiler.toSource(mainRoot);
+      if (expectedAsSource.equals(mainAsSource)) {
+        fail("In: " + expectedAsSource + "\n"+ explanation);
+      }
+ else {
+        fail("\nExpected: " + expectedAsSource + "\nResult:   "+ mainAsSource+ "\n"+ explanation);
+      }
+    }
+  }
+  JSError[] errors=compiler.getResult().errors;
+  if (expectedErrors.size() > 0) {
+    for (int i=0; i < expectedErrors.size(); i++) {
+      if (i < errors.length) {
+        assertThat(errors[i].toString()).contains(expectedErrors.get(i));
+      }
+ else {
+        fail("missing error: " + expectedErrors.get(i));
+      }
+    }
+  }
+ else {
+    assertTrue(errors.length == 0);
+  }
+  assertThat(ast.getAstRoot(compiler)).isNotSameAs(realAst.getAstRoot(compiler));
+}

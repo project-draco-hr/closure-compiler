@@ -1,0 +1,13 @@
+{
+  setSourceCode("var a;");
+  SourceAst realAst=createRealAst();
+  RecoverableJsAst ast1=new RecoverableJsAst(realAst,true);
+  checkCompile(realAst,makeDefensiveCopy(ast1),"var a;\n");
+  setSourceCode("var b;");
+  realAst.clearAst();
+  checkCompile(realAst,makeDefensiveCopy(ast1),"var a;\n");
+  RecoverableJsAst ast2=new RecoverableJsAst(realAst,true);
+  checkCompile(realAst,makeDefensiveCopy(ast2),"var b;\n");
+  ast1.clearAst();
+  checkCompile(realAst,makeDefensiveCopy(ast1),"var b;\n");
+}
