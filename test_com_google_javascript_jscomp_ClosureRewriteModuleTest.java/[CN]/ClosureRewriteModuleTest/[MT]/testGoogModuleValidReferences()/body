@@ -1,0 +1,5 @@
+{
+  test(new String[]{"goog.module('a.b.c');","goog.module('x.y.z'); var c = goog.require('a.b.c'); use(c);"},new String[]{"/** @const */ var module$exports$a$b$c={};","/** @const */ var module$exports$x$y$z={}; use(module$exports$a$b$c);"});
+  test(new String[]{"goog.module('a.b.c');",LINE_JOINER.join("goog.require('a.b.c');","goog.scope(function() {","  var c = goog.module.get('a.b.c');","  use(c);","});")},new String[]{"/** @const */ var module$exports$a$b$c={};","goog.scope(function() { var c = module$exports$a$b$c; use(c); });"});
+  test(new String[]{"goog.module('a.b.c'); goog.module.declareLegacyNamespace();","goog.require('a.b.c'); use(a.b.c);"},new String[]{LINE_JOINER.join("goog.provide('a.b.c');","/** @const */ var module$exports$a$b$c={};","/** @const */ a.b.c = module$exports$a$b$c"),"goog.require('a.b.c'); use(a.b.c);"});
+}
