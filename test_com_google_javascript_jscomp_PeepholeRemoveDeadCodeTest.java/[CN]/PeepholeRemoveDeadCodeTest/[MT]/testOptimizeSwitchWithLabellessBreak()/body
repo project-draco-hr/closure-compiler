@@ -1,0 +1,5 @@
+{
+  test(LINE_JOINER.join("function f() {","  switch('x') {","    case 'x': var x = 1; break;","    case 'y': break;","  }","}"),"function f() { var x = 1; }");
+  testSame(LINE_JOINER.join("function f() {","  switch(x) {","    case 'y': break;","    default: var x = 1;","  }","}"));
+  test(LINE_JOINER.join("var exit;","switch ('a') {","  case 'a':","    break;","  default:","    exit = 21;","    break;","}","switch(exit) {","  case 21: throw 'x';","  default : console.log('good');","}"),LINE_JOINER.join("var exit;","switch(exit) {","  case 21: throw 'x';","  default : console.log('good');","}"));
+}

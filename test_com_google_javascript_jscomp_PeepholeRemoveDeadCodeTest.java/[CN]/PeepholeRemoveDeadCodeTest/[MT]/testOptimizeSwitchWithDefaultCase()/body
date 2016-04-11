@@ -1,0 +1,13 @@
+{
+  test(LINE_JOINER.join("function f() {","  switch('x') {","    case 'x': return 1;","    case 'y': return 2;","    default: return 3"," }","}"),"function f() { return 1; }");
+  test(LINE_JOINER.join("switch ('hasDefaultCase') {","  case 'foo':","    foo();","    break;","  default:","    bar();","    break;","}"),"bar();");
+  testSame("switch (x) { default: if (a) { break; } bar(); }");
+  testSame(LINE_JOINER.join("switch (x) {","  case x:","    foo();","    break;","  default:","    if (a) { break; }","    bar();","}"));
+  test(LINE_JOINER.join("switch ('hasDefaultCase') {","  case 'foo':","    foo();","    break;","  default:","    if (true) { break; }","    bar();","}"),"");
+  test(LINE_JOINER.join("switch ('hasDefaultCase') {","  case 'foo':","    foo();","    break;","  default:","    if (a) { break; }","    bar();","}"),"switch ('hasDefaultCase') { default: if (a) { break; } bar(); }");
+  test(LINE_JOINER.join("l: switch ('hasDefaultCase') {","  case 'foo':","    foo();","    break;","  default:","    if (a) { break l; }","    bar();","    break;","}"),"l:{ if (a) { break l; } bar(); }");
+  test(LINE_JOINER.join("switch ('hasDefaultCase') {","  case 'foo':","    bar();","    break;","  default:","    foo();","    break;","}"),"foo();");
+  test("switch (a()) { default: bar(); break;}","a(); bar();");
+  test("switch (a()) { default: break; bar();}","a();");
+  test(LINE_JOINER.join("loop: ","while (true) {","  switch (a()) {","    default:","      bar();","      break loop;","  }","}"),"loop: while (true) { a(); bar(); break loop; }");
+}

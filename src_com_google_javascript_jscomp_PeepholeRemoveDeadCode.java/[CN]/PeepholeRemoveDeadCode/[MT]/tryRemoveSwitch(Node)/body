@@ -1,0 +1,15 @@
+{
+  if (n.hasOneChild()) {
+    Node condition=n.removeFirstChild();
+    Node replacement=IR.exprResult(condition).srcref(n);
+    n.getParent().replaceChild(n,replacement);
+    reportCodeChange();
+    return replacement;
+  }
+ else   if (n.getChildCount() == 2 && n.getLastChild().isDefaultCase()) {
+    return tryRemoveSwitchWithSingleCase(n,true);
+  }
+ else {
+    return n;
+  }
+}

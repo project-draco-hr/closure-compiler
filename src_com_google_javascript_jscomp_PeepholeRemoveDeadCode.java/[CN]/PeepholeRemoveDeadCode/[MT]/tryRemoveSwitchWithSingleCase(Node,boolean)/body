@@ -1,0 +1,14 @@
+{
+  Node caseBlock=n.getLastChild().getLastChild();
+  removeIfUnnamedBreak(caseBlock.getLastChild());
+  if (NodeUtil.has(caseBlock,MATCH_UNNAMED_BREAK,NodeUtil.MATCH_NOT_FUNCTION)) {
+    return n;
+  }
+  if (shouldIncludeCondition) {
+    caseBlock.addChildToFront(IR.exprResult(n.removeFirstChild()).srcref(n));
+  }
+  caseBlock.setIsSyntheticBlock(false);
+  n.getParent().replaceChild(n,caseBlock.detachFromParent());
+  reportCodeChange();
+  return caseBlock;
+}
