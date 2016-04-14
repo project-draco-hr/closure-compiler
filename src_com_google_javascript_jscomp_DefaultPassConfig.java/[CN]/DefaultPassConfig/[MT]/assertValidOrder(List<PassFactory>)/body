@@ -4,8 +4,8 @@
   assertPassOrder(checks,closurePrimitives,polymerPass,"The Polymer pass must run after goog.provide processing.");
   assertPassOrder(checks,polymerPass,suspiciousCode,"The Polymer pass must run before suspiciousCode processing.");
   assertPassOrder(checks,dartSuperAccessorsPass,TranspilationPasses.es6ConvertSuper,"The Dart super accessors pass must run before ES6->ES3 super lowering.");
-  if (checks.indexOf(closureGoogScopeAliases) != -1) {
-    Preconditions.checkState(checks.indexOf(checkVariableReferences) != -1,"goog.scope processing requires variable checking");
+  if (checks.contains(closureGoogScopeAliases)) {
+    Preconditions.checkState(checks.contains(checkVariableReferences),"goog.scope processing requires variable checking");
   }
   assertPassOrder(checks,checkVariableReferences,closureGoogScopeAliases,"Variable checking must happen before goog.scope processing.");
 }

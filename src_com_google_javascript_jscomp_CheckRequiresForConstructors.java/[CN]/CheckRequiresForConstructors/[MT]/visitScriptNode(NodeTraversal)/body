@@ -17,7 +17,7 @@
       continue;
     }
     List<String> classNames=getClassNames(namespace);
-    String nonNullClassName=classNames.isEmpty() ? namespace : classNames.get(0);
+    String nonNullClassName=Iterables.getFirst(classNames,namespace);
     String parentNamespace=null;
     int separatorIndex=nonNullClassName.lastIndexOf('.');
     if (separatorIndex > 0) {
@@ -40,7 +40,7 @@
       String rootName=Splitter.on('.').split(namespace).iterator().next();
       if (mode != Mode.SINGLE_FILE || closurizedNamespaces.contains(rootName)) {
         if (node.isCall()) {
-          String nameToReport=classNames.isEmpty() ? namespace : classNames.get(0);
+          String nameToReport=Iterables.getFirst(classNames,namespace);
           compiler.report(t.makeError(node,MISSING_REQUIRE_CALL_WARNING,nameToReport));
         }
  else {
