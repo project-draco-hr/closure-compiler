@@ -3,11 +3,10 @@
   Node statementNode=NodeUtil.getEnclosingStatement(call);
   String legacyNamespace=legacyNamespaceNode.getString();
   boolean targetIsGoogModule=isLegacyByGoogModuleNamespace.containsKey(legacyNamespace);
-  boolean targetIsAGoogModuleGetted=currentScript.googModuleGettedNamespaces.contains(legacyNamespaceNode.getString());
   boolean importHasAlias=currentScript.legacyNamespacesByAlias.containsValue(legacyNamespace);
   boolean isDestructuring=statementNode.getFirstChild().isDestructuringLhs();
   boolean immediatePropertyAccess=call.getParent().isGetProp() && call.getGrandparent().isName() && NodeUtil.isNameDeclaration(call.getGrandparent().getParent());
-  if (currentScript.isModule || (targetIsGoogModule && targetIsAGoogModuleGetted)) {
+  if (currentScript.isModule || targetIsGoogModule) {
     if (isDestructuring) {
       Node replacementNamespaceName=NodeUtil.newQName(compiler,targetIsGoogModule ? toBinaryNamespace(legacyNamespace) : legacyNamespace);
       replacementNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
