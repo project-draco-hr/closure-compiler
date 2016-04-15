@@ -1,0 +1,25 @@
+{
+  if (!setKey.hasChildren() || !setKey.getFirstChild().isFunction()) {
+    return false;
+  }
+  Node setFunction=setKey.getFirstChild();
+  if (!setFunction.hasChildren() || !setFunction.getLastChild().isBlock() || !setFunction.getSecondChild().isParamList()) {
+    return false;
+  }
+  if (setFunction.getSecondChild().getChildCount() != 1) {
+    return false;
+  }
+  Node setBlock=setFunction.getLastChild();
+  if (!setBlock.hasChildren() || !setBlock.getFirstChild().isExprResult() || !setBlock.getFirstChild().getFirstChild().isComma()) {
+    return false;
+  }
+  Node multiExpression=setBlock.getFirstChild().getFirstChild();
+  if (multiExpression.getChildCount() != 2 || !multiExpression.getSecondChild().isAssign()) {
+    return false;
+  }
+  Node clinitFunction=multiExpression.getFirstChild().getFirstChild();
+  if (!clinitFunction.matchesQualifiedName(className + ".$clinit")) {
+    return false;
+  }
+  return true;
+}

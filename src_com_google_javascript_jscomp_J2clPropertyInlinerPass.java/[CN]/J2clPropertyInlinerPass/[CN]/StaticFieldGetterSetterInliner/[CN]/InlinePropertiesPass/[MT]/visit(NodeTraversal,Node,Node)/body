@@ -6,7 +6,7 @@
     if (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) {
       return;
     }
-    String accessName=n.getLastChild().getString();
+    String accessName=n.getQualifiedName();
     J2clProperty prop=propertiesByName.get(accessName);
     if (prop != null && prop.isSafeToInline) {
       FunctionInjector injector=new FunctionInjector(compiler,compiler.getUniqueNameIdSupplier(),true,true,true);
@@ -18,7 +18,7 @@
     Node assignmentTarget=n.getFirstChild();
     Node assignmentValue=n.getLastChild();
     if (assignmentTarget.isGetProp()) {
-      String accessName=assignmentTarget.getLastChild().getString();
+      String accessName=assignmentTarget.getQualifiedName();
       J2clProperty prop=propertiesByName.get(accessName);
       if (prop != null && prop.isSafeToInline) {
         FunctionInjector injector=new FunctionInjector(compiler,compiler.getUniqueNameIdSupplier(),true,true,true);

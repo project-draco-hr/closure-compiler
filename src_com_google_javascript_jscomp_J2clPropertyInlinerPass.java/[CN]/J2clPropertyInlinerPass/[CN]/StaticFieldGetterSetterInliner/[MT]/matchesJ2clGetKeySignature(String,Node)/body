@@ -1,0 +1,30 @@
+{
+  if (!getKey.hasChildren() || !getKey.getFirstChild().isFunction()) {
+    return false;
+  }
+  Node getFunction=getKey.getFirstChild();
+  if (!getFunction.hasChildren() || !getFunction.getLastChild().isBlock()) {
+    return false;
+  }
+  Node getBlock=getFunction.getLastChild();
+  if (!getBlock.hasChildren() || !(getBlock.getChildCount() == 1) || !getBlock.getFirstChild().isReturn()) {
+    return false;
+  }
+  Node returnStatement=getBlock.getFirstChild();
+  if (!returnStatement.getFirstChild().isComma()) {
+    return false;
+  }
+  Node multiExpression=returnStatement.getFirstChild();
+  if (!multiExpression.getFirstChild().isCall() || !multiExpression.getSecondChild().isGetProp()) {
+    return false;
+  }
+  Node clinitFunction=multiExpression.getFirstChild().getFirstChild();
+  Node internalProp=multiExpression.getSecondChild();
+  if (!clinitFunction.matchesQualifiedName(className + ".$clinit")) {
+    return false;
+  }
+  if (!internalProp.getQualifiedName().startsWith(className + ".$")) {
+    return false;
+  }
+  return true;
+}

@@ -2,11 +2,13 @@
   if (!NodeUtil.isObjectDefinePropertiesDefinition(n)) {
     return;
   }
+  Node className=n.getSecondChild();
+  if (!className.isName()) {
+    return;
+  }
+  String classNameString=className.getQualifiedName();
   for (  Node p : NodeUtil.getObjectDefinedPropertiesKeys(n)) {
     String name=p.getString();
-    if (!matchesJ2clStaticFieldName(name)) {
-      continue;
-    }
     Node propertyLiteral=p.getFirstChild();
     Node getKey=null;
     Node setKey=null;
@@ -16,14 +18,19 @@
       }
 switch (innerKey.getString()) {
 case "get":
-        getKey=innerKey;
+        if (matchesJ2clGetKeySignature(classNameString,innerKey)) {
+          getKey=innerKey;
+        }
       break;
 case "set":
-    setKey=innerKey;
+    if (matchesJ2clSetKeySignature(classNameString,innerKey)) {
+      setKey=innerKey;
+    }
   break;
 }
 }
-Preconditions.checkArgument(getKey != null && setKey != null,"J2cl Properties should have both a getter and setter");
-propertiesByName.put(name,new J2clProperty(getKey,setKey));
+if (getKey != null && setKey != null) {
+j2clPropertiesByName.put(classNameString + "." + name,new J2clProperty(getKey,setKey));
+}
 }
 }
