@@ -1,0 +1,11 @@
+{
+  String clinitName=node.isCall() ? getClinitMethodName(node.getFirstChild()) : null;
+  if (clinitName == null) {
+    return;
+  }
+  if (clinitsCalledAtBranch.add(clinitName)) {
+    return;
+  }
+  parent.replaceChild(node,Node.newNumber(0).useSourceInfoIfMissingFrom(node));
+  t.getCompiler().reportCodeChange();
+}

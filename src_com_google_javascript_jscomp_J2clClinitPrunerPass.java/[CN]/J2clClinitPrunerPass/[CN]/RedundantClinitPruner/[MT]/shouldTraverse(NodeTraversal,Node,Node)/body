@@ -1,0 +1,13 @@
+{
+  if (parent != null && NodeUtil.isFunctionDeclaration(node)) {
+    NodeTraversal.traverseEs6(t.getCompiler(),node,new RedundantClinitPruner());
+    return false;
+  }
+  if (isNewControlBranch(parent)) {
+    clinitsCalledAtBranch=new HierarchicalSet(clinitsCalledAtBranch);
+    if (isClinitMethod(parent)) {
+      clinitsCalledAtBranch.add(NodeUtil.getName(parent));
+    }
+  }
+  return true;
+}
