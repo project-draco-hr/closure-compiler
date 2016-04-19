@@ -1,9 +1,11 @@
 {
-  for (int i=0; i < props.size(); i++) {
-    Property prop=props.get(i);
-    ConformanceResult result=checkConformance(t,n,prop);
-    if (result.level != ConformanceLevel.CONFORMANCE) {
-      return result;
+  if (NodeUtil.isGet(n) && n.getLastChild().isString()) {
+    for (int i=0; i < props.size(); i++) {
+      Property prop=props.get(i);
+      ConformanceResult result=checkConformance(t,n,prop);
+      if (result.level != ConformanceLevel.CONFORMANCE) {
+        return result;
+      }
     }
   }
   return ConformanceResult.CONFORMANCE;
