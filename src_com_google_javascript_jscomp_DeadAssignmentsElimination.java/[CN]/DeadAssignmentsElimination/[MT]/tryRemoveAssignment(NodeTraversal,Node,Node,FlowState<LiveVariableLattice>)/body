@@ -1,11 +1,18 @@
 {
   Node parent=n.getParent();
-  if (NodeUtil.isAssignmentOp(n) || n.isInc() || n.isDec()) {
-    Node lhs=n.getFirstChild();
-    Node rhs=lhs.getNext();
+  boolean isDeclarationNode=NodeUtil.isNameDeclaration(parent);
+  if (NodeUtil.isAssignmentOp(n) || n.isInc() || n.isDec()|| isDeclarationNode) {
+    Node lhs=isDeclarationNode ? n : n.getFirstChild();
+    Node rhs=NodeUtil.getRValueOfLValue(lhs);
     if (rhs != null) {
       tryRemoveAssignment(t,rhs,exprRoot,state);
-      rhs=lhs.getNext();
+      rhs=NodeUtil.getRValueOfLValue(lhs);
+    }
+    if (isDeclarationNode && lhs.getNext() != null) {
+      tryRemoveAssignment(t,lhs.getNext(),exprRoot,state);
+    }
+    if (isDeclarationNode && (rhs == null || parent.getParent().isFor())) {
+      return;
     }
     Scope scope=t.getScope();
     if (!lhs.isName()) {
@@ -54,6 +61,11 @@
  else {
         return;
       }
+    }
+ else     if (isDeclarationNode) {
+      lhs.removeChild(rhs);
+      parent.getParent().addChildAfter(IR.exprResult(rhs),parent);
+      rhs.getParent().useSourceInfoFrom(rhs);
     }
  else {
       throw new IllegalStateException("Unknown statement");
