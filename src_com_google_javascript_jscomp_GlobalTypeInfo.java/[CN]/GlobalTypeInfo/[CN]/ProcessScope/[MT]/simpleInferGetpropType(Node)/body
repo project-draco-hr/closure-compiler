@@ -1,11 +1,14 @@
 {
   Preconditions.checkArgument(n.isGetProp());
   Node recv=n.getFirstChild();
+  String pname=n.getLastChild().getString();
+  if (recv.isGetProp() && recv.getLastChild().getString().equals("prototype")) {
+    return simpleInferPrototypeProperty(recv.getFirstChild(),pname);
+  }
   if (!recv.isQualifiedName()) {
     return null;
   }
   QualifiedName recvQname=QualifiedName.fromNode(recv);
-  String pname=n.getLastChild().getString();
   Declaration decl=this.currentScope.getDeclaration(recvQname,false);
   QualifiedName propQname=new QualifiedName(pname);
   if (decl != null) {

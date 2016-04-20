@@ -1,0 +1,14 @@
+{
+  if (this.protoProps.containsKey(pname)) {
+    Property p=this.protoProps.get(pname);
+    Node defSite=p.getDefSite();
+    if (defSite != null && defSite.isGetProp()) {
+      JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(defSite);
+      JSType declType=p.getDeclaredType();
+      if (declType != null && (!declType.isFunctionType() || jsdoc != null)) {
+        return declType;
+      }
+    }
+  }
+  return null;
+}
