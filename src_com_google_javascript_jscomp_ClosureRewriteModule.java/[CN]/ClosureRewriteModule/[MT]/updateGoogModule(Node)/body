@@ -10,5 +10,9 @@
   if (!currentScript.declareLegacyNamespace) {
     NodeUtil.getEnclosingStatement(call).detachFromParent();
   }
+  Node callee=call.getFirstChild();
+  Node arg=callee.getNext();
+  maybeAddToSymbolTable(callee);
+  maybeAddToSymbolTable(createNamespaceNode(arg));
   compiler.reportCodeChange();
 }

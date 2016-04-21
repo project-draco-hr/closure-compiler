@@ -41,6 +41,12 @@
         statementNode.getParent().replaceChild(statementNode,IR.exprResult(call));
       }
     }
+    if (targetIsGoogModule) {
+      Node callee=call.getFirstChild();
+      Node arg=callee.getNext();
+      maybeAddToSymbolTable(callee);
+      maybeAddToSymbolTable(createNamespaceNode(arg));
+    }
     compiler.reportCodeChange();
   }
 }
