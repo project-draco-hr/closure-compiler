@@ -18,10 +18,11 @@
       }
       if (!languageOutIsAtLeast(polyfill.nativeVersion)) {
         if (!polyfill.installer.isEmpty()) {
-          addInstaller(node,polyfill.installer);
+          addInstaller(polyfill.installer);
         }
         if (!polyfill.rewrite.isEmpty()) {
           changed=true;
+          injectRuntime();
           Node replacement=NodeUtil.newQName(compiler,polyfill.rewrite);
           replacement.useSourceInfoIfMissingFromForTree(node);
           parent.replaceChild(node,replacement);
@@ -34,7 +35,7 @@
     for (    Polyfill polyfill : polyfills.methods.get(node.getLastChild().getString())) {
       if (!languageOutIsAtLeast(polyfill.nativeVersion) && !polyfill.installer.isEmpty()) {
         if (!isStaticFunction(node,traversal)) {
-          addInstaller(node,polyfill.installer);
+          addInstaller(polyfill.installer);
         }
       }
     }

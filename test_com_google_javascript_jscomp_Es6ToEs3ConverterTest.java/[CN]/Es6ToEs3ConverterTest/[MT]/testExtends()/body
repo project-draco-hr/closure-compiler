@@ -1,5 +1,6 @@
 {
   test("class D {} class C extends D {}",LINE_JOINER.join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function(var_args) { D.apply(this, arguments); };","$jscomp.inherits(C, D);"));
+  assertThat(getInjectedLibraries()).containsExactly("es6_runtime");
   test("class D {} class C extends D { constructor() { super(); } }",LINE_JOINER.join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function() {","  D.call(this);","}","$jscomp.inherits(C, D);"));
   test("class D {} class C extends D { constructor(str) { super(str); } }",LINE_JOINER.join("/** @constructor @struct */","var D = function() {};","/** @constructor @struct @extends {D} */","var C = function(str) { ","  D.call(this, str);","}","$jscomp.inherits(C, D);"));
   test("class C extends ns.D { }",LINE_JOINER.join("/** @constructor @struct @extends {ns.D} */","var C = function(var_args) { ns.D.apply(this, arguments); };","$jscomp.inherits(C, ns.D);"));

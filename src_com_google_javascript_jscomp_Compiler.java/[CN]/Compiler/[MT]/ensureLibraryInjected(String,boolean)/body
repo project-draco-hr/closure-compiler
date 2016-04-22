@@ -1,21 +1,45 @@
 {
-  if (injectedLibraries.containsKey(resourceName) || options.preventLibraryInjection.contains(resourceName)) {
-    return null;
+  boolean doNotInject=!force && (options.skipNonTranspilationPasses || options.preventLibraryInjection);
+  if (injectedLibraries.containsKey(resourceName) || doNotInject) {
+    return lastInjectedLibrary;
   }
-  boolean isBase="base".equals(resourceName);
-  if (!isBase) {
-    ensureLibraryInjected("base",true);
-  }
-  Node firstChild=loadLibraryCode(resourceName,normalizeAndUniquifyNames).removeChildren();
-  Node lastChild=firstChild.getLastSibling();
-  Node parent=getNodeForCodeInsertion(null);
-  if (isBase || options.preventLibraryInjection.contains("base")) {
-    parent.addChildrenToFront(firstChild);
-  }
+  String originalCode=ResourceLoader.loadTextResource(Compiler.class,"js/" + resourceName + ".js");
+  Node ast=parseSyntheticCode(originalCode);
+  for (Node node=ast.getFirstChild(); node != null && node.isExprResult() && node.getFirstChild().isString(); node=ast.getFirstChild()) {
+    String directive=node.getFirstChild().getString();
+    List<String> words=Splitter.on(' ').splitToList(directive);
+switch (words.get(0)) {
+case "use":
+      break;
+case "require":
+    for (    String dependency : words.subList(1,words.size())) {
+      ensureLibraryInjected(dependency,force);
+    }
+  break;
+case "declare":
+for (String extern : words.subList(1,words.size())) {
+  getSynthesizedExternsInputAtEnd().getAstRoot(this).addChildToBack(IR.var(IR.name(extern)));
+}
+break;
+default :
+throw new RuntimeException("Bad directive: " + directive);
+}
+ast.removeChild(node);
+}
+if (getLifeCycleStage().isNormalized()) {
+Normalize.normalizeSyntheticCode(this,ast,"jscomp_" + resourceName + "_");
+}
+Node firstChild=ast.removeChildren();
+Node lastChild=firstChild.getLastSibling();
+Node parent=getNodeForCodeInsertion(null);
+if (lastInjectedLibrary == null) {
+parent.addChildrenToFront(firstChild);
+}
  else {
-    parent.addChildrenAfter(firstChild,injectedLibraries.get("base"));
-  }
-  reportCodeChange();
-  injectedLibraries.put(resourceName,lastChild);
-  return lastChild;
+parent.addChildrenAfter(firstChild,lastInjectedLibrary);
+}
+lastInjectedLibrary=lastChild;
+injectedLibraries.put(resourceName,lastChild);
+reportCodeChange();
+return lastChild;
 }
