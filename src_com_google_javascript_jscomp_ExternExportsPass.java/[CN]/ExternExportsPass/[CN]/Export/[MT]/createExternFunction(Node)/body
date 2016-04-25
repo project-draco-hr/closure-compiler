@@ -9,6 +9,9 @@
     param=param.getNext();
   }
   Node externFunction=IR.function(IR.name(""),paramList,IR.block());
-  externFunction.setJSType(exportedFunction.getJSType());
+  if (exportedFunction.getJSType() != null) {
+    externFunction.setJSType(exportedFunction.getJSType());
+    deleteInlineJsdocs(externFunction);
+  }
   return externFunction;
 }

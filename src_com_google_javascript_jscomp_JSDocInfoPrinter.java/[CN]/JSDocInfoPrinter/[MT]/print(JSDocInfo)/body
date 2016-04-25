@@ -89,7 +89,9 @@
   }
   Set<String> suppressions=info.getSuppressions();
   if (!suppressions.isEmpty()) {
-    parts.add("@suppress {" + Joiner.on(',').join(suppressions) + "}");
+    String[] arr=suppressions.toArray(new String[0]);
+    Arrays.sort(arr,Ordering.<String>natural());
+    parts.add("@suppress {" + Joiner.on(',').join(Arrays.asList(arr)) + "}");
     multiline=true;
   }
   if (info.isDeprecated()) {

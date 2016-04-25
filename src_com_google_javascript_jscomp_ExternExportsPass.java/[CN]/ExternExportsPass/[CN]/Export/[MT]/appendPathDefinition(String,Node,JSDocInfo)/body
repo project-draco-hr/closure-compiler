@@ -17,6 +17,15 @@
       pathDefinition=NodeUtil.newExpr(IR.assign(qualifiedPath,initializer));
     }
   }
+  if (jsdoc != null) {
+    if (pathDefinition.isExprResult()) {
+      pathDefinition.getFirstChild().setJSDocInfo(jsdoc);
+    }
+ else {
+      Preconditions.checkState(pathDefinition.isVar());
+      pathDefinition.setJSDocInfo(jsdoc);
+    }
+  }
   externsRoot.addChildToBack(pathDefinition);
   alreadyExportedPaths.add(path);
 }

@@ -4,8 +4,16 @@
     String pathPrefix=pathPrefixes.get(i);
     boolean isCompletePathPrefix=(i == pathPrefixes.size() - 1);
     boolean skipPathPrefix=pathPrefix.endsWith(".prototype") || (alreadyExportedPaths.contains(pathPrefix) && !isCompletePathPrefix);
+    boolean exportedValueDefinesNewType=false;
+    if (valueToExport != null) {
+      JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(valueToExport);
+      if (jsdoc != null && jsdoc.containsTypeDefinition()) {
+        exportedValueDefinesNewType=true;
+      }
+    }
     if (!skipPathPrefix) {
       Node initializer;
+      JSDocInfo jsdoc=null;
       if (isCompletePathPrefix && valueToExport != null) {
         if (valueToExport.isFunction()) {
           initializer=createExternFunction(valueToExport);
@@ -15,10 +23,15 @@
           initializer=createExternObjectLit(valueToExport);
         }
       }
+ else       if (!isCompletePathPrefix && exportedValueDefinesNewType) {
+        jsdoc=buildNamespaceJSDoc();
+        initializer=createExternObjectLit(IR.objectlit());
+        initializer.setJSDocInfo(null);
+      }
  else {
         initializer=IR.empty();
       }
-      appendPathDefinition(pathPrefix,initializer);
+      appendPathDefinition(pathPrefix,initializer,jsdoc);
     }
   }
 }
