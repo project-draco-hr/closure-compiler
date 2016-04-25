@@ -5,9 +5,13 @@
 switch (n.getType()) {
 case Token.ASSIGN:
     name=n.getFirstChild().getQualifiedName();
-  fn=n;
+  if (name == null) {
+    compiler.report(t.makeError(n,INJECTED_FUNCTION_ON_NON_QNAME));
+    return;
+  }
+fn=n;
 while (fn.isAssign()) {
-  fn=fn.getLastChild();
+fn=fn.getLastChild();
 }
 target=n.getParent();
 break;
