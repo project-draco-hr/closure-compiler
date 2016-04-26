@@ -3,9 +3,10 @@
   if (!shouldOptimizeScope(scope)) {
     return;
   }
+  Preconditions.checkState(scope.isFunctionScope(),scope);
   ControlFlowGraph<Node> cfg=t.getControlFlowGraph();
   LiveVariablesAnalysis liveness=new LiveVariablesAnalysis(cfg,scope,compiler);
-  if (scope.getRootNode().getSecondChild().getChildCount() == 2) {
+  if (NodeUtil.getFunctionParameters(scope.getRootNode()).getChildCount() == 2) {
     liveness.markAllParametersEscaped();
   }
   liveness.analyze();
