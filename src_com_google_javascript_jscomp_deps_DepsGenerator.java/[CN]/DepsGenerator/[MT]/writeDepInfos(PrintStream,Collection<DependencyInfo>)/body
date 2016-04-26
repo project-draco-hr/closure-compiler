@@ -1,16 +1,5 @@
 {
   for (  DependencyInfo depInfo : depInfos) {
-    Collection<String> provides=depInfo.getProvides();
-    Collection<String> requires=depInfo.getRequires();
-    out.print("goog.addDependency('" + depInfo.getPathRelativeToClosureBase() + "', ");
-    writeJsArray(out,provides);
-    out.print(", ");
-    writeJsArray(out,requires);
-    Map<String,String> loadFlags=depInfo.getLoadFlags();
-    if (!loadFlags.isEmpty()) {
-      out.print(", ");
-      writeJsObject(out,loadFlags);
-    }
-    out.println(");");
+    DependencyInfo.Util.writeAddDependency(out,depInfo);
   }
 }
