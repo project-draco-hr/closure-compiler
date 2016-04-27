@@ -2,7 +2,9 @@
   if (!recvType.isUnknown() && !recvType.isTop() && (JSType.NULL.isSubtypeOf(recvType) || JSType.UNDEFINED.isSubtypeOf(recvType))) {
     JSType minusNull=recvType.removeType(JSType.NULL_OR_UNDEF);
     if (!minusNull.isBottom()) {
-      warnings.add(JSError.make(obj,NULLABLE_DEREFERENCE,recvType.toString()));
+      if (this.reportNullDeref) {
+        warnings.add(JSError.make(obj,NULLABLE_DEREFERENCE,recvType.toString()));
+      }
       TypeEnv outEnv=inEnv;
       if (obj.isQualifiedName()) {
         QualifiedName qname=QualifiedName.fromNode(obj);
