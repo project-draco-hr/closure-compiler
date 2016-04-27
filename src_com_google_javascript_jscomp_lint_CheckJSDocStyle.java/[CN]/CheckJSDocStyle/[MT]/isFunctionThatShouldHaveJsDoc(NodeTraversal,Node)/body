@@ -8,8 +8,14 @@
   if (NodeUtil.isNameDeclaration(function.getGrandparent()) || function.getParent().isAssign()) {
     return true;
   }
-  if (function.getParent().isMemberFunctionDef() && function.getGrandparent().isClassMembers()) {
-    return !(function.getParent().matchesQualifiedName("constructor") && !NodeUtil.getFunctionParameters(function).hasChildren());
+  if (function.getGrandparent().isClassMembers()) {
+    Node memberNode=function.getParent();
+    if (memberNode.isMemberFunctionDef()) {
+      return !isConstructorWithoutParameters(function);
+    }
+ else     if (memberNode.isGetterDef() || memberNode.isSetterDef()) {
+      return true;
+    }
   }
   return false;
 }
