@@ -26,7 +26,7 @@
   boolean declaredModuleExports=false;
   for (  Node ref : exports) {
     if (ref.getParent().isAssign() && !ref.getGrandparent().isExprResult() && !declaredModuleExports) {
-      script.addChildToFront(IR.var(IR.name(moduleName)).useSourceInfoIfMissingFromForTree(ref));
+      script.addChildToFront(IR.var(moduleName).useSourceInfoIfMissingFromForTree(ref));
       declaredModuleExports=true;
     }
     String qName=null;
@@ -62,7 +62,7 @@
   }
   if (!exportRefs.isEmpty()) {
     String aliasName="exports$$" + moduleName;
-    Node aliasNode=IR.var(IR.name(aliasName),IR.name(moduleName)).useSourceInfoIfMissingFromForTree(script);
+    Node aliasNode=IR.var(aliasName,IR.name(moduleName)).useSourceInfoIfMissingFromForTree(script);
     script.addChildToFront(aliasNode);
     for (    Node ref : exportRefs) {
       ref.setOriginalName(ref.getString());

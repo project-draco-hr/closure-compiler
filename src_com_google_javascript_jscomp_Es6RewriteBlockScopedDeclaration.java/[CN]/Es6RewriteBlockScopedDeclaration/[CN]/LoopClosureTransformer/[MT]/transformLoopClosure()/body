@@ -9,7 +9,7 @@
       objectLitNextIteration.addChildToBack(IR.stringKey(var.name,IR.getprop(IR.name(object.name),IR.string(var.name))));
     }
     Node updateLoopObject=IR.assign(IR.name(object.name),objectLitNextIteration);
-    Node objectLit=IR.var(IR.name(object.name),IR.objectlit()).useSourceInfoFromForTree(loopNode);
+    Node objectLit=IR.var(object.name,IR.objectlit()).useSourceInfoFromForTree(loopNode);
     loopNode.getParent().addChildBefore(objectLit,loopNode);
     if (NodeUtil.isVanillaFor(loopNode)) {
       Node initializer=loopNode.getFirstChild();
@@ -87,7 +87,7 @@
     call.putBooleanProp(Node.FREE_CALL,true);
     Node replacement;
     if (NodeUtil.isFunctionDeclaration(function)) {
-      replacement=IR.var(IR.name(function.getFirstChild().getString()),call).useSourceInfoIfMissingFromForTree(function);
+      replacement=IR.var(function.getFirstChild().getString(),call).useSourceInfoIfMissingFromForTree(function);
     }
  else {
       replacement=call.useSourceInfoIfMissingFromForTree(function);
