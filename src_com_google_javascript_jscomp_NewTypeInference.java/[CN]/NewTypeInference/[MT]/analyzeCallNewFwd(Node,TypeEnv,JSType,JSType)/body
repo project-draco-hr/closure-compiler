@@ -24,7 +24,7 @@
  else   if (funType.isLoose()) {
     return analyzeLooseCallNodeFwd(expr,envAfterCallee,requiredType);
   }
- else   if (expr.isCall() && funType.isSomeConstructorOrInterface() && funType.getReturnType().isUnknown()) {
+ else   if (expr.isCall() && funType.isSomeConstructorOrInterface() && (funType.getReturnType().isUnknown() || funType.getReturnType().isUndefined())) {
     warnings.add(JSError.make(expr,CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
     return analyzeCallNodeArgsFwdWhenError(expr,envAfterCallee);
   }

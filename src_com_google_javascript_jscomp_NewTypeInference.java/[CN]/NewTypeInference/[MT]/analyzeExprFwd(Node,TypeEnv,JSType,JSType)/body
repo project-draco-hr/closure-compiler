@@ -176,9 +176,7 @@ break;
 default :
 throw new RuntimeException("Unhandled expression type: " + Token.name(expr.getType()));
 }
-if (resultPair.type.isUnknown() && this.reportUnknownTypes) {
-warnings.add(JSError.make(expr,UNKNOWN_EXPR_TYPE));
-}
+mayWarnAboutUnknownType(expr,resultPair.type);
 maybeSetTypeI(expr,resultPair.type);
 if (this.currentScope.isFunction()) {
 println("AnalyzeExprFWD: ",expr," ::reqtype: ",requiredType," ::spectype: ",specializedType," ::resulttype: ",resultPair.type);

@@ -5,7 +5,7 @@
   test(options,LINE_JOINER.join("/** @return {number} */","function f() {","  return 'asdf';","}"),NewTypeInference.RETURN_NONDECLARED_TYPE);
   test(options,"/** @type {ASDF} */ var x;",GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
   options.setWarningLevel(DiagnosticGroups.REPORT_UNKNOWN_TYPES,CheckLevel.WARNING);
-  test(options,"function f(/** ? */ x) { x; }",NewTypeInference.UNKNOWN_EXPR_TYPE);
+  test(options,"function f(/** ? */ x) { var y = x; }",NewTypeInference.UNKNOWN_EXPR_TYPE);
   options.setWarningLevel(DiagnosticGroups.REPORT_UNKNOWN_TYPES,CheckLevel.OFF);
   testSame(options,LINE_JOINER.join("(function() {","  /** @constructor */","  var Boolean = function() {};","})();"));
 }
