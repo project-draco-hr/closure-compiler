@@ -4,19 +4,21 @@
       if (typeNode.isString()) {
         String typeString=typeNode.getString();
         if (mode == Mode.SINGLE_FILE && !typeString.contains(".")) {
-          weakUsages.put(typeString,n);
+          weakUsages.add(typeString);
           return;
         }
         String rootName=Splitter.on('.').split(typeString).iterator().next();
         Var var=t.getScope().getVar(rootName);
         if ((var == null || !var.isExtern()) && !ClosureRewriteModule.isModuleExport(rootName)) {
-          usagesMap.put(typeString,n);
-          Node getprop=NodeUtil.newQName(compiler,typeString);
-          getprop.useSourceInfoIfMissingFromForTree(typeNode);
-          visitQualifiedName(getprop);
+          if (markStrongUsages) {
+            usages.put(typeString,n);
+          }
+ else {
+            addWeakUsagesOfAllPrefixes(typeString);
+          }
         }
  else {
-          weakUsages.put(typeString,n);
+          weakUsages.add(typeString);
         }
       }
     }

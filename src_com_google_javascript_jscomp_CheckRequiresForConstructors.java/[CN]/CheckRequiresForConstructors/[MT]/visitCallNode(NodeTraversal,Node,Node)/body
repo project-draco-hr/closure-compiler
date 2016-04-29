@@ -27,7 +27,7 @@
   }
   Node callee=call.getFirstChild();
   if (callee.matchesQualifiedName("goog.module.get") && call.getSecondChild().isString()) {
-    weakUsages.put(call.getSecondChild().getString(),call);
+    weakUsages.add(call.getSecondChild().getString());
   }
   if (codingConvention.isClassFactoryCall(call)) {
     if (parent.isName()) {
@@ -38,7 +38,7 @@
     }
   }
   if (callee.isName()) {
-    weakUsages.put(callee.getString(),callee);
+    weakUsages.add(callee.getString());
   }
  else   if (callee.isQualifiedName()) {
     Node root=NodeUtil.getRootOfQualifiedName(callee);
