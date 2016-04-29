@@ -40,9 +40,9 @@
     builder.recordType(new JSTypeExpression(new Node(Token.BANG,arrayType),restParam.getSourceFileName()));
     name.setJSDocInfo(builder.build());
   }
-  Node newArr=IR.var(REST_PARAMS,IR.arraylit());
+  Node newArr=IR.var(IR.name(REST_PARAMS),IR.arraylit());
   functionBody.addChildToFront(newArr.useSourceInfoIfMissingFromForTree(restParam));
-  Node init=IR.var(REST_INDEX,IR.number(restIndex));
+  Node init=IR.var(IR.name(REST_INDEX),IR.number(restIndex));
   Node cond=IR.lt(IR.name(REST_INDEX),IR.getprop(IR.name("arguments"),IR.string("length")));
   Node incr=IR.inc(IR.name(REST_INDEX),false);
   Node body=IR.block(IR.exprResult(IR.assign(IR.getelem(IR.name(REST_PARAMS),IR.sub(IR.name(REST_INDEX),IR.number(restIndex))),IR.getelem(IR.name("arguments"),IR.name(REST_INDEX)))));
