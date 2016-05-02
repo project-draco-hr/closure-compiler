@@ -1,0 +1,23 @@
+{
+  List<SourceFile> inputs=new ArrayList<>();
+  int i=0;
+  for (  String source : sources) {
+    inputs.add(SourceFile.fromCode("in" + i,source));
+    i++;
+  }
+  Compiler compiler=new Compiler();
+  Compiler.setLoggingLevel(Level.INFO);
+  Result result=compiler.compile(EXTERNS,inputs,options);
+  if (expectedCompileErrors == 0) {
+    assertTrue("Expected no errors, found: " + Arrays.toString(result.errors),result.success);
+  }
+ else {
+    assertFalse(result.success);
+    assertEquals(expectedCompileErrors,compiler.getErrorCount());
+  }
+  assertEquals(expectedCompileWarnings,compiler.getWarningCount());
+  if (flushResults) {
+    flushResults(compiler);
+  }
+  return compiler;
+}

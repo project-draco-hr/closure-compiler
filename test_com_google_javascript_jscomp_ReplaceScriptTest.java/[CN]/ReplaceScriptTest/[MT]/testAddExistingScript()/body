@@ -1,0 +1,14 @@
+{
+  CompilerOptions options=getOptions();
+  String src="goog.provide('Bar');\n" + "/** @constructor */\n" + "Bar = function() {};\n";
+  String otherSrc="goog.require('Bar');\n" + "Bar.foo = function() {};\n";
+  String updatedOtherSrc="goog.require('Bar');\n" + "\n\n" + "Bar.foo = function() {};\n";
+  Compiler compiler=runAddScript(options,ImmutableList.of(CLOSURE_BASE,src),0,0,otherSrc,false);
+  try {
+    doAddScript(compiler,updatedOtherSrc,1);
+    fail("Expected an IllegalStateException to be thrown");
+  }
+ catch (  IllegalStateException expectedISE) {
+  }
+  verifyPropertyLineno(compiler,"Bar","foo",2);
+}

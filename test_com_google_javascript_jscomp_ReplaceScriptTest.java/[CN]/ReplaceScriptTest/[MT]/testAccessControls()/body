@@ -1,0 +1,11 @@
+{
+  CompilerOptions options=getOptions(DiagnosticGroups.ACCESS_CONTROLS);
+  options.setCheckTypes(true);
+  String src0="/** @constructor */\n" + "test.Bar = function() { this.privNum = 10; };\n" + "/** @private */\n"+ "test.Bar.prototype.privNum;\n"+ "/** @protected */\n"+ "test.Bar.prototype.protNum;\n";
+  String src1="var a = new test.Bar();\n" + "var b = a.privNum;\n" + "a.privNum = 20;\n"+ "var c = a.protNum;\n";
+  Result result=this.runReplaceScript(options,ImmutableList.of(src0,src1),3,0,src1,1,true).getResult();
+  assertNumWarningsAndErrors(result,3,0);
+  assertErrorType(result.errors[0],CheckAccessControls.BAD_PRIVATE_PROPERTY_ACCESS,2);
+  assertErrorType(result.errors[1],CheckAccessControls.BAD_PRIVATE_PROPERTY_ACCESS,3);
+  assertErrorType(result.errors[2],CheckAccessControls.BAD_PROTECTED_PROPERTY_ACCESS,4);
+}

@@ -1,0 +1,11 @@
+{
+  CompilerOptions options=getOptions();
+  options.setWarningLevel(DiagnosticGroups.MISSING_REQUIRE,CheckLevel.ERROR);
+  options.setClosurePass(true);
+  String source0="var ns = {};\n goog.provide('ns.Bar');\n" + "/** @constructor */ ns.Bar = function() {};";
+  String source1="var a = new ns.Bar();";
+  Result result=runReplaceScript(options,ImmutableList.of(source0,source1),1,0,source1,1,true).getResult();
+  assertFalse(result.success);
+  assertThat(result.errors).hasLength(1);
+  assertErrorType(result.errors[0],CheckRequiresForConstructors.MISSING_REQUIRE_WARNING,1);
+}

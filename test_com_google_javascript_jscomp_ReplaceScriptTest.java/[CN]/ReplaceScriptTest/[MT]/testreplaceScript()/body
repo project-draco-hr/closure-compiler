@@ -1,0 +1,12 @@
+{
+  CompilerOptions options=getOptions(DiagnosticGroups.ACCESS_CONTROLS);
+  Compiler compiler=new Compiler();
+  String source="" + "/** @param {number} n */\n" + "temp = function(n) {retrun (n + 1);};\n"+ "temp(10);\n";
+  List<SourceFile> inputs=ImmutableList.of(SourceFile.fromCode("in",source));
+  Result result=compiler.compile(EXTERNS,inputs,options);
+  assertTrue(result.success);
+  String source2="" + "var a = 20;\n" + "/** @param {number} n */\n"+ "temp = function(n) {retrun (n + 1);};\n"+ "temp(a);\n";
+  SourceFile newSource=SourceFile.fromCode("in",source2);
+  JsAst ast=new JsAst(newSource);
+  compiler.replaceScript(ast);
+}

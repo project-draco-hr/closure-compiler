@@ -1,0 +1,10 @@
+{
+  CompilerOptions options=getOptions();
+  options.setWarningLevel(DiagnosticGroups.MISSING_PROVIDE,CheckLevel.ERROR);
+  checkProvideRequireErrors(options);
+  String source0="goog.provide('ns.Foo'); /** @constructor */ ns.Foo = function() {};" + "/** @constructor */ ns.Bar = function() {};";
+  Result result=runReplaceScript(options,ImmutableList.of(source0),1,0,source0,0,true).getResult();
+  assertFalse(result.success);
+  assertThat(result.errors).hasLength(1);
+  assertErrorType(result.errors[0],CheckProvides.MISSING_PROVIDE_WARNING,1);
+}

@@ -1,0 +1,10 @@
+{
+  CompilerOptions options=getOptions();
+  options.setClosurePass(true);
+  String src1="/** @constructor */\n" + "test.Bar = function() { this.privNum = 10; };\n";
+  String src2="goog.scope(function() {\n" + "  var Bar = test.Bar;\n" + "  Bar.temp = 10;"+ "});";
+  String modifiedSrc2="\n\n\n\n" + src2;
+  Compiler compiler=runReplaceScript(options,ImmutableList.of(CLOSURE_BASE,src1,src2),0,0,modifiedSrc2,2,false);
+  assertNoWarningsOrErrors(compiler.getResult());
+  verifyPropertyLineno(compiler,"test.Bar","temp",7);
+}

@@ -1,0 +1,13 @@
+{
+  String provideSrc="goog.provide('ns.Foo');\n";
+  String mainSrc="/** @constructor */\n" + "ns.Foo = function() {\n" + "};\n"+ "ns.Foo.prototype.fn = function(val){\n"+ "  return 'abc';\n"+ "};\n";
+  String newSource=provideSrc + "\n\n\n" + mainSrc;
+  String src=provideSrc + mainSrc;
+  Compiler compiler=runReplaceScript(getOptions(),ImmutableList.of(CLOSURE_BASE,src),0,0,newSource,1,false);
+  Result result=compiler.getResult();
+  assertNoWarningsOrErrors(result);
+  JSType type=compiler.getTypeIRegistry().getType("ns.Foo");
+  FunctionType fnType=type.toObjectType().getConstructor();
+  Node srcNode=fnType.getSource();
+  assertNode(srcNode).hasLineno(6);
+}

@@ -1,0 +1,11 @@
+{
+  CompilerOptions options=getOptions();
+  String prefix="var a = 3;\n";
+  String declaration="var b = 4;\n";
+  String src=prefix + declaration;
+  String newSrc=prefix + "\n\n\n\n" + declaration;
+  Compiler compiler=runReplaceScript(options,ImmutableList.of(CLOSURE_BASE,src),0,0,newSrc,1,false);
+  assertNoWarningsOrErrors(compiler.getResult());
+  TypedVar var=compiler.getTopScope().getVar("b");
+  assertNode(var.getNode()).hasLineno(6);
+}

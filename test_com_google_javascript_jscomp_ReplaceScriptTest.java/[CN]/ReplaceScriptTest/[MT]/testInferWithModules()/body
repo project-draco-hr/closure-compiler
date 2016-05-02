@@ -1,0 +1,16 @@
+{
+  CompilerOptions options=getOptions();
+  Compiler compiler=new Compiler();
+  List<SourceFile> inputs=ImmutableList.of(SourceFile.fromCode("in",""));
+  Result result=compiler.compile(EXTERNS,inputs,options);
+  assertTrue(result.success);
+  CompilerInput oldInput=compiler.getInput(new InputId("in"));
+  JSModule myModule=oldInput.getModule();
+  assertThat(myModule.getInputs()).hasSize(1);
+  SourceFile newSource=SourceFile.fromCode("in","var x;");
+  JsAst ast=new JsAst(newSource);
+  compiler.replaceScript(ast);
+  assertThat(myModule.getInputs()).hasSize(1);
+  assertThat(myModule.getInputs()).doesNotContain(oldInput);
+  assertThat(myModule.getInputs()).containsExactly(compiler.getInput(new InputId("in")));
+}

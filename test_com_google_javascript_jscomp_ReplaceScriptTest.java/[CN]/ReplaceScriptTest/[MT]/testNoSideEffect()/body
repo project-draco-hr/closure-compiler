@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=getOptions();
+  options.setCheckSuspiciousCode(true);
+  options.setWarningLevel(DiagnosticGroups.ES5_STRICT,CheckLevel.OFF);
+  String src="var s = 'test'\n" + "'this';\n";
+  Result result=runReplaceScript(options,ImmutableList.of(src),0,1,src,0,true).getResult();
+  assertNumWarningsAndErrors(result,0,1);
+  assertErrorType(result.warnings[0],CheckSideEffects.USELESS_CODE_ERROR,2);
+}

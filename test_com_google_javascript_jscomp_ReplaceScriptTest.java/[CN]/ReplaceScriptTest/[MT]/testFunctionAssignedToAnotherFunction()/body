@@ -1,0 +1,10 @@
+{
+  String src2="goog.provide('ns.Bar');\n" + "/** @return {null} */\n" + "ns.fn = function() {};\n";
+  String src="goog.provide('ns.Foo');\n" + "goog.require('ns.Bar');\n" + "/** @constructor */\n"+ "ns.Foo = function() {\n"+ "  this.fn();"+ "};\n"+ "/**\n"+ " * Performs feature-specific initialization.\n"+ " * @protected\n"+ " */\n"+ "ns.Foo.prototype.fn = ns.fn;\n";
+  CompilerOptions options=getOptions();
+  options.setCheckTypes(true);
+  Compiler compiler=runFullCompile(options,ImmutableList.of(CLOSURE_BASE,src2,src),0,0,false);
+  assertNoWarningsOrErrors(compiler.getResult());
+  doReplaceScript(compiler,src,2);
+  assertNoWarningsOrErrors(compiler.getResult());
+}

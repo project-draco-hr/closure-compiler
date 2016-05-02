@@ -1,0 +1,14 @@
+{
+  CompilerOptions options=getOptions(DiagnosticGroups.CHECK_VARIABLES);
+  options.setCheckSymbols(true);
+  String firstSource="var aVar = 10;";
+  String secondSource="var n = aVar;\n" + "var b = bVar + 1;";
+  String modifiedSource="var n = aVar;\n" + "var b = bVar + 1;\n" + "var c = cVar + 1;";
+  Result result=this.runReplaceScript(options,ImmutableList.of(firstSource,secondSource),1,0,modifiedSource,1,true).getResult();
+  assertFalse(result.success);
+  assertThat(result.errors).hasLength(2);
+  int i=2;
+  for (  JSError e : result.errors) {
+    assertErrorType(e,VarCheck.UNDEFINED_VAR_ERROR,i++);
+  }
+}

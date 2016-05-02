@@ -1,0 +1,7 @@
+{
+  CompilerOptions options=getOptions(DiagnosticGroups.GLOBAL_THIS);
+  String src="/** @constructor */ namespace.Bar = function() {};\n" + "namespace.Bar.someFunc = function() { this.newField = 20; }";
+  Result result=runReplaceScript(options,ImmutableList.of(src),1,0,src,0,true).getResult();
+  assertNumWarningsAndErrors(result,1,0);
+  assertErrorType(result.errors[0],CheckGlobalThis.GLOBAL_THIS,2);
+}

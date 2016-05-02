@@ -1,0 +1,12 @@
+{
+  String src0="var a = 10;\n var b = 11;";
+  String src1="var a = 20;\n var d = 23;";
+  String src2="var c = 32;\n var d = 23;";
+  String modifiedSrc1="var c = 20;\n var b = 20;";
+  Compiler compiler=runRedefinedVarsTest(ImmutableList.of(src0,src1,src2),2,modifiedSrc1,1,ImmutableList.of(2,1));
+  flushResults(compiler);
+  doReplaceScript(compiler,src2,2);
+  Result result=compiler.getResult();
+  assertThat(result.errors).hasLength(3);
+  assertErrorType(result.errors[1],VarCheck.VAR_MULTIPLY_DECLARED_ERROR,1);
+}

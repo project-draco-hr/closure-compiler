@@ -1,0 +1,10 @@
+{
+  CompilerOptions options=getOptions();
+  options.inferTypes=true;
+  String src="";
+  String modifiedSrc="/** @constructor */\n" + "Foo = function() {};\n" + "/** @type {number} */\n"+ "Foo.prototype.prop = 10;\n"+ "var temp = new Foo();";
+  Compiler compiler=runReplaceScript(options,ImmutableList.of(src),0,0,modifiedSrc,0,true);
+  TypedVar var=compiler.getTopScope().getVar("temp");
+  ObjectType type=var.getType().toObjectType().getImplicitPrototype();
+  assertNotNull(type.getOwnPropertyJSDocInfo("prop"));
+}

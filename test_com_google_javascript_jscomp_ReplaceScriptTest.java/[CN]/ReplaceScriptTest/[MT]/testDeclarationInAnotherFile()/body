@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=getOptions();
+  options.setClosurePass(true);
+  String src="goog.provide('Bar');\n" + "/** @constructor */\n" + "Bar = function() {};\n";
+  String otherSrc="goog.require('Bar');\n" + "Bar.foo = function() {};\n";
+  Compiler compiler=runReplaceScript(options,ImmutableList.of(CLOSURE_BASE,src,otherSrc),0,0,src,1,false);
+  assertNoWarningsOrErrors(compiler.getResult());
+  verifyPropertyLineno(compiler,"Bar","foo",2);
+}

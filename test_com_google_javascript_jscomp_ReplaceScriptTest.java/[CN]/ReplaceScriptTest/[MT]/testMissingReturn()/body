@@ -1,0 +1,9 @@
+{
+  CompilerOptions options=getOptions();
+  options.setCheckTypes(true);
+  options.setWarningLevel(DiagnosticGroups.MISSING_RETURN,CheckLevel.ERROR);
+  String src="/** @return {number} */\n" + "temp = function() { var t = 20; };\n";
+  Result result=runReplaceScript(options,ImmutableList.of(src),1,0,src,0,true).getResult();
+  assertNumWarningsAndErrors(result,1,0);
+  assertErrorType(result.errors[0],CheckMissingReturn.MISSING_RETURN_STATEMENT,2);
+}

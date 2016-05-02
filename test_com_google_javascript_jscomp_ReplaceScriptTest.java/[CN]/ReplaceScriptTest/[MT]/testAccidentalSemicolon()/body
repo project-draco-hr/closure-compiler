@@ -1,0 +1,8 @@
+{
+  CompilerOptions options=getOptions();
+  options.setCheckSuspiciousCode(true);
+  String src="if (true) ; \n  var s = 'test';\n";
+  Result result=runReplaceScript(options,ImmutableList.of(src),0,1,src,0,true).getResult();
+  assertNumWarningsAndErrors(result,0,1);
+  assertErrorType(result.warnings[0],CheckSuspiciousCode.SUSPICIOUS_SEMICOLON,1);
+}

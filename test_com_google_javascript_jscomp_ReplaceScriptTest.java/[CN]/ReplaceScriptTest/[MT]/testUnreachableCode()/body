@@ -1,0 +1,8 @@
+{
+  CompilerOptions options=getOptions();
+  options.setWarningLevel(DiagnosticGroups.CHECK_USELESS_CODE,CheckLevel.ERROR);
+  String src="if (false) { \n  var s = 'test';\n }";
+  Result result=runReplaceScript(options,ImmutableList.of(src),1,0,src,0,true).getResult();
+  assertNumWarningsAndErrors(result,1,0);
+  assertErrorType(result.errors[0],CheckUnreachableCode.UNREACHABLE_CODE,1);
+}

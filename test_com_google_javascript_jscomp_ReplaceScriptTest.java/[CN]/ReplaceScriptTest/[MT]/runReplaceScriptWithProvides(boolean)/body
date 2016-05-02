@@ -1,0 +1,8 @@
+{
+  CompilerOptions options=getOptions(DiagnosticGroups.ACCESS_CONTROLS);
+  options.setClosurePass(closureOn);
+  String source="goog.provide('Bar');" + "/** @constructor */ Bar = function() {};";
+  String newSource="goog.provide('Bar');\ngoog.provide('Baz');" + "/** @constructor */ Bar = function() {};\n" + "/** @constructor */ Baz = function() {};";
+  Result result=this.runReplaceScript(options,ImmutableList.of(CLOSURE_BASE,source),0,0,newSource,1,false).getResult();
+  assertNoWarningsOrErrors(result);
+}
