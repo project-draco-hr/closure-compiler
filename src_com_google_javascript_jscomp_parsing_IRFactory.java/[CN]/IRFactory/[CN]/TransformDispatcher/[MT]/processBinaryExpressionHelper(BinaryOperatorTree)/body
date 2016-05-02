@@ -1,0 +1,25 @@
+{
+  Node root=null;
+  Node current=null;
+  Node previous=null;
+  while (exprTree != null) {
+    previous=current;
+    current=newNode(transformBinaryTokenType(exprTree.operator.type),transform(exprTree.right));
+    setSourceInfo(current,exprTree);
+    if (previous != null) {
+      previous.addChildToFront(current);
+    }
+    if (exprTree.left instanceof BinaryOperatorTree) {
+      exprTree=(BinaryOperatorTree)exprTree.left;
+    }
+ else {
+      Node leftNode=transform(exprTree.left);
+      current.addChildToFront(leftNode);
+      exprTree=null;
+    }
+    if (root == null) {
+      root=current;
+    }
+  }
+  return root;
+}

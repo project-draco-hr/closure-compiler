@@ -1,6 +1,21 @@
 {
-  validate(n);
-  for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
-    validateAll(c);
+  ArrayDeque<Node> work=new ArrayDeque<>();
+  while (n != null) {
+    validate(n);
+    Node nextSibling=n.getNext();
+    Node firstChild=n.getFirstChild();
+    if (firstChild != null) {
+      if (nextSibling != null) {
+        work.push(nextSibling);
+      }
+      n=firstChild;
+    }
+ else     if (nextSibling != null) {
+      n=nextSibling;
+    }
+ else {
+      n=work.poll();
+    }
   }
+  Preconditions.checkState(work.isEmpty());
 }

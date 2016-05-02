@@ -1,15 +1,8 @@
 {
   Comment closestPreviousComment=null;
-  while (currentComment != null && currentComment.location.end.offset <= location.start.offset) {
-    if (currentComment.type == Comment.Type.JSDOC) {
-      closestPreviousComment=currentComment;
-    }
-    if (this.nextCommentIter.hasNext()) {
-      currentComment=this.nextCommentIter.next();
-    }
- else {
-      currentComment=null;
-    }
+  while (hasPendingCommentBefore(location)) {
+    closestPreviousComment=currentComment;
+    currentComment=skipNonJsDoc(nextCommentIter);
   }
   return closestPreviousComment;
 }
