@@ -1,0 +1,12 @@
+{
+  Node firstExpr=callNode.getSecondChild();
+  Node secondExpr=callNode.getLastChild();
+  if (!NodeUtil.isLiteralValue(firstExpr,true) && !NodeUtil.isLiteralValue(secondExpr,true)) {
+    return;
+  }
+  firstExpr.detachFromParent();
+  secondExpr.detachFromParent();
+  Node replacement=asEqOperation(firstExpr,secondExpr);
+  callNode.getParent().replaceChild(callNode,replacement.useSourceInfoIfMissingFrom(callNode));
+  compiler.reportCodeChange();
+}
