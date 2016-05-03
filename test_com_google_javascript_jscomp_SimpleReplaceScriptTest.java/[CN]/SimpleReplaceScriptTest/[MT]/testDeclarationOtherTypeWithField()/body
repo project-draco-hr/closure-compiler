@@ -1,0 +1,12 @@
+{
+  CompilerOptions options=getOptions();
+  String srcPrefix="goog.provide('Bar');\n" + "/** @constructor */\n" + "Bar = function() {};\n";
+  String declaration="Bar.foo = function() {};\n";
+  String originalSrc=srcPrefix + declaration;
+  String modifiedSrc=srcPrefix + "\n\n\n\n" + declaration;
+  String otherSrc="goog.provide('Baz');\n" + "/** @constructor */\n" + "Baz = function() {};\n"+ "Baz.foo = function() {};\n";
+  Compiler compiler=runReplaceScript(options,ImmutableList.of(CLOSURE_BASE,originalSrc,otherSrc),0,0,modifiedSrc,1,false);
+  assertNoWarningsOrErrors(compiler.getResult());
+  verifyPropertyLineno(compiler,"Bar","foo",8);
+  verifyPropertyLineno(compiler,"Baz","foo",4);
+}

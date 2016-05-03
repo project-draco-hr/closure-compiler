@@ -1,0 +1,11 @@
+{
+  CompilerOptions options=getOptions();
+  String src1="goog.provide('ns.Bar');\n" + "/** @constructor */\n" + "ns.Bar = function() {};\n"+ "ns.Bar.temp = function() {};\n"+ "ns.Bar.func = function() {};\n";
+  String src2="goog.provide('ns.Foo');\n" + "goog.require('ns.Bar');\n" + "/**\n"+ " * @extends {ns.Bar}\n"+ " * @constructor\n"+ " */\n"+ "ns.Foo = function() {};\n"+ "goog.inherits(ns.Foo, ns.Bar);\n"+ "/** @override */\n"+ "ns.Foo.func = function() {"+ "  ns.Bar.temp(); "+ "};\n";
+  String newSrc2="\n\n\n" + src2;
+  Compiler compiler=runReplaceScript(options,ImmutableList.of(CLOSURE_BASE,src1,src2),0,0,newSrc2,2,false);
+  assertNoWarningsOrErrors(compiler.getResult());
+  verifyPropertyLineno(compiler,"ns.Foo","func",13);
+  doReplaceScript(compiler,src1,1);
+  verifyPropertyLineno(compiler,"ns.Foo","func",13);
+}

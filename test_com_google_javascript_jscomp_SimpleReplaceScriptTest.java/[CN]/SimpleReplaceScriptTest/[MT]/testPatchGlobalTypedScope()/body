@@ -1,0 +1,31 @@
+{
+  CompilerOptions options=getOptions(DiagnosticGroups.CHECK_TYPES);
+  String externSrc="/** @type {number} */ var aNum;\n";
+  String src1="goog.provide('unique.Bar');\n" + "/** @constructor */ unique.Bar = function() {};\n" + "/** @type {unique.Bar} */ var obj1 = new unique.Bar();\n"+ "var testNum = 20;\n"+ "var objNoType1 = new unique.Bar();\n";
+  String src2="goog.require('unique.Bar');\n" + "/** @type {unique.Bar} */ var obj2 = new unique.Bar();\n" + "var objNoType2 = new unique.Bar();";
+  List<SourceFile> inputs=ImmutableList.of(SourceFile.fromCode("in1",src1),SourceFile.fromCode("in2",src2));
+  List<SourceFile> externs=ImmutableList.of(SourceFile.fromCode("extern",externSrc));
+  Compiler compiler=new Compiler();
+  Compiler.setLoggingLevel(Level.INFO);
+  compiler.compile(externs,inputs,options);
+  assertTrue(compiler.getResult().success);
+  TypedScope oldGlobalScope=compiler.getTopScope();
+  SourceFile newSource1=SourceFile.fromCode("in1",src1);
+  JsAst ast=new JsAst(newSource1);
+  compiler.replaceScript(ast);
+  assertTrue(compiler.getResult().success);
+  assertScopesSimilar(oldGlobalScope,compiler.getTopScope());
+  assertScopeAndThisForScopeSimilar(compiler.getTopScope());
+  SourceFile newSource2=SourceFile.fromCode("in2",src2);
+  ast=new JsAst(newSource2);
+  compiler.replaceScript(ast);
+  assertTrue(compiler.getResult().success);
+  assertScopesSimilar(oldGlobalScope,compiler.getTopScope());
+  assertScopeAndThisForScopeSimilar(compiler.getTopScope());
+  newSource2=SourceFile.fromCode("in2","");
+  ast=new JsAst(newSource2);
+  compiler.replaceScript(ast);
+  assertTrue(compiler.getResult().success);
+  assertSubsetScope(compiler.getTopScope(),oldGlobalScope,ImmutableSet.of("obj2","objNoType2"));
+  assertScopeAndThisForScopeSimilar(compiler.getTopScope());
+}
