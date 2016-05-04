@@ -4,7 +4,7 @@
   Node rhs=superSet.getLastChild();
   Node superGet=superSet.getFirstChild();
   Node name=superGet.getLastChild().cloneTree();
-  Node callSuperSet=IR.call(NodeUtil.newQName(compiler,CALL_SUPER_SET),IR.thisNode(),superGet.isGetProp() ? renameProperty(name) : name,rhs.cloneTree());
-  replace(superSet,callSuperSet.srcrefTree(superSet));
+  Node callSuperSet=IR.call(NodeUtil.newQName(compiler,CALL_SUPER_SET).srcrefTree(superSet),IR.thisNode().srcref(superSet),superGet.isGetProp() ? renameProperty(name) : name,rhs.cloneTree());
+  replace(superSet,callSuperSet);
   reportEs6Change();
 }
