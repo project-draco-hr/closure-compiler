@@ -2,7 +2,7 @@
   Node legacyNamespaceNode=call.getLastChild();
   Node statementNode=NodeUtil.getEnclosingStatement(call);
   String legacyNamespace=legacyNamespaceNode.getString();
-  boolean targetIsGoogModule=isLegacyByGoogModuleNamespace.containsKey(legacyNamespace);
+  boolean targetIsGoogModule=rewriteState.containsModule(legacyNamespace);
   boolean targetIsAGoogModuleGetted=currentScript.googModuleGettedNamespaces.contains(legacyNamespaceNode.getString());
   boolean importHasAlias=currentScript.legacyNamespacesByAlias.containsValue(legacyNamespace);
   boolean isDestructuring=statementNode.getFirstChild().isDestructuringLhs();
@@ -22,7 +22,7 @@
         binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
         call.getParent().replaceChild(call,binaryNamespaceName);
       }
- else       if (importHasAlias || !isLegacyByGoogModuleNamespace.get(legacyNamespace)) {
+ else       if (importHasAlias || !rewriteState.isLegacyModule(legacyNamespace)) {
         statementNode.detachFromParent();
       }
     }

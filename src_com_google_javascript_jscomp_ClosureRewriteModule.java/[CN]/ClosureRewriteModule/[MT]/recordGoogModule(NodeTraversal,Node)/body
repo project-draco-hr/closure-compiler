@@ -10,11 +10,11 @@
   currentScript.legacyNamespace=legacyNamespace;
   currentScript.binaryNamespace=toBinaryNamespace(legacyNamespace);
   currentScript.contentsPrefix=toModuleContentsPrefix(legacyNamespace);
-  if (isLegacyByGoogModuleNamespace.containsKey(legacyNamespace)) {
+  if (rewriteState.containsModule(legacyNamespace)) {
     t.report(call,DUPLICATE_MODULE,legacyNamespace);
   }
   if (legacyScriptNamespaces.contains(legacyNamespace)) {
     t.report(call,DUPLICATE_NAMESPACE,legacyNamespace);
   }
-  isLegacyByGoogModuleNamespace.put(legacyNamespace,false);
+  rewriteState.trackModule(legacyNamespace,currentScript);
 }
