@@ -1,0 +1,29 @@
+{
+  if (type == Token.NAME || getBooleanProp(IS_MODULE_NAME)) {
+    String name=getOriginalName();
+    if (name == null) {
+      name=getString();
+    }
+    return name.isEmpty() ? null : name;
+  }
+ else   if (type == Token.GETPROP) {
+    String left=getFirstChild().getOriginalQualifiedName();
+    if (left == null) {
+      return null;
+    }
+    String right=getLastChild().getOriginalName();
+    if (right == null) {
+      right=getLastChild().getString();
+    }
+    return left + "." + right;
+  }
+ else   if (type == Token.THIS) {
+    return "this";
+  }
+ else   if (type == Token.SUPER) {
+    return "super";
+  }
+ else {
+    return null;
+  }
+}
