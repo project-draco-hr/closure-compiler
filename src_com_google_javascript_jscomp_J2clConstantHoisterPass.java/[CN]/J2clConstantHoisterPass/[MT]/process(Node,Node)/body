@@ -1,0 +1,14 @@
+{
+  final Multimap<String,Node> fieldAssignments=ArrayListMultimap.create();
+  NodeTraversal.traverseEs6(compiler,root,new AbstractPostOrderCallback(){
+    @Override public void visit(    NodeTraversal t,    Node node,    Node parent){
+      if (parent != null && NodeUtil.isLValue(node)) {
+        fieldAssignments.put(node.getQualifiedName(),parent);
+      }
+    }
+  }
+);
+  for (  Collection<Node> assignments : fieldAssignments.asMap().values()) {
+    maybeHoistClassField(assignments);
+  }
+}

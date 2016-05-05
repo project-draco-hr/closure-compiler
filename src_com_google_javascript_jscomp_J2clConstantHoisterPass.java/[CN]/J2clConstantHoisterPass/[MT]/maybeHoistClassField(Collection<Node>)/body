@@ -1,0 +1,21 @@
+{
+  if (assignments.size() != 2) {
+    return;
+  }
+  Node firstAssignment=Iterables.get(assignments,0);
+  Node secondAssignment=Iterables.get(assignments,1);
+  if (!isClassFieldInitialization(secondAssignment)) {
+    return;
+  }
+  if (!isClinitFieldAssignment(firstAssignment)) {
+    return;
+  }
+  if (!isLiteralValue(firstAssignment.getSecondChild())) {
+    return;
+  }
+  if (NodeUtil.getEnclosingScript(firstAssignment) != NodeUtil.getEnclosingScript(secondAssignment)) {
+    return;
+  }
+  hoistConstantLikeField(firstAssignment,secondAssignment);
+  compiler.reportCodeChange();
+}

@@ -1,0 +1,10 @@
+{
+  Node clinitAssignedValue=clinitAssignment.getSecondChild();
+  Node declarationInClass=declarationAssignment.getFirstChild();
+  Node declarationAssignedValue=declarationInClass.getFirstChild();
+  NodeUtil.removeChild(clinitAssignment.getParent(),clinitAssignment);
+  clinitAssignedValue.detachFromParent();
+  declarationInClass.replaceChild(declarationAssignedValue,clinitAssignedValue);
+  declarationInClass.putBooleanProp(Node.IS_CONSTANT_VAR,true);
+  checkState(isLiteralValue(declarationAssignedValue));
+}
