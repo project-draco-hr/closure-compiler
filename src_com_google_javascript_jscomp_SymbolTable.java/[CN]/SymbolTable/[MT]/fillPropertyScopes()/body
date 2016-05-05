@@ -1,12 +1,19 @@
 {
   List<Symbol> types=new ArrayList<>();
+  List<Symbol> googModuleExportTypes=new ArrayList<>();
   for (  Symbol sym : getAllSymbols()) {
     if (needsPropertyScope(sym)) {
-      types.add(sym);
+      if (sym.getName().startsWith("module$exports")) {
+        googModuleExportTypes.add(sym);
+      }
+ else {
+        types.add(sym);
+      }
     }
   }
   Collections.sort(types,getNaturalSymbolOrdering().reverse());
-  for (  Symbol s : types) {
+  Collections.sort(googModuleExportTypes,getNaturalSymbolOrdering().reverse());
+  for (  Symbol s : Iterables.concat(googModuleExportTypes,types)) {
     createPropertyScopeFor(s);
   }
   pruneOrphanedNames();
