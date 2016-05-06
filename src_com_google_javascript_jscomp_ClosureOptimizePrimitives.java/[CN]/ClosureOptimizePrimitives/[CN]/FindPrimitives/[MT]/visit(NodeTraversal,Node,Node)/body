@@ -1,7 +1,10 @@
 {
   if (n.isCall()) {
     Node fn=n.getFirstChild();
-    if (fn.matchesQualifiedName("goog$object$create") || fn.matchesQualifiedName("goog.object.create")) {
+    if (compiler.getCodingConvention().isPropertyRenameFunction(fn.getOriginalQualifiedName())) {
+      processRenamePropertyCall(n);
+    }
+ else     if (fn.matchesQualifiedName("goog$object$create") || fn.matchesQualifiedName("goog.object.create")) {
       processObjectCreateCall(n);
     }
  else     if (fn.matchesQualifiedName("goog$object$createSet") || fn.matchesQualifiedName("goog.object.createSet")) {

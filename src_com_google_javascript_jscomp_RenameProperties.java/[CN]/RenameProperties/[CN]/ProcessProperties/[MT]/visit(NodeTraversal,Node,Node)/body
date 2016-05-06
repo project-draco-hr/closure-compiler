@@ -23,16 +23,19 @@ quotedNames.add(child.getString());
 }
 break;
 case Token.CALL:
+{
 Node fnName=n.getFirstChild();
-if (fnName.isName() && RENAME_PROPERTY_FUNCTION_NAME.equals(fnName.getString())) {
+if (compiler.getCodingConvention().isPropertyRenameFunction(fnName.getOriginalQualifiedName())) {
 callNodeToParentMap.put(n,parent);
 countCallCandidates(t,n);
 }
 break;
+}
 case Token.FUNCTION:
+{
 if (NodeUtil.isFunctionDeclaration(n)) {
 String name=n.getFirstChild().getString();
-if (RENAME_PROPERTY_FUNCTION_NAME.equals(name)) {
+if (NodeUtil.JSC_PROPERTY_NAME_FN.equals(name)) {
 if (parent.isExprResult()) {
 parent.detachFromParent();
 }
@@ -42,7 +45,7 @@ parent.removeChild(n);
 compiler.reportCodeChange();
 }
 }
- else if (parent.isName() && RENAME_PROPERTY_FUNCTION_NAME.equals(parent.getString())) {
+ else if (parent.isName() && NodeUtil.JSC_PROPERTY_NAME_FN.equals(parent.getString())) {
 Node varNode=parent.getParent();
 if (varNode.isVar()) {
 varNode.removeChild(parent);
@@ -52,6 +55,14 @@ varNode.detachFromParent();
 compiler.reportCodeChange();
 }
 }
+ else if (NodeUtil.isFunctionExpression(n) && parent.isAssign() && parent.getFirstChild().isGetProp()&& compiler.getCodingConvention().isPropertyRenameFunction(parent.getFirstChild().getOriginalQualifiedName())) {
+Node exprResult=parent.getParent();
+if (exprResult.isExprResult() && NodeUtil.isStatementBlock(exprResult.getParent()) && exprResult.getFirstChild().isAssign()) {
+exprResult.detachFromParent();
+compiler.reportCodeChange();
+}
+}
 break;
+}
 }
 }
