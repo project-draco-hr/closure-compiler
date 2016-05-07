@@ -1,16 +1,17 @@
 {
-  if (getpropOrName.isName() && getpropOrName.getString() != null) {
-    if (getpropOrName.getBooleanProp(Node.GOOG_MODULE_REQUIRE)) {
-      Node declStatement=NodeUtil.getEnclosingStatement(getpropOrName);
+  Preconditions.checkState(n.isName() || n.isGetProp() || n.isStringKey(),n);
+  if (n.isName() && n.getString() != null) {
+    if (n.getBooleanProp(Node.GOOG_MODULE_REQUIRE)) {
+      Node declStatement=NodeUtil.getEnclosingStatement(n);
       if (NodeUtil.isNameDeclaration(declStatement)) {
         for (        Node varChild : declStatement.children()) {
           if (varChild.isName()) {
-            requires.put(varChild.getString(),getpropOrName);
+            requires.put(varChild.getString(),n);
           }
           if (varChild.isObjectPattern()) {
             for (            Node objectChild : varChild.children()) {
               if (objectChild.isStringKey()) {
-                requires.put(objectChild.getString(),getpropOrName);
+                requires.put(objectChild.getString(),n);
               }
             }
           }
@@ -18,5 +19,6 @@
       }
     }
   }
-  addWeakUsagesOfAllPrefixes(getpropOrName.getQualifiedName());
+  String qualifiedName=n.isStringKey() ? n.getString() : n.getQualifiedName();
+  addWeakUsagesOfAllPrefixes(qualifiedName);
 }
