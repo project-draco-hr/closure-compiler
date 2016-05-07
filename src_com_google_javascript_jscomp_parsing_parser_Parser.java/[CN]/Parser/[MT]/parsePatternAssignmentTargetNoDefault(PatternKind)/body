@@ -1,0 +1,16 @@
+{
+  ParseTree assignmentTarget;
+  if (peekPatternStart()) {
+    assignmentTarget=parsePattern(kind);
+  }
+ else {
+    assignmentTarget=parseLeftHandSideExpression();
+    if (!assignmentTarget.isValidAssignmentTarget()) {
+      reportError("invalid assignment target");
+    }
+    if (kind == PatternKind.INITIALIZER && assignmentTarget.type != ParseTreeType.IDENTIFIER_EXPRESSION) {
+      reportError("Only an identifier or destructuring pattern is allowed here.");
+    }
+  }
+  return assignmentTarget;
+}

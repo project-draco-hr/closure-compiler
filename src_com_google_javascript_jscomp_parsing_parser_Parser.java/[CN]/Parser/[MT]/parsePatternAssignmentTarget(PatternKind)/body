@@ -1,0 +1,11 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ParseTree assignmentTarget;
+  assignmentTarget=parsePatternAssignmentTargetNoDefault(patternKind);
+  if (peek(TokenType.EQUAL)) {
+    eat(TokenType.EQUAL);
+    ParseTree defaultValue=parseAssignmentExpression();
+    assignmentTarget=new DefaultParameterTree(getTreeLocation(start),assignmentTarget,defaultValue);
+  }
+  return assignmentTarget;
+}

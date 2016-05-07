@@ -3,6 +3,10 @@
   expectedFeatures=FeatureSet.ES6;
   parse("function f([x, y]) { use(x); use(y); }");
   parse("function f([x, [y, z]]) {}");
+  parse("function f([x, {y, foo: z}]) {}");
   parse("function f([x, y] = [1, 2]) { use(x); use(y); }");
   parse("function f([x, x]) {}");
+  parseError("function f([a[0], x]) {}","Only an identifier or destructuring pattern is allowed here.");
+  parseError("function f([a, [x.foo]]) {}","Only an identifier or destructuring pattern is allowed here.");
+  parseError("function f([a, {foo: x.foo}]) {}","Only an identifier or destructuring pattern is allowed here.");
 }

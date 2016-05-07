@@ -14,13 +14,11 @@
       parameter=new OptionalParameterTree(getTreeLocation(start),parameter);
     }
   }
- else   if (context != ParamContext.TYPE_EXPRESSION) {
-    if (peek(TokenType.OPEN_SQUARE)) {
-      parameter=parseArrayPattern(PatternKind.INITIALIZER);
-    }
- else     if (peek(TokenType.OPEN_CURLY)) {
-      parameter=parseObjectPattern(PatternKind.INITIALIZER);
-    }
+ else   if (context != ParamContext.TYPE_EXPRESSION && peekPatternStart()) {
+    parameter=parsePattern(PatternKind.INITIALIZER);
+  }
+ else {
+    throw new IllegalStateException("parseParameterCalled() without confirming a parameter exists.");
   }
   ParseTree typeAnnotation=null;
   SourceRange typeLocation=null;

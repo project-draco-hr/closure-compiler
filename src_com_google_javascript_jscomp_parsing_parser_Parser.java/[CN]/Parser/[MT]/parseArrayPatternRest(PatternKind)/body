@@ -1,0 +1,17 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  eat(TokenType.SPREAD);
+  ParseTree patternAssignmentTarget=parsePatternAssignmentTargetNoDefault(patternKind);
+  IdentifierToken identifierToken;
+  if (patternAssignmentTarget.type != ParseTreeType.IDENTIFIER_EXPRESSION) {
+    reportError("lvalues in rest elements must be identifiers");
+    identifierToken=new IdentifierToken(getTreeLocation(start),"invalid_rest");
+  }
+ else {
+    identifierToken=patternAssignmentTarget.asIdentifierExpression().identifierToken;
+  }
+  if (peek(TokenType.EQUAL)) {
+    reportError("A default value cannot be specified after '...'");
+  }
+  return new AssignmentRestElementTree(getTreeLocation(start),identifierToken);
+}

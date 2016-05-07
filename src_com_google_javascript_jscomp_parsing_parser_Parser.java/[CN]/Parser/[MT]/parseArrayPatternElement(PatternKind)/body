@@ -1,28 +1,10 @@
 {
-  SourcePosition start=getTreeStartLocation();
-  ParseTree lvalue;
-  boolean rest=false;
-  if (peekPatternStart()) {
-    lvalue=parsePattern(kind);
+  ParseTree patternElement;
+  if (peek(TokenType.SPREAD)) {
+    patternElement=parseArrayPatternRest(patternKind);
   }
  else {
-    if (peek(TokenType.SPREAD)) {
-      eat(TokenType.SPREAD);
-      rest=true;
-    }
-    lvalue=parseLeftHandSideExpression();
+    patternElement=parsePatternAssignmentTarget(patternKind);
   }
-  if (rest && lvalue.type != ParseTreeType.IDENTIFIER_EXPRESSION) {
-    reportError("lvalues in rest elements must be identifiers");
-    return lvalue;
-  }
-  if (rest) {
-    return new AssignmentRestElementTree(getTreeLocation(start),lvalue.asIdentifierExpression().identifierToken);
-  }
-  Token eq=eatOpt(TokenType.EQUAL);
-  if (eq != null) {
-    ParseTree defaultValue=parseAssignmentExpression();
-    return new DefaultParameterTree(getTreeLocation(start),lvalue,defaultValue);
-  }
-  return lvalue;
+  return patternElement;
 }
