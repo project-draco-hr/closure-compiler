@@ -1,0 +1,12 @@
+{
+  mode=LanguageMode.ECMASCRIPT6;
+  expectedFeatures=FeatureSet.ES6;
+  parse("[first, ...rest] = foo();");
+  parse("[first, {a, b}, ...[re, st, ...{length}]] = foo();");
+  parse("[x, ...y[15]] = foo();");
+  parseError("var [x, ...y[15]] = foo();","Only an identifier or destructuring pattern is allowed here.");
+  parseError("[first, ...more = 'default'] = foo();","A default value cannot be specified after '...'");
+  parseError("var [first, ...more, last] = foo();","']' expected");
+  mode=LanguageMode.ECMASCRIPT5;
+  parseWarning("var [first, ...rest] = foo();","this language feature is only supported in es6 mode: destructuring");
+}
