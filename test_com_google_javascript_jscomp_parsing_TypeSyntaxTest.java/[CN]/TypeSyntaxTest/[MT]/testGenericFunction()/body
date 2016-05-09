@@ -1,6 +1,5 @@
 {
   parse("function foo<T>() {\n}");
-  parse("var x = <K, V>(p) => 3;");
   parse("class Foo {\n  f<T>() {\n  }\n}");
   parse("(function<T>() {\n})();");
   parse("function* foo<T>() {\n}");
@@ -10,9 +9,7 @@
   parse("function foo<T() {\n}");
   expectErrors("Parse error. 'identifier' expected");
   parse("function foo<>() {\n}");
-  expectErrors("Parse error. invalid location for generics");
-  parse("var x = <T>(5 + 7);");
-  expectErrors("Parse error. invalid location for generics");
+  expectErrors("Parse error. primary expression expected");
   parse("var x = <T>((p:T) => 3);");
   testNotEs6Typed("function foo<T>() {}","generics");
 }

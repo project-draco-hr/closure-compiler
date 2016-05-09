@@ -1,5 +1,9 @@
 {
   inGeneratorContext.addLast(false);
+  ParseTree returnType=null;
+  if (peek(TokenType.COLON)) {
+    returnType=parseTypeAnnotation();
+  }
   if (peekImplicitSemiColon()) {
     reportError("No newline allowed before '=>'");
   }
@@ -9,7 +13,7 @@
     functionBody=parseFunctionBody();
   }
  else {
-    functionBody=parseAssignment(expressionIn,false);
+    functionBody=parseAssignment(expressionIn);
   }
   FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),null,generics,false,false,false,null,FunctionDeclarationTree.Kind.ARROW,formalParameterList,returnType,functionBody);
   inGeneratorContext.removeLast();
