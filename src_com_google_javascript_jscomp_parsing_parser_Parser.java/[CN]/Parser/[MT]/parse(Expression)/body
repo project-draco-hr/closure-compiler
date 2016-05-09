@@ -1,14 +1,3 @@
 {
-  SourcePosition start=getTreeStartLocation();
-  ParseTree result=parseAssignment(expressionIn);
-  if (peek(TokenType.COMMA) && !peek(1,TokenType.SPREAD)) {
-    ImmutableList.Builder<ParseTree> exprs=ImmutableList.builder();
-    exprs.add(result);
-    while (peek(TokenType.COMMA) && !peek(1,TokenType.SPREAD)) {
-      eat(TokenType.COMMA);
-      exprs.add(parseAssignment(expressionIn));
-    }
-    return new CommaExpressionTree(getTreeLocation(start),exprs.build());
-  }
-  return result;
+  return parse(expressionIn,true);
 }

@@ -1,24 +1,3 @@
 {
-  if (peek(TokenType.YIELD) && inGeneratorContext()) {
-    return parseYield(expressionIn);
-  }
-  SourcePosition start=getTreeStartLocation();
-  ParseTree left=parseConditional(expressionIn);
-  if (peek(TokenType.ARROW)) {
-    FormalParameterListTree params=transformArrowFunctionParameters(start,left);
-    return parseArrowFunctionTail(start,null,params,expressionIn);
-  }
-  if (left.type == ParseTreeType.FORMAL_PARAMETER_LIST) {
-    reportError("invalid paren expression");
-  }
-  if (peekAssignmentOperator()) {
-    left=transformLeftHandSideExpression(left);
-    if (!left.isValidAssignmentTarget()) {
-      reportError("invalid assignment target");
-    }
-    Token operator=nextToken();
-    ParseTree right=parseAssignment(expressionIn);
-    return new BinaryOperatorTree(getTreeLocation(start),left,operator,right);
-  }
-  return left;
+  return parseAssignment(expressionIn,true);
 }
