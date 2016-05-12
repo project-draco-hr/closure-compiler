@@ -1,9 +1,18 @@
 {
   ImmutableList.Builder<JSError> errors=ImmutableList.builder();
   Map<String,SourceFile> sourceFilesByName=new HashMap<>();
-  Iterator<SourceFile> fileIterator=sourceFiles.listIterator();
+  Iterator<SourceFile> fileIterator=sourceFiles.iterator();
+  int currentFileIndex=0;
+  Iterator<JsModuleSpec> moduleIterator=jsModuleSpecs.iterator();
+  int cumulatedJsFileNum=0;
+  JsModuleSpec currentModule=null;
   while (fileIterator.hasNext()) {
     SourceFile sourceFile=fileIterator.next();
+    currentFileIndex++;
+    if (moduleIterator.hasNext() && currentFileIndex > cumulatedJsFileNum) {
+      currentModule=moduleIterator.next();
+      cumulatedJsFileNum+=currentModule.numJsFiles;
+    }
     String fullPath=sourceFile.getName();
     if (!fullPath.contains("!/")) {
       continue;
@@ -17,6 +26,9 @@
       if (firstSourceFile.getCode().equals(sourceFile.getCode())) {
         errors.add(JSError.make(SourceFile.DUPLICATE_ZIP_CONTENTS,firstSourceFile.getName(),sourceFile.getName()));
         fileIterator.remove();
+        if (currentModule != null) {
+          currentModule.numJsFiles--;
+        }
       }
  else {
         errors.add(JSError.make(CONFLICTING_DUPLICATE_ZIP_CONTENTS,firstSourceFile.getName(),sourceFile.getName()));
