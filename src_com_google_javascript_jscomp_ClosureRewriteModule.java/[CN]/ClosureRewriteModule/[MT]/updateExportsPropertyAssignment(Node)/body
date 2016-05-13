@@ -3,7 +3,9 @@
     return;
   }
   Node parent=getpropNode.getParent();
-  Node exportsNameNode=parent.getFirstFirstChild();
+  Preconditions.checkState(parent.isAssign() || parent.isExprResult(),parent);
+  Node exportsNameNode=getpropNode.getFirstChild();
+  Preconditions.checkState(exportsNameNode.getString().equals("exports"));
   safeSetString(exportsNameNode,currentScript.binaryNamespace);
   Node jsdocNode=parent.isAssign() ? parent : getpropNode;
   markConstAndCopyJsDoc(jsdocNode,jsdocNode,parent.getLastChild());
