@@ -1,20 +1,6 @@
 {
   DiagnosticGroups diagnosticGroups=getDiagnosticGroups();
-  if (config.warningGuards != null) {
-    for (    FlagEntry<CheckLevel> entry : config.warningGuards) {
-      if ("*".equals(entry.value)) {
-        Set<String> groupNames=diagnosticGroups.getRegisteredGroups().keySet();
-        for (        String groupName : groupNames) {
-          if (!DiagnosticGroups.wildcardExcludedGroups.contains(groupName)) {
-            diagnosticGroups.setWarningLevel(options,groupName,entry.flag);
-          }
-        }
-      }
- else {
-        diagnosticGroups.setWarningLevel(options,entry.value,entry.flag);
-      }
-    }
-  }
+  setWarningGuardOptions(options,config.warningGuards,diagnosticGroups);
   if (!config.warningsWhitelistFile.isEmpty()) {
     addWhitelistWarningsGuard(options,new File(config.warningsWhitelistFile));
   }
