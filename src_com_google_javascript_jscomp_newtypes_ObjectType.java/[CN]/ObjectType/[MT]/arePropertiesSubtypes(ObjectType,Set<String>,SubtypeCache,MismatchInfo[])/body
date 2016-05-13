@@ -1,0 +1,19 @@
+{
+  for (  String pname : otherPropNames) {
+    QualifiedName qname=new QualifiedName(pname);
+    if (!isPropertySubtype(pname,this.getLeftmostProp(qname),other.getLeftmostProp(qname),subSuperMap,boxedInfo)) {
+      return false;
+    }
+  }
+  if (other.ns != null) {
+    for (    String pname : other.ns.getAllPropsOfNamespace()) {
+      if (!otherPropNames.contains(pname)) {
+        QualifiedName qname=new QualifiedName(pname);
+        if (!isPropertySubtype(pname,this.getLeftmostProp(qname),other.getLeftmostProp(qname),subSuperMap,boxedInfo)) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}

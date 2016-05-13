@@ -1,0 +1,32 @@
+{
+  if (isUnknown() || other.isUnknown() || other.isTop()) {
+    return true;
+  }
+  if (hasTruthyMask()) {
+    return !other.makeTruthy().isBottom();
+  }
+  if (hasFalsyMask()) {
+    return !other.makeFalsy().isBottom();
+  }
+  if (!EnumType.areSubtypes(this,other,subSuperMap)) {
+    return false;
+  }
+  int mask=getMask() & ~ENUM_MASK;
+  if ((mask | other.getMask()) != other.getMask()) {
+    if (boxedInfo != null && isUnion()) {
+      whyNotUnionSubtypes(this,other,boxedInfo);
+    }
+    return false;
+  }
+  if (getTypeVar() != null && !getTypeVar().equals(other.getTypeVar())) {
+    return false;
+  }
+  if (getObjs().isEmpty()) {
+    return true;
+  }
+  boolean result=ObjectType.isUnionSubtype(keepLoosenessOfThis,getObjs(),other.getObjs(),subSuperMap);
+  if (boxedInfo != null) {
+    ObjectType.whyNotUnionSubtypes(keepLoosenessOfThis,getObjs(),other.getObjs(),subSuperMap,boxedInfo);
+  }
+  return result;
+}

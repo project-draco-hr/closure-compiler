@@ -1,0 +1,23 @@
+{
+  if (NUMBER.isSubtypeOf(found) && !NUMBER.isSubtypeOf(expected)) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(NUMBER);
+  }
+ else   if (STRING.isSubtypeOf(found) && !STRING.isSubtypeOf(expected)) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(STRING);
+  }
+ else   if (BOOLEAN.isSubtypeOf(found) && !BOOLEAN.isSubtypeOf(expected)) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(BOOLEAN);
+  }
+ else   if (NULL.isSubtypeOf(found) && !NULL.isSubtypeOf(expected)) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(NULL);
+  }
+ else   if (UNDEFINED.isSubtypeOf(found) && !UNDEFINED.isSubtypeOf(expected)) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(UNDEFINED);
+  }
+ else   if (found.hasTypeVariable() && !expected.hasTypeVariable()) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(fromTypeVar(found.getTypeVar()));
+  }
+ else   if ((found.getMask() & NON_SCALAR_MASK) != 0 && (expected.getMask() & NON_SCALAR_MASK) == 0) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(makeType(NON_SCALAR_MASK,found.getObjs(),null,ImmutableSet.<EnumType>of()));
+  }
+}

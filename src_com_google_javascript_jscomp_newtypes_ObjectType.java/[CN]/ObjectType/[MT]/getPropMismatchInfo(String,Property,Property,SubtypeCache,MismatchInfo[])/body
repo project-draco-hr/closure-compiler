@@ -1,0 +1,24 @@
+{
+  Preconditions.checkNotNull(pname);
+  if (prop2.isOptional()) {
+    if (prop1 != null && !prop1.getType().isSubtypeOf(prop2.getType(),subSuperMap)) {
+      boxedInfo[0]=MismatchInfo.makePropTypeMismatch(pname,prop2.getType(),prop1.getType());
+      return false;
+    }
+  }
+ else {
+    if (prop1 == null) {
+      boxedInfo[0]=MismatchInfo.makeMissingPropMismatch(pname);
+      return false;
+    }
+ else     if (prop1.isOptional()) {
+      boxedInfo[0]=MismatchInfo.makeMaybeMissingPropMismatch(pname);
+      return false;
+    }
+ else     if (!prop1.getType().isSubtypeOf(prop2.getType(),subSuperMap)) {
+      boxedInfo[0]=MismatchInfo.makePropTypeMismatch(pname,prop2.getType(),prop1.getType());
+      return false;
+    }
+  }
+  return true;
+}

@@ -1,0 +1,14 @@
+{
+  if (t1.isSingletonObj() && t2.isSingletonObj()) {
+    MismatchInfo[] boxedInfo=new MismatchInfo[1];
+    ObjectType.whyNotSubtypeOf(t1.getObjTypeIfSingletonObj(),t2.getObjTypeIfSingletonObj(),boxedInfo);
+    return boxedInfo[0];
+  }
+  if (t1.isUnion()) {
+    MismatchInfo[] boxedInfo=new MismatchInfo[1];
+    boolean areSubtypes=t1.isSubtypeOfHelper(true,t2,SubtypeCache.create(),boxedInfo);
+    Preconditions.checkState(!areSubtypes);
+    return boxedInfo[0];
+  }
+  return null;
+}
