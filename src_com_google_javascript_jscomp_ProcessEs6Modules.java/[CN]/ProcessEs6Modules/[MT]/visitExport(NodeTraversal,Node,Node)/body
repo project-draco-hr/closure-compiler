@@ -29,11 +29,7 @@
     importNode.copyInformationFrom(export);
     parent.addChildBefore(importNode,export);
     visit(t,importNode,parent);
-    URI loadAddress=loader.locateEs6Module(moduleIdentifier.getString(),t.getInput());
-    if (loadAddress == null) {
-      compiler.report(t.makeError(moduleIdentifier,ES6ModuleLoader.LOAD_ERROR,moduleIdentifier.getString()));
-      return;
-    }
+    URI loadAddress=checkNotNull(loader.locateEs6Module(moduleIdentifier.getString(),t.getInput()));
     String moduleName=ES6ModuleLoader.toModuleName(loadAddress);
     for (    Node exportSpec : export.getFirstChild().children()) {
       String nameFromOtherModule=exportSpec.getFirstChild().getString();

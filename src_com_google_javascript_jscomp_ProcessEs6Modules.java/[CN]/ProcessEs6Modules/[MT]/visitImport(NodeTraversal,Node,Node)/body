@@ -6,11 +6,7 @@
     moduleName=importName.substring("goog:".length());
   }
  else {
-    URI loadAddress=loader.locateEs6Module(importName,t.getInput());
-    if (loadAddress == null) {
-      compiler.report(t.makeError(importDecl,ES6ModuleLoader.LOAD_ERROR,importName));
-      return;
-    }
+    URI loadAddress=checkNotNull(loader.locateEs6Module(importName,t.getInput()));
     moduleName=ES6ModuleLoader.toModuleName(loadAddress);
   }
   for (  Node child : importDecl.children()) {
