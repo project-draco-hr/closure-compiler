@@ -12,6 +12,9 @@
     warnings.add(JSError.make(callNode,NewTypeInference.UNKNOWN_ASSERTION_TYPE));
   }
   EnvTypePair pair=analyzeExprFwd(assertedNode,env,JSType.UNKNOWN,assertedType);
+  if (!pair.type.isSubtypeOf(assertedType) && JSType.haveCommonSubtype(assertedType,pair.type)) {
+    pair.type=assertedType;
+  }
   if (pair.type.isBottom()) {
     JSType t=analyzeExprFwd(assertedNode,env).type.substituteGenericsWithUnknown();
     if (t.isSubtypeOf(assertedType)) {
