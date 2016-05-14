@@ -1,0 +1,18 @@
+{
+  if (!currentScript.declareLegacyNamespace) {
+    return;
+  }
+  Node binaryNamespaceName=IR.name(currentScript.binaryNamespace);
+  binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,currentScript.legacyNamespace);
+  Node assignmentNode=IR.assign(NodeUtil.newQName(compiler,currentScript.legacyNamespace),binaryNamespaceName);
+  Node binaryToLegacyBridgeStatement=IR.exprResult(assignmentNode);
+  binaryToLegacyBridgeStatement.srcrefTree(afterNode);
+  if (jsDocSourceNode != null) {
+    markConstAndCopyJsDoc(jsDocSourceNode,assignmentNode,binaryNamespaceName);
+  }
+ else {
+    markConst(assignmentNode);
+  }
+  afterNode.getParent().addChildAfter(binaryToLegacyBridgeStatement,afterNode);
+  compiler.reportCodeChange();
+}

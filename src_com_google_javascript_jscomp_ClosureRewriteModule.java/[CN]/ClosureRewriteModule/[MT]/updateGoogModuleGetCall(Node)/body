@@ -5,9 +5,9 @@
     NodeUtil.getEnclosingStatement(call).detachFromParent();
   }
  else {
-    Node exportedNamespaceName=NodeUtil.newQName(compiler,rewriteState.getExportedNamespace(legacyNamespace)).srcrefTree(call);
-    exportedNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
-    call.getParent().replaceChild(call,exportedNamespaceName);
+    Node binaryNamespaceName=IR.name(toBinaryNamespace(legacyNamespace));
+    binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
+    call.getParent().replaceChild(call,binaryNamespaceName);
   }
   compiler.reportCodeChange();
 }

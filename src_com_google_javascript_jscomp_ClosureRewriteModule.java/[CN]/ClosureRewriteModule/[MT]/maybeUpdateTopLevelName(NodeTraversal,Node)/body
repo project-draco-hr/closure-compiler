@@ -10,7 +10,8 @@
   boolean nameIsAnAlias=currentScript.legacyNamespacesByAlias.containsKey(name);
   if (nameIsAnAlias && var.getNode() != nameNode) {
     String legacyNamespace=currentScript.legacyNamespacesByAlias.get(name);
-    String namespaceToInline=rewriteState.getExportedNamespace(legacyNamespace);
+    boolean targetNamespaceIsAGoogModule=rewriteState.containsModule(legacyNamespace);
+    String namespaceToInline=targetNamespaceIsAGoogModule ? toBinaryNamespace(legacyNamespace) : legacyNamespace;
     safeSetMaybeQualifiedString(nameNode,namespaceToInline);
     if (namespaceToInline.indexOf('.') != -1) {
       String firstQualifiedName=namespaceToInline.substring(0,namespaceToInline.indexOf('.'));
