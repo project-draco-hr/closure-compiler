@@ -2,23 +2,24 @@
   Node legacyNamespaceNode=call.getLastChild();
   Node statementNode=NodeUtil.getEnclosingStatement(call);
   String legacyNamespace=legacyNamespaceNode.getString();
-  boolean targetIsGoogModule=rewriteState.containsModule(legacyNamespace);
-  boolean targetIsAGoogModuleGetted=currentScript.googModuleGettedNamespaces.contains(legacyNamespaceNode.getString());
+  boolean targetIsNonLegacyGoogModule=rewriteState.containsModule(legacyNamespace) && !rewriteState.isLegacyModule(legacyNamespace);
+  boolean targetIsGoogModuleGetted=currentScript.googModuleGettedNamespaces.contains(legacyNamespaceNode.getString());
   boolean importHasAlias=currentScript.legacyNamespacesByAlias.containsValue(legacyNamespace);
   boolean isDestructuring=statementNode.getFirstChild().isDestructuringLhs();
   boolean immediatePropertyAccess=call.getParent().isGetProp() && call.getGrandparent().isName() && NodeUtil.isNameDeclaration(call.getGrandparent().getParent());
-  if (currentScript.isModule || (targetIsGoogModule && targetIsAGoogModuleGetted)) {
+  if (currentScript.isModule || (targetIsNonLegacyGoogModule && targetIsGoogModuleGetted)) {
     if (isDestructuring) {
-      Node replacementNamespaceName=NodeUtil.newQName(compiler,targetIsGoogModule ? toBinaryNamespace(legacyNamespace) : legacyNamespace);
+      String exportedNamespace=rewriteState.getExportedNamespace(legacyNamespace);
+      Node replacementNamespaceName=NodeUtil.newQName(compiler,exportedNamespace);
       replacementNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
       replacementNamespaceName.putBooleanProp(Node.GOOG_MODULE_REQUIRE,true);
       replacementNamespaceName.srcrefTree(call);
       call.getParent().replaceChild(call,replacementNamespaceName);
       markConst(statementNode);
     }
- else     if (targetIsGoogModule) {
+ else     if (targetIsNonLegacyGoogModule) {
       if (immediatePropertyAccess || !isTopLevel(t,statementNode,ScopeType.EXEC_CONTEXT)) {
-        Node binaryNamespaceName=IR.name(toBinaryNamespace(legacyNamespace));
+        Node binaryNamespaceName=IR.name(rewriteState.getBinaryNamespace(legacyNamespace));
         binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
         call.getParent().replaceChild(call,binaryNamespaceName);
       }
@@ -41,7 +42,7 @@
         statementNode.getParent().replaceChild(statementNode,IR.exprResult(call));
       }
     }
-    if (targetIsGoogModule) {
+    if (targetIsNonLegacyGoogModule) {
       Node callee=call.getFirstChild();
       Node arg=callee.getNext();
       maybeAddToSymbolTable(callee);

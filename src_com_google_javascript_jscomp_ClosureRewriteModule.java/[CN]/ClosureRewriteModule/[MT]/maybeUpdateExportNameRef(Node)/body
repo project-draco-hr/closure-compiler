@@ -1,10 +1,15 @@
 {
-  if (!currentScript.isModule || !"exports".equals(n.getString())) {
+  if (!currentScript.isModule || !"exports".equals(n.getString()) || n.getParent() == null) {
     return;
   }
   if (n.getParent().isParamList()) {
     return;
   }
-  safeSetString(n,currentScript.binaryNamespace);
+  if (currentScript.declareLegacyNamespace) {
+    Node legacyQname=NodeUtil.newQName(compiler,currentScript.legacyNamespace).srcrefTree(n);
+    n.getParent().replaceChild(n,legacyQname);
+    return;
+  }
+  safeSetString(n,currentScript.getBinaryNamespace());
   Preconditions.checkState(currentScript.willCreateExportsObject || currentScript.hasCreatedExportObject);
 }

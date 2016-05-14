@@ -6,7 +6,8 @@
   Preconditions.checkState(parent.isAssign() || parent.isExprResult(),parent);
   Node exportsNameNode=getpropNode.getFirstChild();
   Preconditions.checkState(exportsNameNode.getString().equals("exports"));
-  safeSetString(exportsNameNode,currentScript.binaryNamespace);
+  String exportedNamespace=currentScript.declareLegacyNamespace ? currentScript.legacyNamespace : currentScript.getBinaryNamespace();
+  safeSetMaybeQualifiedString(exportsNameNode,exportedNamespace);
   Node jsdocNode=parent.isAssign() ? parent : getpropNode;
   markConstAndCopyJsDoc(jsdocNode,jsdocNode,parent.getLastChild());
   if (!currentScript.hasCreatedExportObject) {

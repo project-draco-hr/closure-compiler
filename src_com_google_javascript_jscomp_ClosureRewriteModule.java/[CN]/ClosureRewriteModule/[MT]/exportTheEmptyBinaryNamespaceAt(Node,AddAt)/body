@@ -1,5 +1,8 @@
 {
-  Node binaryNamespaceName=IR.name(currentScript.binaryNamespace);
+  if (currentScript.declareLegacyNamespace) {
+    return;
+  }
+  Node binaryNamespaceName=IR.name(currentScript.getBinaryNamespace());
   binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,currentScript.legacyNamespace);
   Node binaryNamespaceExportNode=IR.var(binaryNamespaceName,IR.objectlit());
   if (addAt == AddAt.BEFORE) {
@@ -13,5 +16,4 @@
   markConst(binaryNamespaceExportNode);
   compiler.reportCodeChange();
   currentScript.hasCreatedExportObject=true;
-  maybeExportLegacyNamespaceAfter(binaryNamespaceExportNode,null);
 }
