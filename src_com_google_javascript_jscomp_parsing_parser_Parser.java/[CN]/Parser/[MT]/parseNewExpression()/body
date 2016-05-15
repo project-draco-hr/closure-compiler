@@ -1,5 +1,11 @@
 {
-  if (peek(TokenType.NEW)) {
+  if (!peek(TokenType.NEW)) {
+    return parseMemberExpressionNoNew();
+  }
+ else   if (peek(1,TokenType.PERIOD)) {
+    return parseNewDotSomething();
+  }
+ else {
     SourcePosition start=getTreeStartLocation();
     eat(TokenType.NEW);
     ParseTree operand=parseNewExpression();
@@ -8,8 +14,5 @@
       arguments=parseArguments();
     }
     return new NewExpressionTree(getTreeLocation(start),operand,arguments);
-  }
- else {
-    return parseMemberExpressionNoNew();
   }
 }
