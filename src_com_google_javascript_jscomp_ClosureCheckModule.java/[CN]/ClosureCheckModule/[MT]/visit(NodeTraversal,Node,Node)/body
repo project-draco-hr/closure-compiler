@@ -17,6 +17,35 @@ case Token.CALL:
     checkRequireCall(t,n,parent);
   }
 break;
+case Token.ASSIGN:
+{
+Node lhs=n.getFirstChild();
+if (lhs.isQualifiedName()) {
+  Node root=NodeUtil.getRootOfQualifiedName(lhs);
+  if (root.matchesQualifiedName("exports") && (lhs.isName() || !root.getNext().getString().equals("prototype")) && !NodeUtil.isLegacyGoogModuleFile(NodeUtil.getEnclosingScript(n))) {
+    JSDocInfo jsDoc=n.getJSDocInfo();
+    if (jsDoc != null && jsDoc.isExport()) {
+      t.report(n,AT_EXPORT_IN_NON_LEGACY_GOOG_MODULE);
+    }
+  }
+}
+break;
+}
+case Token.CLASS:
+case Token.FUNCTION:
+if (!NodeUtil.isStatement(n)) {
+break;
+}
+case Token.VAR:
+case Token.LET:
+case Token.CONST:
+if (t.inGlobalHoistScope() && NodeUtil.getEnclosingClass(n) == null && NodeUtil.getEnclosingType(n,Token.OBJECTLIT) == null) {
+JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(n);
+if (jsdoc != null && jsdoc.isExport()) {
+t.report(n,AT_EXPORT_IN_GOOG_MODULE);
+}
+}
+break;
 case Token.THIS:
 if (t.inGlobalHoistScope()) {
 t.report(n,GOOG_MODULE_REFERENCES_THIS);

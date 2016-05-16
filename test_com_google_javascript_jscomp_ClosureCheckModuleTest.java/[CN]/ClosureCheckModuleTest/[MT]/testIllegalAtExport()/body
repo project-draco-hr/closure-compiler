@@ -1,0 +1,6 @@
+{
+  testError(LINE_JOINER.join("goog.module('foo.example.ClassName');","","/** @constructor @export */ function ClassName() {}","","exports = ClassName;"),ClosureCheckModule.AT_EXPORT_IN_GOOG_MODULE);
+  testError(LINE_JOINER.join("goog.module('foo.example.ClassName');","","/** @constructor */ function ClassName() {}","","/** @export */","exports = ClassName;"),ClosureCheckModule.AT_EXPORT_IN_NON_LEGACY_GOOG_MODULE);
+  testError(LINE_JOINER.join("goog.module('foo.example.ns');","","/** @constructor */ function ClassName() {}","","/** @export */","exports.ClassName = ClassName;"),ClosureCheckModule.AT_EXPORT_IN_NON_LEGACY_GOOG_MODULE);
+  testError(LINE_JOINER.join("goog.module('foo.example.ClassName');","goog.module.declareLegacyNamespace();","","/** @constructor @export */ function ClassName() {}","","exports = ClassName;"),ClosureCheckModule.AT_EXPORT_IN_GOOG_MODULE);
+}
