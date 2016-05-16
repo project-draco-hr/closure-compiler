@@ -3,21 +3,12 @@
     long hashCode=HASH_FUNCTION.hashString(js,StandardCharsets.UTF_8).asLong();
     return cachedTranspilations.get(hashCode,new Callable<String>(){
       @Override public String call(){
-        CompilerOptions options=new CompilerOptions();
-        options.setLanguageIn(LanguageMode.ECMASCRIPT6_STRICT);
-        options.setLanguageOut(LanguageMode.ECMASCRIPT5);
-        options.setQuoteKeywordProperties(true);
-        options.setSkipNonTranspilationPasses(true);
-        options.setVariableRenaming(VariableRenamingPolicy.OFF);
-        options.setPropertyRenaming(PropertyRenamingPolicy.OFF);
-        options.setWrapGoogModulesForWhitespaceOnly(false);
-        options.setPrettyPrint(true);
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
         Compiler compiler=new Compiler(new PrintStream(baos));
         compiler.disableThreads();
         SourceFile externs=SourceFile.fromCode("externs","function Symbol() {}");
         SourceFile sourceFile=SourceFile.fromCode(path,js);
-        compiler.<SourceFile,SourceFile>compile(ImmutableList.<SourceFile>of(externs),ImmutableList.<SourceFile>of(sourceFile),options);
+        compiler.<SourceFile,SourceFile>compile(ImmutableList.<SourceFile>of(externs),ImmutableList.<SourceFile>of(sourceFile),getOptions());
         if (compiler.getErrorManager().getErrorCount() > 0) {
           String message;
           try {
