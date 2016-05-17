@@ -3,19 +3,27 @@
     return;
   }
   Node assignNode=n.getParent();
-  Node exprResultNode=assignNode.getParent();
   Node rhs=assignNode.getLastChild();
-  rhs.detachFromParent();
-  Node binaryNamespaceName=IR.name(currentScript.binaryNamespace);
-  binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,currentScript.legacyNamespace);
-  Node exportsObjectCreationNode=IR.var(binaryNamespaceName,rhs);
-  exportsObjectCreationNode.srcrefTree(exprResultNode);
-  exportsObjectCreationNode.putBooleanProp(Node.IS_NAMESPACE,true);
-  exprResultNode.getParent().replaceChild(exprResultNode,exportsObjectCreationNode);
+  Node jsdocNode;
+  if (currentScript.declareLegacyNamespace) {
+    Node legacyQname=NodeUtil.newQName(compiler,currentScript.legacyNamespace).srcrefTree(n);
+    assignNode.replaceChild(n,legacyQname);
+    jsdocNode=assignNode;
+  }
+ else {
+    rhs.detachFromParent();
+    Node exprResultNode=assignNode.getParent();
+    Node binaryNamespaceName=IR.name(currentScript.getBinaryNamespace());
+    binaryNamespaceName.putProp(Node.ORIGINALNAME_PROP,currentScript.legacyNamespace);
+    Node exportsObjectCreationNode=IR.var(binaryNamespaceName,rhs);
+    exportsObjectCreationNode.srcrefTree(exprResultNode);
+    exportsObjectCreationNode.putBooleanProp(Node.IS_NAMESPACE,true);
+    exprResultNode.getParent().replaceChild(exprResultNode,exportsObjectCreationNode);
+    jsdocNode=exportsObjectCreationNode;
+    currentScript.hasCreatedExportObject=true;
+  }
+  markConstAndCopyJsDoc(assignNode,jsdocNode,rhs);
   compiler.reportCodeChange();
-  currentScript.hasCreatedExportObject=true;
-  markConstAndCopyJsDoc(assignNode,exportsObjectCreationNode,rhs);
-  maybeExportLegacyNamespaceAfter(exportsObjectCreationNode,assignNode);
   maybeUpdateExportObjectLiteral(t,rhs);
   return;
 }

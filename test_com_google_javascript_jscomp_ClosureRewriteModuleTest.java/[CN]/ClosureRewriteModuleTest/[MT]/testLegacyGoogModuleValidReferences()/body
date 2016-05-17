@@ -1,0 +1,7 @@
+{
+  test(new String[]{"goog.module('a.b.c'); goog.module.declareLegacyNamespace();","goog.require('a.b.c'); use(a.b.c);"},new String[]{"goog.provide('a.b.c');","goog.require('a.b.c'); use(a.b.c);"});
+  test(new String[]{"goog.module('a.b.c'); goog.module.declareLegacyNamespace();","goog.module('x.y.z'); var c = goog.require('a.b.c'); use(c);"},new String[]{"goog.provide('a.b.c');","/** @const */ var module$exports$x$y$z={}; goog.require('a.b.c'); use(a.b.c);"});
+  test(new String[]{LINE_JOINER.join("goog.module('a.b.Foo');","goog.module.declareLegacyNamespace();","","/** @constructor */ exports = function() {};"),"/** @param {a.b.Foo} x */ function f(x) {}"},new String[]{"goog.provide('a.b.Foo'); /** @constructor */ a.b.Foo = function() {};","/** @param {a.b.Foo} x */ function f(x) {}"});
+  test(new String[]{LINE_JOINER.join("goog.module('a.b.c');","goog.module.declareLegacyNamespace();","","exports = function() {};"),"function f() { return goog.module.get('a.b.c'); }"},new String[]{"goog.provide('a.b.c'); /** @const */ a.b.c = function() {};","function f() { return a.b.c; }"});
+  test(new String[]{LINE_JOINER.join("goog.module('a.b.Foo');","goog.module.declareLegacyNamespace();","","/** @constructor */ function Foo() {};","","exports = Foo;"),"/** @param {a.b.Foo} x */ function f(x) {}"},new String[]{LINE_JOINER.join("goog.provide('a.b.Foo');","/** @constructor */ function module$contents$a$b$Foo_Foo() {};","/** @const */ a.b.Foo = module$contents$a$b$Foo_Foo;"),"/** @param {a.b.Foo} x */ function f(x) {}"});
+}
