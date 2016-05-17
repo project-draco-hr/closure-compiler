@@ -6,11 +6,19 @@
   JSType recvReqType, recvSpecType;
   if (NodeUtil.isPropertyTest(compiler,propAccessNode) && !specializedType.isFalseOrFalsy() || specializedType.isTrueOrTruthy()) {
     recvReqType=reqObjType;
-    if (specializedType.isTrueOrTruthy()) {
-      recvSpecType=reqObjType.withLoose().withProperty(propQname,specializedType);
+    pair=analyzeExprFwd(receiver,inEnv,recvReqType);
+    JSType subtypeWithProp=pair.type.findSubtypeWithProp(propQname);
+    if (subtypeWithProp.isBottom()) {
+      recvSpecType=reqObjType;
     }
  else {
-      recvSpecType=reqObjType.withProperty(propQname,specializedType);
+      recvSpecType=subtypeWithProp;
+    }
+    if (specializedType.isTrueOrTruthy()) {
+      recvSpecType=recvSpecType.withLoose().withProperty(propQname,specializedType);
+    }
+ else {
+      recvSpecType=recvSpecType.withProperty(propQname,specializedType);
     }
   }
  else   if (specializedType.isFalseOrFalsy()) {

@@ -1,0 +1,25 @@
+{
+  Preconditions.checkArgument(pname.isIdentifier());
+  if (isTop() || isUnknown() || (getMask() & NON_SCALAR_MASK) == 0) {
+    return BOTTOM;
+  }
+  if (NUMBER.isSubtypeOf(this) && commonTypes.getNumberInstance().mayHaveProp(pname) || STRING.isSubtypeOf(this) && commonTypes.getNumberInstance().mayHaveProp(pname) || BOOLEAN.isSubtypeOf(this) && commonTypes.getBooleanInstance().mayHaveProp(pname)) {
+    return BOTTOM;
+  }
+  if ((getMask() & ENUM_MASK) != 0) {
+    return BOTTOM;
+  }
+  if (getObjs().size() == 1) {
+    ObjectType obj=Iterables.getOnlyElement(getObjs());
+    return obj.mayHaveProp(pname) ? this : BOTTOM;
+  }
+  ImmutableSet.Builder<ObjectType> builder=ImmutableSet.builder();
+  boolean foundObjWithProp=false;
+  for (  ObjectType o : getObjs()) {
+    if (o.mayHaveProp(pname)) {
+      foundObjWithProp=true;
+      builder.add(o);
+    }
+  }
+  return foundObjWithProp ? makeType(NON_SCALAR_MASK,builder.build(),null,NO_ENUMS) : BOTTOM;
+}

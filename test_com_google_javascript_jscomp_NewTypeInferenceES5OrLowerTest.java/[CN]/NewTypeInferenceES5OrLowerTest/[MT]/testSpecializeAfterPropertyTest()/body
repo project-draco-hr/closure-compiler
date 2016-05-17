@@ -1,0 +1,8 @@
+{
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar() {","  this.prop = 123;","}","function f(/** !Foo|!Bar */ x) {","  if (x.prop) {","    var /** !Bar */ n = x;","  }","}"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar() {","  this.prop = 123;","}","function f(/** {a: (!Foo|!Bar)} */ x) {","  if (x.a.prop) {","    var /** !Bar */ n = x.a;","  }","}"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar() {","  this.prop = 123;","}","function g(x) { x.prop = 234; }","function f(/** !Foo|!Bar */ x) {","  if (x.prop) {","    var /** !Bar */ n = x;","  }","}","var obj = new Foo;","g(obj);","f(obj);"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar() {","  this.prop = 123;","}","/** @constructor */","function Baz() {","  this.prop = 345;","}","function f(/** !Foo|!Bar|!Baz */ x) {","  if (x.prop) {","    var /** (!Bar|!Baz) */ n = x;","  }","}"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar() {","  /** @type {number} */","  this.prop = 123;","}","function f(/** !Foo|!Bar */ x) {","  if (x.prop) {","    var /** string */ s = x.prop;","  }","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @constructor */","function Bar() { this.startsWith = function(s) {}; }","function f(/** !Foo|!Bar|string */ x) {","  if (x.startsWith) {","    var /** !Bar|string */ y = x;","  }","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+}
