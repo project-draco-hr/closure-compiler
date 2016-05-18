@@ -1,12 +1,16 @@
 {
+  String fnName=callNode.getFirstChild().getOriginalName();
+  if (fnName == null) {
+    fnName=callNode.getFirstChild().getString();
+  }
   Node firstArg=callNode.getSecondChild();
   if (!firstArg.isString()) {
-    t.report(callNode,BAD_CALL);
+    t.report(callNode,BAD_CALL,fnName);
     return;
   }
   for (  String name : DOT_SPLITTER.split(firstArg.getString())) {
     if (!TokenStream.isJSIdentifier(name)) {
-      t.report(callNode,BAD_ARG,name);
+      t.report(callNode,BAD_ARG,fnName);
       continue;
     }
     if (!externedNames.contains(name)) {
