@@ -1,0 +1,15 @@
+{
+  Preconditions.checkState(NodeUtil.isNameDeclaration(n));
+  if (n.getChildCount() == 1 && parent == googScopeBlock) {
+    Node rhs=n.getFirstFirstChild();
+    if (rhs != null && rhs.isQualifiedName()) {
+      Node root=NodeUtil.getRootOfQualifiedName(rhs);
+      if (root.isName()) {
+        Var var=t.getScope().getVar(root.getString());
+        if (var == null || (var.isGlobal() && !var.isExtern())) {
+          usages.put(rhs.getQualifiedName(),rhs);
+        }
+      }
+    }
+  }
+}
