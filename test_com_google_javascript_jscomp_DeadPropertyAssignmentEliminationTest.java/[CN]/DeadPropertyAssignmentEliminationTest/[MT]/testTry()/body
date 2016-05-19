@@ -1,0 +1,8 @@
+{
+  testSame(LINE_JOINER.join("function f(x) {","  x.p = 1;","  try {","    x.p = 2;","  } catch (e) {}","}"));
+  testSame(LINE_JOINER.join("function f(x) {","  x.p = 1;","  try {","  } catch (e) {","    x.p = 2;","  }","}"));
+  testSame(LINE_JOINER.join("function f(x) {","  try {","    x.p = 1;","  } catch (e) {","    x.p = 2;","  }","}"));
+  test(LINE_JOINER.join("function f(x) {","  try {","    x.p = 1;","    x.p = 2;","  } catch (e) {","  }","}"),LINE_JOINER.join("function f(x) {","  try {","    1;","    x.p = 2;","  } catch (e) {","  }","}"));
+  testSame(LINE_JOINER.join("function f(x) {","  try {","    x.p = 1;","    maybeThrow();","    x.p = 2;","  } catch (e) {","  }","}"));
+  testSame(LINE_JOINER.join("/** @constructor */","function f() {","  try {","    this.p = 1;","    maybeThrow();","    this.p = 2;","  } catch (e) {","  }","}"));
+}

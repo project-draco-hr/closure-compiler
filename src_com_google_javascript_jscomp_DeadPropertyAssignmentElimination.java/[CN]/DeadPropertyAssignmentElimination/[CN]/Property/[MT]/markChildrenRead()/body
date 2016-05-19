@@ -1,0 +1,15 @@
+{
+  Set<Property> propertiesSet=new HashSet<>(children);
+  Queue<Property> propertyQueue=new LinkedList<>(propertiesSet);
+  propertiesSet.add(this);
+  while (!propertyQueue.isEmpty()) {
+    Property childProperty=propertyQueue.remove();
+    childProperty.markLastWriteRead();
+    for (    Property grandchildProperty : childProperty.children) {
+      if (!propertiesSet.contains(grandchildProperty)) {
+        propertiesSet.add(grandchildProperty);
+        propertyQueue.add(grandchildProperty);
+      }
+    }
+  }
+}

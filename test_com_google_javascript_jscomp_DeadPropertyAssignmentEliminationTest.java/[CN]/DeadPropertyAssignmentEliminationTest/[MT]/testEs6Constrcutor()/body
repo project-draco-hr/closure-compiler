@@ -1,0 +1,9 @@
+{
+  setAcceptedLanguage(LanguageMode.ECMASCRIPT6);
+  testSame(LINE_JOINER.join("class Foo {","  constructor() {","    this.p = 123;","    var z = this.p;","    this.p = 234;","  }","}"));
+  test(LINE_JOINER.join("class Foo {","  constructor() {","    this.p = 123;","    this.p = 234;","  }","}"),LINE_JOINER.join("class Foo {","  constructor() {","    123;","    this.p = 234;","  }","}"));
+  if (ASSUME_CONSTRUCTORS_HAVENT_ESCAPED) {
+    test(LINE_JOINER.join("class Foo {","  constructor() {","    this.p = 123;","    foo();","    this.p = 234;","  }","}"),LINE_JOINER.join("class Foo {","  constructor() {","    123;","    foo();","    this.p = 234;","  }","}"));
+  }
+  setAcceptedLanguage(LanguageMode.ECMASCRIPT5);
+}

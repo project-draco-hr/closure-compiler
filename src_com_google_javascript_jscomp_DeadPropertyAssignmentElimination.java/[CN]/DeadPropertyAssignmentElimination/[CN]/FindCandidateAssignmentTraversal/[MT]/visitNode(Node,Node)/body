@@ -1,0 +1,42 @@
+{
+switch (n.getType()) {
+case Token.GETPROP:
+    if (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) {
+      return false;
+    }
+  Property property=getOrCreateProperty(n);
+if (property != null) {
+  property.markLastWriteRead();
+  property.markChildrenRead();
+}
+return true;
+case Token.CALL:
+if (ASSUME_CONSTRUCTORS_HAVENT_ESCAPED && isConstructor && !NodeUtil.referencesThis(n)&& NodeUtil.getEnclosingType(n,Token.TRY) == null) {
+markAllPropsReadExceptThisProps();
+}
+ else {
+markAllPropsRead();
+}
+return false;
+case Token.THIS:
+case Token.NAME:
+Property nameProp=Preconditions.checkNotNull(getOrCreateProperty(n));
+nameProp.markLastWriteRead();
+nameProp.markChildrenRead();
+return true;
+case Token.THROW:
+case Token.FOR:
+case Token.SWITCH:
+markAllPropsRead();
+return false;
+case Token.BLOCK:
+visitBlock(n);
+return true;
+default :
+if (isConditionalExpression(n)) {
+markAllPropsRead();
+return false;
+}
+return true;
+}
+}

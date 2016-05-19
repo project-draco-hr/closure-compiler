@@ -1,0 +1,26 @@
+{
+  Property property=getOrCreateProperty(lhs);
+  if (property == null) {
+    return;
+  }
+  if (!lhs.isGetProp()) {
+    property.markLastWriteRead();
+    property.markChildrenRead();
+    return;
+  }
+  Node assignNode=lhs.getParent();
+  if (!assignNode.isAssign()) {
+    property.markLastWriteRead();
+  }
+  property.markChildrenRead();
+  property.addWrite(lhs);
+  Node child=lhs.getFirstChild();
+  while (child != null) {
+    Property childProperty=getOrCreateProperty(child);
+    if (childProperty == null) {
+      break;
+    }
+    childProperty.markLastWriteRead();
+    child=child.getFirstChild();
+  }
+}

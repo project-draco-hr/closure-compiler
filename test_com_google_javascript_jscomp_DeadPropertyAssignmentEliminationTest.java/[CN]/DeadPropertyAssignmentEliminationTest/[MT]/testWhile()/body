@@ -1,0 +1,9 @@
+{
+  testSame(LINE_JOINER.join("function f(x) {","  x.p = 1;","  while(x);","  x.p = 2;","}"));
+  testSame(LINE_JOINER.join("function f(x) {","  x.p = 1;","  while(1) {","    x.p = 2;","  }","}"));
+  testSame(LINE_JOINER.join("function f(x) {","  while(true) {","    x.p = 1;","    if (random()) continue;","    x.p = 2;","  }","}"));
+  testSame(LINE_JOINER.join("function f(x) {","  while(true) {","    x.p = 1;","    if (random()) break;","    x.p = 2;","  }","}"));
+  test(LINE_JOINER.join("function f(x) {","  x.p = 1;","  while(x.p = 2) {","  }","}"),LINE_JOINER.join("function f(x) {","  1;","  while(x.p = 2) {","  }","}"));
+  test(LINE_JOINER.join("function f(x) {","  while(true) {","    x.p = 1;","    x.p = 2;","  }","}"),LINE_JOINER.join("function f(x) {","  while(true) {","    1;","    x.p = 2;","  }","}"));
+  test(LINE_JOINER.join("function f(x) {","  x.p = 1;","  while(1) {}","  x.p = 2;","}"),LINE_JOINER.join("function f(x) {","  1;","  while(1) {}","  x.p = 2;","}"));
+}

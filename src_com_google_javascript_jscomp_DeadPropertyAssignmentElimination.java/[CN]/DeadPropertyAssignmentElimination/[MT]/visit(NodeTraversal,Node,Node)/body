@@ -1,0 +1,28 @@
+{
+  if (!n.isFunction()) {
+    return;
+  }
+  Node body=NodeUtil.getFunctionBody(n);
+  if (!body.hasChildren() || NodeUtil.containsFunction(body)) {
+    return;
+  }
+  FindCandidateAssignmentTraversal traversal=new FindCandidateAssignmentTraversal(NodeUtil.isConstructor(n));
+  NodeTraversal.traverseEs6(compiler,body,traversal);
+  for (  Property property : traversal.propertyMap.values()) {
+    if (property.writes.size() <= 1) {
+      continue;
+    }
+    PeekingIterator<PropertyWrite> iter=Iterators.peekingIterator(property.writes.iterator());
+    while (iter.hasNext()) {
+      PropertyWrite propertyWrite=iter.next();
+      if (iter.hasNext() && propertyWrite.isSafeToRemove(iter.peek())) {
+        Node lhs=propertyWrite.assignedAt;
+        Node rhs=lhs.getNext();
+        Node assignNode=lhs.getParent();
+        rhs.detachFromParent();
+        assignNode.getParent().replaceChild(assignNode,rhs);
+        compiler.reportCodeChange();
+      }
+    }
+  }
+}

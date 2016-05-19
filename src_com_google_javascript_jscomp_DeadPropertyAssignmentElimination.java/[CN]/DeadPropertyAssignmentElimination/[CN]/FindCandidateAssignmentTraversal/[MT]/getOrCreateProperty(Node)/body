@@ -1,0 +1,18 @@
+{
+  if (!propNode.isQualifiedName()) {
+    return null;
+  }
+  String propName=propNode.isGetProp() ? propNode.getLastChild().getString() : propNode.getQualifiedName();
+  if (propertyMap.containsKey(propName)) {
+    return propertyMap.get(propName);
+  }
+  Property property=new Property(propName);
+  propertyMap.put(propName,property);
+  if (propNode.isGetProp()) {
+    Property parentProperty=getOrCreateProperty(propNode.getFirstChild());
+    if (parentProperty != null) {
+      parentProperty.children.add(property);
+    }
+  }
+  return property;
+}

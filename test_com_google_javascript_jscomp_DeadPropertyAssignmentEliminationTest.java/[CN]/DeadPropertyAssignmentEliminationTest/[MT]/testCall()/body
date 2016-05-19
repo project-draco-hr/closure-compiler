@@ -1,0 +1,9 @@
+{
+  testSame(LINE_JOINER.join("var foo = function() {","  a.b.c = 20;","  doSomething();","  a.b.c = 30;","}"));
+  if (ASSUME_CONSTRUCTORS_HAVENT_ESCAPED) {
+    test(LINE_JOINER.join("/** @constructor */","var foo = function() {","  this.c = 20;","  doSomething();","  this.c = 30;","}"),LINE_JOINER.join("/** @constructor */","var foo = function() {","  20;","  doSomething();","  this.c = 30;","}"));
+  }
+  testSame(LINE_JOINER.join("/** @constructor */","var foo = function() {","  this.c = 20;","  doSomething(this);","  this.c = 30;","}"));
+  testSame(LINE_JOINER.join("/** @constructor */","var foo = function() {","  this.c = 20;","  this.doSomething();","  this.c = 30;","}"));
+  testSame(LINE_JOINER.join("/** @constructor */","var foo = function() {","  this.c = 20;","  doSomething(this.c);","  this.c = 30;","}"));
+}
