@@ -4,6 +4,14 @@
   if (this.interfaces == null) {
     this.interfaces=ImmutableSet.of();
   }
+  if (isInterface()) {
+    for (    Map.Entry<String,Property> entry : this.protoProps.entrySet()) {
+      Property prop=entry.getValue();
+      if (!prop.isDeclared()) {
+        this.protoProps=this.protoProps.with(entry.getKey(),Property.makeWithDefsite(prop.getDefSite(),JSType.UNKNOWN,JSType.UNKNOWN));
+      }
+    }
+  }
   JSType protoObject=JSType.fromObjectType(ObjectType.makeObjectType(this.superClass,this.protoProps,null,null,false,ObjectKind.UNRESTRICTED));
   addCtorProperty("prototype",null,protoObject,false);
   this.isFinalized=true;
