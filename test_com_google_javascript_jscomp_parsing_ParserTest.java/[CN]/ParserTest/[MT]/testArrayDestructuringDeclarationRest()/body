@@ -1,9 +1,12 @@
 {
   mode=LanguageMode.ECMASCRIPT6;
-  expectedFeatures=FeatureSet.ES6;
+  expectFeatures(Feature.DESTRUCTURING,Feature.REST_PARAMETERS);
   parse("var [first, ...rest] = foo();");
+  expectFeatures(Feature.DESTRUCTURING,Feature.REST_PARAMETERS,Feature.LET_DECLARATIONS);
   parse("let [first, ...rest] = foo();");
+  expectFeatures(Feature.DESTRUCTURING,Feature.REST_PARAMETERS,Feature.CONST_DECLARATIONS);
   parse("const [first, ...rest] = foo();");
+  expectFeatures(Feature.DESTRUCTURING,Feature.REST_PARAMETERS);
   parse("var [first, {a, b}, ...[re, st, ...{length}]] = foo();");
   parseError("var [first, ...more = 'default'] = foo();","A default value cannot be specified after '...'");
   parseError("var [first, ...more, last] = foo();","']' expected");

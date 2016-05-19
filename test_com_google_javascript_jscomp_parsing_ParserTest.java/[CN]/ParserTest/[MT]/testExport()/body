@@ -1,6 +1,6 @@
 {
-  expectedFeatures=FeatureSet.ES6_MODULES;
   mode=LanguageMode.ECMASCRIPT6;
+  expectFeatures(Feature.MODULES);
   parse("export const x = 1");
   parse("export var x = 1");
   parse("export function f() {}");
@@ -9,11 +9,11 @@
   parse("export {x as x1}");
   parse("export {x as x1, y as x2}");
   parse("export {x as default, y as class}");
-  expectedFeatures=FeatureSet.ES3;
+  expectFeatures();
   parseError("export {default as x}","cannot use keyword 'default' here.");
   parseError("export {package as x}","cannot use keyword 'package' here.");
   parseError("export {package}","cannot use keyword 'package' here.");
-  expectedFeatures=FeatureSet.ES6_MODULES;
+  expectFeatures(Feature.MODULES);
   parse("export {x as x1, y as y1} from './someModule'");
   parse("export {x as x1, y as y1, } from './someModule'");
   parse("export {default as d} from './someModule'");

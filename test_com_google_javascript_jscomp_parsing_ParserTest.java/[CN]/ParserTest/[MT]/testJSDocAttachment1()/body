@@ -8,7 +8,7 @@
   assertNode(varNameNode).hasType(Token.NAME);
   assertThat(varNameNode.getJSDocInfo()).isNull();
   mode=LanguageMode.ECMASCRIPT6;
-  expectedFeatures=FeatureSet.ES6_IMPL;
+  expectFeatures(Feature.LET_DECLARATIONS);
   Node letNode=parse("/** @type {number} */let a;").getFirstChild();
   assertNode(letNode).hasType(Token.LET);
   JSDocInfo letInfo=letNode.getJSDocInfo();
@@ -17,7 +17,7 @@
   Node letNameNode=letNode.getFirstChild();
   assertNode(letNameNode).hasType(Token.NAME);
   assertThat(letNameNode.getJSDocInfo()).isNull();
-  expectedFeatures=FeatureSet.ES6;
+  expectFeatures(Feature.CONST_DECLARATIONS);
   Node constNode=parse("/** @type {number} */const a = 0;").getFirstChild();
   assertNode(constNode).hasType(Token.CONST);
   JSDocInfo constInfo=constNode.getJSDocInfo();
