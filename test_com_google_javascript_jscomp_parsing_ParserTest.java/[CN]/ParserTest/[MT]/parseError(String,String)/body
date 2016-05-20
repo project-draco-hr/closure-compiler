@@ -1,6 +1,9 @@
 {
   TestErrorReporter testErrorReporter=new TestErrorReporter(errors,null);
-  ParseResult result=ParserRunner.parse(new SimpleSourceFile("input",false),source,ParserRunner.createConfig(isIdeMode,mode,null),testErrorReporter);
+  Config config=ParserRunner.createConfig(mode,null);
+  config.setIdeMode(isIdeMode);
+  config.setParseJsDocDocumentation(isIdeMode);
+  ParseResult result=ParserRunner.parse(new SimpleSourceFile("input",false),source,config,testErrorReporter);
   Node script=result.ast;
   if (expectedFeatures != null) {
     assertThat(result.features).isEqualTo(expectedFeatures);
