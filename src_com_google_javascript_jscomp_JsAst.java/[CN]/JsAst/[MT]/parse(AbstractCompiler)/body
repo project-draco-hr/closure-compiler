@@ -6,14 +6,14 @@
     ParserRunner.ParseResult result=ParserRunner.parse(sourceFile,sourceFile.getCode(),compiler.getParserConfig(sourceFile.isExtern() ? AbstractCompiler.ConfigContext.EXTERNS : AbstractCompiler.ConfigContext.DEFAULT),reporter);
     root=result.ast;
     features=result.features;
-    if (compiler.isIdeMode()) {
+    if (compiler.getOptions().preservesDetailedSourceInfo()) {
       compiler.addComments(sourceFile.getName(),result.comments);
     }
   }
  catch (  IOException e) {
     compiler.report(JSError.make(AbstractCompiler.READ_ERROR,sourceFile.getName()));
   }
-  if (root == null || (errorManager.getErrorCount() > startErrorCount && !compiler.isIdeMode())) {
+  if (root == null || (errorManager.getErrorCount() > startErrorCount && !compiler.getOptions().canKeepGoing())) {
     root=IR.script();
   }
  else {
