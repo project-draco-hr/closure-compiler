@@ -11,7 +11,8 @@
   if (rewriteState.containsModule(legacyNamespace)) {
     t.report(call,DUPLICATE_NAMESPACE,legacyNamespace);
   }
-  legacyScriptNamespaces.add(legacyNamespace);
+  rewriteState.legacyScriptNamespaces.add(legacyNamespace);
+  rewriteState.legacyNamespacesByScriptNode.put(NodeUtil.getEnclosingScript(call),legacyNamespace);
   LinkedList<String> parts=Lists.newLinkedList(Splitter.on('.').split(legacyNamespace));
   while (!parts.isEmpty()) {
     legacyScriptNamespacesAndPrefixes.add(Joiner.on('.').join(parts));

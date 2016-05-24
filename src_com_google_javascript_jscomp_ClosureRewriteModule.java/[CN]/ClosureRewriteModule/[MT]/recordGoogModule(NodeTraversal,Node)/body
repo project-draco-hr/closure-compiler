@@ -12,8 +12,9 @@
   if (rewriteState.containsModule(legacyNamespace)) {
     t.report(call,DUPLICATE_MODULE,legacyNamespace);
   }
-  if (legacyScriptNamespaces.contains(legacyNamespace)) {
+  if (rewriteState.legacyScriptNamespaces.contains(legacyNamespace)) {
     t.report(call,DUPLICATE_NAMESPACE,legacyNamespace);
   }
-  rewriteState.trackModule(legacyNamespace,currentScript);
+  rewriteState.scriptDescriptionsByGoogModuleNamespace.put(legacyNamespace,currentScript);
+  rewriteState.legacyNamespacesByScriptNode.put(NodeUtil.getEnclosingScript(currentScript.rootNode),legacyNamespace);
 }
