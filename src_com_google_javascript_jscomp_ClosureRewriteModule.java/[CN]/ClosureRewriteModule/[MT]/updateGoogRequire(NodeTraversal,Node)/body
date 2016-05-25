@@ -4,18 +4,35 @@
   String legacyNamespace=legacyNamespaceNode.getString();
   boolean targetIsNonLegacyGoogModule=rewriteState.containsModule(legacyNamespace) && !rewriteState.isLegacyModule(legacyNamespace);
   boolean targetIsGoogModuleGetted=currentScript.googModuleGettedNamespaces.contains(legacyNamespaceNode.getString());
-  boolean importHasAlias=currentScript.legacyNamespacesByAlias.containsValue(legacyNamespace);
+  boolean importHasAlias=NodeUtil.isNameDeclaration(statementNode);
   boolean isDestructuring=statementNode.getFirstChild().isDestructuringLhs();
   boolean immediatePropertyAccess=call.getParent().isGetProp() && call.getGrandparent().isName() && NodeUtil.isNameDeclaration(call.getGrandparent().getParent());
+  boolean currentScriptIsAModule=currentScript.isModule;
+  boolean requireDirectlyStoredInAlias=NodeUtil.isNameDeclaration(call.getGrandparent());
+  if (currentScriptIsAModule && requireDirectlyStoredInAlias && isTopLevel(t,statementNode,ScopeType.EXEC_CONTEXT)) {
+    Node lhs=call.getParent();
+    String exportedNamespace=rewriteState.getExportedNamespace(legacyNamespace);
+    if (exportedNamespace == null) {
+    }
+ else     if (lhs.isName()) {
+      String aliasName=statementNode.getFirstChild().getString();
+      recordImportAlias(aliasName,exportedNamespace);
+    }
+ else     if (lhs.isDestructuringLhs() && lhs.getFirstChild().isObjectPattern()) {
+      for (      Node importSpec : lhs.getFirstChild().children()) {
+        String importedProperty=importSpec.getString();
+        String aliasName=importSpec.hasChildren() ? importSpec.getFirstChild().getString() : importedProperty;
+        String fullName=exportedNamespace + "." + importedProperty;
+        recordImportAlias(aliasName,fullName);
+      }
+    }
+ else {
+      throw new RuntimeException("Illegal goog.module import: " + lhs);
+    }
+  }
   if (currentScript.isModule || (targetIsNonLegacyGoogModule && targetIsGoogModuleGetted)) {
     if (isDestructuring) {
-      String exportedNamespace=rewriteState.getExportedNamespace(legacyNamespace);
-      Node replacementNamespaceName=NodeUtil.newQName(compiler,exportedNamespace);
-      replacementNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
-      replacementNamespaceName.putBooleanProp(Node.GOOG_MODULE_REQUIRE,true);
-      replacementNamespaceName.srcrefTree(call);
-      call.getParent().replaceChild(call,replacementNamespaceName);
-      markConst(statementNode);
+      statementNode.detachFromParent();
     }
  else     if (targetIsNonLegacyGoogModule) {
       if (immediatePropertyAccess || !isTopLevel(t,statementNode,ScopeType.EXEC_CONTEXT)) {

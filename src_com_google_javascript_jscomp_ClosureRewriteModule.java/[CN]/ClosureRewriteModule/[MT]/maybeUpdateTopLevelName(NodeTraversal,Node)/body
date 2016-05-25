@@ -7,16 +7,21 @@
   if (var == null || var.getScope().getRootNode() != currentScript.rootNode) {
     return;
   }
-  boolean nameIsAnAlias=currentScript.legacyNamespacesByAlias.containsKey(name);
+  if (var.getNameNode() == nameNode && nameNode.getParent().isStringKey() && nameNode.getGrandparent().isObjectPattern()) {
+    Node destructuringLhsNode=nameNode.getGrandparent().getParent();
+    if (isCallTo(destructuringLhsNode.getLastChild(),"goog.require")) {
+      return;
+    }
+  }
+  boolean nameIsAnAlias=currentScript.importedNamesByAlias.containsKey(name);
   if (nameIsAnAlias && var.getNode() != nameNode) {
-    String legacyNamespace=currentScript.legacyNamespacesByAlias.get(name);
-    String namespaceToInline=rewriteState.getExportedNamespace(legacyNamespace);
+    String namespaceToInline=currentScript.importedNamesByAlias.get(name);
     safeSetMaybeQualifiedString(nameNode,namespaceToInline);
     if (namespaceToInline.indexOf('.') != -1) {
       String firstQualifiedName=namespaceToInline.substring(0,namespaceToInline.indexOf('.'));
       Var shadowedVar=t.getScope().getVar(firstQualifiedName);
       if (shadowedVar != null && shadowedVar.isLocal()) {
-        t.report(shadowedVar.getNode(),IMPORT_INLINING_SHADOWS_VAR,shadowedVar.getName(),legacyNamespace);
+        t.report(shadowedVar.getNode(),IMPORT_INLINING_SHADOWS_VAR,shadowedVar.getName(),namespaceToInline);
       }
     }
     return;

@@ -1,4 +1,10 @@
 {
-  String binaryNamespace=getBinaryNamespace(legacyNamespace);
-  return binaryNamespace != null ? binaryNamespace : legacyNamespace;
+  if (legacyScriptNamespaces.contains(legacyNamespace)) {
+    return legacyNamespace;
+  }
+  ScriptDescription script=scriptDescriptionsByGoogModuleNamespace.get(legacyNamespace);
+  if (script != null) {
+    return script.declareLegacyNamespace ? legacyNamespace : script.getBinaryNamespace();
+  }
+  return null;
 }

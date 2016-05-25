@@ -5,7 +5,8 @@
     NodeUtil.getEnclosingStatement(call).detachFromParent();
   }
  else {
-    Node exportedNamespaceName=NodeUtil.newQName(compiler,rewriteState.getExportedNamespace(legacyNamespace)).srcrefTree(call);
+    String exportedNamespace=rewriteState.getExportedNamespace(legacyNamespace);
+    Node exportedNamespaceName=NodeUtil.newQName(compiler,exportedNamespace).srcrefTree(call);
     exportedNamespaceName.putProp(Node.ORIGINALNAME_PROP,legacyNamespace);
     call.getParent().replaceChild(call,exportedNamespaceName);
   }

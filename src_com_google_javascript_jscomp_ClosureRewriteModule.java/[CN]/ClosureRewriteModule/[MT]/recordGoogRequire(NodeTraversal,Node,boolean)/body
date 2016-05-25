@@ -1,18 +1,11 @@
 {
   maybeSplitMultiVar(call);
   Node legacyNamespaceNode=call.getLastChild();
-  Node statementNode=NodeUtil.getEnclosingStatement(call);
   if (!legacyNamespaceNode.isString()) {
     t.report(legacyNamespaceNode,INVALID_REQUIRE_NAMESPACE);
     return;
   }
   String legacyNamespace=legacyNamespaceNode.getString();
-  boolean currentScriptIsAModule=currentScript.isModule;
-  boolean requireStoredInSimpleAlias=call.getParent().isName() && NodeUtil.isNameDeclaration(call.getGrandparent());
-  if (currentScriptIsAModule && requireStoredInSimpleAlias && isTopLevel(t,statementNode,ScopeType.EXEC_CONTEXT)) {
-    String aliasName=statementNode.getFirstChild().getString();
-    recordImportAlias(aliasName,legacyNamespace);
-  }
   boolean targetIsAModule=rewriteState.containsModule(legacyNamespace);
   boolean targetIsALegacyScript=rewriteState.legacyScriptNamespaces.contains(legacyNamespace);
   if (reportBadRequireErrors && currentScript.isModule && !targetIsAModule&& !targetIsALegacyScript) {
