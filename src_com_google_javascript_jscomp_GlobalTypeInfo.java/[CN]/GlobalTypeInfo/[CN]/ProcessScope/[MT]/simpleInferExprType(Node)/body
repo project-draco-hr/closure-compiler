@@ -2,23 +2,25 @@
 switch (n.getType()) {
 case Token.REGEXP:
     return commonTypes.getRegexpType();
+case Token.CAST:
+  return castTypes.get(n);
 case Token.ARRAYLIT:
 {
-    if (!n.hasChildren()) {
-      return commonTypes.getArrayInstance();
-    }
-    Node child=n.getFirstChild();
-    JSType arrayType=simpleInferExprType(child);
-    if (arrayType == null) {
+  if (!n.hasChildren()) {
+    return commonTypes.getArrayInstance();
+  }
+  Node child=n.getFirstChild();
+  JSType arrayType=simpleInferExprType(child);
+  if (arrayType == null) {
+    return null;
+  }
+  while (null != (child=child.getNext())) {
+    if (!arrayType.equals(simpleInferExprType(child))) {
       return null;
     }
-    while (null != (child=child.getNext())) {
-      if (!arrayType.equals(simpleInferExprType(child))) {
-        return null;
-      }
-    }
-    return commonTypes.getArrayInstance(arrayType);
   }
+  return commonTypes.getArrayInstance(arrayType);
+}
 case Token.TRUE:
 return JSType.TRUE_TYPE;
 case Token.FALSE:
