@@ -1,0 +1,17 @@
+{
+  if (NodeUtil.isGetterOrSetter(n)) {
+    Node grandparent=parent.getParent();
+    if (NodeUtil.isGetOrSetKey(n) && n.getString() != null) {
+      propNames.add(n.getString());
+    }
+ else     if (NodeUtil.isObjectDefinePropertyDefinition(grandparent)) {
+      Node propNode=grandparent.getChildAtIndex(2);
+      if (propNode.isString()) {
+        propNames.add(propNode.getString());
+      }
+    }
+ else     if (grandparent.isStringKey() && NodeUtil.isObjectDefinePropertiesDefinition(grandparent.getParent().getParent())) {
+      propNames.add(grandparent.getString());
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  Node fnNode=getFunctionNode("Object.defineProperty(this, 'bar', {get: function() {}});");
+  assertTrue(NodeUtil.isGetterOrSetter(fnNode.getParent()));
+  fnNode=getFunctionNode("Object.defineProperty(this, 'bar', {set: function() {}});");
+  assertTrue(NodeUtil.isGetterOrSetter(fnNode.getParent()));
+  fnNode=getFunctionNode("Object.defineProperties(this, {bar: {get: function() {}}});");
+  assertTrue(NodeUtil.isGetterOrSetter(fnNode.getParent()));
+  fnNode=getFunctionNode("Object.defineProperties(this, {bar: {set: function() {}}});");
+  assertTrue(NodeUtil.isGetterOrSetter(fnNode.getParent()));
+  fnNode=getFunctionNode("var x = {get bar() {}};");
+  assertTrue(NodeUtil.isGetterOrSetter(fnNode.getParent()));
+  fnNode=getFunctionNode("var x = {set bar(z) {}};");
+  assertTrue(NodeUtil.isGetterOrSetter(fnNode.getParent()));
+}

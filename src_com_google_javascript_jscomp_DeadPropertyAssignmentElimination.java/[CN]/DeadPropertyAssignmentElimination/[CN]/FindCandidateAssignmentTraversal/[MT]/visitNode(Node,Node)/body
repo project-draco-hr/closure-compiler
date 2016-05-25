@@ -1,13 +1,19 @@
 {
 switch (n.getType()) {
 case Token.GETPROP:
-    if (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) {
-      return false;
+    if (n.isGetProp() && n.getLastChild().isString() && getterSetterNames.contains(n.getLastChild().getString())) {
+      markAllPropsRead();
+      return true;
     }
-  Property property=getOrCreateProperty(n);
+  if (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) {
+    return false;
+  }
+Property property=getOrCreateProperty(n);
 if (property != null) {
-  property.markLastWriteRead();
+property.markLastWriteRead();
+if (!parent.isGetProp()) {
   property.markChildrenRead();
+}
 }
 return true;
 case Token.CALL:
@@ -22,7 +28,9 @@ case Token.THIS:
 case Token.NAME:
 Property nameProp=Preconditions.checkNotNull(getOrCreateProperty(n));
 nameProp.markLastWriteRead();
+if (!parent.isGetProp()) {
 nameProp.markChildrenRead();
+}
 return true;
 case Token.THROW:
 case Token.FOR:
