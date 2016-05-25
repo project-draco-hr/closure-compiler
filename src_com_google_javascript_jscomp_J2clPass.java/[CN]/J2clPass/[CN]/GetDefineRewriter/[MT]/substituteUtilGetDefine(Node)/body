@@ -1,0 +1,14 @@
+{
+  Node firstExpr=callNode.getSecondChild();
+  Node secondExpr=callNode.getLastChild();
+  if (secondExpr != firstExpr) {
+    secondExpr.detachFromParent();
+  }
+ else {
+    secondExpr=IR.nullNode();
+  }
+  Node replacement=getDefineReplacement(firstExpr,secondExpr);
+  replacement.useSourceInfoIfMissingFromForTree(callNode);
+  callNode.getParent().replaceChild(callNode,replacement);
+  compiler.reportCodeChange();
+}
