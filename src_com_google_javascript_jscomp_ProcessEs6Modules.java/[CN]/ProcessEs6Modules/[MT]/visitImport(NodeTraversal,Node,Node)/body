@@ -40,7 +40,8 @@
   if (alreadyRequired.add(moduleName)) {
     Node require=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"goog.require"),IR.string(moduleName)));
     require.copyInformationFromForTree(importDecl);
-    script.addChildToFront(require);
+    script.addChildAfter(require,googRequireInsertSpot);
+    googRequireInsertSpot=require;
     if (reportDependencies) {
       t.getInput().addRequire(moduleName);
     }
