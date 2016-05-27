@@ -1,0 +1,22 @@
+{
+  Preconditions.checkState(n.isGetElem());
+  Node recv=n.getFirstChild();
+  Node propNode=n.getLastChild();
+  if (propNode.isString()) {
+    JSType propType=simpleInferPropAccessType(recv,propNode.getString());
+    if (propType != null) {
+      return propType;
+    }
+  }
+  JSType recvType=simpleInferExprType(recv);
+  if (recvType != null) {
+    JSType indexType=recvType.getIndexType();
+    if (indexType != null) {
+      JSType propType=simpleInferExprType(propNode);
+      if (propType != null && propType.isSubtypeOf(indexType)) {
+        return recvType.getIndexedType();
+      }
+    }
+  }
+  return null;
+}

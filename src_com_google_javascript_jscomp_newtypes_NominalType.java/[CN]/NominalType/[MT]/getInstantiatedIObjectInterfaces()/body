@@ -1,8 +1,9 @@
 {
-  Preconditions.checkState(this.rawType.isFinalized());
   ImmutableSet.Builder<NominalType> result=ImmutableSet.builder();
   for (  NominalType interf : this.rawType.getInterfaces()) {
-    result.add(interf.instantiateGenerics(typeMap));
+    if (interf.inheritsFromIObjectReflexive()) {
+      result.add(interf.instantiateGenerics(typeMap));
+    }
   }
   return result.build();
 }

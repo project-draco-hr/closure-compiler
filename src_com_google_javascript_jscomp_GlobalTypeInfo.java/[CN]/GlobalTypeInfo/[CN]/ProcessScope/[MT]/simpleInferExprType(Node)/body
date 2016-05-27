@@ -42,7 +42,9 @@ objLitType=objLitType.withProperty(new QualifiedName(NodeUtil.getObjectLitKeyNam
 return objLitType;
 }
 case Token.GETPROP:
-return simpleInferGetpropType(n);
+return simpleInferPropAccessType(n.getFirstChild(),n.getLastChild().getString());
+case Token.GETELEM:
+return simpleInferGetelemType(n);
 case Token.COMMA:
 case Token.ASSIGN:
 return simpleInferExprType(n.getLastChild());
@@ -61,7 +63,6 @@ case STRING:
 return JSType.STRING;
 case BOOLEAN:
 return JSType.BOOLEAN;
-case UNDETERMINED:
 default :
 return null;
 }
