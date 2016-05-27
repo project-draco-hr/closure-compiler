@@ -1,0 +1,82 @@
+{
+switch (n.getType()) {
+case Token.FUNCTION:
+{
+      if (parent.isCall()) {
+        Preconditions.checkState(!parent.getFirstChild().matchesQualifiedName("goog.scope"),parent);
+      }
+      Node body=n.getLastChild();
+      if (body.isBlock() && body.hasChildren()) {
+        if (isConstructor(n)) {
+          processConstructor(n);
+        }
+        n.getLastChild().removeChildren();
+        compiler.reportCodeChange();
+      }
+      break;
+    }
+case Token.EXPR_RESULT:
+  Node expr=n.getFirstChild();
+switch (expr.getType()) {
+case Token.NUMBER:
+case Token.STRING:
+  n.detachFromParent();
+compiler.reportCodeChange();
+break;
+case Token.CALL:
+Preconditions.checkState(!n.getFirstChild().matchesQualifiedName("goog.scope"),n);
+Preconditions.checkState(!n.getFirstChild().matchesQualifiedName("goog.forwardDeclare"),n);
+n.detachFromParent();
+compiler.reportCodeChange();
+break;
+case Token.ASSIGN:
+processName(expr.getFirstChild(),n);
+break;
+case Token.GETPROP:
+processName(expr,n);
+break;
+default :
+if (expr.getJSDocInfo() == null) {
+n.detachFromParent();
+compiler.reportCodeChange();
+}
+break;
+}
+break;
+case Token.VAR:
+case Token.CONST:
+case Token.LET:
+if (n.getChildCount() == 1) {
+processName(n.getFirstChild(),n);
+}
+break;
+case Token.THROW:
+case Token.RETURN:
+case Token.BREAK:
+case Token.CONTINUE:
+case Token.DEBUGGER:
+n.detachFromParent();
+compiler.reportCodeChange();
+break;
+case Token.FOR_OF:
+case Token.DO:
+case Token.WHILE:
+case Token.FOR:
+{
+Node body=NodeUtil.getLoopCodeBlock(n);
+parent.replaceChild(n,body.detachFromParent());
+Node initializer=n.isFor() ? n.getFirstChild() : IR.empty();
+if (NodeUtil.isNameDeclaration(initializer)) {
+parent.addChildBefore(initializer.detachFromParent(),body);
+processName(initializer.getFirstChild(),initializer);
+}
+compiler.reportCodeChange();
+break;
+}
+case Token.LABEL:
+parent.replaceChild(n,n.getSecondChild().detachFromParent());
+compiler.reportCodeChange();
+break;
+}
+return true;
+}

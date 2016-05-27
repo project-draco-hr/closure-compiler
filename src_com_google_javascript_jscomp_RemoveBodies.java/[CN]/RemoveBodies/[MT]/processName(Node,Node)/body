@@ -1,0 +1,21 @@
+{
+  Preconditions.checkState(NodeUtil.isStatement(statement),statement);
+  if (!nameNode.isQualifiedName()) {
+    removeNode(statement);
+    return;
+  }
+  Node jsdocNode=NodeUtil.getBestJSDocInfoNode(nameNode);
+switch (shouldRemove(nameNode)) {
+case REMOVE_ALL:
+    removeNode(statement);
+  break;
+case PRESERVE_ALL:
+break;
+case UNDECLARED:
+jsdocNode.setJSDocInfo(getAllTypeJSDoc());
+case REMOVE_RHS:
+maybeRemoveRhs(nameNode,statement,jsdocNode.getJSDocInfo());
+break;
+}
+seenNames.add(nameNode.getQualifiedName());
+}

@@ -1,0 +1,18 @@
+{
+  Node jsdocNode=NodeUtil.getBestJSDocInfoNode(nameNode);
+  JSDocInfo jsdoc=jsdocNode.getJSDocInfo();
+  if (jsdoc != null && jsdoc.isConstructorOrInterface()) {
+    return RemovalType.PRESERVE_ALL;
+  }
+  Node rhs=NodeUtil.getRValueOfLValue(nameNode);
+  if (rhs == null || rhs.isFunction() || rhs.isQualifiedName() && rhs.matchesQualifiedName("goog.abstractMethod") || rhs.isQualifiedName() && rhs.matchesQualifiedName("goog.nullFunction") || rhs.isObjectLit() && !rhs.hasChildren() && (jsdoc == null || jsdoc.getTypeNodes().isEmpty())) {
+    return RemovalType.PRESERVE_ALL;
+  }
+  if (jsdoc == null || !jsdoc.containsDeclaration()) {
+    if (seenNames.contains(nameNode.getQualifiedName())) {
+      return RemovalType.REMOVE_ALL;
+    }
+    return RemovalType.UNDECLARED;
+  }
+  return RemovalType.REMOVE_RHS;
+}

@@ -1,0 +1,25 @@
+{
+  final String className=getClassName(function);
+  if (className == null) {
+    return;
+  }
+  final Node insertionPoint=NodeUtil.getEnclosingStatement(function);
+  NodeTraversal.traverseEs6(compiler,function.getLastChild(),new AbstractShallowStatementCallback(){
+    @Override public void visit(    NodeTraversal t,    Node n,    Node parent){
+      if (n.isExprResult()) {
+        Node expr=n.getFirstChild();
+        Node name=expr.isAssign() ? expr.getFirstChild() : expr;
+        if (!name.isGetProp() || !name.getFirstChild().isThis()) {
+          return;
+        }
+        String pname=name.getLastChild().getString();
+        JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(name);
+        Node newProtoAssignStmt=NodeUtil.newQNameDeclaration(compiler,className + ".prototype." + pname,null,jsdoc);
+        newProtoAssignStmt.useSourceInfoIfMissingFromForTree(expr);
+        insertionPoint.getParent().addChildAfter(newProtoAssignStmt,insertionPoint);
+        compiler.reportCodeChange();
+      }
+    }
+  }
+);
+}

@@ -1,0 +1,15 @@
+{
+  if (jsdoc != null) {
+    if (jsdoc.hasConstAnnotation() && !jsdoc.hasType() && !NodeUtil.isNamespaceDecl(nameNode)) {
+      return;
+    }
+    if (jsdoc.hasEnumParameterType()) {
+      removeEnumValues(NodeUtil.getRValueOfLValue(nameNode));
+      return;
+    }
+  }
+  Node newStatement=NodeUtil.newQNameDeclaration(compiler,nameNode.getQualifiedName(),null,jsdoc);
+  newStatement.useSourceInfoIfMissingFromForTree(nameNode);
+  statement.getParent().replaceChild(statement,newStatement);
+  compiler.reportCodeChange();
+}
