@@ -100,18 +100,11 @@
     checks.add(newTypeInference);
   }
   checks.add(inlineTypeAliases);
-  if (options.checkTypes || options.inferTypes) {
-    checks.add(resolveTypes);
-    checks.add(inferTypes);
-    if (options.checkTypes) {
-      checks.add(checkTypes);
-    }
- else {
-      checks.add(inferJsDocInfo);
-    }
-    if (!options.preservesDetailedSourceInfo()) {
-      checks.add(clearTypedScopePass);
-    }
+  if (!options.getNewTypeInference()) {
+    addOldTypeCheckerPasses(checks,options);
+  }
+  if (options.getNewTypeInference()) {
+    addOldTypeCheckerPasses(checks,options);
   }
   if (options.generateExportsAfterTypeChecking && options.generateExports) {
     checks.add(generateExports);
