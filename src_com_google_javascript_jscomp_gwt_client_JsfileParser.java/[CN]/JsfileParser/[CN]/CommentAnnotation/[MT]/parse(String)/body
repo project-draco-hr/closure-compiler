@@ -1,0 +1,12 @@
+{
+  JsRegExp re=new JsRegExp(ANNOTATION_RE,"g");
+  JsRegExp.Match match;
+  List<CommentAnnotation> out=new ArrayList<>();
+  while ((match=re.exec(comment)) != null) {
+    boolean modName=match.get(OTHER_ANNOTATION_GROUP) == null;
+    String name=modName ? "@modName" : match.get(OTHER_ANNOTATION_GROUP);
+    String value=Strings.nullToEmpty(match.get(modName ? MODNAME_VALUE_GROUP : OTHER_VALUE_GROUP));
+    out.add(new CommentAnnotation(name,value));
+  }
+  return out;
+}

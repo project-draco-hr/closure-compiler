@@ -1,0 +1,40 @@
+{
+  if (node.isGetProp() && node.getFirstChild().isName() && node.getFirstChild().getString().equals("goog")) {
+    Var root=traversal.getScope().getVar("goog");
+    if (root == null) {
+      info.goog=true;
+      if (parent.isCall() && parent.getChildCount() < 3) {
+        Node arg;
+switch (node.getLastChild().getString()) {
+case "module":
+          info.loadFlags.add(JsArray.of("module","goog"));
+case "provide":
+        arg=parent.getSecondChild();
+      if (arg.isString()) {
+        info.provides.add(arg.getString());
+      }
+    break;
+case "require":
+  arg=parent.getSecondChild();
+if (arg.isString()) {
+  info.requires.add(arg.getString());
+}
+break;
+case "setTestOnly":
+info.testonly=true;
+break;
+default :
+}
+}
+}
+}
+if (node.isImport()) {
+Node moduleSpecifier=node.getChildAtIndex(2);
+Preconditions.checkState(moduleSpecifier.isString());
+info.loadFlags.add(JsArray.of("module","es6"));
+info.importedModules.add(moduleSpecifier.getString());
+}
+ else if (node.isExport()) {
+info.loadFlags.add(JsArray.of("module","es6"));
+}
+}

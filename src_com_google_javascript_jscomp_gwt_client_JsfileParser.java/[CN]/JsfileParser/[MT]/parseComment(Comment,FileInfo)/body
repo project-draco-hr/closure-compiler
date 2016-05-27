@@ -1,0 +1,64 @@
+{
+  boolean fileOverview=comment.value.contains("@fileoverview");
+  for (  CommentAnnotation annotation : CommentAnnotation.parse(comment.value)) {
+switch (annotation.name) {
+case "@fileoverview":
+case "@author":
+case "@see":
+case "@link":
+      break;
+case "@mods":
+    if (!annotation.value.isEmpty()) {
+      info.mods.add(annotation.value);
+    }
+  break;
+case "@visibility":
+if (!annotation.value.isEmpty()) {
+  info.visibility.add(annotation.value);
+}
+break;
+case "@modName":
+if (!annotation.value.isEmpty()) {
+info.modName.add(annotation.value);
+}
+break;
+case "@config":
+info.isConfig=true;
+break;
+case "@provideGoog":
+info.provideGoog=true;
+break;
+case "@requirecss":
+if (!annotation.value.isEmpty()) {
+info.requiresCss.add(annotation.value);
+}
+break;
+case "@hassoydeltemplate":
+if (!annotation.value.isEmpty()) {
+info.hasSoyDeltemplates.add(annotation.value);
+}
+break;
+case "@hassoydelcall":
+if (!annotation.value.isEmpty()) {
+info.hasSoyDelcalls.add(annotation.value);
+}
+break;
+case "@externs":
+info.isExterns=true;
+break;
+case "@enhanceable":
+case "@pintomodule":
+info.customAnnotations.add(JsArray.of(annotation.name.substring(1),annotation.value));
+break;
+case "@enhance":
+if (!annotation.value.isEmpty()) {
+info.customAnnotations.add(JsArray.of(annotation.name.substring(1),annotation.value));
+}
+break;
+default :
+if (fileOverview) {
+info.customAnnotations.add(JsArray.of(annotation.name.substring(1),annotation.value));
+}
+}
+}
+}

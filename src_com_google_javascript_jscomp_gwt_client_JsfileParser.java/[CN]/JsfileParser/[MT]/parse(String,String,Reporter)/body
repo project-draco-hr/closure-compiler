@@ -1,0 +1,24 @@
+{
+  ErrorReporter errorReporter=new DelegatingReporter(reporter);
+  Compiler compiler=new Compiler();
+  compiler.init(ImmutableList.<SourceFile>of(),ImmutableList.<SourceFile>of(),new CompilerOptions());
+  Config config=ParserRunner.createConfig(Config.LanguageMode.ECMASCRIPT6,ImmutableSet.<String>of());
+  config.setPreserveDetailedSourceInfo(true);
+  config.setKeepGoing(true);
+  config.setParseJsDocDocumentation(true);
+  SourceFile source=SourceFile.fromCode(filename,code);
+  FileInfo info=new FileInfo(errorReporter);
+  ParserRunner.ParseResult parsed=ParserRunner.parse(source,code,config,errorReporter);
+  parsed.ast.setInputId(new InputId(filename));
+  String version=parsed.features.version();
+  if (!version.equals("es3")) {
+    info.loadFlags.add(JsArray.of("lang",version));
+  }
+  for (  Comment comment : parsed.comments) {
+    if (comment.type == Comment.Type.JSDOC) {
+      parseComment(comment,info);
+    }
+  }
+  NodeTraversal.traverseEs6(compiler,parsed.ast,new Traverser(info));
+  return info;
+}

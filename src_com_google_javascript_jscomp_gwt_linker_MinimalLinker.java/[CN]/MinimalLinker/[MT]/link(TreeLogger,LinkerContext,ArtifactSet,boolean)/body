@@ -1,0 +1,14 @@
+{
+  ArtifactSet toReturn=new ArtifactSet(artifacts);
+  ArtifactSet writableArtifacts=new ArtifactSet(artifacts);
+  for (  CompilationResult result : toReturn.find(CompilationResult.class)) {
+    String[] js=result.getJavaScript();
+    Preconditions.checkArgument(js.length == 1,"MinimalLinker doesn't support GWT.runAsync");
+    byte[] primary=Util.getBytes(PREFIX + js[0] + SUFFIX);
+    toReturn.add(emitBytes(logger,primary,context.getModuleName() + ".js"));
+  }
+  for (  SymbolMapsLinker.ScriptFragmentEditsArtifact ea : writableArtifacts.find(SymbolMapsLinker.ScriptFragmentEditsArtifact.class)) {
+    toReturn.add(ea);
+  }
+  return toReturn;
+}
