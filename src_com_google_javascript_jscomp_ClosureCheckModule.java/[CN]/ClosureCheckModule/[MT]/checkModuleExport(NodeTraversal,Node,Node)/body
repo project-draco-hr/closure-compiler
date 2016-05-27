@@ -1,0 +1,21 @@
+{
+  Preconditions.checkArgument(n.isAssign());
+  Node lhs=n.getFirstChild();
+  Preconditions.checkState(lhs.isQualifiedName());
+  Preconditions.checkState(NodeUtil.getRootOfQualifiedName(lhs).matchesQualifiedName("exports"));
+  if (lhs.isName()) {
+    if (defaultExportNode != null) {
+      t.report(n,EXPORT_REPEATED_ERROR,String.valueOf(defaultExportNode.getLineno()));
+    }
+ else     if (!t.inGlobalScope() || !parent.isExprResult()) {
+      t.report(n,EXPORT_NOT_A_MODULE_LEVEL_STATEMENT);
+    }
+    defaultExportNode=lhs;
+  }
+  if ((lhs.isName() || !NodeUtil.isPrototypeProperty(lhs)) && !NodeUtil.isLegacyGoogModuleFile(NodeUtil.getEnclosingScript(n))) {
+    JSDocInfo jsDoc=n.getJSDocInfo();
+    if (jsDoc != null && jsDoc.isExport()) {
+      t.report(n,AT_EXPORT_IN_NON_LEGACY_GOOG_MODULE);
+    }
+  }
+}

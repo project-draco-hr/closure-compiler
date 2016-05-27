@@ -20,14 +20,8 @@ break;
 case Token.ASSIGN:
 {
 Node lhs=n.getFirstChild();
-if (lhs.isQualifiedName()) {
-  Node root=NodeUtil.getRootOfQualifiedName(lhs);
-  if (root.matchesQualifiedName("exports") && (lhs.isName() || !root.getNext().getString().equals("prototype")) && !NodeUtil.isLegacyGoogModuleFile(NodeUtil.getEnclosingScript(n))) {
-    JSDocInfo jsDoc=n.getJSDocInfo();
-    if (jsDoc != null && jsDoc.isExport()) {
-      t.report(n,AT_EXPORT_IN_NON_LEGACY_GOOG_MODULE);
-    }
-  }
+if (lhs.isQualifiedName() && NodeUtil.getRootOfQualifiedName(lhs).matchesQualifiedName("exports")) {
+  checkModuleExport(t,n,parent);
 }
 break;
 }
@@ -73,6 +67,7 @@ break;
 case Token.SCRIPT:
 currentModuleName=null;
 shortRequiredNamespaces.clear();
+defaultExportNode=null;
 break;
 }
 }
