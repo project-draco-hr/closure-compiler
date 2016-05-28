@@ -1,47 +1,13 @@
 {
   Node target=call.getFirstChild();
-  if (!target.isName()) {
+  if (!target.isQualifiedName()) {
     return;
   }
-  String renameFunctionName=target.getOriginalQualifiedName();
-  if (renameFunctionName == null || !compiler.getCodingConvention().isPropertyRenameFunction(renameFunctionName)) {
-    return;
+  String functionName=target.getOriginalQualifiedName();
+  if (functionName != null && compiler.getCodingConvention().isPropertyRenameFunction(functionName)) {
+    handlePropertyRenameFunctionCall(t,call,functionName);
   }
-  if (call.getChildCount() != 2 && call.getChildCount() != 3) {
-    compiler.report(JSError.make(call,Warnings.INVALID_RENAME_FUNCTION,renameFunctionName," Must be called with 1 or 2 arguments"));
-    return;
-  }
-  if (!call.getSecondChild().isString()) {
-    compiler.report(JSError.make(call,Warnings.INVALID_RENAME_FUNCTION,renameFunctionName," The first argument must be a string literal."));
-    return;
-  }
-  String propName=call.getSecondChild().getString();
-  if (propName.contains(".")) {
-    compiler.report(JSError.make(call,Warnings.INVALID_RENAME_FUNCTION,renameFunctionName," The first argument must not be a property path."));
-    return;
-  }
-  Node obj=call.getChildAtIndex(2);
-  JSType type=getType(obj);
-  Property prop=getProperty(propName);
-  if (!prop.scheduleRenaming(call.getSecondChild(),processProperty(t,prop,type,null)) && propertiesToErrorFor.containsKey(propName)) {
-    String suggestion="";
-    if (type.isAllType() || type.isUnknownType()) {
-      if (obj.isThis()) {
-        suggestion="The \"this\" object is unknown in the function, consider using @this";
-      }
- else {
-        String qName=obj.getQualifiedName();
-        suggestion="Consider casting " + qName + " if you know its type.";
-      }
-    }
- else {
-      List<String> errors=new ArrayList<>();
-      printErrorLocations(errors,type);
-      if (!errors.isEmpty()) {
-        suggestion="Consider fixing errors for the following types:\n";
-        suggestion+=Joiner.on("\n").join(errors);
-      }
-    }
-    compiler.report(JSError.make(call,propertiesToErrorFor.get(propName),Warnings.INVALIDATION,propName,String.valueOf(type),renameFunctionName,suggestion));
+ else   if (NodeUtil.isObjectDefinePropertiesDefinition(call)) {
+    handleObjectDefineProperties(t,call);
   }
 }

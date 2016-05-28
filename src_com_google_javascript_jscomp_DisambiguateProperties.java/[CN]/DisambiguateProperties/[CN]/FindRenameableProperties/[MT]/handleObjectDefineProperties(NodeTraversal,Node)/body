@@ -1,0 +1,16 @@
+{
+  Node typeObj=call.getSecondChild();
+  JSType type=getType(typeObj);
+  Node objectLiteral=typeObj.getNext();
+  if (!objectLiteral.isObjectLit()) {
+    return;
+  }
+  for (  Node key : objectLiteral.children()) {
+    if (key.isQuotedString()) {
+      continue;
+    }
+    String propName=key.getString();
+    Property prop=getProperty(propName);
+    prop.scheduleRenaming(key,processProperty(t,prop,type,null));
+  }
+}

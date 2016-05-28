@@ -10,42 +10,57 @@ case Token.GETPROP:
 case Token.CALL:
 {
     Node target=n.getFirstChild();
-    if (!target.isName()) {
+    if (!target.isQualifiedName()) {
       break;
     }
-    String renameFunctionName=target.getOriginalName();
-    if (renameFunctionName == null) {
-      renameFunctionName=target.getString();
+    String renameFunctionName=target.getOriginalQualifiedName();
+    if (renameFunctionName != null && compiler.getCodingConvention().isPropertyRenameFunction(renameFunctionName)) {
+      if (n.getChildCount() != 2 && n.getChildCount() != 3) {
+        compiler.report(JSError.make(n,DisambiguateProperties.Warnings.INVALID_RENAME_FUNCTION,renameFunctionName," Must be called with 1 or 2 arguments."));
+        break;
+      }
+      Node propName=n.getSecondChild();
+      if (!propName.isString()) {
+        compiler.report(JSError.make(n,DisambiguateProperties.Warnings.INVALID_RENAME_FUNCTION,renameFunctionName," The first argument must be a string literal."));
+        break;
+      }
+      if (propName.getString().contains(".")) {
+        compiler.report(JSError.make(n,DisambiguateProperties.Warnings.INVALID_RENAME_FUNCTION,renameFunctionName," The first argument must not be a property path."));
+        break;
+      }
+      JSType jstype=getJSType(n.getSecondChild());
+      maybeMarkCandidate(propName,jstype);
     }
-    if (renameFunctionName == null || !compiler.getCodingConvention().isPropertyRenameFunction(renameFunctionName)) {
-      break;
+ else     if (NodeUtil.isObjectDefinePropertiesDefinition(n)) {
+      Node typeObj=n.getSecondChild();
+      JSType jstype=getJSType(typeObj);
+      Node objectLiteral=typeObj.getNext();
+      if (!objectLiteral.isObjectLit()) {
+        break;
+      }
+      for (      Node key : objectLiteral.children()) {
+        if (key.isQuotedString()) {
+          quotedNames.add(key.getString());
+        }
+ else {
+          maybeMarkCandidate(key,jstype);
+        }
+      }
     }
-    if (n.getChildCount() != 2 && n.getChildCount() != 3) {
-      compiler.report(JSError.make(n,DisambiguateProperties.Warnings.INVALID_RENAME_FUNCTION,renameFunctionName," Must be called with 1 or 2 arguments."));
-      break;
-    }
-    Node propName=n.getSecondChild();
-    if (!propName.isString()) {
-      compiler.report(JSError.make(n,DisambiguateProperties.Warnings.INVALID_RENAME_FUNCTION,renameFunctionName," The first argument must be a string literal."));
-      break;
-    }
-    if (propName.getString().contains(".")) {
-      compiler.report(JSError.make(n,DisambiguateProperties.Warnings.INVALID_RENAME_FUNCTION,renameFunctionName," The first argument must not be a property path."));
-      break;
-    }
-    JSType jstype=getJSType(n.getChildAtIndex(2));
-    maybeMarkCandidate(propName,jstype);
     break;
   }
 case Token.OBJECTLIT:
+if (n.getParent().isCall() && NodeUtil.isObjectDefinePropertiesDefinition(n.getParent())) {
+  break;
+}
 for (Node key=n.getFirstChild(); key != null; key=key.getNext()) {
-  if (!key.isQuotedString()) {
-    JSType jstype=getJSType(n.getFirstChild());
-    maybeMarkCandidate(key,jstype);
-  }
+if (!key.isQuotedString()) {
+  JSType jstype=getJSType(n.getFirstChild());
+  maybeMarkCandidate(key,jstype);
+}
  else {
-    quotedNames.add(key.getString());
-  }
+  quotedNames.add(key.getString());
+}
 }
 break;
 case Token.GETELEM:
