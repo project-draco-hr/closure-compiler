@@ -1,4 +1,16 @@
 {
+  if (NodeUtil.isObjectDefinePropertyDefinition(n)) {
+    if (!NodeUtil.isPrototypeProperty(n.getSecondChild()) || !n.getChildAtIndex(2).isString() || !n.getChildAtIndex(3).isObjectLit()) {
+      unknownGetterSetterPresent=true;
+      return;
+    }
+  }
+ else   if (NodeUtil.isObjectDefinePropertiesDefinition(n)) {
+    if (!NodeUtil.isPrototypeProperty(n.getSecondChild()) || !n.getChildAtIndex(2).isObjectLit()) {
+      unknownGetterSetterPresent=true;
+      return;
+    }
+  }
   if (NodeUtil.isGetterOrSetter(n)) {
     Node grandparent=parent.getParent();
     if (NodeUtil.isGetOrSetKey(n) && n.getString() != null) {

@@ -1,5 +1,8 @@
 {
   GetterSetterCollector getterSetterCollector=new GetterSetterCollector();
   NodeTraversal.traverseEs6(compiler,root,getterSetterCollector);
+  if (getterSetterCollector.unknownGetterSetterPresent) {
+    return;
+  }
   NodeTraversal.traverseEs6(compiler,root,new FunctionVisitor(compiler,getterSetterCollector.propNames));
 }
