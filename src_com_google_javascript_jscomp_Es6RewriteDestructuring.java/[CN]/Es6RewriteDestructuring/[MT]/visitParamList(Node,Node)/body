@@ -35,21 +35,11 @@
       compiler.reportCodeChange();
     }
  else     if (param.isDestructuringPattern()) {
-      String tempVarName;
-      JSDocInfo fnJSDoc=NodeUtil.getBestJSDocInfo(function);
-      if (fnJSDoc != null && fnJSDoc.getParameterNameAt(i) != null) {
-        tempVarName=fnJSDoc.getParameterNameAt(i);
-      }
- else {
-        tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
-      }
-      Preconditions.checkState(TokenStream.isJSIdentifier(tempVarName));
-      Node newParam=IR.name(tempVarName);
-      newParam.setJSDocInfo(param.getJSDocInfo());
-      paramList.replaceChild(param,newParam);
-      Node newDecl=IR.var(param,IR.name(tempVarName));
-      body.addChildAfter(newDecl,insertSpot);
-      insertSpot=newDecl;
+      insertSpot=replacePatternParamWithTempVar(function,insertSpot,param,getTempParameterName(function,i));
+      compiler.reportCodeChange();
+    }
+ else     if (param.isRest() && param.getFirstChild().isDestructuringPattern()) {
+      insertSpot=replacePatternParamWithTempVar(function,insertSpot,param.getFirstChild(),getTempParameterName(function,i));
       compiler.reportCodeChange();
     }
   }
