@@ -2,12 +2,11 @@
   Scope scope=t.getScope();
   if (scope.isFunctionBlockScope()) {
     varsInFunctionBody.clear();
-    for (Iterator<Var> it=scope.getVars(); it.hasNext(); ) {
-      varsInFunctionBody.add(it.next().name);
+    for (    Var v : scope.getVarIterable()) {
+      varsInFunctionBody.add(v.name);
     }
   }
-  for (Iterator<Var> it=scope.getVars(); it.hasNext(); ) {
-    Var v=it.next();
+  for (  Var v : scope.getVarIterable()) {
     ReferenceCollection referenceCollection=referenceMap.getReferences(v);
     if (referenceCollection != null) {
       if (scope.getRootNode().isFunction() && v.isDefaultParam()) {

@@ -1,18 +1,15 @@
 {
   UndiGraph<Var,Void> interferenceGraph=LinkedUndirectedGraph.create();
   Scope scope=t.getScope();
-  for (Iterator<Var> i=scope.getVars(); i.hasNext(); ) {
-    Var v=i.next();
+  for (  Var v : scope.getVarIterable()) {
     if (!escaped.contains(v)) {
       if (!v.getParentNode().isFunction()) {
         interferenceGraph.createNode(v);
       }
     }
   }
-  for (Iterator<Var> i1=scope.getVars(); i1.hasNext(); ) {
-    Var v1=i1.next();
-    NEXT_VAR_PAIR:     for (Iterator<Var> i2=scope.getVars(); i2.hasNext(); ) {
-      Var v2=i2.next();
+  for (  Var v1 : scope.getVarIterable()) {
+    NEXT_VAR_PAIR:     for (    Var v2 : scope.getVarIterable()) {
       if (v1.index >= v2.index) {
         continue;
       }
