@@ -14,6 +14,9 @@
   if (options.removeUnusedVars || options.removeUnusedLocalVars) {
     if (options.deadAssignmentElimination) {
       passes.add(deadAssignmentsElimination);
+      if (!options.polymerPass) {
+        passes.add(deadPropertyAssignmentElimination);
+      }
     }
     if (!runOptimizeCalls) {
       passes.add(getRemoveUnusedVars("removeUnusedVars",false));
