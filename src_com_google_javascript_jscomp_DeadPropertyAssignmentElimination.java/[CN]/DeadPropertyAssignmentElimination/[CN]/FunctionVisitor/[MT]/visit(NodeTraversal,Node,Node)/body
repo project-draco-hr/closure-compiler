@@ -6,7 +6,7 @@
   if (!body.hasChildren() || NodeUtil.containsFunction(body)) {
     return;
   }
-  FindCandidateAssignmentTraversal traversal=new FindCandidateAssignmentTraversal(getterSetterNames,NodeUtil.isConstructor(n));
+  FindCandidateAssignmentTraversal traversal=new FindCandidateAssignmentTraversal(blacklistedPropNames,NodeUtil.isConstructor(n));
   NodeTraversal.traverseEs6(compiler,body,traversal);
   for (  Property property : traversal.propertyMap.values()) {
     if (property.writes.size() <= 1) {

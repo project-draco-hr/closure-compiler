@@ -1,8 +1,12 @@
 {
+  if (compiler.getExternProperties() == null) {
+    return;
+  }
   GetterSetterCollector getterSetterCollector=new GetterSetterCollector();
   NodeTraversal.traverseEs6(compiler,root,getterSetterCollector);
   if (getterSetterCollector.unknownGetterSetterPresent) {
     return;
   }
-  NodeTraversal.traverseEs6(compiler,root,new FunctionVisitor(compiler,getterSetterCollector.propNames));
+  Set<String> blacklistedPropNames=Sets.union(getterSetterCollector.propNames,compiler.getExternProperties());
+  NodeTraversal.traverseEs6(compiler,root,new FunctionVisitor(compiler,blacklistedPropNames));
 }
