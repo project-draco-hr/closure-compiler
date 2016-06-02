@@ -1,4 +1,11 @@
 {
+  TypedScope scope=t.getTypedScope();
+  if (scope.getVarCount() > LiveVariablesAnalysis.MAX_VARIABLES_TO_ANALYZE) {
+    for (    TypedVar v : scope.getVarIterable()) {
+      eventfulObjectDisposed(t,v.getNode());
+    }
+    return;
+  }
   ControlFlowGraph<Node> cfg=t.getControlFlowGraph();
   LiveVariablesAnalysis liveness=new LiveVariablesAnalysis(cfg,t.getTypedScope(),compiler);
   liveness.analyze();

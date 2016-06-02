@@ -1,0 +1,12 @@
+{
+  policy=DisposalCheckingPolicy.AGGRESSIVE;
+  List<String> parts=new ArrayList<>();
+  parts.add(CLOSURE_DEFS);
+  parts.add("var test = function() {");
+  parts.add("  var eh = new goog.events.EventHandler();");
+  for (int i=0; i < LiveVariablesAnalysis.MAX_VARIABLES_TO_ANALYZE; i++) {
+    parts.add("  var v" + i + " = null;");
+  }
+  parts.add("}");
+  testSame(LINE_JOINER.join(parts));
+}
