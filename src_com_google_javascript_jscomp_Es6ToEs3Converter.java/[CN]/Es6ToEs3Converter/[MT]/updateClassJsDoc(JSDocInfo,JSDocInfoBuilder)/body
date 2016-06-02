@@ -1,0 +1,32 @@
+{
+  if (!newInfo.isUnrestrictedRecorded() && !newInfo.isDictRecorded() && !newInfo.isStructRecorded()) {
+    newInfo.recordStruct();
+  }
+  if (ctorInfo != null) {
+    if (!ctorInfo.getSuppressions().isEmpty()) {
+      newInfo.recordSuppressions(ctorInfo.getSuppressions());
+    }
+    for (    String param : ctorInfo.getParameterNames()) {
+      newInfo.recordParameter(param,ctorInfo.getParameterType(param));
+      newInfo.recordParameterDescription(param,ctorInfo.getDescriptionForParameter(param));
+    }
+    for (    JSTypeExpression thrown : ctorInfo.getThrownTypes()) {
+      newInfo.recordThrowType(thrown);
+      newInfo.recordThrowDescription(thrown,ctorInfo.getThrowsDescriptionForType(thrown));
+    }
+    JSDocInfo.Visibility visibility=ctorInfo.getVisibility();
+    if (visibility != null && visibility != JSDocInfo.Visibility.INHERITED) {
+      newInfo.recordVisibility(visibility);
+    }
+    if (ctorInfo.isDeprecated()) {
+      newInfo.recordDeprecated();
+    }
+    if (ctorInfo.getDeprecationReason() != null && !newInfo.isDeprecationReasonRecorded()) {
+      newInfo.recordDeprecationReason(ctorInfo.getDeprecationReason());
+    }
+    newInfo.mergePropertyBitfieldFrom(ctorInfo);
+    for (    String templateType : ctorInfo.getTemplateTypeNames()) {
+      newInfo.recordTemplateTypeName(templateType);
+    }
+  }
+}

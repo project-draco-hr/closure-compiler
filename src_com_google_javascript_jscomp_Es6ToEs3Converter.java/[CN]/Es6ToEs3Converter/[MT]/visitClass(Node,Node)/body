@@ -66,36 +66,7 @@
     }
   }
   addTypeDeclarations(metadata,enclosingStatement);
-  if (!newInfo.isUnrestrictedRecorded() && !newInfo.isDictRecorded() && !newInfo.isStructRecorded()) {
-    newInfo.recordStruct();
-  }
-  if (ctorJSDocInfo != null) {
-    if (!ctorJSDocInfo.getSuppressions().isEmpty()) {
-      newInfo.recordSuppressions(ctorJSDocInfo.getSuppressions());
-    }
-    for (    String param : ctorJSDocInfo.getParameterNames()) {
-      newInfo.recordParameter(param,ctorJSDocInfo.getParameterType(param));
-      newInfo.recordParameterDescription(param,ctorJSDocInfo.getDescriptionForParameter(param));
-    }
-    for (    JSTypeExpression thrown : ctorJSDocInfo.getThrownTypes()) {
-      newInfo.recordThrowType(thrown);
-      newInfo.recordThrowDescription(thrown,ctorJSDocInfo.getThrowsDescriptionForType(thrown));
-    }
-    JSDocInfo.Visibility visibility=ctorJSDocInfo.getVisibility();
-    if (visibility != null && visibility != JSDocInfo.Visibility.INHERITED) {
-      newInfo.recordVisibility(visibility);
-    }
-    if (ctorJSDocInfo.isDeprecated()) {
-      newInfo.recordDeprecated();
-    }
-    if (ctorJSDocInfo.getDeprecationReason() != null && !newInfo.isDeprecationReasonRecorded()) {
-      newInfo.recordDeprecationReason(ctorJSDocInfo.getDeprecationReason());
-    }
-    newInfo.mergePropertyBitfieldFrom(ctorJSDocInfo);
-    for (    String templateType : ctorJSDocInfo.getTemplateTypeNames()) {
-      newInfo.recordTemplateTypeName(templateType);
-    }
-  }
+  updateClassJsDoc(ctorJSDocInfo,newInfo);
   if (NodeUtil.isStatement(classNode)) {
     constructor.getFirstChild().setString("");
     Node ctorVar=IR.let(metadata.classNameNode.cloneNode(),constructor);
