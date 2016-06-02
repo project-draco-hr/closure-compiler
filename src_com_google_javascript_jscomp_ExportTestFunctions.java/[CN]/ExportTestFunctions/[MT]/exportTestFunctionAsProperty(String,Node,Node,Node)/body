@@ -1,5 +1,8 @@
 {
   String testFunctionName=NodeUtil.getPrototypePropertyName(node.getFirstChild());
+  if (node.getFirstChild().getQualifiedName().startsWith("window.")) {
+    testFunctionName=node.getFirstChild().getQualifiedName().substring("window.".length());
+  }
   String objectName=fullyQualifiedFunctionName.substring(0,fullyQualifiedFunctionName.lastIndexOf('.'));
   String exportCallStr=SimpleFormat.format("%s(%s, '%s', %s);",exportPropertyFunction,objectName,testFunctionName,fullyQualifiedFunctionName);
   Node exportCall=this.compiler.parseSyntheticCode(exportCallStr).removeChildren();
