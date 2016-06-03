@@ -3,16 +3,23 @@ switch (n.getType()) {
 case Token.GETPROP:
     Node propNode=n.getSecondChild();
   if (propNode.isString()) {
+    if (compiler.getCodingConvention().blockRenamingForProperty(propNode.getString())) {
+      externedNames.add(propNode.getString());
+      break;
+    }
     maybeMarkCandidate(propNode);
   }
 break;
 case Token.OBJECTLIT:
 for (Node key=n.getFirstChild(); key != null; key=key.getNext()) {
-if (!key.isQuotedString()) {
-  maybeMarkCandidate(key);
+if (key.isQuotedString()) {
+  quotedNames.add(key.getString());
+}
+ else if (compiler.getCodingConvention().blockRenamingForProperty(key.getString())) {
+  externedNames.add(key.getString());
 }
  else {
-  quotedNames.add(key.getString());
+  maybeMarkCandidate(key);
 }
 }
 break;
