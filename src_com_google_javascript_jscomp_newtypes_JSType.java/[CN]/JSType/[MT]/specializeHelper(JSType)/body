@@ -6,12 +6,15 @@
     return makeTruthy();
   }
   if (hasTruthyMask()) {
-    return other.makeTruthy();
+    JSType otherTruthy=other.makeTruthy();
+    return otherTruthy.hasNonScalar() ? otherTruthy.withLoose() : otherTruthy;
   }
   if (other.hasFalsyMask()) {
     return makeFalsy();
   }
-  Preconditions.checkState(!hasFalsyMask());
+  if (hasFalsyMask()) {
+    return other.makeFalsy();
+  }
   if (this.isTop()) {
     return other;
   }
