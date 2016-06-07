@@ -1,9 +1,9 @@
 {
-  Deque<ScriptDescription> scriptDefinitions=new LinkedList<>();
+  Deque<ScriptDescription> scriptDescriptions=new LinkedList<>();
   for (Node c=root.getFirstChild(); c != null; c=c.getNext()) {
     pushScript(new ScriptDescription());
     currentScript.rootNode=c;
-    scriptDefinitions.addLast(currentScript);
+    scriptDescriptions.addLast(currentScript);
     NodeTraversal.traverseEs6(compiler,c,new ScriptRecorder());
     popScript();
   }
@@ -12,7 +12,7 @@
     return;
   }
   for (Node c=root.getFirstChild(); c != null; c=c.getNext()) {
-    pushScript(scriptDefinitions.removeFirst());
+    pushScript(scriptDescriptions.removeFirst());
     NodeTraversal.traverseEs6(compiler,c,new ScriptUpdater());
     popScript();
     inlineGoogLoadModuleCalls();
