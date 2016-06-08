@@ -12,9 +12,17 @@
         if (!name.isGetProp() || !name.getFirstChild().isThis()) {
           return;
         }
+        JSType type=name.getJSType();
         String pname=name.getLastChild().getString();
         JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(name);
-        Node newProtoAssignStmt=NodeUtil.newQNameDeclaration(compiler,className + ".prototype." + pname,null,jsdoc);
+        Node initializer=null;
+        if (type == null) {
+          initializer=NodeUtil.getRValueOfLValue(name).detachFromParent();
+        }
+ else         if (isInferrableConst(jsdoc)) {
+          jsdoc=maybeUpdateJSDocInfoWithType(jsdoc,name);
+        }
+        Node newProtoAssignStmt=NodeUtil.newQNameDeclaration(compiler,className + ".prototype." + pname,initializer,jsdoc);
         newProtoAssignStmt.useSourceInfoIfMissingFromForTree(expr);
         insertionPoint.getParent().addChildAfter(newProtoAssignStmt,insertionPoint);
         compiler.reportCodeChange();

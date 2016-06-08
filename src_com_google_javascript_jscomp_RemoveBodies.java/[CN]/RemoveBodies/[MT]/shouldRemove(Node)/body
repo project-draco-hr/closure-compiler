@@ -12,7 +12,14 @@
     if (seenNames.contains(nameNode.getQualifiedName())) {
       return RemovalType.REMOVE_ALL;
     }
-    return RemovalType.UNDECLARED;
+    jsdocNode.setJSDocInfo(getAllTypeJSDoc());
+    return RemovalType.REMOVE_RHS;
+  }
+  if (isInferrableConst(jsdoc) && !NodeUtil.isNamespaceDecl(nameNode)) {
+    if (nameNode.getJSType() == null) {
+      return RemovalType.PRESERVE_ALL;
+    }
+    jsdocNode.setJSDocInfo(maybeUpdateJSDocInfoWithType(jsdoc,nameNode));
   }
   return RemovalType.REMOVE_RHS;
 }
