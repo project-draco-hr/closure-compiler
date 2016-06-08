@@ -1,21 +1,19 @@
 {
+  FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.ARROW).setGenerics(generics).setFormalParameterList(formalParameterList);
   inGeneratorContext.addLast(false);
-  ParseTree returnType=null;
   if (peek(TokenType.COLON)) {
-    returnType=parseTypeAnnotation();
+    builder.setReturnType(parseTypeAnnotation());
   }
   if (peekImplicitSemiColon()) {
     reportError("No newline allowed before '=>'");
   }
   eat(TokenType.ARROW);
-  ParseTree functionBody;
   if (peek(TokenType.OPEN_CURLY)) {
-    functionBody=parseFunctionBody();
+    builder.setFunctionBody(parseFunctionBody());
   }
  else {
-    functionBody=parseAssignment(expressionIn);
+    builder.setFunctionBody(parseAssignment(expressionIn));
   }
-  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),null,generics,false,false,false,null,FunctionDeclarationTree.Kind.ARROW,formalParameterList,returnType,functionBody);
   inGeneratorContext.removeLast();
-  return declaration;
+  return builder.build(getTreeLocation(start));
 }

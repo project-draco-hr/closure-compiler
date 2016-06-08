@@ -1,8 +1,4 @@
 {
-  GenericTypeListTree generics=maybeParseGenericTypes();
-  FormalParameterListTree formalParameterList=parseFormalParameterList(ParamContext.SIGNATURE);
-  ParseTree returnType=maybeParseColonType();
-  ParseTree functionBody=new EmptyStatementTree(getTreeLocation(start));
-  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),name,generics,false,isGenerator,false,null,FunctionDeclarationTree.Kind.DECLARATION,formalParameterList,returnType,functionBody);
-  return declaration;
+  FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.DECLARATION).setName(name).setGenerator(isGenerator).setGenerics(maybeParseGenericTypes()).setFormalParameterList(parseFormalParameterList(ParamContext.SIGNATURE)).setReturnType(maybeParseColonType()).setFunctionBody(new EmptyStatementTree(getTreeLocation(start)));
+  return builder.build(getTreeLocation(start));
 }

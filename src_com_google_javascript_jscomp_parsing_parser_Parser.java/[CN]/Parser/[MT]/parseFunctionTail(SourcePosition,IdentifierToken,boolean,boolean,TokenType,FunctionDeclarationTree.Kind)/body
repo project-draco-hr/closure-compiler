@@ -1,10 +1,6 @@
 {
   inGeneratorContext.addLast(isGenerator);
-  GenericTypeListTree generics=maybeParseGenericTypes();
-  FormalParameterListTree formalParameterList=parseFormalParameterList(ParamContext.IMPLEMENTATION);
-  ParseTree returnType=maybeParseColonType();
-  BlockTree functionBody=parseFunctionBody();
-  FunctionDeclarationTree declaration=new FunctionDeclarationTree(getTreeLocation(start),name,generics,isStatic,isGenerator,false,access,kind,formalParameterList,returnType,functionBody);
+  FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(kind).setName(name).setStatic(isStatic).setGenerator(isGenerator).setAccess(access).setGenerics(maybeParseGenericTypes()).setFormalParameterList(parseFormalParameterList(ParamContext.IMPLEMENTATION)).setReturnType(maybeParseColonType()).setFunctionBody(parseFunctionBody());
   inGeneratorContext.removeLast();
-  return declaration;
+  return builder.build(getTreeLocation(start));
 }
