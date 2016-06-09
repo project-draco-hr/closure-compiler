@@ -8,12 +8,19 @@
   }
  else {
     RawNominalType rawType=checkValidLendsToPrototypeAndGetClass(lendsQname,lendsName,objlit);
-    if (rawType == null) {
-      return;
+    if (rawType != null) {
+      for (      Node prop : objlit.children()) {
+        String pname=NodeUtil.getObjectLitKeyName(prop);
+        mayAddPropToPrototype(rawType,pname,prop,prop.getFirstChild());
+      }
     }
-    for (    Node prop : objlit.children()) {
-      String pname=NodeUtil.getObjectLitKeyName(prop);
-      mayAddPropToPrototype(rawType,pname,prop,prop.getFirstChild());
+ else {
+      for (      Node prop : objlit.children()) {
+        Node propInit=prop.getFirstChild();
+        if (propInit.isFunction()) {
+          visitFunctionLate(propInit,null);
+        }
+      }
     }
   }
 }
