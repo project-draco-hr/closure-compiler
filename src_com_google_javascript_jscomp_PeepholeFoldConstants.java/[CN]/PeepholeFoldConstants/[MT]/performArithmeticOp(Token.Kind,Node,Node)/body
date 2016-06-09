@@ -1,0 +1,54 @@
+{
+  if (opType == Token.ADD && (NodeUtil.mayBeString(left,shouldUseTypes) || NodeUtil.mayBeString(right,shouldUseTypes))) {
+    return null;
+  }
+  double result;
+  Double lValObj=NodeUtil.getNumberValue(left,shouldUseTypes);
+  if (lValObj == null) {
+    return null;
+  }
+  Double rValObj=NodeUtil.getNumberValue(right,shouldUseTypes);
+  if (rValObj == null) {
+    return null;
+  }
+  double lval=lValObj;
+  double rval=rValObj;
+switch (opType) {
+case BITAND:
+    result=NodeUtil.toInt32(lval) & NodeUtil.toInt32(rval);
+  break;
+case BITOR:
+result=NodeUtil.toInt32(lval) | NodeUtil.toInt32(rval);
+break;
+case BITXOR:
+result=NodeUtil.toInt32(lval) ^ NodeUtil.toInt32(rval);
+break;
+case ADD:
+result=lval + rval;
+break;
+case SUB:
+result=lval - rval;
+break;
+case MUL:
+result=lval * rval;
+break;
+case MOD:
+if (rval == 0) {
+return null;
+}
+result=lval % rval;
+break;
+case DIV:
+if (rval == 0) {
+return null;
+}
+result=lval / rval;
+break;
+default :
+throw new Error("Unexpected arithmetic operator");
+}
+if ((String.valueOf(result).length() <= String.valueOf(lval).length() + String.valueOf(rval).length() + 1 && Math.abs(result) <= MAX_FOLD_NUMBER) || Double.isNaN(result) || result == Double.POSITIVE_INFINITY || result == Double.NEGATIVE_INFINITY) {
+return NodeUtil.numberNode(result,null);
+}
+return null;
+}

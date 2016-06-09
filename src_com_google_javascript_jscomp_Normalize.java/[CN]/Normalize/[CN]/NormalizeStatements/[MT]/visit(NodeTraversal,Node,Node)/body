@@ -1,6 +1,6 @@
 {
 switch (n.getType()) {
-case Token.WHILE:
+case WHILE:
     if (CONVERT_WHILE_TO_FOR) {
       Node expr=n.getFirstChild();
       n.setType(Token.FOR);
@@ -11,21 +11,21 @@ case Token.WHILE:
       reportCodeChange("WHILE node");
     }
   break;
-case Token.FUNCTION:
+case FUNCTION:
 if (maybeNormalizeFunctionDeclaration(n)) {
   reportCodeChange("Function declaration");
 }
 break;
-case Token.NAME:
-case Token.STRING:
-case Token.STRING_KEY:
-case Token.GETTER_DEF:
-case Token.SETTER_DEF:
+case NAME:
+case STRING:
+case STRING_KEY:
+case GETTER_DEF:
+case SETTER_DEF:
 if (!compiler.getLifeCycleStage().isNormalizedObfuscated()) {
 annotateConstantsByConvention(n,parent);
 }
 break;
-case Token.CAST:
+case CAST:
 parent.replaceChild(n,n.removeFirstChild());
 break;
 }

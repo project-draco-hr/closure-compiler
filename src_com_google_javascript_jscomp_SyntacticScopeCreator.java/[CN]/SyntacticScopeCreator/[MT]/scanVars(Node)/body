@@ -1,13 +1,13 @@
 {
 switch (n.getType()) {
-case Token.VAR:
+case VAR:
     for (Node child=n.getFirstChild(); child != null; ) {
       Node next=child.getNext();
       declareVar(child);
       child=next;
     }
   return;
-case Token.FUNCTION:
+case FUNCTION:
 if (NodeUtil.isFunctionExpression(n)) {
   return;
 }
@@ -17,7 +17,7 @@ return;
 }
 declareVar(n.getFirstChild());
 return;
-case Token.CATCH:
+case CATCH:
 Preconditions.checkState(n.getChildCount() == 2,n);
 final Node var=n.getFirstChild();
 Preconditions.checkState(var.isName(),var);
@@ -25,7 +25,7 @@ final Node block=var.getNext();
 declareVar(var);
 scanVars(block);
 return;
-case Token.SCRIPT:
+case SCRIPT:
 inputId=n.getInputId();
 Preconditions.checkNotNull(inputId);
 break;

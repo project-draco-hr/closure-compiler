@@ -1,25 +1,25 @@
 {
 switch (n.getType()) {
-case Token.TEMPLATELIT:
+case TEMPLATELIT:
     if (n.hasOneChild()) {
       return TernaryValue.forBoolean(!n.getFirstChild().getString().isEmpty());
     }
   break;
-case Token.STRING:
+case STRING:
 return TernaryValue.forBoolean(n.getString().length() > 0);
-case Token.NUMBER:
+case NUMBER:
 return TernaryValue.forBoolean(n.getDouble() != 0);
-case Token.NOT:
+case NOT:
 return getPureBooleanValue(n.getLastChild()).not();
-case Token.NULL:
-case Token.FALSE:
+case NULL:
+case FALSE:
 return TernaryValue.FALSE;
-case Token.VOID:
+case VOID:
 if (!mayHaveSideEffects(n.getFirstChild())) {
 return TernaryValue.FALSE;
 }
 break;
-case Token.NAME:
+case NAME:
 String name=n.getString();
 if ("undefined".equals(name) || "NaN".equals(name)) {
 return TernaryValue.FALSE;
@@ -28,14 +28,14 @@ return TernaryValue.FALSE;
 return TernaryValue.TRUE;
 }
 break;
-case Token.TRUE:
-case Token.REGEXP:
+case TRUE:
+case REGEXP:
 return TernaryValue.TRUE;
-case Token.FUNCTION:
-case Token.CLASS:
-case Token.NEW:
-case Token.ARRAYLIT:
-case Token.OBJECTLIT:
+case FUNCTION:
+case CLASS:
+case NEW:
+case ARRAYLIT:
+case OBJECTLIT:
 if (!mayHaveSideEffects(n)) {
 return TernaryValue.TRUE;
 }

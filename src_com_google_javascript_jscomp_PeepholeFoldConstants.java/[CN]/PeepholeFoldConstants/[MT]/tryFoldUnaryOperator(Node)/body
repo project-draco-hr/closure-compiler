@@ -10,7 +10,7 @@
     return n;
   }
 switch (n.getType()) {
-case Token.NOT:
+case NOT:
     if (late && left.isNumber()) {
       double numValue=left.getDouble();
       if (numValue == 0 || numValue == 1) {
@@ -21,14 +21,14 @@ case Token.NOT:
 parent.replaceChild(n,replacementNode);
 reportCodeChange();
 return replacementNode;
-case Token.POS:
+case POS:
 if (NodeUtil.isNumericResult(left)) {
 parent.replaceChild(n,left.detachFromParent());
 reportCodeChange();
 return left;
 }
 return n;
-case Token.NEG:
+case NEG:
 if (left.isName()) {
 if (left.getString().equals("Infinity")) {
 return n;
@@ -51,7 +51,7 @@ return negNumNode;
 report(NEGATING_A_NON_NUMBER_ERROR,left);
 return n;
 }
-case Token.BITNOT:
+case BITNOT:
 try {
 double val=left.getDouble();
 if (val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {

@@ -1,14 +1,14 @@
 {
-  int token=n.getType();
+  Token.Kind token=n.getType();
 switch (token) {
-case Token.STAR:
-case Token.EMPTY:
+case STAR:
+case EMPTY:
     return anyType();
-case Token.VOID:
+case VOID:
   return undefinedType();
-case Token.BANG:
+case BANG:
 return convertTypeNodeAST(n.getFirstChild());
-case Token.STRING:
+case STRING:
 String typeName=n.getString();
 switch (typeName) {
 case "boolean":
@@ -32,10 +32,10 @@ return parameterizedType(root,Iterables.filter(Iterables.transform(block.childre
 }
 return root;
 }
-case Token.QMARK:
+case QMARK:
 Node child=n.getFirstChild();
 return child == null ? anyType() : convertTypeNodeAST(child);
-case Token.LC:
+case LC:
 LinkedHashMap<String,TypeDeclarationNode> properties=new LinkedHashMap<>();
 for (Node field : n.getFirstChild().children()) {
 boolean isFieldTypeDeclared=field.getType() == Token.COLON;
@@ -48,9 +48,9 @@ TypeDeclarationNode fieldType=isFieldTypeDeclared ? convertTypeNodeAST(field.get
 properties.put(fieldName,fieldType);
 }
 return recordType(properties);
-case Token.ELLIPSIS:
+case ELLIPSIS:
 return arrayType(convertTypeNodeAST(n.getFirstChild()));
-case Token.PIPE:
+case PIPE:
 ImmutableList<TypeDeclarationNode> types=FluentIterable.from(n.children()).transform(CONVERT_TYPE_NODE).filter(Predicates.notNull()).toList();
 switch (types.size()) {
 case 0:
@@ -60,7 +60,7 @@ return types.get(0);
 default :
 return unionType(types);
 }
-case Token.FUNCTION:
+case FUNCTION:
 Node returnType=anyType();
 LinkedHashMap<String,TypeDeclarationNode> requiredParams=new LinkedHashMap<>();
 LinkedHashMap<String,TypeDeclarationNode> optionalParams=new LinkedHashMap<>();
@@ -97,7 +97,7 @@ returnType=convertTypeNodeAST(child2);
 }
 }
 return functionType(returnType,requiredParams,optionalParams,restName,restType);
-case Token.EQUALS:
+case EQUALS:
 TypeDeclarationNode optionalParam=convertTypeNodeAST(n.getFirstChild());
 return optionalParam == null ? null : optionalParameter(optionalParam);
 default :

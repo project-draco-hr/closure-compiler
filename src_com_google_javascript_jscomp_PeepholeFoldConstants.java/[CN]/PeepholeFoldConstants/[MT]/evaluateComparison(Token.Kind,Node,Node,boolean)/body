@@ -1,0 +1,24 @@
+{
+  if (NodeUtil.mayHaveSideEffects(left) || NodeUtil.mayHaveSideEffects(right)) {
+    return TernaryValue.UNKNOWN;
+  }
+switch (op) {
+case EQ:
+    return tryAbstractEqualityComparison(left,right,useTypes);
+case NE:
+  return tryAbstractEqualityComparison(left,right,useTypes).not();
+case SHEQ:
+return tryStrictEqualityComparison(left,right,useTypes);
+case SHNE:
+return tryStrictEqualityComparison(left,right,useTypes).not();
+case LT:
+return tryAbstractRelationalComparison(left,right,useTypes,false);
+case GT:
+return tryAbstractRelationalComparison(right,left,useTypes,false);
+case LE:
+return tryAbstractRelationalComparison(right,left,useTypes,true).not();
+case GE:
+return tryAbstractRelationalComparison(left,right,useTypes,true).not();
+}
+throw new IllegalStateException("Unexpected operator for comparison");
+}

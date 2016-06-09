@@ -1,26 +1,26 @@
 {
 switch (n.getType()) {
-case Token.FUNCTION:
+case FUNCTION:
     return false;
-case Token.LABEL:
+case LABEL:
   labels.add(0,n.getFirstChild().getString());
 break;
-case Token.DO:
-case Token.WHILE:
-case Token.FOR:
+case DO:
+case WHILE:
+case FOR:
 continueCatchers++;
 breakCatchers++;
 break;
-case Token.SWITCH:
+case SWITCH:
 breakCatchers++;
 break;
-case Token.BLOCK:
+case BLOCK:
 parent=n.getParent();
 if (parent != null && parent.isTry() && parent.getFirstChild() == n && n.getNext().hasChildren()) {
 throwCatchers++;
 }
 break;
-case Token.BREAK:
+case BREAK:
 if (!n.isGeneratorSafe() && ((breakCatchers == 0 && !n.hasChildren()) || (n.hasChildren() && !labels.contains(n.getFirstChild().getString())))) {
 exited=true;
 if (addJumps) {
@@ -28,7 +28,7 @@ parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
 }
 }
 break;
-case Token.CONTINUE:
+case CONTINUE:
 if (continueCatchers == 0 || (n.hasChildren() && !labels.contains(n.getFirstChild().getString()))) {
 exited=true;
 if (addJumps) {
@@ -36,7 +36,7 @@ parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
 }
 }
 break;
-case Token.THROW:
+case THROW:
 if (throwCatchers == 0) {
 exited=true;
 if (addJumps && !n.isGeneratorSafe()) {
@@ -44,13 +44,13 @@ parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
 }
 }
 break;
-case Token.RETURN:
+case RETURN:
 exited=true;
 if (addJumps) {
 parent.addChildBefore(createFinallyJumpBlock(finallyName,finallyStartState),n);
 }
 break;
-case Token.YIELD:
+case YIELD:
 exited=true;
 break;
 default :

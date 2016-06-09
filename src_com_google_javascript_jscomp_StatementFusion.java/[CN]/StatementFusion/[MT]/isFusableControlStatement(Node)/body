@@ -1,22 +1,22 @@
 {
 switch (n.getType()) {
-case Token.IF:
-case Token.THROW:
-case Token.SWITCH:
-case Token.EXPR_RESULT:
+case IF:
+case THROW:
+case SWITCH:
+case EXPR_RESULT:
     return true;
-case Token.RETURN:
+case RETURN:
   return n.hasChildren();
-case Token.FOR:
+case FOR:
 if (NodeUtil.isForIn(n)) {
   return !mayHaveSideEffects(n.getFirstChild());
 }
  else {
   return !n.getFirstChild().isVar();
 }
-case Token.LABEL:
+case LABEL:
 return isFusableControlStatement(n.getLastChild());
-case Token.BLOCK:
+case BLOCK:
 return !n.isSyntheticBlock() && isFusableControlStatement(n.getFirstChild());
 }
 return false;

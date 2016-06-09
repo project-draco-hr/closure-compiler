@@ -1,25 +1,25 @@
 {
   Preconditions.checkArgument(n.getParent() == null);
 switch (n.getType()) {
-case Token.NOT:
+case NOT:
 {
       MinimizedCondition subtree=computeMinimizedCondition(n.getFirstChild().detachFromParent());
       ImmutableList<MeasuredNode> positiveAsts=ImmutableList.of(subtree.positive.cloneTree().addNot(),subtree.negative.cloneTree());
       ImmutableList<MeasuredNode> negativeAsts=ImmutableList.of(subtree.negative.negate(),subtree.positive);
       return new MinimizedCondition(Collections.min(positiveAsts,AST_LENGTH_COMPARATOR),Collections.min(negativeAsts,AST_LENGTH_COMPARATOR));
     }
-case Token.AND:
-case Token.OR:
+case AND:
+case OR:
 {
-    int opType=n.getType();
-    int complementType=opType == Token.AND ? Token.OR : Token.AND;
+    Token.Kind opType=n.getType();
+    Token.Kind complementType=opType == Token.AND ? Token.OR : Token.AND;
     MinimizedCondition leftSubtree=computeMinimizedCondition(n.getFirstChild().detachFromParent());
     MinimizedCondition rightSubtree=computeMinimizedCondition(n.getLastChild().detachFromParent());
     ImmutableList<MeasuredNode> positiveAsts=ImmutableList.of(MeasuredNode.addNode(new Node(opType).srcref(n),leftSubtree.positive.cloneTree(),rightSubtree.positive.cloneTree()),MeasuredNode.addNode(new Node(complementType).srcref(n),leftSubtree.negative.cloneTree(),rightSubtree.negative.cloneTree()).negate());
     ImmutableList<MeasuredNode> negativeAsts=ImmutableList.of(MeasuredNode.addNode(new Node(opType).srcref(n),leftSubtree.positive,rightSubtree.positive).negate(),MeasuredNode.addNode(new Node(complementType).srcref(n),leftSubtree.negative,rightSubtree.negative));
     return new MinimizedCondition(Collections.min(positiveAsts,AST_LENGTH_COMPARATOR),Collections.min(negativeAsts,AST_LENGTH_COMPARATOR));
   }
-case Token.HOOK:
+case HOOK:
 {
   Node cond=n.getFirstChild();
   Node thenNode=cond.getNext();
@@ -30,7 +30,7 @@ case Token.HOOK:
   MeasuredNode negTree=MeasuredNode.addNode(new Node(Token.HOOK,cond.cloneTree()).srcref(n),thenSubtree.negative,elseSubtree.negative);
   return new MinimizedCondition(posTree,negTree);
 }
-case Token.COMMA:
+case COMMA:
 {
 Node lhs=n.getFirstChild();
 MinimizedCondition rhsSubtree=computeMinimizedCondition(lhs.getNext().detachFromParent());

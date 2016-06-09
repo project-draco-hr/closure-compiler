@@ -5,17 +5,17 @@
   Ref.Type type=Ref.Type.DIRECT_GET;
   if (parent != null) {
 switch (parent.getType()) {
-case Token.EXPR_RESULT:
-case Token.IF:
-case Token.INSTANCEOF:
-case Token.TYPEOF:
-case Token.VOID:
-case Token.NOT:
-case Token.BITNOT:
-case Token.POS:
-case Token.NEG:
+case EXPR_RESULT:
+case IF:
+case INSTANCEOF:
+case TYPEOF:
+case VOID:
+case NOT:
+case BITNOT:
+case POS:
+case NEG:
       break;
-case Token.CALL:
+case CALL:
     if (n == parent.getFirstChild()) {
       type=Ref.Type.CALL_GET;
     }
@@ -26,19 +26,19 @@ case Token.CALL:
       type=Ref.Type.ALIASING_GET;
     }
   break;
-case Token.NEW:
+case NEW:
 type=n == parent.getFirstChild() ? Ref.Type.DIRECT_GET : Ref.Type.ALIASING_GET;
 break;
-case Token.OR:
-case Token.AND:
+case OR:
+case AND:
 type=determineGetTypeForHookOrBooleanExpr(module,scope,parent,name);
 break;
-case Token.HOOK:
+case HOOK:
 if (n != parent.getFirstChild()) {
 type=determineGetTypeForHookOrBooleanExpr(module,scope,parent,name);
 }
 break;
-case Token.DELPROP:
+case DELPROP:
 type=Ref.Type.DELETE_PROP;
 break;
 default :

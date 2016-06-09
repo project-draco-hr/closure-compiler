@@ -4,7 +4,7 @@
   boolean isVar;
   Node msgNode;
 switch (node.getType()) {
-case Token.NAME:
+case NAME:
     if ((parent != null) && (NodeUtil.isNameDeclaration(parent))) {
       messageKey=node.getString();
       originalMessageKey=node.getOriginalName();
@@ -15,7 +15,7 @@ case Token.NAME:
     }
   msgNode=node.getFirstChild();
 break;
-case Token.ASSIGN:
+case ASSIGN:
 isVar=false;
 Node getProp=node.getFirstChild();
 if (!getProp.isGetProp()) {
@@ -26,7 +26,7 @@ messageKey=propNode.getString();
 originalMessageKey=getProp.getOriginalName();
 msgNode=node.getLastChild();
 break;
-case Token.STRING_KEY:
+case STRING_KEY:
 if (node.isQuotedString() || node.getFirstChild() == null) {
 return;
 }
@@ -35,7 +35,7 @@ messageKey=node.getString();
 originalMessageKey=node.getOriginalName();
 msgNode=node.getFirstChild();
 break;
-case Token.CALL:
+case CALL:
 if (node.getFirstChild().matchesQualifiedName(MSG_FUNCTION_NAME)) {
 googMsgNodes.add(node);
 }

@@ -4,18 +4,18 @@
     typeParameters=ImmutableList.of();
   }
 switch (n.getType()) {
-case Token.LC:
+case LC:
     return getRecordTypeHelper(n,registry,typeParameters);
-case Token.EMPTY:
+case EMPTY:
   return JSType.UNKNOWN;
-case Token.VOID:
+case VOID:
 return JSType.UNDEFINED;
-case Token.LB:
+case LB:
 warnings.add(JSError.make(n,BAD_ARRAY_TYPE_SYNTAX));
 return JSType.UNKNOWN;
-case Token.STRING:
+case STRING:
 return getNamedTypeHelper(n,registry,typeParameters);
-case Token.PIPE:
+case PIPE:
 {
 JSType union=JSType.BOTTOM;
 for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
@@ -32,7 +32,7 @@ union=nextUnion;
 }
 return union;
 }
-case Token.BANG:
+case BANG:
 {
 JSType nullableType=getTypeFromCommentHelper(n.getFirstChild(),registry,typeParameters);
 if (nullableType.isTypeVariable()) {
@@ -40,7 +40,7 @@ warnings.add(JSError.make(n,CANNOT_MAKE_TYPEVAR_NON_NULL));
 }
 return nullableType.removeType(JSType.NULL);
 }
-case Token.QMARK:
+case QMARK:
 {
 Node child=n.getFirstChild();
 if (child == null) {
@@ -50,9 +50,9 @@ return JSType.UNKNOWN;
 return JSType.join(JSType.NULL,getTypeFromCommentHelper(child,registry,typeParameters));
 }
 }
-case Token.STAR:
+case STAR:
 return JSType.TOP;
-case Token.FUNCTION:
+case FUNCTION:
 return getFunTypeHelper(n,registry,typeParameters);
 default :
 throw new IllegalArgumentException("Unsupported type exp: " + Token.name(n.getType()) + " "+ n.toStringTree());

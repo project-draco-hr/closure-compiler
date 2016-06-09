@@ -1,11 +1,11 @@
 {
 switch (n.getType()) {
-case Token.SCRIPT:
+case SCRIPT:
 {
       reportUnused(t);
       break;
     }
-case Token.GETPROP:
+case GETPROP:
 {
     String propName=n.getLastChild().getString();
     if (compiler.getCodingConvention().isExported(propName) || isPinningPropertyUse(n) || !isCandidatePropertyDefinition(n)) {
@@ -18,21 +18,21 @@ case Token.GETPROP:
     }
     break;
   }
-case Token.MEMBER_FUNCTION_DEF:
+case MEMBER_FUNCTION_DEF:
 {
   if (isCheckablePrivatePropDecl(n)) {
     candidates.add(n);
   }
   break;
 }
-case Token.OBJECTLIT:
+case OBJECTLIT:
 {
 for (Node c : n.children()) {
   used.add(c.getString());
 }
 break;
 }
-case Token.CALL:
+case CALL:
 Node target=n.getFirstChild();
 if (n.hasMoreThanOneChild() && compiler.getCodingConvention().isPropertyRenameFunction(target.getOriginalQualifiedName())) {
 Node propName=target.getNext();

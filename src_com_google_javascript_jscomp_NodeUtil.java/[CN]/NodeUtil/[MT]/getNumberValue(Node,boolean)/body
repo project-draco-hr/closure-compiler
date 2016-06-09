@@ -1,20 +1,20 @@
 {
 switch (n.getType()) {
-case Token.TRUE:
+case TRUE:
     return 1.0;
-case Token.FALSE:
-case Token.NULL:
+case FALSE:
+case NULL:
   return 0.0;
-case Token.NUMBER:
+case NUMBER:
 return n.getDouble();
-case Token.VOID:
+case VOID:
 if (mayHaveSideEffects(n.getFirstChild())) {
 return null;
 }
  else {
 return Double.NaN;
 }
-case Token.NAME:
+case NAME:
 String name=n.getString();
 if (name.equals("undefined")) {
 return Double.NaN;
@@ -37,21 +37,21 @@ return 0.0;
 }
 }
 return null;
-case Token.NEG:
+case NEG:
 if (n.getChildCount() == 1 && n.getFirstChild().isName() && n.getFirstChild().getString().equals("Infinity")) {
 return Double.NEGATIVE_INFINITY;
 }
 return null;
-case Token.NOT:
+case NOT:
 TernaryValue child=getPureBooleanValue(n.getFirstChild());
 if (child != TernaryValue.UNKNOWN) {
 return child.toBoolean(true) ? 0.0 : 1.0;
 }
 break;
-case Token.STRING:
+case STRING:
 return getStringNumberValue(n.getString());
-case Token.ARRAYLIT:
-case Token.OBJECTLIT:
+case ARRAYLIT:
+case OBJECTLIT:
 String value=getStringValue(n);
 return value != null ? getStringNumberValue(value) : null;
 }

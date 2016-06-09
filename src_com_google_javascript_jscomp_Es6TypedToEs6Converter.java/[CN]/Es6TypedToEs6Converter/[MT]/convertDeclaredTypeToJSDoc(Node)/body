@@ -1,28 +1,28 @@
 {
   Preconditions.checkArgument(type instanceof TypeDeclarationNode);
 switch (type.getType()) {
-case Token.STRING_TYPE:
+case STRING_TYPE:
     return IR.string("string");
-case Token.BOOLEAN_TYPE:
+case BOOLEAN_TYPE:
   return IR.string("boolean");
-case Token.NUMBER_TYPE:
+case NUMBER_TYPE:
 return IR.string("number");
-case Token.VOID_TYPE:
+case VOID_TYPE:
 return IR.string("void");
-case Token.UNDEFINED_TYPE:
+case UNDEFINED_TYPE:
 return IR.string("undefined");
-case Token.ANY_TYPE:
+case ANY_TYPE:
 return new Node(Token.QMARK);
-case Token.NAMED_TYPE:
+case NAMED_TYPE:
 return convertNamedType(type);
-case Token.ARRAY_TYPE:
+case ARRAY_TYPE:
 {
 Node arrayType=IR.string("Array");
 Node memberType=convertWithLocation(type.getFirstChild());
 arrayType.addChildToFront(new Node(Token.BLOCK,memberType).useSourceInfoIfMissingFrom(type));
 return new Node(Token.BANG,arrayType);
 }
-case Token.PARAMETERIZED_TYPE:
+case PARAMETERIZED_TYPE:
 {
 Node namedType=type.getFirstChild();
 Node result=convertWithLocation(namedType);
@@ -34,7 +34,7 @@ parameters.addChildToBack(convertWithLocation(param));
 }
 return result;
 }
-case Token.FUNCTION_TYPE:
+case FUNCTION_TYPE:
 {
 Node returnType=type.getFirstChild();
 Node paramList=new Node(Token.PARAM_LIST);
@@ -60,13 +60,13 @@ function.addChildToBack(paramList);
 function.addChildToBack(convertWithLocation(returnType));
 return function;
 }
-case Token.UNION_TYPE:
+case UNION_TYPE:
 Node pipe=new Node(Token.PIPE);
 for (Node child : type.children()) {
 pipe.addChildToBack(convertWithLocation(child));
 }
 return pipe;
-case Token.RECORD_TYPE:
+case RECORD_TYPE:
 {
 Node lb=new Node(Token.LB);
 for (Node member : type.children()) {
@@ -87,10 +87,10 @@ lb.addChildrenToBack(colon);
 }
 return new Node(Token.LC,lb);
 }
-case Token.TYPEOF:
+case TYPEOF:
 compiler.report(JSError.make(type,TYPE_QUERY_NOT_SUPPORTED));
 return new Node(Token.QMARK);
-case Token.STRING:
+case STRING:
 compiler.report(JSError.make(type,SPECIALIZED_SIGNATURE_NOT_SUPPORTED));
 return new Node(Token.QMARK);
 default :

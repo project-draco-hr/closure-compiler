@@ -17,49 +17,49 @@
   }
  else   if (controlCanExit(currentStatement)) {
 switch (currentStatement.getType()) {
-case Token.WHILE:
-case Token.DO:
-case Token.FOR:
+case WHILE:
+case DO:
+case FOR:
       if (NodeUtil.isForIn(currentStatement)) {
         visitForIn();
         return false;
       }
     visitLoop(null);
   return false;
-case Token.LABEL:
+case LABEL:
 visitLabel();
 return false;
-case Token.SWITCH:
+case SWITCH:
 visitSwitch();
 return false;
-case Token.IF:
+case IF:
 if (!currentStatement.isGeneratorSafe()) {
 visitIf();
 return false;
 }
 break;
-case Token.TRY:
+case TRY:
 visitTry();
 return false;
-case Token.EXPR_RESULT:
+case EXPR_RESULT:
 if (currentStatement.getFirstChild().isYield()) {
 visitYieldExprResult();
 return true;
 }
 break;
-case Token.RETURN:
+case RETURN:
 visitReturn();
 return false;
-case Token.CONTINUE:
+case CONTINUE:
 visitContinue();
 return false;
-case Token.BREAK:
+case BREAK:
 if (!currentStatement.isGeneratorSafe()) {
 visitBreak();
 return false;
 }
 break;
-case Token.THROW:
+case THROW:
 visitThrow();
 return false;
 default :

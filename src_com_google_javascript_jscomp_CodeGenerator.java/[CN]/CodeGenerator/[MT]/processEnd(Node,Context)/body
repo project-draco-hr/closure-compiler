@@ -1,12 +1,12 @@
 {
 switch (n.getType()) {
-case Token.CLASS:
-case Token.INTERFACE:
-case Token.ENUM:
-case Token.NAMESPACE:
+case CLASS:
+case INTERFACE:
+case ENUM:
+case NAMESPACE:
     cc.endClass(context == Context.STATEMENT);
   break;
-case Token.FUNCTION:
+case FUNCTION:
 if (n.getLastChild().isEmpty()) {
   cc.endStatement(true);
 }
@@ -14,29 +14,29 @@ if (n.getLastChild().isEmpty()) {
   cc.endFunction(context == Context.STATEMENT);
 }
 break;
-case Token.DECLARE:
+case DECLARE:
 if (n.getParent().getType() != Token.NAMESPACE_ELEMENTS) {
 processEnd(n.getFirstChild(),context);
 }
 break;
-case Token.EXPORT:
+case EXPORT:
 if (n.getParent().getType() != Token.NAMESPACE_ELEMENTS && n.getFirstChild().getType() != Token.DECLARE) {
 processEnd(n.getFirstChild(),context);
 }
 break;
-case Token.COMPUTED_PROP:
+case COMPUTED_PROP:
 if (n.hasOneChild()) {
 cc.endStatement(true);
 }
 break;
-case Token.MEMBER_FUNCTION_DEF:
-case Token.GETTER_DEF:
-case Token.SETTER_DEF:
+case MEMBER_FUNCTION_DEF:
+case GETTER_DEF:
+case SETTER_DEF:
 if (n.getFirstChild().getLastChild().isEmpty()) {
 cc.endStatement(true);
 }
 break;
-case Token.MEMBER_VARIABLE_DEF:
+case MEMBER_VARIABLE_DEF:
 cc.endStatement(true);
 break;
 default :

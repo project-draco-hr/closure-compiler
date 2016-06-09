@@ -1,33 +1,33 @@
 {
 switch (n.getType()) {
-case Token.LC:
+case LC:
     return createRecordTypeFromNodes(n.getFirstChild(),sourceName,scope);
-case Token.BANG:
+case BANG:
   return createFromTypeNodesInternal(n.getFirstChild(),sourceName,scope).restrictByNotNullOrUndefined();
-case Token.QMARK:
+case QMARK:
 Node firstChild=n.getFirstChild();
 if (firstChild == null) {
 return getNativeType(UNKNOWN_TYPE);
 }
 return createNullableType(createFromTypeNodesInternal(firstChild,sourceName,scope));
-case Token.EQUALS:
+case EQUALS:
 return createOptionalType(createFromTypeNodesInternal(n.getFirstChild(),sourceName,scope));
-case Token.ELLIPSIS:
+case ELLIPSIS:
 return createOptionalType(createFromTypeNodesInternal(n.getFirstChild(),sourceName,scope));
-case Token.STAR:
+case STAR:
 return getNativeType(ALL_TYPE);
-case Token.PIPE:
+case PIPE:
 UnionTypeBuilder builder=new UnionTypeBuilder(this);
 for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
 builder.addAlternate(createFromTypeNodesInternal(child,sourceName,scope));
 }
 return builder.build();
-case Token.EMPTY:
+case EMPTY:
 return getNativeType(UNKNOWN_TYPE);
-case Token.VOID:
+case VOID:
 return getNativeType(VOID_TYPE);
-case Token.STRING:
-case Token.NAME:
+case STRING:
+case NAME:
 JSType namedType=getType(scope,n.getString(),sourceName,n.getLineno(),n.getCharno());
 if ((namedType instanceof ObjectType) && !(namedType instanceof NamespaceType) && !(nonNullableTypeNames.contains(n.getString()))) {
 Node typeList=n.getFirstChild();
@@ -53,7 +53,7 @@ return createDefaultObjectUnion(namedType);
  else {
 return namedType;
 }
-case Token.FUNCTION:
+case FUNCTION:
 JSType thisType=null;
 boolean isConstructor=false;
 Node current=n.getFirstChild();

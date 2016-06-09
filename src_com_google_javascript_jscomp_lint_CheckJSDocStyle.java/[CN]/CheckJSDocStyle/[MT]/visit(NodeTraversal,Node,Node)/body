@@ -1,31 +1,31 @@
 {
 switch (n.getType()) {
-case Token.FUNCTION:
+case FUNCTION:
     visitFunction(t,n,parent);
   break;
-case Token.ASSIGN:
+case ASSIGN:
 if (!n.getLastChild().isFunction()) {
   visitNonFunction(t,n);
 }
 checkStyleForPrivateProperties(t,n);
 break;
-case Token.VAR:
-case Token.LET:
-case Token.CONST:
+case VAR:
+case LET:
+case CONST:
 for (Node decl : n.children()) {
 if (decl.getFirstChild() == null || !decl.getFirstChild().isFunction()) {
 visitNonFunction(t,n);
 }
 }
 break;
-case Token.STRING_KEY:
+case STRING_KEY:
 if (n.getFirstChild() == null || !n.getFirstChild().isFunction()) {
 visitNonFunction(t,n);
 }
 break;
-case Token.MEMBER_FUNCTION_DEF:
-case Token.GETTER_DEF:
-case Token.SETTER_DEF:
+case MEMBER_FUNCTION_DEF:
+case GETTER_DEF:
+case SETTER_DEF:
 if (NodeUtil.getEnclosingClass(n) != null) {
 checkStyleForPrivateProperties(t,n);
 }

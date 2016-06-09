@@ -1,33 +1,33 @@
 {
 switch (n.getType()) {
-case Token.STRING:
-case Token.STRING_KEY:
+case STRING:
+case STRING_KEY:
     return n.getString();
-case Token.NAME:
+case NAME:
   String name=n.getString();
 if ("undefined".equals(name) || "Infinity".equals(name) || "NaN".equals(name)) {
   return name;
 }
 break;
-case Token.NUMBER:
+case NUMBER:
 return DToA.numberToString(n.getDouble());
-case Token.FALSE:
+case FALSE:
 return "false";
-case Token.TRUE:
+case TRUE:
 return "true";
-case Token.NULL:
+case NULL:
 return "null";
-case Token.VOID:
+case VOID:
 return "undefined";
-case Token.NOT:
+case NOT:
 TernaryValue child=getPureBooleanValue(n.getFirstChild());
 if (child != TernaryValue.UNKNOWN) {
 return child.toBoolean(true) ? "false" : "true";
 }
 break;
-case Token.ARRAYLIT:
+case ARRAYLIT:
 return arrayToString(n);
-case Token.OBJECTLIT:
+case OBJECTLIT:
 return "[object Object]";
 }
 return null;

@@ -1,8 +1,8 @@
 {
   Node parent=n.getParent();
 switch (n.getType()) {
-case Token.OR:
-case Token.AND:
+case OR:
+case AND:
 {
       Node left=n.getFirstChild();
       Node right=n.getLastChild();
@@ -10,7 +10,7 @@ case Token.AND:
       right=performConditionSubstitutions(right);
       TernaryValue rightVal=NodeUtil.getPureBooleanValue(right);
       if (NodeUtil.getPureBooleanValue(right) != TernaryValue.UNKNOWN) {
-        int type=n.getType();
+        Token.Kind type=n.getType();
         Node replacement=null;
         boolean rval=rightVal.toBoolean(true);
         if (type == Token.OR && !rval || type == Token.AND && rval) {
@@ -32,7 +32,7 @@ case Token.AND:
       }
       return n;
     }
-case Token.HOOK:
+case HOOK:
 {
     Node condition=n.getFirstChild();
     Node trueNode=n.getSecondChild();

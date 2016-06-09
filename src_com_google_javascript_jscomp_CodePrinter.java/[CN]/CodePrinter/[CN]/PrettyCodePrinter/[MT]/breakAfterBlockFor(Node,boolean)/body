@@ -2,17 +2,17 @@
   Preconditions.checkState(n.isBlock(),n);
   Node parent=n.getParent();
   if (parent != null) {
-    int type=parent.getType();
+    Token.Kind type=parent.getType();
 switch (type) {
-case Token.DO:
+case DO:
       return false;
-case Token.FUNCTION:
+case FUNCTION:
     return false;
-case Token.TRY:
+case TRY:
   return n != parent.getFirstChild();
-case Token.CATCH:
+case CATCH:
 return !NodeUtil.hasFinally(getTryForCatch(parent));
-case Token.IF:
+case IF:
 return n == parent.getLastChild();
 }
 }

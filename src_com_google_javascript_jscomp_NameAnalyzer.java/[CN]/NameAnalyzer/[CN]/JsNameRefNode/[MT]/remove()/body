@@ -1,14 +1,14 @@
 {
   Node containingNode=parent.getParent();
 switch (parent.getType()) {
-case Token.VAR:
+case VAR:
     Preconditions.checkState(parent.hasOneChild());
   replaceWithRhs(containingNode,parent);
 break;
-case Token.FUNCTION:
+case FUNCTION:
 replaceWithRhs(containingNode,parent);
 break;
-case Token.ASSIGN:
+case ASSIGN:
 if (containingNode.isExprResult()) {
 replaceWithRhs(containingNode.getParent(),containingNode);
 }
@@ -16,9 +16,9 @@ replaceWithRhs(containingNode.getParent(),containingNode);
 replaceWithRhs(containingNode,parent);
 }
 break;
-case Token.OBJECTLIT:
+case OBJECTLIT:
 break;
-case Token.EXPR_RESULT:
+case EXPR_RESULT:
 Preconditions.checkState(isAnalyzableObjectDefinePropertiesDefinition(parent.getFirstChild()));
 replaceWithRhs(containingNode,parent);
 break;

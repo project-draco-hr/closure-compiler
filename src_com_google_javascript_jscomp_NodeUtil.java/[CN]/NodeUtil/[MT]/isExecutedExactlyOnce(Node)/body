@@ -2,15 +2,15 @@
   inspect:   do {
     Node parent=n.getParent();
 switch (parent.getType()) {
-case Token.IF:
-case Token.HOOK:
-case Token.AND:
-case Token.OR:
+case IF:
+case HOOK:
+case AND:
+case OR:
       if (parent.getFirstChild() != n) {
         return false;
       }
     continue inspect;
-case Token.FOR:
+case FOR:
   if (NodeUtil.isForIn(parent)) {
     if (parent.getSecondChild() != n) {
       return false;
@@ -22,19 +22,19 @@ case Token.FOR:
     }
   }
 continue inspect;
-case Token.WHILE:
-case Token.DO:
+case WHILE:
+case DO:
 return false;
-case Token.TRY:
+case TRY:
 if (!hasFinally(parent) || parent.getLastChild() != n) {
 return false;
 }
 continue inspect;
-case Token.CASE:
-case Token.DEFAULT_CASE:
+case CASE:
+case DEFAULT_CASE:
 return false;
-case Token.SCRIPT:
-case Token.FUNCTION:
+case SCRIPT:
+case FUNCTION:
 break inspect;
 }
 }

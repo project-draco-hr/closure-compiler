@@ -17,16 +17,16 @@
     }
  else {
 switch (node.getType()) {
-case Token.CALL:
-case Token.NEW:
+case CALL:
+case NEW:
         visitCall(sideEffectInfo,node);
       break;
-case Token.DELPROP:
-case Token.DEC:
-case Token.INC:
+case DELPROP:
+case DEC:
+case INC:
     visitAssignmentOrUnaryOperator(sideEffectInfo,traversal.getScope(),node,node.getFirstChild(),null);
   break;
-case Token.NAME:
+case NAME:
 Preconditions.checkArgument(NodeUtil.isNameDeclaration(parent));
 Node value=node.getFirstChild();
 if (value != null && !NodeUtil.evaluatesToLocalValue(value)) {
@@ -35,10 +35,10 @@ Var var=scope.getVar(node.getString());
 sideEffectInfo.blacklistLocal(var);
 }
 break;
-case Token.THROW:
+case THROW:
 visitThrow(sideEffectInfo);
 break;
-case Token.RETURN:
+case RETURN:
 if (node.hasChildren() && !NodeUtil.evaluatesToLocalValue(node.getFirstChild())) {
 sideEffectInfo.setTaintsReturn();
 }

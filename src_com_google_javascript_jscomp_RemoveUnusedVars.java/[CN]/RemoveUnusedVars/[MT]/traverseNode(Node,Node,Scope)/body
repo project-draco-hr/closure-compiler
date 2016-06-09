@@ -1,8 +1,8 @@
 {
-  int type=n.getType();
+  Token.Kind type=n.getType();
   Var var=null;
 switch (type) {
-case Token.FUNCTION:
+case FUNCTION:
     if (NodeUtil.isFunctionDeclaration(n)) {
       var=scope.getVar(n.getFirstChild().getString());
     }
@@ -13,7 +13,7 @@ case Token.FUNCTION:
     traverseFunction(n,scope);
   }
 return;
-case Token.ASSIGN:
+case ASSIGN:
 Assign maybeAssign=Assign.maybeCreateAssign(n);
 if (maybeAssign != null) {
 var=scope.getVar(maybeAssign.nameNode.getString());
@@ -27,7 +27,7 @@ if (isRemovableVar(var) && !maybeAssign.mayHaveSecondarySideEffects) {
 }
 }
 break;
-case Token.CALL:
+case CALL:
 Var modifiedVar=null;
 SubclassRelationship subclassRelationship=codingConvention.getClassesDefinedByCall(n);
 if (subclassRelationship != null) {
@@ -45,7 +45,7 @@ continuations.put(modifiedVar,new Continuation(n,scope));
 return;
 }
 break;
-case Token.NAME:
+case NAME:
 var=scope.getVar(n.getString());
 if (parent.isVar()) {
 Node value=n.getFirstChild();

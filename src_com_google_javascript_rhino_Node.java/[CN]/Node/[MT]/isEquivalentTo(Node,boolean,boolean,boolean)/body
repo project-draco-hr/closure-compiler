@@ -1,5 +1,5 @@
 {
-  if (type != node.type || getChildCount() != node.getChildCount() || this.getClass() != node.getClass()) {
+  if (kind != node.kind || getChildCount() != node.getChildCount() || this.getClass() != node.getClass()) {
     return false;
   }
   if (compareType && !JSType.isEquivalent(getJSType(),node.getJSType())) {
@@ -13,15 +13,15 @@
   if ((thisTDN != null || thatTDN != null) && (thisTDN == null || thatTDN == null || !thisTDN.isEquivalentTo(thatTDN,compareType,recurse,jsDoc))) {
     return false;
   }
-  if (type == Token.INC || type == Token.DEC) {
+  if (kind == Token.INC || kind == Token.DEC) {
     int post1=this.getIntProp(INCRDECR_PROP);
     int post2=node.getIntProp(INCRDECR_PROP);
     if (post1 != post2) {
       return false;
     }
   }
- else   if (type == Token.STRING || type == Token.STRING_KEY) {
-    if (type == Token.STRING_KEY) {
+ else   if (kind == Token.STRING || kind == Token.STRING_KEY) {
+    if (kind == Token.STRING_KEY) {
       int quoted1=this.getIntProp(QUOTED_PROP);
       int quoted2=node.getIntProp(QUOTED_PROP);
       if (quoted1 != quoted2) {
@@ -34,12 +34,12 @@
       return false;
     }
   }
- else   if (type == Token.CALL) {
+ else   if (kind == Token.CALL) {
     if (this.getBooleanProp(FREE_CALL) != node.getBooleanProp(FREE_CALL)) {
       return false;
     }
   }
- else   if (type == Token.FUNCTION) {
+ else   if (kind == Token.FUNCTION) {
     if (this.isArrowFunction() != node.isArrowFunction()) {
       return false;
     }

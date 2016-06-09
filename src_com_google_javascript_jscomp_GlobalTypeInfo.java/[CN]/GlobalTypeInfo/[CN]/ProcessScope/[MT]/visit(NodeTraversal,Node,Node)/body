@@ -1,13 +1,13 @@
 {
 switch (n.getType()) {
-case Token.FUNCTION:
+case FUNCTION:
     Node grandparent=parent.getParent();
   if (grandparent == null || (!isPrototypePropertyDeclaration(grandparent) && !isClassPropertyDeclaration(parent.getFirstChild(),currentScope))) {
     RawNominalType ownerType=maybeGetOwnerType(n,parent);
     visitFunctionLate(n,ownerType);
   }
 break;
-case Token.NAME:
+case NAME:
 {
 String name=n.getString();
 if (name == null || parent.isFunction()) {
@@ -23,12 +23,12 @@ if (parent.isVar() || parent.isCatch()) {
 }
 break;
 }
-case Token.GETPROP:
+case GETPROP:
 if (parent.isExprResult() && n.isQualifiedName()) {
 visitPropertyDeclaration(n);
 }
 break;
-case Token.ASSIGN:
+case ASSIGN:
 {
 Node lvalue=n.getFirstChild();
 if (lvalue.isGetProp() && lvalue.isQualifiedName() && parent.isExprResult()) {
@@ -36,13 +36,13 @@ visitPropertyDeclaration(lvalue);
 }
 break;
 }
-case Token.CAST:
+case CAST:
 castTypes.put(n,getDeclaredTypeOfNode(n.getJSDocInfo(),currentScope));
 break;
-case Token.OBJECTLIT:
+case OBJECTLIT:
 visitObjectLit(n,parent);
 break;
-case Token.CALL:
+case CALL:
 visitCall(n);
 break;
 }

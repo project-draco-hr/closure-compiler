@@ -5,10 +5,10 @@
   Name.Type type=Name.Type.OTHER;
   boolean isPropAssign=false;
 switch (n.getType()) {
-case Token.GETTER_DEF:
-case Token.SETTER_DEF:
-case Token.STRING_KEY:
-case Token.MEMBER_FUNCTION_DEF:
+case GETTER_DEF:
+case SETTER_DEF:
+case STRING_KEY:
+case MEMBER_FUNCTION_DEF:
     name=null;
   if (parent != null && parent.isObjectLit()) {
     name=getNameForObjLitKey(n);
@@ -21,39 +21,39 @@ if (name == null) {
 }
 isSet=true;
 switch (n.getType()) {
-case Token.MEMBER_FUNCTION_DEF:
-case Token.STRING_KEY:
+case MEMBER_FUNCTION_DEF:
+case STRING_KEY:
 type=getValueType(n.getFirstChild());
 break;
-case Token.GETTER_DEF:
+case GETTER_DEF:
 type=Name.Type.GET;
 break;
-case Token.SETTER_DEF:
+case SETTER_DEF:
 type=Name.Type.SET;
 break;
 default :
 throw new IllegalStateException("unexpected:" + n);
 }
 break;
-case Token.NAME:
+case NAME:
 if (parent != null) {
 switch (parent.getType()) {
-case Token.VAR:
-case Token.LET:
-case Token.CONST:
+case VAR:
+case LET:
+case CONST:
 isSet=true;
 Node rvalue=n.getFirstChild();
 type=rvalue == null ? Name.Type.OTHER : getValueType(rvalue);
 break;
-case Token.ASSIGN:
+case ASSIGN:
 if (parent.getFirstChild() == n) {
 isSet=true;
 type=getValueType(n.getNext());
 }
 break;
-case Token.GETPROP:
+case GETPROP:
 return;
-case Token.FUNCTION:
+case FUNCTION:
 Node grandparent=parent.getParent();
 if (grandparent == null || NodeUtil.isFunctionExpression(parent)) {
 return;
@@ -61,13 +61,13 @@ return;
 isSet=true;
 type=Name.Type.FUNCTION;
 break;
-case Token.CATCH:
-case Token.INC:
-case Token.DEC:
+case CATCH:
+case INC:
+case DEC:
 isSet=true;
 type=Name.Type.OTHER;
 break;
-case Token.CLASS:
+case CLASS:
 isSet=true;
 type=Name.Type.CLASS;
 break;
@@ -80,22 +80,22 @@ type=Name.Type.OTHER;
 }
 name=n.getString();
 break;
-case Token.GETPROP:
+case GETPROP:
 if (parent != null) {
 switch (parent.getType()) {
-case Token.ASSIGN:
+case ASSIGN:
 if (parent.getFirstChild() == n) {
 isSet=true;
 type=getValueType(n.getNext());
 isPropAssign=true;
 }
 break;
-case Token.INC:
-case Token.DEC:
+case INC:
+case DEC:
 isSet=true;
 type=Name.Type.OTHER;
 break;
-case Token.GETPROP:
+case GETPROP:
 return;
 default :
 if (NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) {

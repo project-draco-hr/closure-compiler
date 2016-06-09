@@ -1,7 +1,7 @@
 {
   LValueResultFwd lvalResult=null;
 switch (expr.getType()) {
-case Token.THIS:
+case THIS:
 {
       if (currentScope.hasThis()) {
         lvalResult=new LValueResultFwd(inEnv,envGetType(inEnv,THIS_ID),currentScope.getDeclaredTypeOf(THIS_ID),new QualifiedName(THIS_ID));
@@ -12,15 +12,15 @@ case Token.THIS:
       }
       break;
     }
-case Token.NAME:
+case NAME:
 {
     String varName=expr.getString();
     JSType varType=analyzeExprFwd(expr,inEnv).type;
     lvalResult=new LValueResultFwd(inEnv,varType,currentScope.getDeclaredTypeOf(varName),varType.hasNonScalar() ? new QualifiedName(varName) : null);
     break;
   }
-case Token.GETPROP:
-case Token.GETELEM:
+case GETPROP:
+case GETELEM:
 {
   Node obj=expr.getFirstChild();
   Node prop=expr.getLastChild();
@@ -44,7 +44,7 @@ case Token.GETELEM:
   lvalResult=new LValueResultFwd(pair.env,pair.type,null,null);
   break;
 }
-case Token.VAR:
+case VAR:
 {
 Preconditions.checkState(NodeUtil.isForIn(expr.getParent()));
 Node vdecl=expr.getFirstChild();

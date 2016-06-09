@@ -11,20 +11,20 @@
     String export=null;
     Node context=null;
 switch (n.getType()) {
-case Token.FUNCTION:
-case Token.CLASS:
+case FUNCTION:
+case CLASS:
       if (parent.isScript()) {
         export=NodeUtil.getName(n);
         context=n;
         mode=Mode.EXPORT;
       }
     break;
-case Token.MEMBER_FUNCTION_DEF:
+case MEMBER_FUNCTION_DEF:
   export=n.getString();
 context=n;
 mode=Mode.EXPORT;
 break;
-case Token.ASSIGN:
+case ASSIGN:
 Node grandparent=parent.getParent();
 if (parent.isExprResult() && !n.getLastChild().isAssign()) {
 if (grandparent != null && grandparent.isScript() && n.getFirstChild().isQualifiedName()) {
@@ -39,9 +39,9 @@ mode=Mode.EXTERN;
 }
 }
 break;
-case Token.VAR:
-case Token.LET:
-case Token.CONST:
+case VAR:
+case LET:
+case CONST:
 if (parent.isScript()) {
 if (n.getFirstChild().hasChildren() && !n.getFirstFirstChild().isAssign()) {
 export=n.getFirstChild().getString();
@@ -50,16 +50,16 @@ mode=Mode.EXPORT;
 }
 }
 break;
-case Token.GETPROP:
+case GETPROP:
 if (allowLocalExports && parent.isExprResult()) {
 mode=Mode.EXTERN;
 export=n.getLastChild().getString();
 mode=Mode.EXTERN;
 }
 break;
-case Token.STRING_KEY:
-case Token.GETTER_DEF:
-case Token.SETTER_DEF:
+case STRING_KEY:
+case GETTER_DEF:
+case SETTER_DEF:
 if (allowLocalExports) {
 export=n.getString();
 mode=Mode.EXTERN;

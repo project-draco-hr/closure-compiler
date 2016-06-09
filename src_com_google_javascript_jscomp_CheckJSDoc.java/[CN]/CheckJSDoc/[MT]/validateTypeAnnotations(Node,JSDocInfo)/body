@@ -2,47 +2,47 @@
   if (info != null && info.hasType()) {
     boolean valid=false;
 switch (n.getType()) {
-case Token.FUNCTION:
+case FUNCTION:
       valid=NodeUtil.isFunctionDeclaration(n);
     break;
-case Token.NAME:
-case Token.DEFAULT_VALUE:
-case Token.ARRAY_PATTERN:
-case Token.OBJECT_PATTERN:
+case NAME:
+case DEFAULT_VALUE:
+case ARRAY_PATTERN:
+case OBJECT_PATTERN:
   Node parent=n.getParent();
 switch (parent.getType()) {
-case Token.GETTER_DEF:
-case Token.SETTER_DEF:
-case Token.CATCH:
-case Token.FUNCTION:
-case Token.VAR:
-case Token.LET:
-case Token.CONST:
-case Token.PARAM_LIST:
+case GETTER_DEF:
+case SETTER_DEF:
+case CATCH:
+case FUNCTION:
+case VAR:
+case LET:
+case CONST:
+case PARAM_LIST:
   valid=true;
 break;
 }
 break;
-case Token.CAST:
-case Token.VAR:
-case Token.LET:
-case Token.CONST:
-case Token.EXPORT:
-case Token.STRING_KEY:
-case Token.GETTER_DEF:
-case Token.SETTER_DEF:
+case CAST:
+case VAR:
+case LET:
+case CONST:
+case EXPORT:
+case STRING_KEY:
+case GETTER_DEF:
+case SETTER_DEF:
 valid=true;
 break;
-case Token.ASSIGN:
+case ASSIGN:
 {
 Node lvalue=n.getFirstChild();
 valid=n.getParent().isExprResult() && (lvalue.isGetProp() || lvalue.isGetElem() || lvalue.matchesQualifiedName("exports"));
 break;
 }
-case Token.GETPROP:
+case GETPROP:
 valid=n.getParent().isExprResult() && n.isQualifiedName();
 break;
-case Token.CALL:
+case CALL:
 valid=info.isDefine();
 break;
 default :

@@ -1,16 +1,16 @@
 {
 switch (n.getType()) {
-case Token.VAR:
+case VAR:
     declareLHS(scope.getClosestHoistScope(),n);
   return;
-case Token.LET:
-case Token.CONST:
+case LET:
+case CONST:
 if (!isNodeAtCurrentLexicalScope(n)) {
   return;
 }
 declareLHS(scope,n);
 return;
-case Token.FUNCTION:
+case FUNCTION:
 if (NodeUtil.isFunctionExpression(n) || !isNodeAtCurrentLexicalScope(n)) {
 return;
 }
@@ -20,7 +20,7 @@ return;
 }
 declareVar(n.getFirstChild());
 return;
-case Token.CLASS:
+case CLASS:
 if (NodeUtil.isClassExpression(n) || !isNodeAtCurrentLexicalScope(n)) {
 return;
 }
@@ -30,7 +30,7 @@ return;
 }
 declareVar(n.getFirstChild());
 return;
-case Token.CATCH:
+case CATCH:
 Preconditions.checkState(n.getChildCount() == 2,n);
 if (isNodeAtCurrentLexicalScope(n)) {
 declareLHS(scope,n);
@@ -38,7 +38,7 @@ declareLHS(scope,n);
 final Node block=n.getSecondChild();
 scanVars(block);
 return;
-case Token.SCRIPT:
+case SCRIPT:
 inputId=n.getInputId();
 Preconditions.checkNotNull(inputId);
 break;

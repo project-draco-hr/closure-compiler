@@ -1,24 +1,24 @@
 {
 switch (n.getType()) {
-case Token.ASSIGN:
-case Token.COMMA:
+case ASSIGN:
+case COMMA:
     return getImpureBooleanValue(n.getLastChild());
-case Token.NOT:
+case NOT:
   TernaryValue value=getImpureBooleanValue(n.getLastChild());
 return value.not();
-case Token.AND:
+case AND:
 {
 TernaryValue lhs=getImpureBooleanValue(n.getFirstChild());
 TernaryValue rhs=getImpureBooleanValue(n.getLastChild());
 return lhs.and(rhs);
 }
-case Token.OR:
+case OR:
 {
 TernaryValue lhs=getImpureBooleanValue(n.getFirstChild());
 TernaryValue rhs=getImpureBooleanValue(n.getLastChild());
 return lhs.or(rhs);
 }
-case Token.HOOK:
+case HOOK:
 {
 TernaryValue trueValue=getImpureBooleanValue(n.getSecondChild());
 TernaryValue falseValue=getImpureBooleanValue(n.getLastChild());
@@ -29,11 +29,11 @@ return trueValue;
 return TernaryValue.UNKNOWN;
 }
 }
-case Token.NEW:
-case Token.ARRAYLIT:
-case Token.OBJECTLIT:
+case NEW:
+case ARRAYLIT:
+case OBJECTLIT:
 return TernaryValue.TRUE;
-case Token.VOID:
+case VOID:
 return TernaryValue.FALSE;
 default :
 return getPureBooleanValue(n);

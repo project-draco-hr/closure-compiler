@@ -1,18 +1,18 @@
 {
 switch (origValueNode.getType()) {
-case Token.FUNCTION:
+case FUNCTION:
     updateFunctionNode(message,origValueNode);
   return origValueNode;
-case Token.STRING:
+case STRING:
 String newString=message.toString();
 if (!origValueNode.getString().equals(newString)) {
 origValueNode.setString(newString);
 compiler.reportCodeChange();
 }
 return origValueNode;
-case Token.ADD:
+case ADD:
 return IR.string(message.toString());
-case Token.CALL:
+case CALL:
 return replaceCallNode(message,origValueNode);
 default :
 throw new MalformedException("Expected FUNCTION, STRING, or ADD node; found: " + origValueNode.getType(),origValueNode);

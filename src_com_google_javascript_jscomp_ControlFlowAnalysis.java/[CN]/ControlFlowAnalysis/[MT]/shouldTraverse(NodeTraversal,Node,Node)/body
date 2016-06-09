@@ -1,45 +1,45 @@
 {
   astPosition.put(n,astPositionCounter++);
 switch (n.getType()) {
-case Token.CLASS:
+case CLASS:
     return shouldTraverseFunctionsAndClasses;
-case Token.FUNCTION:
+case FUNCTION:
   if (shouldTraverseFunctionsAndClasses || n == cfg.getEntry().getValue()) {
     exceptionHandler.push(n);
     return true;
   }
 return false;
-case Token.TRY:
+case TRY:
 exceptionHandler.push(n);
 return true;
 }
 if (parent != null) {
 switch (parent.getType()) {
-case Token.FOR:
-case Token.FOR_OF:
+case FOR:
+case FOR_OF:
 return n == parent.getLastChild();
-case Token.DO:
+case DO:
 return n != parent.getSecondChild();
-case Token.IF:
-case Token.WHILE:
-case Token.WITH:
-case Token.SWITCH:
-case Token.CASE:
-case Token.CATCH:
-case Token.LABEL:
+case IF:
+case WHILE:
+case WITH:
+case SWITCH:
+case CASE:
+case CATCH:
+case LABEL:
 return n != parent.getFirstChild();
-case Token.FUNCTION:
+case FUNCTION:
 return n == parent.getLastChild();
-case Token.CONTINUE:
-case Token.BREAK:
-case Token.EXPR_RESULT:
-case Token.VAR:
-case Token.LET:
-case Token.CONST:
-case Token.RETURN:
-case Token.THROW:
+case CONTINUE:
+case BREAK:
+case EXPR_RESULT:
+case VAR:
+case LET:
+case CONST:
+case RETURN:
+case THROW:
 return false;
-case Token.TRY:
+case TRY:
 if ((!NodeUtil.hasFinally(parent) && n == NodeUtil.getCatchBlock(parent)) || NodeUtil.isTryFinallyNode(parent,n)) {
 Preconditions.checkState(exceptionHandler.peek() == parent);
 exceptionHandler.pop();

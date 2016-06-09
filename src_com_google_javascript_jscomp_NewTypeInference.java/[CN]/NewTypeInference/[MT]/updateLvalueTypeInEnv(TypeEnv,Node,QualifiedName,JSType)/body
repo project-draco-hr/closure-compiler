@@ -1,18 +1,18 @@
 {
   Preconditions.checkNotNull(type);
 switch (lvalue.getType()) {
-case Token.NAME:
+case NAME:
     return envPutType(env,lvalue.getString(),type);
-case Token.THIS:
+case THIS:
 {
     JSType t=envGetType(env,THIS_ID);
     return t == null ? env : envPutType(env,THIS_ID,type);
   }
-case Token.VAR:
+case VAR:
 Preconditions.checkState(NodeUtil.isForIn(lvalue.getParent()));
 return envPutType(env,lvalue.getFirstChild().getString(),type);
-case Token.GETPROP:
-case Token.GETELEM:
+case GETPROP:
+case GETELEM:
 {
 if (qname != null) {
 String objName=qname.getLeftmostName();

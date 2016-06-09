@@ -3,18 +3,18 @@
   Node parent=name.getParent();
   Node grandparent=parent.getParent();
 switch (parent.getType()) {
-case Token.VAR:
+case VAR:
     if (canMoveValue(collector,ref.getScope(),name.getFirstChild())) {
       return info.addDeclaration(new Declaration(getModule(ref),name));
     }
   return false;
-case Token.FUNCTION:
+case FUNCTION:
 if (NodeUtil.isFunctionDeclaration(parent)) {
   return info.addDeclaration(new Declaration(getModule(ref),name));
 }
 return false;
-case Token.ASSIGN:
-case Token.GETPROP:
+case ASSIGN:
+case GETPROP:
 Node child=name;
 for (Node current : name.getAncestors()) {
 if (current.isGetProp()) {
@@ -31,7 +31,7 @@ return false;
 child=current;
 }
 return false;
-case Token.CALL:
+case CALL:
 if (NodeUtil.isExprCall(grandparent)) {
 SubclassRelationship relationship=compiler.getCodingConvention().getClassesDefinedByCall(parent);
 if (relationship != null && name.getString().equals(relationship.subclassName)) {

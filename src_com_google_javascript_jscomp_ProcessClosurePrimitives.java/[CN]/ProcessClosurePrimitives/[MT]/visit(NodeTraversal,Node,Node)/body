@@ -1,6 +1,6 @@
 {
 switch (n.getType()) {
-case Token.CALL:
+case CALL:
     Node left=n.getFirstChild();
   if (left.isGetProp()) {
     Node name=left.getFirstChild();
@@ -58,8 +58,8 @@ case Token.CALL:
     }
   }
 break;
-case Token.ASSIGN:
-case Token.NAME:
+case ASSIGN:
+case NAME:
 if (n.isName() && n.getString().equals("CLOSURE_DEFINES")) {
 handleClosureDefinesValues(t,n);
 }
@@ -67,10 +67,10 @@ handleClosureDefinesValues(t,n);
 handleCandidateProvideDefinition(t,n,parent);
 }
 break;
-case Token.EXPR_RESULT:
+case EXPR_RESULT:
 handleTypedefDefinition(t,n);
 break;
-case Token.CLASS:
+case CLASS:
 if (t.inGlobalHoistScope() && !NodeUtil.isClassExpression(n)) {
 String name=n.getFirstChild().getString();
 ProvidedName pn=providedNames.get(name);
@@ -79,7 +79,7 @@ compiler.report(t.makeError(n,CLASS_NAMESPACE_ERROR,name));
 }
 }
 break;
-case Token.FUNCTION:
+case FUNCTION:
 if (t.inGlobalHoistScope() && !NodeUtil.isFunctionExpression(n)) {
 String name=n.getFirstChild().getString();
 ProvidedName pn=providedNames.get(name);
@@ -88,7 +88,7 @@ compiler.report(t.makeError(n,FUNCTION_NAMESPACE_ERROR,name));
 }
 }
 break;
-case Token.GETPROP:
+case GETPROP:
 if (n.getFirstChild().isName() && !parent.isCall() && !parent.isAssign()&& n.matchesQualifiedName("goog.base")) {
 reportBadGoogBaseUse(t,n,"May only be called directly.");
 }

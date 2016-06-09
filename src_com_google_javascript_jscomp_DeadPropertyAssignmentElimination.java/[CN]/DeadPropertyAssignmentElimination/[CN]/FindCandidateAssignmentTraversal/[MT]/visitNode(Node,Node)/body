@@ -1,6 +1,6 @@
 {
 switch (n.getType()) {
-case Token.GETPROP:
+case GETPROP:
     if (n.isGetProp() && n.getLastChild().isString() && blacklistedPropNames.contains(n.getLastChild().getString())) {
       markAllPropsRead();
       return true;
@@ -16,7 +16,7 @@ if (!parent.isGetProp()) {
 }
 }
 return true;
-case Token.CALL:
+case CALL:
 if (ASSUME_CONSTRUCTORS_HAVENT_ESCAPED && isConstructor && !NodeUtil.referencesThis(n)&& NodeUtil.getEnclosingType(n,Token.TRY) == null) {
 markAllPropsReadExceptThisProps();
 }
@@ -24,20 +24,20 @@ markAllPropsReadExceptThisProps();
 markAllPropsRead();
 }
 return false;
-case Token.THIS:
-case Token.NAME:
+case THIS:
+case NAME:
 Property nameProp=Preconditions.checkNotNull(getOrCreateProperty(n));
 nameProp.markLastWriteRead();
 if (!parent.isGetProp()) {
 nameProp.markChildrenRead();
 }
 return true;
-case Token.THROW:
-case Token.FOR:
-case Token.SWITCH:
+case THROW:
+case FOR:
+case SWITCH:
 markAllPropsRead();
 return false;
-case Token.BLOCK:
+case BLOCK:
 visitBlock(n);
 return true;
 default :

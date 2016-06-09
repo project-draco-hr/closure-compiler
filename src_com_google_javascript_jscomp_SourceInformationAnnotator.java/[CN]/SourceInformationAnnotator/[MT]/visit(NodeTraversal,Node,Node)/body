@@ -3,20 +3,20 @@
     Preconditions.checkState(sourceFile.equals(n.getSourceFileName()));
   }
 switch (n.getType()) {
-case Token.GETPROP:
+case GETPROP:
     Node propNode=n.getLastChild();
   setOriginalName(n,propNode.getString());
 break;
-case Token.FUNCTION:
+case FUNCTION:
 String functionName=NodeUtil.getNearestFunctionName(n);
 if (functionName != null) {
 setOriginalName(n,functionName);
 }
 break;
-case Token.NAME:
+case NAME:
 setOriginalName(n,n.getString());
 break;
-case Token.OBJECTLIT:
+case OBJECTLIT:
 for (Node key=n.getFirstChild(); key != null; key=key.getNext()) {
 if (!key.isComputedProp() && !key.isQuotedString()) {
 setOriginalName(key,key.getString());

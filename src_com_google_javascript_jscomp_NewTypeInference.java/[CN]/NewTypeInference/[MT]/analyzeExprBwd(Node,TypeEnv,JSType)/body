@@ -2,22 +2,22 @@
   Preconditions.checkArgument(requiredType != null,"Required type null at: %s",expr);
   Preconditions.checkArgument(!requiredType.isBottom());
 switch (expr.getType()) {
-case Token.EMPTY:
+case EMPTY:
     return new EnvTypePair(outEnv,JSType.UNKNOWN);
-case Token.FUNCTION:
+case FUNCTION:
 {
     String fnName=symbolTable.getFunInternalName(expr);
     return new EnvTypePair(outEnv,envGetType(outEnv,fnName));
   }
-case Token.FALSE:
-case Token.NULL:
-case Token.NUMBER:
-case Token.STRING:
-case Token.TRUE:
+case FALSE:
+case NULL:
+case NUMBER:
+case STRING:
+case TRUE:
 return new EnvTypePair(outEnv,scalarValueToType(expr.getType()));
-case Token.OBJECTLIT:
+case OBJECTLIT:
 return analyzeObjLitBwd(expr,outEnv,requiredType);
-case Token.THIS:
+case THIS:
 {
 if (!currentScope.hasThis()) {
 return new EnvTypePair(outEnv,JSType.UNKNOWN);
@@ -25,74 +25,74 @@ return new EnvTypePair(outEnv,JSType.UNKNOWN);
 JSType thisType=currentScope.getDeclaredTypeOf(THIS_ID);
 return new EnvTypePair(outEnv,thisType);
 }
-case Token.NAME:
+case NAME:
 return analyzeNameBwd(expr,outEnv,requiredType);
-case Token.INC:
-case Token.DEC:
-case Token.BITNOT:
-case Token.NEG:
+case INC:
+case DEC:
+case BITNOT:
+case NEG:
 return analyzeExprBwd(expr.getFirstChild(),outEnv,JSType.NUMBER);
-case Token.POS:
+case POS:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=JSType.NUMBER;
 return pair;
 }
-case Token.TYPEOF:
+case TYPEOF:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=JSType.STRING;
 return pair;
 }
-case Token.INSTANCEOF:
+case INSTANCEOF:
 {
 TypeEnv env=analyzeExprBwd(expr.getLastChild(),outEnv,commonTypes.topFunction()).env;
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),env);
 pair.type=JSType.BOOLEAN;
 return pair;
 }
-case Token.BITOR:
-case Token.BITAND:
-case Token.BITXOR:
-case Token.DIV:
-case Token.LSH:
-case Token.MOD:
-case Token.MUL:
-case Token.RSH:
-case Token.SUB:
-case Token.URSH:
+case BITOR:
+case BITAND:
+case BITXOR:
+case DIV:
+case LSH:
+case MOD:
+case MUL:
+case RSH:
+case SUB:
+case URSH:
 return analyzeBinaryNumericOpBwd(expr,outEnv);
-case Token.ADD:
+case ADD:
 return analyzeAddBwd(expr,outEnv,requiredType);
-case Token.OR:
-case Token.AND:
+case OR:
+case AND:
 return analyzeLogicalOpBwd(expr,outEnv);
-case Token.SHEQ:
-case Token.SHNE:
-case Token.EQ:
-case Token.NE:
+case SHEQ:
+case SHNE:
+case EQ:
+case NE:
 return analyzeEqNeBwd(expr,outEnv);
-case Token.LT:
-case Token.GT:
-case Token.LE:
-case Token.GE:
+case LT:
+case GT:
+case LE:
+case GE:
 return analyzeLtGtBwd(expr,outEnv);
-case Token.ASSIGN:
+case ASSIGN:
 return analyzeAssignBwd(expr,outEnv,requiredType);
-case Token.ASSIGN_ADD:
+case ASSIGN_ADD:
 return analyzeAssignAddBwd(expr,outEnv,requiredType);
-case Token.ASSIGN_BITOR:
-case Token.ASSIGN_BITXOR:
-case Token.ASSIGN_BITAND:
-case Token.ASSIGN_LSH:
-case Token.ASSIGN_RSH:
-case Token.ASSIGN_URSH:
-case Token.ASSIGN_SUB:
-case Token.ASSIGN_MUL:
-case Token.ASSIGN_DIV:
-case Token.ASSIGN_MOD:
+case ASSIGN_BITOR:
+case ASSIGN_BITXOR:
+case ASSIGN_BITAND:
+case ASSIGN_LSH:
+case ASSIGN_RSH:
+case ASSIGN_URSH:
+case ASSIGN_SUB:
+case ASSIGN_MUL:
+case ASSIGN_DIV:
+case ASSIGN_MOD:
 return analyzeAssignNumericOpBwd(expr,outEnv);
-case Token.GETPROP:
+case GETPROP:
 {
 Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()) || !NodeUtil.isLValue(expr));
 if (expr.getBooleanProp(Node.ANALYZED_DURING_GTI)) {
@@ -100,51 +100,51 @@ return new EnvTypePair(outEnv,requiredType);
 }
 return analyzePropAccessBwd(expr.getFirstChild(),expr.getLastChild().getString(),outEnv,requiredType);
 }
-case Token.HOOK:
+case HOOK:
 return analyzeHookBwd(expr,outEnv,requiredType);
-case Token.CALL:
-case Token.NEW:
+case CALL:
+case NEW:
 return analyzeCallNewBwd(expr,outEnv,requiredType);
-case Token.COMMA:
+case COMMA:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getLastChild(),outEnv,requiredType);
 pair.env=analyzeExprBwd(expr.getFirstChild(),pair.env).env;
 return pair;
 }
-case Token.NOT:
+case NOT:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=pair.type.negate();
 return pair;
 }
-case Token.GETELEM:
+case GETELEM:
 return analyzeGetElemBwd(expr,outEnv,requiredType);
-case Token.VOID:
+case VOID:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=JSType.UNDEFINED;
 return pair;
 }
-case Token.IN:
+case IN:
 return analyzeInBwd(expr,outEnv);
-case Token.DELPROP:
+case DELPROP:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=JSType.BOOLEAN;
 return pair;
 }
-case Token.VAR:
+case VAR:
 {
 Node vdecl=expr.getFirstChild();
 String name=vdecl.getString();
 Preconditions.checkState(!vdecl.hasChildren());
 return new EnvTypePair(envPutType(outEnv,name,JSType.UNKNOWN),JSType.UNKNOWN);
 }
-case Token.REGEXP:
+case REGEXP:
 return new EnvTypePair(outEnv,commonTypes.getRegexpType());
-case Token.ARRAYLIT:
+case ARRAYLIT:
 return analyzeArrayLitBwd(expr,outEnv);
-case Token.CAST:
+case CAST:
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=symbolTable.getCastType(expr);
 return pair;

@@ -1,7 +1,7 @@
 {
   Node result=n;
 switch (n.getType()) {
-case Token.HOOK:
+case HOOK:
     Node trueNode=trySimplifyUnusedResult(n.getSecondChild());
   Node falseNode=trySimplifyUnusedResult(n.getLastChild());
 if (trueNode == null && falseNode != null) {
@@ -19,18 +19,18 @@ if (trueNode == null && falseNode != null) {
   result=n;
 }
 break;
-case Token.AND:
-case Token.OR:
+case AND:
+case OR:
 Node conditionalResultNode=trySimplifyUnusedResult(n.getLastChild());
 if (conditionalResultNode == null) {
 Preconditions.checkState(n.hasOneChild(),n);
 result=trySimplifyUnusedResult(n.getFirstChild());
 }
 break;
-case Token.FUNCTION:
+case FUNCTION:
 result=null;
 break;
-case Token.COMMA:
+case COMMA:
 Node left=trySimplifyUnusedResult(n.getFirstChild());
 Node right=trySimplifyUnusedResult(n.getLastChild());
 if (left == null && right == null) {

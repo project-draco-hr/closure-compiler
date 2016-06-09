@@ -3,7 +3,7 @@
     checkAndSetStrictModeDirective(t,n);
   }
 switch (n.getType()) {
-case Token.CALL:
+case CALL:
     if (isCallTo(n,"goog.loadModule")) {
       recordGoogLoadModule(n);
     }
@@ -26,23 +26,23 @@ if (isCallTo(n,"goog.module.get")) {
 recordGoogModuleGet(t,n);
 }
 break;
-case Token.CLASS:
-case Token.FUNCTION:
+case CLASS:
+case FUNCTION:
 if (isTopLevel(t,n,ScopeType.BLOCK)) {
 recordTopLevelClassOrFunctionName(n);
 }
 break;
-case Token.CONST:
-case Token.LET:
-case Token.VAR:
+case CONST:
+case LET:
+case VAR:
 if (isTopLevel(t,n,n.isVar() ? ScopeType.EXEC_CONTEXT : ScopeType.BLOCK)) {
 recordTopLevelVarNames(n);
 }
 break;
-case Token.NAME:
+case NAME:
 maybeRecordExportDeclaration(n);
 break;
-case Token.RETURN:
+case RETURN:
 if (isTopLevel(t,n,ScopeType.BLOCK)) {
 recordModuleReturn();
 }

@@ -1,7 +1,7 @@
 {
 switch (expr.getType()) {
-case Token.THIS:
-case Token.NAME:
+case THIS:
+case NAME:
 {
       EnvTypePair pair=analyzeExprBwd(expr,outEnv,type);
       String name=expr.getQualifiedName();
@@ -11,13 +11,13 @@ case Token.NAME:
       }
       return new LValueResultBwd(pair.env,pair.type,pair.type.hasNonScalar() ? new QualifiedName(name) : null);
     }
-case Token.GETPROP:
+case GETPROP:
 {
     Node obj=expr.getFirstChild();
     QualifiedName pname=new QualifiedName(expr.getLastChild().getString());
     return analyzePropLValBwd(obj,pname,outEnv,type,doSlicing);
   }
-case Token.GETELEM:
+case GETELEM:
 {
   if (expr.getLastChild().isString()) {
     Node obj=expr.getFirstChild();

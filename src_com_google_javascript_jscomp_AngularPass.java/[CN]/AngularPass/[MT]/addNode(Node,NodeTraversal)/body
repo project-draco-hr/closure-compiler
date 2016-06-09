@@ -3,7 +3,7 @@
   Node fn=null;
   String name=null;
 switch (n.getType()) {
-case Token.ASSIGN:
+case ASSIGN:
     name=n.getFirstChild().getQualifiedName();
   if (name == null) {
     compiler.report(t.makeError(n,INJECTED_FUNCTION_ON_NON_QNAME));
@@ -15,7 +15,7 @@ fn=fn.getLastChild();
 }
 target=n.getParent();
 break;
-case Token.FUNCTION:
+case FUNCTION:
 name=NodeUtil.getName(n);
 fn=n;
 target=n;
@@ -23,14 +23,14 @@ if (n.getParent().isAssign() && n.getParent().getJSDocInfo().isNgInject()) {
 return;
 }
 break;
-case Token.VAR:
-case Token.LET:
-case Token.CONST:
+case VAR:
+case LET:
+case CONST:
 name=n.getFirstChild().getString();
 fn=getDeclarationRValue(n);
 target=n;
 break;
-case Token.MEMBER_FUNCTION_DEF:
+case MEMBER_FUNCTION_DEF:
 Node parent=n.getParent();
 if (parent.isClassMembers()) {
 Node classNode=parent.getParent();

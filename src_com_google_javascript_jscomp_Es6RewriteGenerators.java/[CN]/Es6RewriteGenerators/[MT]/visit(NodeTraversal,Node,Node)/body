@@ -1,24 +1,24 @@
 {
 switch (n.getType()) {
-case Token.FUNCTION:
+case FUNCTION:
     if (n.isGeneratorFunction()) {
       generatorCaseCount=0;
       visitGenerator(n,parent);
     }
   break;
-case Token.NAME:
+case NAME:
 Node enclosing=NodeUtil.getEnclosingFunction(n);
 if (enclosing != null && enclosing.isGeneratorFunction() && n.matchesQualifiedName("arguments")) {
 n.setString(GENERATOR_ARGUMENTS);
 }
 break;
-case Token.THIS:
+case THIS:
 enclosing=NodeUtil.getEnclosingFunction(n);
 if (enclosing != null && enclosing.isGeneratorFunction()) {
 n.getParent().replaceChild(n,IR.name(GENERATOR_THIS));
 }
 break;
-case Token.YIELD:
+case YIELD:
 if (n.isYieldFor()) {
 visitYieldFor(t,n,parent);
 }

@@ -1,23 +1,23 @@
 {
 switch (n.getType()) {
-case Token.LABEL:
+case LABEL:
     tryMinimizeExits(n.getLastChild(),Token.BREAK,n.getFirstChild().getString());
   break;
-case Token.FOR:
-case Token.WHILE:
+case FOR:
+case WHILE:
 tryMinimizeExits(NodeUtil.getLoopCodeBlock(n),Token.CONTINUE,null);
 break;
-case Token.DO:
+case DO:
 tryMinimizeExits(NodeUtil.getLoopCodeBlock(n),Token.CONTINUE,null);
 Node cond=NodeUtil.getConditionExpression(n);
 if (NodeUtil.getPureBooleanValue(cond) == TernaryValue.FALSE) {
 tryMinimizeExits(n.getFirstChild(),Token.BREAK,null);
 }
 break;
-case Token.FUNCTION:
+case FUNCTION:
 tryMinimizeExits(n.getLastChild(),Token.RETURN,null);
 break;
-case Token.SWITCH:
+case SWITCH:
 tryMinimizeSwitchExits(n,Token.BREAK,null);
 break;
 }

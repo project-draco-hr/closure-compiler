@@ -1,29 +1,29 @@
 {
   Node parent=propAccess.getParent();
 switch (parent.getType()) {
-case Token.CALL:
+case CALL:
     return parent.getFirstChild() != propAccess && compiler.getCodingConvention().isPropertyTestFunction(parent);
-case Token.IF:
-case Token.WHILE:
-case Token.DO:
-case Token.FOR:
+case IF:
+case WHILE:
+case DO:
+case FOR:
   return NodeUtil.getConditionExpression(parent) == propAccess;
-case Token.INSTANCEOF:
-case Token.TYPEOF:
-case Token.AND:
-case Token.OR:
+case INSTANCEOF:
+case TYPEOF:
+case AND:
+case OR:
 return true;
-case Token.NE:
-case Token.SHNE:
+case NE:
+case SHNE:
 {
 Node other=parent.getFirstChild() == propAccess ? parent.getSecondChild() : parent.getFirstChild();
 return isUndefined(other);
 }
-case Token.HOOK:
+case HOOK:
 return parent.getFirstChild() == propAccess;
-case Token.NOT:
+case NOT:
 return parent.getParent().isOr() && parent.getParent().getFirstChild() == parent;
-case Token.CAST:
+case CAST:
 return isPropertyTest(compiler,parent);
 }
 return false;

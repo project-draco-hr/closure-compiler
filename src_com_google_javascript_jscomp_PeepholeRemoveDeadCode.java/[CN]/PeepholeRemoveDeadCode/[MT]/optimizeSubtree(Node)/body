@@ -1,24 +1,24 @@
 {
 switch (subtree.getType()) {
-case Token.ASSIGN:
+case ASSIGN:
     return tryFoldAssignment(subtree);
-case Token.COMMA:
+case COMMA:
   return tryFoldComma(subtree);
-case Token.SCRIPT:
-case Token.BLOCK:
+case SCRIPT:
+case BLOCK:
 return tryOptimizeBlock(subtree);
-case Token.EXPR_RESULT:
+case EXPR_RESULT:
 subtree=tryFoldExpr(subtree);
 return subtree;
-case Token.HOOK:
+case HOOK:
 return tryFoldHook(subtree);
-case Token.SWITCH:
+case SWITCH:
 return tryOptimizeSwitch(subtree);
-case Token.IF:
+case IF:
 return tryFoldIf(subtree);
-case Token.WHILE:
+case WHILE:
 return tryFoldWhile(subtree);
-case Token.FOR:
+case FOR:
 {
 Node condition=NodeUtil.getConditionExpression(subtree);
 if (condition != null) {
@@ -26,13 +26,13 @@ tryFoldForCondition(condition);
 }
 return tryFoldFor(subtree);
 }
-case Token.DO:
+case DO:
 Node foldedDo=tryFoldDoAway(subtree);
 if (foldedDo.isDo()) {
 return tryFoldEmptyDo(foldedDo);
 }
 return foldedDo;
-case Token.TRY:
+case TRY:
 return tryFoldTry(subtree);
 default :
 return subtree;

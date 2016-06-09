@@ -1,16 +1,16 @@
 {
 switch (node.getType()) {
-case Token.ASSIGN_SUB:
+case ASSIGN_SUB:
     return reduceSubstractionAssignment(node);
-case Token.TRUE:
-case Token.FALSE:
+case TRUE:
+case FALSE:
   return reduceTrueFalse(node);
-case Token.NEW:
+case NEW:
 node=tryFoldStandardConstructors(node);
 if (!node.isCall()) {
 return node;
 }
-case Token.CALL:
+case CALL:
 Node result=tryFoldLiteralConstructor(node);
 if (result == node) {
 result=tryFoldSimpleFunctionCall(node);
@@ -19,22 +19,22 @@ result=tryFoldImmediateCallToBoundFunction(node);
 }
 }
 return result;
-case Token.RETURN:
+case RETURN:
 return tryReduceReturn(node);
-case Token.COMMA:
+case COMMA:
 return trySplitComma(node);
-case Token.NAME:
+case NAME:
 return tryReplaceUndefined(node);
-case Token.ARRAYLIT:
+case ARRAYLIT:
 return tryMinimizeArrayLiteral(node);
-case Token.GETPROP:
+case GETPROP:
 return tryMinimizeWindowRefs(node);
-case Token.MUL:
-case Token.AND:
-case Token.OR:
-case Token.BITOR:
-case Token.BITXOR:
-case Token.BITAND:
+case MUL:
+case AND:
+case OR:
+case BITOR:
+case BITXOR:
+case BITAND:
 return tryRotateAssociativeOperator(node);
 default :
 return node;

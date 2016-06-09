@@ -6,10 +6,10 @@
     println("\tBWD Statment: ",n);
     println("\t\toutEnv: ",outEnv);
 switch (n.getType()) {
-case Token.EXPR_RESULT:
+case EXPR_RESULT:
       inEnv=analyzeExprBwd(n.getFirstChild(),outEnv,JSType.UNKNOWN).env;
     break;
-case Token.RETURN:
+case RETURN:
 {
     Node retExp=n.getFirstChild();
     if (retExp == null) {
@@ -22,7 +22,7 @@ case Token.RETURN:
     }
     break;
   }
-case Token.VAR:
+case VAR:
 {
   if (NodeUtil.isTypedefDecl(n)) {
     inEnv=outEnv;
@@ -52,27 +52,27 @@ case Token.VAR:
   }
   break;
 }
-case Token.BLOCK:
-case Token.BREAK:
-case Token.CATCH:
-case Token.CONTINUE:
-case Token.DEFAULT_CASE:
-case Token.DEBUGGER:
-case Token.EMPTY:
-case Token.SCRIPT:
-case Token.TRY:
+case BLOCK:
+case BREAK:
+case CATCH:
+case CONTINUE:
+case DEFAULT_CASE:
+case DEBUGGER:
+case EMPTY:
+case SCRIPT:
+case TRY:
 inEnv=outEnv;
 break;
-case Token.DO:
-case Token.FOR:
-case Token.IF:
-case Token.WHILE:
+case DO:
+case FOR:
+case IF:
+case WHILE:
 Node expr=NodeUtil.isForIn(n) ? n.getFirstChild() : NodeUtil.getConditionExpression(n);
 inEnv=analyzeExprBwd(expr,outEnv).env;
 break;
-case Token.THROW:
-case Token.CASE:
-case Token.SWITCH:
+case THROW:
+case CASE:
+case SWITCH:
 inEnv=analyzeExprBwd(n.getFirstChild(),outEnv).env;
 break;
 default :

@@ -1,0 +1,47 @@
+{
+  Node left=n.getFirstChild();
+  JSType leftType=getJSType(left);
+  Node right=n.getLastChild();
+  JSType rightType=getJSType(right);
+switch (op) {
+case ASSIGN_LSH:
+case ASSIGN_RSH:
+case LSH:
+case RSH:
+case ASSIGN_URSH:
+case URSH:
+    if (!leftType.matchesInt32Context()) {
+      report(t,left,BIT_OPERATION,NodeUtil.opToStr(n.getType()),leftType.toString());
+    }
+  if (!rightType.matchesUint32Context()) {
+    report(t,right,BIT_OPERATION,NodeUtil.opToStr(n.getType()),rightType.toString());
+  }
+break;
+case ASSIGN_DIV:
+case ASSIGN_MOD:
+case ASSIGN_MUL:
+case ASSIGN_SUB:
+case DIV:
+case MOD:
+case MUL:
+case SUB:
+validator.expectNumber(t,left,leftType,"left operand");
+validator.expectNumber(t,right,rightType,"right operand");
+break;
+case ASSIGN_BITAND:
+case ASSIGN_BITXOR:
+case ASSIGN_BITOR:
+case BITAND:
+case BITXOR:
+case BITOR:
+validator.expectBitwiseable(t,left,leftType,"bad left operand to bitwise operator");
+validator.expectBitwiseable(t,right,rightType,"bad right operand to bitwise operator");
+break;
+case ASSIGN_ADD:
+case ADD:
+break;
+default :
+report(t,n,UNEXPECTED_TOKEN,Token.name(op));
+}
+ensureTyped(t,n);
+}

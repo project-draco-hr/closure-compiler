@@ -1,37 +1,37 @@
 {
 switch (value.getType()) {
-case Token.CAST:
+case CAST:
     return evaluatesToLocalValue(value.getFirstChild(),locals);
-case Token.ASSIGN:
+case ASSIGN:
   return NodeUtil.isImmutableValue(value.getLastChild()) || (locals.apply(value) && evaluatesToLocalValue(value.getLastChild(),locals));
-case Token.COMMA:
+case COMMA:
 return evaluatesToLocalValue(value.getLastChild(),locals);
-case Token.AND:
-case Token.OR:
+case AND:
+case OR:
 return evaluatesToLocalValue(value.getFirstChild(),locals) && evaluatesToLocalValue(value.getLastChild(),locals);
-case Token.HOOK:
+case HOOK:
 return evaluatesToLocalValue(value.getSecondChild(),locals) && evaluatesToLocalValue(value.getLastChild(),locals);
-case Token.INC:
-case Token.DEC:
+case INC:
+case DEC:
 return true;
-case Token.THIS:
+case THIS:
 return locals.apply(value);
-case Token.NAME:
+case NAME:
 return isImmutableValue(value) || locals.apply(value);
-case Token.GETELEM:
-case Token.GETPROP:
+case GETELEM:
+case GETPROP:
 return locals.apply(value);
-case Token.CALL:
+case CALL:
 return callHasLocalResult(value) || isToStringMethodCall(value) || locals.apply(value);
-case Token.NEW:
+case NEW:
 return newHasLocalResult(value) || locals.apply(value);
-case Token.FUNCTION:
-case Token.REGEXP:
-case Token.ARRAYLIT:
-case Token.OBJECTLIT:
+case FUNCTION:
+case REGEXP:
+case ARRAYLIT:
+case OBJECTLIT:
 return true;
-case Token.DELPROP:
-case Token.IN:
+case DELPROP:
+case IN:
 return true;
 default :
 if (isAssignmentOp(value) || isSimpleOperator(value) || isImmutableValue(value)) {

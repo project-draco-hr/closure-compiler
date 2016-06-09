@@ -1,25 +1,25 @@
 {
   Node child=subExpression;
   for (  Node parent : child.getAncestors()) {
-    int parentType=parent.getType();
+    Token.Kind parentType=parent.getType();
 switch (parentType) {
-case Token.EXPR_RESULT:
-case Token.IF:
-case Token.SWITCH:
-case Token.RETURN:
-case Token.THROW:
-case Token.VAR:
+case EXPR_RESULT:
+case IF:
+case SWITCH:
+case RETURN:
+case THROW:
+case VAR:
       Preconditions.checkState(child == parent.getFirstChild());
     return parent;
-case Token.FOR:
+case FOR:
   if (!NodeUtil.isForIn(parent) && child == parent.getFirstChild()) {
     return parent;
   }
-case Token.SCRIPT:
-case Token.BLOCK:
-case Token.LABEL:
-case Token.CASE:
-case Token.DEFAULT_CASE:
+case SCRIPT:
+case BLOCK:
+case LABEL:
+case CASE:
+case DEFAULT_CASE:
 return null;
 }
 child=parent;

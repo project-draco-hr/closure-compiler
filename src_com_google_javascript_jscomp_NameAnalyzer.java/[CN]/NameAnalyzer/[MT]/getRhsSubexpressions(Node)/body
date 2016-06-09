@@ -1,15 +1,15 @@
 {
 switch (n.getType()) {
-case Token.EXPR_RESULT:
+case EXPR_RESULT:
     return getRhsSubexpressions(n.getFirstChild());
-case Token.FUNCTION:
+case FUNCTION:
   return ImmutableList.of();
-case Token.CALL:
+case CALL:
 {
   Preconditions.checkState(isAnalyzableObjectDefinePropertiesDefinition(n));
   return ImmutableList.of(n.getLastChild());
 }
-case Token.NAME:
+case NAME:
 {
 Node rhs=n.getFirstChild();
 if (rhs != null) {
@@ -19,13 +19,13 @@ if (rhs != null) {
   return ImmutableList.of();
 }
 }
-case Token.ASSIGN:
+case ASSIGN:
 {
 Node lhs=n.getFirstChild();
 Node rhs=lhs.getNext();
 return ImmutableList.of(lhs,rhs);
 }
-case Token.VAR:
+case VAR:
 {
 ImmutableList.Builder<Node> nodes=ImmutableList.builder();
 for (Node child : n.children()) {

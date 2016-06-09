@@ -2,42 +2,42 @@
   Node prev=parent;
   for (  Node anc : parent.getAncestors()) {
 switch (anc.getType()) {
-case Token.INSTANCEOF:
-case Token.EXPR_RESULT:
-case Token.VAR:
-case Token.LET:
-case Token.CONST:
-case Token.IF:
-case Token.WHILE:
-case Token.FOR:
-case Token.TYPEOF:
-case Token.VOID:
-case Token.NOT:
-case Token.BITNOT:
-case Token.POS:
-case Token.NEG:
+case INSTANCEOF:
+case EXPR_RESULT:
+case VAR:
+case LET:
+case CONST:
+case IF:
+case WHILE:
+case FOR:
+case TYPEOF:
+case VOID:
+case NOT:
+case BITNOT:
+case POS:
+case NEG:
       return Ref.Type.DIRECT_GET;
-case Token.HOOK:
+case HOOK:
     if (anc.getFirstChild() == prev) {
       return Ref.Type.DIRECT_GET;
     }
   break;
-case Token.ASSIGN:
+case ASSIGN:
 if (!name.equals(anc.getFirstChild().getQualifiedName())) {
   return Ref.Type.ALIASING_GET;
 }
 break;
-case Token.NAME:
+case NAME:
 if (!name.equals(anc.getString())) {
 return Ref.Type.ALIASING_GET;
 }
 break;
-case Token.CALL:
+case CALL:
 if (anc.getFirstChild() != prev) {
 return Ref.Type.ALIASING_GET;
 }
 break;
-case Token.DELPROP:
+case DELPROP:
 return Ref.Type.DELETE_PROP;
 }
 prev=anc;

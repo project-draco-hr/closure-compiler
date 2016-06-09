@@ -12,22 +12,22 @@
     println("\t\tinEnv: ",inEnv);
     boolean conditional=false;
 switch (n.getType()) {
-case Token.BLOCK:
-case Token.BREAK:
-case Token.CONTINUE:
-case Token.DEFAULT_CASE:
-case Token.DEBUGGER:
-case Token.EMPTY:
-case Token.FUNCTION:
-case Token.SCRIPT:
-case Token.TRY:
+case BLOCK:
+case BREAK:
+case CONTINUE:
+case DEFAULT_CASE:
+case DEBUGGER:
+case EMPTY:
+case FUNCTION:
+case SCRIPT:
+case TRY:
       outEnv=inEnv;
     break;
-case Token.CATCH:
+case CATCH:
   String catchVarname=n.getFirstChild().getString();
 outEnv=envPutType(inEnv,catchVarname,JSType.UNKNOWN);
 break;
-case Token.EXPR_RESULT:
+case EXPR_RESULT:
 println("\tsemi ",Token.name(n.getFirstChild().getType()));
 if (n.getBooleanProp(Node.ANALYZED_DURING_GTI)) {
 n.removeProp(Node.ANALYZED_DURING_GTI);
@@ -37,7 +37,7 @@ outEnv=inEnv;
 outEnv=analyzeExprFwd(n.getFirstChild(),inEnv,JSType.UNKNOWN).env;
 }
 break;
-case Token.RETURN:
+case RETURN:
 {
 Node retExp=n.getFirstChild();
 JSType declRetType=currentScope.getDeclaredFunctionType().getReturnType();
@@ -57,10 +57,10 @@ warnings.add(JSError.make(n,RETURN_NONDECLARED_TYPE,errorMsgWithTypeDiff(declRet
 }
 break;
 }
-case Token.DO:
-case Token.IF:
-case Token.FOR:
-case Token.WHILE:
+case DO:
+case IF:
+case FOR:
+case WHILE:
 if (NodeUtil.isForIn(n)) {
 Node obj=n.getSecondChild();
 EnvTypePair pair=analyzeExprFwd(obj,inEnv,pickReqObjType(n));
@@ -86,13 +86,13 @@ break;
 conditional=true;
 analyzeConditionalStmFwd(dn,NodeUtil.getConditionExpression(n),inEnv);
 break;
-case Token.CASE:
+case CASE:
 {
 conditional=true;
 analyzeConditionalStmFwd(dn,n,inEnv);
 break;
 }
-case Token.VAR:
+case VAR:
 outEnv=inEnv;
 if (NodeUtil.isTypedefDecl(n)) {
 break;
@@ -101,8 +101,8 @@ for (Node nameNode=n.getFirstChild(); nameNode != null; nameNode=nameNode.getNex
 outEnv=processVarDeclaration(nameNode,outEnv);
 }
 break;
-case Token.SWITCH:
-case Token.THROW:
+case SWITCH:
+case THROW:
 outEnv=analyzeExprFwd(n.getFirstChild(),inEnv).env;
 break;
 default :

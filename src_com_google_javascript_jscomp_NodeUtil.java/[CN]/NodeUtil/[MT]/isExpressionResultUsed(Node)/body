@@ -1,16 +1,16 @@
 {
   Node parent=expr.getParent();
 switch (parent.getType()) {
-case Token.BLOCK:
-case Token.EXPR_RESULT:
+case BLOCK:
+case EXPR_RESULT:
     return false;
-case Token.CAST:
+case CAST:
   return isExpressionResultUsed(parent);
-case Token.HOOK:
-case Token.AND:
-case Token.OR:
+case HOOK:
+case AND:
+case OR:
 return (expr == parent.getFirstChild()) || isExpressionResultUsed(parent);
-case Token.COMMA:
+case COMMA:
 Node grandparent=parent.getParent();
 if (grandparent.isCall() && parent == grandparent.getFirstChild()) {
 if (expr == parent.getFirstChild() && parent.getChildCount() == 2 && expr.getNext().isName() && "eval".equals(expr.getNext().getString())) {
@@ -18,7 +18,7 @@ return true;
 }
 }
 return (expr == parent.getFirstChild()) ? false : isExpressionResultUsed(parent);
-case Token.FOR:
+case FOR:
 if (!NodeUtil.isForIn(parent)) {
 return (parent.getSecondChild() == expr);
 }

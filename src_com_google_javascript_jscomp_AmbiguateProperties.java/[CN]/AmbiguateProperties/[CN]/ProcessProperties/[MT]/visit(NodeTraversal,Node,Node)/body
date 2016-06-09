@@ -1,13 +1,13 @@
 {
 switch (n.getType()) {
-case Token.GETPROP:
+case GETPROP:
 {
       Node propNode=n.getSecondChild();
       JSType jstype=getJSType(n.getFirstChild());
       maybeMarkCandidate(propNode,jstype);
       break;
     }
-case Token.CALL:
+case CALL:
 {
     Node target=n.getFirstChild();
     if (!target.isQualifiedName()) {
@@ -49,7 +49,7 @@ case Token.CALL:
     }
     break;
   }
-case Token.OBJECTLIT:
+case OBJECTLIT:
 if (n.getParent().isCall() && NodeUtil.isObjectDefinePropertiesDefinition(n.getParent())) {
   break;
 }
@@ -63,7 +63,7 @@ if (!key.isQuotedString()) {
 }
 }
 break;
-case Token.GETELEM:
+case GETELEM:
 Node child=n.getLastChild();
 if (child.isString()) {
 quotedNames.add(child.getString());

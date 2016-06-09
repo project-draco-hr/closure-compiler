@@ -1,11 +1,11 @@
 {
 switch (n.getType()) {
-case Token.FUNCTION:
+case FUNCTION:
 {
       visitFunctionEarly(n);
       break;
     }
-case Token.VAR:
+case VAR:
 {
     Node nameNode=n.getFirstChild();
     String varName=nameNode.getString();
@@ -32,18 +32,18 @@ case Token.VAR:
     }
     break;
   }
-case Token.NAME:
+case NAME:
 {
   if (this.currentScope.isFunction()) {
     NTIScope.mayRecordEscapedVar(this.currentScope,n.getString());
   }
   break;
 }
-case Token.EXPR_RESULT:
+case EXPR_RESULT:
 {
 Node expr=n.getFirstChild();
 switch (expr.getType()) {
-case Token.ASSIGN:
+case ASSIGN:
   Node lhs=expr.getFirstChild();
 if (isCtorDefinedByCall(lhs)) {
   visitNewCtorDefinedByCall(lhs);
@@ -53,7 +53,7 @@ if (!lhs.isGetProp()) {
 return;
 }
 expr=lhs;
-case Token.GETPROP:
+case GETPROP:
 if (isPrototypeProperty(expr) || NodeUtil.referencesThis(expr) || !expr.isQualifiedName()) {
 return;
 }

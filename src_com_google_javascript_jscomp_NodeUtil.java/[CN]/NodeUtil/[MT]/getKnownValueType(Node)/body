@@ -1,16 +1,16 @@
 {
 switch (n.getType()) {
-case Token.CAST:
+case CAST:
     return getKnownValueType(n.getFirstChild());
-case Token.ASSIGN:
-case Token.COMMA:
+case ASSIGN:
+case COMMA:
   return getKnownValueType(n.getLastChild());
-case Token.AND:
-case Token.OR:
+case AND:
+case OR:
 return and(getKnownValueType(n.getFirstChild()),getKnownValueType(n.getLastChild()));
-case Token.HOOK:
+case HOOK:
 return and(getKnownValueType(n.getSecondChild()),getKnownValueType(n.getLastChild()));
-case Token.ADD:
+case ADD:
 {
 ValueType last=getKnownValueType(n.getLastChild());
 if (last == ValueType.STRING) {
@@ -28,7 +28,7 @@ return ValueType.NUMBER;
 }
 return ValueType.UNDETERMINED;
 }
-case Token.ASSIGN_ADD:
+case ASSIGN_ADD:
 {
 ValueType last=getKnownValueType(n.getLastChild());
 if (last == ValueType.STRING) {
@@ -36,7 +36,7 @@ return ValueType.STRING;
 }
 return ValueType.UNDETERMINED;
 }
-case Token.NAME:
+case NAME:
 String name=n.getString();
 if (name.equals("undefined")) {
 return ValueType.VOID;
@@ -48,60 +48,60 @@ if (name.equals("Infinity")) {
 return ValueType.NUMBER;
 }
 return ValueType.UNDETERMINED;
-case Token.ASSIGN_BITOR:
-case Token.ASSIGN_BITXOR:
-case Token.ASSIGN_BITAND:
-case Token.ASSIGN_LSH:
-case Token.ASSIGN_RSH:
-case Token.ASSIGN_URSH:
-case Token.ASSIGN_SUB:
-case Token.ASSIGN_MUL:
-case Token.ASSIGN_DIV:
-case Token.ASSIGN_MOD:
-case Token.BITNOT:
-case Token.BITOR:
-case Token.BITXOR:
-case Token.BITAND:
-case Token.LSH:
-case Token.RSH:
-case Token.URSH:
-case Token.SUB:
-case Token.MUL:
-case Token.MOD:
-case Token.DIV:
-case Token.INC:
-case Token.DEC:
-case Token.POS:
-case Token.NEG:
-case Token.NUMBER:
+case ASSIGN_BITOR:
+case ASSIGN_BITXOR:
+case ASSIGN_BITAND:
+case ASSIGN_LSH:
+case ASSIGN_RSH:
+case ASSIGN_URSH:
+case ASSIGN_SUB:
+case ASSIGN_MUL:
+case ASSIGN_DIV:
+case ASSIGN_MOD:
+case BITNOT:
+case BITOR:
+case BITXOR:
+case BITAND:
+case LSH:
+case RSH:
+case URSH:
+case SUB:
+case MUL:
+case MOD:
+case DIV:
+case INC:
+case DEC:
+case POS:
+case NEG:
+case NUMBER:
 return ValueType.NUMBER;
-case Token.TRUE:
-case Token.FALSE:
-case Token.EQ:
-case Token.NE:
-case Token.SHEQ:
-case Token.SHNE:
-case Token.LT:
-case Token.GT:
-case Token.LE:
-case Token.GE:
-case Token.IN:
-case Token.INSTANCEOF:
-case Token.NOT:
-case Token.DELPROP:
+case TRUE:
+case FALSE:
+case EQ:
+case NE:
+case SHEQ:
+case SHNE:
+case LT:
+case GT:
+case LE:
+case GE:
+case IN:
+case INSTANCEOF:
+case NOT:
+case DELPROP:
 return ValueType.BOOLEAN;
-case Token.TYPEOF:
-case Token.STRING:
+case TYPEOF:
+case STRING:
 return ValueType.STRING;
-case Token.NULL:
+case NULL:
 return ValueType.NULL;
-case Token.VOID:
+case VOID:
 return ValueType.VOID;
-case Token.FUNCTION:
-case Token.NEW:
-case Token.ARRAYLIT:
-case Token.OBJECTLIT:
-case Token.REGEXP:
+case FUNCTION:
+case NEW:
+case ARRAYLIT:
+case OBJECTLIT:
+case REGEXP:
 return ValueType.OBJECT;
 default :
 return ValueType.UNDETERMINED;

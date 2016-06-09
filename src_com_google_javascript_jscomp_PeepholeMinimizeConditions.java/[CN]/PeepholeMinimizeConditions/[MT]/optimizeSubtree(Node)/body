@@ -1,7 +1,7 @@
 {
 switch (node.getType()) {
-case Token.THROW:
-case Token.RETURN:
+case THROW:
+case RETURN:
 {
       Node result=tryRemoveRedundantExit(node);
       if (result != node) {
@@ -9,29 +9,29 @@ case Token.RETURN:
       }
       return tryReplaceExitWithBreak(node);
     }
-case Token.NOT:
+case NOT:
   tryMinimizeCondition(node.getFirstChild());
 return tryMinimizeNot(node);
-case Token.IF:
+case IF:
 performConditionSubstitutions(node.getFirstChild());
 return tryMinimizeIf(node);
-case Token.EXPR_RESULT:
+case EXPR_RESULT:
 performConditionSubstitutions(node.getFirstChild());
 return tryMinimizeExprResult(node);
-case Token.HOOK:
+case HOOK:
 performConditionSubstitutions(node.getFirstChild());
 return tryMinimizeHook(node);
-case Token.WHILE:
-case Token.DO:
+case WHILE:
+case DO:
 tryMinimizeCondition(NodeUtil.getConditionExpression(node));
 return node;
-case Token.FOR:
+case FOR:
 if (!NodeUtil.isForIn(node)) {
 tryJoinForCondition(node);
 tryMinimizeCondition(NodeUtil.getConditionExpression(node));
 }
 return node;
-case Token.BLOCK:
+case BLOCK:
 return tryReplaceIf(node);
 default :
 return node;

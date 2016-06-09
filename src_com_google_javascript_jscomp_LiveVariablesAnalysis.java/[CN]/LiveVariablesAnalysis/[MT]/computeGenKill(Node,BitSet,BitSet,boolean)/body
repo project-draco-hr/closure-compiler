@@ -1,15 +1,15 @@
 {
 switch (n.getType()) {
-case Token.SCRIPT:
-case Token.BLOCK:
-case Token.FUNCTION:
+case SCRIPT:
+case BLOCK:
+case FUNCTION:
     return;
-case Token.WHILE:
-case Token.DO:
-case Token.IF:
+case WHILE:
+case DO:
+case IF:
   computeGenKill(NodeUtil.getConditionExpression(n),gen,kill,conditional);
 return;
-case Token.FOR:
+case FOR:
 if (!NodeUtil.isForIn(n)) {
 computeGenKill(NodeUtil.getConditionExpression(n),gen,kill,conditional);
 }
@@ -27,7 +27,7 @@ if (lhs.isName()) {
 }
 }
 return;
-case Token.VAR:
+case VAR:
 for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
 if (c.hasChildren()) {
 computeGenKill(c.getFirstChild(),gen,kill,conditional);
@@ -37,17 +37,17 @@ addToSetIfLocal(c,kill);
 }
 }
 return;
-case Token.AND:
-case Token.OR:
+case AND:
+case OR:
 computeGenKill(n.getFirstChild(),gen,kill,conditional);
 computeGenKill(n.getLastChild(),gen,kill,true);
 return;
-case Token.HOOK:
+case HOOK:
 computeGenKill(n.getFirstChild(),gen,kill,conditional);
 computeGenKill(n.getSecondChild(),gen,kill,true);
 computeGenKill(n.getLastChild(),gen,kill,true);
 return;
-case Token.NAME:
+case NAME:
 if (isArgumentsName(n)) {
 markAllParametersEscaped();
 }

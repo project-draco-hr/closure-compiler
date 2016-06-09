@@ -1,7 +1,7 @@
 {
 switch (n.getType()) {
-case Token.GETPROP:
-case Token.GETELEM:
+case GETPROP:
+case GETELEM:
     Node dest=n.getSecondChild();
   if (dest.isString()) {
     if (dest.getString().equals("prototype")) {
@@ -14,14 +14,14 @@ case Token.GETELEM:
     }
   }
 break;
-case Token.OBJECTLIT:
+case OBJECTLIT:
 for (Node key=n.getFirstChild(); key != null; key=key.getNext()) {
 switch (key.getType()) {
-case Token.STRING_KEY:
+case STRING_KEY:
   addPossibleSignature(key.getString(),key.getFirstChild(),t);
 break;
-case Token.SETTER_DEF:
-case Token.GETTER_DEF:
+case SETTER_DEF:
+case GETTER_DEF:
 nonMethodProperties.add(key.getString());
 break;
 default :

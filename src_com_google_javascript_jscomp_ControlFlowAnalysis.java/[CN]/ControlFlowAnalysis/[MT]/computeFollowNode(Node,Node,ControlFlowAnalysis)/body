@@ -4,10 +4,10 @@
     return null;
   }
 switch (parent.getType()) {
-case Token.IF:
+case IF:
     return computeFollowNode(fromNode,parent,cfa);
-case Token.CASE:
-case Token.DEFAULT_CASE:
+case CASE:
+case DEFAULT_CASE:
   if (parent.getNext() != null) {
     if (parent.getNext().isCase()) {
       return parent.getNext().getSecondChild();
@@ -22,18 +22,18 @@ case Token.DEFAULT_CASE:
  else {
     return computeFollowNode(fromNode,parent,cfa);
   }
-case Token.FOR:
-case Token.FOR_OF:
+case FOR:
+case FOR_OF:
 if (parent.isForOf() || NodeUtil.isForIn(parent)) {
   return parent;
 }
  else {
   return parent.getSecondChild().getNext();
 }
-case Token.WHILE:
-case Token.DO:
+case WHILE:
+case DO:
 return parent;
-case Token.TRY:
+case TRY:
 if (parent.getFirstChild() == node) {
 if (NodeUtil.hasFinally(parent)) {
 return computeFallThrough(parent.getLastChild());

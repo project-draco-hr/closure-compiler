@@ -2,10 +2,10 @@
   Preconditions.checkArgument(requiredType != null && !requiredType.isBottom());
   EnvTypePair resultPair=null;
 switch (expr.getType()) {
-case Token.EMPTY:
+case EMPTY:
     resultPair=new EnvTypePair(inEnv,JSType.UNKNOWN);
   break;
-case Token.FUNCTION:
+case FUNCTION:
 {
   String fnName=symbolTable.getFunInternalName(expr);
   JSType fnType=envGetType(inEnv,fnName);
@@ -14,17 +14,17 @@ case Token.FUNCTION:
   resultPair=new EnvTypePair(outEnv,fnType);
   break;
 }
-case Token.FALSE:
-case Token.NULL:
-case Token.NUMBER:
-case Token.STRING:
-case Token.TRUE:
+case FALSE:
+case NULL:
+case NUMBER:
+case STRING:
+case TRUE:
 resultPair=new EnvTypePair(inEnv,scalarValueToType(expr.getType()));
 break;
-case Token.OBJECTLIT:
+case OBJECTLIT:
 resultPair=analyzeObjLitFwd(expr,inEnv,requiredType,specializedType);
 break;
-case Token.THIS:
+case THIS:
 {
 if (!currentScope.hasThis()) {
 mayWarnAboutGlobalThis(expr,currentScope);
@@ -40,84 +40,84 @@ resultPair=EnvTypePair.addBinding(inEnv,THIS_ID,preciseType);
 }
 break;
 }
-case Token.NAME:
+case NAME:
 resultPair=analyzeNameFwd(expr,inEnv,requiredType,specializedType);
 break;
-case Token.AND:
-case Token.OR:
+case AND:
+case OR:
 resultPair=analyzeLogicalOpFwd(expr,inEnv,requiredType,specializedType);
 break;
-case Token.INC:
-case Token.DEC:
+case INC:
+case DEC:
 resultPair=analyzeIncDecFwd(expr,inEnv,requiredType);
 break;
-case Token.BITNOT:
-case Token.NEG:
+case BITNOT:
+case NEG:
 resultPair=analyzeUnaryNumFwd(expr,inEnv);
 break;
-case Token.POS:
+case POS:
 {
 resultPair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 resultPair.type=JSType.NUMBER;
 break;
 }
-case Token.TYPEOF:
+case TYPEOF:
 {
 resultPair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 resultPair.type=JSType.STRING;
 break;
 }
-case Token.INSTANCEOF:
+case INSTANCEOF:
 resultPair=analyzeInstanceofFwd(expr,inEnv,specializedType);
 break;
-case Token.ADD:
+case ADD:
 resultPair=analyzeAddFwd(expr,inEnv,requiredType);
 break;
-case Token.BITOR:
-case Token.BITAND:
-case Token.BITXOR:
-case Token.DIV:
-case Token.LSH:
-case Token.MOD:
-case Token.MUL:
-case Token.RSH:
-case Token.SUB:
-case Token.URSH:
+case BITOR:
+case BITAND:
+case BITXOR:
+case DIV:
+case LSH:
+case MOD:
+case MUL:
+case RSH:
+case SUB:
+case URSH:
 resultPair=analyzeBinaryNumericOpFwd(expr,inEnv);
 break;
-case Token.ASSIGN:
+case ASSIGN:
 resultPair=analyzeAssignFwd(expr,inEnv,requiredType,specializedType);
 break;
-case Token.ASSIGN_ADD:
+case ASSIGN_ADD:
 resultPair=analyzeAssignAddFwd(expr,inEnv,requiredType);
 break;
-case Token.ASSIGN_BITOR:
-case Token.ASSIGN_BITXOR:
-case Token.ASSIGN_BITAND:
-case Token.ASSIGN_LSH:
-case Token.ASSIGN_RSH:
-case Token.ASSIGN_URSH:
-case Token.ASSIGN_SUB:
-case Token.ASSIGN_MUL:
-case Token.ASSIGN_DIV:
-case Token.ASSIGN_MOD:
+case ASSIGN_BITOR:
+case ASSIGN_BITXOR:
+case ASSIGN_BITAND:
+case ASSIGN_LSH:
+case ASSIGN_RSH:
+case ASSIGN_URSH:
+case ASSIGN_SUB:
+case ASSIGN_MUL:
+case ASSIGN_DIV:
+case ASSIGN_MOD:
 resultPair=analyzeAssignNumericOpFwd(expr,inEnv);
 break;
-case Token.SHEQ:
-case Token.SHNE:
+case SHEQ:
+case SHNE:
 resultPair=analyzeStrictComparisonFwd(expr.getType(),expr.getFirstChild(),expr.getLastChild(),inEnv,specializedType);
 break;
-case Token.EQ:
-case Token.NE:
+case EQ:
+case NE:
 resultPair=analyzeNonStrictComparisonFwd(expr,inEnv,specializedType);
 break;
-case Token.LT:
-case Token.GT:
-case Token.LE:
-case Token.GE:
+case LT:
+case GT:
+case LE:
+case GE:
 resultPair=analyzeLtGtFwd(expr,inEnv);
 break;
-case Token.GETPROP:
+case GETPROP:
 Preconditions.checkState(!NodeUtil.isAssignmentOp(expr.getParent()) || !NodeUtil.isLValue(expr));
 if (expr.getBooleanProp(Node.ANALYZED_DURING_GTI)) {
 expr.removeProp(Node.ANALYZED_DURING_GTI);
@@ -127,50 +127,50 @@ resultPair=new EnvTypePair(inEnv,requiredType);
 resultPair=analyzePropAccessFwd(expr.getFirstChild(),expr.getLastChild().getString(),inEnv,requiredType,specializedType);
 }
 break;
-case Token.HOOK:
+case HOOK:
 resultPair=analyzeHookFwd(expr,inEnv,requiredType,specializedType);
 break;
-case Token.CALL:
-case Token.NEW:
+case CALL:
+case NEW:
 resultPair=analyzeCallNewFwd(expr,inEnv,requiredType,specializedType);
 break;
-case Token.COMMA:
+case COMMA:
 resultPair=analyzeExprFwd(expr.getLastChild(),analyzeExprFwd(expr.getFirstChild(),inEnv).env,requiredType,specializedType);
 break;
-case Token.NOT:
+case NOT:
 {
 resultPair=analyzeExprFwd(expr.getFirstChild(),inEnv,JSType.UNKNOWN,specializedType.negate());
 resultPair.type=resultPair.type.negate().toBoolean();
 break;
 }
-case Token.GETELEM:
+case GETELEM:
 resultPair=analyzeGetElemFwd(expr,inEnv,requiredType,specializedType);
 break;
-case Token.VOID:
+case VOID:
 {
 resultPair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 resultPair.type=JSType.UNDEFINED;
 break;
 }
-case Token.IN:
+case IN:
 resultPair=analyzeInFwd(expr,inEnv,specializedType);
 break;
-case Token.DELPROP:
+case DELPROP:
 {
 resultPair=analyzeExprFwd(expr.getFirstChild(),inEnv);
 resultPair.type=JSType.BOOLEAN;
 break;
 }
-case Token.REGEXP:
+case REGEXP:
 resultPair=new EnvTypePair(inEnv,commonTypes.getRegexpType());
 break;
-case Token.ARRAYLIT:
+case ARRAYLIT:
 resultPair=analyzeArrayLitFwd(expr,inEnv);
 break;
-case Token.CAST:
+case CAST:
 resultPair=analyzeCastFwd(expr,inEnv);
 break;
-case Token.CASE:
+case CASE:
 resultPair=analyzeStrictComparisonFwd(Token.SHEQ,expr.getParent().getFirstChild(),expr.getFirstChild(),inEnv,specializedType);
 break;
 default :
