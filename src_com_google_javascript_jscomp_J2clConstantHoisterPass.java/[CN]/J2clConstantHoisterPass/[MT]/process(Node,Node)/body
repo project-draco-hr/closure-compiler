@@ -1,14 +1,19 @@
 {
   final Multimap<String,Node> fieldAssignments=ArrayListMultimap.create();
+  final Set<Node> hoistableFunctions=new HashSet<>();
   NodeTraversal.traverseEs6(compiler,root,new AbstractPostOrderCallback(){
     @Override public void visit(    NodeTraversal t,    Node node,    Node parent){
       if (parent != null && NodeUtil.isLValue(node)) {
         fieldAssignments.put(node.getQualifiedName(),parent);
+        Node rValue=NodeUtil.getRValueOfLValue(node);
+        if (isHoistableFunction(t,parent,rValue)) {
+          hoistableFunctions.add(rValue);
+        }
       }
     }
   }
 );
   for (  Collection<Node> assignments : fieldAssignments.asMap().values()) {
-    maybeHoistClassField(assignments);
+    maybeHoistClassField(assignments,hoistableFunctions);
   }
 }

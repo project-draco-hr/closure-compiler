@@ -10,7 +10,8 @@
   if (!isClinitFieldAssignment(firstAssignment)) {
     return;
   }
-  if (!isLiteralValue(firstAssignment.getSecondChild())) {
+  Node firstAssignmentRhs=firstAssignment.getSecondChild();
+  if (!NodeUtil.isLiteralValue(firstAssignmentRhs,true) || (firstAssignmentRhs.isFunction() && !hoistableFunctions.contains(firstAssignmentRhs))) {
     return;
   }
   if (NodeUtil.getEnclosingScript(firstAssignment) != NodeUtil.getEnclosingScript(secondAssignment)) {
