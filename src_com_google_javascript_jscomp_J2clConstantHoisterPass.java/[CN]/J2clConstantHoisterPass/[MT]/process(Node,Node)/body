@@ -5,10 +5,9 @@
     @Override public void visit(    NodeTraversal t,    Node node,    Node parent){
       if (parent != null && NodeUtil.isLValue(node)) {
         fieldAssignments.put(node.getQualifiedName(),parent);
-        Node rValue=NodeUtil.getRValueOfLValue(node);
-        if (isHoistableFunction(t,parent,rValue)) {
-          hoistableFunctions.add(rValue);
-        }
+      }
+      if (isHoistableFunction(t,node)) {
+        hoistableFunctions.add(node);
       }
     }
   }
