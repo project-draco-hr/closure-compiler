@@ -11,8 +11,8 @@ case NOT:
 case AND:
 case OR:
 {
-    Token.Kind opType=n.getType();
-    Token.Kind complementType=opType == Token.AND ? Token.OR : Token.AND;
+    Token opType=n.getType();
+    Token complementType=opType == Token.AND ? Token.OR : Token.AND;
     MinimizedCondition leftSubtree=computeMinimizedCondition(n.getFirstChild().detachFromParent());
     MinimizedCondition rightSubtree=computeMinimizedCondition(n.getLastChild().detachFromParent());
     ImmutableList<MeasuredNode> positiveAsts=ImmutableList.of(MeasuredNode.addNode(new Node(opType).srcref(n),leftSubtree.positive.cloneTree(),rightSubtree.positive.cloneTree()),MeasuredNode.addNode(new Node(complementType).srcref(n),leftSubtree.negative.cloneTree(),rightSubtree.negative.cloneTree()).negate());
