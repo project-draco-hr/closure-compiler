@@ -1,0 +1,8 @@
+{
+  String name=ES6ModuleLoader.toJSIdentifier(ES6ModuleLoader.createUri(classNode.getStaticSourceFile().getName())) + CLASS_DECL_VAR + (classDeclVarCounter++);
+  Node statement=NodeUtil.getEnclosingStatement(parent);
+  parent.replaceChild(classNode,IR.name(name));
+  Node classDeclaration=IR.constNode(IR.name(name),classNode).useSourceInfoIfMissingFromForTree(classNode);
+  statement.getParent().addChildBefore(classDeclaration,statement);
+  compiler.reportCodeChange();
+}
