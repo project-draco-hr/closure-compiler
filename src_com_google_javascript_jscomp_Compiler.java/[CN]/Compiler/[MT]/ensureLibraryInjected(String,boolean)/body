@@ -4,7 +4,7 @@
     return lastInjectedLibrary;
   }
   String originalCode=ResourceLoader.loadTextResource(Compiler.class,"js/" + resourceName + ".js");
-  Node ast=parseSyntheticCode(originalCode);
+  Node ast=parseSyntheticCode(" [synthetic:" + resourceName + "] ",originalCode);
   for (Node node=ast.getFirstChild(); node != null && node.isExprResult() && node.getFirstChild().isString(); node=ast.getFirstChild()) {
     String directive=node.getFirstChild().getString();
     List<String> words=Splitter.on(' ').splitToList(directive);
@@ -30,6 +30,9 @@ if (getLifeCycleStage().isNormalized()) {
 Normalize.normalizeSyntheticCode(this,ast,"jscomp_" + resourceName + "_");
 }
 Node firstChild=ast.removeChildren();
+if (firstChild == null) {
+return lastInjectedLibrary;
+}
 Node lastChild=firstChild.getLastSibling();
 Node parent=getNodeForCodeInsertion(null);
 if (lastInjectedLibrary == null) {
