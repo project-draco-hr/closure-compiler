@@ -7,7 +7,9 @@
     SourcePosition start=getTreeStartLocation();
     eat(TokenType.STAR);
     ParseTree name=parseComputedPropertyName();
-    ParseTree value=parseFunctionTail(start,null,false,true,null,FunctionDeclarationTree.Kind.EXPRESSION);
+    FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.EXPRESSION);
+    parseGeneratorFunctionTail(builder);
+    ParseTree value=builder.build(getTreeLocation(start));
     return new ComputedPropertyMethodTree(getTreeLocation(start),null,name,value);
   }
 }

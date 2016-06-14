@@ -2,6 +2,7 @@
   SourcePosition start=getTreeStartLocation();
   eat(Keywords.FUNCTION.type);
   boolean isGenerator=eatOpt(TokenType.STAR) != null;
-  IdentifierToken name=eatId();
-  return parseFunctionTail(start,name,false,isGenerator,null,FunctionDeclarationTree.Kind.DECLARATION);
+  FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.DECLARATION).setName(eatId());
+  parseFunctionTail(builder,isGenerator);
+  return builder.build(getTreeLocation(start));
 }

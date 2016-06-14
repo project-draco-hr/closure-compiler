@@ -38,7 +38,9 @@
       eatPossibleImplicitSemiColon();
     }
  else {
-      function=parseFunctionTail(start,name,isStatic,isGenerator,accessOnFunction,kind);
+      FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(kind).setName(name).setStatic(isStatic).setAccess(accessOnFunction);
+      parseFunctionTail(builder,isGenerator);
+      function=builder.build(getTreeLocation(start));
     }
     if (kind == FunctionDeclarationTree.Kind.MEMBER) {
       return function;

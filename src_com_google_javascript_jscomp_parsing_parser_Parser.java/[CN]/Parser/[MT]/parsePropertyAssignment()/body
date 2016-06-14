@@ -26,7 +26,9 @@
       return new ComputedPropertyDefinitionTree(getTreeLocation(start),name,value);
     }
  else {
-      ParseTree value=parseFunctionTail(start,null,false,false,null,FunctionDeclarationTree.Kind.EXPRESSION);
+      FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.EXPRESSION);
+      parseFunctionTail(builder);
+      ParseTree value=builder.build(getTreeLocation(start));
       return new ComputedPropertyMethodTree(getTreeLocation(start),null,name,value);
     }
   }
