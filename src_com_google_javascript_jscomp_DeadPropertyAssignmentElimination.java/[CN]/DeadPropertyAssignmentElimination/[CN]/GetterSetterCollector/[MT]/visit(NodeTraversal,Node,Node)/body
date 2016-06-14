@@ -1,15 +1,16 @@
 {
   if (NodeUtil.isObjectDefinePropertyDefinition(n)) {
-    if (!NodeUtil.isPrototypeProperty(n.getSecondChild()) || !n.getChildAtIndex(2).isString() || !n.getChildAtIndex(3).isObjectLit()) {
+    if (!n.getChildAtIndex(2).isString() && !n.getLastChild().isObjectLit()) {
       unknownGetterSetterPresent=true;
-      return;
     }
+ else     if (!n.getLastChild().isObjectLit()) {
+      propNames.add(n.getChildAtIndex(2).getString());
+    }
+    return;
   }
- else   if (NodeUtil.isObjectDefinePropertiesDefinition(n)) {
-    if (!NodeUtil.isPrototypeProperty(n.getSecondChild()) || !n.getChildAtIndex(2).isObjectLit()) {
-      unknownGetterSetterPresent=true;
-      return;
-    }
+ else   if (NodeUtil.isObjectDefinePropertiesDefinition(n) && !n.getChildAtIndex(2).isObjectLit()) {
+    unknownGetterSetterPresent=true;
+    return;
   }
   if (NodeUtil.isGetterOrSetter(n)) {
     Node grandparent=parent.getParent();
@@ -21,9 +22,15 @@
       if (propNode.isString()) {
         propNames.add(propNode.getString());
       }
+ else {
+        unknownGetterSetterPresent=true;
+      }
     }
  else     if (grandparent.isStringKey() && NodeUtil.isObjectDefinePropertiesDefinition(grandparent.getParent().getParent())) {
       propNames.add(grandparent.getString());
     }
+  }
+ else   if (isAliasedPropertySet(n)) {
+    propNames.add(n.getString());
   }
 }
