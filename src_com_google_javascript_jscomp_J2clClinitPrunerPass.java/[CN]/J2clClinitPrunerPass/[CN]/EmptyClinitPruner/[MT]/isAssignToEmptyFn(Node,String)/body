@@ -1,11 +1,8 @@
 {
-  if (!assignNode.isAssign()) {
+  if (!NodeUtil.isExprAssign(node)) {
     return false;
   }
-  Node lhs=assignNode.getFirstChild();
-  Node rhs=assignNode.getLastChild();
-  if (!NodeUtil.isEmptyFunctionExpression(rhs)) {
-    return false;
-  }
-  return lhs.getQualifiedName() != null && lhs.matchesQualifiedName(enclosingFnName);
+  Node lhs=node.getFirstChild().getFirstChild();
+  Node rhs=node.getFirstChild().getLastChild();
+  return NodeUtil.isEmptyFunctionExpression(rhs) && lhs.matchesQualifiedName(enclosingFnName);
 }

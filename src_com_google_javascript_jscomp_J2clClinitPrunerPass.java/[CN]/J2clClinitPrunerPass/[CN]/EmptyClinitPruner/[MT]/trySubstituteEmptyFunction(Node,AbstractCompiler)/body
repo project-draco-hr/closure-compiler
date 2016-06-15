@@ -1,17 +1,16 @@
 {
-  Preconditions.checkArgument(fnNode.isFunction());
   String fnQualifiedName=NodeUtil.getName(fnNode);
   if (Strings.isNullOrEmpty(fnQualifiedName)) {
-    return fnNode;
+    return;
   }
   Node body=fnNode.getLastChild();
   if (!body.hasChildren()) {
-    return fnNode;
+    return;
   }
   Node firstExpr=body.getFirstChild();
-  if (firstExpr.isExprResult() && isAssignToEmptyFn(firstExpr.getFirstChild(),fnQualifiedName) && (firstExpr.getNext() == null)) {
-    body.removeChildren();
-    compiler.reportCodeChange();
+  if (!isAssignToEmptyFn(firstExpr,fnQualifiedName) || firstExpr.getNext() != null) {
+    return;
   }
-  return fnNode;
+  body.removeChild(firstExpr);
+  compiler.reportCodeChange();
 }
