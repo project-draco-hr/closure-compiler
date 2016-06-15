@@ -5,14 +5,14 @@
   }
   final TypeIRegistry registry=compiler.getTypeIRegistry();
   final List<Node> thrownTypes=transform(info.getThrownTypes(),new Function<JSTypeExpression,Node>(){
-    public Node apply(    JSTypeExpression expr){
+    @Override public Node apply(    JSTypeExpression expr){
       return expr.getRoot();
     }
   }
 );
   for (  Node typeRoot : info.getTypeNodes()) {
     NodeUtil.visitPreOrder(typeRoot,new NodeUtil.Visitor(){
-      public void visit(      Node node){
+      @Override public void visit(      Node node){
         if (!node.isString()) {
           return;
         }
@@ -46,7 +46,7 @@ case PIPE:
     if (typeName.equals("null") || registry.getType(typeName) == null) {
       return;
     }
-    JSType type=(JSType)registry.createTypeFromCommentNode(node,"[internal]",null);
+    JSType type=(JSType)registry.createTypeFromCommentNode(node);
     if (type.isNullable()) {
       reportWarning(t,node,typeName);
     }
