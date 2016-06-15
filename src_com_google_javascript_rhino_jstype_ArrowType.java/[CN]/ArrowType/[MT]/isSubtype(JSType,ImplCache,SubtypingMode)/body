@@ -1,0 +1,41 @@
+{
+  if (!(other instanceof ArrowType)) {
+    return false;
+  }
+  ArrowType that=(ArrowType)other;
+  if (!this.returnType.isSubtype(that.returnType,implicitImplCache,subtypingMode)) {
+    return false;
+  }
+  Node thisParam=parameters.getFirstChild();
+  Node thatParam=that.parameters.getFirstChild();
+  while (thisParam != null && thatParam != null) {
+    JSType thisParamType=thisParam.getJSType();
+    JSType thatParamType=thatParam.getJSType();
+    if (thisParamType != null) {
+      if (thatParamType == null || !thatParamType.isSubtype(thisParamType,implicitImplCache,subtypingMode)) {
+        return false;
+      }
+    }
+    boolean thisIsVarArgs=thisParam.isVarArgs();
+    boolean thatIsVarArgs=thatParam.isVarArgs();
+    boolean thisIsOptional=thisIsVarArgs || thisParam.isOptionalArg();
+    boolean thatIsOptional=thatIsVarArgs || thatParam.isOptionalArg();
+    if (!thisIsOptional && thatIsOptional) {
+      boolean isTopFunction=thatIsVarArgs && (thatParamType == null || thatParamType.isUnknownType() || thatParamType.isNoType());
+      if (!isTopFunction) {
+        return false;
+      }
+    }
+    if (!thisIsVarArgs) {
+      thisParam=thisParam.getNext();
+    }
+    if (!thatIsVarArgs) {
+      thatParam=thatParam.getNext();
+    }
+    if (thisIsVarArgs && thatIsVarArgs) {
+      thisParam=null;
+      thatParam=null;
+    }
+  }
+  return thisParam == null || thisParam.isOptionalArg() || thisParam.isVarArgs() || thatParam != null;
+}

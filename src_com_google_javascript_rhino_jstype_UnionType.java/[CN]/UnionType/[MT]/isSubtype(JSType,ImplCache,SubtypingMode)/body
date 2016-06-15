@@ -1,0 +1,17 @@
+{
+  if (that.isUnknownType() || this.isUnknownType()) {
+    return true;
+  }
+  if (that.isAllType()) {
+    return true;
+  }
+  for (  JSType element : alternatesWithoutStucturalTyping) {
+    if (subtypingMode == SubtypingMode.IGNORE_NULL_UNDEFINED && (element.isNullType() || element.isVoidType())) {
+      continue;
+    }
+    if (!element.isSubtype(that,implicitImplCache,subtypingMode)) {
+      return false;
+    }
+  }
+  return true;
+}

@@ -1,3 +1,7 @@
 {
-  registerMismatch(found,required,report(JSError.make(n,TYPE_MISMATCH_WARNING,formatFoundRequired(msg,found,required))));
+  JSError err=JSError.make(n,TYPE_MISMATCH_WARNING,formatFoundRequired(msg,found,required));
+  registerMismatch(found,required,err);
+  if (this.subtypingMode == SubtypingMode.NORMAL || !found.isSubtypeModuloNullUndefined(required)) {
+    report(err);
+  }
 }
