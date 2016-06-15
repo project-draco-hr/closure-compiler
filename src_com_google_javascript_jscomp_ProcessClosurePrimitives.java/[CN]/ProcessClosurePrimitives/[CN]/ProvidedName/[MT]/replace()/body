@@ -4,8 +4,6 @@
     return;
   }
   if (candidateDefinition != null && explicitNode != null) {
-    explicitNode.detachFromParent();
-    compiler.reportCodeChange();
     JSDocInfo info;
     if (candidateDefinition.isExprResult()) {
       info=candidateDefinition.getFirstChild().getJSDocInfo();
@@ -61,9 +59,13 @@
         parentName.replacementNode.getParent().addChildAfter(replacementNode,parentName.replacementNode);
       }
     }
-    if (explicitNode != null) {
-      explicitNode.detachFromParent();
+    compiler.reportCodeChange();
+  }
+  if (explicitNode != null) {
+    if (preserveGoogProvidesAndRequires && explicitNode.hasChildren()) {
+      return;
     }
+    explicitNode.detachFromParent();
     compiler.reportCodeChange();
   }
 }
