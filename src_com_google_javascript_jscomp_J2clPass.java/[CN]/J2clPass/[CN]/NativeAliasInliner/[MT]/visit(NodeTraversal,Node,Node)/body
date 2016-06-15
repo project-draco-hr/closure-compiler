@@ -1,0 +1,9 @@
+{
+  if (n.isName() && !NodeUtil.isNameDeclaration(parent) && !parent.isAssign()) {
+    Node declaringNode=getDeclaringNode(t,n);
+    if (declaringNode != null && declaringNode.getFirstChild() != n && isNativeAlias(declaringNode)) {
+      parent.replaceChild(n,declaringNode.getFirstFirstChild().cloneTree());
+      compiler.reportCodeChange();
+    }
+  }
+}
