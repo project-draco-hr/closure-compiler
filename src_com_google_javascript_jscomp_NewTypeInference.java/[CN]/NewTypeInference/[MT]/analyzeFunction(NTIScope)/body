@@ -3,14 +3,14 @@
   currentScope=scope;
   ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false,false);
   cfa.process(null,scope.getRoot());
-  cfg=cfa.getCfg();
-  println(cfg);
+  this.cfg=cfa.getCfg();
+  println(this.cfg);
   List<DiGraphNode<Node,ControlFlowGraph.Branch>> workset=new LinkedList<>();
-  buildWorkset(cfg.getEntry(),workset);
+  buildWorkset(this.cfg.getEntry(),workset);
   this.typeEnvFromDeclaredTypes=getTypeEnvFromDeclaredTypes();
   if (scope.isFunction() && scope.hasUndeclaredFormalsOrOuters()) {
     Collections.reverse(workset);
-    for (    DiGraphEdge<Node,ControlFlowGraph.Branch> e : cfg.getEdges()) {
+    for (    DiGraphEdge<Node,ControlFlowGraph.Branch> e : this.cfg.getEdges()) {
       envs.put(e,this.typeEnvFromDeclaredTypes);
     }
     analyzeFunctionBwd(workset);

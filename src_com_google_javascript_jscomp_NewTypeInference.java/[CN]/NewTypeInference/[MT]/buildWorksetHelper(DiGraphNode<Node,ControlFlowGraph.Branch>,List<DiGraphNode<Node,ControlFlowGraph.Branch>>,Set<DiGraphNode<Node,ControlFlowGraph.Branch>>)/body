@@ -1,5 +1,5 @@
 {
-  if (seen.contains(dn) || dn == cfg.getImplicitReturn()) {
+  if (seen.contains(dn) || dn == this.cfg.getImplicitReturn()) {
     return;
   }
 switch (dn.getValue().getType()) {
@@ -22,34 +22,46 @@ buildWorksetHelper(outEdge.getDestination(),workset,seen);
 }
 break;
 default :
+{
 for (DiGraphEdge<Node,ControlFlowGraph.Branch> inEdge : dn.getInEdges()) {
 if (!seen.contains(inEdge.getSource()) && !inEdge.getSource().getValue().isDo()) {
 return;
 }
 }
 seen.add(dn);
-if (cfg.getEntry() != dn) {
+if (this.cfg.getEntry() != dn) {
 workset.add(dn);
 }
 while (true) {
-List<DiGraphNode<Node,ControlFlowGraph.Branch>> succs=cfg.getDirectedSuccNodes(dn);
+Node n=dn.getValue();
+if (n.isTry()) {
+maybeAddDeadCode(workset,seen,n.getSecondChild());
+}
+ else if (n.isBreak() || n.isContinue() || n.isThrow()) {
+maybeAddDeadCode(workset,seen,n.getNext());
+}
+List<DiGraphNode<Node,ControlFlowGraph.Branch>> succs=this.cfg.getDirectedSuccNodes(dn);
 if (succs.size() != 1) {
 break;
 }
 DiGraphNode<Node,ControlFlowGraph.Branch> succ=succs.get(0);
-if (succ == cfg.getImplicitReturn()) {
+if (succ == this.cfg.getImplicitReturn()) {
+if (n.getNext() != null) {
+maybeAddDeadCode(workset,seen,n.getNext());
+}
 return;
 }
-if (cfg.getDirectedPredNodes(succ).size() > 1) {
+if (this.cfg.getDirectedPredNodes(succ).size() > 1) {
 break;
 }
 workset.add(succ);
 seen.add(succ);
 dn=succ;
 }
-for (DiGraphNode<Node,ControlFlowGraph.Branch> succ : cfg.getDirectedSuccNodes(dn)) {
+for (DiGraphNode<Node,ControlFlowGraph.Branch> succ : this.cfg.getDirectedSuccNodes(dn)) {
 buildWorksetHelper(succ,workset,seen);
 }
 break;
+}
 }
 }

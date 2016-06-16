@@ -3,7 +3,7 @@
   Preconditions.checkArgument(!fnRoot.isFromExterns());
   FunctionTypeBuilder builder=new FunctionTypeBuilder();
   TypeEnv entryEnv=getEntryTypeEnv();
-  TypeEnv exitEnv=getInEnv(cfg.getImplicitReturn());
+  TypeEnv exitEnv=getInEnv(this.cfg.getImplicitReturn());
   if (exitEnv == null) {
     exitEnv=envPutType(new TypeEnv(),RETVAL_ID,JSType.BOTTOM);
   }
@@ -55,7 +55,7 @@
   JSType actualRetType=Preconditions.checkNotNull(envGetType(exitEnv,RETVAL_ID));
   if (declRetType != null) {
     builder.addRetType(declRetType);
-    if (!isAllowedToNotReturn(fn) && !JSType.UNDEFINED.isSubtypeOf(declRetType) && hasPathWithNoReturn(cfg)) {
+    if (!isAllowedToNotReturn(fn) && !JSType.UNDEFINED.isSubtypeOf(declRetType) && hasPathWithNoReturn(this.cfg)) {
       warnings.add(JSError.make(fnRoot,MISSING_RETURN_STATEMENT,declRetType.toString()));
     }
   }
