@@ -1,0 +1,15 @@
+{
+  if (n.isFunction()) {
+    return n;
+  }
+  if (n.isMemberFunctionDef()) {
+    return n.getFirstChild();
+  }
+  if (n.isVar() && n.getFirstFirstChild() != null && n.getFirstFirstChild().isFunction()) {
+    return n.getFirstFirstChild();
+  }
+  if (n.isAssign() && n.getFirstChild().isQualifiedName() && n.getLastChild().isFunction()) {
+    return n.getLastChild();
+  }
+  return null;
+}

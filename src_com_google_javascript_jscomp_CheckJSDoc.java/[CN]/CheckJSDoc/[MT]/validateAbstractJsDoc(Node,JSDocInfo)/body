@@ -1,0 +1,26 @@
+{
+  if (info == null || !info.isAbstract()) {
+    return;
+  }
+  Node functionNode=getFunctionDecl(n);
+  if (functionNode == null) {
+    report(n,MISPLACED_ANNOTATION);
+    return;
+  }
+  if (NodeUtil.getFunctionBody(functionNode).hasChildren()) {
+    report(n,MISPLACED_ANNOTATION);
+    return;
+  }
+  if (n.isMemberFunctionDef() && "constructor".equals(n.getString())) {
+    report(n,MISPLACED_ANNOTATION);
+    return;
+  }
+  if (!n.isMemberFunctionDef() && !NodeUtil.isPrototypeMethod(functionNode)) {
+    report(n,MISPLACED_ANNOTATION);
+    return;
+  }
+  if (n.isStaticMember()) {
+    report(n,MISPLACED_ANNOTATION);
+    return;
+  }
+}
