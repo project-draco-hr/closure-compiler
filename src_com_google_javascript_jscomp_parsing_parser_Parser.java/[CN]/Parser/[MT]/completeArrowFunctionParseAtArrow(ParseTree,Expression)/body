@@ -1,0 +1,11 @@
+{
+  features=features.require(Feature.ARROW_FUNCTIONS);
+  FormalParameterListTree arrowFormalParameters=transformToArrowFormalParameters(leftOfArrow);
+  if (peekImplicitSemiColon()) {
+    reportError("No newline allowed before '=>'");
+  }
+  eat(TokenType.ARROW);
+  ParseTree arrowFunctionBody=parseArrowFunctionBody(expressionIn);
+  FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.ARROW).setFormalParameterList(arrowFormalParameters).setFunctionBody(arrowFunctionBody);
+  return builder.build(getTreeLocation(arrowFormalParameters.location.start));
+}

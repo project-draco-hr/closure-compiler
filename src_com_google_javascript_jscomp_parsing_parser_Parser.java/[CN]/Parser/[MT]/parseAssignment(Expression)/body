@@ -5,8 +5,7 @@
   SourcePosition start=getTreeStartLocation();
   ParseTree left=parseConditional(expressionIn);
   if (peek(TokenType.ARROW)) {
-    FormalParameterListTree params=transformArrowFunctionParameters(start,left);
-    return parseArrowFunctionTail(start,null,params,expressionIn);
+    return completeAssignmentExpressionParseAtArrow(left,expressionIn);
   }
   if (left.type == ParseTreeType.FORMAL_PARAMETER_LIST) {
     reportError("invalid paren expression");

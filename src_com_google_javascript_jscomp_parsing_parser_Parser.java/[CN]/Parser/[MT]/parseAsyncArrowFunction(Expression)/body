@@ -1,0 +1,13 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  features=features.require(Feature.ARROW_FUNCTIONS).require(Feature.ASYNC_FUNCTIONS);
+  eatPredefinedString(ASYNC);
+  FormalParameterListTree arrowParameterList=parseFormalParameterList(ParamContext.IMPLEMENTATION);
+  if (peekImplicitSemiColon()) {
+    reportError("No newline allowed before '=>'");
+  }
+  eat(TokenType.ARROW);
+  ParseTree arrowFunctionBody=parseArrowFunctionBody(expressionIn);
+  FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.ARROW).setAsync(true).setFormalParameterList(arrowParameterList).setFunctionBody(arrowFunctionBody);
+  return builder.build(getTreeLocation(start));
+}

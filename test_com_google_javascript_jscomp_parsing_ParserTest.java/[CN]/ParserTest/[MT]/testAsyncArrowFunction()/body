@@ -1,0 +1,16 @@
+{
+  String arrowFunctionSource="f = async (x) => x + 1";
+  expectFeatures(Feature.ASYNC_FUNCTIONS,Feature.ARROW_FUNCTIONS);
+  for (  LanguageMode m : LanguageMode.values()) {
+    mode=m;
+    if (m.featureSet.contains(Feature.ASYNC_FUNCTIONS)) {
+      parse(arrowFunctionSource);
+    }
+ else     if (m.featureSet.contains(Feature.ARROW_FUNCTIONS)) {
+      parseWarning(arrowFunctionSource,requiresLanguageModeMessage(LanguageMode.ECMASCRIPT8,Feature.ASYNC_FUNCTIONS));
+    }
+ else {
+      parseWarning(arrowFunctionSource,requiresLanguageModeMessage(LanguageMode.ECMASCRIPT6,Feature.ARROW_FUNCTIONS),requiresLanguageModeMessage(LanguageMode.ECMASCRIPT8,Feature.ASYNC_FUNCTIONS));
+    }
+  }
+}

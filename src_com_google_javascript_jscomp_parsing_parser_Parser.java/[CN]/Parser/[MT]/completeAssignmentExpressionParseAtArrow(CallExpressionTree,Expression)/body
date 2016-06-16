@@ -1,0 +1,18 @@
+{
+  ParseTree operand=callExpression.operand;
+  ParseTree arguments=callExpression.arguments;
+  ParseTree result;
+  if (operand.location.end.line < arguments.location.start.line) {
+    resetScannerAfter(operand);
+    result=operand;
+  }
+ else   if (isAsyncId(operand)) {
+    resetScanner(operand);
+    result=parseAsyncArrowFunction(expressionIn);
+  }
+ else {
+    reportError("'=>' unexpected");
+    result=callExpression;
+  }
+  return result;
+}

@@ -1,0 +1,20 @@
+{
+  FormalParameterListTree arrowParameterList;
+switch (leftOfArrow.type) {
+case FORMAL_PARAMETER_LIST:
+    arrowParameterList=leftOfArrow.asFormalParameterList();
+  break;
+case IDENTIFIER_EXPRESSION:
+arrowParameterList=new FormalParameterListTree(leftOfArrow.location,ImmutableList.<ParseTree>of(leftOfArrow));
+break;
+case ARGUMENT_LIST:
+case PAREN_EXPRESSION:
+resetScanner(leftOfArrow);
+arrowParameterList=parseFormalParameterList(ParamContext.IMPLEMENTATION);
+break;
+default :
+reportError(leftOfArrow,"invalid arrow function parameters");
+arrowParameterList=newEmptyFormalParameterList(leftOfArrow.location);
+}
+return arrowParameterList;
+}
