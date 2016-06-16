@@ -1,13 +1,3 @@
 {
-  if (peekPredefinedString(ASYNC) && peekFunction(1)) {
-    Token asyncToken=peekToken();
-    Token functionToken=peekToken(1);
-    if (asyncToken.location.start.line != functionToken.location.start.line) {
-      reportError(functionToken,"Newline is not allowed between 'async' and 'function'");
-    }
-    return true;
-  }
- else {
-    return false;
-  }
+  return peekPredefinedString(ASYNC) && !peekImplicitSemiColon(1) && peekFunction(1);
 }

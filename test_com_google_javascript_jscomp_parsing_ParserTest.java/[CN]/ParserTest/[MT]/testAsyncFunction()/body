@@ -1,0 +1,16 @@
+{
+  String asyncFunctionExpressionSource="f = async function() {};";
+  String asyncFunctionDeclarationSource="async function f() {}";
+  expectFeatures(Feature.ASYNC_FUNCTIONS);
+  for (  LanguageMode m : LanguageMode.values()) {
+    mode=m;
+    if (m.featureSet.contains(Feature.ASYNC_FUNCTIONS)) {
+      parse(asyncFunctionExpressionSource);
+      parse(asyncFunctionDeclarationSource);
+    }
+ else {
+      parseWarning(asyncFunctionExpressionSource,requiresLanguageModeMessage(LanguageMode.ECMASCRIPT8,Feature.ASYNC_FUNCTIONS));
+      parseWarning(asyncFunctionDeclarationSource,requiresLanguageModeMessage(LanguageMode.ECMASCRIPT8,Feature.ASYNC_FUNCTIONS));
+    }
+  }
+}

@@ -2,6 +2,10 @@
   SourcePosition start=getTreeStartLocation();
   features.require(Feature.ASYNC_FUNCTIONS);
   eatAsyncFunctionStart();
+  if (peek(TokenType.STAR)) {
+    reportError("async functions cannot be generators");
+    eat(TokenType.STAR);
+  }
   FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.EXPRESSION).setName(eatIdOpt()).setAsync(true);
   parseFunctionTail(builder);
   return builder.build(getTreeLocation(start));
