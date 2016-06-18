@@ -14,8 +14,10 @@ if (NodeUtil.getPureBooleanValue(cond) == TernaryValue.FALSE) {
 tryMinimizeExits(n.getFirstChild(),Token.BREAK,null);
 }
 break;
-case FUNCTION:
-tryMinimizeExits(n.getLastChild(),Token.RETURN,null);
+case BLOCK:
+if (n.getParent() != null && n.getParent().isFunction()) {
+tryMinimizeExits(n,Token.RETURN,null);
+}
 break;
 case SWITCH:
 tryMinimizeSwitchExits(n,Token.BREAK,null);
