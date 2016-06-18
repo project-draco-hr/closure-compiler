@@ -30,7 +30,14 @@ break;
 case FUNCTION:
 return checkForNewObjects || !isFunctionExpression(n);
 case CLASS:
-return checkForNewObjects || !isClassExpression(n) || checkForStateChangeHelper(n.getSecondChild(),checkForNewObjects,compiler);
+return checkForNewObjects || isClassDeclaration(n) || checkForStateChangeHelper(n.getSecondChild(),checkForNewObjects,compiler)|| checkForStateChangeHelper(n.getLastChild(),checkForNewObjects,compiler);
+case CLASS_MEMBERS:
+for (Node member=n.getFirstChild(); member != null; member=member.getNext()) {
+if (member.isComputedProp() && checkForStateChangeHelper(member.getFirstChild(),checkForNewObjects,compiler)) {
+return true;
+}
+}
+return false;
 case NEW:
 if (checkForNewObjects) {
 return true;
