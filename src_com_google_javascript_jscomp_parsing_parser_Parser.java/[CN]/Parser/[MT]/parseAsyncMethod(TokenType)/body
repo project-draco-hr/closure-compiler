@@ -1,0 +1,22 @@
+{
+  features.require(Feature.ASYNC_FUNCTIONS);
+  eatPredefinedString(ASYNC);
+  if (peekIdOrKeyword()) {
+    IdentifierToken name=eatIdOrKeywordAsId();
+    FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.MEMBER).setAsync(true).setName(name).setAccess(access);
+    parseFunctionTail(builder,false);
+    return builder.build(getTreeLocation(name.getStart()));
+  }
+ else   if (config.parseTypeSyntax && peekIndexSignature()) {
+    ParseTree indexSignature=parseIndexSignature();
+    eatPossibleImplicitSemiColon();
+    return indexSignature;
+  }
+ else {
+    ParseTree nameExpr=parseComputedPropertyName();
+    FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.EXPRESSION).setAsync(true);
+    parseFunctionTail(builder,false);
+    ParseTree function=builder.build(getTreeLocation(nameExpr.getStart()));
+    return new ComputedPropertyMethodTree(getTreeLocation(nameExpr.getStart()),access,nameExpr,function);
+  }
+}

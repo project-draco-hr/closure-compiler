@@ -1,0 +1,12 @@
+{
+  mode=LanguageMode.ECMASCRIPT6;
+  expectFeatures(Feature.MEMBER_DECLARATIONS);
+  parse("o={async(){}}");
+  parse("class C{async(){}}");
+  expectFeatures();
+  parse("o={async:false}");
+  parseError("class C{async};","'(' expected");
+  mode=LanguageMode.ECMASCRIPT8;
+  parseError("o={async\nm(){}}","'}' expected");
+  parseError("class C{async\nm(){}}","'(' expected");
+}

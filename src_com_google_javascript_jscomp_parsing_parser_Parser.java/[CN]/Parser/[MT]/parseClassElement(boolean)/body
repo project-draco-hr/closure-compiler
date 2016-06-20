@@ -3,11 +3,16 @@
   if (peek(TokenType.SEMI_COLON)) {
     return parseEmptyStatement();
   }
-  if (peekGetAccessor(true)) {
+ else   if (peekGetAccessor(true)) {
     return parseGetAccessor(access);
   }
-  if (peekSetAccessor(true)) {
+ else   if (peekSetAccessor(true)) {
     return parseSetAccessor(access);
   }
-  return parseClassMemberDeclaration(true,isAmbient,access);
+ else   if (!isAmbient && peekAsyncMethod()) {
+    return parseAsyncMethod(access);
+  }
+ else {
+    return parseClassMemberDeclaration(true,isAmbient,access);
+  }
 }

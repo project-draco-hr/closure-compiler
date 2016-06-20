@@ -357,6 +357,9 @@ if (!n.isMemberVariableDef() && n.getFirstChild().isGeneratorFunction()) {
 Preconditions.checkState(type == Token.MEMBER_FUNCTION_DEF);
 add("*");
 }
+if (n.isMemberFunctionDef() && n.getFirstChild().isAsyncFunction()) {
+add("async ");
+}
 switch (type) {
 case GETTER_DEF:
 Preconditions.checkState(!first.getSecondChild().hasChildren());
@@ -719,6 +722,9 @@ add("set ");
 }
  else if (last.getBooleanProp(Node.GENERATOR_FN)) {
 add("*");
+}
+ else if (last.isAsyncFunction()) {
+add("async");
 }
 add("[");
 add(first);

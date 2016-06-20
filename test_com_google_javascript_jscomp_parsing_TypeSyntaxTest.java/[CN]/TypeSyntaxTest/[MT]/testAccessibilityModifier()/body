@@ -13,10 +13,11 @@
   parse("public function foo() {}");
   expectErrors("Parse error. Semi-colon expected");
   parse("class Foo { static private constructor() {}}");
-  testNotEs6TypedFullError("class Foo { private constructor() {} }","Parse error. Semi-colon expected");
-  testNotEs6TypedFullError("class Foo { protected bar; }","Parse error. Semi-colon expected");
-  testNotEs6TypedFullError("class Foo { protected bar() {} }","Parse error. Semi-colon expected");
-  testNotEs6TypedFullError("class Foo { private get() {} }","Parse error. Semi-colon expected");
-  testNotEs6TypedFullError("class Foo { private set() {} }","Parse error. Semi-colon expected");
-  testNotEs6TypedFullError("class Foo { private [Symbol.iterator]() {} }","Parse error. Semi-colon expected");
+  String accessModifierInterpretedAsPropertyNameErrorMessage="Parse error. '(' expected";
+  testNotEs6TypedFullError("class Foo { private constructor() {} }",accessModifierInterpretedAsPropertyNameErrorMessage);
+  testNotEs6TypedFullError("class Foo { protected bar; }",accessModifierInterpretedAsPropertyNameErrorMessage);
+  testNotEs6TypedFullError("class Foo { protected bar() {} }",accessModifierInterpretedAsPropertyNameErrorMessage);
+  testNotEs6TypedFullError("class Foo { private get() {} }",accessModifierInterpretedAsPropertyNameErrorMessage);
+  testNotEs6TypedFullError("class Foo { private set() {} }",accessModifierInterpretedAsPropertyNameErrorMessage);
+  testNotEs6TypedFullError("class Foo { private [Symbol.iterator]() {} }",accessModifierInterpretedAsPropertyNameErrorMessage);
 }
