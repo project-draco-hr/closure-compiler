@@ -1,0 +1,18 @@
+{
+  if (this.isArrayType()) {
+    return true;
+  }
+  TemplatizedType templatizedType=this.toMaybeTemplatizedType();
+  if (templatizedType != null && templatizedType.getReferencedType().isArrayType()) {
+    return true;
+  }
+  if (this.isUnionType()) {
+    JSType arrayType=registry.getNativeType(JSTypeNative.ARRAY_TYPE);
+    for (    JSType alternate : this.toMaybeUnionType().getAlternates()) {
+      if (alternate.isSubtype(arrayType)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

@@ -1,0 +1,18 @@
+{
+  if (!n.isCall()) {
+    return false;
+  }
+  if (!n.getFirstChild().isQualifiedName()) {
+    return false;
+  }
+  String name=n.getFirstChild().getQualifiedName();
+  if (!GOOG_OBJECT_METHODS.contains(name)) {
+    return false;
+  }
+  Node firstArg=n.getSecondChild();
+  if (firstArg == null) {
+    return false;
+  }
+  TypeI type=firstArg.getTypeI();
+  return type != null && type.containsArray();
+}
