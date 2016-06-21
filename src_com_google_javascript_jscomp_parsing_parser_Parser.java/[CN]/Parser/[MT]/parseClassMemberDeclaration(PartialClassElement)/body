@@ -1,10 +1,4 @@
 {
-  SourcePosition start=getTreeStartLocation();
-  boolean isStatic=false;
-  if (allowStatic && peek(TokenType.STATIC) && peekType(1) != TokenType.OPEN_PAREN) {
-    eat(TokenType.STATIC);
-    isStatic=true;
-  }
   boolean isGenerator=eatOpt(TokenType.STAR) != null;
   ParseTree nameExpr;
   IdentifierToken name;
@@ -26,27 +20,27 @@
     TokenType accessOnFunction;
     if (nameExpr == null) {
       kind=FunctionDeclarationTree.Kind.MEMBER;
-      accessOnFunction=access;
+      accessOnFunction=partial.accessModifier;
     }
  else {
       kind=FunctionDeclarationTree.Kind.EXPRESSION;
       accessOnFunction=null;
     }
     ParseTree function;
-    if (isAmbient) {
-      function=parseMethodSignature(start,name,isStatic,isGenerator,false,accessOnFunction);
+    if (partial.isAmbient) {
+      function=parseMethodSignature(partial,name,isGenerator,false);
       eatPossibleImplicitSemiColon();
     }
  else {
-      FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(kind).setName(name).setStatic(isStatic).setAccess(accessOnFunction);
+      FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(kind).setName(name).setStatic(partial.isStatic).setAccess(accessOnFunction);
       parseFunctionTail(builder,isGenerator);
-      function=builder.build(getTreeLocation(start));
+      function=builder.build(getTreeLocation(partial.start));
     }
     if (kind == FunctionDeclarationTree.Kind.MEMBER) {
       return function;
     }
  else {
-      return new ComputedPropertyMethodTree(getTreeLocation(start),access,nameExpr,function);
+      return new ComputedPropertyMethodTree(getTreeLocation(partial.start),partial.accessModifier,nameExpr,function);
     }
   }
  else {
@@ -59,10 +53,10 @@
     }
     eatPossibleImplicitSemiColon();
     if (nameExpr == null) {
-      return new MemberVariableTree(getTreeLocation(start),name,isStatic,false,access,declaredType);
+      return new MemberVariableTree(getTreeLocation(partial.start),name,partial.isStatic,false,partial.accessModifier,declaredType);
     }
  else {
-      return new ComputedPropertyMemberVariableTree(getTreeLocation(start),nameExpr,isStatic,access,declaredType);
+      return new ComputedPropertyMemberVariableTree(getTreeLocation(partial.start),nameExpr,partial.isStatic,partial.accessModifier,declaredType);
     }
   }
 }

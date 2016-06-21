@@ -1,18 +1,12 @@
 {
-  TokenType access=maybeParseAccessibilityModifier();
   if (peek(TokenType.SEMI_COLON)) {
     return parseEmptyStatement();
   }
- else   if (peekGetAccessor(true)) {
-    return parseGetAccessor(access);
-  }
- else   if (peekSetAccessor(true)) {
-    return parseSetAccessor(access);
-  }
- else   if (!isAmbient && peekAsyncMethod()) {
-    return parseAsyncMethod(access);
-  }
  else {
-    return parseClassMemberDeclaration(true,isAmbient,access);
+    PartialClassElement partialElement=getClassElementDefaults();
+    partialElement.isAmbient=isAmbient;
+    partialElement.accessModifier=maybeParseAccessibilityModifier();
+    partialElement.isStatic=eatOpt(TokenType.STATIC) != null;
+    return parseClassElement(partialElement);
   }
 }

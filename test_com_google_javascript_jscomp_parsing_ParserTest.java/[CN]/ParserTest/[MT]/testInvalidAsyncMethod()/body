@@ -3,10 +3,13 @@
   expectFeatures(Feature.MEMBER_DECLARATIONS);
   parse("o={async(){}}");
   parse("class C{async(){}}");
+  parse("class C{static async(){}}");
   expectFeatures();
   parse("o={async:false}");
   parseError("class C{async};","'(' expected");
   mode=LanguageMode.ECMASCRIPT8;
   parseError("o={async\nm(){}}","'}' expected");
+  parseError("o={static async\nm(){}}","Cannot use keyword in short object literal");
   parseError("class C{async\nm(){}}","'(' expected");
+  parseError("class C{static async\nm(){}}","'(' expected");
 }

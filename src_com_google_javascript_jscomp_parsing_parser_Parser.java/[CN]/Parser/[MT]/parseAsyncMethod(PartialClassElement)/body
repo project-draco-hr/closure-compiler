@@ -1,0 +1,28 @@
+{
+  features.require(Feature.ASYNC_FUNCTIONS);
+  eatPredefinedString(ASYNC);
+  if (peekIdOrKeyword()) {
+    IdentifierToken name=eatIdOrKeywordAsId();
+    FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.MEMBER).setAsync(true).setStatic(partial.isStatic).setName(name).setAccess(partial.accessModifier);
+    if (partial.isAmbient) {
+      builder.setGenerics(maybeParseGenericTypes()).setFormalParameterList(parseFormalParameterList(ParamContext.SIGNATURE)).setReturnType(maybeParseColonType()).setFunctionBody(new EmptyStatementTree(getTreeLocation(partial.start)));
+      eatPossibleImplicitSemiColon();
+    }
+ else {
+      parseFunctionTail(builder,false);
+    }
+    return builder.build(getTreeLocation(name.getStart()));
+  }
+ else   if (config.parseTypeSyntax && peekIndexSignature()) {
+    ParseTree indexSignature=parseIndexSignature();
+    eatPossibleImplicitSemiColon();
+    return indexSignature;
+  }
+ else {
+    ParseTree nameExpr=parseComputedPropertyName();
+    FunctionDeclarationTree.Builder builder=FunctionDeclarationTree.builder(FunctionDeclarationTree.Kind.EXPRESSION).setAsync(true).setStatic(partial.isStatic);
+    parseFunctionTail(builder,false);
+    ParseTree function=builder.build(getTreeLocation(nameExpr.getStart()));
+    return new ComputedPropertyMethodTree(getTreeLocation(nameExpr.getStart()),partial.accessModifier,nameExpr,function);
+  }
+}

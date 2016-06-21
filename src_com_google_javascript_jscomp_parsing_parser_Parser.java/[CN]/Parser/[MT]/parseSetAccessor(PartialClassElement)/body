@@ -1,6 +1,4 @@
 {
-  SourcePosition start=getTreeStartLocation();
-  boolean isStatic=eatOpt(TokenType.STATIC) != null;
   eatPredefinedString(PredefinedName.SET);
   if (peekPropertyName(0)) {
     Token propertyName=eatObjectLiteralPropertyName();
@@ -13,7 +11,7 @@
       reportError(scanner.peekToken(),"setter should not have any returns");
     }
     BlockTree body=parseFunctionBody();
-    return new SetAccessorTree(getTreeLocation(start),propertyName,isStatic,parameter,type,body);
+    return new SetAccessorTree(getTreeLocation(partial.start),propertyName,partial.isStatic,parameter,type,body);
   }
  else {
     ParseTree property=parseComputedPropertyName();
@@ -22,6 +20,6 @@
     ParseTree type=maybeParseColonType();
     eat(TokenType.CLOSE_PAREN);
     BlockTree body=parseFunctionBody();
-    return new ComputedPropertySetterTree(getTreeLocation(start),property,isStatic,access,parameter,type,body);
+    return new ComputedPropertySetterTree(getTreeLocation(partial.start),property,partial.isStatic,partial.accessModifier,parameter,type,body);
   }
 }
