@@ -7,8 +7,11 @@
 );
   NodeTraversal.traverseEs6(compiler,root,collector);
   for (  Var v : collector.getAllSymbols()) {
-    ReferenceCollection refCollection=collector.getReferences(v);
     NamedInfo info=getNamedInfo(v);
+    if (!info.allowMove) {
+      continue;
+    }
+    ReferenceCollection refCollection=collector.getReferences(v);
     for (    Reference ref : refCollection) {
       processReference(collector,ref,info);
     }
