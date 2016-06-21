@@ -1,5 +1,4 @@
 {
-  testError("var C = new (class {})();",CANNOT_CONVERT);
-  testError("var C = new (foo || (foo = class { }))();",CANNOT_CONVERT);
-  testError("(condition ? obj1 : obj2).prop = class C { };",CANNOT_CONVERT);
+  test("var C = new (class {})();",LINE_JOINER.join("/** @constructor @struct @const */","var testcode$classdecl$var0=function(){};","var C=new testcode$classdecl$var0"));
+  test("(condition ? obj1 : obj2).prop = class C { };",LINE_JOINER.join("/** @constructor @struct @const */","var testcode$classdecl$var0 = function(){};","(condition ? obj1 : obj2).prop = testcode$classdecl$var0;"));
 }

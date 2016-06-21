@@ -1,6 +1,11 @@
 {
-  if (NodeUtil.isClassDeclaration(classNode) || parent.isName() || (parent.isAssign() && parent.getParent().isExprResult())) {
+  boolean isAnonymous=classNode.getFirstChild().isEmpty();
+  if (NodeUtil.isClassDeclaration(classNode) || isAnonymous && parent.isName() || (isAnonymous && parent.isAssign() && parent.getParent().isExprResult())) {
     return false;
   }
-  return expressionDecomposer.canExposeExpression(classNode) == DecompositionType.MOVABLE;
+  if (NodeUtil.mayHaveSideEffects(classNode) || expressionDecomposer.canExposeExpression(classNode) != DecompositionType.MOVABLE) {
+    compiler.report(JSError.make(classNode,CANNOT_CONVERT,"class expression that cannot be extracted"));
+    return false;
+  }
+  return true;
 }
