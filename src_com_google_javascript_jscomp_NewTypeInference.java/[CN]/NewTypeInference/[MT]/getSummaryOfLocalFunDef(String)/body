@@ -5,6 +5,9 @@
     return fnType;
   }
   fnType=currentScope.getDeclaredTypeOf(name);
-  Preconditions.checkState(fnType.getFunType() != null,"Needed function but found %s",fnType);
+  if (fnType.getFunType() == null) {
+    Preconditions.checkState(fnType.isUnknown());
+    return this.commonTypes.qmarkFunction();
+  }
   return changeTypeIfFunctionNamespace(fnScope,fnType);
 }
