@@ -6,6 +6,12 @@
   if (initializer != null && initializer.isFunction()) {
     methodScope=visitFunctionLate(initializer,rawType);
     methodType=methodScope.getDeclaredFunctionType();
+    if (defSite.isGetterDef()) {
+      pname=NewTypeInference.createGetterPropName(pname);
+    }
+ else     if (defSite.isSetterDef()) {
+      pname=NewTypeInference.createSetterPropName(pname);
+    }
   }
  else   if (jsdoc != null && jsdoc.containsFunctionDeclaration()) {
     methodType=computeFnDeclaredType(jsdoc,pname,defSite,rawType,currentScope);
@@ -15,6 +21,12 @@
   }
  else   if (methodType != null) {
     propDeclType=commonTypes.fromFunctionType(methodType.toFunctionType());
+  }
+  if (defSite.isGetterDef()) {
+    FunctionType ft=propDeclType.getFunTypeIfSingletonObj();
+    if (ft != null) {
+      propDeclType=ft.getReturnType();
+    }
   }
   propertyDefs.put(rawType,pname,new PropertyDef(defSite,methodType,methodScope));
   boolean isConst=isConst(defSite);

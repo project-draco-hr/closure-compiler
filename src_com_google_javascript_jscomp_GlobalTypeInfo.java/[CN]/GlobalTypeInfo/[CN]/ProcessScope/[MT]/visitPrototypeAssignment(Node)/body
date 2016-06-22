@@ -4,6 +4,12 @@
   QualifiedName ctorQname=QualifiedName.fromNode(ctorNameNode);
   RawNominalType rawType=currentScope.getNominalType(ctorQname);
   if (rawType == null) {
+    for (    Node objLitChild : getProp.getParent().getLastChild().children()) {
+      Node initializer=objLitChild.getLastChild();
+      if (initializer != null && initializer.isFunction()) {
+        visitFunctionLate(initializer,null);
+      }
+    }
     return;
   }
   getProp.putBooleanProp(Node.ANALYZED_DURING_GTI,true);

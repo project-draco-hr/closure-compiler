@@ -3,6 +3,10 @@
     return true;
   }
   if (n.isObjectLit()) {
+    Node parent=n.getParent();
+    if (parent.isAssign() && parent.getFirstChild().isGetProp() && parent.getFirstChild().getLastChild().getString().equals("prototype")) {
+      return true;
+    }
     JSDocInfo jsdoc=n.getJSDocInfo();
     return jsdoc != null && jsdoc.getLendsName() != null && jsdoc.getLendsName().endsWith("prototype");
   }
