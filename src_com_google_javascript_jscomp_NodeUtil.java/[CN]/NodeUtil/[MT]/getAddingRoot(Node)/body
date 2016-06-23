@@ -1,18 +1,20 @@
 {
   Node addingRoot=null;
   Node ancestor=n;
-  while (null != (ancestor=ancestor.getParent())) {
-    Token type=ancestor.getType();
-    if (type == Token.SCRIPT) {
+  crawl_ancestors:   while (null != (ancestor=ancestor.getParent())) {
+switch (ancestor.getType()) {
+case SCRIPT:
+case MODULE_BODY:
       addingRoot=ancestor;
-      break;
-    }
- else     if (type == Token.FUNCTION) {
-      addingRoot=ancestor.getLastChild();
-      break;
-    }
-  }
-  Preconditions.checkState(addingRoot.isBlock() || addingRoot.isScript());
-  Preconditions.checkState(addingRoot.getFirstChild() == null || !addingRoot.getFirstChild().isScript());
-  return addingRoot;
+    break crawl_ancestors;
+case FUNCTION:
+  addingRoot=ancestor.getLastChild();
+break crawl_ancestors;
+default :
+continue crawl_ancestors;
+}
+}
+Preconditions.checkState(addingRoot.isBlock() || addingRoot.isModuleBody() || addingRoot.isScript());
+Preconditions.checkState(addingRoot.getFirstChild() == null || !addingRoot.getFirstChild().isScript());
+return addingRoot;
 }

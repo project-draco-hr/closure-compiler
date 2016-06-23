@@ -33,7 +33,7 @@ break;
 case VAR:
 case LET:
 case CONST:
-if (t.inGlobalHoistScope() && NodeUtil.getEnclosingClass(n) == null && NodeUtil.getEnclosingType(n,Token.OBJECTLIT) == null) {
+if (t.inModuleHoistScope() && NodeUtil.getEnclosingClass(n) == null && NodeUtil.getEnclosingType(n,Token.OBJECTLIT) == null) {
 JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(n);
 if (jsdoc != null && jsdoc.isExport()) {
 t.report(n,AT_EXPORT_IN_GOOG_MODULE);
@@ -41,12 +41,12 @@ t.report(n,AT_EXPORT_IN_GOOG_MODULE);
 }
 break;
 case THIS:
-if (t.inGlobalHoistScope()) {
+if (t.inModuleHoistScope()) {
 t.report(n,GOOG_MODULE_REFERENCES_THIS);
 }
 break;
 case THROW:
-if (t.inGlobalHoistScope()) {
+if (t.inModuleHoistScope()) {
 t.report(n,GOOG_MODULE_USES_THROW);
 }
 break;

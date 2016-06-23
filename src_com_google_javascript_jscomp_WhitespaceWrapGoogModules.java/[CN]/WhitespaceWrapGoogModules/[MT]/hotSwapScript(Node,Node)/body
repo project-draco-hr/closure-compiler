@@ -2,6 +2,8 @@
   if (!NodeUtil.isGoogModuleFile(scriptRoot)) {
     return;
   }
+  ClosureRewriteModule.inlineModuleIntoGlobal(scriptRoot);
+  compiler.reportCodeChange();
   Node block=IR.block();
   block.addChildToBack(IR.exprResult(IR.string("use strict")));
   Node loadMod=IR.exprResult(IR.call(IR.getprop(IR.name("goog"),IR.string("loadModule")),IR.function(IR.name(""),IR.paramList(IR.name("exports")),block))).srcrefTree(scriptRoot);

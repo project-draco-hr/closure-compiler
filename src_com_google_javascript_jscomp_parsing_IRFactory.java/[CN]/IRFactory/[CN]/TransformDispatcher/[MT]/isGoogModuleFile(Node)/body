@@ -1,0 +1,15 @@
+{
+  Preconditions.checkArgument(scriptNode.isScript());
+  if (!scriptNode.hasChildren()) {
+    return false;
+  }
+  Node exprResult=scriptNode.getFirstChild();
+  if (!exprResult.isExprResult()) {
+    return false;
+  }
+  Node call=exprResult.getFirstChild();
+  if (!call.isCall()) {
+    return false;
+  }
+  return call.getFirstChild().matchesQualifiedName("goog.module");
+}

@@ -1,3 +1,7 @@
 {
-  return isFunctionDeclaration(n) && (n.getParent().isScript() || n.getGrandparent().isFunction());
+  if (isFunctionDeclaration(n)) {
+    Node parent=n.getParent();
+    return parent.isScript() || parent.isModuleBody() || parent.getParent().isFunction();
+  }
+  return false;
 }
