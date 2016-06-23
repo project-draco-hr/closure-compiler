@@ -4,4 +4,5 @@
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prototype = { a: 1, /** @const */ b: 2 };","(new Foo).b = 3;"),NewTypeInference.CONST_PROPERTY_REASSIGNED);
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prototype = { method: function(/** number */ x) {} };","(new Foo).method('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prototype = { method: function(/** number */ x) {} };","/** @constructor @extends {Foo} */","function Bar() {}","(new Bar).method('asdf');"),NewTypeInference.INVALID_ARGUMENT_TYPE);
+  typeCheck(LINE_JOINER.join("function f(ns) {","  return ns.prototype = {","    method: function(x, y) {}","  };","}"));
 }
