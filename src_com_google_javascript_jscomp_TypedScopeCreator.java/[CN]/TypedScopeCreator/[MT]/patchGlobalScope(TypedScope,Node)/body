@@ -17,8 +17,12 @@
     }
   }
   for (  TypedVar var : varsToRemove) {
+    String typeName=var.getName();
     globalScope.undeclare(var);
-    globalScope.getTypeOfThis().toObjectType().removeProperty(var.getName());
+    globalScope.getTypeOfThis().toObjectType().removeProperty(typeName);
+    if (typeRegistry.getType(typeName) != null) {
+      typeRegistry.removeType(typeName);
+    }
   }
   GlobalScopeBuilder scopeBuilder=new GlobalScopeBuilder(globalScope);
   NodeTraversal.traverseTyped(compiler,scriptRoot,scopeBuilder);
