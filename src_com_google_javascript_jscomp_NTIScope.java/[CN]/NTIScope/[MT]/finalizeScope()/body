@@ -1,7 +1,6 @@
 {
   Preconditions.checkState(isTopLevel() || this.declaredType != null,"No declared type for function-scope: %s",this.root);
   unknownTypeNames=ImmutableSet.of();
-  JSTypes commonTypes=getCommonTypes();
   for (  Map.Entry<String,Namespace> entry : localNamespaces.entrySet()) {
     String name=entry.getKey();
     Namespace ns=entry.getValue();
@@ -10,10 +9,10 @@
       constVars.add(name);
       NamespaceLit nslit=(NamespaceLit)ns;
       nslit.maybeSetWindowInstance(externs.get(name));
-      t=nslit.toJSType(commonTypes);
+      t=nslit.toJSType();
     }
  else {
-      t=ns.toJSType(commonTypes);
+      t=ns.toJSType();
     }
     if (externs.containsKey(name)) {
       externs.put(name,t);

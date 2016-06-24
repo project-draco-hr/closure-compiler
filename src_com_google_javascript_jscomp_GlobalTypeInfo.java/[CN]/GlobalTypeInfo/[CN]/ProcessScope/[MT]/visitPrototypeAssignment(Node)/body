@@ -1,10 +1,14 @@
 {
   Preconditions.checkArgument(getProp.isGetProp());
+  Node protoObjNode=getProp.getParent().getLastChild();
+  if (!protoObjNode.isObjectLit()) {
+    return;
+  }
   Node ctorNameNode=NodeUtil.getPrototypeClassName(getProp);
   QualifiedName ctorQname=QualifiedName.fromNode(ctorNameNode);
   RawNominalType rawType=currentScope.getNominalType(ctorQname);
   if (rawType == null) {
-    for (    Node objLitChild : getProp.getParent().getLastChild().children()) {
+    for (    Node objLitChild : protoObjNode.children()) {
       Node initializer=objLitChild.getLastChild();
       if (initializer != null && initializer.isFunction()) {
         visitFunctionLate(initializer,null);
@@ -13,7 +17,7 @@
     return;
   }
   getProp.putBooleanProp(Node.ANALYZED_DURING_GTI,true);
-  for (  Node objLitChild : getProp.getParent().getLastChild().children()) {
+  for (  Node objLitChild : protoObjNode.children()) {
     mayAddPropToPrototype(rawType,objLitChild.getString(),objLitChild,objLitChild.getLastChild());
   }
 }
