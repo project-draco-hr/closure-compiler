@@ -1,14 +1,12 @@
 {
+  if (currentModuleName == null) {
+    return;
+  }
 switch (n.getType()) {
 case CALL:
     Node callee=n.getFirstChild();
-  if (callee.matchesQualifiedName("goog.module")) {
-    if (currentModuleName == null) {
-      currentModuleName=extractFirstArgumentName(n);
-    }
- else {
-      t.report(n,MULTIPLE_MODULES_IN_FILE);
-    }
+  if (callee.matchesQualifiedName("goog.module") && !currentModuleName.equals(extractFirstArgumentName(n))) {
+    t.report(n,MULTIPLE_MODULES_IN_FILE);
   }
  else   if (callee.matchesQualifiedName("goog.provide")) {
     t.report(n,MODULE_AND_PROVIDES);
@@ -63,11 +61,6 @@ t.report(n,REFERENCE_TO_SHORT_IMPORT_BY_LONG_NAME,n.getQualifiedName());
 t.report(n,REFERENCE_TO_SHORT_IMPORT_BY_LONG_NAME_INCLUDING_SHORT_NAME,n.getQualifiedName(),shortName);
 }
 }
-break;
-case SCRIPT:
-currentModuleName=null;
-shortRequiredNamespaces.clear();
-defaultExportNode=null;
 break;
 }
 }

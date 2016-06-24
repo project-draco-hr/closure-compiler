@@ -1,0 +1,11 @@
+{
+  Node firstStatement=scopeRoot.getFirstChild();
+  if (NodeUtil.isExprCall(firstStatement)) {
+    Node call=firstStatement.getFirstChild();
+    Node callee=call.getFirstChild();
+    if (callee.matchesQualifiedName("goog.module")) {
+      Preconditions.checkState(currentModuleName == null);
+      currentModuleName=extractFirstArgumentName(call);
+    }
+  }
+}
