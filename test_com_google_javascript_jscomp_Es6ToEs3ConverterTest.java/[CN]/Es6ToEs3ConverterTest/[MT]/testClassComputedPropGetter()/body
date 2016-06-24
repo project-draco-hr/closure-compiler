@@ -1,6 +1,6 @@
 {
   setLanguageOut(LanguageMode.ECMASCRIPT5);
   test("/** @unrestricted */ class C { /** @return {number} */ get [foo]() { return 4; }}",LINE_JOINER.join("/** @constructor @unrestricted */","var C = function() {};","/** @type {number} */","C.prototype[foo];","var $jscomp$compprop0 = {};","Object.defineProperties(","  C.prototype,","  ($jscomp$compprop0[foo] = {","    configurable:true,","    enumerable:true,","    /** @this {C} */","    get: function() { return 4; }","  }, $jscomp$compprop0));"));
-  assertThat(getInjectedLibraries()).isEmpty();
+  assertThat(getLastCompiler().injected).isEmpty();
   testError("class C { get [add + expr]() {} }",CANNOT_CONVERT);
 }

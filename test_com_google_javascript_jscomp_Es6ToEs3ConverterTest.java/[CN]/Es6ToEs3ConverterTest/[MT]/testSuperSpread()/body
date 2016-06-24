@@ -1,4 +1,4 @@
 {
   test(LINE_JOINER.join("class D {}","class C extends D {","  constructor(args) {","    super(...args)","  }","}"),LINE_JOINER.join("/** @constructor @struct */","var D = function(){};","/** @constructor @struct @extends {D} */","var C=function(args) {","  D.call.apply(D, [].concat([this], $jscomp.arrayFromIterable(args)));","};","$jscomp.inherits(C,D);"));
-  assertThat(getInjectedLibraries()).containsExactly("es6_runtime");
+  assertThat(getLastCompiler().injected).containsExactly("es6/util/arrayfromiterable","es6/util/inherits");
 }
