@@ -3,7 +3,7 @@
   if (doc == null) {
     return;
   }
-  int numGeneratorAnnotations=Booleans.countTrue(doc.isConsistentIdGenerator(),doc.isIdGenerator(),doc.isStableIdGenerator(),doc.isMappedIdGenerator());
+  int numGeneratorAnnotations=Booleans.countTrue(doc.isConsistentIdGenerator(),doc.isIdGenerator(),doc.isStableIdGenerator(),doc.isXidGenerator(),doc.isMappedIdGenerator());
   if (numGeneratorAnnotations == 0) {
     return;
   }
@@ -29,6 +29,9 @@
   }
  else   if (doc.isStableIdGenerator()) {
     nameGenerators.put(name,createNameSupplier(RenameStrategy.STABLE,previousMap.get(name)));
+  }
+ else   if (doc.isXidGenerator()) {
+    nameGenerators.put(name,createNameSupplier(RenameStrategy.XID,previousMap.get(name)));
   }
  else   if (doc.isIdGenerator()) {
     nameGenerators.put(name,createNameSupplier(RenameStrategy.INCONSISTENT,previousMap.get(name)));
