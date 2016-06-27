@@ -1,8 +1,8 @@
 {
+  addLibrary("Proxy","es6","es6",null);
+  addLibrary("Map","es6","es5","es6/map");
   setLanguage(ES6,ES5);
-  testSame("new Proxy();",RewritePolyfills.INSUFFICIENT_OUTPUT_VERSION_ERROR);
-  assertThat(getInjectedLibraries()).isEmpty();
+  testInjects("new Proxy();",RewritePolyfills.INSUFFICIENT_OUTPUT_VERSION_ERROR);
   setLanguage(ES6,ES3);
-  test("new Map();","$jscomp.Map$install(); new $jscomp.Map();",null,RewritePolyfills.INSUFFICIENT_OUTPUT_VERSION_ERROR);
-  assertThat(getInjectedLibraries()).containsExactly("es6_runtime");
+  testInjects("new Map();",RewritePolyfills.INSUFFICIENT_OUTPUT_VERSION_ERROR,"es6/map");
 }

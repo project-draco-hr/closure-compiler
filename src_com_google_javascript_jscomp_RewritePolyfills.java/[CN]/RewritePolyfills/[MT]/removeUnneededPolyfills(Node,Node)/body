@@ -1,0 +1,17 @@
+{
+  Node node=parent.getFirstChild();
+  while (node != null && node != runtimeEnd) {
+    Node next=node.getNext();
+    if (NodeUtil.isExprCall(node)) {
+      Node call=node.getFirstChild();
+      Node name=call.getFirstChild();
+      if (name.matchesQualifiedName("$jscomp.polyfill")) {
+        FeatureSet nativeVersion=FeatureSet.valueOf(name.getNext().getNext().getNext().getString());
+        if (languageOutIsAtLeast(nativeVersion)) {
+          NodeUtil.removeChild(parent,node);
+        }
+      }
+    }
+    node=next;
+  }
+}

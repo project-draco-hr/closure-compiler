@@ -1,8 +1,4 @@
 {
-  JSDocInfo doc=node.getJSDocInfo();
-  if (doc != null) {
-    fixJsdoc(traversal.getScope(),doc);
-  }
   if (node.isQualifiedName()) {
     String name=node.getQualifiedName();
     Polyfill polyfill=null;
@@ -16,27 +12,15 @@
       if (!languageOutIsAtLeast(polyfill.polyfillVersion)) {
         traversal.report(node,INSUFFICIENT_OUTPUT_VERSION_ERROR,name,compiler.getOptions().getLanguageOut().toString(),polyfill.polyfillVersion.toLanguageModeString());
       }
-      if (!languageOutIsAtLeast(polyfill.nativeVersion)) {
-        if (!polyfill.installer.isEmpty()) {
-          addInstaller(polyfill.installer);
-        }
-        if (!polyfill.rewrite.isEmpty()) {
-          changed=true;
-          injectRuntime();
-          Node replacement=NodeUtil.newQName(compiler,polyfill.rewrite);
-          replacement.useSourceInfoIfMissingFromForTree(node);
-          parent.replaceChild(node,replacement);
-        }
-      }
+      inject(polyfill);
       return;
     }
   }
   if (node.isGetProp() && node.getLastChild().isString()) {
-    for (    Polyfill polyfill : polyfills.methods.get(node.getLastChild().getString())) {
-      if (!languageOutIsAtLeast(polyfill.nativeVersion) && !polyfill.installer.isEmpty()) {
-        if (!isStaticFunction(node,traversal)) {
-          addInstaller(polyfill.installer);
-        }
+    Collection<Polyfill> methods=polyfills.methods.get(node.getLastChild().getString());
+    if (!methods.isEmpty() && !isStaticFunction(node,traversal)) {
+      for (      Polyfill polyfill : methods) {
+        inject(polyfill);
       }
     }
   }

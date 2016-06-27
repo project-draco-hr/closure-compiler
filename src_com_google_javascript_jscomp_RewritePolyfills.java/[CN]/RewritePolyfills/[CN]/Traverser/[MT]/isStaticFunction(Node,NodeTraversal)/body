@@ -2,27 +2,6 @@
   if (!node.isQualifiedName()) {
     return false;
   }
-  String root=NodeUtil.getRootOfQualifiedName(node).getQualifiedName();
-  if (globals == null) {
-    return false;
-  }
-  GlobalNamespace.Name fullName=globals.getOwnSlot(node.getQualifiedName());
-  GlobalNamespace.Name rootName=globals.getOwnSlot(root);
-  if (fullName == null || rootName == null) {
-    return false;
-  }
-  GlobalNamespace.Ref rootDecl=rootName.getDeclaration();
-  if (rootDecl == null) {
-    return false;
-  }
-  Node globalDeclNode=rootDecl.getNode();
-  if (globalDeclNode == null) {
-    return false;
-  }
-  Var rootScope=traversal.getScope().getVar(root);
-  if (rootScope == null) {
-    return true;
-  }
-  Node scopeDeclNode=rootScope.getNode();
-  return scopeDeclNode == globalDeclNode;
+  String qname=node.getQualifiedName();
+  return qname.startsWith("goog.string") || qname.startsWith("goog.array");
 }

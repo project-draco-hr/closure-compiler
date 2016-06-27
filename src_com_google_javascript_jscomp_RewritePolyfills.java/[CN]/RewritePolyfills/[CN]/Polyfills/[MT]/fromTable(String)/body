@@ -1,0 +1,24 @@
+{
+  ImmutableMultimap.Builder<String,Polyfill> methods=ImmutableMultimap.builder();
+  ImmutableMap.Builder<String,Polyfill> statics=ImmutableMap.builder();
+  for (  String line : Splitter.on('\n').omitEmptyStrings().split(table)) {
+    List<String> tokens=Splitter.on(' ').omitEmptyStrings().splitToList(line.trim());
+    if (tokens.size() == 1 && tokens.get(0).isEmpty()) {
+      continue;
+    }
+ else     if (tokens.size() < 3) {
+      throw new IllegalArgumentException("Invalid table: too few tokens on line: " + line);
+    }
+    String symbol=tokens.get(0);
+    Polyfill polyfill=new Polyfill(FeatureSet.valueOf(tokens.get(1)),FeatureSet.valueOf(tokens.get(2)),tokens.size() > 3 ? tokens.get(3) : "");
+    if (symbol.contains(".prototype.")) {
+      methods.put(symbol.replaceAll(".*\\.prototype\\.",""),polyfill);
+    }
+ else {
+      statics.put(symbol,polyfill);
+      statics.put(GLOBAL + symbol,polyfill);
+      statics.put(WINDOW + symbol,polyfill);
+    }
+  }
+  return new Polyfills(methods.build(),statics.build());
+}

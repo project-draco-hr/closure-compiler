@@ -1,8 +1,8 @@
 {
+  addLibrary("Array.from","es6","es6",null);
+  addLibrary("Math.clz32","es6","es5","es6/math/clz32");
   setLanguage(ES6,ES5);
-  testSame("Array.from(x);",RewritePolyfills.INSUFFICIENT_OUTPUT_VERSION_ERROR);
-  assertThat(getInjectedLibraries()).isEmpty();
+  testInjects("Array.from(x);",RewritePolyfills.INSUFFICIENT_OUTPUT_VERSION_ERROR);
   setLanguage(ES6,ES3);
-  test("Math.clz32(x);","$jscomp.math.clz32(x);",null,RewritePolyfills.INSUFFICIENT_OUTPUT_VERSION_ERROR);
-  assertThat(getInjectedLibraries()).containsExactly("es6_runtime");
+  testInjects("Math.clz32(x);",RewritePolyfills.INSUFFICIENT_OUTPUT_VERSION_ERROR,"es6/math/clz32");
 }

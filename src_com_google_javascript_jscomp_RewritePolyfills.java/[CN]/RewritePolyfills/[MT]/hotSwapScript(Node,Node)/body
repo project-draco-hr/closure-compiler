@@ -1,7 +1,14 @@
 {
   Traverser traverser=new Traverser();
   NodeTraversal.traverseEs6(compiler,scriptRoot,traverser);
-  if (traverser.changed) {
+  if (!traverser.libraries.isEmpty()) {
+    Node lastNode=null;
+    for (    String library : traverser.libraries) {
+      lastNode=compiler.ensureLibraryInjected(library,false);
+    }
+    if (lastNode != null) {
+      removeUnneededPolyfills(lastNode.getParent(),lastNode);
+    }
     compiler.reportCodeChange();
   }
 }
