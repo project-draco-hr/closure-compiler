@@ -2,7 +2,6 @@
   if (!useTypes) {
     return n;
   }
-  Node parent=n.getParent();
 switch (n.getType()) {
 case OR:
 case AND:
@@ -13,21 +12,7 @@ case EQ:
 case NE:
 case SHEQ:
 case SHNE:
-Node left=n.getFirstChild();
-Node right=n.getLastChild();
-boolean leftIsNull=NodeUtil.isNullOrUndefined(left);
-boolean rightIsNull=NodeUtil.isNullOrUndefined(right);
-boolean leftIsObject=isObjectType(left);
-boolean rightIsObject=isObjectType(right);
-if (leftIsObject && rightIsNull || rightIsObject && leftIsNull) {
-n.detachChildren();
-Node objExpression=leftIsObject ? left : right;
-Node replacement=n.getType() == Token.EQ || n.getType() == Token.SHEQ ? IR.not(objExpression) : objExpression;
-parent.replaceChild(n,replacement);
-reportCodeChange();
-return replacement;
-}
-break;
+return tryReplaceComparisonWithCoercion(n,false);
 }
 return n;
 }

@@ -1,0 +1,17 @@
+{
+  boolean leftIsNull=NodeUtil.isNullOrUndefined(left);
+  boolean rightIsNull=NodeUtil.isNullOrUndefined(right);
+  boolean leftIsObjectType=isObjectType(left);
+  boolean rightIsObjectType=isObjectType(right);
+  if (leftIsObjectType && rightIsNull || rightIsObjectType && leftIsNull) {
+    return leftIsNull ? BooleanCoercability.RIGHT : BooleanCoercability.LEFT;
+  }
+  boolean leftIsZero=left.isNumber() && left.getDouble() == 0;
+  boolean rightIsZero=right.isNumber() && right.getDouble() == 0;
+  boolean leftIsNumberType=isNumberType(left);
+  boolean rightIsNumberType=isNumberType(right);
+  if (leftIsNumberType && rightIsZero || rightIsNumberType && leftIsZero) {
+    return leftIsZero ? BooleanCoercability.RIGHT : BooleanCoercability.LEFT;
+  }
+  return BooleanCoercability.NONE;
+}
