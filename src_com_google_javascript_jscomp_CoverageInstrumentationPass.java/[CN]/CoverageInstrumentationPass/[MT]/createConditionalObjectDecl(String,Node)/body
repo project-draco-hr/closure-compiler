@@ -1,5 +1,12 @@
 {
-  String jscovDecl=" var " + name + " = window.top.__jscov || "+ "(window.top.__jscov = {fileNames:[], instrumentedLines: [], executedLines: []});";
+  String jscovData;
+  if (instrumentOption != InstrumentOption.LINE_ONLY) {
+    jscovData="{fileNames:[], instrumentedLines: [], executedLines: []," + "branchPrsent:[], branchesInLine: []}";
+  }
+ else {
+    jscovData="{fileNames:[], instrumentedLines: [], executedLines: []}";
+  }
+  String jscovDecl=" var " + name + " = window.top.__jscov || "+ "(window.top.__jscov = "+ jscovData+ ");";
   Node script=compiler.parseSyntheticCode(jscovDecl);
   Node var=script.removeFirstChild();
   return var.useSourceInfoIfMissingFromForTree(srcref);
