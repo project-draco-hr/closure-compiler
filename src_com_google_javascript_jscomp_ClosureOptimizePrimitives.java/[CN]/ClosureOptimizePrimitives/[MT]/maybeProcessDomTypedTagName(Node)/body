@@ -1,0 +1,24 @@
+{
+  String qualifiedName=n.getQualifiedName();
+  if (qualifiedName == null) {
+    return;
+  }
+  if (NodeUtil.isLValue(n)) {
+    return;
+  }
+  String prefix="goog.dom.TypedTagName.";
+  String altPrefix="goog$dom$TypedTagName$";
+  String tagName;
+  if (qualifiedName.startsWith(prefix)) {
+    tagName=qualifiedName.substring(prefix.length());
+  }
+ else   if (qualifiedName.startsWith(altPrefix)) {
+    tagName=qualifiedName.substring(altPrefix.length());
+  }
+ else {
+    return;
+  }
+  Node stringNode=Node.newString(tagName).srcref(n);
+  n.getParent().replaceChild(n,stringNode);
+  compiler.reportCodeChange();
+}
