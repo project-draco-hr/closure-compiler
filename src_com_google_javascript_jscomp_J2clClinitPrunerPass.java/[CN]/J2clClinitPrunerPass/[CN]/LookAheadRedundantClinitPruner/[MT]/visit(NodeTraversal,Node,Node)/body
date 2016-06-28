@@ -1,0 +1,26 @@
+{
+  if (!node.isExprResult()) {
+    return;
+  }
+  String clinitName=node.getFirstChild().isCall() ? getClinitMethodName(node.getFirstFirstChild()) : null;
+  if (clinitName == null) {
+    return;
+  }
+  Node callOrNewNode=getCallOrNewNode(node.getNext());
+  if (callOrNewNode == null || !callOrNewNode.getFirstChild().isName()) {
+    return;
+  }
+  Node enclosingFunction=NodeUtil.getEnclosingFunction(node);
+  if (enclosingFunction == null || callOrNewNode.getFirstChild().getString().equals(NodeUtil.getNearestFunctionName(enclosingFunction))) {
+    return;
+  }
+  Var var=t.getScope().getVar(callOrNewNode.getFirstChild().getString());
+  if (var == null || var.getInitialValue() == null || !var.getInitialValue().isFunction()) {
+    return;
+  }
+  Node staticFnNode=var.getInitialValue();
+  if (callsClinit(staticFnNode,clinitName) && hasSafeArguments(t,callOrNewNode)) {
+    parent.removeChild(node);
+    t.getCompiler().reportCodeChange();
+  }
+}

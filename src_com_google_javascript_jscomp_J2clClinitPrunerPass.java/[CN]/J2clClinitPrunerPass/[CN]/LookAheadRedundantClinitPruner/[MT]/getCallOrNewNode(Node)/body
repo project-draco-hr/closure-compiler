@@ -1,0 +1,19 @@
+{
+  if (n == null) {
+    return null;
+  }
+switch (n.getToken()) {
+case EXPR_RESULT:
+case RETURN:
+    return getCallOrNewNode(n.getFirstChild());
+case CALL:
+case NEW:
+  return n;
+case CONST:
+case LET:
+case VAR:
+return n.getChildCount() == 1 ? getCallOrNewNode(n.getFirstFirstChild()) : null;
+default :
+return null;
+}
+}
