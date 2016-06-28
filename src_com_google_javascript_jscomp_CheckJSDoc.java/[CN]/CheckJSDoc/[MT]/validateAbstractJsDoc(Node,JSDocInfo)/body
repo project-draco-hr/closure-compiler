@@ -4,23 +4,23 @@
   }
   Node functionNode=getFunctionDecl(n);
   if (functionNode == null) {
-    report(n,MISPLACED_ANNOTATION);
+    report(n,MISPLACED_ANNOTATION,"@abstract","only functions or methods can be abstract");
     return;
   }
   if (NodeUtil.getFunctionBody(functionNode).hasChildren()) {
-    report(n,MISPLACED_ANNOTATION);
+    report(n,MISPLACED_ANNOTATION,"@abstract","function with a non-empty body cannot be abstract");
     return;
   }
   if (n.isMemberFunctionDef() && "constructor".equals(n.getString())) {
-    report(n,MISPLACED_ANNOTATION);
+    report(n,MISPLACED_ANNOTATION,"@abstract","constructors cannot be abstract");
     return;
   }
   if (!n.isMemberFunctionDef() && !NodeUtil.isPrototypeMethod(functionNode)) {
-    report(n,MISPLACED_ANNOTATION);
+    report(n,MISPLACED_ANNOTATION,"@abstract","only functions or methods can be abstract");
     return;
   }
   if (n.isStaticMember()) {
-    report(n,MISPLACED_ANNOTATION);
+    report(n,MISPLACED_ANNOTATION,"@abstract","static methods cannot be abstract");
     return;
   }
 }
