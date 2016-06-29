@@ -1,0 +1,20 @@
+{
+  if (n.isFunction() && parent.isAssign() && parent.getParent().isExprResult()) {
+    Node block=n.getChildAtIndex(2);
+    if (!block.hasOneChild()) {
+      return;
+    }
+    Node statement=block.getFirstChild();
+    if ((statement.isExprResult() || statement.isReturn()) && statement.hasOneChild() && statement.getFirstChild().isCall()) {
+      String functionName=NodeUtil.getName(n);
+      if (functionName == null || !functionName.contains(PROTOTYPE_MARKER)) {
+        return;
+      }
+      Node call=statement.getFirstChild();
+      if (argumentsMatch(n,call) && returnMatches(call) && functionNameMatches(functionName,call)) {
+        parent.getParent().detachFromParent();
+        compiler.reportCodeChange();
+      }
+    }
+  }
+}
