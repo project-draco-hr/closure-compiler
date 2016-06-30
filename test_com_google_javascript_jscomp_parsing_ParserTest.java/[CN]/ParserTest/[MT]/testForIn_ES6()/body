@@ -7,12 +7,13 @@
   expectFeatures(Feature.CONST_DECLARATIONS);
   parse("for (const a in b) c;");
   expectFeatures();
-  parseError("for (a,b in c) d;","';' expected");
+  parseError("for (a,b in c) d;",INVALID_ASSIGNMENT_TARGET);
   parseError("for (var a,b in c) d;","for-in statement may not have more than one variable declaration");
   parseError("for (let a,b in c) d;","for-in statement may not have more than one variable declaration");
   parseError("for (const a,b in c) d;","for-in statement may not have more than one variable declaration");
-  parseError("for (a=1 in b) c;","';' expected");
+  parseError("for (a=1 in b) c;",INVALID_ASSIGNMENT_TARGET);
   parseError("for (let a=1 in b) c;","for-in statement may not have initializer");
   parseError("for (const a=1 in b) c;","for-in statement may not have initializer");
   parseError("for (var a=1 in b) c;","for-in statement may not have initializer");
+  parseError("for (\"a\" in b) c;",INVALID_ASSIGNMENT_TARGET);
 }
