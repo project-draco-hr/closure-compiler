@@ -1,5 +1,8 @@
 {
-  createEdge(node,Branch.ON_TRUE,computeFallThrough(node.getFirstChild()));
-  createEdge(node,Branch.ON_FALSE,computeFollowNode(node,this));
+  Node cond=node.getFirstChild();
+  createEdge(node,Branch.ON_TRUE,computeFallThrough(cond));
+  if (!cond.isTrue()) {
+    createEdge(node,Branch.ON_FALSE,computeFollowNode(node,this));
+  }
   connectToPossibleExceptionHandler(node,NodeUtil.getConditionExpression(node));
 }
