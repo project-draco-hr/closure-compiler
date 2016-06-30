@@ -1,0 +1,16 @@
+{
+  if (type != null) {
+    ObjectTypeI iproto=castToObject(type).getPrototypeObject();
+    while (iproto != null && iproto.getConstructor() == null) {
+      iproto=iproto.getPrototypeObject();
+    }
+    if (iproto != null) {
+      Node source=iproto.getConstructor().getSource();
+      JSDocInfo jsDoc=source != null ? NodeUtil.getBestJSDocInfo(source) : null;
+      if (jsDoc != null && jsDoc.isConstant()) {
+        return iproto;
+      }
+    }
+  }
+  return null;
+}

@@ -1,0 +1,13 @@
+{
+  String propertyName=getprop.getLastChild().getString();
+  if (codingConvention != null && codingConvention.isPrivate(propertyName)) {
+    return Visibility.PRIVATE;
+  }
+  Visibility raw=Visibility.INHERITED;
+  if (objectType != null) {
+    raw=objectType.getOwnPropertyJSDocInfo(propertyName).getVisibility();
+  }
+  TypeI type=getprop.getTypeIIfOld();
+  boolean createdFromGoogProvide=(type != null && type.isInstanceofObject());
+  return (raw != Visibility.INHERITED || fileOverviewVisibility == null || createdFromGoogProvide) ? raw : fileOverviewVisibility;
+}

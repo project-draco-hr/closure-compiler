@@ -4,7 +4,7 @@
   if (!(NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == getprop) && !parent.isInc() && !parent.isDec()&& !isDelete) {
     return;
   }
-  ObjectType objectType=ObjectType.cast(dereference(getprop.getFirstChild().getJSType()));
+  ObjectTypeI objectType=castToObject(dereference(getprop.getFirstChild().getTypeI()));
   String propertyName=getprop.getLastChild().getString();
   boolean isConstant=isPropertyDeclaredConstant(objectType,propertyName);
   if (isConstant) {
@@ -19,17 +19,17 @@
     if (objectType == null || (objectType.isFunctionType() && !objectType.toMaybeFunctionType().isConstructor())) {
       return;
     }
-    ObjectType oType=objectType;
+    ObjectTypeI oType=objectType;
     while (oType != null) {
       if (initializedConstantProperties.containsEntry(oType,propertyName)) {
         compiler.report(t.makeError(getprop,CONST_PROPERTY_REASSIGNED_VALUE,propertyName));
         break;
       }
-      oType=oType.getImplicitPrototype();
+      oType=oType.getPrototypeObject();
     }
     initializedConstantProperties.put(objectType,propertyName);
     if (objectType.isInstanceType()) {
-      ObjectType prototype=objectType.getImplicitPrototype();
+      ObjectTypeI prototype=objectType.getPrototypeObject();
       if (prototype != null && prototype.hasProperty(propertyName)) {
         initializedConstantProperties.put(prototype,propertyName);
       }

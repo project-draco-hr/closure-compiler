@@ -1,0 +1,13 @@
+{
+  TypeI currentClass=getCurrentClass();
+  if (currentClass != null && ownerType.isEquivalentTo(currentClass)) {
+    return;
+  }
+  if (isClassType && isValidPrivateConstructorAccess(parent)) {
+    return;
+  }
+  TypeI accessedType=getprop.getFirstChild().getTypeI();
+  String propertyName=getprop.getLastChild().getString();
+  String readableTypeName=ownerType.equals(accessedType) ? typeRegistry.getReadableTypeName(getprop.getFirstChild()) : ownerType.toString();
+  compiler.report(t.makeError(getprop,BAD_PRIVATE_PROPERTY_ACCESS,propertyName,readableTypeName));
+}

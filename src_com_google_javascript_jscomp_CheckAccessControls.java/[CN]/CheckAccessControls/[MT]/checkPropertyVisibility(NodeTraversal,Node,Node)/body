@@ -3,17 +3,17 @@
   if (jsdoc != null && jsdoc.getSuppressions().contains("visibility")) {
     return;
   }
-  ObjectType referenceType=ObjectType.cast(dereference(getprop.getFirstChild().getJSType()));
+  ObjectTypeI referenceType=castToObject(dereference(getprop.getFirstChild().getTypeI()));
   String propertyName=getprop.getLastChild().getString();
   boolean isPrivateByConvention=isPrivateByConvention(propertyName);
   if (isPrivateByConvention && propertyIsDeclaredButNotPrivate(getprop,parent)) {
     compiler.report(t.makeError(getprop,CONVENTION_MISMATCH));
     return;
   }
-  StaticSourceFile definingSource=getDefiningSource(getprop,referenceType,propertyName);
+  StaticSourceFile definingSource=AccessControlUtils.getDefiningSource(getprop,referenceType,propertyName);
   boolean isClassType=false;
   boolean isOverride=jsdoc != null && parent.isAssign() && parent.getFirstChild() == getprop;
-  ObjectType objectType=getObjectType(referenceType,isOverride,propertyName);
+  ObjectTypeI objectType=AccessControlUtils.getObjectType(referenceType,isOverride,propertyName);
   Visibility fileOverviewVisibility=defaultVisibilityForFiles.get(definingSource);
   Visibility visibility=AccessControlUtils.getEffectivePropertyVisibility(getprop,referenceType,defaultVisibilityForFiles,enforceCodingConventions ? compiler.getCodingConvention() : null);
   if (isOverride) {
@@ -23,13 +23,12 @@
     }
   }
   if (objectType != null) {
-    Property p=objectType.getOwnSlot(propertyName);
-    Node node=p.getNode();
+    Node node=objectType.getOwnPropertyDefsite(propertyName);
     if (node == null) {
       return;
     }
     definingSource=node.getStaticSourceFile();
-    isClassType=p.getJSDocInfo().isConstructor();
+    isClassType=objectType.getOwnPropertyJSDocInfo(propertyName).isConstructor();
   }
  else   if (isPrivateByConvention) {
     objectType=referenceType;

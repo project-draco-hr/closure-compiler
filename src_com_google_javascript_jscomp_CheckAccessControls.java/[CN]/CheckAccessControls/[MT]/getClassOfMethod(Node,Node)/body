@@ -2,20 +2,20 @@
   if (parent.isAssign()) {
     Node lValue=parent.getFirstChild();
     if (NodeUtil.isGet(lValue)) {
-      JSType lValueType=lValue.getJSType();
-      if (lValueType != null && lValueType.isNominalConstructor()) {
+      TypeI lValueType=lValue.getTypeI();
+      if (lValueType != null && lValueType.isOriginalConstructor()) {
         return (lValueType.toMaybeFunctionType()).getInstanceType();
       }
  else {
-        return normalizeClassType(lValue.getFirstChild().getJSType());
+        return normalizeClassType(lValue.getFirstChild().getTypeI());
       }
     }
  else {
-      return normalizeClassType(lValue.getJSType());
+      return normalizeClassType(lValue.getTypeI());
     }
   }
  else   if (NodeUtil.isFunctionDeclaration(n) || parent.isName()) {
-    return normalizeClassType(n.getJSType());
+    return normalizeClassType(n.getTypeI());
   }
  else   if (parent.isStringKey() || parent.isGetterDef() || parent.isSetterDef()) {
     Node objectLitParent=parent.getGrandparent();
@@ -24,7 +24,7 @@
     }
     Node className=NodeUtil.getPrototypeClassName(objectLitParent.getFirstChild());
     if (className != null) {
-      return normalizeClassType(className.getJSType());
+      return normalizeClassType(className.getTypeI());
     }
   }
   return null;

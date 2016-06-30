@@ -1,0 +1,12 @@
+{
+  if (enforceCodingConventions && compiler.getCodingConvention().isConstant(prop)) {
+    return true;
+  }
+  for (; objectType != null; objectType=objectType.getPrototypeObject()) {
+    JSDocInfo docInfo=objectType.getOwnPropertyJSDocInfo(prop);
+    if (docInfo != null && docInfo.isConstant()) {
+      return true;
+    }
+  }
+  return false;
+}
