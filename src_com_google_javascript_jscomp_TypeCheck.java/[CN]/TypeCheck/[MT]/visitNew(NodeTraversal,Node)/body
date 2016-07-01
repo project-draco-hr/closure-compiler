@@ -1,18 +1,21 @@
 {
   Node constructor=n.getFirstChild();
   JSType type=getJSType(constructor).restrictByNotNullOrUndefined();
-  if (type.isConstructor() || type.isEmptyType() || type.isUnknownType()) {
-    FunctionType fnType=type.toMaybeFunctionType();
-    if (fnType != null && fnType.hasInstanceType()) {
-      visitParameterList(t,n,fnType);
-      ensureTyped(t,n,fnType.getInstanceType());
-    }
- else {
-      ensureTyped(t,n);
-    }
+  if (!couldBeAConstructor(type)) {
+    report(t,n,NOT_A_CONSTRUCTOR);
+    ensureTyped(t,n);
+    return;
+  }
+  Var var=t.getScope().getVar(constructor.getQualifiedName());
+  if (var != null && var.getJSDocInfo() != null && var.getJSDocInfo().isAbstract()) {
+    report(t,n,INSTANTIATE_ABSTRACT_CLASS);
+  }
+  FunctionType fnType=type.toMaybeFunctionType();
+  if (fnType != null && fnType.hasInstanceType()) {
+    visitParameterList(t,n,fnType);
+    ensureTyped(t,n,fnType.getInstanceType());
   }
  else {
-    report(t,n,NOT_A_CONSTRUCTOR);
     ensureTyped(t,n);
   }
 }

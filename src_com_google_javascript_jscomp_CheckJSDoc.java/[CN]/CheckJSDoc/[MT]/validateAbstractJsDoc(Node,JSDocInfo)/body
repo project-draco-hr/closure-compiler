@@ -2,6 +2,9 @@
   if (info == null || !info.isAbstract()) {
     return;
   }
+  if (n.isClass()) {
+    return;
+  }
   Node functionNode=getFunctionDecl(n);
   if (functionNode == null) {
     report(n,MISPLACED_ANNOTATION,"@abstract","only functions or methods can be abstract");
@@ -15,7 +18,7 @@
     report(n,MISPLACED_ANNOTATION,"@abstract","constructors cannot be abstract");
     return;
   }
-  if (!n.isMemberFunctionDef() && !NodeUtil.isPrototypeMethod(functionNode)) {
+  if (!info.isConstructor() && !n.isMemberFunctionDef() && !NodeUtil.isPrototypeMethod(functionNode)) {
     report(n,MISPLACED_ANNOTATION,"@abstract","only functions or methods can be abstract");
     return;
   }
