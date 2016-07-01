@@ -1,5 +1,5 @@
 {
-  writeMemStats(passName);
+  int allocMem=getAllocatedMegabytes();
   Stats logStats=currentPass.pop();
   Preconditions.checkState(passName.equals(logStats.pass));
   log.add(logStats);
@@ -19,8 +19,10 @@
     }
   }
   logStats.runtime=runtime;
+  logStats.allocMem=allocMem;
   logStats.runs=1;
   summaryStats.runtime+=runtime;
+  summaryStats.allocMem=Math.max(allocMem,summaryStats.allocMem);
   summaryStats.runs+=1;
   if (codeChange.hasCodeChanged()) {
     logStats.changes=1;
