@@ -1,15 +1,22 @@
 {
   Preconditions.checkArgument(prevChild.parent == this,"prev is not a child of this node.");
-  Preconditions.checkArgument(newChild.next == null,"The new child node has siblings.");
+  Preconditions.checkArgument(prevChild.next != null,"prev is doesn't have a sibling to replace.");
+  Preconditions.checkArgument(newChild.next == null,"The new child node has next siblings.");
+  Preconditions.checkArgument(newChild.previous == null,"The new child node has previous siblings.");
   Preconditions.checkArgument(newChild.parent == null,"The new child node already has a parent.");
-  newChild.copyInformationFrom(prevChild);
-  Node child=prevChild.next;
-  newChild.next=child.next;
+  newChild.copyInformationFrom(prevChild.next);
+  Node childToReplace=prevChild.next;
+  newChild.next=childToReplace.next;
+  newChild.previous=prevChild;
   newChild.parent=this;
   prevChild.next=newChild;
-  if (child == last) {
+  if (childToReplace == last) {
     last=newChild;
   }
-  child.next=null;
-  child.parent=null;
+ else {
+    childToReplace.next.previous=newChild;
+  }
+  childToReplace.next=null;
+  childToReplace.previous=null;
+  childToReplace.parent=null;
 }

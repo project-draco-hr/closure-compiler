@@ -8,7 +8,11 @@
   if (node != null) {
     Node oldNext=node.next;
     node.next=children;
+    children.previous=node;
     lastSibling.next=oldNext;
+    if (oldNext != null) {
+      oldNext.previous=lastSibling;
+    }
     if (node == last) {
       last=lastSibling;
     }
@@ -16,6 +20,7 @@
  else {
     if (first != null) {
       lastSibling.next=first;
+      first.previous=lastSibling;
     }
  else {
       last=lastSibling;
