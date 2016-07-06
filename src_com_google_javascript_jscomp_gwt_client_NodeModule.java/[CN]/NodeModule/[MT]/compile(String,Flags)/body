@@ -1,0 +1,17 @@
+{
+  final CompilerOptions options=new CompilerOptions();
+  applyDefaultOptions(options);
+  applyOptionsFromFlags(options,flags);
+  disableUnsupportedOptions(options);
+  NodeErrorManager errorManager=new NodeErrorManager();
+  Compiler compiler=new Compiler();
+  compiler.setErrorManager(errorManager);
+  SourceFile src=SourceFile.fromCode("code.js",js);
+  SourceFile externs=SourceFile.fromCode("externs.js","");
+  compiler.compile(ImmutableList.of(externs),ImmutableList.of(src),options);
+  ModuleOutput output=new ModuleOutput();
+  output.compiledCode=compiler.toSource();
+  output.errors=toNativeErrorArray(errorManager.errors);
+  output.warnings=toNativeErrorArray(errorManager.warnings);
+  return output;
+}
