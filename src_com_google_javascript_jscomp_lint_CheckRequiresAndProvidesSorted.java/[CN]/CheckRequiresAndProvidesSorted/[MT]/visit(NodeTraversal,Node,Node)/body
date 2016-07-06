@@ -2,14 +2,10 @@
 switch (n.getType()) {
 case SCRIPT:
     if (!containsShorthandRequire) {
-      if (!alphabetical.isOrdered(requires)) {
-        t.report(requires.get(0),REQUIRES_NOT_SORTED);
-      }
-      if (!alphabetical.isOrdered(provides)) {
-        t.report(provides.get(0),PROVIDES_NOT_SORTED);
-      }
+      reportIfOutOfOrder(requires,REQUIRES_NOT_SORTED);
     }
-  requires.clear();
+  reportIfOutOfOrder(provides,PROVIDES_NOT_SORTED);
+requires.clear();
 provides.clear();
 containsShorthandRequire=false;
 break;
