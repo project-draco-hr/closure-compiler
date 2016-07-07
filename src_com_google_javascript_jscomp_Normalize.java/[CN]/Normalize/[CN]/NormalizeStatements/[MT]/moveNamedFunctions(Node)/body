@@ -1,22 +1,17 @@
 {
   Preconditions.checkState(functionBody.getParent().isFunction());
-  Node previous=null;
+  Node insertAfter=null;
   Node current=functionBody.getFirstChild();
   while (current != null && NodeUtil.isFunctionDeclaration(current)) {
-    previous=current;
+    insertAfter=current;
     current=current.getNext();
   }
-  Node insertAfter=previous;
   while (current != null) {
     Node next=current.getNext();
     if (NodeUtil.isFunctionDeclaration(current)) {
-      Preconditions.checkNotNull(previous);
-      functionBody.removeChildAfter(previous);
+      functionBody.removeChild(current);
       insertAfter=addToFront(functionBody,current,insertAfter);
       reportCodeChange("Move function declaration not at top of function");
-    }
- else {
-      previous=current;
     }
     current=next;
   }

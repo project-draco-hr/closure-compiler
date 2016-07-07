@@ -1,12 +1,11 @@
 {
-  for (Node c=n.getFirstChild(), prev=null; c != null; ) {
+  for (Node c=n.getFirstChild(); c != null; ) {
     Node next=c.getNext();
     if (!isUnremovableNode(c) && !mayHaveSideEffects(c)) {
-      n.removeFirstOrChildAfter(prev);
+      n.removeChild(c);
       reportCodeChange();
     }
  else {
-      prev=c;
       tryOptimizeConditionalAfterAssign(c);
     }
     c=next;
