@@ -1,12 +1,18 @@
 {
   Node firstExpr=callNode.getSecondChild();
   Node secondExpr=callNode.getLastChild();
-  if (!NodeUtil.isLiteralValue(firstExpr,true) && !NodeUtil.isLiteralValue(secondExpr,true)) {
+  if (NodeUtil.isNullOrUndefined(firstExpr) || NodeUtil.isNullOrUndefined(secondExpr)) {
+    rewriteToEq(callNode,firstExpr,secondExpr,Eq.DOUBLE);
     return;
   }
-  firstExpr.detachFromParent();
-  secondExpr.detachFromParent();
-  Node replacement=asEqOperation(firstExpr,secondExpr);
-  callNode.getParent().replaceChild(callNode,replacement.useSourceInfoIfMissingFrom(callNode));
-  compiler.reportCodeChange();
+  if (NodeUtil.isLiteralValue(firstExpr,true) || NodeUtil.isLiteralValue(secondExpr,true)) {
+    rewriteToEq(callNode,firstExpr,secondExpr,Eq.TRIPLE);
+    return;
+  }
+  JSType firstType=getTypeRestrictByNotNullOrUndefined(firstExpr);
+  JSType secondType=getTypeRestrictByNotNullOrUndefined(secondExpr);
+  if (isObjectType(firstType) || isObjectType(secondType) || sameType(firstType,secondType)) {
+    rewriteToEq(callNode,firstExpr,secondExpr,Eq.DOUBLE);
+    return;
+  }
 }
