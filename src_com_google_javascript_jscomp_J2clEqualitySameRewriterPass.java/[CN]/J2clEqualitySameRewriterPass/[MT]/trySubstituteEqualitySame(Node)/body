@@ -9,6 +9,9 @@
     rewriteToEq(callNode,firstExpr,secondExpr,Eq.TRIPLE);
     return;
   }
+  if (!compiler.getOptions().useTypesForOptimization) {
+    return;
+  }
   JSType firstType=getTypeRestrictByNotNullOrUndefined(firstExpr);
   JSType secondType=getTypeRestrictByNotNullOrUndefined(secondExpr);
   if (isObjectType(firstType) || isObjectType(secondType) || sameType(firstType,secondType)) {
