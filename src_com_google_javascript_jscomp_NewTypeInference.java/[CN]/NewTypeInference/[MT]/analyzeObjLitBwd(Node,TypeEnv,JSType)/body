@@ -4,7 +4,7 @@
   }
   TypeEnv env=outEnv;
   JSType result=pickReqObjType(objLit);
-  for (Node prop=objLit.getLastChild(); prop != null; prop=objLit.getChildBefore(prop)) {
+  for (Node prop=objLit.getLastChild(); prop != null; prop=prop.getPrevious()) {
     QualifiedName pname=new QualifiedName(NodeUtil.getObjectLitKeyName(prop));
     if (prop.isGetterDef() || prop.isSetterDef()) {
       env=analyzeExprBwd(prop.getFirstChild(),env).env;
