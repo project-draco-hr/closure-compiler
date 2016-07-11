@@ -1,5 +1,6 @@
 {
-  if (NodeUtil.isInSyntheticScript(n)) {
+  String filename=n.getSourceFileName();
+  if (filename != null && (filename.contains("synthetic:es6/symbol") || filename.contains("synthetic:es6/weakmap") || filename.contains("synthetic:es6/weakset")|| filename.contains("synthetic:runtime_type_check"))) {
     return ConformanceResult.CONFORMANCE;
   }
   if (n.isGetProp() && isUnknown(n) && isUsed(n)&& !isTypeImmediatelyTightened(n)&& isCheckablePropertySource(n.getFirstChild())&& !isTemplateType(n)&& !isDeclaredUnknown(n)) {
