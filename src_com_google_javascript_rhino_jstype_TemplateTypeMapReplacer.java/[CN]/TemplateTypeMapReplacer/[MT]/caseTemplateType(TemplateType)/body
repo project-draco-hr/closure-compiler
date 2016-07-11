@@ -5,12 +5,13 @@
     }
  else {
       JSType replacement=replacements.getUnresolvedOriginalTemplateType(type);
-      if (isRecursive(type,replacement)) {
+      if (replacement == keyType || isRecursive(type,replacement)) {
         return type;
       }
       visitedTypes.push(type);
       JSType visitedReplacement=replacement.visit(this);
       visitedTypes.pop();
+      Preconditions.checkState(visitedReplacement != keyType,"Trying to replace key %s with the same value",keyType);
       return visitedReplacement;
     }
   }
