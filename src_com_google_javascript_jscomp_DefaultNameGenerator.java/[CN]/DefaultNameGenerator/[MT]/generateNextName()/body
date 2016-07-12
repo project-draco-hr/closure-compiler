@@ -1,10 +1,11 @@
 {
-  while (true) {
-    String name=prefix;
+  String name;
+  do {
+    name=prefix;
     int i=nameCount;
     if (name.isEmpty()) {
       int pos=i % firstChars.length;
-      name+=firstChars[pos].name;
+      name=String.valueOf(firstChars[pos].name);
       i/=firstChars.length;
     }
     while (i > 0) {
@@ -14,9 +15,7 @@
       i/=nonFirstChars.length;
     }
     nameCount++;
-    if (TokenStream.isKeyword(name) || reservedNames.contains(name)) {
-      continue;
-    }
-    return name;
   }
+ while (TokenStream.isKeyword(name) || reservedNames.contains(name));
+  return name;
 }
