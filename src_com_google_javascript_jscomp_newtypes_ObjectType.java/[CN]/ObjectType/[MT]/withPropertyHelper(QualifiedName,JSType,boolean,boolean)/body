@@ -22,7 +22,11 @@
       if (isDeclared && declType == null) {
         declType=type;
       }
-      newProps=newProps.with(pname,isConstant ? Property.makeConstant(null,type,declType) : Property.make(type,isDeclared ? declType : null));
+      Node defsite=null;
+      if (hasProp(qname)) {
+        defsite=getLeftmostProp(qname).getDefSite();
+      }
+      newProps=newProps.with(pname,isConstant ? Property.makeConstant(defsite,type,declType) : Property.makeWithDefsite(defsite,type,isDeclared ? declType : null));
     }
   }
  else {

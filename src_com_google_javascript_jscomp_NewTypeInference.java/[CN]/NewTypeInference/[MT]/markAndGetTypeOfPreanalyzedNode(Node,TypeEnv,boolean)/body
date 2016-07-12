@@ -1,4 +1,7 @@
 {
+  if (NodeUtil.getRootOfQualifiedName(qnameNode).isThis()) {
+    return null;
+  }
 switch (qnameNode.getType()) {
 case NAME:
 {
@@ -17,10 +20,6 @@ case GETPROP:
     if (recvType.isSubtypeOf(JSType.TOP_OBJECT)) {
       result=recvType.getProp(new QualifiedName(pname));
     }
-    if (pname.equals("prototype") && (recvType.isConstructor() || recvType.isInterfaceDefinition())) {
-      FunctionType ft=recvType.getFunTypeIfSingletonObj();
-      result=ft.getInstanceTypeOfCtor();
-    }
     if (result == null) {
       warnings.add(JSError.make(qnameNode,UNKNOWN_NAMESPACE_PROPERTY,qnameNode.getQualifiedName()));
       return JSType.UNKNOWN;
@@ -32,6 +31,6 @@ case GETPROP:
     return result;
   }
 default :
-throw new RuntimeException("markAndGetTypeOfPreanalyzedNode: unexpected node " + qnameNode.getType());
+throw new RuntimeException("markAndGetTypeOfPreanalyzedNode: unexpected node " + compiler.toSource(qnameNode) + " with token "+ qnameNode.getType());
 }
 }

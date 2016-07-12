@@ -1,5 +1,8 @@
 {
   Preconditions.checkNotNull(preservedNamespaces,"Failed to preserve namespaces post-finalization");
-  RawNominalType nominalType=(RawNominalType)preservedNamespaces.get(typeName);
-  return nominalType == null ? null : nominalType.getInstanceAsJSType();
+  Namespace ns=preservedNamespaces.get(typeName);
+  if (ns instanceof RawNominalType) {
+    return ((RawNominalType)ns).getInstanceAsJSType();
+  }
+  return null;
 }

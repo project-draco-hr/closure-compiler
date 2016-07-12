@@ -1,0 +1,20 @@
+{
+  String pname=qname.getLeftmostName();
+  Property p=props.get(pname);
+  if (p != null) {
+    return p;
+  }
+  if (this.ns != null) {
+    p=this.ns.getNsProp(pname);
+    if (p != null) {
+      return p;
+    }
+  }
+  if (this.nominalType != null) {
+    return ownProp ? this.nominalType.getOwnProp(pname) : this.nominalType.getProp(pname);
+  }
+  if (!ownProp && builtinObject != null) {
+    return builtinObject.getProp(pname);
+  }
+  return null;
+}

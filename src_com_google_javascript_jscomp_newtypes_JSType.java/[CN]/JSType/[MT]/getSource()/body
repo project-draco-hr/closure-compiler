@@ -1,3 +1,7 @@
 {
-  throw new UnsupportedOperationException("getSource not implemented yet");
+  if (isConstructor()) {
+    JSType instance=getFunTypeIfSingletonObj().getInstanceTypeOfCtor();
+    return instance.getNominalTypeIfSingletonObj().getDefSite();
+  }
+  return this.isSingletonObj() ? getNominalTypeIfSingletonObj().getDefSite() : null;
 }
