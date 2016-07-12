@@ -1,8 +1,12 @@
 {
-  enableTypeCheck();
-  super.test(externs,js,expected,error,warning,description);
-  disableTypeCheck();
-  enableNewTypeInference();
-  super.test(externs,js,expected,error,warning,description);
-  disableNewTypeInference();
+  if (this.mode == TypeInferenceMode.Both || this.mode == TypeInferenceMode.OtiOnly) {
+    enableTypeCheck();
+    super.test(externs,js,expected,error,warning,description);
+    disableTypeCheck();
+  }
+  if (this.mode == TypeInferenceMode.Both || this.mode == TypeInferenceMode.NtiOnly) {
+    enableNewTypeInference();
+    super.test(externs,js,expected,error,warning,description);
+    disableNewTypeInference();
+  }
 }
