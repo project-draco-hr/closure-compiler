@@ -1,0 +1,15 @@
+{
+  Preconditions.checkArgument(declaration.isName());
+  JSDocInfo nameJsdoc=getBestJSDocInfo(declaration);
+  if (nameJsdoc != null) {
+    return nameJsdoc.getType();
+  }
+  Node parent=declaration.getParent();
+  if (parent.isParamList()) {
+    JSDocInfo functionJsdoc=getBestJSDocInfo(parent.getParent());
+    if (functionJsdoc != null) {
+      return functionJsdoc.getParameterType(declaration.getString());
+    }
+  }
+  return null;
+}

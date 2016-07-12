@@ -10,7 +10,14 @@ case NULL:
 return getTypeJSDoc(oldJSDoc,"null");
 case VOID:
 return getTypeJSDoc(oldJSDoc,"void");
-default :
-return null;
+case OBJECT:
+break;
+case UNDETERMINED:
+if (rhs.isName()) {
+Var decl=t.getScope().getVar(rhs.getString());
+return getJSDocForName(decl,oldJSDoc);
 }
+break;
+}
+return null;
 }
