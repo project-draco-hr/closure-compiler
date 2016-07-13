@@ -1,0 +1,16 @@
+{
+  Node jsdocNode=NodeUtil.getBestJSDocInfoNode(nameNode);
+  JSDocInfo jsdoc=jsdocNode.getJSDocInfo();
+  if (!isInferrableConst(jsdoc,nameNode)) {
+    return;
+  }
+  Node rhs=NodeUtil.getRValueOfLValue(nameNode);
+  if (rhs == null) {
+    return;
+  }
+  JSDocInfo newJsdoc=getTypedJSDoc(rhs,jsdoc);
+  if (newJsdoc != null) {
+    jsdocNode.setJSDocInfo(newJsdoc);
+    compiler.reportCodeChange();
+  }
+}
