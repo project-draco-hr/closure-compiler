@@ -1,0 +1,14 @@
+{
+  Random random=new Random(0);
+  Set<String> reservedNames=ImmutableSet.of();
+  String prefix="prefix";
+  RandomNameGenerator ng=new RandomNameGenerator(reservedNames,prefix,null,random);
+  int len1=RandomNameGenerator.FIRST_CHAR.length;
+  int len2=RandomNameGenerator.NONFIRST_CHAR.length;
+  int count=len1 * (1 + len2);
+  String[] result=generate(ng,count);
+  for (int i=0; i < count; ++i) {
+    assertThat(result[i]).startsWith(prefix);
+    assertThat(result[i].length()).isGreaterThan(prefix.length());
+  }
+}

@@ -1,0 +1,17 @@
+{
+  Random random=new Random(0);
+  Set<String> reservedNames=ImmutableSet.of();
+  RandomNameGenerator ng=new RandomNameGenerator(reservedNames,"",null,random);
+  int len1=RandomNameGenerator.FIRST_CHAR.length;
+  int len2=RandomNameGenerator.NONFIRST_CHAR.length;
+  int count=len1 * (1 + len2);
+  String[] result=generate(ng,count);
+  Set<String> resultSet=Sets.newHashSet(result);
+  assertThat(resultSet).hasSize(count);
+  for (int i=0; i < len1; ++i) {
+    assertThat(result[i].length()).isEqualTo(1);
+  }
+  for (int i=len1; i < count; ++i) {
+    assertThat(result[i].length()).isAtLeast(2);
+  }
+}

@@ -1,0 +1,17 @@
+{
+  Random random=new Random(0);
+  try {
+    new RandomNameGenerator(Collections.<String>emptySet(),"123abc",null,random);
+    fail("Constructor should throw exception when the first char of prefix " + "is invalid");
+  }
+ catch (  IllegalArgumentException ex) {
+    assertThat(ex.getMessage()).contains("W, X, Y, Z, $");
+  }
+  try {
+    new RandomNameGenerator(Collections.<String>emptySet(),"abc%",null,random);
+    fail("Constructor should throw exception when one of prefix characters " + "is invalid");
+  }
+ catch (  IllegalArgumentException ex) {
+    assertThat(ex.getMessage()).contains("W, X, Y, Z, _, 0, 1");
+  }
+}

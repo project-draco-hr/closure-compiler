@@ -1,0 +1,19 @@
+{
+  String name="";
+  int length=getNameLength(position,nameIdx);
+  Hasher hasher=Hashing.murmur3_128().newHasher();
+  hasher.putInt(length);
+  nameIdx++;
+  do {
+    nameIdx--;
+    List<Character> alphabet=getAlphabet(position,hasher);
+    int alphabetSize=alphabet.size();
+    Character character=alphabet.get(nameIdx % alphabetSize);
+    name+=character;
+    hasher.putChar(character);
+    nameIdx/=alphabetSize;
+    position++;
+  }
+ while (nameIdx > 0);
+  return name;
+}

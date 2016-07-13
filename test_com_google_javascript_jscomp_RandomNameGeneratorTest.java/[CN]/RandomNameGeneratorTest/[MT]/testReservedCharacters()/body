@@ -1,0 +1,16 @@
+{
+  Random random=new Random(0);
+  Set<String> reservedNames=ImmutableSet.of();
+  RandomNameGenerator ng=new RandomNameGenerator(reservedNames,"",new char[]{'a','b'},random);
+  int count=RandomNameGenerator.FIRST_CHAR.length * (RandomNameGenerator.NONFIRST_CHAR.length + 1);
+  Set<String> result=Sets.newHashSet(generate(ng,count));
+  assertThat(result).doesNotContain("a");
+  assertThat(result).doesNotContain("b");
+  assertThat(result).contains("x");
+  assertThat(result).doesNotContain("ax");
+  assertThat(result).doesNotContain("bx");
+  assertThat(result).doesNotContain("xa");
+  assertThat(result).doesNotContain("xb");
+  assertThat(result).contains("xx");
+  assertThat(result).hasSize(count);
+}
