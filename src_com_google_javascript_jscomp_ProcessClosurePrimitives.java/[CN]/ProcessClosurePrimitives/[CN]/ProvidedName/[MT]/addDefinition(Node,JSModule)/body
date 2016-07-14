@@ -1,8 +1,11 @@
 {
   Preconditions.checkArgument(node.isExprResult() || node.isFunction() || NodeUtil.isNameDeclaration(node));
   Preconditions.checkArgument(explicitNode != node);
-  if ((candidateDefinition == null) || !node.isExprResult()) {
-    candidateDefinition=node;
-    updateMinimumModule(module);
+  if (candidateDefinition != null) {
+    Node errorNode=node.isExprResult() ? node.getFirstChild() : node;
+    compiler.report(JSError.make(errorNode,DUPLICATE_DEFINITION_ERROR,namespace,candidateDefinition.toString()));
+    return;
   }
+  candidateDefinition=node;
+  updateMinimumModule(module);
 }
