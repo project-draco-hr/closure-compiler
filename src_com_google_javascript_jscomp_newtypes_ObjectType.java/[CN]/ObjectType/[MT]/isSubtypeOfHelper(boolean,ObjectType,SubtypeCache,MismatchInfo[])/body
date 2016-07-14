@@ -5,19 +5,27 @@
   if ((keepLoosenessOfThis && this.isLoose) || other.isLoose) {
     return this.isLooseSubtypeOf(other,subSuperMap);
   }
-  NominalType thisNt=this.nominalType;
-  NominalType otherNt=other.nominalType;
+  NominalType thisNt=getNominalType();
+  NominalType otherNt=other.getNominalType();
   boolean checkOnlyLocalProps=true;
-  if (otherNt != null && otherNt.isStructuralInterface()) {
+  if (otherNt.isStructuralInterface()) {
     if (otherNt.equals(subSuperMap.get(thisNt))) {
       return true;
     }
     subSuperMap=subSuperMap.with(thisNt,otherNt);
-    if (thisNt == null || !thisNt.isNominalSubtypeOf(otherNt)) {
+    if (!thisNt.isNominalSubtypeOf(otherNt)) {
       checkOnlyLocalProps=false;
     }
+    if (otherNt.isIObject()) {
+      if (thisNt.inheritsFromIObjectReflexive() && !thisNt.isNominalSubtypeOf(otherNt)) {
+        return false;
+      }
+      if (thisNt.isBuiltinObject()) {
+        return compareRecordTypeToIObject(otherNt,subSuperMap);
+      }
+    }
   }
- else   if (otherNt != null && !otherNt.isStructuralInterface() && (thisNt == null || !thisNt.isNominalSubtypeOf(otherNt))) {
+ else   if (!thisNt.isNominalSubtypeOf(otherNt)) {
     return false;
   }
   Set<String> otherPropNames;

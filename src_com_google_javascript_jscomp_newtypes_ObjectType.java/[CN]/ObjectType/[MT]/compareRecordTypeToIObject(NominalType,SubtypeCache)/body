@@ -1,0 +1,18 @@
+{
+  JSType keyType=otherNt.getIndexType();
+  JSType valueType=otherNt.getIndexedType();
+  for (  Map.Entry<String,Property> entry : this.props.entrySet()) {
+    String pname=entry.getKey();
+    JSType ptype=entry.getValue().getType();
+    if (keyType.isNumber() && Ints.tryParse(pname) == null) {
+      return false;
+    }
+    if (!keyType.isNumber() && !keyType.isString()) {
+      return false;
+    }
+    if (!ptype.isSubtypeOf(valueType,subSuperMap)) {
+      return false;
+    }
+  }
+  return true;
+}

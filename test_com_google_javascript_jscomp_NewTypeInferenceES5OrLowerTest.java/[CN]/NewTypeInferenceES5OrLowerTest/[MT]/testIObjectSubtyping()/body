@@ -4,4 +4,11 @@
   typeCheck(LINE_JOINER.join("/**"," * @param {!IObject<number, number>} x"," * @param {!IObject<string, number>} y"," */","function f(x, y) {","  x = y;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("/**"," * @param {!IObject<number, number>} x"," * @param {!IObject<(number|string), number>} y"," */","function f(x, y) {","  x = y;","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck(LINE_JOINER.join("/**"," * @param {!IObject<number, (number|string)>} x"," * @param {!IObject<number, number>} y"," */","function f(x, y) {","  x = y;","}"));
+  typeCheck(LINE_JOINER.join("/**"," * @param {!IObject<number, number>} x"," * @param {{ '1': number, '2': number }} y"," */","function f(x, y) {","  x = y;","}"));
+  typeCheck(LINE_JOINER.join("/** @type {!IObject<string, number>} */","var x = { 'a': 123, 'b': 234 };"));
+  typeCheck(LINE_JOINER.join("/** @type {!IObject<string, number>} */","var x = { 'a': 123, 'b': true };"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @type {!IObject<string, number>} */","var x = { a: 123, b: true };"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @type {!IObject<number, number>} */","var x = { '1': 1, 'b': 2 };"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/** @type {!IObject<!Function, string>} */","var x = { 'a': 'asdf' };"),NewTypeInference.MISTYPED_ASSIGN_RHS);
+  typeCheck(LINE_JOINER.join("/**"," * @record"," * @extends {IObject<string, string>}"," */","function Foo() {}","/** @type {number} */","Foo.prototype.prop;","/** @param {!Foo} x */","function f(x) {}","f({ prop: 123, 'a': 'asdf', 'b': 'asdf' });"));
 }
