@@ -1,0 +1,16 @@
+{
+  Preconditions.checkArgument(destructuringLhs.isDestructuringLhs());
+  Node objectPattern=destructuringLhs.getFirstChild();
+  if (!objectPattern.isObjectPattern()) {
+    return false;
+  }
+  for (  Node stringKey : objectPattern.children()) {
+    if (!stringKey.isStringKey()) {
+      return false;
+    }
+    if (stringKey.hasChildren() && !stringKey.getFirstChild().isName()) {
+      return false;
+    }
+  }
+  return true;
+}
