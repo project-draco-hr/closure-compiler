@@ -1,26 +1,20 @@
 {
-  String name=null;
-  if (n.isName() && NodeUtil.isNameDeclaration(parent)) {
-    name=n.getString();
-  }
- else   if (n.isAssign() && parent.isExprResult()) {
-    name=n.getFirstChild().getQualifiedName();
-  }
-  if (name != null) {
-    if (parent.getBooleanProp(Node.IS_NAMESPACE)) {
-      processProvideFromPreviousPass(t,name,parent);
+  if (t.inGlobalHoistScope()) {
+    String name=null;
+    if (n.isName() && NodeUtil.isNameDeclaration(parent)) {
+      name=n.getString();
     }
+ else     if (n.isAssign() && parent.isExprResult()) {
+      name=n.getFirstChild().getQualifiedName();
+    }
+    if (name != null) {
+      if (parent.getBooleanProp(Node.IS_NAMESPACE)) {
+        processProvideFromPreviousPass(t,name,parent);
+      }
  else {
-      ProvidedName pn=providedNames.get(name);
-      if (pn != null) {
-        if (t.inGlobalHoistScope()) {
+        ProvidedName pn=providedNames.get(name);
+        if (pn != null) {
           pn.addDefinition(parent,t.getModule());
-        }
- else {
-          Var var=t.getScope().getVar(name);
-          if (var == null || var.isGlobal()) {
-            compiler.report(JSError.make(n,DEFINITION_NOT_IN_GLOBAL_SCOPE,name));
-          }
         }
       }
     }
