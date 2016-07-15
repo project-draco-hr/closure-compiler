@@ -21,4 +21,5 @@
   typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @template T"," * @param {T} x"," */","function Foo(x) {}","/**"," * @template T"," * @this {Foo<T>}"," * @param {T} x"," */","function poly(x) {}","function f(x) {","  poly.bind(new Foo('asdf'), x);","}","f(123);"));
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {string} */","  this.p = 'asdf';","}","(function() { this.p - 5; }).bind(new Foo);"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.p = 123;","}","(function(x) { this.p - x; }).bind(new Foo, 321);"));
+  typeCheck("(function() {}).bind();",NewTypeInference.WRONG_ARGUMENT_COUNT);
 }

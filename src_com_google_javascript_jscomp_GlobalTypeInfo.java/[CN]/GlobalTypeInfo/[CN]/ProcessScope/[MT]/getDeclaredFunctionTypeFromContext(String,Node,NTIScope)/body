@@ -4,7 +4,7 @@
   if (NodeUtil.isFunctionBind(maybeBind) && !NodeUtil.isGoogPartial(maybeBind)) {
     Node call=maybeBind.getParent();
     Bind bindComponents=convention.describeFunctionBind(call,true,false);
-    JSType recvType=simpleInferExprType(bindComponents.thisValue);
+    JSType recvType=bindComponents.thisValue == null ? null : simpleInferExprType(bindComponents.thisValue);
     if (recvType == null) {
       return null;
     }
