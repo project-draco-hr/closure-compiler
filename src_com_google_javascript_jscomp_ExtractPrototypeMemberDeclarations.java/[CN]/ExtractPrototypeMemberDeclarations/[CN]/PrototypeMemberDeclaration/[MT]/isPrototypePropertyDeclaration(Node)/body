@@ -1,0 +1,16 @@
+{
+  if (!NodeUtil.isExprAssign(n)) {
+    return false;
+  }
+  Node lvalue=n.getFirstFirstChild();
+  if (lvalue.isGetProp()) {
+    Node cur=lvalue.getFirstChild();
+    while (cur.isGetProp()) {
+      if (cur.getLastChild().getString().equals("prototype")) {
+        return true;
+      }
+      cur=cur.getFirstChild();
+    }
+  }
+  return false;
+}

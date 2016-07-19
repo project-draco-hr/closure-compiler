@@ -1,12 +1,13 @@
 {
-  Node cur=qName;
-  while (cur.isGetProp()) {
-    if (cur.getLastChild().getString().equals("prototype")) {
-      return cur.getFirstChild();
-    }
- else {
-      cur=cur.getFirstChild();
-    }
+  if (!qName.isGetProp()) {
+    return null;
+  }
+  if (qName.getLastChild().getString().equals("prototype")) {
+    return qName.getFirstChild();
+  }
+  Node recv=qName.getFirstChild();
+  if (recv.isGetProp() && recv.getLastChild().getString().equals("prototype")) {
+    return recv.getFirstChild();
   }
   return null;
 }
