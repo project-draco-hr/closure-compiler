@@ -1,16 +1,7 @@
 {
-  DefinitionProvider definitionProvider=null;
-  if (useNameReferenceGraph) {
-    NameReferenceGraphConstruction graphBuilder=new NameReferenceGraphConstruction(compiler);
-    graphBuilder.process(externs,root);
-    definitionProvider=graphBuilder.getNameReferenceGraph();
-  }
- else {
-    SimpleDefinitionFinder defFinder=new SimpleDefinitionFinder(compiler);
-    defFinder.process(externs,root);
-    definitionProvider=defFinder;
-  }
-  PureFunctionIdentifier pureFunctionIdentifier=new PureFunctionIdentifier(compiler,definitionProvider);
+  SimpleDefinitionFinder defFinder=new SimpleDefinitionFinder(compiler);
+  defFinder.process(externs,root);
+  PureFunctionIdentifier pureFunctionIdentifier=new PureFunctionIdentifier(compiler,defFinder);
   pureFunctionIdentifier.process(externs,root);
   if (reportPath != null) {
     try {
