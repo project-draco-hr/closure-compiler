@@ -2,6 +2,12 @@
   if (!n.isGetProp()) {
     return false;
   }
-  Node recv=n.getFirstChild();
-  return recv.isGetProp() && recv.getLastChild().getString().equals("prototype");
+  n=n.getFirstChild();
+  while (n.isGetProp()) {
+    if (n.getLastChild().getString().equals("prototype")) {
+      return n.isQualifiedName();
+    }
+    n=n.getFirstChild();
+  }
+  return false;
 }
