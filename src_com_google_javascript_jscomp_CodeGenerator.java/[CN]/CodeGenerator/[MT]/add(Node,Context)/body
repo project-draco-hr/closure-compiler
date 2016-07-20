@@ -21,8 +21,8 @@
     if (n.isAssign() && needsParens) {
       add("(");
     }
-    if (NodeUtil.isAssignmentOp(n) && NodeUtil.isAssignmentOp(last)) {
-      addExpr(first,p,context);
+    if (NodeUtil.isAssignmentOp(n) || type == Token.EXPONENT) {
+      addExpr(first,p + 1,context);
       cc.addOp(opstr,true);
       addExpr(last,p,rhsContext);
     }
@@ -376,6 +376,8 @@ add("set ");
 break;
 case MEMBER_FUNCTION_DEF:
 case MEMBER_VARIABLE_DEF:
+break;
+default :
 break;
 }
 String name=n.getString();

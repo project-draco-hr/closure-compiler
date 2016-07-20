@@ -16,6 +16,9 @@
       reportError("invalid assignment target");
     }
     Token operator=nextToken();
+    if (TokenType.STAR_STAR_EQUAL.equals(operator.type)) {
+      features=features.require(Feature.EXPONENT_OP);
+    }
     ParseTree right=parseAssignment(expressionIn);
     return new BinaryOperatorTree(getTreeLocation(start),left,operator,right);
   }

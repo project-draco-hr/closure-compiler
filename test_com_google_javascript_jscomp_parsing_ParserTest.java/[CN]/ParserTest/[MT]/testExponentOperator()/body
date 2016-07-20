@@ -1,0 +1,12 @@
+{
+  mode=LanguageMode.ECMASCRIPT7;
+  expectFeatures(Feature.EXPONENT_OP);
+  parse("x**y");
+  parse("-(x**y)");
+  parse("(-x)**y");
+  parseError("-x**y","Unary operator '-' requires parentheses before '**'");
+  parse("x**-y");
+  mode=LanguageMode.ECMASCRIPT6;
+  expectFeatures(Feature.EXPONENT_OP);
+  parseWarning("x**y",requiresLanguageModeMessage(LanguageMode.ECMASCRIPT7,Feature.EXPONENT_OP));
+}

@@ -1,0 +1,16 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  ParseTree left=parseUnaryExpression();
+  if (peek(TokenType.STAR_STAR)) {
+    if (left.type == ParseTreeType.UNARY_EXPRESSION) {
+      reportError("Unary operator '%s' requires parentheses before '**'",left.asUnaryExpression().operator);
+    }
+    features=features.require(Feature.EXPONENT_OP);
+    Token operator=nextToken();
+    ParseTree right=parseExponentiationExpression();
+    return new BinaryOperatorTree(getTreeLocation(start),left,operator,right);
+  }
+ else {
+    return left;
+  }
+}
