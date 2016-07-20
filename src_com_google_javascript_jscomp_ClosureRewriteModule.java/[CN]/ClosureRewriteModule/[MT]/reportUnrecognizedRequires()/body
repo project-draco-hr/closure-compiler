@@ -2,19 +2,16 @@
   for (  UnrecognizedRequire unrecognizedRequire : unrecognizedRequires) {
     String legacyNamespace=unrecognizedRequire.legacyNamespace;
     Node requireNode=unrecognizedRequire.requireNode;
-    boolean targetMustBeGoogModule=unrecognizedRequire.mustBeGoogModule;
     boolean targetGoogModuleExists=rewriteState.containsModule(legacyNamespace);
     boolean targetLegacyScriptExists=rewriteState.legacyScriptNamespaces.contains(legacyNamespace);
-    if (targetMustBeGoogModule && !targetGoogModuleExists) {
-      compiler.report(JSError.make(requireNode,MISSING_MODULE.level,MISSING_MODULE,legacyNamespace));
-      continue;
-    }
-    if (!targetMustBeGoogModule && !targetGoogModuleExists && !targetLegacyScriptExists) {
+    if (!targetGoogModuleExists && !targetLegacyScriptExists) {
       compiler.report(JSError.make(requireNode,MISSING_MODULE_OR_PROVIDE.level,MISSING_MODULE_OR_PROVIDE,legacyNamespace));
       NodeUtil.getEnclosingStatement(requireNode).detachFromParent();
       continue;
     }
-    compiler.report(JSError.make(requireNode,LATE_PROVIDE_ERROR.level,LATE_PROVIDE_ERROR,legacyNamespace));
+    if (unrecognizedRequire.mustBeOrdered) {
+      compiler.report(JSError.make(requireNode,LATE_PROVIDE_ERROR.level,LATE_PROVIDE_ERROR,legacyNamespace));
+    }
   }
   unrecognizedRequires.clear();
 }

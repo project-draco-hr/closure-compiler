@@ -1,5 +1,5 @@
 {
-  testError(LINE_JOINER.join("goog.module('a');","x = goog.module.get('g');"),INVALID_GET_ALIAS);
-  testError(LINE_JOINER.join("goog.module('a');","var x;","x = goog.module.get('g');"),INVALID_GET_ALIAS);
-  testError(LINE_JOINER.join("goog.module('a');","var x = goog.forwardDeclare('z');","x = goog.module.get('g');"),INVALID_GET_ALIAS);
+  testError(new String[]{"goog.provide('g');",LINE_JOINER.join("goog.module('a');","x = goog.module.get('g');")},INVALID_GET_ALIAS);
+  testError(new String[]{"goog.provide('g');",LINE_JOINER.join("goog.module('a');","var x;","x = goog.module.get('g');")},INVALID_GET_ALIAS);
+  testError(new String[]{"goog.provide('g'); goog.provide('z');",LINE_JOINER.join("goog.module('a');","var x = goog.forwardDeclare('z');","x = goog.module.get('g');")},INVALID_GET_ALIAS);
 }
