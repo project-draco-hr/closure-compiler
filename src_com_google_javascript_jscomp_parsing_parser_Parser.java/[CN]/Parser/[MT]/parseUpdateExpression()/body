@@ -1,0 +1,18 @@
+{
+  SourcePosition start=getTreeStartLocation();
+  if (peekUpdateOperator()) {
+    Token operator=nextToken();
+    ParseTree operand=parseUnaryExpression();
+    return UpdateExpressionTree.prefix(getTreeLocation(start),operator,operand);
+  }
+ else {
+    ParseTree lhs=parseLeftHandSideExpression();
+    if (peekUpdateOperator() && !peekImplicitSemiColon()) {
+      Token operator=nextToken();
+      return UpdateExpressionTree.postfix(getTreeLocation(start),operator,lhs);
+    }
+ else {
+      return lhs;
+    }
+  }
+}
