@@ -72,13 +72,13 @@
   if (options.processObjectPropertyString && !options.skipNonTranspilationPasses) {
     checks.add(objectPropertyStringPreprocess);
   }
+  if (options.dartPass && !options.getLanguageOut().isEs6OrHigher()) {
+    checks.add(dartSuperAccessorsPass);
+  }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     checks.add(es6ExternsCheck);
     checks.add(es6SuperCheck);
     TranspilationPasses.addEs6EarlyPasses(checks);
-  }
-  if (options.dartPass && !options.getLanguageOut().isEs6OrHigher()) {
-    checks.add(dartSuperAccessorsPass);
   }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     TranspilationPasses.addEs6LatePasses(checks);
