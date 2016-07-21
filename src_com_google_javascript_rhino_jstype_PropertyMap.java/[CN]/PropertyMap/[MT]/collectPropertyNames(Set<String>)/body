@@ -1,4 +1,12 @@
 {
-  Set<PropertyMap> identitySet=Sets.newIdentityHashSet();
-  collectPropertyNamesHelper(props,identitySet);
+  props.addAll(properties.keySet());
+  PropertyMap primaryParent=getPrimaryParent();
+  if (primaryParent != null) {
+    primaryParent.collectPropertyNames(props);
+  }
+  for (  PropertyMap p : getSecondaryParents()) {
+    if (p != null) {
+      p.collectPropertyNames(props);
+    }
+  }
 }
