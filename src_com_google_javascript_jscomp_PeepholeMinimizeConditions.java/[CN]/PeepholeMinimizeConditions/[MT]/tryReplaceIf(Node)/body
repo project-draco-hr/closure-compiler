@@ -1,5 +1,7 @@
 {
-  for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
+  Node next=null;
+  for (Node child=n.getFirstChild(); child != null; child=next) {
+    next=child.getNext();
     if (child.isIf()) {
       Node cond=child.getFirstChild();
       Node thenBranch=cond.getNext();
@@ -42,6 +44,7 @@
         n.replaceChild(child,returnNode);
         n.removeChild(nextNode);
         reportCodeChange();
+        break;
       }
  else       if (elseBranch != null && statementMustExitParent(thenBranch)) {
         child.removeChild(elseBranch);
