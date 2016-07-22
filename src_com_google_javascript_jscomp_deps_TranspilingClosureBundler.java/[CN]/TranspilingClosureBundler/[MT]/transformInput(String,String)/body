@@ -2,7 +2,7 @@
   try {
     long hashCode=HASH_FUNCTION.hashString(js,StandardCharsets.UTF_8).asLong();
     return cachedTranspilations.get(hashCode,new Callable<String>(){
-      @Override public String call(){
+      @Override public String call() throws IOException, UnsupportedEncodingException {
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
         Compiler compiler=new Compiler(new PrintStream(baos));
         compiler.disableThreads();
@@ -19,7 +19,10 @@
           }
           throw new IllegalStateException(message);
         }
-        return compiler.toSource();
+        StringBuilder source=new StringBuilder().append(compiler.toSource());
+        StringBuilder sourceMap=new StringBuilder();
+        compiler.getSourceMap().appendTo(sourceMap,path);
+        return source.append("\n//# sourceMappingURL=data:,").append(URLEncoder.encode(sourceMap.toString(),"UTF-8").replace("+","%20")).append("\n").toString();
       }
     }
 );
