@@ -1,7 +1,13 @@
 {
   Node curParam=firstParam;
+  Set<String> keys=new HashSet<>();
   while (curParam != null) {
     if (!curParam.isString() && !curParam.isNumber()) {
+      return false;
+    }
+    String key=curParam.isString() ? curParam.getString() : numberToString(curParam.getDouble());
+    if (!keys.add(key)) {
+      compiler.report(JSError.make(firstParam.getPrevious(),DUPLICATE_SET_MEMBER,key));
       return false;
     }
     curParam=curParam.getNext();
