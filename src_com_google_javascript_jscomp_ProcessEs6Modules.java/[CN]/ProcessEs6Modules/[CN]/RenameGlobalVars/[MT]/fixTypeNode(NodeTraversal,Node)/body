@@ -1,7 +1,7 @@
 {
   if (typeNode.isString()) {
     String name=typeNode.getString();
-    if (ES6ModuleLoader.isRelativeIdentifier(name) || ES6ModuleLoader.isAbsoluteIdentifier(name)) {
+    if (ModuleLoader.isRelativeIdentifier(name) || ModuleLoader.isAbsoluteIdentifier(name)) {
       int lastSlash=name.lastIndexOf('/');
       int endIndex=name.indexOf('.',lastSlash);
       String localTypeName=null;
@@ -12,8 +12,7 @@
         localTypeName=name.substring(endIndex);
       }
       String moduleName=name.substring(0,endIndex);
-      URI loadAddress=checkNotNull(loader.locateEs6Module(moduleName,t.getInput()));
-      String globalModuleName=ES6ModuleLoader.toModuleName(loadAddress);
+      String globalModuleName=t.getInput().getUri().resolveEs6Module(moduleName).toModuleName();
       typeNode.setString(localTypeName == null ? globalModuleName : globalModuleName + localTypeName);
     }
  else {

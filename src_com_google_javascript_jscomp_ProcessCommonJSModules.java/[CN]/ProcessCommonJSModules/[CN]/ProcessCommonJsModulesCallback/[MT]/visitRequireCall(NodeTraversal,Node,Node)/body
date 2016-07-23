@@ -1,11 +1,11 @@
 {
   String requireName=require.getSecondChild().getString();
-  URI loadAddress=loader.locateCommonJsModule(requireName,t.getInput());
-  if (loadAddress == null) {
+  ModuleUri moduleUri=t.getInput().getUri().resolveCommonJsModule(requireName);
+  if (moduleUri == null) {
     compiler.report(t.makeError(require,LOAD_ERROR,requireName));
     return;
   }
-  String moduleName=ES6ModuleLoader.toModuleName(loadAddress);
+  String moduleName=moduleUri.toModuleName();
   Node script=getCurrentScriptNode(parent);
   if (!NodeUtil.isExpressionResultUsed(require) && parent.isExprResult() && NodeUtil.isStatementBlock(parent.getParent())) {
     parent.getParent().removeChild(parent);

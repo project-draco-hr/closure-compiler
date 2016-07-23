@@ -1,6 +1,7 @@
 {
   Preconditions.checkArgument(scriptNodeCount == 1,"ProcessCommonJSModules supports only one invocation per " + "CompilerInput / script node");
-  String moduleName=inputToModuleName(t.getInput());
+  String moduleName=t.getInput().getUri().toModuleName();
+  ;
   boolean hasExports=!(moduleExportRefs.isEmpty() && exportRefs.isEmpty());
   NodeTraversal.traverseEs6(compiler,script,new SuffixVarsCallback(moduleName,hasExports));
   if (!hasExports) {

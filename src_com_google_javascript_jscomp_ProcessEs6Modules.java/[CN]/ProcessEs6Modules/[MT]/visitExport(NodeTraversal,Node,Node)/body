@@ -29,8 +29,7 @@
     importNode.copyInformationFrom(export);
     parent.addChildBefore(importNode,export);
     visit(t,importNode,parent);
-    URI loadAddress=checkNotNull(loader.locateEs6Module(moduleIdentifier.getString(),t.getInput()));
-    String moduleName=ES6ModuleLoader.toModuleName(loadAddress);
+    String moduleName=t.getInput().getUri().resolveEs6Module(moduleIdentifier.getString()).toModuleName();
     for (    Node exportSpec : export.getFirstChild().children()) {
       String nameFromOtherModule=exportSpec.getFirstChild().getString();
       String exportedName=exportSpec.getLastChild().getString();

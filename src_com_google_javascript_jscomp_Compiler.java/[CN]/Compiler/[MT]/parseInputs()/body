@@ -16,13 +16,14 @@
       }
       externsRoot.addChildToBack(n);
     }
-    if (options.lowerFromEs6()) {
-      processEs6Modules();
-    }
-    if (options.transformAMDToCJSModules || options.processCommonJSModules) {
-      processAMDAndCommonJSModules();
-    }
     if (options.lowerFromEs6() || options.transformAMDToCJSModules || options.processCommonJSModules) {
+      this.moduleLoader=new ModuleLoader(this,options.moduleRoots,inputs);
+      if (options.lowerFromEs6()) {
+        processEs6Modules();
+      }
+      if (options.transformAMDToCJSModules || options.processCommonJSModules) {
+        processAMDAndCommonJSModules();
+      }
       Map<String,CompilerInput> inputModuleIdentifiers=new HashMap<>();
       for (      CompilerInput input : inputs) {
         if (input.getKnownProvides().isEmpty()) {
@@ -41,6 +42,9 @@
       if (!inputsToRewrite.isEmpty()) {
         processEs6Modules(new ArrayList<>(inputsToRewrite.values()),true);
       }
+    }
+ else {
+      this.moduleLoader=ModuleLoader.EMPTY;
     }
     orderInputs();
     if (hasErrors()) {
