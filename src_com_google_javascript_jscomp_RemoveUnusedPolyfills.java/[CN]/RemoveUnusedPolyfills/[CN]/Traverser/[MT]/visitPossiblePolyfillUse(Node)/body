@@ -1,0 +1,33 @@
+{
+  if (node.isQualifiedName()) {
+    String qname=node.getQualifiedName();
+    qname=qname.replaceAll("^(goog\\.global\\.|window\\.)","");
+    staticPolyfills.removeAll(qname);
+    methodPolyfills.removeAll(PrototypeMethod.split(qname));
+  }
+  if (node.isGetProp()) {
+    String methodName=node.getLastChild().getString();
+    Node target=node.getFirstChild();
+    Set<PrototypeMethod> methods=methodsByName.get(methodName);
+    if (methods.isEmpty()) {
+      return;
+    }
+    JSType targetType=target.getJSType();
+    if (targetType == null) {
+      methodPolyfills.keySet().removeAll(methods);
+      return;
+    }
+    targetType=targetType.restrictByNotNullOrUndefined();
+    TypeIRegistry registry=compiler.getTypeIRegistry();
+    if (targetType.isUnknownType() || targetType.isEmptyType() || targetType.isAllType()|| targetType.isEquivalentTo(registry.getNativeType(JSTypeNative.OBJECT_TYPE))) {
+      methodPolyfills.keySet().removeAll(methods);
+    }
+    for (    PrototypeMethod method : ImmutableList.copyOf(methods)) {
+      checkType(targetType,registry,method,method.type);
+      String primitiveType=PRIMITIVE_WRAPPERS.get(method.type);
+      if (primitiveType != null) {
+        checkType(targetType,registry,method,primitiveType);
+      }
+    }
+  }
+}
