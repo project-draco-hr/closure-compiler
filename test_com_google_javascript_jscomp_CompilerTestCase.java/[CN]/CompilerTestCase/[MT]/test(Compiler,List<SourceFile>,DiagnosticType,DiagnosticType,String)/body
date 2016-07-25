@@ -5,15 +5,15 @@
   Node root=compiler.parseInputs();
   String errorMsg=LINE_JOINER.join(compiler.getErrors());
   if (root == null && expected == null && error != null) {
-    assert_().withFailureMessage("Expected one parse error, but got " + errorMsg).that(compiler.getErrorCount()).isEqualTo(1);
+    assertWithMessage("Expected one parse error, but got " + errorMsg).that(compiler.getErrorCount()).isEqualTo(1);
     JSError actualError=compiler.getErrors()[0];
-    assert_().withFailureMessage("Unexpected parse error(s): " + errorMsg).that(actualError.getType()).isEqualTo(error);
+    assertWithMessage("Unexpected parse error(s): " + errorMsg).that(actualError.getType()).isEqualTo(error);
     if (description != null) {
       assertThat(actualError.description).isEqualTo(description);
     }
     return;
   }
-  assert_().withFailureMessage("Unexpected parse error(s): " + errorMsg).that(root).isNotNull();
+  assertWithMessage("Unexpected parse error(s): " + errorMsg).that(root).isNotNull();
   if (!expectParseWarningsThisTest) {
     assertEquals("Unexpected parse warning(s): " + LINE_JOINER.join(compiler.getWarnings()),0,compiler.getWarnings().length);
   }
@@ -204,12 +204,12 @@
     if (description != null) {
       assertThat(actualError.description).isEqualTo(description);
     }
-    assert_().withFailureMessage("Some placeholders in the error message were not replaced").that(actualError.description).doesNotContainMatch("\\{\\d\\}");
+    assertWithMessage("Some placeholders in the error message were not replaced").that(actualError.description).doesNotContainMatch("\\{\\d\\}");
     if (warning != null) {
       String warnings="";
       for (      JSError actualWarning : compiler.getWarnings()) {
         warnings+=actualWarning.description + "\n";
-        assert_().withFailureMessage("Some placeholders in the warning message were not replaced").that(actualWarning.description).doesNotContainMatch("\\{\\d\\}");
+        assertWithMessage("Some placeholders in the warning message were not replaced").that(actualWarning.description).doesNotContainMatch("\\{\\d\\}");
       }
       assertEquals("There should be one warning. " + warnings,1,compiler.getWarningCount());
       assertEquals(warnings,warning,compiler.getWarnings()[0].getType());
