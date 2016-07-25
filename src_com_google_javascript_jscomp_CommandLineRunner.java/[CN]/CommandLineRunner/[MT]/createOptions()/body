@@ -60,7 +60,15 @@
   options.angularPass=flags.angularPass;
   options.polymerPass=flags.polymerPass;
   options.setDartPass(flags.dartPass);
-  options.setJ2clPass(flags.j2clPass);
+  if (!flags.j2clPassMode.isEmpty()) {
+    try {
+      CompilerOptions.J2clPassMode j2clPassMode=CompilerOptions.J2clPassMode.valueOf(flags.j2clPassMode.toUpperCase());
+      options.setJ2clPass(j2clPassMode);
+    }
+ catch (    IllegalArgumentException ex) {
+      throw new FlagUsageException("Unknown J2clPassMode `" + flags.j2clPassMode + "' specified.");
+    }
+  }
   options.renamePrefixNamespace=flags.renamePrefixNamespace;
   options.setPreserveTypeAnnotations(flags.preserveTypeAnnotations);
   options.setPreventLibraryInjection(!flags.injectLibraries);
