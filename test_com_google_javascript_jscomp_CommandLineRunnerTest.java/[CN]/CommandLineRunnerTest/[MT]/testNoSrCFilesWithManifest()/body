@@ -2,12 +2,11 @@
   args.add("--env=CUSTOM");
   args.add("--output_manifest=test.MF");
   CommandLineRunner runner=createCommandLineRunner(new String[0]);
-  String expectedMessage="";
   try {
     runner.doRun();
+    fail("Expected flag usage exception");
   }
  catch (  FlagUsageException e) {
-    expectedMessage=e.getMessage();
+    assertThat(e.getMessage()).isEqualTo("Bad --js flag. Manifest files cannot be generated when the input is from stdin.");
   }
-  assertThat("Bad --js flag. " + "Manifest files cannot be generated when the input is from stdin.").isEqualTo(expectedMessage);
 }
