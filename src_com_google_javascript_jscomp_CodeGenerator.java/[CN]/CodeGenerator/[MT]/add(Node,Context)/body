@@ -561,7 +561,7 @@ add(first);
 break;
 }
 case CALL:
-if (isIndirectEval(first) || n.getBooleanProp(Node.FREE_CALL) && NodeUtil.isGet(first)) {
+if (isIndirectEval(first) || (n.getBooleanProp(Node.FREE_CALL) && NodeUtil.isGet(first))) {
 add("(0,");
 addExpr(first,NodeUtil.precedence(Token.COMMA),Context.OTHER);
 add(")");
@@ -810,7 +810,7 @@ case TEMPLATELIT:
 add("`");
 for (Node c=first; c != null; c=c.getNext()) {
 if (c.isString()) {
-add(strEscape(c.getString(),"'","\"","\\",false,false));
+add(strEscape(c.getString(),"\"","'","\\`","\\",false,false));
 }
  else {
 cc.append("${");

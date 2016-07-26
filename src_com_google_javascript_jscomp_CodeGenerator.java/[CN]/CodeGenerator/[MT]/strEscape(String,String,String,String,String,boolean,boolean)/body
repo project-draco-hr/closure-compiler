@@ -38,6 +38,9 @@ break;
 case '\'':
 sb.append(singlequoteEscape);
 break;
+case '`':
+sb.append(backtickEscape);
+break;
 case '\u2028':
 sb.append("\\u2028");
 break;
@@ -90,7 +93,7 @@ sb.append(c);
 }
 break;
 default :
-if (outputCharsetEncoder != null && outputCharsetEncoder.canEncode(c) || c > 0x1f && c < 0x7f) {
+if ((outputCharsetEncoder != null && outputCharsetEncoder.canEncode(c)) || (c > 0x1f && c < 0x7f)) {
 sb.append(c);
 }
  else {
