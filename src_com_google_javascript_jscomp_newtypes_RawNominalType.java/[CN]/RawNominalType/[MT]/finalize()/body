@@ -12,6 +12,17 @@
       }
     }
   }
+  for (  String pname : this.randomProps.keySet()) {
+    if (this.superclass != null && this.superclass.mayHaveProp(pname)) {
+      this.randomProps=this.randomProps.without(pname);
+      continue;
+    }
+    for (    NominalType interf : this.interfaces) {
+      if (interf.mayHaveProp(pname)) {
+        this.randomProps=this.randomProps.without(pname);
+      }
+    }
+  }
   JSType protoObject=JSType.fromObjectType(ObjectType.makeObjectType(this.superclass,this.protoProps,null,null,false,ObjectKind.UNRESTRICTED));
   addCtorProperty("prototype",null,protoObject,false);
   this.isFinalized=true;
