@@ -1,0 +1,50 @@
+{
+  if (inExterns && node.getJSDocInfo() != null) {
+    for (    Node typeRoot : node.getJSDocInfo().getTypeNodes()) {
+      traversal.traverse(typeRoot);
+    }
+  }
+  Definition def=DefinitionsRemover.getDefinition(node,inExterns);
+  if (def != null) {
+    String name=getSimplifiedName(def.getLValue());
+    if (name != null) {
+      Node rValue=def.getRValue();
+      if ((rValue != null) && !NodeUtil.isImmutableValue(rValue) && !rValue.isFunction()) {
+        Definition unknownDef=new UnknownDefinition(def.getLValue(),inExterns);
+        def=unknownDef;
+      }
+      if (inExterns) {
+        if (node.isQualifiedName()) {
+          for (          Definition prevDef : new ArrayList<>(nameDefinitionMultimap.get(name))) {
+            if (prevDef instanceof ExternalNameOnlyDefinition && !jsdocContainsDeclarations(node)) {
+              if (node.matchesQualifiedName(prevDef.getLValue())) {
+                nameDefinitionMultimap.remove(name,prevDef);
+              }
+            }
+          }
+        }
+      }
+      nameDefinitionMultimap.put(name,def);
+      definitionSiteMap.put(node,new DefinitionSite(node,def,traversal.getModule(),traversal.inGlobalScope(),inExterns));
+    }
+  }
+  if (inExterns && (parent != null) && parent.isExprResult()) {
+    String name=getSimplifiedName(node);
+    if (name != null) {
+      boolean dropStub=false;
+      if (!jsdocContainsDeclarations(node) && node.isQualifiedName()) {
+        for (        Definition prevDef : nameDefinitionMultimap.get(name)) {
+          if (node.matchesQualifiedName(prevDef.getLValue())) {
+            dropStub=true;
+            break;
+          }
+        }
+      }
+      if (!dropStub) {
+        Definition definition=new ExternalNameOnlyDefinition(node);
+        nameDefinitionMultimap.put(name,definition);
+        definitionSiteMap.put(node,new DefinitionSite(node,definition,traversal.getModule(),traversal.inGlobalScope(),inExterns));
+      }
+    }
+  }
+}

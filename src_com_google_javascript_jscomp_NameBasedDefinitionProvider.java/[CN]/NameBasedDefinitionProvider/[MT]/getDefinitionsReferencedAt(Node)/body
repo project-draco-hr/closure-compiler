@@ -1,0 +1,25 @@
+{
+  if (definitionSiteMap.containsKey(useSite)) {
+    return null;
+  }
+  Preconditions.checkState(hasProcessBeenRun,"The process was not run");
+  if (useSite.isGetProp()) {
+    String propName=useSite.getLastChild().getString();
+    if (propName.equals("apply") || propName.equals("call")) {
+      useSite=useSite.getFirstChild();
+    }
+  }
+  String name=getSimplifiedName(useSite);
+  if (name != null) {
+    Collection<Definition> defs=nameDefinitionMultimap.get(name);
+    if (!defs.isEmpty()) {
+      return defs;
+    }
+ else {
+      return null;
+    }
+  }
+ else {
+    return null;
+  }
+}
