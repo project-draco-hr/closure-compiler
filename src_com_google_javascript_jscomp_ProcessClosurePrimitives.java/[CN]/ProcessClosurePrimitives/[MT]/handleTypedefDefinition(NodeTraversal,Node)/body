@@ -5,7 +5,12 @@
     if (name != null) {
       ProvidedName pn=providedNames.get(name);
       if (pn != null) {
+        n.putBooleanProp(Node.WAS_PREVIOUSLY_PROVIDED,true);
         pn.addDefinition(n,t.getModule());
+      }
+ else       if (n.getBooleanProp(Node.WAS_PREVIOUSLY_PROVIDED)) {
+        ProvidedName provided=new ProvidedName(name,n,t.getModule(),true);
+        providedNames.put(name,provided);
       }
     }
   }
