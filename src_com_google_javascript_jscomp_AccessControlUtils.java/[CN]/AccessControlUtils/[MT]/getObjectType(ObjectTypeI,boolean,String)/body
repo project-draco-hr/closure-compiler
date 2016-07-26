@@ -2,5 +2,12 @@
   if (referenceType == null) {
     return null;
   }
-  return referenceType.getLowestSupertypeWithProperty(propertyName,isOverride);
+  ObjectTypeI current=isOverride ? referenceType.getPrototypeObject() : referenceType;
+  for (; current != null; current=current.getPrototypeObject()) {
+    JSDocInfo docInfo=current.getOwnPropertyJSDocInfo(propertyName);
+    if (docInfo != null && docInfo.getVisibility() != Visibility.INHERITED) {
+      return current;
+    }
+  }
+  return null;
 }

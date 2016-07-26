@@ -3,8 +3,11 @@
     Node lValue=parent.getFirstChild();
     if (NodeUtil.isGet(lValue)) {
       TypeI lValueType=lValue.getTypeI();
-      if (lValueType != null && lValueType.isOriginalConstructor()) {
+      if (lValueType != null && (lValueType.isConstructor() || lValueType.isInterface())) {
         return (lValueType.toMaybeFunctionType()).getInstanceType();
+      }
+ else       if (NodeUtil.isPrototypeProperty(lValue)) {
+        return normalizeClassType(NodeUtil.getPrototypeClassName(lValue).getTypeI());
       }
  else {
         return normalizeClassType(lValue.getFirstChild().getTypeI());

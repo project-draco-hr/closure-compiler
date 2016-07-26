@@ -1,3 +1,7 @@
 {
-  testDepProp("/** @constructor */ function Foo() {" + " /** @deprecated GRR */ this.bar = 3;" + "  this.baz = this.bar;"+ "}","Property bar of type Foo has been deprecated: GRR");
+  String js="/** @constructor */ function Foo() {" + " /** @deprecated GRR */ this.bar = 3;" + "  this.baz = this.bar;"+ "}";
+  this.mode=TypeInferenceMode.OtiOnly;
+  testDepProp(js,"Property bar of type Foo has been deprecated: GRR");
+  this.mode=TypeInferenceMode.NtiOnly;
+  testDepProp(js,"Property bar of type Foo{bar:number} has been deprecated: GRR");
 }
