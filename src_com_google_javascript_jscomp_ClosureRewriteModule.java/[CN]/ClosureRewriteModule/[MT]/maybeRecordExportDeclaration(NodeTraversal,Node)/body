@@ -1,0 +1,17 @@
+{
+  if (!currentScript.isModule || currentScript.declareLegacyNamespace || !n.getString().equals("exports")|| !isAssignTarget(n)) {
+    return;
+  }
+  Preconditions.checkState(currentScript.defaultExportName == null);
+  Node defaultExportRhs=n.getNext();
+  if (defaultExportRhs.isName() && !currentScript.declareLegacyNamespace) {
+    String exportedName=defaultExportRhs.getString();
+    Var var=t.getScope().getVar(exportedName);
+    if (var != null && var.getInitialValue() != null && !isCallTo(var.getInitialValue(),"goog.require")) {
+      currentScript.defaultExportName=exportedName;
+      recordNameToInline(exportedName,currentScript.getBinaryNamespace());
+    }
+  }
+  currentScript.willCreateExportsObject=true;
+  return;
+}

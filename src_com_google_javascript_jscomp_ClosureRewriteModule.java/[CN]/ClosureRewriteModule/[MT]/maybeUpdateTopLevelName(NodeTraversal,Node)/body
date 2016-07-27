@@ -13,9 +13,15 @@
       return;
     }
   }
-  boolean nameIsAnAlias=currentScript.importedNamesByAlias.containsKey(name);
+  boolean nameIsExported=name.equals(currentScript.defaultExportName);
+  if (nameIsExported) {
+    safeSetString(nameNode,currentScript.getBinaryNamespace());
+    currentScript.hasCreatedExportObject=true;
+    return;
+  }
+  boolean nameIsAnAlias=currentScript.namesToInlineByAlias.containsKey(name);
   if (nameIsAnAlias && var.getNode() != nameNode) {
-    String namespaceToInline=currentScript.importedNamesByAlias.get(name);
+    String namespaceToInline=currentScript.namesToInlineByAlias.get(name);
     safeSetMaybeQualifiedString(nameNode,namespaceToInline);
     if (namespaceToInline.indexOf('.') != -1) {
       String firstQualifiedName=namespaceToInline.substring(0,namespaceToInline.indexOf('.'));

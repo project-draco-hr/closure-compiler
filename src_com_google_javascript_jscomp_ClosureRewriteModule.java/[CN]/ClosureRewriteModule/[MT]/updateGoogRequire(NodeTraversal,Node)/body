@@ -15,14 +15,14 @@
     }
  else     if (lhs.isName()) {
       String aliasName=statementNode.getFirstChild().getString();
-      recordImportAlias(aliasName,exportedNamespace);
+      recordNameToInline(aliasName,exportedNamespace);
     }
  else     if (lhs.isDestructuringLhs() && lhs.getFirstChild().isObjectPattern()) {
       for (      Node importSpec : lhs.getFirstChild().children()) {
         String importedProperty=importSpec.getString();
         String aliasName=importSpec.hasChildren() ? importSpec.getFirstChild().getString() : importedProperty;
         String fullName=exportedNamespace + "." + importedProperty;
-        recordImportAlias(aliasName,fullName);
+        recordNameToInline(aliasName,fullName);
       }
     }
  else {
