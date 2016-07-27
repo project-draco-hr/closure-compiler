@@ -1,0 +1,15 @@
+{
+  JsonObject offset=section.get("offset").getAsJsonObject();
+  int line=offset.get("line").getAsInt();
+  int column=offset.get("column").getAsInt();
+  if (section.has("map") && section.has("url")) {
+    throw new SourceMapParseException("Invalid map format: section may not have both 'map' and 'url'");
+  }
+ else   if (section.has("url")) {
+    return SourceMapSection.forURL(section.get("url").getAsString(),line,column);
+  }
+ else   if (section.has("map")) {
+    return SourceMapSection.forMap(section.get("map").toString(),line,column);
+  }
+  throw new SourceMapParseException("Invalid map format: section must have either 'map' or 'url'");
+}

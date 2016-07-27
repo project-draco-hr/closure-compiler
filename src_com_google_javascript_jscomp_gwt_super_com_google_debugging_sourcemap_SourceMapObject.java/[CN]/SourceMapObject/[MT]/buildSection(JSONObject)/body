@@ -1,0 +1,18 @@
+{
+  JSONObject offset=section.get("offset").isObject();
+  if (offset == null || !offset.containsKey("line") || !offset.containsKey("column")) {
+    throw new SourceMapParseException("Invalid map format: missing offset");
+  }
+  int line=getNumber(offset.get("line"),-1);
+  int column=getNumber(offset.get("column"),-1);
+  if (section.containsKey("map") && section.containsKey("url")) {
+    throw new SourceMapParseException("Invalid map format: section may not have both 'map' and 'url'");
+  }
+ else   if (section.containsKey("url")) {
+    return SourceMapSection.forURL(getStringOrNull(section.get("url")),line,column);
+  }
+ else   if (section.containsKey("map")) {
+    return SourceMapSection.forMap(section.get("map").toString(),line,column);
+  }
+  throw new SourceMapParseException("Invalid map format: section must have either 'map' or 'url'");
+}

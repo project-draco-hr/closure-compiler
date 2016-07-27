@@ -1,0 +1,34 @@
+{
+  JSONValue value=JSONParser.parseStrict(contents);
+  JSONObject sourceMapRoot=value != null ? value.isObject() : null;
+  if (sourceMapRoot == null) {
+    throw new SourceMapParseException("couldn't parseStrict contents of source map");
+  }
+  version=getNumber(sourceMapRoot.get("version"),0);
+  file=getStringOrNull(sourceMapRoot.get("file"));
+  lineCount=getNumber(sourceMapRoot.get("lineCount"),-1);
+  mappings=getStringOrNull(sourceMapRoot.get("mappings"));
+  sourceRoot=getStringOrNull(sourceMapRoot.get("sourceRoot"));
+  if (sourceMapRoot.containsKey("sections")) {
+    ImmutableList.Builder<SourceMapSection> builder=ImmutableList.builder();
+    JSONArray array=sourceMapRoot.get("sections").isArray();
+    if (array != null) {
+      for (int i=0, count=array.size(); i < count; ++i) {
+        builder.add(buildSection(array.get(i).isObject()));
+      }
+    }
+    sections=builder.build();
+  }
+ else {
+    sections=null;
+  }
+  sources=getJavaStringArray(sourceMapRoot.get("sources"));
+  names=getJavaStringArray(sourceMapRoot.get("names"));
+  Map<String,Object> extensions=new LinkedHashMap<>();
+  for (  String key : sourceMapRoot.keySet()) {
+    if (key.startsWith("x_")) {
+      extensions.put(key,sourceMapRoot.get(key));
+    }
+  }
+  this.extensions=Collections.unmodifiableMap(extensions);
+}

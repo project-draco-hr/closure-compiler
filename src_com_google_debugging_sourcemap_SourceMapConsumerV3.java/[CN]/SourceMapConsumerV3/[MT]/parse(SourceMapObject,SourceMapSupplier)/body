@@ -1,0 +1,25 @@
+{
+  if (sourceMapObject.getVersion() != 3) {
+    throw new SourceMapParseException("Unknown version: " + sourceMapObject.getVersion());
+  }
+  String file=sourceMapObject.getFile();
+  if (file != null && file.isEmpty()) {
+    throw new SourceMapParseException("File entry is empty");
+  }
+  if (sourceMapObject.getSections() != null) {
+    parseMetaMap(sourceMapObject,sectionSupplier);
+    return;
+  }
+  lineCount=sourceMapObject.getLineCount();
+  sourceRoot=sourceMapObject.getSourceRoot();
+  sources=sourceMapObject.getSources();
+  names=sourceMapObject.getNames();
+  if (lineCount >= 0) {
+    lines=new ArrayList<>(lineCount);
+  }
+ else {
+    lines=new ArrayList<>();
+  }
+  extensions.putAll(sourceMapObject.getExtensions());
+  new MappingBuilder(sourceMapObject.getMappings()).build();
+}

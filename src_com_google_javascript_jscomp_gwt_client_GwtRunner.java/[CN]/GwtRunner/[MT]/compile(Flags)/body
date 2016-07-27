@@ -13,5 +13,14 @@
   output.compiledCode=compiler.toSource();
   output.errors=toNativeErrorArray(errorManager.errors);
   output.warnings=toNativeErrorArray(errorManager.warnings);
+  if (flags.getCreateSourceMap()) {
+    StringBuilder b=new StringBuilder();
+    try {
+      compiler.getSourceMap().appendTo(b,"IGNORED");
+    }
+ catch (    IOException e) {
+    }
+    output.sourceMap=b.toString();
+  }
   return output;
 }

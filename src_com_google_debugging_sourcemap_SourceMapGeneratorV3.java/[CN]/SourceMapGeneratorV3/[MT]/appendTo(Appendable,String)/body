@@ -23,9 +23,12 @@
   appendFieldEnd(out);
   for (  String key : this.extensions.keySet()) {
     Object objValue=this.extensions.get(key);
-    String value=objValue.toString();
+    String value;
     if (objValue instanceof String) {
-      value=new Gson().toJson(value);
+      value=escapeString((String)objValue);
+    }
+ else {
+      value=objValue.toString();
     }
     appendField(out,key,value);
   }

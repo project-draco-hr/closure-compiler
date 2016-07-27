@@ -1,0 +1,32 @@
+{
+  if (sectionSupplier == null) {
+    sectionSupplier=new DefaultSourceMapSupplier();
+  }
+  try {
+    if (sourceMapObject.getLineCount() >= 0 || sourceMapObject.getMappings() != null || sourceMapObject.getSources() != null || sourceMapObject.getNames() != null) {
+      throw new SourceMapParseException("Invalid map format");
+    }
+    SourceMapGeneratorV3 generator=new SourceMapGeneratorV3();
+    for (    SourceMapSection section : sourceMapObject.getSections()) {
+      String mapSectionContents=section.getSectionValue();
+      if (section.getSectionType() == SourceMapSection.SectionType.URL) {
+        mapSectionContents=sectionSupplier.getSourceMap(section.getSectionValue());
+      }
+      if (mapSectionContents == null) {
+        throw new SourceMapParseException("Unable to retrieve: " + section.getSectionValue());
+      }
+      generator.mergeMapSection(section.getLine(),section.getColumn(),mapSectionContents);
+    }
+    StringBuilder sb=new StringBuilder();
+    try {
+      generator.appendTo(sb,sourceMapObject.getFile());
+    }
+ catch (    IOException e) {
+      throw new RuntimeException(e);
+    }
+    parse(sb.toString());
+  }
+ catch (  IOException ex) {
+    throw new SourceMapParseException("IO exception: " + ex);
+  }
+}

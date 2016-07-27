@@ -3,26 +3,16 @@
     throw new SourceMapParseException("This appears to be a V1 SourceMap, which is not supported.");
   }
  else   if (contents.startsWith("{")) {
-    try {
-      JsonElement jsonElement=PARSER.parse(contents);
-      if (!jsonElement.isJsonObject()) {
-        throw new SourceMapParseException("Expected a JSON Object.");
-      }
-      JsonObject sourceMapRoot=jsonElement.getAsJsonObject();
-      int version=sourceMapRoot.get("version").getAsInt();
-switch (version) {
+    SourceMapObject sourceMapObject=new SourceMapObject(contents);
+switch (sourceMapObject.getVersion()) {
 case 3:
 {
-          SourceMapConsumerV3 consumer=new SourceMapConsumerV3();
-          consumer.parse(sourceMapRoot,supplier);
-          return consumer;
-        }
+        SourceMapConsumerV3 consumer=new SourceMapConsumerV3();
+        consumer.parse(sourceMapObject,supplier);
+        return consumer;
+      }
 default :
-      throw new SourceMapParseException("Unknown source map version:" + version);
-  }
-}
- catch (JsonParseException ex) {
-  throw new SourceMapParseException("JSON parse exception: " + ex);
+    throw new SourceMapParseException("Unknown source map version:" + sourceMapObject.getVersion());
 }
 }
 throw new SourceMapParseException("unable to detect source map format");
