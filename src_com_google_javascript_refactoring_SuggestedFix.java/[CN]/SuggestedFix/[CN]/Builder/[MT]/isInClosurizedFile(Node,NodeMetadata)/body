@@ -1,0 +1,19 @@
+{
+  Node script=NodeUtil.getEnclosingScript(node);
+  if (script == null) {
+    return false;
+  }
+  Node child=script.getFirstChild();
+  while (child != null) {
+    if (child.isExprResult() && child.getFirstChild().isCall()) {
+      if (Matchers.functionCall("goog.require").matches(child.getFirstChild(),metadata)) {
+        return true;
+      }
+    }
+ else     if (child.isVar() && child.getBooleanProp(Node.IS_NAMESPACE)) {
+      return true;
+    }
+    child=child.getNext();
+  }
+  return false;
+}
