@@ -81,7 +81,7 @@
     passes.add(getCustomPasses(CustomPassExecutionTime.BEFORE_OPTIMIZATION_LOOP));
   }
   passes.add(createEmptyPass("beforeMainOptimizations"));
-  if (options.flowSensitiveInlineVariables) {
+  if (options.inlineVariables || options.inlineLocalVariables) {
     passes.add(flowSensitiveInlineVariables);
   }
   passes.addAll(getMainOptimizationLoop());
@@ -97,7 +97,7 @@
   if (options.customPasses != null) {
     passes.add(getCustomPasses(CustomPassExecutionTime.AFTER_OPTIMIZATION_LOOP));
   }
-  if (options.flowSensitiveInlineVariables) {
+  if (options.inlineVariables || options.inlineLocalVariables) {
     passes.add(flowSensitiveInlineVariables);
     if (options.removeUnusedVars || options.removeUnusedLocalVars) {
       passes.add(getRemoveUnusedVars("removeUnusedVars",false));
