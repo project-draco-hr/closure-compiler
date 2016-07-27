@@ -1,19 +1,15 @@
 {
   Preconditions.checkState(compiler.getLifeCycleStage().isNormalized());
-  DefinitionUseSiteFinder defFinder=compiler.getSimpleDefinitionFinder();
+  boolean shouldResetModifyCallSites=false;
   if (this.modifyCallSites) {
-    if (defFinder == null) {
+    if (compiler.getDefinitionFinder() == null) {
       this.modifyCallSites=false;
-      this.mustResetModifyCallSites=true;
-    }
- else {
-      defFinder.process(externs,root);
+      shouldResetModifyCallSites=true;
     }
   }
-  process(externs,root,defFinder);
-  compiler.setSimpleDefinitionFinder(null);
-  if (this.mustResetModifyCallSites) {
+  process(externs,root,compiler.getDefinitionFinder());
+  compiler.setDefinitionFinder(null);
+  if (shouldResetModifyCallSites) {
     this.modifyCallSites=true;
-    this.mustResetModifyCallSites=false;
   }
 }
