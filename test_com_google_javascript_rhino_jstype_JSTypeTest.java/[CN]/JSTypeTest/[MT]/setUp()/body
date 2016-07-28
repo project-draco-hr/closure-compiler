@@ -10,7 +10,7 @@
   dateMethod=new FunctionBuilder(registry).withParamsNode(new Node(Token.PARAM_LIST)).withReturnType(NUMBER_TYPE).withTypeOfThis(DATE_TYPE).build();
   unresolvedNamedType=new NamedType(registry,"not.resolved.named.type",null,-1,-1);
   namedGoogBar=new NamedType(registry,"goog.Bar",null,-1,-1);
-  subclassCtor=new FunctionType(registry,null,null,createArrowType(null),null,null,true,false);
+  subclassCtor=new FunctionType(registry,null,null,createArrowType(null),null,null,true,false,false);
   subclassCtor.setPrototypeBasedOn(unresolvedNamedType);
   subclassOfUnresolvedNamedType=subclassCtor.getInstanceType();
   interfaceType=FunctionType.forInterface(registry,"Interface",null,registry.createTemplateTypeMap(null,null));
@@ -18,14 +18,14 @@
   subInterfaceType=FunctionType.forInterface(registry,"SubInterface",null,registry.createTemplateTypeMap(null,null));
   subInterfaceType.setExtendedInterfaces(Lists.<ObjectType>newArrayList(interfaceInstType));
   subInterfaceInstType=subInterfaceType.getInstanceType();
-  googBar=registry.createConstructorType("goog.Bar",null,null,null,null);
+  googBar=registry.createConstructorType("goog.Bar",null,null,null,null,false);
   googBar.getPrototype().defineDeclaredProperty("date",DATE_TYPE,null);
   googBar.setImplementedInterfaces(Lists.<ObjectType>newArrayList(interfaceInstType));
   googBarInst=googBar.getInstanceType();
-  googSubBar=registry.createConstructorType("googSubBar",null,null,null,null);
+  googSubBar=registry.createConstructorType("googSubBar",null,null,null,null,false);
   googSubBar.setPrototypeBasedOn(googBar.getInstanceType());
   googSubBarInst=googSubBar.getInstanceType();
-  googSubSubBar=registry.createConstructorType("googSubSubBar",null,null,null,null);
+  googSubSubBar=registry.createConstructorType("googSubSubBar",null,null,null,null,false);
   googSubSubBar.setPrototypeBasedOn(googSubBar.getInstanceType());
   googSubSubBarInst=googSubSubBar.getInstanceType();
   final ObjectType googObject=registry.createAnonymousObjectType(null);

@@ -6,11 +6,10 @@
     ensureTyped(t,n);
     return;
   }
-  Var var=t.getScope().getVar(constructor.getQualifiedName());
-  if (var != null && var.getJSDocInfo() != null && var.getJSDocInfo().isAbstract()) {
+  FunctionType fnType=type.toMaybeFunctionType();
+  if (fnType != null && fnType.isAbstract()) {
     report(t,n,INSTANTIATE_ABSTRACT_CLASS);
   }
-  FunctionType fnType=type.toMaybeFunctionType();
   if (fnType != null && fnType.hasInstanceType()) {
     visitParameterList(t,n,fnType);
     ensureTyped(t,n,fnType.getInstanceType());
