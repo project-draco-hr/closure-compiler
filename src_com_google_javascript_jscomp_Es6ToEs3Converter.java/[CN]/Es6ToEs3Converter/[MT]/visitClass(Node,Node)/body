@@ -32,13 +32,15 @@
     }
   }
   if (metadata.definePropertiesObjForPrototype.hasChildren()) {
-    Node definePropsCall=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"Object.defineProperties"),NodeUtil.newQName(compiler,metadata.fullClassName + ".prototype"),metadata.definePropertiesObjForPrototype));
+    compiler.ensureLibraryInjected("util/global",false);
+    Node definePropsCall=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"$jscomp.global.Object.defineProperties"),NodeUtil.newQName(compiler,metadata.fullClassName + ".prototype"),metadata.definePropertiesObjForPrototype));
     definePropsCall.useSourceInfoIfMissingFromForTree(classNode);
     metadata.insertNodeAndAdvance(definePropsCall);
     visitObject(metadata.definePropertiesObjForPrototype);
   }
   if (metadata.definePropertiesObjForClass.hasChildren()) {
-    Node definePropsCall=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"Object.defineProperties"),NodeUtil.newQName(compiler,metadata.fullClassName),metadata.definePropertiesObjForClass));
+    compiler.ensureLibraryInjected("util/global",false);
+    Node definePropsCall=IR.exprResult(IR.call(NodeUtil.newQName(compiler,"$jscomp.global.Object.defineProperties"),NodeUtil.newQName(compiler,metadata.fullClassName),metadata.definePropertiesObjForClass));
     definePropsCall.useSourceInfoIfMissingFromForTree(classNode);
     metadata.insertNodeAndAdvance(definePropsCall);
     visitObject(metadata.definePropertiesObjForClass);
