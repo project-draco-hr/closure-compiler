@@ -1,9 +1,9 @@
 {
   Preconditions.checkState(this.isSingletonObj());
-  if (this.equals(TOP_OBJECT)) {
+  JSType proto=getNominalTypeIfSingletonObj().getPrototypePropertyOfCtor();
+  if (this.equals(proto)) {
+    Preconditions.checkState(this.isInstanceofObject(),"Failed to reach Object.prototype in prototype chain, unexpected self-link found at %s",this);
     return null;
   }
- else {
-    return getNominalTypeIfSingletonObj().getPrototypePropertyOfCtor();
-  }
+  return proto;
 }
