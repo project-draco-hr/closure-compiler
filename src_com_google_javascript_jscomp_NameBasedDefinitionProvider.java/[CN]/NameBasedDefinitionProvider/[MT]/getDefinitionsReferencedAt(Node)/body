@@ -1,6 +1,7 @@
 {
   Preconditions.checkState(hasProcessBeenRun,"The process was not run");
-  if (definitionSiteMap.containsKey(useSite)) {
+  Preconditions.checkArgument(useSite.isGetProp() || useSite.isName());
+  if (definitionNodeByDefinitionSite.containsKey(useSite)) {
     return null;
   }
   if (useSite.isGetProp()) {
@@ -12,14 +13,7 @@
   String name=getSimplifiedName(useSite);
   if (name != null) {
     Collection<Definition> defs=nameDefinitionMultimap.get(name);
-    if (!defs.isEmpty()) {
-      return defs;
-    }
- else {
-      return null;
-    }
+    return defs.isEmpty() ? null : defs;
   }
- else {
-    return null;
-  }
+  return null;
 }

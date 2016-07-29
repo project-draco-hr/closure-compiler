@@ -1,5 +1,14 @@
 {
-  if (info != null && info.isNoSideEffects() && !n.isFromExterns()) {
-    reportMisplaced(n,"nosideeffects","@nosideeffects is only supported in externs.");
+  if (info == null) {
+    return;
+  }
+  if (n.isFromExterns()) {
+    return;
+  }
+  if (info.hasSideEffectsArgumentsAnnotation() || info.modifiesThis()) {
+    report(n,INVALID_MODIFIES_ANNOTATION);
+  }
+  if (info.isNoSideEffects()) {
+    report(n,INVALID_NO_SIDE_EFFECT_ANNOTATION);
   }
 }

@@ -1,8 +1,12 @@
 {
-  if (!node.isCall() && !node.isNew()) {
+  if (!NodeUtil.isCallOrNew(node)) {
     return;
   }
-  Collection<Definition> definitions=defFinder.getDefinitionsReferencedAt(node.getFirstChild());
+  Node nameNode=node.getFirstChild();
+  if (!nameNode.isName() && !nameNode.isGetProp()) {
+    return;
+  }
+  Collection<Definition> definitions=defFinder.getDefinitionsReferencedAt(nameNode);
   if (definitions == null) {
     return;
   }

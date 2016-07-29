@@ -1,4 +1,5 @@
 {
+  Node lhs=op.getFirstChild();
   if (lhs.isName()) {
     Var var=scope.getVar(lhs.getString());
     if (varDeclaredInDifferentFunction(var,scope)) {
@@ -6,6 +7,7 @@
     }
  else {
       Preconditions.checkState(NodeUtil.isAssignmentOp(op) || isIncDec(op) || op.isDelProp());
+      Node rhs=op.getLastChild();
       if (rhs != null && op.isAssign() && !NodeUtil.evaluatesToLocalValue(rhs)) {
         sideEffectInfo.blacklistLocal(var);
       }
