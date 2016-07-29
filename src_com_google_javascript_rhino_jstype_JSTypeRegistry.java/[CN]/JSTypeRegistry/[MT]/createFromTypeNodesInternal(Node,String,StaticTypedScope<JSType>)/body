@@ -32,28 +32,18 @@ JSType namedType=getType(scope,n.getString(),sourceName,n.getLineno(),n.getCharn
 if ((namedType instanceof ObjectType) && !(namedType instanceof NamespaceType) && !(nonNullableTypeNames.contains(n.getString()))) {
 Node typeList=n.getFirstChild();
 int nAllowedTypes=namedType.getTemplateTypeMap().numUnfilledTemplateKeys();
-String typeName=n.getString();
-if (!namedType.isUnknownType() && (typeList != null || nAllowedTypes > 0)) {
-if (typeList == null) {
-if (typeName.equals("Object") || typeName.equals("Array")) {
-return createDefaultObjectUnion(namedType);
-}
-typeList=IR.empty();
-}
+if (!namedType.isUnknownType() && typeList != null) {
 ImmutableList.Builder<JSType> templateTypes=ImmutableList.builder();
-if ((typeName.equals("Object") || typeName.equals("window.Object")) && typeList.getFirstChild() == typeList.getLastChild()) {
+if ((n.getString().equals("Object") || n.getString().equals("window.Object")) && typeList.getFirstChild() == typeList.getLastChild()) {
 templateTypes.add(getNativeType(UNKNOWN_TYPE));
 }
 int templateNodeIndex=0;
-for (Node templateNode : typeList.children()) {
+for (Node templateNode : typeList.getFirstChild().siblings()) {
 if (++templateNodeIndex > nAllowedTypes) {
 reporter.warning("Too many template parameters",sourceName,templateNode.getLineno(),templateNode.getCharno());
 break;
 }
 templateTypes.add(createFromTypeNodesInternal(templateNode,sourceName,scope));
-}
-for (int i=typeList.getChildCount(); i < nAllowedTypes; i++) {
-templateTypes.add(getNativeType(UNKNOWN_TYPE));
 }
 namedType=createTemplatizedType((ObjectType)namedType,templateTypes.build());
 Preconditions.checkNotNull(namedType);
