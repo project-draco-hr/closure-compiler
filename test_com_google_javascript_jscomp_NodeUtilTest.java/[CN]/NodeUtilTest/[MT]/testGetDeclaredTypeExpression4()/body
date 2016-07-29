@@ -1,0 +1,7 @@
+{
+  Node ast=parse("/** @param {number=} x */ function f(x = -1) {}");
+  Node x=getNameNode(ast,"x");
+  JSTypeExpression typeExpr=NodeUtil.getDeclaredTypeExpression(x);
+  assertNode(typeExpr.getRoot()).hasType(Token.EQUALS);
+  assertThat(typeExpr.getRoot().getFirstChild().getString()).isEqualTo("number");
+}
