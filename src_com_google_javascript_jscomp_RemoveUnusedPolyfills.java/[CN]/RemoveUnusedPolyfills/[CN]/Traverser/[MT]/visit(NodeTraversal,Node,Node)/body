@@ -1,0 +1,11 @@
+{
+  if (NodeUtil.isExprCall(node)) {
+    Node call=node.getFirstChild();
+    Node name=call.getFirstChild();
+    String originalName=name.getOriginalQualifiedName();
+    if ("$jscomp.polyfill".equals(originalName)) {
+      visitPolyfillDefinition(node,name.getNext().getString());
+    }
+  }
+  visitPossiblePolyfillUse(node);
+}
