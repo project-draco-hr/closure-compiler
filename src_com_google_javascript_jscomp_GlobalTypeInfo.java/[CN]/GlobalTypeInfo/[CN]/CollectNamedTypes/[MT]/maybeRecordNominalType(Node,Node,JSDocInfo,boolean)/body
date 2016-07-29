@@ -6,7 +6,8 @@
   if (fnDoc.isConstructorOrInterface()) {
     if (nameNode == null) {
       warnings.add(JSError.make(defSite,ANONYMOUS_NOMINAL_TYPE));
-      return;
+      nameNode=IR.name(ANON_FUN_PREFIX + funNameGen.generateNextName());
+      nameNode.useSourceInfoFrom(defSite);
     }
     String qname=nameNode.getQualifiedName();
     ImmutableList.Builder<String> builder=ImmutableList.builder();

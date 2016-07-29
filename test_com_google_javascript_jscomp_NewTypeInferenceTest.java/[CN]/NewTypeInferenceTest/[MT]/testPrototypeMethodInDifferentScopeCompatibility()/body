@@ -1,0 +1,6 @@
+{
+  String js=LINE_JOINER.join("/** @constructor */","function Foo() {}","function g() {","  /** @return {number} */","  Foo.prototype.method = function() {","    return 123;","  };","}","var /** string */ s = (new Foo).method();");
+  typeCheck(js,GlobalTypeInfo.CTOR_IN_DIFFERENT_SCOPE,NewTypeInference.MISTYPED_ASSIGN_RHS);
+  compilerOptions.setWarningLevel(DiagnosticGroups.NEW_CHECK_TYPES_EXTRA_CHECKS,CheckLevel.OFF);
+  typeCheck(js,NewTypeInference.MISTYPED_ASSIGN_RHS);
+}

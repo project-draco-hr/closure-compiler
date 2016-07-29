@@ -24,7 +24,16 @@
       if (isFwd) {
         warnings.add(JSError.make(callNode,NOT_UNIQUE_INSTANTIATION,Integer.toString(types.size()),UniqueNameGenerator.getOriginalName(typeParam),types.toString(),funType.toString()));
       }
-      builder.put(typeParam,JSType.UNKNOWN);
+      if (inCompatibilityMode) {
+        JSType joinedType=JSType.BOTTOM;
+        for (        JSType t : types) {
+          joinedType=JSType.join(joinedType,t);
+        }
+        builder.put(typeParam,joinedType);
+      }
+ else {
+        builder.put(typeParam,JSType.UNKNOWN);
+      }
     }
  else     if (types.size() == 1) {
       JSType t=Iterables.getOnlyElement(types);
