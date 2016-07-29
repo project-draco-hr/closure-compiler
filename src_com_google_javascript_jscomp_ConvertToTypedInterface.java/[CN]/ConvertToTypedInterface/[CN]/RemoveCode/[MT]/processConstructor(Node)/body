@@ -17,17 +17,12 @@
         if (seenNames.contains(fullyQualifiedName)) {
           return;
         }
-        JSType type=name.getJSType();
         JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(name);
         if (jsdoc == null) {
           jsdoc=getAllTypeJSDoc();
         }
  else         if (isInferrableConst(jsdoc,name)) {
-          jsdoc=maybeUpdateJSDocInfoWithType(jsdoc,name);
-          if (type == null) {
-            compiler.report(JSError.make(name,CONSTANT_WITHOUT_EXPLICIT_TYPE));
-            return;
-          }
+          jsdoc=pullJsdocTypeFromAst(compiler,jsdoc,name);
         }
         Node newProtoAssignStmt=NodeUtil.newQNameDeclaration(compiler,fullyQualifiedName,null,jsdoc);
         newProtoAssignStmt.useSourceInfoIfMissingFromForTree(expr);

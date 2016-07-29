@@ -13,11 +13,7 @@
     return RemovalType.REMOVE_RHS;
   }
   if (isInferrableConst(jsdoc,nameNode)) {
-    if (nameNode.getJSType() == null) {
-      compiler.report(JSError.make(nameNode,CONSTANT_WITHOUT_EXPLICIT_TYPE));
-      return RemovalType.PRESERVE_ALL;
-    }
-    jsdocNode.setJSDocInfo(maybeUpdateJSDocInfoWithType(jsdoc,nameNode));
+    jsdocNode.setJSDocInfo(pullJsdocTypeFromAst(compiler,jsdoc,nameNode));
   }
   return RemovalType.REMOVE_RHS;
 }

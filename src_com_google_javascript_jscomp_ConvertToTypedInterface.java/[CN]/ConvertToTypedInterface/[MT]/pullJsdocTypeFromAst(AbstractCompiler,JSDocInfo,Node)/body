@@ -1,0 +1,11 @@
+{
+  Preconditions.checkArgument(nameNode.isQualifiedName());
+  JSType type=nameNode.getJSType();
+  if (type == null) {
+    compiler.report(JSError.make(nameNode,CONSTANT_WITHOUT_EXPLICIT_TYPE));
+    return getTypeJSDoc(oldJSDoc,new JSTypeExpression(new Node(Token.STAR),""));
+  }
+ else {
+    return getTypeJSDoc(oldJSDoc,type.toNonNullAnnotationString());
+  }
+}

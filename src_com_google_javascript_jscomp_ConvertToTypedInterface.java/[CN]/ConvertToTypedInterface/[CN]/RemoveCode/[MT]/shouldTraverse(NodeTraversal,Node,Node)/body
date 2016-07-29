@@ -56,7 +56,7 @@ break;
 case VAR:
 case CONST:
 case LET:
-if (n.getChildCount() == 1) {
+if (n.getChildCount() == 1 && NodeUtil.isStatement(n)) {
 processName(n.getFirstChild(),n);
 }
 break;
@@ -65,26 +65,7 @@ case RETURN:
 case BREAK:
 case CONTINUE:
 case DEBUGGER:
-n.detachFromParent();
-compiler.reportCodeChange();
-break;
-case FOR_OF:
-case DO:
-case WHILE:
-case FOR:
-{
-Node body=NodeUtil.getLoopCodeBlock(n);
-parent.replaceChild(n,body.detachFromParent());
-Node initializer=n.isFor() ? n.getFirstChild() : IR.empty();
-if (NodeUtil.isNameDeclaration(initializer)) {
-parent.addChildBefore(initializer.detachFromParent(),body);
-processName(initializer.getFirstChild(),initializer);
-}
-compiler.reportCodeChange();
-break;
-}
-case LABEL:
-parent.replaceChild(n,n.getSecondChild().detachFromParent());
+NodeUtil.removeChild(parent,n);
 compiler.reportCodeChange();
 break;
 default :

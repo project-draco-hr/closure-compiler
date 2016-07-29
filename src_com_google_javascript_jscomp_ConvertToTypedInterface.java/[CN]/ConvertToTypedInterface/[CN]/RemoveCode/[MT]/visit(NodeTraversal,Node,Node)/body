@@ -11,8 +11,30 @@ case CASE:
 n.removeFirstChild();
 Node children=n.removeChildren();
 parent.addChildrenAfter(children,n);
-n.detachFromParent();
+NodeUtil.removeChild(parent,n);
 compiler.reportCodeChange();
+break;
+case FOR_OF:
+case DO:
+case WHILE:
+case FOR:
+{
+Node body=NodeUtil.getLoopCodeBlock(n);
+parent.addChildAfter(body.detachFromParent(),n);
+NodeUtil.removeChild(parent,n);
+Node initializer=n.isFor() ? n.getFirstChild() : IR.empty();
+if (initializer.isVar() && initializer.getChildCount() == 1) {
+parent.addChildBefore(initializer.detachFromParent(),body);
+processName(initializer.getFirstChild(),initializer);
+}
+compiler.reportCodeChange();
+break;
+}
+case LABEL:
+if (n.getParent() != null) {
+parent.replaceChild(n,n.getSecondChild().detachFromParent());
+compiler.reportCodeChange();
+}
 break;
 default :
 break;
