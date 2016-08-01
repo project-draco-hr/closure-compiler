@@ -1,0 +1,9 @@
+{
+  if (!NodeUtil.isFunctionObjectCall(call) && !NodeUtil.isFunctionObjectApply(call)) {
+    return;
+  }
+  FunctionType methodType=call.getFirstFirstChild().getJSType().toMaybeFunctionType();
+  if (methodType != null && methodType.isAbstract() && !methodType.isConstructor()) {
+    report(t,call,ABSTRACT_METHOD_NOT_CALLABLE,methodType.getDisplayName());
+  }
+}
