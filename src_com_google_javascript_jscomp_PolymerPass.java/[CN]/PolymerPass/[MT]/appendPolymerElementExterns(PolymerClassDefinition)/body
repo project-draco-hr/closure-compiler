@@ -7,6 +7,10 @@
   String polymerElementType=PolymerPassStaticUtils.getPolymerElementType(def);
   baseExterns.getFirstChild().setString(polymerElementType);
   String elementType=tagNameMap.get(def.nativeBaseElement);
+  if (elementType == null) {
+    compiler.report(JSError.make(def.descriptor,POLYMER_INVALID_EXTENDS,def.nativeBaseElement));
+    return;
+  }
   JSTypeExpression elementBaseType=new JSTypeExpression(new Node(Token.BANG,IR.string(elementType)),VIRTUAL_FILE);
   JSDocInfoBuilder baseDocs=JSDocInfoBuilder.copyFrom(baseExterns.getJSDocInfo());
   baseDocs.changeBaseType(elementBaseType);
