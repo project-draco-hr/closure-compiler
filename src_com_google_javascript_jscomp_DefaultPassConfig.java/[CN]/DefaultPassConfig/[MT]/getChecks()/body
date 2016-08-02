@@ -105,9 +105,6 @@
   if (!options.getNewTypeInference()) {
     addOldTypeCheckerPasses(checks,options);
   }
-  if (options.getNewTypeInference()) {
-    addOldTypeCheckerPasses(checks,options);
-  }
   if (options.generateExportsAfterTypeChecking && options.generateExports) {
     checks.add(generateExports);
   }
@@ -120,6 +117,9 @@
   checks.add(checkConsts);
   if (options.enables(DiagnosticGroups.ANALYZER_CHECKS)) {
     checks.add(analyzerChecks);
+  }
+  if (options.getNewTypeInference()) {
+    addOldTypeCheckerPasses(checks,options);
   }
   if (options.checkEventfulObjectDisposalPolicy != CompilerOptions.DisposalCheckingPolicy.OFF) {
     checks.add(checkEventfulObjectDisposal);
