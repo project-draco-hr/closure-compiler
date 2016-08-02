@@ -1,8 +1,12 @@
 {
-  if (options.getNewTypeInference() && !options.getRunOTIAfterNTI()) {
-    return getSymbolTable();
-  }
- else {
-    return getTypeRegistry();
-  }
+switch (mostRecentTypechecker) {
+case NONE:
+    return options.getNewTypeInference() ? getSymbolTable() : getTypeRegistry();
+case OTI:
+  return getTypeRegistry();
+case NTI:
+return getSymbolTable();
+default :
+throw new RuntimeException("Unhandled typechecker " + mostRecentTypechecker);
+}
 }
