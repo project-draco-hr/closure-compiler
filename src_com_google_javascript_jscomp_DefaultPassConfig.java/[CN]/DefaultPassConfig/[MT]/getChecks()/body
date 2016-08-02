@@ -114,7 +114,9 @@
   if (options.checkTypes && (!options.disables(DiagnosticGroups.ACCESS_CONTROLS) || options.enables(DiagnosticGroups.CONSTANT_PROPERTY))) {
     checks.add(checkAccessControls);
   }
-  checks.add(checkConsts);
+  if (!options.getNewTypeInference()) {
+    checks.add(checkConsts);
+  }
   if (options.enables(DiagnosticGroups.ANALYZER_CHECKS)) {
     checks.add(analyzerChecks);
   }
