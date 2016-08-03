@@ -13,16 +13,15 @@
     return new LValueResultFwd(inEnv,requiredType,null,null);
   }
   if (!recvType.hasProp(pname)) {
+    if (insideQualifiedName || propAccessNode.getParent().getType() != Token.ASSIGN) {
+      mayWarnAboutInexistentProp(propAccessNode,recvType,pname);
+      if (!recvType.isLoose()) {
+        return new LValueResultFwd(inEnv,requiredType,null,null);
+      }
+    }
     if (recvType.isLoose()) {
       recvType=recvType.withProperty(pname,JSType.TOP_OBJECT.withLoose());
       inEnv=updateLvalueTypeInEnv(inEnv,obj,recvLvalue.ptr,recvType);
-    }
- else {
-      boolean warnForInexistentProp=insideQualifiedName || propAccessNode.getParent().getType() != Token.ASSIGN;
-      if (warnForInexistentProp && !recvType.isUnknown() && !recvType.mayBeDict()) {
-        mayWarnAboutInexistentProp(propAccessNode,recvType,pname,inEnv);
-        return new LValueResultFwd(inEnv,requiredType,null,null);
-      }
     }
   }
   if (propAccessNode.isGetElem()) {

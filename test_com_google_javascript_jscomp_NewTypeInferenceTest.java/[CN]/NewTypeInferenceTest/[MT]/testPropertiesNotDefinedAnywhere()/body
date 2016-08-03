@@ -1,0 +1,9 @@
+{
+  typeCheck("var x = (/** @type {?} */ (null)).undefinedProp;",NewTypeInference.INEXISTENT_PROPERTY);
+  typeCheck(LINE_JOINER.join("function f(/** ? */ x) {","  x.bar.baz = 123;","}"),NewTypeInference.INEXISTENT_PROPERTY);
+  typeCheck(LINE_JOINER.join("function f(/** ? */ x) {","  if (x.bar === undefined) {","    return 123;","  }","}"));
+  typeCheck(LINE_JOINER.join("function f(/** ? */ x) {","  if (x.bar !== undefined) {","    return x.bar();","  }","}"));
+  typeCheck(LINE_JOINER.join("/** @const */","var ns = {","  FOO: 123","};","function f(/** ? */ x) {","  return x.FOO;","}"));
+  typeCheckCustomExterns(DEFAULT_EXTERNS + "/** @enum */ var myenum = { FOO: 123 };","function f(x) { return x.FOO; }");
+  typeCheck(LINE_JOINER.join("/** @enum */ var myenum = { FOO: 123 };","function f(x) { return x.FOO; }"));
+}

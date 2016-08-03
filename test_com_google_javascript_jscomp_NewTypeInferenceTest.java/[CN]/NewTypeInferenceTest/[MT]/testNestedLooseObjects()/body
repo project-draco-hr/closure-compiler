@@ -1,6 +1,6 @@
 {
   typeCheck(LINE_JOINER.join("function f(obj) {","  obj.a.b = 123;","}"));
-  typeCheck(LINE_JOINER.join("function f(obj) {","  obj.a.b = 123;","  obj.a.b < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("Object.prototype.a;","function f(obj) {","  obj.a.b = 123;","  obj.a.b < 'str';","}"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(LINE_JOINER.join("function f(obj, cond) {","  (cond ? obj : obj).x - 1;","  return obj.x;","}","f({x: 'str'}, true);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(LINE_JOINER.join("function f(obj) {","  obj.a.b - 123;","}","f({a: {b: 'str'}})"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(LINE_JOINER.join("function f(obj) {","  obj.a.b = 123;","}","f({a: {b: 'str'}})"));

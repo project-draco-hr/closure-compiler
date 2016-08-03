@@ -11,7 +11,7 @@
   typeCheck(LINE_JOINER.join("function g(x) {","  function f() {","    var /** string */ s = x;","    x = 5;","  }","  f();","  x - 5;","}"),NewTypeInference.CROSS_SCOPE_GOTCHA,NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(LINE_JOINER.join("function g(x) {","  function f() {","    var /** string */ s = x;","    x = 5;","  }","  var z = x;","  f();","  x - 5;","  var /** string */ y = z;","}"),NewTypeInference.INVALID_OPERAND_TYPE);
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @type {string} */","Foo.prototype.prefix;","Foo.prototype.method = function() {","  var x = this;","  return function() {","    if (x.prefix.length) {","      return 123;","    }","  };","};"));
-  typeCheck(LINE_JOINER.join("function f(x) {","  function g(condition) {","    if (condition) {","      return 'early';","    }","    return function() { return x.prop; };","  }","}"));
+  typeCheck(LINE_JOINER.join("function f(x) {","  function g(condition) {","    if (condition) {","      return 'early';","    }","    return function() { return x.toString; };","  }","}"));
   typeCheck(LINE_JOINER.join("function f(x) {","  function g(condition) {","    if (condition) {","      return 'early';","    }","    (function() { return x - 1; })();","  }","  g(false);","  var /** string */ s = x;","}"));
   typeCheck(LINE_JOINER.join("var x;","function f(cond) {","  if (cond) {","    return;","  }","  return function g() {","    return function w() { x };","  };","}"));
 }

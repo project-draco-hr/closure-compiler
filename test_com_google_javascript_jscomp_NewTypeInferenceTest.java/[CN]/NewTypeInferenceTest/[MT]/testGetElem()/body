@@ -4,7 +4,7 @@
   typeCheck(LINE_JOINER.join("function f(x, y) {","  x < y;","  ({})[y - 5];","  x = 'asdf';","}","f('asdf', 123);"));
   typeCheck(LINE_JOINER.join("function f(x, y) {","  ({})[y - 5];","  x < y;","}","f('asdf', 123);"),NewTypeInference.INVALID_ARGUMENT_TYPE);
   typeCheck(LINE_JOINER.join("function f(x) {","  x['prop'] = 'str';","  return x['prop'] - 5;","}","f({});"),NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("function f(/** ? */ o) { return o[0].prop; }");
+  typeCheck("function f(/** ? */ o) { return o[0].toString; }");
   typeCheck(LINE_JOINER.join("function f(x) {","  x['prop'] = 7;","  var p = 'prop';","  x[p] = 'str';","  return x['prop'] - 5;","}","f({});"));
-  typeCheck(LINE_JOINER.join("function f(/** !Object */ x, id) {","  var serviceHolder = x[id];","  if (typeof serviceHolder[0].dispose != 'undefined') {}","}"));
+  typeCheck(LINE_JOINER.join("Object.prototype.dispose;","function f(/** !Object */ x, id) {","  var serviceHolder = x[id];","  if (typeof serviceHolder[0].dispose != 'undefined') {}","}"));
 }

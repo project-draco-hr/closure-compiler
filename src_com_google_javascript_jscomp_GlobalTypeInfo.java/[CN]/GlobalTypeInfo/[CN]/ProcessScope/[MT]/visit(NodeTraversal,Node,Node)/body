@@ -24,6 +24,9 @@ if (parent.isVar() || parent.isCatch()) {
 break;
 }
 case GETPROP:
+if (NodeUtil.isPropertyTest(compiler,n) || isPropertyAbsentTest(n)) {
+allPropertyNames.add(n.getLastChild().getString());
+}
 if (parent.isExprResult() && n.isQualifiedName()) {
 visitPropertyDeclaration(n);
 }

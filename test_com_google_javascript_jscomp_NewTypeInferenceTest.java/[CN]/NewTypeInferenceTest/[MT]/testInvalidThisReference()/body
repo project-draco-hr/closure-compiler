@@ -3,9 +3,9 @@
   typeCheck("function f(x){}; f(this);");
   typeCheck("function f(){ return this; }");
   typeCheck("function f() { this.p = 1; }",NewTypeInference.GLOBAL_THIS);
-  typeCheck("function f() { return this.p; }",NewTypeInference.GLOBAL_THIS);
-  typeCheck("function f() { this['p']; }",NewTypeInference.GLOBAL_THIS);
-  typeCheck("(function() { this.p; })();",NewTypeInference.GLOBAL_THIS);
-  typeCheck(LINE_JOINER.join("function g(x) {}","g(function() { return this.p; })"));
-  typeCheck(LINE_JOINER.join("/** @constructor */ function Foo(x) {}","new Foo(function() { return this.p; })"));
+  typeCheck("function f() { return this.toString; }",NewTypeInference.GLOBAL_THIS);
+  typeCheck("function f() { this['toString']; }",NewTypeInference.GLOBAL_THIS);
+  typeCheck("(function() { this.toString; })();",NewTypeInference.GLOBAL_THIS);
+  typeCheck(LINE_JOINER.join("function g(x) {}","g(function() { return this.toString; })"));
+  typeCheck(LINE_JOINER.join("/** @constructor */ function Foo(x) {}","new Foo(function() { return this.toString; })"));
 }

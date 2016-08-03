@@ -6,11 +6,13 @@
   Node maybeLvalue=parent.isAssign() ? parent.getFirstChild() : parent;
   if (NodeUtil.isNamespaceDecl(maybeLvalue) && currentScope.isNamespace(maybeLvalue)) {
     for (    Node prop : objLitNode.children()) {
+      allPropertyNames.add(prop.getString());
       visitNamespacePropertyDeclaration(prop,maybeLvalue,prop.getString());
     }
   }
  else   if (!NodeUtil.isEnumDecl(maybeLvalue) && !NodeUtil.isPrototypeAssignment(maybeLvalue)) {
     for (    Node prop : objLitNode.children()) {
+      allPropertyNames.add(prop.getString());
       if (prop.getJSDocInfo() != null) {
         declaredObjLitProps.put(prop,getDeclaredTypeOfNode(prop.getJSDocInfo(),currentScope));
       }

@@ -1,8 +1,8 @@
 {
   typeCheck(LINE_JOINER.join("/** @param {{ a: number }} obj */","function f(obj) {","  123, obj.b;","  obj.b = 'str';","}"),NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck("({}).p < 'asdf';",NewTypeInference.INEXISTENT_PROPERTY);
-  typeCheck("(/** @type {?} */ (null)).prop - 123;");
-  typeCheck("(/** @type {?} */ (null)).prop += 123;");
+  typeCheck("(/** @type {?} */ (null)).prop - 123;",NewTypeInference.INEXISTENT_PROPERTY);
+  typeCheck(LINE_JOINER.join("Object.prototype.prop;","(/** @type {?} */ (null)).prop += 123;"));
   typeCheck("var x = {}; var y = x.a;",NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck("var x = {}; var y = x['a'];");
   typeCheck("var x = {}; x.y - 3; x.y = 5;",NewTypeInference.INEXISTENT_PROPERTY);

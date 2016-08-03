@@ -31,7 +31,11 @@
   pair=analyzeExprFwd(receiver,inEnv,recvReqType,recvSpecType);
   pair=mayWarnAboutNullableReferenceAndTighten(receiver,pair.type,recvSpecType,pair.env);
   JSType recvType=pair.type.autobox();
-  if (recvType.isUnknown() || recvType.isTrueOrTruthy() || mayWarnAboutNonObject(receiver,recvType,specializedType)) {
+  if (recvType.isUnknown() || recvType.isTrueOrTruthy()) {
+    mayWarnAboutInexistentProp(propAccessNode,recvType,propQname);
+    return new EnvTypePair(pair.env,requiredType);
+  }
+  if (mayWarnAboutNonObject(receiver,recvType,specializedType)) {
     return new EnvTypePair(pair.env,requiredType);
   }
   FunctionType ft=recvType.getFunTypeIfSingletonObj();
@@ -66,7 +70,7 @@
     warnings.add(JSError.make(propAccessNode,BOTTOM_PROP,pname,recvType.toString()));
     return new EnvTypePair(pair.env,JSType.UNKNOWN);
   }
-  if (!propAccessNode.getParent().isExprResult() && !specializedType.isTrueOrTruthy() && !specializedType.isFalseOrFalsy()&& !recvType.mayBeDict()&& !mayWarnAboutInexistentProp(propAccessNode,recvType,propQname,pair.env)&& recvType.hasProp(propQname)&& !resultType.isSubtypeOf(requiredType)&& tightenTypeAndDontWarn(receiver.isName() ? receiver.getString() : null,receiver,recvType.getDeclaredProp(propQname),resultType,requiredType)) {
+  if (!propAccessNode.getParent().isExprResult() && !specializedType.isTrueOrTruthy() && !specializedType.isFalseOrFalsy()&& !recvType.mayBeDict()&& !mayWarnAboutInexistentProp(propAccessNode,recvType,propQname)&& recvType.hasProp(propQname)&& !resultType.isSubtypeOf(requiredType)&& tightenTypeAndDontWarn(receiver.isName() ? receiver.getString() : null,receiver,recvType.getDeclaredProp(propQname),resultType,requiredType)) {
     resultType=resultType.specialize(requiredType);
     LValueResultFwd lvr=analyzeLValueFwd(propAccessNode,inEnv,resultType);
     TypeEnv updatedEnv=updateLvalueTypeInEnv(lvr.env,propAccessNode,lvr.ptr,resultType);
