@@ -11,14 +11,11 @@
       if (cause instanceof InvalidRequirementSpec) {
         throw (InvalidRequirementSpec)cause;
       }
-      throw e;
+      throw Throwables.propagate(cause);
     }
     return rule;
   }
- catch (  InvalidRequirementSpec e) {
-    throw e;
-  }
-catch (  Exception e) {
-    throw Throwables.propagate(e);
+ catch (  InstantiationException|IllegalAccessException|IllegalArgumentException e) {
+    throw new RuntimeException(e);
   }
 }

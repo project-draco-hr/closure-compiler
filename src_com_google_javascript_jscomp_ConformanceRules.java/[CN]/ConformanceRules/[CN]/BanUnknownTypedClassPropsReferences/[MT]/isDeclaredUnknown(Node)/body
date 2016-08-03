@@ -1,16 +1,13 @@
 {
   Node target=n.getFirstChild();
-  ObjectType targetType=target.getJSType().toObjectType();
+  ObjectTypeI targetType=target.getTypeI().toMaybeObjectType();
   if (targetType != null) {
-    Property prop=targetType.getSlot(n.getLastChild().getString());
-    if (prop != null) {
-      JSDocInfo info=prop.getJSDocInfo();
-      if (info != null && info.hasType()) {
-        JSTypeExpression expr=info.getType();
-        Node typeExprNode=expr.getRoot();
-        if (typeExprNode.getType() == Token.QMARK && !typeExprNode.hasChildren()) {
-          return true;
-        }
+    JSDocInfo info=targetType.getPropertyJSDocInfo(n.getLastChild().getString());
+    if (info != null && info.hasType()) {
+      JSTypeExpression expr=info.getType();
+      Node typeExprNode=expr.getRoot();
+      if (typeExprNode.getType() == Token.QMARK && !typeExprNode.hasChildren()) {
+        return true;
       }
     }
   }
