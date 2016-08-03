@@ -23,5 +23,12 @@
   if (subclassType == null || calledClassType == null) {
     return false;
   }
-  return subclassType.toObjectType().getConstructor().getSuperClassConstructor().getInstanceType().equals(calledClassType);
+  if (subclassType.toObjectType() == null || subclassType.toObjectType().getConstructor() == null) {
+    return false;
+  }
+  FunctionType superClassConstructor=subclassType.toObjectType().getConstructor().getSuperClassConstructor();
+  if (superClassConstructor == null) {
+    return false;
+  }
+  return superClassConstructor.getInstanceType().equals(calledClassType);
 }
