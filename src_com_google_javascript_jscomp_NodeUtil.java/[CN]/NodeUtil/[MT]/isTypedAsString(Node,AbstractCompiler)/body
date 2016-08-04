@@ -1,0 +1,15 @@
+{
+  if (n.isString()) {
+    return true;
+  }
+  if (compiler.getOptions().useTypesForOptimization) {
+    TypeI type=n.getTypeI();
+    if (type != null) {
+      TypeI nativeStringType=compiler.getTypeIRegistry().getNativeType(JSTypeNative.STRING_TYPE);
+      if (type.isEquivalentTo(nativeStringType)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

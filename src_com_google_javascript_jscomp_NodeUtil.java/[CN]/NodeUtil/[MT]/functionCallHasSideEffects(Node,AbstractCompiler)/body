@@ -6,22 +6,22 @@
   if (callNode.isOnlyModifiesArgumentsCall() && allArgsUnescapedLocal(callNode)) {
     return false;
   }
-  Node nameNode=callNode.getFirstChild();
-  if (nameNode.isName()) {
-    String name=nameNode.getString();
+  Node callee=callNode.getFirstChild();
+  if (callee.isName()) {
+    String name=callee.getString();
     if (BUILTIN_FUNCTIONS_WITHOUT_SIDEEFFECTS.contains(name)) {
       return false;
     }
   }
- else   if (nameNode.isGetProp()) {
-    if (callNode.hasOneChild() && OBJECT_METHODS_WITHOUT_SIDEEFFECTS.contains(nameNode.getLastChild().getString())) {
+ else   if (callee.isGetProp()) {
+    if (callNode.hasOneChild() && OBJECT_METHODS_WITHOUT_SIDEEFFECTS.contains(callee.getLastChild().getString())) {
       return false;
     }
-    if (callNode.isOnlyModifiesThisCall() && evaluatesToLocalValue(nameNode.getFirstChild())) {
+    if (callNode.isOnlyModifiesThisCall() && evaluatesToLocalValue(callee.getFirstChild())) {
       return false;
     }
-    if (nameNode.getFirstChild().isName() && nameNode.isQualifiedName() && nameNode.getFirstChild().getString().equals("Math")) {
-switch (nameNode.getLastChild().getString()) {
+    if (callee.getFirstChild().isName() && callee.isQualifiedName() && callee.getFirstChild().getString().equals("Math")) {
+switch (callee.getLastChild().getString()) {
 case "abs":
 case "acos":
 case "acosh":
@@ -59,12 +59,12 @@ case "random":
   }
 }
 if (compiler != null && !compiler.hasRegExpGlobalReferences()) {
-  if (nameNode.getFirstChild().isRegExp() && REGEXP_METHODS.contains(nameNode.getLastChild().getString())) {
+  if (callee.getFirstChild().isRegExp() && REGEXP_METHODS.contains(callee.getLastChild().getString())) {
     return false;
   }
- else   if (nameNode.getFirstChild().isString()) {
-    String method=nameNode.getLastChild().getString();
-    Node param=nameNode.getNext();
+ else   if (isTypedAsString(callee.getFirstChild(),compiler)) {
+    String method=callee.getLastChild().getString();
+    Node param=callee.getNext();
     if (param != null) {
       if (param.isString()) {
         if (STRING_REGEXP_METHODS.contains(method)) {
