@@ -3,14 +3,12 @@
     Preconditions.checkArgument(child.parent == null);
     child.parent=this;
   }
-  Node lastSib=children.getLastSibling();
-  Preconditions.checkState(lastSib.next == null);
-  lastSib.next=first;
+  Node lastSib=children.previous;
   if (first != null) {
+    Node last=first.previous;
+    children.previous=last;
+    lastSib.next=first;
     first.previous=lastSib;
   }
   first=children;
-  if (last == null) {
-    last=lastSib;
-  }
 }

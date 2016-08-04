@@ -1,16 +1,22 @@
 {
-  Node prev=child.previous;
+  Preconditions.checkState(child.parent == this);
+  Preconditions.checkState(child.previous != null);
+  Node last=first.previous;
+  Node prevSibling=child.previous;
+  Node nextSibling=child.next;
   if (first == child) {
-    first=child.next;
+    first=nextSibling;
+    if (nextSibling != null) {
+      nextSibling.previous=last;
+    }
   }
-  if (prev != null) {
-    prev.next=child.next;
+ else   if (child == last) {
+    first.previous=prevSibling;
+    prevSibling.next=null;
   }
-  if (last == child) {
-    last=prev;
-  }
-  if (child.next != null) {
-    child.next.previous=prev;
+ else {
+    prevSibling.next=nextSibling;
+    nextSibling.previous=prevSibling;
   }
   child.next=null;
   child.previous=null;

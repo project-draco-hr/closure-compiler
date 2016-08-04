@@ -1,16 +1,24 @@
 {
   Node result=cloneNode(cloneTypeExprs);
-  for (Node n2=getFirstChild(); n2 != null; n2=n2.getNext()) {
-    Node n2clone=n2.cloneTree(cloneTypeExprs);
-    n2clone.parent=result;
-    if (result.last != null) {
-      result.last.next=n2clone;
-      n2clone.previous=result.last;
+  Node firstChild=null;
+  Node lastChild=null;
+  if (this.hasChildren()) {
+    for (Node n2=getFirstChild(); n2 != null; n2=n2.next) {
+      Node n2clone=n2.cloneTree(cloneTypeExprs);
+      n2clone.parent=result;
+      if (firstChild == null) {
+        firstChild=n2clone;
+        lastChild=firstChild;
+      }
+ else {
+        lastChild.next=n2clone;
+        n2clone.previous=lastChild;
+        lastChild=n2clone;
+      }
     }
-    if (result.first == null) {
-      result.first=n2clone;
-    }
-    result.last=n2clone;
+    firstChild.previous=lastChild;
+    lastChild.next=null;
+    result.first=firstChild;
   }
   return result;
 }

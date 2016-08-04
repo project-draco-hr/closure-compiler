@@ -2,13 +2,15 @@
   Preconditions.checkArgument(child.parent == null);
   Preconditions.checkArgument(child.next == null);
   Preconditions.checkArgument(child.previous == null);
-  child.parent=this;
-  child.next=null;
-  child.previous=last;
-  if (last == null) {
-    first=last=child;
-    return;
+  if (first == null) {
+    child.previous=child;
+    first=child;
   }
-  last.next=child;
-  last=child;
+ else {
+    Node last=first.previous;
+    last.next=child;
+    child.previous=last;
+    first.previous=child;
+  }
+  child.parent=this;
 }

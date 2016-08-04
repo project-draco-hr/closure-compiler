@@ -1,8 +1,7 @@
 {
-  if (prev == null) {
-    return removeFirstChild();
-  }
- else {
-    return removeChildAfter(prev);
-  }
+  Preconditions.checkArgument(prev == null || prev.parent == this,"invalid node.");
+  Node target=prev == null ? first : prev.next;
+  Preconditions.checkArgument(target != null,"no next sibling.");
+  removeChild(target);
+  return target;
 }

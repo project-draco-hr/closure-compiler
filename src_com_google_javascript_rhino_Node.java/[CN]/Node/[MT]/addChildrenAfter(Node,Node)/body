@@ -1,30 +1,23 @@
 {
   Preconditions.checkArgument(node == null || node.parent == this);
+  Preconditions.checkState(children.previous != null);
+  if (node == null) {
+    addChildrenToFront(children);
+    return;
+  }
   for (Node child=children; child != null; child=child.next) {
     Preconditions.checkArgument(child.parent == null);
     child.parent=this;
   }
-  Node lastSibling=children.getLastSibling();
-  if (node != null) {
-    Node oldNext=node.next;
-    node.next=children;
-    children.previous=node;
-    lastSibling.next=oldNext;
-    if (oldNext != null) {
-      oldNext.previous=lastSibling;
-    }
-    if (node == last) {
-      last=lastSibling;
-    }
+  Node lastSibling=children.previous;
+  Node nodeAfter=node.next;
+  lastSibling.next=nodeAfter;
+  if (nodeAfter == null) {
+    first.previous=lastSibling;
   }
  else {
-    if (first != null) {
-      lastSibling.next=first;
-      first.previous=lastSibling;
-    }
- else {
-      last=lastSibling;
-    }
-    first=children;
+    nodeAfter.previous=lastSibling;
   }
+  node.next=children;
+  children.previous=node;
 }

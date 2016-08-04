@@ -2,22 +2,32 @@
   Preconditions.checkArgument(newChild.next == null,"The new child node has next siblings.");
   Preconditions.checkArgument(newChild.previous == null,"The new child node has previous siblings.");
   Preconditions.checkArgument(newChild.parent == null,"The new child node already has a parent.");
+  Preconditions.checkState(child.parent == this);
   newChild.copyInformationFrom(child);
-  newChild.next=child.next;
-  newChild.previous=child.previous;
   newChild.parent=this;
-  if (child == first) {
+  Node nextSibling=child.next;
+  Node prevSibling=child.previous;
+  Node last=first.previous;
+  if (child == prevSibling) {
     first=newChild;
+    first.previous=newChild;
   }
  else {
-    child.previous.next=newChild;
-  }
-  if (child == last) {
-    last=newChild;
-  }
+    if (child == first) {
+      first=newChild;
+    }
  else {
-    child.next.previous=newChild;
+      prevSibling.next=newChild;
+    }
+    if (child == last) {
+      first.previous=newChild;
+    }
+ else {
+      nextSibling.previous=newChild;
+    }
+    newChild.previous=prevSibling;
   }
+  newChild.next=nextSibling;
   child.next=null;
   child.previous=null;
   child.parent=null;
