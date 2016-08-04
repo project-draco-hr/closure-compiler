@@ -1,0 +1,6 @@
+{
+  String externs="";
+  String originalCode="" + "/** @constructor */\n" + "function Clazz() {};\n"+ "var cls = new Clazz();\n"+ "cls.showError('boo');\n";
+  String template="" + "/** @constructor */\n" + "function SomeClassNotInCompilationUnit() {};\n"+ "var foo = new SomeClassNotInCompilationUnit();\n"+ "foo.showError('bar');\n"+ "\n"+ "/**"+ " * @param {SomeClassNotInCompilationUnit} obj\n"+ " * @param {string} msg\n"+ " */\n"+ "function before_template(obj, msg) {\n"+ "  obj.showError(msg);\n"+ "}\n"+ "/**"+ " * @param {SomeClassNotInCompilationUnit} obj\n"+ " * @param {string} msg\n"+ " */\n"+ "function after_template(obj, msg) {\n"+ "  obj.showError(msg, false);\n"+ "}\n";
+  assertChanges(externs,originalCode,null,template);
+}
