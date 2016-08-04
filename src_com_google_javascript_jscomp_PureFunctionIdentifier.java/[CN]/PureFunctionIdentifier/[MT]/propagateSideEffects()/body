@@ -1,7 +1,7 @@
 {
-  DiGraph<FunctionInformation,Node> sideEffectGraph=LinkedDirectedGraph.createWithoutAnnotations();
+  LinkedDirectedGraph<FunctionInformation,Node> sideEffectGraph=LinkedDirectedGraph.createWithoutAnnotations();
   for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
-    sideEffectGraph.createNode(functionInfo);
+    functionInfo.graphNode=sideEffectGraph.createNode(functionInfo);
   }
   for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
     if (!functionInfo.mayHaveSideEffects()) {
@@ -19,7 +19,7 @@
         Node defValue=def.getRValue();
         FunctionInformation dep=functionSideEffectMap.get(defValue);
         Preconditions.checkNotNull(dep);
-        sideEffectGraph.connect(dep,callSite,functionInfo);
+        sideEffectGraph.connect(dep.graphNode,callSite,functionInfo.graphNode);
       }
     }
   }
