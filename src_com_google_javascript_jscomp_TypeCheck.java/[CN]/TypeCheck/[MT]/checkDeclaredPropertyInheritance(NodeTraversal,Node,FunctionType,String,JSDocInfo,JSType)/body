@@ -43,7 +43,7 @@
     if (!ctorTypeMap.isEmpty()) {
       superClassPropType=superClassPropType.visit(new TemplateTypeMapReplacer(typeRegistry,ctorTypeMap));
     }
-    if (!propertyType.isSubtype(superClassPropType)) {
+    if (!propertyType.isSubtype(superClassPropType,this.subtypingMode)) {
       compiler.report(t.makeError(n,HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,propertyName,topInstanceType.toString(),superClassPropType.toString(),propertyType.toString()));
     }
   }
@@ -51,7 +51,7 @@
     for (    ObjectType interfaceType : ctorType.getExtendedInterfaces()) {
       if (interfaceType.hasProperty(propertyName)) {
         JSType superPropertyType=interfaceType.getPropertyType(propertyName);
-        if (!propertyType.isSubtype(superPropertyType)) {
+        if (!propertyType.isSubtype(superPropertyType,this.subtypingMode)) {
           topInstanceType=interfaceType.getConstructor().getTopMostDefiningType(propertyName);
           compiler.report(t.makeError(n,HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,propertyName,topInstanceType.toString(),superPropertyType.toString(),propertyType.toString()));
         }

@@ -17,13 +17,11 @@
       required=required.visit(replacer);
     }
     required=required.restrictByNotNullOrUndefined();
-    if (!found.isSubtype(required)) {
+    if (!found.isSubtype(required,this.subtypingMode)) {
       FunctionType constructor=implementedInterface.toObjectType().getConstructor();
       JSError err=t.makeError(propNode,HIDDEN_INTERFACE_PROPERTY_MISMATCH,prop,constructor.getTopMostDefiningType(prop).toString(),required.toString(),found.toString());
       registerMismatch(found,required,err);
-      if (this.subtypingMode == SubtypingMode.NORMAL || !found.isSubtypeModuloNullUndefined(required)) {
-        report(err);
-      }
+      report(err);
     }
   }
 }
