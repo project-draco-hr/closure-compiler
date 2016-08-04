@@ -1,0 +1,7 @@
+{
+  ModuleLoader loader=new ModuleLoader(null,ImmutableList.of("/foo"),ImmutableList.<DependencyInfo>of());
+  String contents="" + "import './a';\n" + "import './qux/b';\n"+ "import '../closure/c';\n"+ "import '../closure/d/e';\n"+ "import '../../corge/f';\n";
+  DependencyInfo expected=new SimpleDependencyInfo("../bar/baz.js","/foo/js/bar/baz.js",ImmutableList.of("module$js$bar$baz"),ImmutableList.of("module$js$bar$a","module$js$bar$qux$b","module$js$closure$c","module$js$closure$d$e","module$corge$f"),ImmutableMap.of("module","es6"));
+  DependencyInfo result=parser.setModuleLoader(loader).parseFile("/foo/js/bar/baz.js","../bar/baz.js",contents);
+  assertDeps(expected,result);
+}

@@ -13,7 +13,7 @@
       boolean isModule=firstChar == 'm';
       boolean isRequire=firstChar == 'r';
       if (isModule && this.moduleType != ModuleType.WRAPPED_GOOG_MODULE) {
-        this.moduleType=ModuleType.UNWRAPPED_GOOG_MODULE;
+        setModuleType(ModuleType.UNWRAPPED_GOOG_MODULE);
       }
       if (isProvide || isRequire) {
         String arg=parseJsString(googMatcher.group(2));
@@ -33,7 +33,26 @@
     return false;
   }
  else   if (line.startsWith(BUNDLED_GOOG_MODULE_START)) {
-    this.moduleType=ModuleType.WRAPPED_GOOG_MODULE;
+    setModuleType(ModuleType.WRAPPED_GOOG_MODULE);
+  }
+  if (line.startsWith("import") || line.startsWith("export")) {
+    es6Matcher.reset(line);
+    while (es6Matcher.find()) {
+      setModuleType(ModuleType.ES6_MODULE);
+      lineHasProvidesOrRequires=true;
+      String arg=es6Matcher.group(1);
+      if (arg != null) {
+        if (arg.startsWith("goog:")) {
+          requires.add(arg.substring(5));
+        }
+ else {
+          requires.add(fileUri.resolveEs6Module(arg).toModuleName());
+        }
+      }
+    }
+    if (moduleType != ModuleType.ES6_MODULE && ES6_EXPORT_PATTERN.matcher(line).lookingAt()) {
+      setModuleType(ModuleType.ES6_MODULE);
+    }
   }
   return !shortcutMode || lineHasProvidesOrRequires || CharMatcher.whitespace().matchesAllOf(line)|| !line.contains(";")|| line.contains("goog.setTestOnly")|| line.contains("goog.module.declareLegacyNamespace");
 }

@@ -1,6 +1,8 @@
 {
   for (  INPUT userOrderedInput : userOrderedInputs) {
-    if (userOrderedInput.getProvides().isEmpty()) {
+    Collection<String> provides=userOrderedInput.getProvides();
+    String firstProvide=Iterables.getFirst(provides,null);
+    if (firstProvide == null || (provides.size() == 1 && firstProvide.startsWith("module$"))) {
       nonExportingInputs.put(ModuleNames.fileToModuleName(userOrderedInput.getName()),userOrderedInput);
     }
     for (    String providedSymbolName : userOrderedInput.getProvides()) {

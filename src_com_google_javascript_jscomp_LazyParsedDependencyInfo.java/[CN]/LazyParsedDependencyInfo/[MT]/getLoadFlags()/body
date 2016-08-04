@@ -4,8 +4,9 @@
     loadFlagsBuilder.putAll(delegate.getLoadFlags());
     FeatureSet features=((JsAst)ast).getFeatures(compiler);
     if (features.hasEs6Modules()) {
-      if (loadFlagsBuilder.containsKey("module")) {
-        compiler.report(JSError.make(MODULE_CONFLICT,getName()));
+      String previousModule=loadFlagsBuilder.get("module");
+      if (previousModule != null && !previousModule.equals("es6")) {
+        compiler.report(JSError.make(ModuleLoader.MODULE_CONFLICT,getName()));
       }
       loadFlagsBuilder.put("module","es6");
     }

@@ -1,11 +1,25 @@
 {
-  provides=new ArrayList<>();
-  requires=new ArrayList<>();
-  fileHasProvidesOrRequires=false;
-  moduleType=ModuleType.NON_MODULE;
+  this.provides=new ArrayList<>();
+  this.requires=new ArrayList<>();
+  this.fileHasProvidesOrRequires=false;
+  this.fileUri=loader.resolve(filePath);
+  this.moduleType=ModuleType.NON_MODULE;
   logger.fine("Parsing Source: " + filePath);
   doParse(filePath,fileContents);
-  DependencyInfo dependencyInfo=new SimpleDependencyInfo(closureRelativePath,filePath,provides,requires,moduleType == ModuleType.UNWRAPPED_GOOG_MODULE);
-  logger.fine("DepInfo: " + dependencyInfo);
-  return dependencyInfo;
+  if (moduleType == ModuleType.ES6_MODULE) {
+    provides.add(fileUri.toModuleName());
+  }
+  Map<String,String> loadFlags=new LinkedHashMap<>();
+switch (moduleType) {
+case UNWRAPPED_GOOG_MODULE:
+    loadFlags.put("module","goog");
+  break;
+case ES6_MODULE:
+loadFlags.put("module","es6");
+break;
+default :
+}
+DependencyInfo dependencyInfo=new SimpleDependencyInfo(closureRelativePath,filePath,provides,requires,loadFlags);
+logger.fine("DepInfo: " + dependencyInfo);
+return dependencyInfo;
 }
