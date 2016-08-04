@@ -299,11 +299,6 @@ if (!jsdocBuilder.recordOverride()) {
 addTypeWarning("msg.jsdoc.override");
 }
 return eatUntilEOLIfNotAnnotation();
-case FINAL:
-if (!jsdocBuilder.recordFinality()) {
-addTypeWarning("msg.jsdoc.final");
-}
-return eatUntilEOLIfNotAnnotation();
 case POLYMER_BEHAVIOR:
 if (jsdocBuilder.isPolymerBehaviorRecorded()) {
 addParserWarning("msg.jsdoc.polymerBehavior.extra");
@@ -556,6 +551,7 @@ addParserWarning("msg.jsdoc.extraversion");
 token=versionInfo.token;
 return token;
 case CONSTANT:
+case FINAL:
 case DEFINE:
 case EXPORT:
 case RETURN:
@@ -570,7 +566,7 @@ lineno=stream.getLineno();
 charno=stream.getCharno();
 Node typeNode=null;
 boolean hasType=lookAheadForType();
-boolean isAlternateTypeAnnotation=annotation == Annotation.PACKAGE || annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC || annotation == Annotation.CONSTANT || annotation == Annotation.EXPORT;
+boolean isAlternateTypeAnnotation=annotation == Annotation.PACKAGE || annotation == Annotation.PRIVATE || annotation == Annotation.PROTECTED || annotation == Annotation.PUBLIC || annotation == Annotation.CONSTANT || annotation == Annotation.FINAL || annotation == Annotation.EXPORT;
 boolean canSkipTypeAnnotation=isAlternateTypeAnnotation || annotation == Annotation.RETURN;
 type=null;
 if (annotation == Annotation.RETURN && !hasType) {
@@ -595,6 +591,11 @@ switch (annotation) {
 case CONSTANT:
 if (!jsdocBuilder.recordConstancy()) {
 addParserWarning("msg.jsdoc.const");
+}
+break;
+case FINAL:
+if (!jsdocBuilder.recordFinality()) {
+addTypeWarning("msg.jsdoc.final");
 }
 break;
 case DEFINE:
