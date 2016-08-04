@@ -5,9 +5,9 @@
   originalParent.addChildBefore(outerBlock,marker.startMarker);
   Node innerBlock=IR.block();
   innerBlock.setIsSyntheticBlock(true);
-  moveSiblingExclusive(originalParent,innerBlock,marker.startMarker,marker.endMarker);
-  outerBlock.addChildToBack(originalParent.removeChildAfter(outerBlock));
+  moveSiblingExclusive(innerBlock,marker.startMarker,marker.endMarker);
+  outerBlock.addChildToBack(outerBlock.getNext().detach());
   outerBlock.addChildToBack(innerBlock);
-  outerBlock.addChildToBack(originalParent.removeChildAfter(outerBlock));
+  outerBlock.addChildToBack(outerBlock.getNext().detach());
   compiler.reportCodeChange();
 }
