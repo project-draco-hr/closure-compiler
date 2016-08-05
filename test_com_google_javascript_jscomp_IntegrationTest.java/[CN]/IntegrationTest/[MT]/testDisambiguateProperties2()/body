@@ -4,5 +4,6 @@
   options.setCheckTypes(true);
   options.setDisambiguateProperties(true);
   options.setRemoveDeadCode(true);
+  options.setRemoveAbstractMethods(true);
   test(options,LINE_JOINER.join("/** @const */ var goog = {};","goog.abstractMethod = function() {};","/** @interface */ function I() {}","I.prototype.a = function(x) {};","/** @constructor @implements {I} */ function Foo() {}","/** @override */ Foo.prototype.a = goog.abstractMethod;","/** @constructor @extends Foo */ function Bar() {}","/** @override */ Bar.prototype.a = function(x) {};"),LINE_JOINER.join("var goog={};","goog.abstractMethod = function() {};","function I(){}","I.prototype.a=function(x){};","function Foo(){}","function Bar(){}","Bar.prototype.a=function(x){};"));
 }

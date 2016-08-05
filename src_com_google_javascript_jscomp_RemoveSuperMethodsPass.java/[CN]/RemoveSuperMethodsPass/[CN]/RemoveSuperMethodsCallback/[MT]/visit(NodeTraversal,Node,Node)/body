@@ -1,0 +1,23 @@
+{
+  if (n.isFunction() && parent.isAssign() && parent.getParent().isExprResult()) {
+    if (parent.getJSDocInfo() != null && parent.getJSDocInfo().isWizaction()) {
+      return;
+    }
+    Node block=n.getLastChild();
+    if (!block.hasOneChild()) {
+      return;
+    }
+    Node statement=block.getFirstChild();
+    if ((statement.isExprResult() || statement.isReturn()) && statement.hasOneChild() && statement.getFirstChild().isCall()) {
+      String methodName=NodeUtil.getName(n);
+      if (methodName == null) {
+        return;
+      }
+      Node call=statement.getFirstChild();
+      if (argumentsMatch(n,call) && returnMatches(call) && functionNameMatches(methodName,call)) {
+        parent.getParent().detachFromParent();
+        compiler.reportCodeChange();
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  testNoOptimize(LINE_JOINER.join("/** @override @suppress {checkTypes} */","Foo.prototype.baz = function(time, loc) {","  return Foo.superClass_.buzz.call(this, time, loc);","};"));
+  testNoOptimize(LINE_JOINER.join("Foo.baw = { prototype: { baz: function(time, loc) {} }};","/** @override */","Foo.baw.prototype.baz = function(time, loc) {","  return Foo.superClass_.baz.call(this, time, loc);","};"));
+  testNoOptimize(LINE_JOINER.join("Foo.prototype.baw = {","  superClass_: { baz: /** @return {number} */ function(time, loc) {} }","};","/** @override */","Foo.prototype.baz = function(time, loc) {","  return Foo.prototype.baw.superClass_.baz.call(this, time, loc);","};"));
+  testNoOptimize(LINE_JOINER.join("Foo.prototype.baw = {};","Foo.prototype.baw.prototype = Foo.prototype;","/** @override */","Foo.prototype.baz = function(time, loc) {","  return FooBase.prototype.baw.prototype.baz.call(this, time, loc);","};"));
+}
