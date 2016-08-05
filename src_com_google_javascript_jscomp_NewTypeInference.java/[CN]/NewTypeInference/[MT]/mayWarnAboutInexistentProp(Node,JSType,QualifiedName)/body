@@ -4,12 +4,15 @@
   if (propAccessNode.isGetElem() || !recvType.isLoose() && recvType.hasProp(propQname)) {
     return false;
   }
-  if (recvType.isUnknown() || recvType.isTrueOrTruthy() || recvType.isLoose()) {
+  if (recvType.isUnknown() || recvType.isTrueOrTruthy() || recvType.isLoose()|| allowPropertyOnSubtypes && recvType.isInstanceofObject()) {
     if (symbolTable.isPropertyDefined(pname)) {
       return false;
     }
     warnings.add(JSError.make(propAccessNode,INEXISTENT_PROPERTY,pname,"any type in the program"));
     return true;
+  }
+  if (allowPropertyOnSubtypes && !recvType.isStruct() && (recvType.isInstanceofObject() || recvType.isPropDefinedOnSubtype(propQname))) {
+    return false;
   }
   String recvTypeAsString=recvType.toString();
   Node recv=propAccessNode.getFirstChild();

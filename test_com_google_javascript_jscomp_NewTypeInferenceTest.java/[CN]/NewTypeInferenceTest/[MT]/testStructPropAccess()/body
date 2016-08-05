@@ -1,7 +1,7 @@
 {
   typeCheck(LINE_JOINER.join("/** @constructor @struct */ function Foo() { this.prop = 123; }","(new Foo).prop;"));
   typeCheck(LINE_JOINER.join("/** @constructor @struct */ function Foo() { this.prop = 123; }","(new Foo)['prop'];"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
-  typeCheck(LINE_JOINER.join("/** @interface */ function Foo() {}","/** @type {number} */ Foo.prototype.prop;","function f(/** !Foo */ x) { x['prop']; }"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
+  typeCheck(LINE_JOINER.join("/** @interface */ function Foo() {}","/** @type {number} */ Foo.prototype.prop;","function f(/** !Foo */ x) { x['prop']; }"));
   typeCheck(LINE_JOINER.join("/** @constructor @struct */ function Foo() {","  this.prop = 123;","  this['prop'] - 123;","}"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
   typeCheck(LINE_JOINER.join("/** @constructor @struct */ function Foo() { this.prop = 123; }","(new Foo)['prop'] = 123;"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
   typeCheck(LINE_JOINER.join("/** @constructor @struct */ function Foo() { this.prop = 123; }","function f(pname) { (new Foo)[pname] = 123; }"),NewTypeInference.ILLEGAL_PROPERTY_ACCESS);
