@@ -1,0 +1,17 @@
+{
+  Iterator<? extends TypeI> arguments=argumentTypes.iterator();
+  Iterator<Node> parameters=this.getParameters().iterator();
+  Node parameter=null;
+  TypeI argument=null;
+  while (arguments.hasNext() && (parameters.hasNext() || parameter != null && parameter.isVarArgs())) {
+    if (parameters.hasNext()) {
+      parameter=parameters.next();
+    }
+    argument=arguments.next();
+    if (!argument.isSubtypeOf(parameter.getTypeI())) {
+      return false;
+    }
+  }
+  int numArgs=argumentTypes.size();
+  return this.getMinArguments() <= numArgs && numArgs <= this.getMaxArguments();
+}

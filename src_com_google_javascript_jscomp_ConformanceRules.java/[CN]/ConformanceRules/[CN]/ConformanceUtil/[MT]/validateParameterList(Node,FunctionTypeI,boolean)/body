@@ -1,0 +1,12 @@
+{
+  Iterator<Node> arguments=callOrNew.children().iterator();
+  arguments.next();
+  if (isCallInvocation && arguments.hasNext()) {
+    arguments.next();
+  }
+  ImmutableList.Builder<TypeI> argumentTypes=ImmutableList.builder();
+  while (arguments.hasNext()) {
+    argumentTypes.add(arguments.next().getTypeI());
+  }
+  return functionType.acceptsArguments(argumentTypes.build());
+}
