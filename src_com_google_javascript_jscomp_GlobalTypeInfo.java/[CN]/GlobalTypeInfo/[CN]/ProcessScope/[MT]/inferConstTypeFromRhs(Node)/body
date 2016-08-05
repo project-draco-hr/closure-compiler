@@ -1,13 +1,13 @@
 {
   if (constExpr.isFromExterns()) {
-    warnings.add(JSError.make(constExpr,COULD_NOT_INFER_CONST_TYPE));
+    warnings.add(JSError.make(constExpr,COULD_NOT_INFER_CONST_TYPE,getNodeNameForConstWarning(constExpr)));
     return null;
   }
   Node rhs=NodeUtil.getRValueOfLValue(constExpr);
   JSType rhsType=simpleInferExprType(rhs);
   boolean isUnescapedVar=constExpr.isName() && constExpr.getParent().isVar() && !this.currentScope.isEscapedVar(constExpr.getString());
   if ((rhsType == null || rhsType.isUnknown()) && !isUnescapedVar) {
-    warnings.add(JSError.make(constExpr,COULD_NOT_INFER_CONST_TYPE));
+    warnings.add(JSError.make(constExpr,COULD_NOT_INFER_CONST_TYPE,getNodeNameForConstWarning(constExpr)));
     return null;
   }
   return rhsType;
