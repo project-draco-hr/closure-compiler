@@ -7,19 +7,15 @@
   Node ast=parseSyntheticCode(" [synthetic:" + resourceName + "] ",originalCode);
   for (Node node=ast.getFirstChild(); node != null && node.isExprResult() && node.getFirstChild().isString(); node=ast.getFirstChild()) {
     String directive=node.getFirstChild().getString();
-    List<String> words=Splitter.on(' ').splitToList(directive);
+    List<String> words=Splitter.on(' ').limit(2).splitToList(directive);
 switch (words.get(0)) {
 case "use":
       break;
 case "require":
-    for (    String dependency : words.subList(1,words.size())) {
-      ensureLibraryInjected(dependency,force);
-    }
+    ensureLibraryInjected(words.get(1),force);
   break;
 case "declare":
-for (String extern : words.subList(1,words.size())) {
-  getSynthesizedExternsInputAtEnd().getAstRoot(this).addChildToBack(IR.var(IR.name(extern)));
-}
+getSynthesizedExternsInputAtEnd().getAstRoot(this).addChildToBack(IR.var(IR.name(words.get(1))));
 break;
 default :
 throw new RuntimeException("Bad directive: " + directive);
