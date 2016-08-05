@@ -1,15 +1,15 @@
 {
-  Preconditions.checkArgument(declNode.isFunction() || declNode.isGetProp() || declNode.isCall());
+  Preconditions.checkArgument(declNode.isFunction() || declNode.isQualifiedName() || declNode.isCall());
   if (fnDoc == null && !NodeUtil.functionHasInlineJsdocs(declNode)) {
     DeclaredFunctionType t=getDeclaredFunctionTypeFromContext(functionName,declNode,parentScope);
     if (t != null) {
       return t;
     }
   }
-  RawNominalType ctorType=!declNode.isGetProp() ? nominaltypesByNode.get(declNode) : null;
+  RawNominalType ctorType=nominaltypesByNode.get(declNode);
   FunctionAndSlotType result=typeParser.getFunctionType(fnDoc,functionName,declNode,ctorType,ownerType,parentScope);
   Node qnameNode;
-  if (declNode.isGetProp()) {
+  if (declNode.isQualifiedName()) {
     qnameNode=declNode;
   }
  else   if (declNode.isFunction()) {

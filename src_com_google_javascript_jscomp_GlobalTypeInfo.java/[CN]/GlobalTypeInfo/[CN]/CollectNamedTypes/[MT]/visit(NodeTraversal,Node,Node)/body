@@ -27,6 +27,9 @@ case VAR:
  else     if (isCtorDefinedByCall(nameNode)) {
       visitNewCtorDefinedByCall(nameNode);
     }
+ else     if (isCtorWithoutFunctionLiteral(nameNode)) {
+      visitNewCtorWithoutFunctionLiteral(nameNode);
+    }
     if (!n.isFromExterns() && !this.currentScope.isDefinedLocally(varName,false)) {
       this.currentScope.addLocal(varName,JSType.UNKNOWN,false,false);
     }
@@ -54,6 +57,10 @@ return;
 }
 expr=lhs;
 case GETPROP:
+if (isCtorWithoutFunctionLiteral(expr)) {
+visitNewCtorWithoutFunctionLiteral(expr);
+return;
+}
 if (isPrototypeProperty(expr) || NodeUtil.referencesThis(expr) || !expr.isQualifiedName()) {
 return;
 }

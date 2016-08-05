@@ -1,6 +1,10 @@
 {
   Preconditions.checkArgument(getProp.isGetProp());
   Preconditions.checkArgument(getProp.isQualifiedName());
+  if (isCtorWithoutFunctionLiteral(getProp)) {
+    computeFnDeclaredType(NodeUtil.getBestJSDocInfo(getProp),getProp.getQualifiedName(),getProp,null,this.currentScope);
+    return;
+  }
   if (isAnnotatedAsConst(getProp)) {
     warnings.add(JSError.make(getProp,MISPLACED_CONST_ANNOTATION));
   }

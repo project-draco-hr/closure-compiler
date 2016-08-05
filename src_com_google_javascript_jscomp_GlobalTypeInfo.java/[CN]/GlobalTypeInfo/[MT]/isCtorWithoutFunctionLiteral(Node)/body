@@ -1,0 +1,16 @@
+{
+  if (!qnameNode.isFromExterns()) {
+    return false;
+  }
+  JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(qnameNode);
+  if (jsdoc == null || !jsdoc.isConstructor()) {
+    return false;
+  }
+  if (qnameNode.isName()) {
+    return qnameNode.getParent().isVar() && !qnameNode.hasChildren();
+  }
+  if (qnameNode.isGetProp()) {
+    return qnameNode.getParent().isExprResult();
+  }
+  return false;
+}

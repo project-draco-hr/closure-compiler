@@ -1,0 +1,19 @@
+{
+  if (defSite == null) {
+    return false;
+  }
+  if (defSite.isFunction()) {
+    return true;
+  }
+  Node parent=defSite.getParent();
+  if (defSite.isCall()) {
+    return parent.isName() || parent.isAssign();
+  }
+  if (defSite.isName()) {
+    return parent.isVar() && !defSite.hasChildren();
+  }
+  if (defSite.isGetProp()) {
+    return parent.isExprResult();
+  }
+  return false;
+}
