@@ -8,6 +8,9 @@
   if (!options.skipNonTranspilationPasses && options.closurePass && options.enables(DiagnosticGroups.LINT_CHECKS)) {
     checks.add(checkRequiresAndProvidesSorted);
   }
+  if (!options.skipNonTranspilationPasses && (options.enables(DiagnosticGroups.MISSING_REQUIRE) || options.enables(DiagnosticGroups.STRICT_MISSING_REQUIRE) || options.enables(DiagnosticGroups.EXTRA_REQUIRE))) {
+    checks.add(checkRequires);
+  }
   if (!options.skipNonTranspilationPasses && options.closurePass) {
     checks.add(closureCheckModule);
     checks.add(closureRewriteModule);
@@ -23,9 +26,6 @@
   if (!options.skipNonTranspilationPasses && options.closurePass) {
     checks.add(closureGoogScopeAliases);
     checks.add(closureRewriteClass);
-  }
-  if (options.enables(DiagnosticGroups.MISSING_REQUIRE) || options.enables(DiagnosticGroups.STRICT_MISSING_REQUIRE) || options.enables(DiagnosticGroups.EXTRA_REQUIRE)) {
-    checks.add(checkRequires);
   }
   if (!options.skipNonTranspilationPasses) {
     checks.add(checkSideEffects);
