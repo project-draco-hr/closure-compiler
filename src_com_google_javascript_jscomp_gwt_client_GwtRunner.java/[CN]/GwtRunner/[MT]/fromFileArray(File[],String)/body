@@ -3,15 +3,11 @@
   if (src != null) {
     for (int i=0; i < src.length; ++i) {
       File file=src[i];
-      String name=file.getName();
-      if (name == null) {
-        name=unknownPrefix + i;
+      String path=file.path;
+      if (path == null) {
+        path=unknownPrefix + i;
       }
-      String source=file.getSource();
-      if (source == null) {
-        source="";
-      }
-      out.add(SourceFile.fromCode(name,source));
+      out.add(SourceFile.fromCode(path,file.src != null ? file.src : ""));
     }
   }
   return ImmutableList.copyOf(out);

@@ -1,19 +1,26 @@
 {
-  if (flags == null) {
-    return;
-  }
+  CompilationLevel level=DEFAULT_COMPILATION_LEVEL;
   if (flags.getCompilationLevel() != null) {
-    CompilationLevel level=COMPILATION_LEVEL_MAP.get(flags.getCompilationLevel().toUpperCase());
-    if (level != null) {
-      level.setOptionsForCompilationLevel(options);
+    level=COMPILATION_LEVEL_MAP.get(flags.getCompilationLevel().toUpperCase());
+    if (level == null) {
+      throw new RuntimeException("Bad value for compilationLevel: " + flags.getCompilationLevel());
     }
   }
+  level.setOptionsForCompilationLevel(options);
+  if (flags.getAssumeFunctionWrapper()) {
+    level.setWrappedOutputOptimizations(options);
+  }
+  if (flags.getUseTypesForOptimization()) {
+    level.setTypeBasedOptimizationOptions(options);
+  }
+  WarningLevel warningLevel=WarningLevel.DEFAULT;
   if (flags.getWarningLevel() != null) {
-    WarningLevel level=WARNING_LEVEL_MAP.get(flags.getWarningLevel().toUpperCase());
-    if (level != null) {
-      level.setOptionsForWarningLevel(options);
+    warningLevel=WARNING_LEVEL_MAP.get(flags.getWarningLevel().toUpperCase());
+    if (warningLevel == null) {
+      throw new RuntimeException("Bad value for compilationLevel: " + flags.getCompilationLevel());
     }
   }
+  warningLevel.setOptionsForWarningLevel(options);
   if (flags.getLanguageIn() != null) {
     LanguageMode languageIn=LanguageMode.fromString(flags.getLanguageIn());
     if (languageIn != null) {
@@ -31,10 +38,13 @@
   }
   options.setAngularPass(flags.getAngularPass());
   options.setChecksOnly(flags.getChecksOnly());
+  options.setDartPass(flags.getDartPass());
+  options.setExportLocalPropertyDefinitions(flags.getExportLocalPropertyDefinitions());
   options.setGenerateExports(flags.getGenerateExports());
   options.setNewTypeInference(flags.getNewTypeInf());
   options.setPolymerPass(flags.getPolymerPass());
   options.setPreserveTypeAnnotations(flags.getPreserveTypeAnnotations());
+  options.setProcessCommonJSModules(flags.getProcessCommonJSModules());
   options.setRenamePrefixNamespace(flags.getRenamePrefixNamespace());
   options.setRewritePolyfills(flags.getRewritePolyfills());
 }

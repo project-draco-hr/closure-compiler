@@ -1,0 +1,19 @@
+{
+  ImmutableMap.Builder<String,SourceMapInput> inputSourceMaps=new ImmutableMap.Builder<>();
+  if (src != null) {
+    for (int i=0; i < src.length; ++i) {
+      File file=src[i];
+      if (file.sourceMap == null || file.sourceMap.isEmpty()) {
+        continue;
+      }
+      String path=file.path;
+      if (path == null) {
+        path=unknownPrefix + i;
+      }
+      path+=".map";
+      SourceFile sf=SourceFile.fromCode(path,file.sourceMap);
+      inputSourceMaps.put(path,new SourceMapInput(sf));
+    }
+  }
+  return inputSourceMaps.build();
+}

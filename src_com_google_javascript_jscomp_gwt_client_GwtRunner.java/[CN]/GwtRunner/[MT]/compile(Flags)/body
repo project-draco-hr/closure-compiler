@@ -1,13 +1,15 @@
 {
+  List<SourceFile> externs=fromFileArray(flags.getExterns(),"Extern_");
+  List<SourceFile> jsCode=fromFileArray(flags.getJsCode(),"Input_");
+  ImmutableMap<String,SourceMapInput> sourceMaps=buildSourceMaps(flags.getJsCode(),"Input_");
   CompilerOptions options=new CompilerOptions();
   applyDefaultOptions(options);
   applyOptionsFromFlags(options,flags);
+  options.setInputSourceMaps(sourceMaps);
   disableUnsupportedOptions(options);
   NodeErrorManager errorManager=new NodeErrorManager();
   Compiler compiler=new Compiler();
   compiler.setErrorManager(errorManager);
-  List<SourceFile> externs=fromFileArray(flags.getExterns(),"Extern_");
-  List<SourceFile> jsCode=fromFileArray(flags.getJsCode(),"Input_");
   compiler.compile(externs,jsCode,options);
   ModuleOutput output=new ModuleOutput();
   output.compiledCode=compiler.toSource();
