@@ -6,7 +6,11 @@
   }
   ImmutableList.Builder<TypeI> argumentTypes=ImmutableList.builder();
   while (arguments.hasNext()) {
-    argumentTypes.add(arguments.next().getTypeI());
+    TypeI argType=arguments.next().getTypeI();
+    if (argType == null) {
+      argType=compiler.getTypeIRegistry().getNativeType(JSTypeNative.UNKNOWN_TYPE);
+    }
+    argumentTypes.add(argType);
   }
   return functionType.acceptsArguments(argumentTypes.build());
 }
