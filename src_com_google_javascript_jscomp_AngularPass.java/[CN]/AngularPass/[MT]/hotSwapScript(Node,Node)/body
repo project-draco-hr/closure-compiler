@@ -10,7 +10,8 @@
     }
     Node dependenciesArray=IR.arraylit(dependencies.toArray(new Node[0]));
     Node statement=IR.exprResult(IR.assign(IR.getelem(NodeUtil.newQName(compiler,name),IR.string(INJECT_PROPERTY_NAME)),dependenciesArray));
-    NodeUtil.setDebugInformation(statement,entry.getNode(),name);
+    statement.useSourceInfoFromForTree(entry.getNode());
+    statement.setOriginalName(name);
     JSDocInfoBuilder newPropertyDoc=new JSDocInfoBuilder(false);
     newPropertyDoc.recordVisibility(Visibility.PUBLIC);
     statement.getFirstChild().setJSDocInfo(newPropertyDoc.build());
