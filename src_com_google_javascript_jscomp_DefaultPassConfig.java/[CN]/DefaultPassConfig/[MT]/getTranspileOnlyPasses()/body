@@ -1,0 +1,25 @@
+{
+  List<PassFactory> passes=new ArrayList<>();
+  if (options.getLanguageIn() == LanguageMode.ECMASCRIPT6_TYPED && options.getLanguageOut() != LanguageMode.ECMASCRIPT6_TYPED) {
+    passes.add(convertEs6TypedToEs6);
+  }
+  passes.add(checkMissingSuper);
+  passes.add(checkVariableReferences);
+  if (options.dartPass && !options.getLanguageOut().isEs6OrHigher()) {
+    passes.add(dartSuperAccessorsPass);
+  }
+  if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
+    TranspilationPasses.addEs6EarlyPasses(passes);
+    TranspilationPasses.addEs6LatePasses(passes);
+    passes.add(markTranspilationDone);
+  }
+  if (options.raiseToEs6Typed()) {
+    passes.add(convertToTypedES6);
+  }
+  if (!options.forceLibraryInjection.isEmpty()) {
+    passes.add(injectRuntimeLibraries);
+  }
+  assertAllOneTimePasses(passes);
+  assertValidOrder(passes);
+  return passes;
+}

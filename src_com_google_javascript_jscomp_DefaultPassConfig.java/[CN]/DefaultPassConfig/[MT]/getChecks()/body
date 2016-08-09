@@ -5,17 +5,17 @@
   if (options.enables(DiagnosticGroups.LINT_CHECKS)) {
     checks.add(lintChecks);
   }
-  if (!options.skipNonTranspilationPasses && options.closurePass && options.enables(DiagnosticGroups.LINT_CHECKS)) {
+  if (options.closurePass && options.enables(DiagnosticGroups.LINT_CHECKS)) {
     checks.add(checkRequiresAndProvidesSorted);
   }
-  if (!options.skipNonTranspilationPasses && (options.enables(DiagnosticGroups.MISSING_REQUIRE) || options.enables(DiagnosticGroups.STRICT_MISSING_REQUIRE) || options.enables(DiagnosticGroups.EXTRA_REQUIRE))) {
+  if (options.enables(DiagnosticGroups.MISSING_REQUIRE) || options.enables(DiagnosticGroups.STRICT_MISSING_REQUIRE) || options.enables(DiagnosticGroups.EXTRA_REQUIRE)) {
     checks.add(checkRequires);
   }
-  if (!options.skipNonTranspilationPasses && options.closurePass) {
+  if (options.closurePass) {
     checks.add(closureCheckModule);
     checks.add(closureRewriteModule);
   }
-  if (!options.skipNonTranspilationPasses && options.declaredGlobalExternsOnWindow) {
+  if (options.declaredGlobalExternsOnWindow) {
     checks.add(declaredGlobalExternsOnWindow);
   }
   if (options.getLanguageIn() == LanguageMode.ECMASCRIPT6_TYPED && options.getLanguageOut() != LanguageMode.ECMASCRIPT6_TYPED) {
@@ -23,63 +23,56 @@
   }
   checks.add(checkMissingSuper);
   checks.add(checkVariableReferences);
-  if (!options.skipNonTranspilationPasses && options.closurePass) {
+  if (options.closurePass) {
     checks.add(closureGoogScopeAliases);
     checks.add(closureRewriteClass);
   }
-  if (!options.skipNonTranspilationPasses) {
-    checks.add(checkSideEffects);
-  }
+  checks.add(checkSideEffects);
   if (options.enables(DiagnosticGroups.MISSING_PROVIDE)) {
     checks.add(checkProvides);
   }
-  if (options.jqueryPass && !options.skipNonTranspilationPasses) {
+  if (options.jqueryPass) {
     checks.add(jqueryAliases);
   }
-  if (options.angularPass && !options.skipNonTranspilationPasses) {
+  if (options.angularPass) {
     checks.add(angularPass);
   }
-  if (!options.generateExportsAfterTypeChecking && options.generateExports && !options.skipNonTranspilationPasses) {
+  if (!options.generateExportsAfterTypeChecking && options.generateExports) {
     checks.add(generateExports);
   }
-  if (options.exportTestFunctions && !options.skipNonTranspilationPasses) {
+  if (options.exportTestFunctions) {
     checks.add(exportTestFunctions);
   }
-  if (options.closurePass && !options.skipNonTranspilationPasses) {
+  if (options.closurePass) {
     checks.add(closurePrimitives);
   }
-  if (options.polymerPass && !options.skipNonTranspilationPasses) {
+  if (options.polymerPass) {
     checks.add(polymerPass);
   }
-  if ((options.checkSuspiciousCode || options.enables(DiagnosticGroups.GLOBAL_THIS) || options.enables(DiagnosticGroups.DEBUGGER_STATEMENT_PRESENT)) && !options.skipNonTranspilationPasses) {
+  if (options.checkSuspiciousCode || options.enables(DiagnosticGroups.GLOBAL_THIS) || options.enables(DiagnosticGroups.DEBUGGER_STATEMENT_PRESENT)) {
     checks.add(suspiciousCode);
   }
-  if (options.closurePass && options.checkMissingGetCssNameLevel.isOn() && !options.skipNonTranspilationPasses) {
+  if (options.closurePass && options.checkMissingGetCssNameLevel.isOn()) {
     checks.add(closureCheckGetCssName);
   }
-  if (options.syntheticBlockStartMarker != null && !options.skipNonTranspilationPasses) {
+  if (options.syntheticBlockStartMarker != null) {
     checks.add(createSyntheticBlocks);
   }
-  if (!options.skipNonTranspilationPasses) {
-    checks.add(checkVars);
-  }
-  if (options.inferConsts && !options.skipNonTranspilationPasses) {
+  checks.add(checkVars);
+  if (options.inferConsts) {
     checks.add(inferConsts);
   }
-  if (options.computeFunctionSideEffects && !options.skipNonTranspilationPasses) {
+  if (options.computeFunctionSideEffects) {
     checks.add(checkRegExp);
   }
-  if (options.processObjectPropertyString && !options.skipNonTranspilationPasses) {
+  if (options.processObjectPropertyString) {
     checks.add(objectPropertyStringPreprocess);
   }
   if (options.dartPass && !options.getLanguageOut().isEs6OrHigher()) {
     checks.add(dartSuperAccessorsPass);
   }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
-    if (!options.skipNonTranspilationPasses) {
-      checks.add(es6ExternsCheck);
-    }
-    checks.add(es6SuperCheck);
+    checks.add(es6ExternsCheck);
     TranspilationPasses.addEs6EarlyPasses(checks);
   }
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {

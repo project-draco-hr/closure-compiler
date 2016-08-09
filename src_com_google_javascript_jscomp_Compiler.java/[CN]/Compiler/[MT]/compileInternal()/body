@@ -11,15 +11,15 @@
   }
   if (options.skipNonTranspilationPasses) {
     whitespaceOnlyPasses();
+    transpile();
+    return;
   }
-  if (!options.skipNonTranspilationPasses || options.lowerFromEs6()) {
-    check();
-    if (hasErrors()) {
-      return;
-    }
-    if (!options.checksOnly && !options.shouldGenerateTypedExterns()) {
-      optimize();
-    }
+  check();
+  if (hasErrors()) {
+    return;
+  }
+  if (!options.checksOnly && !options.shouldGenerateTypedExterns()) {
+    optimize();
   }
   if (options.recordFunctionInformation) {
     recordFunctionInformation();
