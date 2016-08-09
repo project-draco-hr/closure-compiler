@@ -3,7 +3,6 @@
   Node statementNode=NodeUtil.getEnclosingStatement(call);
   String legacyNamespace=legacyNamespaceNode.getString();
   boolean targetIsNonLegacyGoogModule=rewriteState.containsModule(legacyNamespace) && !rewriteState.isLegacyModule(legacyNamespace);
-  boolean targetIsGoogModuleGetted=currentScript.googModuleGettedNamespaces.contains(legacyNamespaceNode.getString());
   boolean importHasAlias=NodeUtil.isNameDeclaration(statementNode);
   boolean isDestructuring=statementNode.getFirstChild().isDestructuringLhs();
   boolean currentScriptIsAModule=currentScript.isModule;
@@ -29,7 +28,7 @@
       throw new RuntimeException("Illegal goog.module import: " + lhs);
     }
   }
-  if (currentScript.isModule || (targetIsNonLegacyGoogModule && targetIsGoogModuleGetted)) {
+  if (currentScript.isModule || targetIsNonLegacyGoogModule) {
     if (isDestructuring) {
       statementNode.detachFromParent();
     }
