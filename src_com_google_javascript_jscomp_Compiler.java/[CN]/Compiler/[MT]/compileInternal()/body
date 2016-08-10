@@ -12,16 +12,17 @@
   if (options.skipNonTranspilationPasses) {
     whitespaceOnlyPasses();
     if (options.lowerFromEs6()) {
-      transpile();
+      transpileAndDontCheck();
     }
-    return;
   }
-  check();
-  if (hasErrors()) {
-    return;
-  }
-  if (!options.checksOnly && !options.shouldGenerateTypedExterns()) {
-    optimize();
+ else {
+    check();
+    if (hasErrors()) {
+      return;
+    }
+    if (!options.checksOnly && !options.shouldGenerateTypedExterns()) {
+      optimize();
+    }
   }
   if (options.recordFunctionInformation) {
     recordFunctionInformation();
