@@ -14,7 +14,7 @@
         }
         String pname=name.getLastChild().getString();
         String fullyQualifiedName=className + ".prototype." + pname;
-        if (seenNames.contains(fullyQualifiedName)) {
+        if (isNameProcessed(fullyQualifiedName)) {
           return;
         }
         JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(name);
@@ -28,7 +28,7 @@
         newProtoAssignStmt.useSourceInfoIfMissingFromForTree(expr);
         insertionPoint.getParent().addChildAfter(newProtoAssignStmt,insertionPoint);
         compiler.reportCodeChange();
-        seenNames.add(fullyQualifiedName);
+        markNameProcessed(fullyQualifiedName);
       }
     }
   }

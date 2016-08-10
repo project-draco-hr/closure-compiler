@@ -34,12 +34,15 @@ parent.removeChild(childBefore);
 compiler.reportCodeChange();
 }
 }
- else if (!callee.matchesQualifiedName("goog.require")) {
+ else if (!callee.matchesQualifiedName("goog.require") && !callee.matchesQualifiedName("goog.module")) {
 n.detachFromParent();
 compiler.reportCodeChange();
 }
 break;
 case ASSIGN:
+if (t.inModuleScope() && expr.getFirstChild().matchesQualifiedName("exports")) {
+break;
+}
 processName(expr.getFirstChild(),n);
 break;
 case GETPROP:

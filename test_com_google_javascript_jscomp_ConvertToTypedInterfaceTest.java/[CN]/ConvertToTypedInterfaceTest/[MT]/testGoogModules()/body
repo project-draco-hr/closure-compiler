@@ -1,0 +1,6 @@
+{
+  testSame(LINE_JOINER.join("goog.module('x.y.z');","","/** @constructor */ function Foo() {};","","exports = Foo;"));
+  testSame(new String[]{LINE_JOINER.join("goog.module('a.b.c');","/** @constructor */ function Foo() {}","Foo.prototoype.display = function() {};","exports = Foo;"),LINE_JOINER.join("goog.module('x.y.z');","/** @constructor */ function Foo() {}","Foo.prototoype.display = function() {};","exports = Foo;")});
+  testSame(new String[]{LINE_JOINER.join("/** @constructor */ function Foo() {}","Foo.prototoype.display = function() {};"),LINE_JOINER.join("goog.module('x.y.z');","/** @constructor */ function Foo() {}","Foo.prototoype.display = function() {};","exports = Foo;")});
+  test(new String[]{LINE_JOINER.join("goog.module('a.b.c');","/** @constructor */ function Foo() {","  /** @type {number} */ this.x = 5;","}","exports = Foo;"),LINE_JOINER.join("goog.module('x.y.z');","/** @constructor */ function Foo() {","  /** @type {number} */ this.x = 99;","}","exports = Foo;")},new String[]{LINE_JOINER.join("goog.module('a.b.c');","/** @constructor */ function Foo() {}","/** @type {number} */ Foo.prototype.x;","exports = Foo;"),LINE_JOINER.join("goog.module('x.y.z');","/** @constructor */ function Foo() {}","/** @type {number} */ Foo.prototype.x;","exports = Foo;")});
+}
