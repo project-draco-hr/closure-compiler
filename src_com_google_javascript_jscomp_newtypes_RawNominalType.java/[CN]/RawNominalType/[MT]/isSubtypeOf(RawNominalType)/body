@@ -1,0 +1,13 @@
+{
+  if (this == other || other.isBuiltinWithName("Object")) {
+    return true;
+  }
+  if (other.isInterface()) {
+    for (    NominalType i : getInterfaces()) {
+      if (i.isRawSubtypeOf(other.getAsNominalType())) {
+        return true;
+      }
+    }
+  }
+  return isClass() && this.superclass != null && this.superclass.isRawSubtypeOf(other.getAsNominalType());
+}

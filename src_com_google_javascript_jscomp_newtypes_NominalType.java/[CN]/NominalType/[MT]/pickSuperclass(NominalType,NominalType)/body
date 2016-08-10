@@ -5,5 +5,14 @@
   if (c1.isNominalSubtypeOf(c2)) {
     return c2;
   }
-  return c2.isNominalSubtypeOf(c1) ? c1 : null;
+  if (c1.isRawSubtypeOf(c2)) {
+    return c2.instantiateGenericsWithUnknown();
+  }
+  if (c2.isNominalSubtypeOf(c1)) {
+    return c1;
+  }
+  if (c2.isRawSubtypeOf(c1)) {
+    return c1.instantiateGenericsWithUnknown();
+  }
+  return null;
 }

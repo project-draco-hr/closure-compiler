@@ -1,0 +1,18 @@
+{
+  boolean addedObj=false;
+  for (int i=0; i < this.objs.size(); i++) {
+    ObjectType oldObj=this.objs.get(i);
+    if (NominalType.equalRawTypes(oldObj.getNominalType(),newObj.getNominalType())) {
+      addedObj=true;
+      if (this.resolution == ResolveConflictsBy.JOIN) {
+        this.objs.set(i,ObjectType.join(oldObj,newObj));
+      }
+ else {
+        this.objs.set(i,ObjectType.meet(oldObj,newObj));
+      }
+    }
+  }
+  if (!addedObj) {
+    this.objs.add(newObj);
+  }
+}
