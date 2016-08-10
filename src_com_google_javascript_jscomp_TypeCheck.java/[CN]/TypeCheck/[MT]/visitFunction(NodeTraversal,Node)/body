@@ -7,6 +7,9 @@
       compiler.report(t.makeError(n,CONFLICTING_EXTENDED_TYPE,"constructor",functionPrivateName));
     }
  else {
+      if (baseConstructor != null && baseConstructor.getSource() != null && baseConstructor.getSource().getBooleanProp(Node.IS_ES6_CLASS) && !functionType.getSource().getBooleanProp(Node.IS_ES6_CLASS)) {
+        compiler.report(t.makeError(n,ES5_CLASS_EXTENDING_ES6_CLASS,functionType.getDisplayName(),baseConstructor.getDisplayName()));
+      }
       for (      JSType baseInterface : functionType.getImplementedInterfaces()) {
         boolean badImplementedType=false;
         ObjectType baseInterfaceObj=ObjectType.cast(baseInterface);

@@ -5,6 +5,14 @@
   Node externAndJsRoot=new Node(Token.BLOCK,externsNode,n);
   externAndJsRoot.setIsSyntheticBlock(true);
   assertEquals("parsing error: " + Joiner.on(", ").join(compiler.getErrors()),0,compiler.getErrorCount());
+  if (compiler.getOptions().getLanguageIn().isEs6OrHigher()) {
+    List<PassFactory> passes=new ArrayList<>();
+    TranspilationPasses.addEs6EarlyPasses(passes);
+    TranspilationPasses.addEs6LatePasses(passes);
+    PhaseOptimizer phaseopt=new PhaseOptimizer(compiler,null,null);
+    phaseopt.consume(passes);
+    phaseopt.process(externsNode,n);
+  }
   TypedScope s=makeTypeCheck().processForTesting(externsNode,n);
   return new TypeCheckResult(n,s);
 }
