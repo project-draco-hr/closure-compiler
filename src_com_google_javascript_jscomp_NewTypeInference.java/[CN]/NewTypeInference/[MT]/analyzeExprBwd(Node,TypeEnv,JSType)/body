@@ -1,7 +1,7 @@
 {
   Preconditions.checkArgument(requiredType != null,"Required type null at: %s",expr);
   Preconditions.checkArgument(!requiredType.isBottom());
-switch (expr.getType()) {
+switch (expr.getToken()) {
 case EMPTY:
     return new EnvTypePair(outEnv,JSType.UNKNOWN);
 case FUNCTION:
@@ -14,7 +14,7 @@ case NULL:
 case NUMBER:
 case STRING:
 case TRUE:
-return new EnvTypePair(outEnv,scalarValueToType(expr.getType()));
+return new EnvTypePair(outEnv,scalarValueToType(expr.getToken()));
 case OBJECTLIT:
 return analyzeObjLitBwd(expr,outEnv,requiredType);
 case THIS:
@@ -149,6 +149,6 @@ EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
 pair.type=symbolTable.getCastType(expr);
 return pair;
 default :
-throw new RuntimeException("BWD: Unhandled expression type: " + expr.getType() + " with parent: "+ expr.getParent());
+throw new RuntimeException("BWD: Unhandled expression type: " + expr.getToken() + " with parent: "+ expr.getParent());
 }
 }

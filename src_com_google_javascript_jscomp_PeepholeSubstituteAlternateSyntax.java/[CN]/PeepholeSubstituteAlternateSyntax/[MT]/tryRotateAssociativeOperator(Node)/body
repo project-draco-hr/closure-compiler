@@ -2,26 +2,26 @@
   if (!late) {
     return n;
   }
-  Preconditions.checkArgument(NodeUtil.isAssociative(n.getType()));
+  Preconditions.checkArgument(NodeUtil.isAssociative(n.getToken()));
   Node rhs=n.getLastChild();
-  if (n.getType() == rhs.getType()) {
+  if (n.getToken() == rhs.getToken()) {
     Node first=n.getFirstChild().detachFromParent();
     Node second=rhs.getFirstChild().detachFromParent();
     Node third=rhs.getLastChild().detachFromParent();
-    Node newLhs=new Node(n.getType(),first,second).useSourceInfoIfMissingFrom(n);
-    Node newRoot=new Node(rhs.getType(),newLhs,third).useSourceInfoIfMissingFrom(rhs);
+    Node newLhs=new Node(n.getToken(),first,second).useSourceInfoIfMissingFrom(n);
+    Node newRoot=new Node(rhs.getToken(),newLhs,third).useSourceInfoIfMissingFrom(rhs);
     n.getParent().replaceChild(n,newRoot);
     reportCodeChange();
     return newRoot;
   }
- else   if (NodeUtil.isCommutative(n.getType()) && !NodeUtil.mayHaveSideEffects(n)) {
+ else   if (NodeUtil.isCommutative(n.getToken()) && !NodeUtil.mayHaveSideEffects(n)) {
     Node lhs=n.getFirstChild();
-    while (lhs.getType() == n.getType()) {
+    while (lhs.getToken() == n.getToken()) {
       lhs=lhs.getFirstChild();
     }
-    int precedence=NodeUtil.precedence(n.getType());
-    int lhsPrecedence=NodeUtil.precedence(lhs.getType());
-    int rhsPrecedence=NodeUtil.precedence(rhs.getType());
+    int precedence=NodeUtil.precedence(n.getToken());
+    int lhsPrecedence=NodeUtil.precedence(lhs.getToken());
+    int rhsPrecedence=NodeUtil.precedence(rhs.getToken());
     if (rhsPrecedence == precedence && lhsPrecedence != precedence) {
       n.removeChild(rhs);
       lhs.getParent().replaceChild(lhs,rhs);

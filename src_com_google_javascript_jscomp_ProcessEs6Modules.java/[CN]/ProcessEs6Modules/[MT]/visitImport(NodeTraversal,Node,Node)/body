@@ -16,7 +16,7 @@
       String name=isNamespaceImport ? "" : "default";
       importMap.put(child.getString(),new ModuleOriginalNamePair(moduleName,name));
     }
- else     if (child.getType() == Token.IMPORT_SPECS) {
+ else     if (child.getToken() == Token.IMPORT_SPECS) {
       for (      Node grandChild : child.children()) {
         String origName=grandChild.getFirstChild().getString();
         if (grandChild.getChildCount() == 2) {
@@ -28,7 +28,7 @@
       }
     }
  else {
-      Preconditions.checkState(child.getType() == Token.IMPORT_STAR,"Expected an IMPORT_STAR node, but was: %s",child);
+      Preconditions.checkState(child.getToken() == Token.IMPORT_STAR,"Expected an IMPORT_STAR node, but was: %s",child);
       if (isNamespaceImport) {
         compiler.report(t.makeError(importDecl,NAMESPACE_IMPORT_CANNOT_USE_STAR,child.getString(),moduleName));
       }

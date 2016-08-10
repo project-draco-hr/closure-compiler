@@ -4,13 +4,13 @@
   }
   Node insertionPoint=n;
   Node topLevel=parent;
-  boolean insideExport=parent.getType() == Token.EXPORT;
+  boolean insideExport=parent.getToken() == Token.EXPORT;
   if (insideExport) {
     insertionPoint=parent;
     topLevel=parent.getParent();
   }
   for (  Node c : n.children()) {
-    if (c.getType() == Token.CONST) {
+    if (c.getToken() == Token.CONST) {
       JSDocInfoBuilder builder=JSDocInfoBuilder.maybeCopyFrom(c.getJSDocInfo());
       builder.recordConstancy();
       c.setType(Token.VAR);

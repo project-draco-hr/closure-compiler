@@ -17,7 +17,7 @@
       type=functionInfo.getParameterType(paramName);
     }
   }
-  if (type != null && type.getRoot().getType() != Token.ELLIPSIS) {
+  if (type != null && type.getRoot().getToken() != Token.ELLIPSIS) {
     compiler.report(JSError.make(restParam,BAD_REST_PARAMETER_ANNOTATION));
   }
   if (!functionBody.hasChildren()) {
@@ -34,7 +34,7 @@
   if (type != null) {
     Node arrayType=IR.string("Array");
     Node typeNode=type.getRoot();
-    Node memberType=typeNode.getType() == Token.ELLIPSIS ? typeNode.getFirstChild().cloneTree() : typeNode.cloneTree();
+    Node memberType=typeNode.getToken() == Token.ELLIPSIS ? typeNode.getFirstChild().cloneTree() : typeNode.cloneTree();
     arrayType.addChildToFront(new Node(Token.BLOCK,memberType).useSourceInfoIfMissingFrom(typeNode));
     JSDocInfoBuilder builder=new JSDocInfoBuilder(false);
     builder.recordType(new JSTypeExpression(new Node(Token.BANG,arrayType),restParam.getSourceFileName()));

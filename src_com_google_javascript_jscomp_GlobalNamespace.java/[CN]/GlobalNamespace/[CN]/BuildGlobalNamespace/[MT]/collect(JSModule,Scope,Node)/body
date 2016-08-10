@@ -4,7 +4,7 @@
   boolean isSet=false;
   Name.Type type=Name.Type.OTHER;
   boolean isPropAssign=false;
-switch (n.getType()) {
+switch (n.getToken()) {
 case GETTER_DEF:
 case SETTER_DEF:
 case STRING_KEY:
@@ -20,7 +20,7 @@ if (name == null) {
   return;
 }
 isSet=true;
-switch (n.getType()) {
+switch (n.getToken()) {
 case MEMBER_FUNCTION_DEF:
 case STRING_KEY:
 type=getValueType(n.getFirstChild());
@@ -37,7 +37,7 @@ throw new IllegalStateException("unexpected:" + n);
 break;
 case NAME:
 if (parent != null) {
-switch (parent.getType()) {
+switch (parent.getToken()) {
 case VAR:
 case LET:
 case CONST:
@@ -82,7 +82,7 @@ name=n.getString();
 break;
 case GETPROP:
 if (parent != null) {
-switch (parent.getType()) {
+switch (parent.getToken()) {
 case ASSIGN:
 if (parent.getFirstChild() == n) {
 isSet=true;

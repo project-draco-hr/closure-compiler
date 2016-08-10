@@ -1,5 +1,5 @@
 {
-  Token token=n.getType();
+  Token token=n.getToken();
 switch (token) {
 case STAR:
 case EMPTY:
@@ -38,7 +38,7 @@ return child == null ? anyType() : convertTypeNodeAST(child);
 case LC:
 LinkedHashMap<String,TypeDeclarationNode> properties=new LinkedHashMap<>();
 for (Node field : n.getFirstChild().children()) {
-boolean isFieldTypeDeclared=field.getType() == Token.COLON;
+boolean isFieldTypeDeclared=field.getToken() == Token.COLON;
 Node fieldNameNode=isFieldTypeDeclared ? field.getFirstChild() : field;
 String fieldName=fieldNameNode.getString();
 if (fieldName.startsWith("'") || fieldName.startsWith("\"")) {
@@ -71,7 +71,7 @@ if (child2.isParamList()) {
 int paramIdx=1;
 for (Node param : child2.children()) {
 String paramName="p" + paramIdx++;
-if (param.getType() == Token.ELLIPSIS) {
+if (param.getToken() == Token.ELLIPSIS) {
 if (param.getFirstChild() != null) {
 restType=arrayType(convertTypeNodeAST(param.getFirstChild()));
 }
@@ -79,7 +79,7 @@ restName=paramName;
 }
  else {
 TypeDeclarationNode paramNode=convertTypeNodeAST(param);
-if (paramNode.getType() == Token.OPTIONAL_PARAMETER) {
+if (paramNode.getToken() == Token.OPTIONAL_PARAMETER) {
 optionalParams.put(paramName,(TypeDeclarationNode)paramNode.removeFirstChild());
 }
  else {
@@ -101,6 +101,6 @@ case EQUALS:
 TypeDeclarationNode optionalParam=convertTypeNodeAST(n.getFirstChild());
 return optionalParam == null ? null : optionalParameter(optionalParam);
 default :
-throw new IllegalArgumentException("Unsupported node type: " + n.getType() + " "+ n.toStringTree());
+throw new IllegalArgumentException("Unsupported node type: " + n.getToken() + " "+ n.toStringTree());
 }
 }

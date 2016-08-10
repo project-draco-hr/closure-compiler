@@ -6,12 +6,12 @@
   assertTrue("foo property not present on goog type",googScopeType.hasProperty("foo"));
   assertFalse("bar property present on goog type",googScopeType.hasProperty("bar"));
   Node varNode=p.root.getFirstChild();
-  assertEquals(Token.VAR,varNode.getType());
+  assertEquals(Token.VAR,varNode.getToken());
   JSType googNodeType=varNode.getFirstChild().getJSType();
   assertThat(googNodeType).isInstanceOf(ObjectType.class);
   assertSame(googNodeType,googScopeType);
   Node getpropFoo1=varNode.getNext().getFirstFirstChild();
-  assertEquals(Token.GETPROP,getpropFoo1.getType());
+  assertEquals(Token.GETPROP,getpropFoo1.getToken());
   assertEquals("goog",getpropFoo1.getFirstChild().getString());
   JSType googGetpropFoo1Type=getpropFoo1.getFirstChild().getJSType();
   assertThat(googGetpropFoo1Type).isInstanceOf(ObjectType.class);
@@ -19,7 +19,7 @@
   JSType googFooType=((ObjectType)googScopeType).getPropertyType("foo");
   assertThat(googFooType).isInstanceOf(ObjectType.class);
   Node getpropFoo2=varNode.getNext().getNext().getFirstFirstChild().getFirstChild();
-  assertEquals(Token.GETPROP,getpropFoo2.getType());
+  assertEquals(Token.GETPROP,getpropFoo2.getToken());
   assertEquals("goog",getpropFoo2.getFirstChild().getString());
   JSType googGetpropFoo2Type=getpropFoo2.getFirstChild().getJSType();
   assertThat(googGetpropFoo2Type).isInstanceOf(ObjectType.class);

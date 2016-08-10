@@ -1,7 +1,7 @@
 {
   Preconditions.checkArgument(requiredType != null && !requiredType.isBottom());
   EnvTypePair resultPair=null;
-switch (expr.getType()) {
+switch (expr.getToken()) {
 case EMPTY:
     resultPair=new EnvTypePair(inEnv,JSType.UNKNOWN);
   break;
@@ -19,7 +19,7 @@ case NULL:
 case NUMBER:
 case STRING:
 case TRUE:
-resultPair=new EnvTypePair(inEnv,scalarValueToType(expr.getType()));
+resultPair=new EnvTypePair(inEnv,scalarValueToType(expr.getToken()));
 break;
 case OBJECTLIT:
 resultPair=analyzeObjLitFwd(expr,inEnv,requiredType,specializedType);
@@ -105,7 +105,7 @@ resultPair=analyzeAssignNumericOpFwd(expr,inEnv);
 break;
 case SHEQ:
 case SHNE:
-resultPair=analyzeStrictComparisonFwd(expr.getType(),expr.getFirstChild(),expr.getLastChild(),inEnv,specializedType);
+resultPair=analyzeStrictComparisonFwd(expr.getToken(),expr.getFirstChild(),expr.getLastChild(),inEnv,specializedType);
 break;
 case EQ:
 case NE:
@@ -174,7 +174,7 @@ case CASE:
 resultPair=analyzeStrictComparisonFwd(Token.SHEQ,expr.getParent().getFirstChild(),expr.getFirstChild(),inEnv,specializedType);
 break;
 default :
-throw new RuntimeException("Unhandled expression type: " + expr.getType());
+throw new RuntimeException("Unhandled expression type: " + expr.getToken());
 }
 mayWarnAboutUnknownType(expr,resultPair.type);
 maybeSetTypeI(expr,resultPair.type);

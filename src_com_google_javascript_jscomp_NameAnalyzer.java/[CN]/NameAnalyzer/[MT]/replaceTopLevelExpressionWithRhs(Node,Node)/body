@@ -1,23 +1,23 @@
 {
-switch (parent.getType()) {
+switch (parent.getToken()) {
 case BLOCK:
 case SCRIPT:
 case FOR:
 case LABEL:
     break;
 default :
-  throw new IllegalArgumentException("Unsupported parent node type in replaceWithRhs " + parent.getType());
+  throw new IllegalArgumentException("Unsupported parent node type in replaceWithRhs " + parent.getToken());
 }
-switch (n.getType()) {
+switch (n.getToken()) {
 case EXPR_RESULT:
 case FUNCTION:
 case VAR:
 break;
 case ASSIGN:
-Preconditions.checkArgument(parent.isFor(),"Unsupported assignment in replaceWithRhs. parent: %s",parent.getType());
+Preconditions.checkArgument(parent.isFor(),"Unsupported assignment in replaceWithRhs. parent: %s",parent.getToken());
 break;
 default :
-throw new IllegalArgumentException("Unsupported node type in replaceWithRhs " + n.getType());
+throw new IllegalArgumentException("Unsupported node type in replaceWithRhs " + n.getToken());
 }
 List<Node> replacements=new ArrayList<>();
 for (Node rhs : getRhsSubexpressions(n)) {

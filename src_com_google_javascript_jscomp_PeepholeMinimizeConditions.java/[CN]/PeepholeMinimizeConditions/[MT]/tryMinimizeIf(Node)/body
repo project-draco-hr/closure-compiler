@@ -82,7 +82,7 @@
   if (thenBranchIsExpressionBlock && elseBranchIsExpressionBlock) {
     Node thenOp=getBlockExpression(thenBranch).getFirstChild();
     Node elseOp=getBlockExpression(elseBranch).getFirstChild();
-    if (thenOp.getType() == elseOp.getType()) {
+    if (thenOp.getToken() == elseOp.getToken()) {
       if (NodeUtil.isAssignmentOp(thenOp)) {
         Node lhs=thenOp.getFirstChild();
         if (areNodesEqualForInlining(lhs,elseOp.getFirstChild()) && !mayEffectMutableState(lhs) && (!mayHaveSideEffects(unnegatedCond.getNode()) || (thenOp.isAssign() && thenOp.getFirstChild().isName()))) {
@@ -92,7 +92,7 @@
           Node elseExpr=elseOp.getLastChild();
           elseOp.removeChild(elseExpr);
           Node hookNode=IR.hook(shortCond.getNode(),thenExpr,elseExpr).srcref(n);
-          Node assign=new Node(thenOp.getType(),assignName,hookNode).srcref(thenOp);
+          Node assign=new Node(thenOp.getToken(),assignName,hookNode).srcref(thenOp);
           Node expr=NodeUtil.newExpr(assign);
           parent.replaceChild(n,expr);
           reportCodeChange();

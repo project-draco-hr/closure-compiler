@@ -3,7 +3,7 @@
   JSType leftType, rightType;
   Node left, right;
   boolean typeable=true;
-switch (n.getType()) {
+switch (n.getToken()) {
 case CAST:
     Node expr=n.getFirstChild();
   JSType exprType=getJSType(expr);
@@ -81,7 +81,7 @@ break;
 case BITNOT:
 childType=getJSType(n.getFirstChild());
 if (!childType.matchesInt32Context()) {
-report(t,n,BIT_OPERATION,NodeUtil.opToStr(n.getType()),childType.toString());
+report(t,n,BIT_OPERATION,NodeUtil.opToStr(n.getToken()),childType.toString());
 }
 ensureTyped(t,n,NUMBER_TYPE);
 break;
@@ -111,7 +111,7 @@ rightType=getJSType(right);
 JSType leftTypeRestricted=leftType.restrictByNotNullOrUndefined();
 JSType rightTypeRestricted=rightType.restrictByNotNullOrUndefined();
 TernaryValue result=TernaryValue.UNKNOWN;
-if (n.getType() == Token.EQ || n.getType() == Token.NE) {
+if (n.getToken() == Token.EQ || n.getToken() == Token.NE) {
 result=leftTypeRestricted.testForEquality(rightTypeRestricted);
 if (n.isNE()) {
 result=result.not();
@@ -119,7 +119,7 @@ result=result.not();
 }
  else {
 if (!leftTypeRestricted.canTestForShallowEqualityWith(rightTypeRestricted)) {
-result=n.getType() == Token.SHEQ ? TernaryValue.FALSE : TernaryValue.TRUE;
+result=n.getToken() == Token.SHEQ ? TernaryValue.FALSE : TernaryValue.TRUE;
 }
 }
 if (result != TernaryValue.UNKNOWN) {
@@ -198,7 +198,7 @@ case BITAND:
 case SUB:
 case ADD:
 case MUL:
-visitBinaryOperator(n.getType(),t,n);
+visitBinaryOperator(n.getToken(),t,n);
 break;
 case TRUE:
 case FALSE:
@@ -279,7 +279,7 @@ visitObjLitKey(t,key,n,typ);
 }
 break;
 default :
-report(t,n,UNEXPECTED_TOKEN,n.getType().toString());
+report(t,n,UNEXPECTED_TOKEN,n.getToken().toString());
 ensureTyped(t,n);
 break;
 }

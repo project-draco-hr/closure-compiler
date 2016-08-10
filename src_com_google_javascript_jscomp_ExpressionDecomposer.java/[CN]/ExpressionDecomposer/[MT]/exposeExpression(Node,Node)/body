@@ -6,14 +6,14 @@
   state.sideEffects=hasFollowingSideEffects;
   state.extractBeforeStatement=exprInjectionPoint;
   for (Node grandchild=null, child=nonconditionalExpr, parent=child.getParent(); parent != expressionRoot; grandchild=child, child=parent, parent=child.getParent()) {
-    Token parentType=parent.getType();
+    Token parentType=parent.getToken();
     Preconditions.checkState(!isConditionalOp(parent) || child == parent.getFirstChild());
     if (parentType == Token.ASSIGN) {
       if (isSafeAssign(parent,state.sideEffects)) {
       }
  else {
         Node left=parent.getFirstChild();
-        Token type=left.getType();
+        Token type=left.getToken();
         if (left != child) {
           Preconditions.checkState(NodeUtil.isGet(left));
           if (type == Token.GETELEM) {

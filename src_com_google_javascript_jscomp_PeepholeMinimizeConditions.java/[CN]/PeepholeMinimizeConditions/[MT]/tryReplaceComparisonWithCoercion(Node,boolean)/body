@@ -2,7 +2,7 @@
   if (!useTypes) {
     return n;
   }
-  Preconditions.checkArgument(n.getType() == Token.EQ || n.getType() == Token.NE || n.getType() == Token.SHEQ || n.getType() == Token.SHNE);
+  Preconditions.checkArgument(n.getToken() == Token.EQ || n.getToken() == Token.NE || n.getToken() == Token.SHEQ || n.getToken() == Token.SHNE);
   Node left=n.getFirstChild();
   Node right=n.getLastChild();
   BooleanCoercability booleanCoercability=canConvertComparisonToBooleanCoercion(left,right);
@@ -10,7 +10,7 @@
     n.detachChildren();
     Node objExpression=booleanCoercability == BooleanCoercability.LEFT ? left : right;
     Node replacement;
-    if (n.getType() == Token.EQ || n.getType() == Token.SHEQ) {
+    if (n.getToken() == Token.EQ || n.getToken() == Token.SHEQ) {
       replacement=IR.not(objExpression);
     }
  else {

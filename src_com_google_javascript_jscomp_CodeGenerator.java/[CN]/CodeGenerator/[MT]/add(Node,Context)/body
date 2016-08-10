@@ -8,7 +8,7 @@
       add(jsdocAsString);
     }
   }
-  Token type=n.getType();
+  Token type=n.getToken();
   String opstr=NodeUtil.opToStr(type);
   int childCount=n.getChildCount();
   Node first=n.getFirstChild();
@@ -679,7 +679,7 @@ case NEW:
 add("new ");
 int precedence=NodeUtil.precedence(type);
 if (NodeUtil.containsType(first,Token.CALL,NodeUtil.MATCH_NOT_FUNCTION)) {
-precedence=NodeUtil.precedence(first.getType()) + 1;
+precedence=NodeUtil.precedence(first.getToken()) + 1;
 }
 addExpr(first,precedence,Context.OTHER);
 Node next=first.getNext();
@@ -750,7 +750,7 @@ add(params);
 add(body,Context.PRESERVE_BLOCK);
 }
  else {
-boolean isInClass=n.getParent().getType() == Token.CLASS_MEMBERS;
+boolean isInClass=n.getParent().getToken() == Token.CLASS_MEMBERS;
 Node initializer=first.getNext();
 if (initializer != null) {
 Preconditions.checkState(!isInClass,"initializers should only exist in object literals, not classes");

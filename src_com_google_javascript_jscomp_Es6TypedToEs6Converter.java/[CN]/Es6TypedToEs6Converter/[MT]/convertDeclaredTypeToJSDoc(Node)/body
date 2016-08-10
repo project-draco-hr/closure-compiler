@@ -1,6 +1,6 @@
 {
   Preconditions.checkArgument(type instanceof TypeDeclarationNode);
-switch (type.getType()) {
+switch (type.getToken()) {
 case STRING_TYPE:
     return IR.string("string");
 case BOOLEAN_TYPE:
@@ -26,7 +26,7 @@ case PARAMETERIZED_TYPE:
 {
 Node namedType=type.getFirstChild();
 Node result=convertWithLocation(namedType);
-Node typeParameterTarget=result.getType() == Token.BANG ? result.getFirstChild() : result;
+Node typeParameterTarget=result.getToken() == Token.BANG ? result.getFirstChild() : result;
 Node parameters=IR.block().useSourceInfoIfMissingFrom(type);
 typeParameterTarget.addChildToFront(parameters);
 for (Node param=namedType.getNext(); param != null; param=param.getNext()) {
@@ -96,5 +96,5 @@ return new Node(Token.QMARK);
 default :
 break;
 }
-throw new IllegalArgumentException("Unexpected node type for type conversion: " + type.getType());
+throw new IllegalArgumentException("Unexpected node type for type conversion: " + type.getToken());
 }
