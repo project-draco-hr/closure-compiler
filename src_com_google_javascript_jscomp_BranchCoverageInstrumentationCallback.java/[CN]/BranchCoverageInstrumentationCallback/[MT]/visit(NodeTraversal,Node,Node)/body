@@ -1,0 +1,30 @@
+{
+  String fileName=traversal.getSourceName();
+  if (node.isScript()) {
+    if (instrumentationData.get(fileName) != null) {
+      node.addChildToFront(newHeaderNode(traversal,node));
+      instrumentBranchCoverage(traversal,instrumentationData.get(fileName));
+    }
+    compiler.reportCodeChange();
+  }
+  if (node.isIf()) {
+    ControlFlowGraph<Node> cfg=traversal.getControlFlowGraph();
+    boolean hasDefaultBlock=false;
+    for (    DiGraph.DiGraphEdge<Node,ControlFlowGraph.Branch> outEdge : cfg.getOutEdges(node)) {
+      if (outEdge.getValue() == ControlFlowGraph.Branch.ON_FALSE) {
+        Node destination=outEdge.getDestination().getValue();
+        if (destination.isBlock() && destination.getParent().isIf()) {
+          hasDefaultBlock=true;
+        }
+        break;
+      }
+    }
+    if (!hasDefaultBlock) {
+      addDefaultBlock(node);
+    }
+    if (!instrumentationData.containsKey(fileName)) {
+      instrumentationData.put(fileName,new FileInstrumentationData(fileName,createArrayName(traversal)));
+    }
+    processBranchInfo(node,instrumentationData.get(fileName));
+  }
+}

@@ -1,0 +1,10 @@
+{
+  String arrayName=createArrayName(traversal);
+  Node getElemNode=IR.getelem(IR.name(arrayName),IR.number(idx));
+  Node exprNode=IR.exprResult(IR.assign(getElemNode,IR.trueNode()));
+  String fileName=traversal.getSourceName();
+  if (!instrumentationData.containsKey(fileName)) {
+    instrumentationData.put(fileName,new FileInstrumentationData(fileName,arrayName));
+  }
+  return exprNode.useSourceInfoIfMissingFromForTree(node);
+}

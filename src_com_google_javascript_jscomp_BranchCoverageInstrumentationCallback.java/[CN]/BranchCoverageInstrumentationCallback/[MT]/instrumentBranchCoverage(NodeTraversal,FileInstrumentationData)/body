@@ -1,0 +1,14 @@
+{
+  int maxLine=data.maxBranchPresentLine();
+  int branchCoverageOffset=0;
+  for (int lineIdx=1; lineIdx <= maxLine; ++lineIdx) {
+    Integer numBranches=data.getNumBranches(lineIdx);
+    if (numBranches != null) {
+      for (int branchIdx=1; branchIdx <= numBranches; ++branchIdx) {
+        Node block=data.getBranchNode(lineIdx,branchIdx);
+        block.addChildToFront(newBranchInstrumentationNode(traversal,block,branchCoverageOffset + branchIdx - 1));
+      }
+      branchCoverageOffset+=numBranches;
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  String fileName=traversal.getSourceName();
+  FileInstrumentationData data=instrumentationData.get(fileName);
+  Preconditions.checkNotNull(data);
+  String objName=CoverageInstrumentationPass.JS_INSTRUMENTATION_OBJECT_NAME;
+  List<Node> nodes=new ArrayList<Node>();
+  nodes.add(newArrayDeclarationNode(traversal));
+  nodes.add(IR.exprResult(IR.call(NodeUtil.newQName(compiler,objName + ".branchPresent.push"),IR.string(data.getBranchPresentAsHexString()))));
+  nodes.add(newBranchesInLineNode("JSCompiler_lcov_branchesInLine",data));
+  nodes.add(IR.exprResult(IR.call(NodeUtil.newQName(compiler,objName + ".branchesInLine.push"),IR.name("JSCompiler_lcov_branchesInLine"))));
+  nodes.add(IR.exprResult(IR.call(NodeUtil.newQName(compiler,objName + ".fileNames.push"),IR.string(fileName))));
+  return IR.block(nodes).useSourceInfoIfMissingFromForTree(srcref);
+}

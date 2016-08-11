@@ -1,6 +1,11 @@
 {
   if (rootNode.hasChildren()) {
-    NodeTraversal.traverseEs6(compiler,rootNode,new CoverageInstrumentationCallback(compiler,instrumentationData,reach));
+    if (instrumentOption == InstrumentOption.BRANCH_ONLY) {
+      NodeTraversal.traverseEs6(compiler,rootNode,new BranchCoverageInstrumentationCallback(compiler,instrumentationData));
+    }
+ else {
+      NodeTraversal.traverseEs6(compiler,rootNode,new CoverageInstrumentationCallback(compiler,instrumentationData,reach));
+    }
     Node firstScript=rootNode.getFirstChild();
     Preconditions.checkState(firstScript.isScript());
     addHeaderCode(firstScript);

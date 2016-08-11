@@ -1,0 +1,13 @@
+{
+  List<Node> assignments=new ArrayList<Node>();
+  assignments.add(IR.var(IR.name(name),IR.arraylit()));
+  int lineWithBranch=0;
+  for (int lineIdx=1; lineIdx <= data.maxBranchPresentLine(); ++lineIdx) {
+    Integer numBranches=data.getNumBranches(lineIdx);
+    if (numBranches != null && numBranches > 0) {
+      Node assignment=IR.exprResult(IR.assign(IR.getelem(IR.name(name),IR.number(lineWithBranch++)),IR.number(numBranches)));
+      assignments.add(assignment.useSourceInfoIfMissingFromForTree(assignment));
+    }
+  }
+  return IR.block(assignments);
+}
