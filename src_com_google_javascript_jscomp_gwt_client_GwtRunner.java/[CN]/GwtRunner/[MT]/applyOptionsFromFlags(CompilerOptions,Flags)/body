@@ -1,50 +1,43 @@
 {
   CompilationLevel level=DEFAULT_COMPILATION_LEVEL;
-  if (flags.getCompilationLevel() != null) {
-    level=COMPILATION_LEVEL_MAP.get(flags.getCompilationLevel().toUpperCase());
+  if (flags.compilationLevel != null) {
+    level=CompilationLevel.fromString(flags.compilationLevel.toUpperCase());
     if (level == null) {
-      throw new RuntimeException("Bad value for compilationLevel: " + flags.getCompilationLevel());
+      throw new RuntimeException("Bad value for compilationLevel: " + flags.compilationLevel);
     }
   }
   level.setOptionsForCompilationLevel(options);
-  if (flags.getAssumeFunctionWrapper()) {
+  if (flags.assumeFunctionWrapper) {
     level.setWrappedOutputOptimizations(options);
   }
-  if (flags.getUseTypesForOptimization()) {
+  if (flags.useTypesForOptimization) {
     level.setTypeBasedOptimizationOptions(options);
   }
   WarningLevel warningLevel=WarningLevel.DEFAULT;
-  if (flags.getWarningLevel() != null) {
-    warningLevel=WARNING_LEVEL_MAP.get(flags.getWarningLevel().toUpperCase());
-    if (warningLevel == null) {
-      throw new RuntimeException("Bad value for compilationLevel: " + flags.getCompilationLevel());
-    }
+  if (flags.warningLevel != null) {
+    warningLevel=WarningLevel.valueOf(flags.warningLevel);
   }
   warningLevel.setOptionsForWarningLevel(options);
-  if (flags.getLanguageIn() != null) {
-    LanguageMode languageIn=LanguageMode.fromString(flags.getLanguageIn());
-    if (languageIn != null) {
-      options.setLanguageIn(languageIn);
-    }
+  LanguageMode languageIn=LanguageMode.fromString(flags.languageIn);
+  if (languageIn != null) {
+    options.setLanguageIn(languageIn);
   }
-  if (flags.getLanguageOut() != null) {
-    LanguageMode languageOut=LanguageMode.fromString(flags.getLanguageOut());
-    if (languageOut != null) {
-      options.setLanguageOut(languageOut);
-    }
+  LanguageMode languageOut=LanguageMode.fromString(flags.languageOut);
+  if (languageOut != null) {
+    options.setLanguageOut(languageOut);
   }
-  if (flags.getCreateSourceMap()) {
+  if (flags.createSourceMap) {
     options.setSourceMapOutputPath("%output%");
   }
-  options.setAngularPass(flags.getAngularPass());
-  options.setChecksOnly(flags.getChecksOnly());
-  options.setDartPass(flags.getDartPass());
-  options.setExportLocalPropertyDefinitions(flags.getExportLocalPropertyDefinitions());
-  options.setGenerateExports(flags.getGenerateExports());
-  options.setNewTypeInference(flags.getNewTypeInf());
-  options.setPolymerPass(flags.getPolymerPass());
-  options.setPreserveTypeAnnotations(flags.getPreserveTypeAnnotations());
-  options.setProcessCommonJSModules(flags.getProcessCommonJSModules());
-  options.setRenamePrefixNamespace(flags.getRenamePrefixNamespace());
-  options.setRewritePolyfills(flags.getRewritePolyfills());
+  options.setAngularPass(flags.angularPass);
+  options.setChecksOnly(flags.checksOnly);
+  options.setDartPass(flags.dartPass);
+  options.setExportLocalPropertyDefinitions(flags.exportLocalPropertyDefinitions);
+  options.setGenerateExports(flags.generateExports);
+  options.setNewTypeInference(flags.newTypeInf);
+  options.setPolymerPass(flags.polymerPass);
+  options.setPreserveTypeAnnotations(flags.preserveTypeAnnotations);
+  options.setProcessCommonJSModules(flags.processCommonJsModules);
+  options.setRenamePrefixNamespace(flags.renamePrefixNamespace);
+  options.setRewritePolyfills(flags.rewritePolyfills);
 }

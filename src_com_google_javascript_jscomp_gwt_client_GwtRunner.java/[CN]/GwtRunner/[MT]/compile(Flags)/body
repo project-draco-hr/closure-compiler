@@ -1,7 +1,11 @@
 {
-  List<SourceFile> externs=fromFileArray(flags.getExterns(),"Extern_");
-  List<SourceFile> jsCode=fromFileArray(flags.getJsCode(),"Input_");
-  ImmutableMap<String,SourceMapInput> sourceMaps=buildSourceMaps(flags.getJsCode(),"Input_");
+  String[] unhandled=updateFlags(flags,defaultFlags);
+  if (unhandled.length > 0) {
+    throw new RuntimeException("Unhandled flag: " + unhandled[0]);
+  }
+  List<SourceFile> externs=fromFileArray(flags.externs,"Extern_");
+  List<SourceFile> jsCode=fromFileArray(flags.jsCode,"Input_");
+  ImmutableMap<String,SourceMapInput> sourceMaps=buildSourceMaps(flags.jsCode,"Input_");
   CompilerOptions options=new CompilerOptions();
   applyDefaultOptions(options);
   applyOptionsFromFlags(options,flags);
@@ -15,7 +19,7 @@
   output.compiledCode=compiler.toSource();
   output.errors=toNativeErrorArray(errorManager.errors);
   output.warnings=toNativeErrorArray(errorManager.warnings);
-  if (flags.getCreateSourceMap()) {
+  if (flags.createSourceMap) {
     StringBuilder b=new StringBuilder();
     try {
       compiler.getSourceMap().appendTo(b,"IGNORED");
