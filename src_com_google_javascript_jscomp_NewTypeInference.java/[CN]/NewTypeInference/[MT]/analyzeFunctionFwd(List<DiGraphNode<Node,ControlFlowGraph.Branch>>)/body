@@ -42,7 +42,12 @@ case RETURN:
 {
 Node retExp=n.getFirstChild();
 JSType declRetType=currentScope.getDeclaredFunctionType().getReturnType();
-declRetType=declRetType == null ? JSType.UNKNOWN : declRetType;
+if (declRetType == null) {
+declRetType=JSType.UNKNOWN;
+}
+ else if (this.areTypeVariablesUnknown) {
+declRetType=declRetType.substituteGenericsWithUnknown();
+}
 JSType actualRetType;
 if (retExp == null) {
 actualRetType=JSType.UNDEFINED;

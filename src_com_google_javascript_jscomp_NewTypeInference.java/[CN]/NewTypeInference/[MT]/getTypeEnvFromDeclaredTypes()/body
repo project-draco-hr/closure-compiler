@@ -25,7 +25,13 @@
   for (  String varName : varNames) {
     if (!locals.contains(varName) || !currentScope.isFunctionNamespace(varName)) {
       JSType declType=currentScope.getDeclaredTypeOf(varName);
-      env=envPutType(env,varName,declType == null ? JSType.UNKNOWN : declType);
+      if (declType == null) {
+        declType=JSType.UNKNOWN;
+      }
+ else       if (areTypeVariablesUnknown) {
+        declType=declType.substituteGenericsWithUnknown();
+      }
+      env=envPutType(env,varName,declType);
     }
   }
   for (  String fnName : currentScope.getLocalFunDefs()) {

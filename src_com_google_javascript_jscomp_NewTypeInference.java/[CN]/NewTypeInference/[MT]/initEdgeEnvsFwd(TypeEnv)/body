@@ -17,7 +17,13 @@
   }
   for (  String name : nonLocals) {
     JSType declType=currentScope.getDeclaredTypeOf(name);
-    JSType initType=declType == null ? envGetType(entryEnv,name) : declType;
+    JSType initType=declType;
+    if (initType == null) {
+      initType=envGetType(entryEnv,name);
+    }
+ else     if (this.areTypeVariablesUnknown) {
+      initType=initType.substituteGenericsWithUnknown();
+    }
     println("Adding non-local ",name," with decltype: ",declType," and inittype: ",initType);
     entryEnv=envPutType(entryEnv,name,initType);
   }
