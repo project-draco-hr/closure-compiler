@@ -1,0 +1,12 @@
+{
+  if (!currentScope.hasThis()) {
+    mayWarnAboutGlobalThis(expr,currentScope);
+    return new EnvTypePair(inEnv,JSType.UNKNOWN);
+  }
+  JSType inferredType=envGetType(inEnv,THIS_ID);
+  if (!inferredType.isSubtypeOf(requiredType)) {
+    return new EnvTypePair(inEnv,inferredType);
+  }
+  JSType preciseType=inferredType.specialize(specializedType);
+  return EnvTypePair.addBinding(inEnv,THIS_ID,preciseType);
+}

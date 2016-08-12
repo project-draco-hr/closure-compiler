@@ -1,3 +1,19 @@
 {
-  throw new UnsupportedOperationException("getUnionMembers not implemented yet");
+  ImmutableSet.Builder<TypeI> builder=ImmutableSet.builder();
+  JSType[] primitiveTypes={BOOLEAN,NUMBER,STRING,UNDEFINED,NULL};
+  for (  JSType primitiveType : primitiveTypes) {
+    if ((this.getMask() & primitiveType.getMask()) != 0) {
+      builder.add(primitiveType);
+    }
+  }
+  for (  ObjectType obj : this.getObjs()) {
+    builder.add(JSType.fromObjectType(obj));
+  }
+  for (  EnumType e : this.getEnums()) {
+    builder.add(JSType.fromEnum(e));
+  }
+  if (this.getTypeVar() != null) {
+    builder.add(JSType.fromTypeVar(this.getTypeVar()));
+  }
+  return builder.build();
 }
