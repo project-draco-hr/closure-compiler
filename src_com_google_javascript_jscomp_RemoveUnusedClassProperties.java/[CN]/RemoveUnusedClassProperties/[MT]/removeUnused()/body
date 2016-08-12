@@ -20,7 +20,7 @@
           Node assign=parent;
           Preconditions.checkState(assign != null && NodeUtil.isAssignmentOp(assign) && assign.getFirstChild() == n);
           compiler.reportChangeToEnclosingScope(assign);
-          replacement=assign.getLastChild().detachFromParent();
+          replacement=assign.getLastChild().detach();
         }
  else         if (parent.isInc() || parent.isDec()) {
           compiler.reportChangeToEnclosingScope(parent);
@@ -34,7 +34,7 @@
           while (preserved.isGetProp()) {
             preserved=preserved.getFirstChild();
           }
-          replacement=IR.comma(preserved.detachFromParent(),replacement).srcref(parent);
+          replacement=IR.comma(preserved.detach(),replacement).srcref(parent);
         }
         compiler.reportChangeToEnclosingScope(parent);
         parent.getParent().replaceChild(parent,replacement);

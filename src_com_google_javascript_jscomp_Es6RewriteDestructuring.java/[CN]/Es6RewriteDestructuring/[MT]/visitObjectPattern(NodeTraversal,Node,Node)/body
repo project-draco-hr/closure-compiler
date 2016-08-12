@@ -23,7 +23,7 @@
     throw new IllegalStateException("Unexpected OBJECT_PATTERN parent: " + parent);
   }
   String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
-  Node tempDecl=IR.var(IR.name(tempVarName),rhs.detachFromParent()).useSourceInfoIfMissingFromForTree(objectPattern);
+  Node tempDecl=IR.var(IR.name(tempVarName),rhs.detach()).useSourceInfoIfMissingFromForTree(objectPattern);
   if (parent.isConst()) {
     JSDocInfoBuilder jsDoc=new JSDocInfoBuilder(false);
     jsDoc.recordConstancy();
@@ -89,6 +89,6 @@
     nodeToDetach.getParent().addChildBefore(newNode,nodeToDetach);
     visit(t,newLHS,newLHS.getParent());
   }
-  nodeToDetach.detachFromParent();
+  nodeToDetach.detach();
   compiler.reportCodeChange();
 }

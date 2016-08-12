@@ -24,16 +24,16 @@
     }
     for (    Node aliasDefinition : traversal.getAliasDefinitionsInOrder()) {
       if (NodeUtil.isNameDeclaration(aliasDefinition.getParent()) && aliasDefinition.getParent().hasOneChild()) {
-        aliasDefinition.getParent().detachFromParent();
+        aliasDefinition.getParent().detach();
       }
  else {
-        aliasDefinition.detachFromParent();
+        aliasDefinition.detach();
       }
     }
     for (    Node scopeCall : traversal.getScopeCalls()) {
       Node expressionWithScopeCall=scopeCall.getParent();
       Node scopeClosureBlock=scopeCall.getLastChild().getLastChild();
-      scopeClosureBlock.detachFromParent();
+      scopeClosureBlock.detach();
       expressionWithScopeCall.getParent().replaceChild(expressionWithScopeCall,scopeClosureBlock);
       NodeUtil.tryMergeBlock(scopeClosureBlock);
     }

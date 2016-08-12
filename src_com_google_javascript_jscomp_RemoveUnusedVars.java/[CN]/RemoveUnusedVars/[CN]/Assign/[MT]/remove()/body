@@ -1,10 +1,10 @@
 {
   Node parent=assignNode.getParent();
   if (mayHaveSecondarySideEffects) {
-    Node replacement=assignNode.getLastChild().detachFromParent();
+    Node replacement=assignNode.getLastChild().detach();
     for (Node current=assignNode.getFirstChild(); !current.isName(); current=current.getFirstChild()) {
       if (current.isGetElem()) {
-        replacement=IR.comma(current.getLastChild().detachFromParent(),replacement);
+        replacement=IR.comma(current.getLastChild().detach(),replacement);
         replacement.useSourceInfoIfMissingFrom(current);
       }
     }
@@ -16,7 +16,7 @@
       grandparent.removeChild(parent);
     }
  else {
-      parent.replaceChild(assignNode,assignNode.getLastChild().detachFromParent());
+      parent.replaceChild(assignNode,assignNode.getLastChild().detach());
     }
   }
 }

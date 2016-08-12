@@ -10,7 +10,7 @@ case "Boolean":
 {
       int paramCount=n.getChildCount() - 1;
       if (paramCount == 1) {
-        Node value=n.getLastChild().detachFromParent();
+        Node value=n.getLastChild().detach();
         Node replacement;
         if (NodeUtil.isBooleanResult(value)) {
           replacement=value;
@@ -27,7 +27,7 @@ case "String":
 {
     Node value=callTarget.getNext();
     if (value != null && value.getNext() == null && NodeUtil.isImmutableValue(value)) {
-      Node addition=IR.add(IR.string("").srcref(callTarget),value.detachFromParent());
+      Node addition=IR.add(IR.string("").srcref(callTarget),value.detach());
       n.getParent().replaceChild(n,addition);
       reportCodeChange();
       return addition;

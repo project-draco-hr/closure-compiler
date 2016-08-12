@@ -24,7 +24,7 @@
     throw new IllegalStateException("Unexpected ARRAY_PATTERN parent: " + parent);
   }
   String tempVarName=DESTRUCTURING_TEMP_VAR + (destructuringVarCounter++);
-  Node tempDecl=IR.var(IR.name(tempVarName),makeIterator(compiler,rhs.detachFromParent()));
+  Node tempDecl=IR.var(IR.name(tempVarName),makeIterator(compiler,rhs.detach()));
   tempDecl.useSourceInfoIfMissingFromForTree(arrayPattern);
   nodeToDetach.getParent().addChildBefore(tempDecl,nodeToDetach);
   boolean needsRuntime=false;
@@ -42,16 +42,16 @@
       Node var=IR.var(IR.name(nextVarName),IR.getprop(IR.call(IR.getprop(IR.name(tempVarName),IR.string("next"))),IR.string("value")));
       var.useSourceInfoIfMissingFromForTree(child);
       nodeToDetach.getParent().addChildBefore(var,nodeToDetach);
-      newLHS=child.getFirstChild().detachFromParent();
-      newRHS=defaultValueHook(IR.name(nextVarName),child.getLastChild().detachFromParent());
+      newLHS=child.getFirstChild().detach();
+      newRHS=defaultValueHook(IR.name(nextVarName),child.getLastChild().detach());
     }
  else     if (child.isRest()) {
-      newLHS=child.getFirstChild().detachFromParent();
+      newLHS=child.getFirstChild().detach();
       newRHS=IR.call(NodeUtil.newQName(compiler,"$jscomp.arrayFromIterator"),IR.name(tempVarName));
       needsRuntime=true;
     }
  else {
-      newLHS=child.detachFromParent();
+      newLHS=child.detach();
       newRHS=IR.getprop(IR.call(IR.getprop(IR.name(tempVarName),IR.string("next"))),IR.string("value"));
     }
     Node newNode;
@@ -66,7 +66,7 @@
     nodeToDetach.getParent().addChildBefore(newNode,nodeToDetach);
     visit(t,newLHS,newLHS.getParent());
   }
-  nodeToDetach.detachFromParent();
+  nodeToDetach.detach();
   if (needsRuntime) {
     compiler.ensureLibraryInjected("es6/util/arrayfromiterator",false);
   }

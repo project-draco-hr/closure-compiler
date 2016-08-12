@@ -17,7 +17,7 @@
   if (lhs.isGetElem()) {
     newProperty.setQuotedString();
   }
-  Node newValue=rhs.detachFromParent();
+  Node newValue=rhs.detach();
   newProperty.addChildToBack(newValue);
   boolean propertyExists=false;
   for (  Node currentProperty : objectLiteral.children()) {
@@ -30,7 +30,7 @@
       if (!isCurrentValueSideEffect && !isNewValueSideEffect) {
         objectLiteral.removeChild(currentProperty);
         objectLiteral.addChildToBack(newProperty);
-        propertyCandidate.detachFromParent();
+        propertyCandidate.detach();
         return true;
       }
       break;
@@ -39,6 +39,6 @@
   if (!propertyExists) {
     objectLiteral.addChildToBack(newProperty);
   }
-  propertyCandidate.detachFromParent();
+  propertyCandidate.detach();
   return true;
 }

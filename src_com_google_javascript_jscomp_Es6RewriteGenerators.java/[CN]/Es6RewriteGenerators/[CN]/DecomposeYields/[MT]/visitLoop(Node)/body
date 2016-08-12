@@ -20,7 +20,7 @@ guard=n.getLastChild();
 if (!guard.isEmpty()) {
 Node firstEntry=IR.name(GENERATOR_DO_WHILE_INITIAL);
 enclosingBlock.addChildToFront(IR.var(firstEntry.cloneTree(),IR.trueNode()));
-guard=IR.or(firstEntry,n.getLastChild().detachFromParent());
+guard=IR.or(firstEntry,n.getLastChild().detach());
 n.addChildToBack(guard);
 }
 incr=IR.empty();
@@ -39,7 +39,7 @@ container.addChildToFront(IR.block(IR.exprResult(IR.assign(guardName.cloneTree()
 container.addChildToBack(guardName.cloneTree());
 }
 if (!incr.isEmpty()) {
-n.addChildBefore(IR.block(IR.exprResult(incr.detachFromParent())),n.getLastChild());
+n.addChildBefore(IR.block(IR.exprResult(incr.detach())),n.getLastChild());
 }
 enclosingBlock.addChildToFront(IR.var(guardName));
 compiler.reportCodeChange();

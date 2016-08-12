@@ -12,7 +12,7 @@
         Node nextThen=nextCond.getNext();
         Node nextElse=nextThen.getNext();
         if (thenBranch.isEquivalentToTyped(nextThen)) {
-          child.detachFromParent();
+          child.detach();
           child.detachChildren();
           Node newCond=new Node(Token.OR,cond);
           nextNode.replaceChild(nextCond,newCond);
@@ -20,7 +20,7 @@
           reportCodeChange();
         }
  else         if (nextElse != null && thenBranch.isEquivalentToTyped(nextElse)) {
-          child.detachFromParent();
+          child.detach();
           child.detachChildren();
           Node newCond=new Node(Token.AND,IR.not(cond).srcref(cond));
           nextNode.replaceChild(nextCond,newCond);
@@ -32,14 +32,14 @@
         Node thenExpr=null;
         if (isReturnExpressBlock(thenBranch)) {
           thenExpr=getBlockReturnExpression(thenBranch);
-          thenExpr.detachFromParent();
+          thenExpr.detach();
         }
  else {
           thenExpr=NodeUtil.newUndefinedNode(child);
         }
         Node elseExpr=nextNode.getFirstChild();
-        cond.detachFromParent();
-        elseExpr.detachFromParent();
+        cond.detach();
+        elseExpr.detach();
         Node returnNode=IR.returnNode(IR.hook(cond,thenExpr,elseExpr).srcref(child));
         n.replaceChild(child,returnNode);
         n.removeChild(nextNode);

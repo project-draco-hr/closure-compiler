@@ -5,9 +5,9 @@
   Preconditions.checkArgument(NodeUtil.isAssociative(n.getToken()));
   Node rhs=n.getLastChild();
   if (n.getToken() == rhs.getToken()) {
-    Node first=n.getFirstChild().detachFromParent();
-    Node second=rhs.getFirstChild().detachFromParent();
-    Node third=rhs.getLastChild().detachFromParent();
+    Node first=n.getFirstChild().detach();
+    Node second=rhs.getFirstChild().detach();
+    Node third=rhs.getLastChild().detach();
     Node newLhs=new Node(n.getToken(),first,second).useSourceInfoIfMissingFrom(n);
     Node newRoot=new Node(rhs.getToken(),newLhs,third).useSourceInfoIfMissingFrom(rhs);
     n.getParent().replaceChild(n,newRoot);

@@ -47,8 +47,8 @@
           Node innerElseBranch=innerThenBranch.getNext();
           if (innerElseBranch == null && !(isLowerPrecedence(unnegatedCond.getNode(),AND_PRECEDENCE) && isLowerPrecedence(innerCond,AND_PRECEDENCE))) {
             n.detachChildren();
-            n.addChildToBack(IR.and(unnegatedCond.getNode(),innerCond.detachFromParent()).srcref(placeholder));
-            n.addChildToBack(innerThenBranch.detachFromParent());
+            n.addChildToBack(IR.and(unnegatedCond.getNode(),innerCond.detach()).srcref(placeholder));
+            n.addChildToBack(innerThenBranch.detach());
             reportCodeChange();
             return n;
           }
@@ -70,8 +70,8 @@
     Node thenExpr=getBlockReturnExpression(thenBranch);
     Node elseExpr=getBlockReturnExpression(elseBranch);
     n.removeChild(placeholder);
-    thenExpr.detachFromParent();
-    elseExpr.detachFromParent();
+    thenExpr.detach();
+    elseExpr.detach();
     Node returnNode=IR.returnNode(IR.hook(shortCond.getNode(),thenExpr,elseExpr).srcref(n));
     parent.replaceChild(n,returnNode);
     reportCodeChange();
@@ -101,8 +101,8 @@
       }
     }
     n.removeChild(placeholder);
-    thenOp.detachFromParent();
-    elseOp.detachFromParent();
+    thenOp.detach();
+    elseOp.detach();
     Node expr=IR.exprResult(IR.hook(shortCond.getNode(),thenOp,elseOp).srcref(n));
     parent.replaceChild(n,expr);
     reportCodeChange();
@@ -118,10 +118,10 @@
     if (name1.hasChildren() && maybeName2.isName() && name1.getString().equals(maybeName2.getString())) {
       Preconditions.checkState(name1.hasOneChild());
       Node thenExpr=name1.removeFirstChild();
-      Node elseExpr=elseAssign.getLastChild().detachFromParent();
-      placeholder.detachFromParent();
+      Node elseExpr=elseAssign.getLastChild().detach();
+      placeholder.detach();
       Node hookNode=IR.hook(shortCond.getNode(),thenExpr,elseExpr).srcref(n);
-      var.detachFromParent();
+      var.detach();
       name1.addChildToBack(hookNode);
       parent.replaceChild(n,var);
       reportCodeChange();
@@ -134,12 +134,12 @@
     Node maybeName1=thenAssign.getFirstChild();
     Node name2=var.getFirstChild();
     if (name2.hasChildren() && maybeName1.isName() && maybeName1.getString().equals(name2.getString())) {
-      Node thenExpr=thenAssign.getLastChild().detachFromParent();
+      Node thenExpr=thenAssign.getLastChild().detach();
       Preconditions.checkState(name2.hasOneChild());
       Node elseExpr=name2.removeFirstChild();
-      placeholder.detachFromParent();
+      placeholder.detach();
       Node hookNode=IR.hook(shortCond.getNode(),thenExpr,elseExpr).srcref(n);
-      var.detachFromParent();
+      var.detach();
       name2.addChildToBack(hookNode);
       parent.replaceChild(n,var);
       reportCodeChange();

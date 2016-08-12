@@ -30,9 +30,9 @@
     Node finallyEnd=makeGeneratorMarker(finallyEndState);
     NodeTraversal.traverseEs6(compiler,tryBody,new ControlExitsCheck(finallyName,finallyStartState));
     NodeTraversal.traverseEs6(compiler,catchBody,new ControlExitsCheck(finallyName,finallyStartState));
-    originalGeneratorBody.addChildToFront(tryBody.detachFromParent());
+    originalGeneratorBody.addChildToFront(tryBody.detach());
     originalGeneratorBody.addChildAfter(finallyStart,catchBody);
-    originalGeneratorBody.addChildAfter(finallyBody.detachFromParent(),finallyStart);
+    originalGeneratorBody.addChildAfter(finallyBody.detach(),finallyStart);
     originalGeneratorBody.addChildAfter(finallyEnd,finallyBody);
     originalGeneratorBody.addChildToFront(IR.var(finallyName.cloneTree()));
     finallyBody.addChildToBack(IR.exprResult(IR.assign(IR.name(GENERATOR_STATE),finallyName.cloneTree())));
@@ -48,7 +48,7 @@
     originalGeneratorBody.addChildAfter(catchEnd,catchBody);
     tryBody.addChildToBack(createStateUpdate(catchEndState));
     tryBody.addChildToBack(createSafeBreak());
-    originalGeneratorBody.addChildToFront(tryBody.detachFromParent());
+    originalGeneratorBody.addChildToFront(tryBody.detach());
   }
   catchBody.addChildToFront(IR.var(caughtError,IR.name(GENERATOR_ERROR)));
   if (enclosingBlock.getParent().isTry()) {

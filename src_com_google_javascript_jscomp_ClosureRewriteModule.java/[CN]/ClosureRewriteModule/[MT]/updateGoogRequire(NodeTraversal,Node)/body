@@ -30,7 +30,7 @@
   }
   if (currentScript.isModule || targetIsNonLegacyGoogModule) {
     if (isDestructuring) {
-      statementNode.detachFromParent();
+      statementNode.detach();
     }
  else     if (targetIsNonLegacyGoogModule) {
       if (!isTopLevel(t,statementNode,ScopeType.EXEC_CONTEXT)) {
@@ -39,11 +39,11 @@
         call.getParent().replaceChild(call,binaryNamespaceName);
       }
  else       if (importHasAlias || !rewriteState.isLegacyModule(legacyNamespace)) {
-        statementNode.detachFromParent();
+        statementNode.detach();
       }
     }
  else {
-      call.detachFromParent();
+      call.detach();
       statementNode.getParent().replaceChild(statementNode,IR.exprResult(call));
     }
     if (targetIsNonLegacyGoogModule) {

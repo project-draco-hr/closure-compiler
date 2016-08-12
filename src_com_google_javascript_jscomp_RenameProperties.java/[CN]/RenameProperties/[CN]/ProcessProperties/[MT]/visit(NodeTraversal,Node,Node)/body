@@ -44,7 +44,7 @@ if (NodeUtil.isFunctionDeclaration(n)) {
 String name=n.getFirstChild().getString();
 if (NodeUtil.JSC_PROPERTY_NAME_FN.equals(name)) {
 if (parent.isExprResult()) {
-parent.detachFromParent();
+parent.detach();
 }
  else {
 parent.removeChild(n);
@@ -57,7 +57,7 @@ Node varNode=parent.getParent();
 if (varNode.isVar()) {
 varNode.removeChild(parent);
 if (!varNode.hasChildren()) {
-varNode.detachFromParent();
+varNode.detach();
 }
 compiler.reportCodeChange();
 }
@@ -65,7 +65,7 @@ compiler.reportCodeChange();
  else if (NodeUtil.isFunctionExpression(n) && parent.isAssign() && parent.getFirstChild().isGetProp()&& compiler.getCodingConvention().isPropertyRenameFunction(parent.getFirstChild().getOriginalQualifiedName())) {
 Node exprResult=parent.getParent();
 if (exprResult.isExprResult() && NodeUtil.isStatementBlock(exprResult.getParent()) && exprResult.getFirstChild().isAssign()) {
-exprResult.detachFromParent();
+exprResult.detach();
 compiler.reportCodeChange();
 }
 }
