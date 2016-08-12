@@ -6,4 +6,5 @@
   typeCheck(LINE_JOINER.join("/** @interface */","function Foo() {}","/** @constructor */","var Bar = Foo;"),GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","/** @interface */","var Bar = Foo;"),GlobalTypeInfo.EXPECTED_INTERFACE);
   typeCheckCustomExterns(DEFAULT_EXTERNS + "var Bar;",LINE_JOINER.join("/**"," * @constructor"," * @final"," */","var Foo = Bar;","var /** !Foo */ x;"),GlobalTypeInfo.EXPECTED_CONSTRUCTOR);
+  typeCheck(LINE_JOINER.join("/** @constructor */ function Foo() {}","/** @type {string} */ Foo.staticProp = 'asdf';","/** @const */","var exports = {","  /** @const */ Bar: Foo","};","function f() { exports.Bar.staticProp - 5; }"),NewTypeInference.INVALID_OPERAND_TYPE);
 }

@@ -9,4 +9,16 @@
     return;
   }
   currentScope.addNamespaceLit(qnameNode);
+  Node maybeObjlit=NodeUtil.getRValueOfLValue(qnameNode);
+  if (maybeObjlit.isOr()) {
+    maybeObjlit=maybeObjlit.getLastChild();
+  }
+  Preconditions.checkState(maybeObjlit.isObjectLit(),"Expected object literal, found %s",maybeObjlit);
+  for (  Node propNode : maybeObjlit.children()) {
+    if (isAliasedNamespaceDefinition(propNode)) {
+      Node fakeGetprop=IR.getprop(qnameNode.cloneTree(),IR.string(propNode.getString()));
+      IR.assign(fakeGetprop,propNode.getFirstChild().cloneTree());
+      visitAliasedNamespace(fakeGetprop);
+    }
+  }
 }
