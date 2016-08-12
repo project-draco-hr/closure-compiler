@@ -45,7 +45,10 @@
     return false;
   }
   if (checkThisType) {
-    if (this.receiverType != null && other.receiverType == null || this.receiverType != null && other.receiverType != null && !other.receiverType.isSubtypeOf(this.receiverType,subSuperMap) && !this.receiverType.isSubtypeOf(other.receiverType,subSuperMap)) {
+    if (!FunctionType.allowMethodsAsFunctions && this.receiverType != null && other.receiverType == null) {
+      return false;
+    }
+    if (this.receiverType != null && other.receiverType != null && !other.receiverType.isSubtypeOf(this.receiverType,subSuperMap) && !this.receiverType.isSubtypeOf(other.receiverType,subSuperMap)) {
       return false;
     }
   }
