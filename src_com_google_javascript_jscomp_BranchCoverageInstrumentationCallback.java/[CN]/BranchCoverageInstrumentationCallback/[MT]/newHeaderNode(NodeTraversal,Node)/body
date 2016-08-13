@@ -5,6 +5,7 @@
   String objName=CoverageInstrumentationPass.JS_INSTRUMENTATION_OBJECT_NAME;
   List<Node> nodes=new ArrayList<>();
   nodes.add(newArrayDeclarationNode(traversal));
+  nodes.add(IR.exprResult(IR.call(NodeUtil.newQName(compiler,objName + ".branchesTaken.push"),IR.name(createArrayName(traversal)))));
   nodes.add(IR.exprResult(IR.call(NodeUtil.newQName(compiler,objName + ".branchPresent.push"),IR.string(data.getBranchPresentAsHexString()))));
   nodes.add(newBranchesInLineNode("JSCompiler_lcov_branchesInLine",data));
   nodes.add(IR.exprResult(IR.call(NodeUtil.newQName(compiler,objName + ".branchesInLine.push"),IR.name("JSCompiler_lcov_branchesInLine"))));
