@@ -1,0 +1,16 @@
+{
+  compilerOptions.setCheckSymbols(true);
+  compilerOptions.setCheckTypes(true);
+  compilerOptions.setPreserveDetailedSourceInfo(true);
+  compilerOptions.setPreserveGoogProvidesAndRequires(true);
+  compilerOptions.setClosurePass(true);
+  Compiler compiler=new Compiler();
+  compiler.disableThreads();
+  compiler.compile(ImmutableList.<SourceFile>of(),ImmutableList.of(SourceFile.fromCode("test",code)),compilerOptions);
+  Node node=compiler.getRoot().getLastChild().getFirstChild();
+  CompilerOptions codePrinterOptions=new CompilerOptions();
+  codePrinterOptions.setPreferSingleQuotes(true);
+  codePrinterOptions.setLineLengthThreshold(80);
+  codePrinterOptions.setUseOriginalNamesInOutput(true);
+  assertEquals(expectedCode,new CodePrinter.Builder(node).setCompilerOptions(codePrinterOptions).setPrettyPrint(true).setLineBreak(true).build());
+}

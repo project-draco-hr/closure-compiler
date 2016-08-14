@@ -7,7 +7,7 @@
     body=IR.block(IR.returnNode(body)).useSourceInfoIfMissingFromForTree(body);
     n.addChildToBack(body);
   }
-  UpdateThisAndArgumentsReferences updater=new UpdateThisAndArgumentsReferences();
+  UpdateThisAndArgumentsReferences updater=new UpdateThisAndArgumentsReferences(compiler);
   NodeTraversal.traverseEs6(compiler,body,updater);
   addVarDecls(t,updater.changedThis,updater.changedArguments);
   compiler.reportCodeChange();
