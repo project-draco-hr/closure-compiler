@@ -6,9 +6,12 @@
   }
   LValueResultFwd lvalue=analyzeLValueFwd(obj,inEnv,reqObjType,true);
   EnvTypePair pair=mayWarnAboutNullableReferenceAndTighten(obj,lvalue.type,null,lvalue.env);
-  JSType lvalueType=pair.type.autobox();
+  JSType lvalueType=pair.type;
+  if (lvalueType.isEnumElement()) {
+    lvalueType=lvalueType.getEnumeratedType();
+  }
   if (!lvalueType.isSubtypeOf(JSType.TOP_OBJECT)) {
-    warnings.add(JSError.make(obj,PROPERTY_ACCESS_ON_NONOBJECT,getPropNameForErrorMsg(obj.getParent()),lvalueType.toString()));
+    warnings.add(JSError.make(obj,ADDING_PROPERTY_TO_NON_OBJECT,getPropNameForErrorMsg(obj.getParent()),lvalueType.toString()));
   }
   lvalue.type=lvalueType;
   lvalue.env=pair.env;

@@ -14,7 +14,9 @@
  else   if (fnNameNode.isQualifiedName()) {
     QualifiedName qname=QualifiedName.fromNode(fnNameNode);
     JSType rootNs=enclosingScope.getDeclaredTypeOf(qname.getLeftmostName());
-    namespaceType=rootNs == null ? null : rootNs.getProp(qname.getAllButLeftmost());
+    if (rootNs != null && rootNs.isSubtypeOf(JSType.TOP_OBJECT)) {
+      namespaceType=rootNs.getProp(qname.getAllButLeftmost());
+    }
   }
   if (namespaceType != null && namespaceType.isNamespace()) {
     return namespaceType.withFunction(fnType.getFunTypeIfSingletonObj(),commonTypes.getFunctionType());

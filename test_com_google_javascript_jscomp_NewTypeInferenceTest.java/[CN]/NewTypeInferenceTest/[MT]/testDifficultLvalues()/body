@@ -5,5 +5,5 @@
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","(new Foo).x += 123;"),NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() { /** @type {number} */ this.a = 123; }","function f(cond, /** !Foo */ foo1) {","  var /** { a: number } */ x = { a: 321 };","  (cond ? foo1 : x).a = 'asdf';","}"),NewTypeInference.MISTYPED_ASSIGN_RHS);
   typeCheck("function f(obj) { obj[1 - 'str'] = 3; }",NewTypeInference.INVALID_OPERAND_TYPE);
-  typeCheck("function f(/** undefined */ n, pname) { n[pname] = 3; }",NewTypeInference.PROPERTY_ACCESS_ON_NONOBJECT);
+  typeCheck("function f(/** undefined */ n, pname) { n[pname] = 3; }",NewTypeInference.ADDING_PROPERTY_TO_NON_OBJECT);
 }

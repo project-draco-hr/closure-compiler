@@ -2,9 +2,9 @@
   typeCheck(LINE_JOINER.join("var /** number */ n = 123;","n.toString();"));
   typeCheck(LINE_JOINER.join("var /** boolean */ b = true;","b.toString();"));
   typeCheck(LINE_JOINER.join("var /** string */ s = '';","s.toString();"));
-  typeCheck(LINE_JOINER.join("var /** number */ n = 123;","n.prop = 0;","n.prop - 5;"),NewTypeInference.INEXISTENT_PROPERTY);
+  typeCheck(LINE_JOINER.join("var /** number */ n = 123;","n.prop = 0;","n.prop - 5;"),NewTypeInference.ADDING_PROPERTY_TO_NON_OBJECT,NewTypeInference.INEXISTENT_PROPERTY);
   typeCheck(LINE_JOINER.join("var /** number */ n = 123;","n['to' + 'String'];"));
-  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.prop = 123;","}","(new Foo).prop.newprop = 5;"));
+  typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {","  /** @type {number} */","  this.prop = 123;","}","(new Foo).prop.newprop = 5;"),NewTypeInference.ADDING_PROPERTY_TO_NON_OBJECT);
   typeCheck(LINE_JOINER.join("/** @enum {number} */","var E = { A: 1 };","function f(/** E */ x) {","  return x.toString();","}"));
   typeCheck(LINE_JOINER.join("/** @constructor */","function Foo() {}","Foo.prototype.toString = function() { return ''; };","function f(/** (number|!Foo) */ x) {","  return x.toString();","}"));
 }
