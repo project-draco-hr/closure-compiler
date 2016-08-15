@@ -34,5 +34,12 @@
  else   if (externs.containsKey(name)) {
     type=externs.get(name);
   }
-  return new Declaration(type,localTypedefs.get(name),localNamespaces.get(name),localFunDefs.get(name),isTypeVar,constVars.contains(name));
+  Namespace ns=null;
+  if (localNamespaces.containsKey(name)) {
+    ns=localNamespaces.get(name);
+  }
+ else   if (preservedNamespaces != null) {
+    ns=preservedNamespaces.get(name);
+  }
+  return new Declaration(type,localTypedefs.get(name),ns,localFunDefs.get(name),isTypeVar,constVars.contains(name));
 }
