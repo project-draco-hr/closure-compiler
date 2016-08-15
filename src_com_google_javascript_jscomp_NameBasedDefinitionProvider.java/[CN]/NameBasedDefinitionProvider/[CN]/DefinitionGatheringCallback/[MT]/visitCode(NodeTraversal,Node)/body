@@ -1,0 +1,14 @@
+{
+  Definition def=DefinitionsRemover.getDefinition(node,false);
+  if (def != null) {
+    String name=getSimplifiedName(def.getLValue());
+    if (name != null) {
+      Node rValue=def.getRValue();
+      if (rValue != null && !NodeUtil.isImmutableValue(rValue) && !isKnownFunctionDefinition(rValue)) {
+        def=new UnknownDefinition(def.getLValue(),false);
+      }
+      nameDefinitionMultimap.put(name,def);
+      definitionNodeByDefinitionSite.put(node,new DefinitionSite(node,def,traversal.getModule(),traversal.inGlobalScope(),false));
+    }
+  }
+}

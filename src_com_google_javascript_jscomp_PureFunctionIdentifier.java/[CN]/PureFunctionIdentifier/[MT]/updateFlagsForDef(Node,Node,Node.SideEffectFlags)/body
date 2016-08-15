@@ -1,0 +1,26 @@
+{
+  FunctionInformation functionInfo=functionSideEffectMap.get(defNode);
+  Preconditions.checkNotNull(functionInfo);
+  if (functionInfo.mutatesGlobalState()) {
+    flags.setMutatesGlobalState();
+  }
+  if (functionInfo.mutatesArguments()) {
+    flags.setMutatesArguments();
+  }
+  if (functionInfo.functionThrows()) {
+    flags.setThrows();
+  }
+  if (!callNode.isNew()) {
+    if (functionInfo.taintsThis()) {
+      if (isCallOrApply(callNode)) {
+        flags.setMutatesArguments();
+      }
+ else {
+        flags.setMutatesThis();
+      }
+    }
+  }
+  if (functionInfo.taintsReturn()) {
+    flags.setReturnsTainted();
+  }
+}

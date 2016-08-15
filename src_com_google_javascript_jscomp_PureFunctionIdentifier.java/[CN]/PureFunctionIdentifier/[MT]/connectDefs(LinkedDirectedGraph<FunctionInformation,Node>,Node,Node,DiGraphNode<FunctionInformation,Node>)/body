@@ -1,0 +1,15 @@
+{
+switch (def.getToken()) {
+case FUNCTION:
+    FunctionInformation info=functionSideEffectMap.get(def);
+  Preconditions.checkNotNull(info);
+sideEffectGraph.connect(info.graphNode,callSite,graphNode);
+break;
+case HOOK:
+connectDefs(sideEffectGraph,def.getSecondChild(),callSite,graphNode);
+connectDefs(sideEffectGraph,def.getLastChild(),callSite,graphNode);
+break;
+default :
+throw new IllegalStateException("Unexpect definition node " + def);
+}
+}
