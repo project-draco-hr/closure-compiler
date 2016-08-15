@@ -1,4 +1,16 @@
 {
-  NodeTraversal.traverseEs6(compiler,externs,this);
-  NodeTraversal.traverseEs6(compiler,root,this);
+  TranspilationPasses.processTranspile(compiler,externs,this);
+  for (  Node singleRoot : root.children()) {
+    FeatureSet features=(FeatureSet)singleRoot.getProp(Node.FEATURE_SET);
+    if (features == null) {
+      continue;
+    }
+    if (TranspilationPasses.isScriptEs6ImplOrHigher(singleRoot)) {
+      singleRoot.putBooleanProp(Node.TRANSPILED,true);
+      NodeTraversal.traverseEs6(compiler,singleRoot,this);
+    }
+ else     if (features.contains(Feature.GETTER) || features.contains(Feature.SETTER)) {
+      NodeTraversal.traverseEs6(compiler,singleRoot,this);
+    }
+  }
 }

@@ -1,3 +1,13 @@
 {
-  NodeTraversal.traverseEs6(compiler,scriptRoot,this);
+  FeatureSet features=(FeatureSet)scriptRoot.getProp(Node.FEATURE_SET);
+  if (features == null) {
+    return;
+  }
+  if (TranspilationPasses.isScriptEs6ImplOrHigher(scriptRoot)) {
+    scriptRoot.putBooleanProp(Node.TRANSPILED,true);
+    NodeTraversal.traverseEs6(compiler,scriptRoot,this);
+  }
+ else   if (features.contains(Feature.GETTER) || features.contains(Feature.SETTER)) {
+    NodeTraversal.traverseEs6(compiler,scriptRoot,this);
+  }
 }
