@@ -7,17 +7,12 @@
     }
   }
  catch (  AbstractCommandLineRunner.FlagUsageException e) {
-    System.err.println(e.getMessage());
+    err.println(e.getMessage());
     result=-1;
   }
 catch (  Throwable t) {
-    t.printStackTrace();
+    t.printStackTrace(err);
     result=-2;
   }
-  if (testMode) {
-    exitCodeReceiverForTesting.apply(result);
-  }
- else {
-    System.exit(result);
-  }
+  exitCodeReceiver.apply(result);
 }
