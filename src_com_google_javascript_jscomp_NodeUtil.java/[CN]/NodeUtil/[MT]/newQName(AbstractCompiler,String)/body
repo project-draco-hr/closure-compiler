@@ -17,10 +17,13 @@
     endPos=name.indexOf('.',startPos);
     String part=(endPos == -1 ? name.substring(startPos) : name.substring(startPos,endPos));
     Node propNode=IR.string(part);
+    propNode.setLength(part.length());
     if (compiler.getCodingConvention().isConstantKey(part)) {
       propNode.putBooleanProp(Node.IS_CONSTANT_NAME,true);
     }
+    int length=node.getLength() + ".".length() + part.length();
     node=IR.getprop(node,propNode);
+    node.setLength(length);
   }
  while (endPos != -1);
   return node;
