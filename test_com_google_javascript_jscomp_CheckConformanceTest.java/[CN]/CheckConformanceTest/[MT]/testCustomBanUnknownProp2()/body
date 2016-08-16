@@ -1,6 +1,6 @@
 {
   configuration=config(rule("BanUnknownTypedClassPropsReferences"),"My rule message",value("String"));
-  String js="/** @param {ObjectWithNoProps} a */ function f(a) { alert(a.foobar); };";
+  String js=LINE_JOINER.join("Object.prototype.foobar;"," /** @param {ObjectWithNoProps} a */","function f(a) { alert(a.foobar); };");
   this.mode=TypeInferenceMode.OTI_ONLY;
   testSame(EXTERNS,js,CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message\nThe property \"foobar\" on type \"(ObjectWithNoProps|null)\"");
   this.mode=TypeInferenceMode.NTI_ONLY;

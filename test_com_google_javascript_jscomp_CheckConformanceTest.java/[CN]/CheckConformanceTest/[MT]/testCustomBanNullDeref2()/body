@@ -1,7 +1,8 @@
 {
   configuration=config(rule("BanNullDeref"),"My rule message");
+  String externs=EXTERNS + "String.prototype.prop;";
   final String code="/** @param {?String} n */ function f(n) { alert(n.prop); }";
-  testSame(EXTERNS,code,CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
+  testSame(externs,code,CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
   configuration=config(rule("BanNullDeref"),"My rule message",value("String"));
-  testSame(EXTERNS,code,null);
+  testSame(externs,code,null);
 }

@@ -1,11 +1,12 @@
 {
   configuration=config(rule("BanNullDeref"),"My rule message");
-  testSame(EXTERNS,"/** @param {string|null} n */ function f(n) { alert(n.prop); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
-  testSame(EXTERNS,"/** @param {string|null} n */ function f(n) { alert(n['prop']); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
-  testSame(EXTERNS,"/** @param {string|null} n */ function f(n) { alert('prop' in n); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
-  testSame(EXTERNS,"/** @param {string|undefined} n */ function f(n) { alert(n.prop); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
-  testSame(EXTERNS,"/** @param {?Function} fnOrNull */ function f(fnOrNull) { fnOrNull(); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
-  testSame(EXTERNS,"/** @param {?Function} fnOrNull */ function f(fnOrNull) { new fnOrNull(); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
-  testSame(EXTERNS,"/** @param {string} n */ function f(n) { alert(n.prop); }",null);
-  testSame(EXTERNS,"/** @param {?} n */ function f(n) { alert(n.prop); }",null);
+  String externs=EXTERNS + "String.prototype.prop;";
+  testSame(externs,"/** @param {string|null} n */ function f(n) { alert(n.prop); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
+  testSame(externs,"/** @param {string|null} n */ function f(n) { alert(n['prop']); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
+  testSame(externs,"/** @param {string|null} n  @suppress {newCheckTypes} */" + "function f(n) { alert('prop' in n); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
+  testSame(externs,"/** @param {string|undefined} n */ function f(n) { alert(n.prop); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
+  testSame(externs,"/** @param {?Function} fnOrNull */ function f(fnOrNull) { fnOrNull(); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
+  testSame(externs,"/** @param {?Function} fnOrNull */ function f(fnOrNull) { new fnOrNull(); }",CheckConformance.CONFORMANCE_VIOLATION,"Violation: My rule message");
+  testSame(externs,"/** @param {string} n */ function f(n) { alert(n.prop); }",null);
+  testSame(externs,"/** @param {?} n */ function f(n) { alert(n.prop); }",null);
 }
