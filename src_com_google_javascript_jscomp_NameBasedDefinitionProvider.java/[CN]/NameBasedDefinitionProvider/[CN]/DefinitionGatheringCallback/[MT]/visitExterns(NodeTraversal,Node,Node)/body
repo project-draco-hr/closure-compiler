@@ -22,7 +22,8 @@
           }
         }
       }
-      addDefinition(name,def,node,traversal);
+      nameDefinitionMultimap.put(name,def);
+      definitionNodeByDefinitionSite.put(node,new DefinitionSite(node,def,traversal.getModule(),traversal.inGlobalScope(),true));
     }
   }
   if (parent != null && parent.isExprResult()) {
@@ -39,7 +40,8 @@
       }
       if (!dropStub) {
         Definition definition=new ExternalNameOnlyDefinition(node);
-        addDefinition(name,definition,node,traversal);
+        nameDefinitionMultimap.put(name,definition);
+        definitionNodeByDefinitionSite.put(node,new DefinitionSite(node,definition,traversal.getModule(),traversal.inGlobalScope(),true));
       }
     }
   }
