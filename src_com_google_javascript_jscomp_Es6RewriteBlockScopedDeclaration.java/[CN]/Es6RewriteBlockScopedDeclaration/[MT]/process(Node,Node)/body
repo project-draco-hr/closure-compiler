@@ -1,12 +1,10 @@
 {
-  NodeTraversal.traverseEs6(compiler,root,new CollectUndeclaredNames());
-  NodeTraversal.traverseEs6(compiler,root,this);
-  TranspilationPasses.processTranspile(compiler,externs,this);
-  NodeTraversal.traverseEs6(compiler,root,new Es6RenameReferences(renameMap));
+  NodeTraversal.traverseRootsEs6(compiler,new CollectUndeclaredNames(),externs,root);
+  NodeTraversal.traverseRootsEs6(compiler,this,externs,root);
+  NodeTraversal.traverseRootsEs6(compiler,new Es6RenameReferences(renameMap),externs,root);
   LoopClosureTransformer transformer=new LoopClosureTransformer();
-  NodeTraversal.traverseEs6(compiler,root,transformer);
+  NodeTraversal.traverseRootsEs6(compiler,transformer,externs,root);
   transformer.transformLoopClosure();
   varify();
-  TranspilationPasses.processTranspile(compiler,externs,new RewriteBlockScopedFunctionDeclaration());
-  NodeTraversal.traverseEs6(compiler,root,new RewriteBlockScopedFunctionDeclaration());
+  NodeTraversal.traverseRootsEs6(compiler,new RewriteBlockScopedFunctionDeclaration(),externs,root);
 }

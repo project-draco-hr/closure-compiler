@@ -1,15 +1,4 @@
 {
-  if (forTranspileOnly) {
-    if (!compiler.getOptions().getLanguageIn().isEs6OrHigher()) {
-      return;
-    }
-    for (    Node singleRoot : root.children()) {
-      if (TranspilationPasses.isScriptEs6ImplOrHigher(singleRoot)) {
-        new ReferenceCollectingCallback(compiler,new ReferenceCheckingBehavior()).process(singleRoot);
-      }
-    }
-  }
- else {
-    new ReferenceCollectingCallback(compiler,new ReferenceCheckingBehavior()).process(root);
-  }
+  ReferenceCollectingCallback callback=new ReferenceCollectingCallback(compiler,new ReferenceCheckingBehavior());
+  callback.process(externs,root);
 }

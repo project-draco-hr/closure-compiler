@@ -5,8 +5,9 @@
       @Override public String call() throws IOException, UnsupportedEncodingException {
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
         Compiler compiler=new Compiler(new PrintStream(baos));
+        compiler.disableThreads();
         SourceFile sourceFile=SourceFile.fromCode(path,js);
-        Result result=compiler.<SourceFile,SourceFile>compile(ImmutableList.<SourceFile>of(),ImmutableList.<SourceFile>of(sourceFile),getOptions());
+        compiler.<SourceFile,SourceFile>compile(ImmutableList.<SourceFile>of(),ImmutableList.<SourceFile>of(sourceFile),getOptions());
         if (compiler.getErrorManager().getErrorCount() > 0) {
           String message;
           try {
@@ -16,9 +17,6 @@
             throw new RuntimeException(e);
           }
           throw new IllegalStateException(message);
-        }
-        if (!result.transpiledFiles.contains(sourceFile)) {
-          return js;
         }
         StringBuilder source=new StringBuilder().append(compiler.toSource());
         StringBuilder sourceMap=new StringBuilder();
