@@ -8,14 +8,17 @@
     summaryStats=new Stats(passName,logStats.isOneTime);
     summary.put(passName,summaryStats);
   }
-  if (passName.equals(Compiler.PARSING_PASS_NAME) && trackSize) {
-    CodeSizeEstimatePrinter estimatePrinter=new CodeSizeEstimatePrinter();
-    CodeGenerator.forCostEstimation(estimatePrinter).add(jsRoot);
-    initCodeSize=codeSize=estimatePrinter.calcSize();
-    logStats.size=summaryStats.size=initCodeSize;
-    if (this.trackGzSize) {
-      initGzCodeSize=gzCodeSize=estimatePrinter.calcZippedSize();
-      logStats.gzSize=summaryStats.gzSize=initGzCodeSize;
+  if (passName.equals(Compiler.PARSING_PASS_NAME)) {
+    recordInputCount();
+    if (trackSize) {
+      CodeSizeEstimatePrinter estimatePrinter=new CodeSizeEstimatePrinter();
+      CodeGenerator.forCostEstimation(estimatePrinter).add(jsRoot);
+      initCodeSize=codeSize=estimatePrinter.calcSize();
+      logStats.size=summaryStats.size=initCodeSize;
+      if (this.trackGzSize) {
+        initGzCodeSize=gzCodeSize=estimatePrinter.calcZippedSize();
+        logStats.gzSize=summaryStats.gzSize=initGzCodeSize;
+      }
     }
   }
   logStats.runtime=runtime;
