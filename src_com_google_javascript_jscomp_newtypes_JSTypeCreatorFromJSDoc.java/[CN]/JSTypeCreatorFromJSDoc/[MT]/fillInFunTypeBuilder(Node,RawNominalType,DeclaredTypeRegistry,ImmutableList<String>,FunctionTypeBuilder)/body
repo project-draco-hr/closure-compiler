@@ -9,7 +9,7 @@
  else   if (child.getType() == Token.NEW) {
     Node newTypeNode=child.getFirstChild();
     JSType t=getThisOrNewType(newTypeNode,registry,typeParameters);
-    if (!t.isSubtypeOf(JSType.TOP_OBJECT) && (!t.hasTypeVariable() || t.hasScalar())) {
+    if (!t.isSubtypeOf(this.commonTypes.TOP_OBJECT) && (!t.hasTypeVariable() || t.hasScalar())) {
       warnings.add(JSError.make(newTypeNode,NEW_EXPECTS_OBJECT_OR_TYPEVAR,t.toString()));
     }
     builder.addNominalType(t);
@@ -24,7 +24,7 @@ case EQUALS:
         break;
 case ELLIPSIS:
       Node restNode=arg.getFirstChild();
-    builder.addRestFormals(restNode == null ? JSType.UNKNOWN : getTypeFromCommentHelper(restNode,registry,typeParameters));
+    builder.addRestFormals(restNode == null ? this.commonTypes.UNKNOWN : getTypeFromCommentHelper(restNode,registry,typeParameters));
   break;
 default :
 builder.addReqFormal(getTypeFromCommentHelper(arg,registry,typeParameters));

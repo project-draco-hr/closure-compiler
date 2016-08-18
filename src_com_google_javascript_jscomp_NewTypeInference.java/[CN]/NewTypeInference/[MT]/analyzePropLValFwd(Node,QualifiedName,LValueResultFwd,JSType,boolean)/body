@@ -3,7 +3,7 @@
   TypeEnv inEnv=recvLvalue.env;
   JSType recvType=recvLvalue.type;
   if (!recvType.isUnion() && !recvType.isSingletonObj()) {
-    recvType=JSType.TOP_OBJECT.withLoose();
+    recvType=TOP_OBJECT.withLoose();
   }
   Node propAccessNode=obj.getParent();
   if (propAccessNode.isGetProp() && propAccessNode.getParent().isAssign() && mayWarnAboutPropCreation(pname,propAccessNode,recvType)) {
@@ -20,7 +20,7 @@
       }
     }
     if (recvType.isLoose()) {
-      recvType=recvType.withProperty(pname,JSType.UNKNOWN);
+      recvType=recvType.withProperty(pname,UNKNOWN);
       inEnv=updateLvalueTypeInEnv(inEnv,obj,recvLvalue.ptr,recvType);
     }
   }
@@ -39,5 +39,5 @@
     return new LValueResultFwd(inEnv,formalType,formalType,null);
   }
   QualifiedName ptr=recvLvalue.ptr == null ? null : QualifiedName.join(recvLvalue.ptr,pname);
-  return recvType.mayHaveProp(pname) ? new LValueResultFwd(inEnv,recvType.getProp(pname),recvType.getDeclaredProp(pname),ptr) : new LValueResultFwd(inEnv,JSType.UNKNOWN,null,ptr);
+  return recvType.mayHaveProp(pname) ? new LValueResultFwd(inEnv,recvType.getProp(pname),recvType.getDeclaredProp(pname),ptr) : new LValueResultFwd(inEnv,UNKNOWN,null,ptr);
 }

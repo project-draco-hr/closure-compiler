@@ -1,6 +1,6 @@
 {
-  if (obj1 == TOP_OBJECT || obj2 == TOP_OBJECT) {
-    return TOP_OBJECT;
+  if (obj1.isTopObject() || obj2.isTopObject()) {
+    return obj1.commonTypes.TOP_OBJECTTYPE;
   }
   NominalType nom1=obj1.nominalType;
   NominalType nom2=obj2.nominalType;
@@ -8,12 +8,13 @@
   if (obj1.equals(obj2)) {
     return obj1;
   }
+  JSTypes commonTypes=obj1.commonTypes;
   boolean isLoose=obj1.isLoose || obj2.isLoose;
   FunctionType fn=FunctionType.join(obj1.fn,obj2.fn);
   PersistentMap<String,Property> props;
   if (isLoose) {
     fn=fn == null ? null : fn.withLoose();
-    props=joinPropsLoosely(obj1.props,obj2.props);
+    props=joinPropsLoosely(commonTypes,obj1.props,obj2.props);
   }
  else {
     props=joinProps(obj1.props,obj2.props,nom1,nom2);
@@ -23,5 +24,5 @@
     fn=null;
   }
   Namespace ns=Objects.equals(obj1.ns,obj2.ns) ? obj1.ns : null;
-  return makeObjectType(nominal,props,fn,ns,isLoose,ObjectKind.join(obj1.objectKind,obj2.objectKind));
+  return makeObjectType(commonTypes,nominal,props,fn,ns,isLoose,ObjectKind.join(obj1.objectKind,obj2.objectKind));
 }

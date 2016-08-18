@@ -7,23 +7,23 @@
   JSType enumeratedType;
   if (texp == null) {
     warnings.add(JSError.make(e.getTypeExprForErrorReporting().getRoot(),CIRCULAR_TYPEDEF_ENUM));
-    enumeratedType=JSType.UNKNOWN;
+    enumeratedType=this.commonTypes.UNKNOWN;
   }
  else {
     int numTypeVars=howmanyTypeVars;
     enumeratedType=getTypeFromJSTypeExpression(texp,registry,null);
     if (howmanyTypeVars > numTypeVars) {
       warnings.add(JSError.make(texp.getRoot(),ENUM_WITH_TYPEVARS));
-      enumeratedType=JSType.UNKNOWN;
+      enumeratedType=this.commonTypes.UNKNOWN;
       howmanyTypeVars=numTypeVars;
     }
  else     if (enumeratedType.isTop()) {
       warnings.add(JSError.make(texp.getRoot(),ENUM_IS_TOP));
-      enumeratedType=JSType.UNKNOWN;
+      enumeratedType=this.commonTypes.UNKNOWN;
     }
  else     if (enumeratedType.isUnion()) {
       warnings.add(JSError.make(texp.getRoot(),ENUM_IS_UNION));
-      enumeratedType=JSType.UNKNOWN;
+      enumeratedType=this.commonTypes.UNKNOWN;
     }
   }
   e.resolveEnum(enumeratedType);

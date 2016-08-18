@@ -10,9 +10,9 @@
     if (n.isFromExterns()) {
       this.allPropertyNames.add(propName);
     }
-    JSType propType=!isPropDeclared ? JSType.UNKNOWN : getTypeFromCommentHelper(propNode.getLastChild(),registry,typeParameters);
+    JSType propType=!isPropDeclared ? this.commonTypes.UNKNOWN : getTypeFromCommentHelper(propNode.getLastChild(),registry,typeParameters);
     Property prop;
-    if (propType.equals(JSType.UNDEFINED) || isUnionWithUndefined(propNode.getLastChild())) {
+    if (propType.equals(this.commonTypes.UNDEFINED) || isUnionWithUndefined(propNode.getLastChild())) {
       prop=Property.makeOptional(null,propType,propType);
     }
  else {
@@ -20,5 +20,5 @@
     }
     props.put(propName,prop);
   }
-  return JSType.fromObjectType(ObjectType.fromProperties(props));
+  return JSType.fromObjectType(ObjectType.fromProperties(this.commonTypes,props));
 }

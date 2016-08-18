@@ -1,15 +1,16 @@
 {
   Preconditions.checkState(areRelatedNominalTypes(obj1.nominalType,obj2.nominalType));
-  if (obj1 == TOP_OBJECT) {
+  if (obj1.isTopObject()) {
     return obj2;
   }
- else   if (obj2 == TOP_OBJECT) {
+ else   if (obj2.isTopObject()) {
     return obj1;
   }
+  JSTypes commonTypes=obj1.commonTypes;
   NominalType resultNomType=NominalType.pickSubclass(obj1.nominalType,obj2.nominalType);
   FunctionType fn=FunctionType.meet(obj1.fn,obj2.fn);
   if (!FunctionType.isInhabitable(fn)) {
-    return BOTTOM_OBJECT;
+    return commonTypes.BOTTOM_OBJECT;
   }
   boolean isLoose=obj1.isLoose && obj2.isLoose || fn != null && fn.isLoose();
   if (resultNomType != null && resultNomType.isFunction() && fn == null) {
@@ -18,15 +19,15 @@
   }
   PersistentMap<String,Property> props;
   if (isLoose) {
-    props=joinPropsLoosely(obj1.props,obj2.props);
+    props=joinPropsLoosely(commonTypes,obj1.props,obj2.props);
   }
  else {
-    props=meetPropsHelper(false,resultNomType,obj1.props,obj2.props);
+    props=meetPropsHelper(commonTypes,false,resultNomType,obj1.props,obj2.props);
   }
-  if (props == BOTTOM_MAP) {
-    return BOTTOM_OBJECT;
+  if (props == commonTypes.BOTTOM_PROPERTY_MAP) {
+    return commonTypes.BOTTOM_OBJECT;
   }
   ObjectKind ok=ObjectKind.meet(obj1.objectKind,obj2.objectKind);
   Namespace resultNs=Objects.equals(obj1.ns,obj2.ns) ? obj1.ns : null;
-  return new ObjectType(resultNomType,props,fn,resultNs,isLoose,ok);
+  return new ObjectType(commonTypes,resultNomType,props,fn,resultNs,isLoose,ok);
 }

@@ -1,0 +1,12 @@
+{
+  if (props == null) {
+    props=PersistentMap.create();
+  }
+ else   if (containsBottomProp(props) || !FunctionType.isInhabitable(fn)) {
+    return commonTypes.BOTTOM_OBJECT;
+  }
+  if (fn != null && !props.containsKey("prototype") && (ns == null || ns.getNsProp("prototype") == null)) {
+    props=props.with("prototype",Property.make(fn.getCommonTypes().UNKNOWN,null));
+  }
+  return new ObjectType(commonTypes,nominalType,props,fn,ns,isLoose,ok);
+}

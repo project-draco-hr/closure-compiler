@@ -1,0 +1,13 @@
+{
+  if (isTopFunction() || isQmarkFunction() || isLoose) {
+    return this.commonTypes.QMARK_FUNCTION;
+  }
+  if (isGeneric()) {
+    return instantiateGenericsWithUnknown(this).transformByApplyProperty();
+  }
+  FunctionTypeBuilder builder=new FunctionTypeBuilder(this.commonTypes);
+  builder.addReqFormal(fromReceiverToFirstFormal());
+  builder.addOptFormal(JSType.join(this.commonTypes.getArrayInstance(),this.commonTypes.getArgumentsArrayType()));
+  builder.addRetType(this.returnType);
+  return builder.buildFunction();
+}

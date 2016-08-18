@@ -17,12 +17,12 @@ case GETPROP:
     JSType recvType=markAndGetTypeOfPreanalyzedNode(qnameNode.getFirstChild(),env,isFwd);
     String pname=qnameNode.getLastChild().getString();
     JSType result=null;
-    if (recvType.isSubtypeOf(JSType.TOP_OBJECT)) {
+    if (recvType.isSubtypeOf(TOP_OBJECT)) {
       result=recvType.getProp(new QualifiedName(pname));
     }
     if (result == null) {
       warnings.add(JSError.make(qnameNode,UNKNOWN_NAMESPACE_PROPERTY,qnameNode.getQualifiedName()));
-      return JSType.UNKNOWN;
+      return UNKNOWN;
     }
     Preconditions.checkNotNull(result,"Null declared type@%s",qnameNode);
     if (isFwd) {

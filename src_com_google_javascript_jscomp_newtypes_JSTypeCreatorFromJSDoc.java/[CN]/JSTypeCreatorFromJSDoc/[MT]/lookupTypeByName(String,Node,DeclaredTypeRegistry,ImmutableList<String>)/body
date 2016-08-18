@@ -2,7 +2,7 @@
   String tvar=UniqueNameGenerator.findGeneratedName(name,outerTypeParameters);
   if (tvar != null) {
     checkInvalidGenericsInstantiation(n);
-    return JSType.fromTypeVar(tvar);
+    return JSType.fromTypeVar(this.commonTypes,tvar);
   }
   Declaration decl=registry.getDeclaration(QualifiedName.fromQualifiedString(name),true);
   if (decl == null) {
@@ -25,5 +25,5 @@
   if (decl.getNominal() != null) {
     return getNominalTypeHelper(decl.getNominal(),n,registry,outerTypeParameters);
   }
-  return JSType.UNKNOWN;
+  return this.commonTypes.UNKNOWN;
 }

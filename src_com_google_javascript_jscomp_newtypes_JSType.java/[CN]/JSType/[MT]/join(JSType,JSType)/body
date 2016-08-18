@@ -1,8 +1,9 @@
 {
   Preconditions.checkNotNull(lhs);
   Preconditions.checkNotNull(rhs);
+  JSTypes commonTypes=lhs.commonTypes;
   if (lhs.isTop() || rhs.isTop()) {
-    return TOP;
+    return commonTypes.TOP;
   }
   if (lhs.isUnknown() || rhs.isUnknown()) {
     return UNKNOWN;
@@ -24,8 +25,8 @@
   String newTypevar=lhs.getTypeVar() != null ? lhs.getTypeVar() : rhs.getTypeVar();
   ImmutableSet<EnumType> newEnums=EnumType.union(lhs.getEnums(),rhs.getEnums());
   if (newEnums.isEmpty()) {
-    return makeType(newMask,newObjs,newTypevar,NO_ENUMS);
+    return makeType(commonTypes,newMask,newObjs,newTypevar,NO_ENUMS);
   }
-  JSType tmpJoin=makeType(newMask & ~ENUM_MASK,newObjs,newTypevar,NO_ENUMS);
-  return makeType(newMask,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
+  JSType tmpJoin=makeType(commonTypes,newMask & ~ENUM_MASK,newObjs,newTypevar,NO_ENUMS);
+  return makeType(commonTypes,newMask,newObjs,newTypevar,EnumType.normalizeForJoin(newEnums,tmpJoin));
 }

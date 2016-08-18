@@ -1,23 +1,24 @@
 {
-  if (NUMBER.isSubtypeOf(found) && !NUMBER.isSubtypeOf(expected)) {
-    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(NUMBER);
+  JSTypes commonTypes=found.commonTypes;
+  if (commonTypes.NUMBER.isSubtypeOf(found) && !commonTypes.NUMBER.isSubtypeOf(expected)) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(commonTypes.NUMBER);
   }
  else   if (STRING.isSubtypeOf(found) && !STRING.isSubtypeOf(expected)) {
     boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(STRING);
   }
- else   if (BOOLEAN.isSubtypeOf(found) && !BOOLEAN.isSubtypeOf(expected)) {
-    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(BOOLEAN);
+ else   if (commonTypes.BOOLEAN.isSubtypeOf(found) && !commonTypes.BOOLEAN.isSubtypeOf(expected)) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(commonTypes.BOOLEAN);
   }
- else   if (NULL.isSubtypeOf(found) && !NULL.isSubtypeOf(expected)) {
-    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(NULL);
+ else   if (commonTypes.NULL.isSubtypeOf(found) && !commonTypes.NULL.isSubtypeOf(expected)) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(commonTypes.NULL);
   }
- else   if (UNDEFINED.isSubtypeOf(found) && !UNDEFINED.isSubtypeOf(expected)) {
-    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(UNDEFINED);
+ else   if (commonTypes.UNDEFINED.isSubtypeOf(found) && !commonTypes.UNDEFINED.isSubtypeOf(expected)) {
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(commonTypes.UNDEFINED);
   }
  else   if (found.hasTypeVariable() && !expected.hasTypeVariable()) {
-    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(fromTypeVar(found.getTypeVar()));
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(fromTypeVar(found.commonTypes,found.getTypeVar()));
   }
  else   if ((found.getMask() & NON_SCALAR_MASK) != 0 && (expected.getMask() & NON_SCALAR_MASK) == 0) {
-    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(makeType(NON_SCALAR_MASK,found.getObjs(),null,NO_ENUMS));
+    boxedInfo[0]=MismatchInfo.makeUnionTypeMismatch(makeType(found.commonTypes,NON_SCALAR_MASK,found.getObjs(),null,NO_ENUMS));
   }
 }

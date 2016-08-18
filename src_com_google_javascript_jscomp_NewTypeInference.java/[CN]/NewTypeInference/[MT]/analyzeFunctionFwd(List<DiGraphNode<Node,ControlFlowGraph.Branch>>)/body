@@ -26,7 +26,7 @@ case WITH:
     break;
 case CATCH:
   String catchVarname=n.getFirstChild().getString();
-outEnv=envPutType(inEnv,catchVarname,JSType.UNKNOWN);
+outEnv=envPutType(inEnv,catchVarname,UNKNOWN);
 break;
 case EXPR_RESULT:
 println("\tsemi ",n.getFirstChild().getToken());
@@ -35,7 +35,7 @@ n.removeProp(Node.ANALYZED_DURING_GTI);
 outEnv=inEnv;
 }
  else {
-outEnv=analyzeExprFwd(n.getFirstChild(),inEnv,JSType.UNKNOWN).env;
+outEnv=analyzeExprFwd(n.getFirstChild(),inEnv,UNKNOWN).env;
 }
 break;
 case RETURN:
@@ -43,14 +43,14 @@ case RETURN:
 Node retExp=n.getFirstChild();
 JSType declRetType=currentScope.getDeclaredFunctionType().getReturnType();
 if (declRetType == null) {
-declRetType=JSType.UNKNOWN;
+declRetType=UNKNOWN;
 }
  else if (this.areTypeVariablesUnknown) {
 declRetType=declRetType.substituteGenericsWithUnknown();
 }
 JSType actualRetType;
 if (retExp == null) {
-actualRetType=JSType.UNDEFINED;
+actualRetType=UNDEFINED;
 outEnv=envPutType(inEnv,RETVAL_ID,actualRetType);
 }
  else {
@@ -72,20 +72,20 @@ Node obj=n.getSecondChild();
 EnvTypePair pair=analyzeExprFwd(obj,inEnv,pickReqObjType(n));
 pair=mayWarnAboutNullableReferenceAndTighten(n,pair.type,null,inEnv);
 JSType objType=pair.type;
-if (!objType.isSubtypeOf(JSType.TOP_OBJECT)) {
+if (!objType.isSubtypeOf(TOP_OBJECT)) {
 warnings.add(JSError.make(obj,FORIN_EXPECTS_OBJECT,objType.toString()));
 }
  else if (objType.isStruct()) {
 warnings.add(JSError.make(obj,IN_USED_WITH_STRUCT));
 }
 Node lhs=n.getFirstChild();
-LValueResultFwd lval=analyzeLValueFwd(lhs,inEnv,JSType.STRING);
+LValueResultFwd lval=analyzeLValueFwd(lhs,inEnv,STRING);
 if (lval.declType != null && !commonTypes.isStringScalarOrObj(lval.declType)) {
 warnings.add(JSError.make(lhs,FORIN_EXPECTS_STRING_KEY,lval.declType.toString()));
 outEnv=lval.env;
 }
  else {
-outEnv=updateLvalueTypeInEnv(lval.env,lhs,lval.ptr,JSType.STRING);
+outEnv=updateLvalueTypeInEnv(lval.env,lhs,lval.ptr,STRING);
 }
 break;
 }
@@ -116,7 +116,7 @@ if (NodeUtil.isStatement(n)) {
 throw new RuntimeException("Unhandled statement type: " + n.getToken());
 }
  else {
-outEnv=analyzeExprFwd(n,inEnv,JSType.UNKNOWN).env;
+outEnv=analyzeExprFwd(n,inEnv,UNKNOWN).env;
 break;
 }
 }

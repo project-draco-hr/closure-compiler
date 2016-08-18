@@ -2,13 +2,12 @@
   if (types == null) {
     return null;
   }
-  JSType ptype=JSType.BOTTOM;
-  boolean foundProp=false;
+  JSType ptype=null;
   for (  TypeWithProperties t : types) {
     if (t.mayHaveProp(qname)) {
-      foundProp=true;
-      ptype=JSType.join(ptype,t.getProp(qname));
+      JSType tmp=t.getProp(qname);
+      ptype=ptype == null ? tmp : JSType.join(ptype,tmp);
     }
   }
-  return foundProp ? ptype : null;
+  return ptype;
 }

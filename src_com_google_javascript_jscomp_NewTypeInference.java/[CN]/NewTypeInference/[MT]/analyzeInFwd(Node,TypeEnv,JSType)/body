@@ -3,32 +3,32 @@
   Node rhs=expr.getLastChild();
   JSType reqObjType=pickReqObjType(expr);
   EnvTypePair pair;
-  pair=analyzeExprFwd(lhs,inEnv,JSType.NUM_OR_STR);
-  if (!pair.type.isSubtypeOf(JSType.NUM_OR_STR)) {
-    warnInvalidOperand(lhs,Token.IN,JSType.NUM_OR_STR,pair.type);
+  pair=analyzeExprFwd(lhs,inEnv,NUMBER_OR_STRING);
+  if (!pair.type.isSubtypeOf(NUMBER_OR_STRING)) {
+    warnInvalidOperand(lhs,Token.IN,NUMBER_OR_STRING,pair.type);
   }
   pair=analyzeExprFwd(rhs,pair.env,reqObjType);
-  if (!pair.type.isSubtypeOf(JSType.TOP_OBJECT)) {
+  if (!pair.type.isSubtypeOf(TOP_OBJECT)) {
     warnInvalidOperand(rhs,Token.IN,"Object",pair.type);
-    pair.type=JSType.BOOLEAN;
+    pair.type=BOOLEAN;
     return pair;
   }
   if (pair.type.isStruct()) {
     warnings.add(JSError.make(rhs,IN_USED_WITH_STRUCT));
-    pair.type=JSType.BOOLEAN;
+    pair.type=BOOLEAN;
     return pair;
   }
-  JSType resultType=JSType.BOOLEAN;
+  JSType resultType=BOOLEAN;
   if (lhs.isString()) {
     QualifiedName pname=new QualifiedName(lhs.getString());
     if (specializedType.isTrueOrTruthy()) {
       pair=analyzeExprFwd(rhs,inEnv,reqObjType,reqObjType.withPropertyRequired(pname.getLeftmostName()));
-      resultType=JSType.TRUE_TYPE;
+      resultType=TRUE_TYPE;
     }
  else     if (specializedType.isFalseOrFalsy()) {
       pair=analyzeExprFwd(rhs,inEnv,reqObjType);
       pair=analyzeExprFwd(rhs,inEnv,reqObjType,pair.type.withoutProperty(pname));
-      resultType=JSType.FALSE_TYPE;
+      resultType=FALSE_TYPE;
     }
   }
   pair.type=resultType;

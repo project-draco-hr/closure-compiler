@@ -1,11 +1,11 @@
 {
   Node fnRoot=fn.getRoot();
   Preconditions.checkArgument(!fnRoot.isFromExterns());
-  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  FunctionTypeBuilder builder=new FunctionTypeBuilder(this.commonTypes);
   TypeEnv entryEnv=getEntryTypeEnv();
   TypeEnv exitEnv=getInEnv(this.cfg.getImplicitReturn());
   if (exitEnv == null) {
-    exitEnv=envPutType(new TypeEnv(),RETVAL_ID,JSType.BOTTOM);
+    exitEnv=envPutType(new TypeEnv(),RETVAL_ID,BOTTOM);
   }
   DeclaredFunctionType declType=fn.getDeclaredFunctionType();
   int reqArity=declType.getRequiredArity();
@@ -21,7 +21,7 @@
     }
     String formalName=formals.get(i);
     formalType=getTypeAfterFwd(formalName,entryEnv,exitEnv);
-    if (formalType.isUnknown() || JSType.UNDEFINED.isSubtypeOf(formalType)) {
+    if (formalType.isUnknown() || UNDEFINED.isSubtypeOf(formalType)) {
       reqArity--;
     }
  else {
@@ -55,15 +55,15 @@
   JSType actualRetType=Preconditions.checkNotNull(envGetType(exitEnv,RETVAL_ID));
   if (declRetType != null) {
     builder.addRetType(declRetType);
-    if (!isAllowedToNotReturn(fn) && !JSType.UNDEFINED.isSubtypeOf(declRetType) && hasPathWithNoReturn(this.cfg)) {
+    if (!isAllowedToNotReturn(fn) && !UNDEFINED.isSubtypeOf(declRetType) && hasPathWithNoReturn(this.cfg)) {
       warnings.add(JSError.make(fnRoot,MISSING_RETURN_STATEMENT,declRetType.toString()));
     }
   }
  else   if (declType.getNominalType() == null) {
-    builder.addRetType(actualRetType.isBottom() ? JSType.TOP : actualRetType);
+    builder.addRetType(actualRetType.isBottom() ? TOP : actualRetType);
   }
  else {
-    builder.addRetType(JSType.UNDEFINED);
+    builder.addRetType(UNDEFINED);
   }
   JSType summary=commonTypes.fromFunctionType(builder.buildFunction());
   println("Function summary for ",fn.getReadableName());

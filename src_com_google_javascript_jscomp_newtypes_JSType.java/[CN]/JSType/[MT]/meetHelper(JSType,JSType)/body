@@ -12,7 +12,7 @@
     return lhs;
   }
   if (lhs.isBottom() || rhs.isBottom()) {
-    return BOTTOM;
+    return lhs.commonTypes.BOTTOM;
   }
   if (lhs.hasTruthyMask()) {
     return rhs.makeTruthy();
@@ -35,5 +35,5 @@
     newTypevar=null;
     newMask=newMask & ~TYPEVAR_MASK;
   }
-  return meetEnums(newMask,lhs.getMask() | rhs.getMask(),ObjectType.meetSets(lhs.getObjs(),rhs.getObjs()),newTypevar,lhs.getObjs(),rhs.getObjs(),lhs.getEnums(),rhs.getEnums());
+  return meetEnums(lhs.commonTypes,newMask,lhs.getMask() | rhs.getMask(),ObjectType.meetSets(lhs.getObjs(),rhs.getObjs()),newTypevar,lhs.getObjs(),rhs.getObjs(),lhs.getEnums(),rhs.getEnums());
 }

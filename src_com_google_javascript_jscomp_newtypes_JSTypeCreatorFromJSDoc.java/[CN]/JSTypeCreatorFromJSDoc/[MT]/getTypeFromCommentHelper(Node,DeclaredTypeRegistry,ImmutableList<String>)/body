@@ -7,26 +7,26 @@ switch (n.getType()) {
 case LC:
     return getRecordTypeHelper(n,registry,typeParameters);
 case EMPTY:
-  return JSType.UNKNOWN;
+  return this.commonTypes.UNKNOWN;
 case VOID:
-return JSType.UNDEFINED;
+return this.commonTypes.UNDEFINED;
 case LB:
 warnings.add(JSError.make(n,BAD_ARRAY_TYPE_SYNTAX));
-return JSType.UNKNOWN;
+return this.commonTypes.UNKNOWN;
 case STRING:
 return getNamedTypeHelper(n,registry,typeParameters);
 case PIPE:
 {
-JSType union=JSType.BOTTOM;
+JSType union=this.commonTypes.BOTTOM;
 for (Node child=n.getFirstChild(); child != null; child=child.getNext()) {
 JSType nextType=getTypeFromCommentHelper(child,registry,typeParameters);
 if (nextType.isUnknown()) {
-return JSType.UNKNOWN;
+return this.commonTypes.UNKNOWN;
 }
 JSType nextUnion=JSType.join(union,nextType);
 if (nextUnion.isBottom()) {
 warnings.add(JSError.make(n,UNION_IS_UNINHABITABLE,nextType.toString(),union.toString()));
-return JSType.UNKNOWN;
+return this.commonTypes.UNKNOWN;
 }
 union=nextUnion;
 }
@@ -38,20 +38,20 @@ JSType nullableType=getTypeFromCommentHelper(n.getFirstChild(),registry,typePara
 if (nullableType.isTypeVariable()) {
 warnings.add(JSError.make(n,CANNOT_MAKE_TYPEVAR_NON_NULL));
 }
-return nullableType.removeType(JSType.NULL);
+return nullableType.removeType(this.commonTypes.NULL);
 }
 case QMARK:
 {
 Node child=n.getFirstChild();
 if (child == null) {
-return JSType.UNKNOWN;
+return this.commonTypes.UNKNOWN;
 }
  else {
-return JSType.join(JSType.NULL,getTypeFromCommentHelper(child,registry,typeParameters));
+return JSType.join(this.commonTypes.NULL,getTypeFromCommentHelper(child,registry,typeParameters));
 }
 }
 case STAR:
-return JSType.TOP;
+return this.commonTypes.TOP;
 case FUNCTION:
 return getFunTypeHelper(n,registry,typeParameters);
 default :

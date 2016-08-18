@@ -1,17 +1,17 @@
 {
   Node firstParam=callNode.getSecondChild();
   if (firstParam == null) {
-    return new EnvTypePair(env,JSType.UNKNOWN);
+    return new EnvTypePair(env,UNKNOWN);
   }
   Node assertedNode=assertionFunctionSpec.getAssertedParam(firstParam);
   if (assertedNode == null) {
-    return new EnvTypePair(env,JSType.UNKNOWN);
+    return new EnvTypePair(env,UNKNOWN);
   }
   JSType assertedType=assertionFunctionSpec.getAssertedNewType(callNode,currentScope);
   if (assertedType.isUnknown()) {
     warnings.add(JSError.make(callNode,UNKNOWN_ASSERTION_TYPE));
   }
-  EnvTypePair pair=analyzeExprFwd(assertedNode,env,JSType.UNKNOWN,assertedType);
+  EnvTypePair pair=analyzeExprFwd(assertedNode,env,UNKNOWN,assertedType);
   if (!pair.type.isSubtypeOf(assertedType) && JSType.haveCommonSubtype(assertedType,pair.type)) {
     pair.type=assertedType;
   }
@@ -22,7 +22,7 @@
     }
  else {
       warnings.add(JSError.make(assertedNode,ASSERT_FALSE));
-      pair.type=JSType.UNKNOWN;
+      pair.type=UNKNOWN;
       pair.env=env;
     }
   }

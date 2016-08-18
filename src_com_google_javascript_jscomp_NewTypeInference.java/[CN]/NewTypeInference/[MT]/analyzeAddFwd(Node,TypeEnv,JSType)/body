@@ -1,20 +1,20 @@
 {
   Node lhs=expr.getFirstChild();
   Node rhs=expr.getLastChild();
-  JSType operandType=requiredType.isNumber() ? JSType.NUMBER : JSType.UNKNOWN;
+  JSType operandType=requiredType.isNumber() ? NUMBER : UNKNOWN;
   EnvTypePair lhsPair=analyzeExprFwd(lhs,inEnv,operandType);
   EnvTypePair rhsPair=analyzeExprFwd(rhs,lhsPair.env,operandType);
   JSType lhsType=lhsPair.type;
   JSType rhsType=rhsPair.type;
   if (lhsType.isString() || rhsType.isString()) {
-    rhsPair.type=JSType.STRING;
+    rhsPair.type=STRING;
     return rhsPair;
   }
   if (!commonTypes.isNumStrScalarOrObj(lhsType)) {
-    warnInvalidOperand(lhs,expr.getToken(),JSType.NUM_OR_STR,lhsType);
+    warnInvalidOperand(lhs,expr.getToken(),NUMBER_OR_STRING,lhsType);
   }
   if (!commonTypes.isNumStrScalarOrObj(rhsType)) {
-    warnInvalidOperand(rhs,expr.getToken(),JSType.NUM_OR_STR,rhsType);
+    warnInvalidOperand(rhs,expr.getToken(),NUMBER_OR_STRING,rhsType);
   }
   return new EnvTypePair(rhsPair.env,JSType.plus(lhsType,rhsType));
 }

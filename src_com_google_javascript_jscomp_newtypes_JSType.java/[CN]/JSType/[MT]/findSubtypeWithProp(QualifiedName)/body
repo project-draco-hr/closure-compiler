@@ -1,17 +1,17 @@
 {
   Preconditions.checkArgument(pname.isIdentifier());
   if (isTop() || isUnknown() || (getMask() & NON_SCALAR_MASK) == 0) {
-    return BOTTOM;
+    return this.commonTypes.BOTTOM;
   }
-  if (NUMBER.isSubtypeOf(this) && commonTypes.getNumberInstance().mayHaveProp(pname) || STRING.isSubtypeOf(this) && commonTypes.getNumberInstance().mayHaveProp(pname) || BOOLEAN.isSubtypeOf(this) && commonTypes.getBooleanInstance().mayHaveProp(pname)) {
-    return BOTTOM;
+  if (this.commonTypes.NUMBER.isSubtypeOf(this) && this.commonTypes.getNumberInstance().mayHaveProp(pname) || STRING.isSubtypeOf(this) && this.commonTypes.getNumberInstance().mayHaveProp(pname) || this.commonTypes.BOOLEAN.isSubtypeOf(this) && this.commonTypes.getBooleanInstance().mayHaveProp(pname)) {
+    return this.commonTypes.BOTTOM;
   }
   if ((getMask() & ENUM_MASK) != 0) {
-    return BOTTOM;
+    return this.commonTypes.BOTTOM;
   }
   if (getObjs().size() == 1) {
     ObjectType obj=Iterables.getOnlyElement(getObjs());
-    return obj.mayHaveProp(pname) ? this : BOTTOM;
+    return obj.mayHaveProp(pname) ? this : this.commonTypes.BOTTOM;
   }
   ImmutableSet.Builder<ObjectType> builder=ImmutableSet.builder();
   boolean foundObjWithProp=false;
@@ -21,5 +21,5 @@
       builder.add(o);
     }
   }
-  return foundObjWithProp ? makeType(NON_SCALAR_MASK,builder.build(),null,NO_ENUMS) : BOTTOM;
+  return foundObjWithProp ? makeType(this.commonTypes,NON_SCALAR_MASK,builder.build(),null,NO_ENUMS) : this.commonTypes.BOTTOM;
 }

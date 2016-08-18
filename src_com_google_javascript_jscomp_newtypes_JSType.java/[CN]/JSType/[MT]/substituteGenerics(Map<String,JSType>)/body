@@ -6,9 +6,9 @@
   for (  ObjectType obj : getObjs()) {
     builder.add(obj.substituteGenerics(concreteTypes));
   }
-  JSType current=makeType(getMask() & ~TYPEVAR_MASK,builder.build(),null,getEnums());
+  JSType current=makeType(this.commonTypes,getMask() & ~TYPEVAR_MASK,builder.build(),null,getEnums());
   if (hasTypeVariable()) {
-    current=JSType.join(current,concreteTypes.containsKey(getTypeVar()) ? concreteTypes.get(getTypeVar()) : fromTypeVar(getTypeVar()));
+    current=JSType.join(current,concreteTypes.containsKey(getTypeVar()) ? concreteTypes.get(getTypeVar()) : fromTypeVar(this.commonTypes,getTypeVar()));
   }
   return current;
 }

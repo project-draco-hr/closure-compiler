@@ -43,12 +43,12 @@
     return new EnvTypePair(pair.env,commonTypes.fromFunctionType(ft.transformByCallProperty()));
   }
   if (ft != null && pname.equals("apply")) {
-    return new EnvTypePair(pair.env,commonTypes.fromFunctionType(ft.transformByApplyProperty(commonTypes)));
+    return new EnvTypePair(pair.env,commonTypes.fromFunctionType(ft.transformByApplyProperty()));
   }
   if (this.convention.isSuperClassReference(pname)) {
     if (ft != null && ft.isUniqueConstructor()) {
       JSType result=ft.getSuperPrototype();
-      pair.type=result != null ? result : JSType.UNDEFINED;
+      pair.type=result != null ? result : UNDEFINED;
       return pair;
     }
   }
@@ -56,7 +56,7 @@
     return new EnvTypePair(pair.env,requiredType);
   }
   if (recvType.isTop()) {
-    recvType=JSType.TOP_OBJECT;
+    recvType=TOP_OBJECT;
   }
   if (propAccessNode.getParent().isDelProp() && recvType.hasConstantProp(propQname)) {
     warnings.add(JSError.make(propAccessNode.getParent(),CONST_PROPERTY_DELETED,pname));
@@ -68,7 +68,7 @@
   JSType resultType=recvType.getProp(propQname);
   if (resultType != null && resultType.isBottom()) {
     warnings.add(JSError.make(propAccessNode,BOTTOM_PROP,pname,recvType.toString()));
-    return new EnvTypePair(pair.env,JSType.UNKNOWN);
+    return new EnvTypePair(pair.env,UNKNOWN);
   }
   if (!propAccessNode.getParent().isExprResult() && !specializedType.isTrueOrTruthy() && !specializedType.isFalseOrFalsy()&& !recvType.mayBeDict()&& !mayWarnAboutInexistentProp(propAccessNode,recvType,propQname)&& recvType.hasProp(propQname)&& !resultType.isSubtypeOf(requiredType)&& tightenTypeAndDontWarn(receiver.isName() ? receiver.getString() : null,receiver,recvType.getDeclaredProp(propQname),resultType,requiredType)) {
     resultType=resultType.specialize(requiredType);
@@ -77,7 +77,7 @@
     return new EnvTypePair(updatedEnv,resultType);
   }
   if (resultType == null) {
-    resultType=JSType.UNKNOWN;
+    resultType=UNKNOWN;
   }
   return new EnvTypePair(pair.env,resultType);
 }

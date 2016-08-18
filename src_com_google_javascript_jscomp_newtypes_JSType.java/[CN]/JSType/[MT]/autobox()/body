@@ -8,26 +8,26 @@
   }
 switch (mask) {
 case NUMBER_MASK:
-    return commonTypes.getNumberInstance();
+    return this.commonTypes.getNumberInstance();
 case BOOLEAN_MASK:
 case TRUE_MASK:
 case FALSE_MASK:
-  return commonTypes.getBooleanInstance();
+  return this.commonTypes.getBooleanInstance();
 case STRING_MASK:
-return commonTypes.getStringInstance();
+return this.commonTypes.getStringInstance();
 }
 ImmutableSet.Builder<ObjectType> builder=ImmutableSet.builder();
 builder.addAll(getObjs());
 if ((mask & NUMBER_MASK) != 0) {
-builder.add(commonTypes.getNumberInstanceObjType());
+builder.add(this.commonTypes.getNumberInstanceObjType());
 }
 if ((mask & STRING_MASK) != 0) {
-builder.add(commonTypes.getStringInstanceObjType());
+builder.add(this.commonTypes.getStringInstanceObjType());
 }
 if ((mask & BOOLEAN_MASK) != 0) {
-builder.add(commonTypes.getBooleanInstanceObjType());
+builder.add(this.commonTypes.getBooleanInstanceObjType());
 }
-JSType result=makeType(mask & ~(NUMBER_MASK | STRING_MASK | BOOLEAN_MASK),builder.build(),getTypeVar(),NO_ENUMS);
+JSType result=makeType(this.commonTypes,mask & ~(NUMBER_MASK | STRING_MASK | BOOLEAN_MASK),builder.build(),getTypeVar(),NO_ENUMS);
 for (EnumType e : getEnums()) {
 result=join(result,e.getEnumeratedType().autobox());
 }

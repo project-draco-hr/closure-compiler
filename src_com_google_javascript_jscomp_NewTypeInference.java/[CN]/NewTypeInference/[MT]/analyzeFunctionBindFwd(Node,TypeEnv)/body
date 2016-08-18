@@ -13,7 +13,7 @@
   }
   if (boundFunType.isSomeConstructorOrInterface()) {
     warnings.add(JSError.make(call,CANNOT_BIND_CTOR));
-    return new EnvTypePair(env,JSType.UNKNOWN);
+    return new EnvTypePair(env,UNKNOWN);
   }
   if (NodeUtil.isGoogBind(call.getFirstChild()) && call.getChildCount() <= 2 || !NodeUtil.isGoogPartial(call.getFirstChild()) && call.getChildCount() == 1) {
     warnings.add(JSError.make(call,WRONG_ARGUMENT_COUNT,getReadableCalleeName(call.getFirstChild()),"0","1",""));
@@ -29,11 +29,11 @@
     Map<String,JSType> typeMap=calcTypeInstantiationFwd(call,receiver,bindComponents.parameters,boundFunType,env);
     boundFunType=boundFunType.instantiateGenerics(typeMap);
   }
-  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  FunctionTypeBuilder builder=new FunctionTypeBuilder(this.commonTypes);
   if (receiver != null) {
     JSType reqThisType=boundFunType.getThisType();
     if (reqThisType == null || boundFunType.isSomeConstructorOrInterface()) {
-      reqThisType=JSType.join(JSType.NULL,JSType.TOP_OBJECT);
+      reqThisType=JSType.join(NULL,TOP_OBJECT);
     }
     pair=analyzeExprFwd(receiver,env,reqThisType);
     env=pair.env;

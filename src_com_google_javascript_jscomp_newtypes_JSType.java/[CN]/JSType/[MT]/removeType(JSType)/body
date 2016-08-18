@@ -5,11 +5,12 @@
     return this;
   }
   if (isTop()) {
-    return ALMOST_TOP.removeType(other);
+    JSType almostTop=makeType(commonTypes,TRUE_MASK | FALSE_MASK | NUMBER_MASK| STRING_MASK| NULL_MASK| UNDEFINED_MASK| NON_SCALAR_MASK,ImmutableSet.of(this.commonTypes.TOP_OBJECTTYPE),null,NO_ENUMS);
+    return almostTop.removeType(other);
   }
   int newMask=getMask() & ~otherMask;
   if ((otherMask & NON_SCALAR_MASK) == 0) {
-    return newMask == getMask() ? this : makeType(newMask,getObjs(),getTypeVar(),getEnums());
+    return newMask == getMask() ? this : makeType(this.commonTypes,newMask,getObjs(),getTypeVar(),getEnums());
   }
   Preconditions.checkState(other.getObjs().size() == 1,"Invalid type to remove: %s",other);
   ObjectType otherObj=Iterables.getOnlyElement(other.getObjs());
@@ -25,5 +26,5 @@
       enumBuilder.add(e);
     }
   }
-  return makeType(newMask,objsBuilder.build(),getTypeVar(),enumBuilder.build());
+  return makeType(this.commonTypes,newMask,objsBuilder.build(),getTypeVar(),enumBuilder.build());
 }

@@ -1,10 +1,10 @@
 {
   if (isQmarkFunction()) {
-    return FunctionTypeBuilder.qmarkFunctionBuilder().buildDeclaration();
+    return DeclaredFunctionType.qmarkFunctionDeclaration(this.commonTypes);
   }
   Preconditions.checkState(!isLoose(),"Loose function: %s",this);
   Preconditions.checkState(!isGeneric(),"Generic function: %s",this);
-  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  FunctionTypeBuilder builder=new FunctionTypeBuilder(this.commonTypes);
   for (  JSType type : this.requiredFormals) {
     builder.addReqFormal(type);
   }

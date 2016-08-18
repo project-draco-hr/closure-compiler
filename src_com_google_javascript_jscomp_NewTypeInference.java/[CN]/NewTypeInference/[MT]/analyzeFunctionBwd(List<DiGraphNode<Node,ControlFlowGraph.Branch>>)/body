@@ -7,7 +7,7 @@
     println("\t\toutEnv: ",outEnv);
 switch (n.getToken()) {
 case EXPR_RESULT:
-      inEnv=analyzeExprBwd(n.getFirstChild(),outEnv,JSType.UNKNOWN).env;
+      inEnv=analyzeExprBwd(n.getFirstChild(),outEnv,UNKNOWN).env;
     break;
 case RETURN:
 {
@@ -17,7 +17,7 @@ case RETURN:
     }
  else {
       JSType declRetType=currentScope.getDeclaredFunctionType().getReturnType();
-      declRetType=declRetType == null ? JSType.UNKNOWN : declRetType;
+      declRetType=declRetType == null ? UNKNOWN : declRetType;
       inEnv=analyzeExprBwd(retExp,outEnv,declRetType).env;
     }
     break;
@@ -33,7 +33,7 @@ case VAR:
     String varName=nameNode.getString();
     Node rhs=nameNode.getFirstChild();
     JSType declType=currentScope.getDeclaredTypeOf(varName);
-    inEnv=envPutType(inEnv,varName,JSType.UNKNOWN);
+    inEnv=envPutType(inEnv,varName,UNKNOWN);
     if (rhs == null || currentScope.isLocalFunDef(varName)) {
       continue;
     }
@@ -45,7 +45,7 @@ case VAR:
  else {
       requiredType=JSType.meet(declType,inferredType);
       if (requiredType.isBottom()) {
-        requiredType=JSType.UNKNOWN;
+        requiredType=UNKNOWN;
       }
     }
     inEnv=analyzeExprBwd(rhs,inEnv,requiredType).env;

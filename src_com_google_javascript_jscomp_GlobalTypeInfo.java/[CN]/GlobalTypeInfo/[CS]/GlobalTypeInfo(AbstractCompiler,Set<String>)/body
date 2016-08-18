@@ -1,14 +1,12 @@
 {
+  boolean inCompatibilityMode=compiler.getOptions().disables(DiagnosticGroups.NEW_CHECK_TYPES_EXTRA_CHECKS);
   this.warnings=new WarningReporter(compiler);
   this.compiler=compiler;
   this.unknownTypeNames=unknownTypeNames;
   this.convention=compiler.getCodingConvention();
   this.varNameGen=new UniqueNameGenerator();
   this.funNameGen=new DefaultNameGenerator(ImmutableSet.<String>of(),"",null);
-  this.typeParser=new JSTypeCreatorFromJSDoc(this.convention,this.varNameGen,this.allPropertyNames);
+  this.commonTypes=JSTypes.init(inCompatibilityMode);
+  this.typeParser=new JSTypeCreatorFromJSDoc(this.commonTypes,this.convention,this.varNameGen,this.allPropertyNames);
   this.allPropertyNames.add("prototype");
-  this.commonTypes=JSTypes.make();
-  JSType.setCommonTypes(this.commonTypes);
-  boolean inCompatibilityMode=compiler.getOptions().disables(DiagnosticGroups.NEW_CHECK_TYPES_EXTRA_CHECKS);
-  FunctionType.setAllowMethodsAsFunctions(inCompatibilityMode);
 }

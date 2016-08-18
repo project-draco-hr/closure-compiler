@@ -1,12 +1,12 @@
 {
   String varName=expr.getString();
   if (varName.equals("undefined")) {
-    return new EnvTypePair(outEnv,JSType.UNDEFINED);
+    return new EnvTypePair(outEnv,UNDEFINED);
   }
   JSType inferredType=envGetType(outEnv,varName);
   println(varName,"'s inferredType: ",inferredType," requiredType:  ",requiredType);
   if (inferredType == null) {
-    return new EnvTypePair(outEnv,JSType.UNKNOWN);
+    return new EnvTypePair(outEnv,UNKNOWN);
   }
   JSType preciseType=inferredType.specialize(requiredType);
   if ((currentScope.isUndeclaredFormal(varName) || currentScope.isUndeclaredOuterVar(varName)) && preciseType.hasNonScalar()) {

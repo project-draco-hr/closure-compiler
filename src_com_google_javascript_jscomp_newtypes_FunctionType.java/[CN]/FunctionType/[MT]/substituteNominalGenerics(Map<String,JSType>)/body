@@ -3,7 +3,7 @@
     return this;
   }
   Map<String,JSType> reducedMap=typeMap;
-  if (!JSType.MAP_TO_UNKNOWN.equals(typeMap)) {
+  if (!this.commonTypes.MAP_TO_UNKNOWN.equals(typeMap)) {
     boolean foundShadowedTypeParam=false;
     for (    String typeParam : this.typeParameters) {
       if (typeMap.containsKey(typeParam)) {
@@ -21,7 +21,7 @@
       reducedMap=builder.build();
     }
   }
-  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  FunctionTypeBuilder builder=new FunctionTypeBuilder(this.commonTypes);
   for (  JSType reqFormal : this.requiredFormals) {
     builder.addReqFormal(reqFormal.substituteGenerics(reducedMap));
   }

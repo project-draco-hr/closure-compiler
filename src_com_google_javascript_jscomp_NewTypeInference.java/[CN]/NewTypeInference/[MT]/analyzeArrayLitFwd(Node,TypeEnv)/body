@@ -1,13 +1,13 @@
 {
   TypeEnv env=inEnv;
-  JSType elementType=JSType.BOTTOM;
+  JSType elementType=BOTTOM;
   for (Node arrayElm=expr.getFirstChild(); arrayElm != null; arrayElm=arrayElm.getNext()) {
     EnvTypePair pair=analyzeExprFwd(arrayElm,env);
     env=pair.env;
     elementType=JSType.join(elementType,pair.type);
   }
   if (elementType.isBottom()) {
-    elementType=JSType.UNKNOWN;
+    elementType=UNKNOWN;
   }
   return new EnvTypePair(env,commonTypes.getArrayInstance(elementType));
 }

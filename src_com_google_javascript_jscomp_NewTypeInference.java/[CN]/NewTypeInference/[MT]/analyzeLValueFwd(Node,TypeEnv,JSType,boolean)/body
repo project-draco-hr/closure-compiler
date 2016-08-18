@@ -8,7 +8,7 @@ case THIS:
       }
  else {
         mayWarnAboutGlobalThis(expr,currentScope);
-        lvalResult=new LValueResultFwd(inEnv,JSType.UNKNOWN,null,null);
+        lvalResult=new LValueResultFwd(inEnv,UNKNOWN,null,null);
       }
       break;
     }
@@ -26,7 +26,7 @@ case GETELEM:
   Node prop=expr.getLastChild();
   QualifiedName pname=expr.isGetProp() || prop.isString() ? new QualifiedName(prop.getString()) : null;
   LValueResultFwd recvLvalue=analyzeReceiverLvalFwd(obj,pname,inEnv,type);
-  if (!recvLvalue.type.isSubtypeOf(JSType.TOP_OBJECT)) {
+  if (!recvLvalue.type.isSubtypeOf(TOP_OBJECT)) {
     EnvTypePair pair=analyzeExprFwd(prop,recvLvalue.env,type);
     lvalResult=new LValueResultFwd(pair.env,type,null,null);
     break;
@@ -50,7 +50,7 @@ Preconditions.checkState(NodeUtil.isForIn(expr.getParent()));
 Node vdecl=expr.getFirstChild();
 String name=vdecl.getString();
 Preconditions.checkState(!vdecl.hasChildren());
-return new LValueResultFwd(inEnv,JSType.STRING,null,new QualifiedName(name));
+return new LValueResultFwd(inEnv,STRING,null,new QualifiedName(name));
 }
 default :
 {

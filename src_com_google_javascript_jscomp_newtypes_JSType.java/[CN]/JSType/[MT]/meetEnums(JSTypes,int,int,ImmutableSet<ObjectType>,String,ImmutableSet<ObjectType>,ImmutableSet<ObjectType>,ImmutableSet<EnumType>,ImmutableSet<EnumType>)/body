@@ -1,0 +1,44 @@
+{
+  if (Objects.equals(enums1,enums2)) {
+    return makeType(commonTypes,newMask,newObjs,newTypevar,enums1);
+  }
+  ImmutableSet.Builder<EnumType> enumBuilder=ImmutableSet.builder();
+  ImmutableSet<EnumType> allEnums=EnumType.union(enums1,enums2);
+  for (  EnumType e : allEnums) {
+    if (enums1 != null && enums1.contains(e) && enums2 != null && enums2.contains(e)) {
+      enumBuilder.add(e);
+      continue;
+    }
+    JSType enumeratedType=e.getEnumeratedType();
+    if (enumeratedType.isUnknown()) {
+      enumBuilder.add(e);
+      continue;
+    }
+    if (enumeratedType.getMask() != NON_SCALAR_MASK) {
+      if ((enumeratedType.getMask() & unionMask) != 0) {
+        enumBuilder.add(e);
+        newMask&=~enumeratedType.getMask();
+      }
+    }
+ else     if (!objs1.isEmpty() || !objs2.isEmpty()) {
+      Set<ObjectType> objsToRemove=new LinkedHashSet<>();
+      ObjectType enumObj=Iterables.getOnlyElement(enumeratedType.getObjs());
+      for (      ObjectType obj1 : objs1) {
+        if (enumObj.isSubtypeOf(obj1,SubtypeCache.create())) {
+          enumBuilder.add(e);
+          objsToRemove.add(obj1);
+        }
+      }
+      for (      ObjectType obj2 : objs2) {
+        if (enumObj.isSubtypeOf(obj2,SubtypeCache.create())) {
+          enumBuilder.add(e);
+          objsToRemove.add(obj2);
+        }
+      }
+      if (!objsToRemove.isEmpty()) {
+        newObjs=Sets.difference(newObjs,objsToRemove).immutableCopy();
+      }
+    }
+  }
+  return makeType(commonTypes,newMask,newObjs,newTypevar,enumBuilder.build());
+}

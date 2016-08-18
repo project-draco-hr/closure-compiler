@@ -1,9 +1,9 @@
 {
   Node lhs=expr.getFirstChild();
   Node rhs=expr.getLastChild();
-  JSType lhsReqType=specializeKeep2ndWhenBottom(requiredType,JSType.NUM_OR_STR);
+  JSType lhsReqType=specializeKeep2ndWhenBottom(requiredType,NUMBER_OR_STRING);
   LValueResultBwd lvalue=analyzeLValueBwd(lhs,outEnv,lhsReqType,false);
-  JSType rhsReqType=lvalue.type.isNumber() ? JSType.NUMBER : JSType.NUM_OR_STR;
+  JSType rhsReqType=lvalue.type.isNumber() ? NUMBER : NUMBER_OR_STRING;
   EnvTypePair pair=analyzeExprBwd(rhs,outEnv,rhsReqType);
   pair.env=analyzeLValueBwd(lhs,pair.env,lhsReqType,false).env;
   return pair;

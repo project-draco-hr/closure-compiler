@@ -3,7 +3,7 @@
   Preconditions.checkArgument(!requiredType.isBottom());
 switch (expr.getToken()) {
 case EMPTY:
-    return new EnvTypePair(outEnv,JSType.UNKNOWN);
+    return new EnvTypePair(outEnv,UNKNOWN);
 case FUNCTION:
 {
     String fnName=symbolTable.getFunInternalName(expr);
@@ -20,7 +20,7 @@ return analyzeObjLitBwd(expr,outEnv,requiredType);
 case THIS:
 {
 if (!currentScope.hasThis()) {
-return new EnvTypePair(outEnv,JSType.UNKNOWN);
+return new EnvTypePair(outEnv,UNKNOWN);
 }
 JSType thisType=currentScope.getDeclaredTypeOf(THIS_ID);
 return new EnvTypePair(outEnv,thisType);
@@ -31,24 +31,24 @@ case INC:
 case DEC:
 case BITNOT:
 case NEG:
-return analyzeExprBwd(expr.getFirstChild(),outEnv,JSType.NUMBER);
+return analyzeExprBwd(expr.getFirstChild(),outEnv,NUMBER);
 case POS:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
-pair.type=JSType.NUMBER;
+pair.type=NUMBER;
 return pair;
 }
 case TYPEOF:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
-pair.type=JSType.STRING;
+pair.type=STRING;
 return pair;
 }
 case INSTANCEOF:
 {
 TypeEnv env=analyzeExprBwd(expr.getLastChild(),outEnv,commonTypes.topFunction()).env;
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),env);
-pair.type=JSType.BOOLEAN;
+pair.type=BOOLEAN;
 return pair;
 }
 case BITOR:
@@ -122,7 +122,7 @@ return analyzeGetElemBwd(expr,outEnv,requiredType);
 case VOID:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
-pair.type=JSType.UNDEFINED;
+pair.type=UNDEFINED;
 return pair;
 }
 case IN:
@@ -130,7 +130,7 @@ return analyzeInBwd(expr,outEnv);
 case DELPROP:
 {
 EnvTypePair pair=analyzeExprBwd(expr.getFirstChild(),outEnv);
-pair.type=JSType.BOOLEAN;
+pair.type=BOOLEAN;
 return pair;
 }
 case VAR:
@@ -138,7 +138,7 @@ case VAR:
 Node vdecl=expr.getFirstChild();
 String name=vdecl.getString();
 Preconditions.checkState(!vdecl.hasChildren());
-return new EnvTypePair(envPutType(outEnv,name,JSType.UNKNOWN),JSType.UNKNOWN);
+return new EnvTypePair(envPutType(outEnv,name,UNKNOWN),UNKNOWN);
 }
 case REGEXP:
 return new EnvTypePair(outEnv,commonTypes.getRegexpType());

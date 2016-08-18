@@ -3,15 +3,15 @@
   Preconditions.checkNotNull(retType);
   Node callee=callNode.getFirstChild();
   TypeEnv tmpEnv=outEnv;
-  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  FunctionTypeBuilder builder=new FunctionTypeBuilder(this.commonTypes);
   for (int i=callNode.getChildCount() - 2; i >= 0; i--) {
     Node arg=callNode.getChildAtIndex(i + 1);
     EnvTypePair pair=analyzeExprBwd(arg,tmpEnv);
     JSType argType=pair.type;
     tmpEnv=pair.env;
-    builder.addReqFormal(isImpreciseType(argType) ? JSType.BOTTOM : argType);
+    builder.addReqFormal(isImpreciseType(argType) ? BOTTOM : argType);
   }
-  JSType looseRetType=retType.isUnknown() ? JSType.BOTTOM : retType;
+  JSType looseRetType=retType.isUnknown() ? BOTTOM : retType;
   JSType looseFunctionType=commonTypes.fromFunctionType(builder.addRetType(looseRetType).addLoose().buildFunction());
   println("loose function type is ",looseFunctionType);
   EnvTypePair calleePair=analyzeExprBwd(callee,tmpEnv,looseFunctionType);

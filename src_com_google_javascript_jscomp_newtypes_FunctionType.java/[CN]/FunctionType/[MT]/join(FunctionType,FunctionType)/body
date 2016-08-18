@@ -5,14 +5,11 @@
  else   if (f2 == null || f1.equals(f2)) {
     return f1;
   }
- else   if (f1.isQmarkFunction()) {
-    return f2 == QMARK_FUNCTION ? QMARK_FUNCTION : f1;
-  }
- else   if (f2.isQmarkFunction()) {
-    return f2;
+ else   if (f1.isQmarkFunction() || f2.isQmarkFunction()) {
+    return f1.commonTypes.QMARK_FUNCTION;
   }
  else   if (f1.isTopFunction() || f2.isTopFunction()) {
-    return TOP_FUNCTION;
+    return f1.commonTypes.TOP_FUNCTION;
   }
   if (f1.isLoose() || f2.isLoose()) {
     return looseJoin(f1,f2);
@@ -29,12 +26,13 @@
   if (f2.isGeneric()) {
     f2=instantiateGenericsWithUnknown(f2);
   }
-  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  JSTypes commonTypes=f1.commonTypes;
+  FunctionTypeBuilder builder=new FunctionTypeBuilder(commonTypes);
   int maxRequiredArity=Math.max(f1.requiredFormals.size(),f2.requiredFormals.size());
   for (int i=0; i < maxRequiredArity; i++) {
     JSType reqFormal=nullAcceptingMeet(f1.getFormalType(i),f2.getFormalType(i));
     if (reqFormal == null) {
-      return BOTTOM_FUNCTION;
+      return commonTypes.BOTTOM_FUNCTION;
     }
     builder.addReqFormal(reqFormal);
   }
@@ -42,14 +40,14 @@
   for (int i=maxRequiredArity; i < maxTotalArity; i++) {
     JSType optFormal=nullAcceptingMeet(f1.getFormalType(i),f2.getFormalType(i));
     if (optFormal == null) {
-      return BOTTOM_FUNCTION;
+      return commonTypes.BOTTOM_FUNCTION;
     }
     builder.addOptFormal(optFormal);
   }
   if (f1.restFormals != null && f2.restFormals != null) {
     JSType newRestFormals=nullAcceptingMeet(f1.restFormals,f2.restFormals);
     if (newRestFormals == null) {
-      return BOTTOM_FUNCTION;
+      return commonTypes.BOTTOM_FUNCTION;
     }
     builder.addRestFormals(newRestFormals);
   }

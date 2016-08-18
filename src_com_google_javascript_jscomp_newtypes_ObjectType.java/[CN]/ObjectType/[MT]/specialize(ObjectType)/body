@@ -1,6 +1,6 @@
 {
   Preconditions.checkState(areRelatedNominalTypes(this.nominalType,other.nominalType));
-  if (this == TOP_OBJECT && other.objectKind.isUnrestricted()) {
+  if (this == this.commonTypes.TOP_OBJECTTYPE && other.objectKind.isUnrestricted()) {
     return other;
   }
   if (this.ns != null) {
@@ -9,11 +9,11 @@
   NominalType resultNomType=NominalType.pickSubclass(this.nominalType,other.nominalType);
   if (resultNomType != null && resultNomType.isClassy()) {
     Preconditions.checkState(this.fn == null && other.fn == null);
-    PersistentMap<String,Property> newProps=meetPropsHelper(true,resultNomType,this.props,other.props);
-    if (newProps == BOTTOM_MAP) {
-      return BOTTOM_OBJECT;
+    PersistentMap<String,Property> newProps=meetPropsHelper(this.commonTypes,true,resultNomType,this.props,other.props);
+    if (newProps == this.commonTypes.BOTTOM_PROPERTY_MAP) {
+      return this.commonTypes.BOTTOM_OBJECT;
     }
-    return new ObjectType(resultNomType,newProps,null,this.ns,false,this.objectKind);
+    return new ObjectType(this.commonTypes,resultNomType,newProps,null,this.ns,false,this.objectKind);
   }
   FunctionType thisFn=this.fn;
   boolean isLoose=this.isLoose;
@@ -21,13 +21,13 @@
     thisFn=other.fn;
     isLoose=other.fn.isLoose();
   }
-  PersistentMap<String,Property> newProps=meetPropsHelper(true,resultNomType,this.props,other.props);
-  if (newProps == BOTTOM_MAP) {
-    return BOTTOM_OBJECT;
+  PersistentMap<String,Property> newProps=meetPropsHelper(this.commonTypes,true,resultNomType,this.props,other.props);
+  if (newProps == this.commonTypes.BOTTOM_PROPERTY_MAP) {
+    return this.commonTypes.BOTTOM_OBJECT;
   }
   FunctionType newFn=thisFn == null ? null : thisFn.specialize(other.fn);
   if (!FunctionType.isInhabitable(newFn)) {
-    return BOTTOM_OBJECT;
+    return this.commonTypes.BOTTOM_OBJECT;
   }
-  return new ObjectType(resultNomType,newProps,newFn,this.ns,isLoose,this.objectKind);
+  return new ObjectType(this.commonTypes,resultNomType,newProps,newFn,this.ns,isLoose,this.objectKind);
 }

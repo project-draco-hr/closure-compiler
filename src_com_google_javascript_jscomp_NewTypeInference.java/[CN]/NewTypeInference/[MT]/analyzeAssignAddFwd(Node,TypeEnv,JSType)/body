@@ -2,13 +2,13 @@
   mayWarnAboutConst(expr);
   Node lhs=expr.getFirstChild();
   Node rhs=expr.getLastChild();
-  JSType lhsReqType=specializeKeep2ndWhenBottom(requiredType,JSType.NUM_OR_STR);
+  JSType lhsReqType=specializeKeep2ndWhenBottom(requiredType,NUMBER_OR_STRING);
   LValueResultFwd lvalue=analyzeLValueFwd(lhs,inEnv,lhsReqType);
   JSType lhsType=lvalue.type;
-  if (!lhsType.isSubtypeOf(JSType.NUM_OR_STR)) {
-    warnInvalidOperand(lhs,Token.ASSIGN_ADD,JSType.NUM_OR_STR,lhsType);
+  if (!lhsType.isSubtypeOf(NUMBER_OR_STRING)) {
+    warnInvalidOperand(lhs,Token.ASSIGN_ADD,NUMBER_OR_STRING,lhsType);
   }
-  JSType rhsReqType=lhsType.isNumber() ? JSType.NUMBER : JSType.NUM_OR_STR;
+  JSType rhsReqType=lhsType.isNumber() ? NUMBER : NUMBER_OR_STRING;
   EnvTypePair pair=analyzeExprFwd(rhs,lvalue.env,rhsReqType);
   if (!pair.type.isSubtypeOf(rhsReqType)) {
     warnInvalidOperand(rhs,Token.ASSIGN_ADD,rhsReqType,pair.type);

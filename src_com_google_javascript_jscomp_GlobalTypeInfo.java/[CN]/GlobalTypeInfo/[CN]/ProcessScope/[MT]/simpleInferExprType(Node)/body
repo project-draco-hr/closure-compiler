@@ -22,16 +22,16 @@ case ARRAYLIT:
   return commonTypes.getArrayInstance(arrayType);
 }
 case TRUE:
-return JSType.TRUE_TYPE;
+return commonTypes.TRUE_TYPE;
 case FALSE:
-return JSType.FALSE_TYPE;
+return commonTypes.FALSE_TYPE;
 case THIS:
 return this.currentScope.getDeclaredTypeOf("this");
 case NAME:
 return simpleInferDeclaration(this.currentScope.getDeclaration(n.getString(),false));
 case OBJECTLIT:
 {
-JSType objLitType=JSType.TOP_OBJECT;
+JSType objLitType=commonTypes.TOP_OBJECT;
 for (Node prop : n.children()) {
 JSType propType=simpleInferExprType(prop.getFirstChild());
 if (propType == null) {
@@ -63,15 +63,15 @@ return lhs == null || rhs == null ? null : JSType.join(lhs,rhs);
 default :
 switch (NodeUtil.getKnownValueType(n)) {
 case NULL:
-return JSType.NULL;
+return commonTypes.NULL;
 case VOID:
-return JSType.UNDEFINED;
+return commonTypes.UNDEFINED;
 case NUMBER:
-return JSType.NUMBER;
+return commonTypes.NUMBER;
 case STRING:
-return JSType.STRING;
+return commonTypes.STRING;
 case BOOLEAN:
-return JSType.BOOLEAN;
+return commonTypes.BOOLEAN;
 default :
 return null;
 }

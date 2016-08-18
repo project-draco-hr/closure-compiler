@@ -23,7 +23,8 @@
   if (f2.isGeneric()) {
     f2=instantiateGenericsWithUnknown(f2);
   }
-  FunctionTypeBuilder builder=new FunctionTypeBuilder();
+  JSTypes commonTypes=f1.commonTypes;
+  FunctionTypeBuilder builder=new FunctionTypeBuilder(commonTypes);
   int minRequiredArity=Math.min(f1.requiredFormals.size(),f2.requiredFormals.size());
   for (int i=0; i < minRequiredArity; i++) {
     builder.addReqFormal(JSType.nullAcceptingJoin(f1.getFormalType(i),f2.getFormalType(i)));
@@ -32,20 +33,20 @@
   for (int i=minRequiredArity; i < maxTotalArity; i++) {
     JSType optFormalType=JSType.nullAcceptingJoin(f1.getFormalType(i),f2.getFormalType(i));
     if (optFormalType.isBottom()) {
-      return BOTTOM_FUNCTION;
+      return commonTypes.BOTTOM_FUNCTION;
     }
     builder.addOptFormal(optFormalType);
   }
   if (f1.restFormals != null || f2.restFormals != null) {
     JSType restFormalsType=JSType.nullAcceptingJoin(f1.restFormals,f2.restFormals);
     if (restFormalsType.isBottom()) {
-      return BOTTOM_FUNCTION;
+      return commonTypes.BOTTOM_FUNCTION;
     }
     builder.addRestFormals(restFormalsType);
   }
   JSType retType=JSType.meet(f1.returnType,f2.returnType);
   if (retType.isBottom()) {
-    return BOTTOM_FUNCTION;
+    return commonTypes.BOTTOM_FUNCTION;
   }
   builder.addRetType(retType);
   builder.addNominalType(meetNominalTypes(f1.nominalType,f2.nominalType));
