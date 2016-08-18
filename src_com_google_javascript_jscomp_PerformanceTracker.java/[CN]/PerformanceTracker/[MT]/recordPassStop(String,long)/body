@@ -11,12 +11,11 @@
   if (passName.equals(Compiler.PARSING_PASS_NAME)) {
     recordInputCount();
     if (trackSize) {
-      CodeSizeEstimatePrinter estimatePrinter=new CodeSizeEstimatePrinter();
-      CodeGenerator.forCostEstimation(estimatePrinter).add(jsRoot);
-      initCodeSize=codeSize=estimatePrinter.calcSize();
+      PerformanceTrackerCodeSizeEstimator estimator=PerformanceTrackerCodeSizeEstimator.estimate(jsRoot,trackGzSize);
+      initCodeSize=codeSize=estimator.getCodeSize();
       logStats.size=summaryStats.size=initCodeSize;
       if (this.trackGzSize) {
-        initGzCodeSize=gzCodeSize=estimatePrinter.calcZippedSize();
+        initGzCodeSize=gzCodeSize=estimator.getZippedCodeSize();
         logStats.gzSize=summaryStats.gzSize=initGzCodeSize;
       }
     }
@@ -33,16 +32,13 @@
   }
   if (codeChange.hasCodeChanged() && trackSize) {
     int newSize=0;
-    CodeSizeEstimatePrinter estimatePrinter=new CodeSizeEstimatePrinter();
-    CodeGenerator.forCostEstimation(estimatePrinter).add(jsRoot);
-    if (trackSize) {
-      newSize=estimatePrinter.calcSize();
-      logStats.diff=codeSize - newSize;
-      summaryStats.diff+=logStats.diff;
-      codeSize=summaryStats.size=logStats.size=newSize;
-    }
+    PerformanceTrackerCodeSizeEstimator estimator=PerformanceTrackerCodeSizeEstimator.estimate(jsRoot,trackGzSize);
+    newSize=estimator.getCodeSize();
+    logStats.diff=codeSize - newSize;
+    summaryStats.diff+=logStats.diff;
+    codeSize=summaryStats.size=logStats.size=newSize;
     if (trackGzSize) {
-      newSize=estimatePrinter.calcZippedSize();
+      newSize=estimator.getZippedCodeSize();
       logStats.gzDiff=gzCodeSize - newSize;
       summaryStats.gzDiff+=logStats.gzDiff;
       gzCodeSize=summaryStats.gzSize=logStats.gzSize=newSize;
