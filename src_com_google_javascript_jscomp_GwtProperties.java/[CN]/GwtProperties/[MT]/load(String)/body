@@ -1,0 +1,31 @@
+{
+  String[] lines=source.split("\r?\n");
+  ImmutableMap.Builder<String,String> builder=ImmutableMap.builder();
+  for (int i=0; i < lines.length; ++i) {
+    String line=lines[i];
+    if (line.isEmpty() || line.startsWith("#") || line.startsWith("!")) {
+      continue;
+    }
+    Matcher m=PROP_DEF.matcher(line);
+    if (!m.find()) {
+      continue;
+    }
+    String key=m.group(1);
+    String data="";
+    line=line.substring(m.group(0).length());
+    for (; ; ) {
+      Matcher lineMatch=PROP_LINE.matcher(line);
+      if (!lineMatch.matches()) {
+        throw new RuntimeException("Properties parser failed on line: " + line);
+      }
+      data+=lineMatch.group(1);
+      boolean isLastLine=lineMatch.group(2).isEmpty();
+      if (isLastLine || i + 1 == lines.length) {
+        break;
+      }
+      line=lines[++i];
+    }
+    builder.put(key,data);
+  }
+  return new GwtProperties(builder.build());
+}
