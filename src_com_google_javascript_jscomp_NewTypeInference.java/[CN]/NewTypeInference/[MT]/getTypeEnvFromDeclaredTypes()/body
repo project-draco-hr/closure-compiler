@@ -4,14 +4,14 @@
   Set<String> locals=currentScope.getLocals();
   varNames.addAll(locals);
   varNames.addAll(currentScope.getExterns());
+  if (currentScope.hasThis()) {
+    varNames.add(THIS_ID);
+  }
   if (currentScope.isFunction()) {
     if (currentScope.getName() != null) {
       varNames.add(currentScope.getName());
     }
     varNames.addAll(currentScope.getFormals());
-    if (currentScope.hasThis()) {
-      varNames.add(THIS_ID);
-    }
     JSType argumentsType;
     DeclaredFunctionType dft=currentScope.getDeclaredFunctionType();
     if (dft.getOptionalArity() == 0 && dft.hasRestFormals()) {

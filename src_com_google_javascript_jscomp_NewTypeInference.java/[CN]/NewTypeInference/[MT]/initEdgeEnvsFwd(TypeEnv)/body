@@ -1,15 +1,15 @@
 {
   envs.clear();
   Set<String> nonLocals=new LinkedHashSet<>();
+  if (currentScope.hasThis()) {
+    nonLocals.add(THIS_ID);
+  }
   if (currentScope.isFunction()) {
     if (currentScope.getName() != null) {
       nonLocals.add(currentScope.getName());
     }
     nonLocals.addAll(currentScope.getOuterVars());
     nonLocals.addAll(currentScope.getFormals());
-    if (currentScope.hasThis()) {
-      nonLocals.add(THIS_ID);
-    }
     entryEnv=envPutType(entryEnv,RETVAL_ID,UNDEFINED);
   }
  else {
