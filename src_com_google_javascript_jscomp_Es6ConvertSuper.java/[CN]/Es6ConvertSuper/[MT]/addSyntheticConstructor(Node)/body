@@ -16,6 +16,9 @@
     }
     Node constructor=IR.function(IR.name(""),IR.paramList(IR.name("var_args")),body);
     memberDef=IR.memberFunctionDef("constructor",constructor);
+    JSDocInfoBuilder info=new JSDocInfoBuilder(false);
+    info.recordParameter("var_args",new JSTypeExpression(new Node(Token.ELLIPSIS,new Node(Token.QMARK)),"<Es6ConvertSuper>"));
+    memberDef.setJSDocInfo(info.build());
   }
   memberDef.useSourceInfoIfMissingFromForTree(classNode);
   classMembers.addChildToFront(memberDef);
