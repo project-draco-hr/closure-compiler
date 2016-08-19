@@ -3,7 +3,7 @@
     return;
   }
   if (preserveTypeAnnotations && n.getJSDocInfo() != null) {
-    String jsdocAsString=JSDocInfoPrinter.print(n.getJSDocInfo());
+    String jsdocAsString=jsDocInfoPrinter.print(n.getJSDocInfo());
     if (!jsdocAsString.equals("/** */ ")) {
       add(jsdocAsString);
     }
@@ -509,6 +509,13 @@ Preconditions.checkState(childCount == 0);
 break;
 case GETPROP:
 {
+if (useOriginalName && n.getOriginalName() != null) {
+if (n.getFirstChild().matchesQualifiedName("$jscomp.scope") && n.getParent().isAssign()) {
+add("var ");
+}
+addIdentifier(n.getOriginalName());
+break;
+}
 Preconditions.checkState(childCount == 2,"Bad GETPROP: expected 2 children, but got %s",childCount);
 Preconditions.checkState(last.isString(),"Bad GETPROP: RHS should be STRING");
 boolean needsParens=(first.isNumber());

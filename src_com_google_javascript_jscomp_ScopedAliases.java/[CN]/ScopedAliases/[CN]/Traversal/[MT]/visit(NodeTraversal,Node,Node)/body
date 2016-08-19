@@ -13,6 +13,9 @@
     Var lexicalVar=t.getScope().getVar(name);
     if (lexicalVar != null && lexicalVar == aliases.get(name)) {
       aliasVar=lexicalVar;
+      if (compiler.getOptions().preservesDetailedSourceInfo() && n.isName()) {
+        n.setOriginalName(name);
+      }
     }
   }
   if (isGoogScopeFunctionBody(t.getEnclosingFunction().getLastChild())) {
