@@ -11,7 +11,15 @@
     Preconditions.checkState(other.typeMap.containsKey(typeVar),"Other (%s) doesn't contain mapping (%s->%s) from this (%s)",other,typeVar,this.typeMap.get(typeVar),this);
     JSType thisType=this.typeMap.get(typeVar);
     JSType otherType=other.typeMap.get(typeVar);
-    if (!thisType.isSubtypeOf(otherType)) {
+    JSTypes commonTypes=getCommonTypes();
+    if (commonTypes.bivariantArrayGenerics && this.rawType.isBuiltinWithName("Array")) {
+      thisType=thisType.removeType(commonTypes.NULL_OR_UNDEFINED);
+      otherType=otherType.removeType(commonTypes.NULL_OR_UNDEFINED);
+      if (!thisType.isSubtypeOf(otherType) && !otherType.isSubtypeOf(thisType)) {
+        return false;
+      }
+    }
+ else     if (!thisType.isSubtypeOf(otherType)) {
       return false;
     }
   }
