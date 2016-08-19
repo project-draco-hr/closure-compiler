@@ -25,11 +25,9 @@
   if (length == limit) {
     return sb.toString();
   }
-  CRC32 crc32=new CRC32();
-  crc32.update(s.getBytes(UTF_8));
-  long hash=crc32.getValue() & unitTestHashReductionMask;
+  int hash=s.hashCode() & unitTestHashReductionMask;
   sb.append('_');
-  sb.append(Long.toHexString(hash));
+  sb.append(Integer.toHexString(hash));
   String encoded=sb.toString();
   if (!usedHashedAliases.add(encoded)) {
     encoded+="_" + id;
