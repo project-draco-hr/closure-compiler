@@ -11,4 +11,5 @@
   typeCheck(LINE_JOINER.join("/**"," * @template T"," * @param {T|undefined} x"," */","function f(x) {}","/**"," * @template T"," * @param {T|undefined} x"," */","function g(x) { f(x); }"));
   typeCheck(LINE_JOINER.join("/**"," * @template T"," * @param {T|undefined} x"," * @return {T}"," */","function f(x) {","  if (x === undefined) {","    throw new Error('');","  }","  return x;","}","/**"," * @template T"," * @param {T|undefined} x"," * @return {T}"," */","function g(x) { return f(x); }","g(123) - 5;"));
   typeCheck(LINE_JOINER.join("/**"," * @template T"," * @param {T|undefined} x"," * @return {T}"," */","function f(x) {","  if (x === undefined) {","    throw new Error('');","  }","  return x;","}","/**"," * @template T"," * @param {T|undefined} x"," * @return {T}"," */","function g(x) { return f(x); }","g(123) < 'asdf';"),NewTypeInference.INVALID_OPERAND_TYPE);
+  typeCheck(LINE_JOINER.join("/**"," * @constructor"," * @param {T} x"," * @template T"," */","function Foo(x) {","  this.prop = x;","}","/**"," * @param {!Foo<T>} x"," * @template T"," */","function f(x) {}","function g(y) {","  if (y.prop) {","    f(y);","  }","}"));
 }

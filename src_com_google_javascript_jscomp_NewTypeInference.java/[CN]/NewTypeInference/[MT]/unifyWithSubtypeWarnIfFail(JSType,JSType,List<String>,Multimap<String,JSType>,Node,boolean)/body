@@ -1,7 +1,7 @@
 {
   if (!genericType.unifyWith(concreteType,typeParameters,typeMultimap) && isFwd) {
     JSType afterInstantiation=genericType.substituteGenericsWithUnknown();
-    if (!genericType.equals(afterInstantiation) && concreteType.isSubtypeOf(afterInstantiation)) {
+    if (!concreteType.isLoose() && !genericType.equals(afterInstantiation) && concreteType.isSubtypeOf(afterInstantiation)) {
       warnings.add(JSError.make(toWarnOn,FAILED_TO_UNIFY,genericType.toString(),concreteType.toString()));
     }
   }
