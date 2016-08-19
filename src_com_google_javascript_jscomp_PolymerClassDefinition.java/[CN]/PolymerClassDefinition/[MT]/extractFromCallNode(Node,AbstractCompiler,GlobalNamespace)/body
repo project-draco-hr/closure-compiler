@@ -47,5 +47,12 @@
     overwriteMembersIfPresent(allProperties,behavior.props);
   }
   overwriteMembersIfPresent(allProperties,PolymerPassStaticUtils.extractProperties(descriptor));
-  return new PolymerClassDefinition(target,descriptor,classInfo,new MemberDefinition(ctorInfo,null,constructor),nativeBaseElement,allProperties,behaviors);
+  FeatureSet newFeatures=null;
+  if (!behaviors.isEmpty()) {
+    newFeatures=behaviors.get(0).features;
+    for (int i=1; i < behaviors.size(); i++) {
+      newFeatures=newFeatures.union(behaviors.get(i).features);
+    }
+  }
+  return new PolymerClassDefinition(target,descriptor,classInfo,new MemberDefinition(ctorInfo,null,constructor),nativeBaseElement,allProperties,behaviors,newFeatures);
 }

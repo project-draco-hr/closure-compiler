@@ -1,4 +1,16 @@
 {
-  ReferenceCollectingCallback callback=new ReferenceCollectingCallback(compiler,new ReferenceCheckingBehavior());
-  callback.process(externs,root);
+  if (forTranspileOnly) {
+    if (!compiler.getOptions().getLanguageIn().isEs6OrHigher()) {
+      return;
+    }
+    for (    Node singleRoot : root.children()) {
+      if (TranspilationPasses.isScriptEs6ImplOrHigher(singleRoot)) {
+        new ReferenceCollectingCallback(compiler,new ReferenceCheckingBehavior()).process(externs,root);
+        return;
+      }
+    }
+  }
+ else {
+    new ReferenceCollectingCallback(compiler,new ReferenceCheckingBehavior()).process(externs,root);
+  }
 }

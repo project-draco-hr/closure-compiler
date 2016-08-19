@@ -48,7 +48,7 @@
   Node statements=block.removeChildren();
   Node parent=exprRoot.getParent();
   if (!isInGlobalScope && !cls.target.isGetProp()) {
-    Node scriptNode=NodeUtil.getEnclosingScript(exprRoot);
+    Node scriptNode=NodeUtil.getEnclosingScript(parent);
     scriptNode.addChildrenToFront(statements);
   }
  else {
@@ -59,6 +59,12 @@
  else {
       parent.addChildrenAfter(statements,beforeRoot);
     }
+  }
+  FeatureSet newFeatures=cls.features;
+  if (newFeatures != null) {
+    Node scriptNode=NodeUtil.getEnclosingScript(parent);
+    FeatureSet oldFeatures=(FeatureSet)scriptNode.getProp(Node.FEATURE_SET);
+    scriptNode.putProp(Node.FEATURE_SET,oldFeatures.union(newFeatures));
   }
   if (NodeUtil.isNameDeclaration(exprRoot)) {
     Node assignExpr=varToAssign(exprRoot);
