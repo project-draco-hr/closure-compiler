@@ -1,0 +1,15 @@
+{
+  List<SourceFile> out=new ArrayList<>();
+  for (  String key : BUILTIN_LANG_EXTERNS) {
+    Preconditions.checkState(externs.containsKey(key),"Externs must contain builtin: %s",key);
+    out.add(externs.remove(key));
+  }
+  if (env == CompilerOptions.Environment.BROWSER) {
+    for (    String key : BROWSER_EXTERN_DEP_ORDER) {
+      Preconditions.checkState(externs.containsKey(key),"Externs must contain builtin for env %s: %s",env,key);
+      out.add(externs.remove(key));
+    }
+    out.addAll(externs.values());
+  }
+  return out;
+}

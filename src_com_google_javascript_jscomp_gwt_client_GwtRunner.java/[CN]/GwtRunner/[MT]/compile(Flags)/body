@@ -3,7 +3,6 @@
   if (unhandled.length > 0) {
     throw new RuntimeException("Unhandled flag: " + unhandled[0]);
   }
-  List<SourceFile> externs=fromFileArray(flags.externs,"Extern_");
   List<SourceFile> jsCode=fromFileArray(flags.jsCode,"Input_");
   ImmutableMap<String,SourceMapInput> sourceMaps=buildSourceMaps(flags.jsCode,"Input_");
   CompilerOptions options=new CompilerOptions();
@@ -11,6 +10,8 @@
   applyOptionsFromFlags(options,flags);
   options.setInputSourceMaps(sourceMaps);
   disableUnsupportedOptions(options);
+  List<SourceFile> externs=fromFileArray(flags.externs,"Extern_");
+  externs.addAll(createExterns(options.getEnvironment()));
   NodeErrorManager errorManager=new NodeErrorManager();
   Compiler compiler=new Compiler();
   compiler.setErrorManager(errorManager);

@@ -1,0 +1,11 @@
+{
+  String[] resources=ResourceLoader.resourceList(GwtRunner.class);
+  Map<String,SourceFile> all=new HashMap<>();
+  for (  String res : resources) {
+    if (res.startsWith(EXTERNS_PREFIX)) {
+      String filename=res.substring(EXTERNS_PREFIX.length());
+      all.put(filename,SourceFile.fromCode("externs.zip//" + res,ResourceLoader.loadTextResource(GwtRunner.class,res)));
+    }
+  }
+  return DefaultExterns.prepareExterns(environment,all);
+}
