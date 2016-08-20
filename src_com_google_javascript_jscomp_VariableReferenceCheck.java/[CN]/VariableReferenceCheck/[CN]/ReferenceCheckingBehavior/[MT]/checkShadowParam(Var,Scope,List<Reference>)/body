@@ -2,7 +2,7 @@
   Var maybeParam=functionScope.getVar(v.getName());
   if (maybeParam != null && maybeParam.isParam() && maybeParam.getScope() == functionScope) {
     for (    Reference r : references) {
-      if ((r.isVarDeclaration() || r.isHoistedFunction()) && !r.getNode().equals(v.getNameNode())) {
+      if ((r.isVarDeclaration() || r.isHoistedFunction()) && r.getNode() != v.getNameNode()) {
         compiler.report(JSError.make(r.getNode(),REDECLARED_VARIABLE,v.name));
       }
     }
