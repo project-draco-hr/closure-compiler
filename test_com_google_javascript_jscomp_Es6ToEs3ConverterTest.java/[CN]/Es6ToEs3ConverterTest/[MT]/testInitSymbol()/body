@@ -1,7 +1,7 @@
 {
-  test("let a = alert(Symbol.thimble);","$jscomp.initSymbol(); var a = alert(Symbol.thimble)");
+  test("alert(Symbol.thimble);","$jscomp.initSymbol(); alert(Symbol.thimble)");
   assertThat(getLastCompiler().injected).containsExactly("es6/symbol");
-  test(LINE_JOINER.join("function f() {","  let x = 1;","  let y = Symbol('nimble');","}"),LINE_JOINER.join("function f() {","  var x = 1;","  $jscomp.initSymbol();","  var y = Symbol('nimble');","}"));
+  test(LINE_JOINER.join("function f() {","  var x = 1;","  var y = Symbol('nimble');","}"),LINE_JOINER.join("function f() {","  var x = 1;","  $jscomp.initSymbol();","  var y = Symbol('nimble');","}"));
   test(LINE_JOINER.join("function f() {","  if (true) {","     let Symbol = function() {};","  }","  alert(Symbol.ism)","}"),LINE_JOINER.join("function f() {","  if (true) {","     var Symbol$0 = function() {};","  }","  $jscomp.initSymbol();","  alert(Symbol.ism)","}"));
   test(LINE_JOINER.join("function f() {","  if (true) {","    let Symbol = function() {};","    alert(Symbol.ism)","  }","}"),LINE_JOINER.join("function f() {","  if (true) {","    var Symbol = function() {};","    alert(Symbol.ism)","  }","}"));
   testExternChanges("alert(Symbol.thimble);","","alert(Symbol.thimble)");
