@@ -36,7 +36,7 @@ if (isNodeAtCurrentLexicalScope(n)) {
 declareLHS(scope,n);
 }
 final Node block=n.getSecondChild();
-scanVars(block);
+scanVars(block,scanInnerBlockScopes,false);
 return;
 case SCRIPT:
 inputId=n.getInputId();
@@ -45,10 +45,13 @@ break;
 default :
 break;
 }
+if (!scanInnerBlockScopes && !firstScan && NodeUtil.createsBlockScope(n)) {
+return;
+}
 if (NodeUtil.isControlStructure(n) || NodeUtil.isStatementBlock(n)) {
 for (Node child=n.getFirstChild(); child != null; ) {
 Node next=child.getNext();
-scanVars(child);
+scanVars(child,scanInnerBlockScopes,false);
 child=next;
 }
 }

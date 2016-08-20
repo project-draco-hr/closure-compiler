@@ -27,10 +27,11 @@
     if (scope.getParent() != null) {
       inputId=NodeUtil.getInputId(n);
     }
-    scanVars(n);
+    boolean scanInnerBlocks=n.isSyntheticBlock() || NodeUtil.isFunctionBlock(n) || n.isModuleBody();
+    scanVars(n,scanInnerBlocks,true);
   }
  else {
     Preconditions.checkState(scope.getParent() == null);
-    scanVars(n);
+    scanVars(n,true,true);
   }
 }
