@@ -47,12 +47,12 @@
     }
  else {
       Node declaration=export.getFirstChild();
-      for (int i=0; i < declaration.getChildCount(); i++) {
-        Node maybeName=declaration.getChildAtIndex(i);
+      Node first=declaration.getFirstChild();
+      for (Node maybeName=first; maybeName != null; maybeName=maybeName.getNext()) {
         if (!maybeName.isName()) {
           break;
         }
-        if (declaration.isClass() && i > 0) {
+        if (declaration.isClass() && maybeName != first) {
           break;
         }
         String name=maybeName.getString();
