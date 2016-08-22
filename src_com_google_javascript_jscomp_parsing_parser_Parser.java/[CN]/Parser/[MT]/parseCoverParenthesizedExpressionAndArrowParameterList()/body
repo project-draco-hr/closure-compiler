@@ -6,12 +6,24 @@
   eat(TokenType.OPEN_PAREN);
   if (peek(TokenType.CLOSE_PAREN)) {
     eat(TokenType.CLOSE_PAREN);
-    return new FormalParameterListTree(getTreeLocation(start),ImmutableList.<ParseTree>of());
+    if (peek(TokenType.ARROW)) {
+      return new FormalParameterListTree(getTreeLocation(start),ImmutableList.<ParseTree>of());
+    }
+ else {
+      reportError("invalid parenthesized expression");
+      return new MissingPrimaryExpressionTree(getTreeLocation(start));
+    }
   }
   if (peek(TokenType.SPREAD)) {
-    ParseTree result=new FormalParameterListTree(getTreeLocation(start),ImmutableList.of(parseParameter(ParamContext.IMPLEMENTATION)));
+    ImmutableList<ParseTree> params=ImmutableList.of(parseParameter(ParamContext.IMPLEMENTATION));
     eat(TokenType.CLOSE_PAREN);
-    return result;
+    if (peek(TokenType.ARROW)) {
+      return new FormalParameterListTree(getTreeLocation(start),params);
+    }
+ else {
+      reportError("invalid parenthesized expression");
+      return new MissingPrimaryExpressionTree(getTreeLocation(start));
+    }
   }
   ParseTree result=parseExpression();
   if (peek(TokenType.COMMA)) {
