@@ -85,9 +85,14 @@
     boolean isUndeclaredReference=false;
     if (!isDeclaration && !isDeclaredInScope) {
       if (!referenceNode.isFromExterns()) {
-        Node grandparent=reference.getGrandparent();
-        if ((v.isVar() && grandparent.isName() && grandparent.getString().equals(v.name))) {
-          continue;
+        if (v.isVar()) {
+          Node curr=reference.getParent();
+          while (curr.isOr() && curr.getParent().getFirstChild() == curr) {
+            curr=curr.getParent();
+          }
+          if (curr.isName() && curr.getString().equals(v.name)) {
+            continue;
+          }
         }
         if (reference.getScope() == v.scope && !v.getName().equals("goog")) {
           isUndeclaredReference=true;

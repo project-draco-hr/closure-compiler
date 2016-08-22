@@ -1,4 +1,5 @@
 {
-  ReferenceCollectingCallback callback=new ReferenceCollectingCallback(compiler,new ReferenceCheckingBehavior());
-  callback.hotSwapScript(scriptRoot,originalRoot);
+  if (!forTranspileOnly || (compiler.getOptions().getLanguageIn().isEs6OrHigher() && TranspilationPasses.isScriptEs6ImplOrHigher(scriptRoot))) {
+    new ReferenceCollectingCallback(compiler,new ReferenceCheckingBehavior()).hotSwapScript(scriptRoot,originalRoot);
+  }
 }
