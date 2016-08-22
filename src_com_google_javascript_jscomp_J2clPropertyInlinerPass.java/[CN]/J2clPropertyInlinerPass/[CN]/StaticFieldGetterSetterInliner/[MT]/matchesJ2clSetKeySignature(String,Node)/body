@@ -10,14 +10,14 @@
     return false;
   }
   Node setBlock=setFunction.getLastChild();
-  if (!setBlock.hasChildren() || !setBlock.getFirstChild().isExprResult() || !setBlock.getFirstChild().getFirstChild().isComma()) {
+  if (!setBlock.hasChildren() || !setBlock.getFirstChild().isExprResult() || !setBlock.getFirstFirstChild().isComma()) {
     return false;
   }
-  Node multiExpression=setBlock.getFirstChild().getFirstChild();
+  Node multiExpression=setBlock.getFirstFirstChild();
   if (multiExpression.getChildCount() != 2 || !multiExpression.getSecondChild().isAssign()) {
     return false;
   }
-  Node clinitFunction=multiExpression.getFirstChild().getFirstChild();
+  Node clinitFunction=multiExpression.getFirstFirstChild();
   if (!clinitFunction.matchesQualifiedName(className + ".$clinit")) {
     return false;
   }
