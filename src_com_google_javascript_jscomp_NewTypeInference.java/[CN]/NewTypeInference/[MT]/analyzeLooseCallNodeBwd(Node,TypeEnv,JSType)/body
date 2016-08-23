@@ -4,8 +4,8 @@
   Node callee=callNode.getFirstChild();
   TypeEnv tmpEnv=outEnv;
   FunctionTypeBuilder builder=new FunctionTypeBuilder(this.commonTypes);
-  for (int i=callNode.getChildCount() - 2; i >= 0; i--) {
-    Node arg=callNode.getChildAtIndex(i + 1);
+  Node target=callNode.getFirstChild();
+  for (Node arg=callNode.getLastChild(); arg != target; arg=arg.getPrevious()) {
     EnvTypePair pair=analyzeExprBwd(arg,tmpEnv);
     JSType argType=pair.type;
     tmpEnv=pair.env;

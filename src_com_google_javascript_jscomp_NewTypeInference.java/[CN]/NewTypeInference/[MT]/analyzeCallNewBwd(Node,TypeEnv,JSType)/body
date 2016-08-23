@@ -28,12 +28,14 @@
     funType=funType.instantiateGenerics(typeMap);
   }
   TypeEnv tmpEnv=envAfterCallee;
-  for (int i=expr.getChildCount() - 2; i >= 0; i--) {
+  Node target=expr.getFirstChild();
+  int i=expr.getChildCount() - 1;
+  for (Node arg=expr.getLastChild(); arg != target; arg=arg.getPrevious()) {
+    i--;
     JSType formalType=funType.getFormalType(i);
     if (formalType.isBottom()) {
       formalType=UNKNOWN;
     }
-    Node arg=expr.getChildAtIndex(i + 1);
     tmpEnv=analyzeExprBwd(arg,tmpEnv,formalType).env;
   }
   JSType retType=expr.isNew() ? funType.getThisType() : funType.getReturnType();
