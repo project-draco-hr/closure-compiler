@@ -1,13 +1,14 @@
 {
   int i=0;
   int childCount=n.getChildCount();
+  Node iArgument=n.getFirstChild();
   for (  Node iParameter : fnType.getParameters()) {
     if (i + 1 >= childCount) {
       return;
     }
-    JSType iParameterType=getJSType(iParameter);
-    Node iArgument=n.getChildAtIndex(i + 1);
+    iArgument=iArgument.getNext();
     JSType iArgumentType=getJSType(iArgument);
+    JSType iParameterType=getJSType(iParameter);
     inferPropertyTypesToMatchConstraint(iArgumentType,iParameterType);
     FunctionType restrictedParameter=null;
     if (iParameterType.isUnionType()) {
