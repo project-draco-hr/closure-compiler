@@ -1,19 +1,24 @@
 {
-  Scope s=t.getScope();
-  if (!s.isLocal()) {
+  if (t.inGlobalScope()) {
     return;
   }
-  if (s.getParent().isGlobal()) {
+  if ((t.getScopeRoot().isFunction() && NodeUtil.getEnclosingFunction(t.getScopeRoot().getParent()) == null) || (NodeUtil.isFunctionBlock(t.getScopeRoot()) && NodeUtil.getEnclosingFunction(t.getScopeRoot().getGrandparent()) == null)) {
     return;
+  }
+  Scope s=t.getScope();
+  if (s.isFunctionBlockScope()) {
+    for (    Var var : s.getParent().getVarIterable()) {
+      scopeUpRefMap.put(s.getRootNode(),var.name);
+    }
   }
   for (  Var var : s.getVarIterable()) {
-    if (var.isBleedingFunction()) {
+    if (!compiler.getOptions().getLanguageOut().isEs5OrHigher() && (var.isBleedingFunction() || var.isCatch())) {
       continue;
     }
     if (compiler.getCodingConvention().isExported(var.name,s.isLocal())) {
       continue;
     }
-    Assignment bestShadow=findBestShadow(s);
+    Assignment bestShadow=findBestShadow(s,var);
     if (bestShadow == null) {
       continue;
     }
@@ -24,8 +29,8 @@
     doShadow(localAssignment,bestShadow,var);
     if (oldPseudoNameMap != null) {
       String targetPseudoName=oldPseudoNameMap.get(s.getVar(bestShadow.oldName).nameNode);
-      for (      Node use : varToNameUsage.get(var)) {
-        deltaPseudoNameMap.put(use,targetPseudoName);
+      for (      Reference use : varToNameUsage.get(var)) {
+        deltaPseudoNameMap.put(use.nameNode,targetPseudoName);
       }
     }
   }

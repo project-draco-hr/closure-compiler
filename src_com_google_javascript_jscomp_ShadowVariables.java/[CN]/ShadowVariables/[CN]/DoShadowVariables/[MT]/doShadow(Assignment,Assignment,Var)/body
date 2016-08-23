@@ -1,6 +1,6 @@
 {
   Scope s=var.getScope();
-  Collection<Node> references=varToNameUsage.get(var);
+  Collection<Reference> references=varToNameUsage.get(var);
   varsByFrequency.remove(original);
   varsByFrequency.remove(toShadow);
   original.count-=references.size();
@@ -9,17 +9,28 @@
   varsByFrequency.add(toShadow);
   Var shadowed=s.getVar(toShadow.oldName);
   if (shadowed != null) {
+    if (s.isFunctionScope() && s.getRootNode().getLastChild().isBlock()) {
+      scopeUpRefMap.put(s.getRootNode().getLastChild(),toShadow.oldName);
+      scopeUpRefMap.remove(s.getRootNode().getLastChild(),original.oldName);
+    }
     for (Scope curScope=s; curScope != shadowed.scope; curScope=curScope.getParent()) {
       scopeUpRefMap.put(curScope.getRootNode(),toShadow.oldName);
+      scopeUpRefMap.remove(curScope.getRootNode(),original.oldName);
     }
   }
-  for (  Node n : references) {
+  for (  Reference ref : references) {
+    Node n=ref.nameNode;
     n.setString(toShadow.oldName);
-    Node cur=n;
-    while (cur != s.getRootNode()) {
-      cur=cur.getParent();
-      if (cur.isFunction()) {
-        scopeUpRefMap.put(cur,toShadow.oldName);
+    if (ref.scope.getRootNode() == s.getRootNode()) {
+      if (var.getNameNode() != ref.nameNode) {
+        scopeUpRefMap.put(s.getRootNode(),toShadow.oldName);
+        scopeUpRefMap.remove(s.getRootNode(),original.oldName);
+      }
+    }
+ else {
+      for (Scope curScope=ref.scope; curScope.getRootNode() != s.getRootNode(); curScope=curScope.getParent()) {
+        scopeUpRefMap.put(curScope.getRootNode(),toShadow.oldName);
+        scopeUpRefMap.remove(curScope.getRootNode(),original.oldName);
       }
     }
   }
