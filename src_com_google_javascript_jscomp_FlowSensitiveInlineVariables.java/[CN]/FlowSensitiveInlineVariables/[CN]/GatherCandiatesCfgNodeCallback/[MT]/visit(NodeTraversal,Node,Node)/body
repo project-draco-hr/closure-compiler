@@ -1,0 +1,18 @@
+{
+  if (n.isName()) {
+    if (parent == null) {
+      return;
+    }
+    if ((NodeUtil.isAssignmentOp(parent) && parent.getFirstChild() == n) || parent.isVar() || parent.isInc()|| parent.isDec()|| parent.isParamList()|| parent.isCatch()) {
+      return;
+    }
+    String name=n.getString();
+    if (compiler.getCodingConvention().isExported(name)) {
+      return;
+    }
+    Definition def=reachingDef.getDef(name,cfgNode);
+    if (def != null && !reachingDef.dependsOnOuterScopeVars(def)) {
+      candidates.add(new Candidate(name,def,n,cfgNode));
+    }
+  }
+}

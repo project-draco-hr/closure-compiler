@@ -2,11 +2,15 @@
   if (t.inGlobalScope()) {
     return;
   }
+  Preconditions.checkState(t.getScopeRoot().isFunction());
+  Node scopeRoot=t.getScopeRoot();
+  if (!isCandidateFunction(scopeRoot)) {
+    return;
+  }
   if (LiveVariablesAnalysis.MAX_VARIABLES_TO_ANALYZE < t.getScope().getVarCount()) {
     return;
   }
   ControlFlowAnalysis cfa=new ControlFlowAnalysis(compiler,false,true);
-  Preconditions.checkState(t.getScopeRoot().isFunction());
   cfa.process(null,t.getScopeRoot());
   cfg=cfa.getCfg();
   reachingDef=new MustBeReachingVariableDef(cfg,t.getScope(),compiler);

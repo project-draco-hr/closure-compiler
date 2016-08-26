@@ -1,0 +1,16 @@
+{
+  if (n.isFunction()) {
+    return false;
+  }
+  if (NodeUtil.isNameDeclaration(n) || isAssignmentToName(n)) {
+    if (n.getFirstChild().isName()) {
+      return true;
+    }
+  }
+  for (Node c=n.getFirstChild(); c != null; c=c.getNext()) {
+    if (containsCandidateExpressions(c)) {
+      return true;
+    }
+  }
+  return false;
+}
