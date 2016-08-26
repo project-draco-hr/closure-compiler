@@ -6,13 +6,8 @@
     return;
   }
   Scope s=t.getScope();
-  if (s.isFunctionBlockScope()) {
-    for (    Var var : s.getParent().getVarIterable()) {
-      scopeUpRefMap.put(s.getRootNode(),var.name);
-    }
-  }
   for (  Var var : s.getVarIterable()) {
-    if (!compiler.getOptions().getLanguageOut().isEs5OrHigher() && (var.isBleedingFunction() || var.isCatch())) {
+    if (var.isBleedingFunction() || var.isCatch()) {
       continue;
     }
     if (compiler.getCodingConvention().isExported(var.name,s.isLocal())) {
