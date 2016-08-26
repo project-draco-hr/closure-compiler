@@ -1,0 +1,27 @@
+{
+  String[] parts=path.split(Pattern.quote(MODULE_SLASH));
+  String[] buffer=new String[parts.length];
+  int position=0;
+  int available=0;
+  for (  String part : parts) {
+    if (part.equals(".")) {
+      continue;
+    }
+    if (part.equals("..")) {
+      if (available > 0) {
+        --position;
+        --available;
+        buffer[position]=null;
+      }
+ else {
+        buffer[position]=part;
+        ++position;
+      }
+      continue;
+    }
+    buffer[position]=part;
+    ++position;
+    ++available;
+  }
+  return MODULE_JOINER.join(Arrays.copyOfRange(buffer,0,position));
+}

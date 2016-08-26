@@ -12,12 +12,12 @@
         localTypeName=name.substring(endIndex);
       }
       String moduleName=name.substring(0,endIndex);
-      ModuleUri moduleUri=t.getInput().getUri().resolveCommonJsModule(moduleName);
-      if (moduleUri == null) {
+      ModulePath modulePath=t.getInput().getPath().resolveCommonJsModule(moduleName);
+      if (modulePath == null) {
         t.makeError(typeNode,LOAD_ERROR,moduleName);
         return;
       }
-      String globalModuleName=moduleUri.toModuleName();
+      String globalModuleName=modulePath.toModuleName();
       typeNode.setString(localTypeName == null ? globalModuleName : globalModuleName + localTypeName);
     }
  else     if (fullRewrite) {
