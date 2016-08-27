@@ -1,3 +1,14 @@
 {
+  if (parseInlineSourceMaps) {
+    Matcher matcher=SOURCE_MAPPING_URL_PATTERN.matcher(value);
+    if (matcher.find()) {
+      String url=value.substring(matcher.group(0).length());
+      if (url.startsWith(BASE64_URL_PREFIX)) {
+        byte[] data=BaseEncoding.base64().decode(url.substring(BASE64_URL_PREFIX.length()));
+        String source=new String(data,StandardCharsets.UTF_8);
+        inlineSourceMap=source;
+      }
+    }
+  }
   comments.add(new Comment(value,range,type));
 }

@@ -1,0 +1,8 @@
+{
+  String code="var X = (function () {\n" + "    function X(input) {\n" + "        this.y = input;\n"+ "    }\n"+ "    return X;\n"+ "}());\n"+ "console.log(new X(1));\n"+ "//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZm9vLmpz"+ "Iiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiZm9vLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQU"+ "FBO0lBR0UsV0FBWSxLQUFhO1FBQ3ZCLElBQUksQ0FBQyxDQUFDLEdBQUcsS0FBSyxDQUFDO0lBQ2pCLENBQUM7"+ "SUFDSCxRQUFDO0FBQUQsQ0FBQyxBQU5ELElBTUM7QUFFRCxPQUFPLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQy"+ "xDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMifQ==";
+  ParseResult result=doParse(code);
+  assertThat(result.sourceMap).named("inline source map").isNotNull();
+  SourceMapInput input=new SourceMapInput(SourceFile.fromCode("test.js.map",result.sourceMap));
+  SourceMapConsumerV3 sourceMap=input.getSourceMap();
+  assertThat(sourceMap.getOriginalSources()).containsExactly("foo.ts");
+}
