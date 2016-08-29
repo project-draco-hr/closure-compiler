@@ -1,7 +1,10 @@
 {
   if (replacements.hasTemplateKey(type)) {
-    if (hasVisitedType(type) || !replacements.hasTemplateType(type)) {
+    if (hasVisitedType(type)) {
       return type;
+    }
+ else     if (!replacements.hasTemplateType(type)) {
+      return replaceMissingTypesWithUnknown ? registry.getNativeType(JSTypeNative.UNKNOWN_TYPE) : type;
     }
  else {
       JSType replacement=replacements.getUnresolvedOriginalTemplateType(type);
