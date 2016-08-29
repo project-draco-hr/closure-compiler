@@ -3,6 +3,10 @@
   String[] buffer=new String[parts.length];
   int position=0;
   int available=0;
+  boolean absolutePath=(parts.length > 1 && parts[0].isEmpty());
+  if (absolutePath) {
+    --available;
+  }
   for (  String part : parts) {
     if (part.equals(".")) {
       continue;
@@ -13,7 +17,7 @@
         --available;
         buffer[position]=null;
       }
- else {
+ else       if (!absolutePath) {
         buffer[position]=part;
         ++position;
       }
@@ -22,6 +26,9 @@
     buffer[position]=part;
     ++position;
     ++available;
+  }
+  if (absolutePath && position == 1) {
+    return MODULE_SLASH;
   }
   return MODULE_JOINER.join(Arrays.copyOfRange(buffer,0,position));
 }
