@@ -1,0 +1,20 @@
+{
+  FilePosition originalSourcePosition=new FilePosition(17,25);
+  ImmutableMap<String,SourceMapInput> inputSourceMaps=ImmutableMap.of("input.js",sourcemap("input.js.map","input.ts",originalSourcePosition));
+  CompilerOptions options=new CompilerOptions();
+  options.sourceMapOutputPath="fake/source_map_path.js.map";
+  options.inputSourceMaps=inputSourceMaps;
+  options.applyInputSourceMaps=true;
+  Compiler compiler=new Compiler();
+  compiler.compile(EMPTY_EXTERNS.get(0),SourceFile.fromCode("input.js","// Unmapped line\nvar x = 1;\nalert(x);"),options);
+  assertThat(compiler.toSource()).isEqualTo("var x=1;alert(x);");
+  SourceMap sourceMap=compiler.getSourceMap();
+  StringWriter out=new StringWriter();
+  sourceMap.appendTo(out,"source.js.map");
+  SourceMapConsumerV3 consumer=new SourceMapConsumerV3();
+  consumer.parse(out.toString());
+  OriginalMapping mapping=consumer.getMappingForLine(1,5);
+  assertThat(mapping.getOriginalFile()).isEqualTo("input.ts");
+  assertThat(mapping.getLineNumber()).isEqualTo(18);
+  assertThat(mapping.getColumnPosition()).isEqualTo(26);
+}

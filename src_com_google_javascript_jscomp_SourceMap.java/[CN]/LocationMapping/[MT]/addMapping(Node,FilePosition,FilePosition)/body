@@ -3,8 +3,18 @@
   if (sourceFile == null || node.getLineno() < 0) {
     return;
   }
+  int lineNo=node.getLineno();
+  int charNo=node.getCharno();
+  if (mapping != null) {
+    OriginalMapping sourceMapping=mapping.getSourceMapping(sourceFile,lineNo,charNo);
+    if (sourceMapping != null) {
+      sourceFile=sourceMapping.getOriginalFile();
+      lineNo=sourceMapping.getLineNumber();
+      charNo=sourceMapping.getColumnPosition();
+    }
+  }
   sourceFile=fixupSourceLocation(sourceFile);
   String originalName=node.getOriginalName();
   int lineBaseOffset=1;
-  generator.addMapping(sourceFile,originalName,new FilePosition(node.getLineno() - lineBaseOffset,node.getCharno()),outputStartPosition,outputEndPosition);
+  generator.addMapping(sourceFile,originalName,new FilePosition(lineNo - lineBaseOffset,charNo),outputStartPosition,outputEndPosition);
 }
