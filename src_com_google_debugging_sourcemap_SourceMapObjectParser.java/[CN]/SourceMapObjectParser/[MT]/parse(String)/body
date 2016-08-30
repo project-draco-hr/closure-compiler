@@ -1,0 +1,31 @@
+{
+  SourceMapObject.Builder builder=SourceMapObject.builder();
+  try {
+    JsonObject sourceMapRoot=new Gson().fromJson(contents,JsonObject.class);
+    builder.setVersion(sourceMapRoot.get("version").getAsInt());
+    builder.setFile(getStringOrNull(sourceMapRoot,"file"));
+    builder.setLineCount(sourceMapRoot.has("lineCount") ? sourceMapRoot.get("lineCount").getAsInt() : -1);
+    builder.setMappings(getStringOrNull(sourceMapRoot,"mappings"));
+    builder.setSourceRoot(getStringOrNull(sourceMapRoot,"sourceRoot"));
+    if (sourceMapRoot.has("sections")) {
+      ImmutableList.Builder<SourceMapSection> listBuilder=ImmutableList.builder();
+      for (      JsonElement each : sourceMapRoot.get("sections").getAsJsonArray()) {
+        listBuilder.add(buildSection(each.getAsJsonObject()));
+      }
+      builder.setSections(listBuilder.build());
+    }
+    builder.setSources(getJavaStringArray(sourceMapRoot.get("sources")));
+    builder.setNames(getJavaStringArray(sourceMapRoot.get("names")));
+    Map<String,Object> extensions=new LinkedHashMap<>();
+    for (    Map.Entry<String,JsonElement> entry : sourceMapRoot.entrySet()) {
+      if (entry.getKey().startsWith("x_")) {
+        extensions.put(entry.getKey(),entry.getValue());
+      }
+    }
+    builder.setExtensions(Collections.unmodifiableMap(extensions));
+  }
+ catch (  JsonParseException ex) {
+    throw new SourceMapParseException("JSON parse exception: " + ex);
+  }
+  return builder.build();
+}

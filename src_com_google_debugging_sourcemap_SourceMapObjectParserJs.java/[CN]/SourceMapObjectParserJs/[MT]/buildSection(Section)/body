@@ -1,0 +1,14 @@
+{
+  int line=section.offset.line;
+  int column=section.offset.column;
+  if (section.map != null && section.url != null) {
+    throw new SourceMapParseException("Invalid map format: section may not have both 'map' and 'url'");
+  }
+ else   if (section.url != null) {
+    return SourceMapSection.forURL(section.url,line,column);
+  }
+ else   if (section.map != null) {
+    return SourceMapSection.forMap(String.valueOf(section.map),line,column);
+  }
+  throw new SourceMapParseException("Invalid map format: section must have either 'map' or 'url'");
+}
