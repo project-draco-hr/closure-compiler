@@ -1,0 +1,6 @@
+{
+  checkMarkedCalls("var dict = {'func': function() {}};" + "function f() { var s = dict['func'];}" + "f.apply()",ImmutableList.of("f.apply"));
+  checkMarkedCalls("var dict = {'func': function() {}};" + "function f() { var s = dict['func'].apply();}" + "f.apply()",ImmutableList.<String>of());
+  checkMarkedCalls("var pure = function() {};" + "var dict = {'func': function() {}};" + "function f() { var s = (dict['func'] || pure)();}"+ "f()",ImmutableList.<String>of());
+  checkMarkedCalls("var pure = function() {};" + "var dict = {'func': function() {}};" + "function f() { var s = (condition ? dict['func'] : pure)();}"+ "f()",ImmutableList.<String>of());
+}
