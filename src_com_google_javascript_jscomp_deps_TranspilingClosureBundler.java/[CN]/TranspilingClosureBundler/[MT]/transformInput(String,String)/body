@@ -2,11 +2,11 @@
   try {
     long hashCode=HASH_FUNCTION.hashString(js,StandardCharsets.UTF_8).asLong();
     return cachedTranspilations.get(hashCode,new Callable<String>(){
-      @Override public String call() throws IOException, UnsupportedEncodingException {
+      @Override public String call() throws IOException {
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
         Compiler compiler=new Compiler(new PrintStream(baos));
         SourceFile sourceFile=SourceFile.fromCode(path,js);
-        Result result=compiler.<SourceFile,SourceFile>compile(ImmutableList.<SourceFile>of(),ImmutableList.<SourceFile>of(sourceFile),getOptions());
+        Result result=compiler.<SourceFile,SourceFile>compile(ImmutableList.<SourceFile>of(),ImmutableList.of(sourceFile),getOptions());
         if (compiler.getErrorManager().getErrorCount() > 0) {
           String message;
           try {
