@@ -1,0 +1,29 @@
+{
+  Preconditions.checkArgument(ctorType.isConstructor());
+  Map<String,ObjectType> abstractMethodSuperTypeMap=new LinkedHashMap<>();
+  FunctionType currSuperCtor=ctorType.getSuperClassConstructor();
+  if (currSuperCtor == null || !currSuperCtor.isAbstract()) {
+    return;
+  }
+  while (currSuperCtor != null && currSuperCtor.isAbstract()) {
+    ObjectType superType=currSuperCtor.getInstanceType();
+    for (    String prop : currSuperCtor.getInstanceType().getImplicitPrototype().getOwnPropertyNames()) {
+      FunctionType maybeAbstractMethod=superType.findPropertyType(prop).toMaybeFunctionType();
+      if (maybeAbstractMethod != null && maybeAbstractMethod.isAbstract() && !abstractMethodSuperTypeMap.containsKey(prop)) {
+        abstractMethodSuperTypeMap.put(prop,superType);
+      }
+    }
+    currSuperCtor=currSuperCtor.getSuperClassConstructor();
+  }
+  ObjectType instance=ctorType.getInstanceType();
+  for (  Map.Entry<String,ObjectType> entry : abstractMethodSuperTypeMap.entrySet()) {
+    String method=entry.getKey();
+    ObjectType superType=entry.getValue();
+    FunctionType abstractMethod=instance.findPropertyType(method).toMaybeFunctionType();
+    if (abstractMethod == null || abstractMethod.isAbstract()) {
+      String sourceName=n.getSourceFileName();
+      sourceName=nullToEmpty(sourceName);
+      registerMismatch(instance,superType,report(JSError.make(n,ABSTRACT_METHOD_NOT_IMPLEMENTED,method,superType.toString(),instance.toString())));
+    }
+  }
+}
