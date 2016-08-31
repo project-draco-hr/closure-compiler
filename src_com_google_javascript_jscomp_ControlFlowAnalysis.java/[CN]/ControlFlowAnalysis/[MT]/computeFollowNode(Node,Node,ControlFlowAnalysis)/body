@@ -22,13 +22,14 @@ case DEFAULT_CASE:
  else {
     return computeFollowNode(fromNode,parent,cfa);
   }
-case FOR:
 case FOR_OF:
-if (parent.isForOf() || NodeUtil.isForIn(parent)) {
-  return parent;
+return parent;
+case FOR:
+if (NodeUtil.isForIn(parent)) {
+return parent;
 }
  else {
-  return parent.getSecondChild().getNext();
+return parent.getSecondChild().getNext();
 }
 case WHILE:
 case DO:
@@ -53,7 +54,7 @@ return computeFollowNode(fromNode,parent,cfa);
  else if (parent.getLastChild() == node) {
 if (cfa != null) {
 for (Node finallyNode : cfa.finallyMap.get(parent)) {
-  cfa.createEdge(fromNode,Branch.ON_EX,finallyNode);
+cfa.createEdge(fromNode,Branch.ON_EX,finallyNode);
 }
 }
 return computeFollowNode(fromNode,parent,cfa);
