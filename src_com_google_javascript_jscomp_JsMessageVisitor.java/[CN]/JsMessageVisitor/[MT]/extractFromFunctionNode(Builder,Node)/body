@@ -1,7 +1,7 @@
 {
   Set<String> phNames=new HashSet<>();
   for (  Node fnChild : node.children()) {
-switch (fnChild.getType()) {
+switch (fnChild.getToken()) {
 case NAME:
       break;
 case PARAM_LIST:
@@ -20,7 +20,7 @@ case PARAM_LIST:
 case BLOCK:
 Node returnNode=fnChild.getFirstChild();
 if (!returnNode.isReturn()) {
-throw new MalformedException("RETURN node expected; found: " + returnNode.getType(),returnNode);
+throw new MalformedException("RETURN node expected; found: " + returnNode.getToken(),returnNode);
 }
 for (Node child : returnNode.children()) {
 extractFromReturnDescendant(builder,child);
@@ -32,7 +32,7 @@ throw new MalformedException("Unrecognized message placeholder referenced: " + p
 }
 break;
 default :
-throw new MalformedException("NAME, LP, or BLOCK node expected; found: " + node.getType(),fnChild);
+throw new MalformedException("NAME, LP, or BLOCK node expected; found: " + node.getToken(),fnChild);
 }
 }
 }

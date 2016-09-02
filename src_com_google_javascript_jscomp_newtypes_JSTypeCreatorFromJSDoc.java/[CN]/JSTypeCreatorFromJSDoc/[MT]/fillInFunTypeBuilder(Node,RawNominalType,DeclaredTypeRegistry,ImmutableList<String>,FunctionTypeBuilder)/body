@@ -1,12 +1,12 @@
 {
   Node child=jsdocNode.getFirstChild();
-  if (child.getType() == Token.THIS) {
+  if (child.getToken() == Token.THIS) {
     if (ownerType == null) {
       builder.addReceiverType(getThisOrNewType(child.getFirstChild(),registry,typeParameters));
     }
     child=child.getNext();
   }
- else   if (child.getType() == Token.NEW) {
+ else   if (child.getToken() == Token.NEW) {
     Node newTypeNode=child.getFirstChild();
     JSType t=getThisOrNewType(newTypeNode,registry,typeParameters);
     if (!t.isSubtypeOf(this.commonTypes.TOP_OBJECT) && (!t.hasTypeVariable() || t.hasScalar())) {
@@ -15,10 +15,10 @@
     builder.addNominalType(t);
     child=child.getNext();
   }
-  if (child.getType() == Token.PARAM_LIST) {
+  if (child.getToken() == Token.PARAM_LIST) {
     for (Node arg=child.getFirstChild(); arg != null; arg=arg.getNext()) {
       try {
-switch (arg.getType()) {
+switch (arg.getToken()) {
 case EQUALS:
           builder.addOptFormal(getTypeFromCommentHelper(arg.getFirstChild(),registry,typeParameters));
         break;
