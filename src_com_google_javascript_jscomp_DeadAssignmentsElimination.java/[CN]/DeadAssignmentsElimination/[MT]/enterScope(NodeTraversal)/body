@@ -1,26 +1,5 @@
 {
-  if (!t.inFunctionBlockScope()) {
-    return;
+  if (t.inFunctionBlockScope()) {
+    functionStack.addFirst(new BailoutInformation());
   }
-  BailoutDetector bailoutDetector=new BailoutDetector();
-  NodeUtil.visitPreOrder(t.getScopeRoot(),bailoutDetector,bailoutDetector);
-  if (bailoutDetector.containsFunction) {
-    return;
-  }
-  if (!bailoutDetector.containsRemovableAssign) {
-    return;
-  }
-  Scope blockScope=t.getScope();
-  Scope functionScope=blockScope.getParent();
-  if (LiveVariablesAnalysis.MAX_VARIABLES_TO_ANALYZE < blockScope.getVarCount() + functionScope.getVarCount()) {
-    return;
-  }
-  for (  Var var : blockScope.getVarIterable()) {
-    Preconditions.checkArgument(!var.isClass() && !var.isLet() && !var.isConst());
-    functionScope.declare(var.getName(),var.getNameNode(),var.getInput());
-  }
-  ControlFlowGraph<Node> cfg=t.getControlFlowGraph();
-  liveness=new LiveVariablesAnalysis(cfg,functionScope,compiler);
-  liveness.analyze();
-  tryRemoveDeadAssignments(t,cfg);
 }
