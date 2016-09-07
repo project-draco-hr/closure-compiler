@@ -1,4 +1,6 @@
 {
-  checkMarkedCalls("/**@constructor*/function A(){}\n" + "A.prototype.foo = function(){};\n" + "var a = new A;\n"+ "a.foo();\n",ImmutableList.of("A","a.foo"));
-  checkMarkedCalls("/**@constructor*/function A(){}\n" + "A.prototype.foo = function(){};\n" + "var x = 1\n"+ "function f(){x = 10}\n"+ "var a = new A;\n"+ "a.foo = f;\n"+ "a.foo();\n",ImmutableList.of("A"));
+  String source=LINE_JOINER.join("/**@constructor*/function A(){}","A.prototype.foo = function(){};","var a = new A;","a.foo();");
+  assertPureCallsMarked(source,ImmutableList.of("A","a.foo"));
+  String sourceOverride=LINE_JOINER.join("/**@constructor*/ function A(){}","A.prototype.foo = function(){};","var x = 1","function f(){x = 10}","var a = new A;","a.foo = f;","a.foo();");
+  assertPureCallsMarked(sourceOverride,ImmutableList.of("A"));
 }

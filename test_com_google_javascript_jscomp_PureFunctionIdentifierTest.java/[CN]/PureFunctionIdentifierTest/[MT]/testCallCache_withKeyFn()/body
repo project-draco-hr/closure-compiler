@@ -1,6 +1,6 @@
 {
-  String source="var valueFn = function(v) { return v }, keyFn = function(v) { return v };" + "goog.reflect.cache(externObj, \"foo\", valueFn, keyFn)";
-  checkMarkedCalls(source,ImmutableList.of("goog.reflect.cache"));
+  String source=LINE_JOINER.join("var valueFn = function(v) { return v };","var keyFn = function(v) { return v };","goog.reflect.cache(externObj, \"foo\", valueFn, keyFn)");
+  assertPureCallsMarked(source,ImmutableList.of("goog.reflect.cache"));
   Node lastRoot=getLastCompiler().getRoot().getLastChild();
   Node call=findQualifiedNameNode("goog.reflect.cache",lastRoot).getParent();
   assertThat(call.isNoSideEffectsCall()).isTrue();

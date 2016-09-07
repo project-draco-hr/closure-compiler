@@ -1,7 +1,6 @@
 {
-  String externs="/**@constructor*/function externObj5(){}\n" + "/**\n" + " * @param {string} s id.\n"+ " * @return {string}\n"+ " * @nosideeffects\n"+ " */\n"+ "externObj5.prototype.propWithAnnotatedStubAfter = function(s) {};\n"+ "/**\n"+ " * @param {string} s id.\n"+ " * @return {string}\n"+ " */\n"+ "externObj5.prototype.propWithAnnotatedStubAfter;\n";
-  List<String> expected=ImmutableList.of();
+  String externs=LINE_JOINER.join("/**@constructor*/function externObj5(){}","/**"," * @param {string} s id."," * @return {string}"," * @nosideeffects"," */","externObj5.prototype.propWithAnnotatedStubAfter = function(s) {};","/**"," * @param {string} s id."," * @return {string}"," */","externObj5.prototype.propWithAnnotatedStubAfter;");
   testSame(externs,"o.prototype.propWithAnnotatedStubAfter",TypeValidator.DUP_VAR_DECLARATION,false);
-  assertEquals(expected,noSideEffectCalls);
+  assertEquals(NO_PURE_CALLS,noSideEffectCalls);
   noSideEffectCalls.clear();
 }

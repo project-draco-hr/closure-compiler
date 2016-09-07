@@ -1,7 +1,7 @@
 {
-  String source="var x = 0;\n" + "function k(){(/a/).exec('')}\n" + "k()";
+  String source=LINE_JOINER.join("var x = 0;","function k(){(/a/).exec('')}","k()");
   regExpHaveSideEffects=true;
-  checkMarkedCalls(source,ImmutableList.<String>of());
+  assertPureCallsMarked(source,NO_PURE_CALLS);
   regExpHaveSideEffects=false;
-  checkMarkedCalls(source,ImmutableList.of("REGEXP STRING exec","k"));
+  assertPureCallsMarked(source,ImmutableList.of("REGEXP STRING exec","k"));
 }

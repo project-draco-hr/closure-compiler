@@ -1,4 +1,4 @@
 {
-  String s="var globalVar = 1;" + "A.f = function() {globalVar = 2;};" + "A.f = function() {};"+ "function sideEffectCaller() { A.f.call(null); };"+ "sideEffectCaller();";
-  checkMarkedCalls(s,ImmutableList.<String>of());
+  String source=CompilerTypeTestCase.CLOSURE_DEFS + LINE_JOINER.join("var globalVar = 1;","A.f = function() {globalVar = 2;};","A.f = function() {};","function sideEffectCaller() { A.f.call(null); };","sideEffectCaller();");
+  assertPureCallsMarked(source,NO_PURE_CALLS);
 }

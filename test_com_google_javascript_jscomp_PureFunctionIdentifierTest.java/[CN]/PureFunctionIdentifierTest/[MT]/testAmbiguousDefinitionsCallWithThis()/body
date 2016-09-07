@@ -1,4 +1,4 @@
 {
-  String s="var globalVar = 1;" + "A.modifiesThis = function() { this.x = 5; };" + "/**@constructor*/function Constructor() { Constructor.modifiesThis.call(this); };"+ "Constructor.prototype.modifiesThis = function() {};"+ "new Constructor();"+ "A.modifiesThis();";
-  checkMarkedCalls(s,ImmutableList.<String>of("Constructor"));
+  String source=CompilerTypeTestCase.CLOSURE_DEFS + LINE_JOINER.join("var globalVar = 1;","A.modifiesThis = function() { this.x = 5; };","/**@constructor*/function Constructor() { Constructor.modifiesThis.call(this); };","Constructor.prototype.modifiesThis = function() {};","new Constructor();","A.modifiesThis();");
+  assertPureCallsMarked(source,ImmutableList.<String>of("Constructor"));
 }

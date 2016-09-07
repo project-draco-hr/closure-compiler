@@ -1,6 +1,10 @@
 {
-  checkMarkedCalls("var dict = {'func': function() {}};" + "function f() { var s = dict['func'];}" + "f.apply()",ImmutableList.of("f.apply"));
-  checkMarkedCalls("var dict = {'func': function() {}};" + "function f() { var s = dict['func'].apply();}" + "f.apply()",ImmutableList.<String>of());
-  checkMarkedCalls("var pure = function() {};" + "var dict = {'func': function() {}};" + "function f() { var s = (dict['func'] || pure)();}"+ "f()",ImmutableList.<String>of());
-  checkMarkedCalls("var pure = function() {};" + "var dict = {'func': function() {}};" + "function f() { var s = (condition ? dict['func'] : pure)();}"+ "f()",ImmutableList.<String>of());
+  String source=LINE_JOINER.join("var dict = {'func': function() {}};","function f() { var s = dict['func'];}","f.apply()");
+  assertPureCallsMarked(source,ImmutableList.of("f.apply"));
+  source=LINE_JOINER.join("var dict = {'func': function() {}};","function f() { var s = dict['func'].apply();}","f.apply()");
+  assertPureCallsMarked(source,NO_PURE_CALLS);
+  source=LINE_JOINER.join("var pure = function() {};","var dict = {'func': function() {}};","function f() { var s = (dict['func'] || pure)();}","f()");
+  assertPureCallsMarked(source,NO_PURE_CALLS);
+  source=LINE_JOINER.join("var pure = function() {};","var dict = {'func': function() {}};","function f() { var s = (condition ? dict['func'] : pure)();}","f()");
+  assertPureCallsMarked(source,NO_PURE_CALLS);
 }

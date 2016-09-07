@@ -1,4 +1,4 @@
 {
-  String source="var x = 0;\n" + "function f(){x = 10}\n" + "function g(){}\n"+ "function h(){ (f || g)() }\n"+ "function i(){ (g || f)() }\n"+ "function j(){ (f || f)() }\n"+ "function k(){ (g || g)() }\n"+ "h(); i(); j(); k()";
-  checkMarkedCalls(source,ImmutableList.of("(g || g)","k"));
+  String source=LINE_JOINER.join("var x = 0;","function f(){x = 10}","function g(){}","function h(){ (f || g)() }","function i(){ (g || f)() }","function j(){ (f || f)() }","function k(){ (g || g)() }","h(); i(); j(); k()");
+  assertPureCallsMarked(source,ImmutableList.of("(g || g)","k"));
 }
