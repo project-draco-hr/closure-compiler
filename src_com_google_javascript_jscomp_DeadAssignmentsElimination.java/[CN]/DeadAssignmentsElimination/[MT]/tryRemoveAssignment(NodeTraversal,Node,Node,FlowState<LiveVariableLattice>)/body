@@ -14,15 +14,16 @@
     if (isDeclarationNode && (rhs == null || parent.getParent().isFor())) {
       return;
     }
-    Scope scope=t.getScope();
     if (!lhs.isName()) {
       return;
     }
     String name=lhs.getString();
-    if (!scope.isDeclared(name,false)) {
+    Preconditions.checkState(t.getScope().isFunctionBlockScope());
+    Scope functionScope=t.getScope().getParent();
+    if (!functionScope.isDeclared(name,false)) {
       return;
     }
-    Var var=scope.getVar(name);
+    Var var=functionScope.getVar(name);
     if (liveness.getEscapedLocals().contains(var)) {
       return;
     }
