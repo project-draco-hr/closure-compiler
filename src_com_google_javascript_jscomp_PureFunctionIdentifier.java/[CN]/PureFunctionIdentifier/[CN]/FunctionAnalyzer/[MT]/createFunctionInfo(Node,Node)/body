@@ -1,0 +1,37 @@
+{
+  Preconditions.checkArgument(node.isFunction());
+  Preconditions.checkState(!functionSideEffectMap.containsKey(node));
+  FunctionInformation sideEffectInfo=new FunctionInformation(inExterns);
+  JSDocInfo info=getJSDocInfoForFunction(node,parent);
+  if (inExterns) {
+    JSType jstype=node.getJSType();
+    FunctionType functionType=JSType.toMaybeFunctionType(jstype);
+    if (functionType != null) {
+      JSType jstypeReturn=functionType.getReturnType();
+      if (!isLocalValueType(jstypeReturn)) {
+        sideEffectInfo.setTaintsReturn();
+      }
+    }
+    if (info == null) {
+      sideEffectInfo.setTaintsGlobalState();
+    }
+ else {
+      if (info.modifiesThis()) {
+        sideEffectInfo.setTaintsThis();
+      }
+ else       if (info.hasSideEffectsArgumentsAnnotation()) {
+        sideEffectInfo.setTaintsArguments();
+      }
+ else       if (!info.getThrownTypes().isEmpty()) {
+        sideEffectInfo.setFunctionThrows();
+      }
+ else       if (info.isNoSideEffects()) {
+        sideEffectInfo.setIsPure();
+      }
+ else {
+        sideEffectInfo.setTaintsGlobalState();
+      }
+    }
+  }
+  return sideEffectInfo;
+}

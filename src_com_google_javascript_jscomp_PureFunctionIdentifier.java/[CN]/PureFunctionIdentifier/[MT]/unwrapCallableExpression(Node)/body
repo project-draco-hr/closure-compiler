@@ -1,0 +1,30 @@
+{
+switch (exp.getToken()) {
+case GETPROP:
+    String propName=exp.getLastChild().getString();
+  if (propName.equals("apply") || propName.equals("call")) {
+    return unwrapCallableExpression(exp.getFirstChild());
+  }
+return ImmutableList.of(exp);
+case FUNCTION:
+case NAME:
+return ImmutableList.of(exp);
+case OR:
+case HOOK:
+Node firstVal;
+if (exp.isHook()) {
+firstVal=exp.getSecondChild();
+}
+ else {
+firstVal=exp.getFirstChild();
+}
+Iterable<Node> firstCallable=unwrapCallableExpression(firstVal);
+Iterable<Node> secondCallable=unwrapCallableExpression(firstVal.getNext());
+if (firstCallable == null || secondCallable == null) {
+return null;
+}
+return Iterables.concat(firstCallable,secondCallable);
+default :
+return null;
+}
+}

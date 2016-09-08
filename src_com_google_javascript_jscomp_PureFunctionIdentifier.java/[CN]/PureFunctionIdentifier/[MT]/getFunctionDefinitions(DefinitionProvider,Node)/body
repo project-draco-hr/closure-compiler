@@ -1,0 +1,24 @@
+{
+  Preconditions.checkArgument(call.isCall() || call.isNew(),call);
+  Iterable<Node> expanded;
+  Cache cacheCall=compiler.getCodingConvention().describeCachingCall(call);
+  if (cacheCall != null) {
+    expanded=getGoogCacheCallableExpression(cacheCall);
+  }
+ else {
+    Node callee=call.getFirstChild();
+    expanded=unwrapCallableExpression(callee);
+  }
+  if (expanded == null) {
+    return null;
+  }
+  List<Definition> defs=new ArrayList<>();
+  for (  Node exp : expanded) {
+    Collection<Definition> values=getCallableDefinitionsByExpression(definitionProvider,exp);
+    if (values == null) {
+      return null;
+    }
+    defs.addAll(values);
+  }
+  return defs;
+}

@@ -1,0 +1,41 @@
+{
+  Map<String,FunctionInformation> reps=new HashMap<>();
+  Set<String> visitedFunctionNames=new HashSet<>();
+  for (  Node call : allFunctionCalls) {
+    Iterable<Node> expressions=unwrapCallableExpression(call.getFirstChild());
+    if (expressions == null) {
+      continue;
+    }
+    for (    Node getOrName : expressions) {
+      String name=NameBasedDefinitionProvider.getSimplifiedName(getOrName);
+      if (visitedFunctionNames.contains(name)) {
+        continue;
+      }
+      Collection<Definition> defs=getCallableDefinitionsByExpression(definitionProvider,getOrName);
+      if (defs == null) {
+        continue;
+      }
+      visitedFunctionNames.add(name);
+      List<FunctionInformation> expandedDefinitions=new ArrayList<>();
+      for (      Definition definition : defs) {
+        for (        Node function : unwrapCallableExpression(definition.getRValue())) {
+          Preconditions.checkState(function.getToken() == Token.FUNCTION);
+          expandedDefinitions.add(functionSideEffectMap.get(function));
+        }
+      }
+      if (expandedDefinitions.size() > 1) {
+        FunctionInformation representativeNode=new FunctionInformation(false);
+        representativeNode.graphNode=sideEffectGraph.createNode(representativeNode);
+        reps.put(name,representativeNode);
+        for (        FunctionInformation definition : expandedDefinitions) {
+          if (definition.mutatesArguments()) {
+            representativeNode.setTaintsArguments();
+          }
+          Preconditions.checkNotNull(definition);
+          sideEffectGraph.connect(definition.graphNode,CallSitePropagationInfo.PROPAGATE_ALL,representativeNode.graphNode);
+        }
+      }
+    }
+  }
+  return reps;
+}

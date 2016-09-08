@@ -1,0 +1,15 @@
+{
+  Preconditions.checkArgument(callSite.isCall() || callSite.isNew());
+  boolean thisIsOuterThis=false;
+  if (callSite.isCall()) {
+    boolean isCallOrApply=isCallOrApply(callSite);
+    Node objectNode=isCallOrApply ? callSite.getSecondChild() : callSite.getFirstFirstChild();
+    if (objectNode != null && objectNode.isName() && !isCallOrApply) {
+    }
+ else     if (objectNode != null && objectNode.isThis()) {
+      thisIsOuterThis=true;
+    }
+  }
+  boolean argsUnescapedLocal=NodeUtil.allArgsUnescapedLocal(callSite);
+  return new CallSitePropagationInfo(argsUnescapedLocal,thisIsOuterThis,callSite.getToken());
+}

@@ -1,5 +1,5 @@
 {
-  FunctionInformation functionInfo=functionSideEffectMap.get(defNode);
+  FunctionInformation functionInfo=functionSideEffectMap.get(functionNode);
   Preconditions.checkNotNull(functionInfo);
   if (functionInfo.mutatesGlobalState()) {
     flags.setMutatesGlobalState();
@@ -10,7 +10,7 @@
   if (functionInfo.functionThrows()) {
     flags.setThrows();
   }
-  if (!callNode.isNew()) {
+  if (callNode.isCall()) {
     if (functionInfo.taintsThis()) {
       if (isCallOrApply(callNode)) {
         flags.setMutatesArguments();

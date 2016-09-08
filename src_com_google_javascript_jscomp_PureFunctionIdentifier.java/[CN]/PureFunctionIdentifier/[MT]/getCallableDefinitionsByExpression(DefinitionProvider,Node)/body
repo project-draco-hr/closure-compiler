@@ -1,0 +1,17 @@
+{
+  Preconditions.checkArgument(exp.isGetProp() || exp.isName() || NodeUtil.isFunctionExpression(exp),exp);
+  if (NodeUtil.isFunctionExpression(exp)) {
+    Definition def=new DefinitionsRemover.FunctionExpressionDefinition(exp,false);
+    return ImmutableList.of(def);
+  }
+  Collection<Definition> declarations=definitionProvider.getDefinitionsReferencedAt(exp);
+  if (declarations == null) {
+    return null;
+  }
+  for (  Definition current : declarations) {
+    if (!isSupportedFunctionDefinition(current.getRValue())) {
+      return null;
+    }
+  }
+  return declarations;
+}

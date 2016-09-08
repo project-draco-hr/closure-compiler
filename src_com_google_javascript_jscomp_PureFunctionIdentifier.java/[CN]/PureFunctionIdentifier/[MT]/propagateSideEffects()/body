@@ -1,27 +1,32 @@
 {
-  LinkedDirectedGraph<FunctionInformation,Node> sideEffectGraph=LinkedDirectedGraph.createWithoutAnnotations();
+  LinkedDirectedGraph<FunctionInformation,CallSitePropagationInfo> sideEffectGraph=LinkedDirectedGraph.createWithoutAnnotations();
   for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
     functionInfo.graphNode=sideEffectGraph.createNode(functionInfo);
   }
+  Map<String,FunctionInformation> reps=generateRepresentativeNodes(sideEffectGraph);
   for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
     if (!functionInfo.mayHaveSideEffects()) {
       continue;
     }
     for (    Node callSite : functionInfo.getCallsInFunctionBody()) {
-      Node callee=callSite.getFirstChild();
-      Cache cacheCall=compiler.getCodingConvention().describeCachingCall(callSite);
-      Collection<Definition> defs=cacheCall != null ? getGoogCacheCallableDefinitions(definitionProvider,cacheCall) : getCallableDefinitions(definitionProvider,callee);
-      if (defs == null) {
+      List<FunctionInformation> possibleSideEffects=getSideEffectsForCall(callSite,definitionProvider,reps);
+      if (possibleSideEffects == null) {
         functionInfo.setTaintsGlobalState();
         break;
       }
-      for (      Definition def : defs) {
-        Node defValue=def.getRValue();
-        connectDefs(sideEffectGraph,defValue,callSite,functionInfo.graphNode);
+      for (      FunctionInformation sideEffectNode : possibleSideEffects) {
+        Preconditions.checkNotNull(sideEffectNode);
+        CallSitePropagationInfo edge=CallSitePropagationInfo.computePropagationType(callSite);
+        sideEffectGraph.connect(sideEffectNode.graphNode,edge,functionInfo.graphNode);
       }
     }
   }
-  FixedPointGraphTraversal.newTraversal(new SideEffectPropagationCallback()).computeFixedPoint(sideEffectGraph);
+  FixedPointGraphTraversal.newTraversal(new EdgeCallback<FunctionInformation,CallSitePropagationInfo>(){
+    @Override public boolean traverseEdge(    FunctionInformation source,    CallSitePropagationInfo edge,    FunctionInformation destination){
+      return edge.propagate(source,destination);
+    }
+  }
+).computeFixedPoint(sideEffectGraph);
   for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
     if (functionInfo.mayBePure()) {
       functionInfo.setIsPure();

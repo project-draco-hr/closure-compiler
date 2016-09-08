@@ -1,0 +1,36 @@
+{
+  Preconditions.checkArgument(call.isCall() || call.isNew());
+  Iterable<Node> expanded;
+  Cache cacheCall=compiler.getCodingConvention().describeCachingCall(call);
+  if (cacheCall != null) {
+    expanded=getGoogCacheCallableExpression(cacheCall);
+  }
+ else {
+    expanded=unwrapCallableExpression(call.getFirstChild());
+  }
+  if (expanded == null) {
+    return null;
+  }
+  List<FunctionInformation> results=new ArrayList<>();
+  for (  Node expression : expanded) {
+    if (NodeUtil.isFunctionExpression(expression)) {
+      results.add(Preconditions.checkNotNull(functionSideEffectMap.get(expression)));
+    }
+    String name=NameBasedDefinitionProvider.getSimplifiedName(expression);
+    if (name != null && representativeNodes.containsKey(name)) {
+      results.add(representativeNodes.get(name));
+    }
+ else {
+      Collection<Definition> definitions=getCallableDefinitionsByExpression(definitionProvider,expression);
+      if (definitions == null) {
+        return null;
+      }
+      Preconditions.checkState(definitions.size() == 1,definitions);
+      Preconditions.checkNotNull((definitions.iterator().next().getLValue()));
+      FunctionInformation dep=functionSideEffectMap.get(definitions.iterator().next().getRValue());
+      Preconditions.checkNotNull(dep,definitions.iterator().next());
+      results.add(dep);
+    }
+  }
+  return results;
+}
