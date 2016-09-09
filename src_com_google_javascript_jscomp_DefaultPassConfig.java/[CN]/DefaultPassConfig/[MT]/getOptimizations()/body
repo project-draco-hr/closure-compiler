@@ -37,6 +37,7 @@
   if (options.reportPath != null && options.smartNameRemoval) {
     passes.add(initNameAnalyzeReport);
   }
+  passes.add(checkConstParams);
   if (options.extraSmartNameRemoval && options.smartNameRemoval) {
     if (options.foldConstants && (options.inlineVariables || options.inlineLocalVariables)) {
       passes.add(earlyInlineVariables);
@@ -59,7 +60,6 @@
   if (options.chainCalls) {
     passes.add(chainCalls);
   }
-  passes.add(checkConstParams);
   assertAllOneTimePasses(passes);
   if (options.smartNameRemoval || options.reportPath != null) {
     passes.addAll(getCodeRemovingPasses());
