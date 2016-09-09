@@ -3,13 +3,13 @@
   for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
     functionInfo.graphNode=sideEffectGraph.createNode(functionInfo);
   }
-  Map<String,FunctionInformation> reps=generateRepresentativeNodes(sideEffectGraph);
+  representativeNodesByName=generateRepresentativeNodes(sideEffectGraph);
   for (  FunctionInformation functionInfo : functionSideEffectMap.values()) {
     if (!functionInfo.mayHaveSideEffects()) {
       continue;
     }
     for (    Node callSite : functionInfo.getCallsInFunctionBody()) {
-      List<FunctionInformation> possibleSideEffects=getSideEffectsForCall(callSite,definitionProvider,reps);
+      List<FunctionInformation> possibleSideEffects=getSideEffectsForCall(callSite,definitionProvider,representativeNodesByName);
       if (possibleSideEffects == null) {
         functionInfo.setTaintsGlobalState();
         break;
