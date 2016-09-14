@@ -28,9 +28,15 @@
     warnings.add(JSError.make(expr,CONSTRUCTOR_NOT_CALLABLE,funType.toString()));
     return analyzeCallNodeArgsFwdWhenError(expr,envAfterCallee);
   }
- else   if (expr.isNew() && (!funType.isSomeConstructorOrInterface() || funType.isInterfaceDefinition())) {
-    warnings.add(JSError.make(expr,NOT_A_CONSTRUCTOR,funType.toString()));
-    return analyzeCallNodeArgsFwdWhenError(expr,envAfterCallee);
+ else   if (expr.isNew()) {
+    if (!funType.isSomeConstructorOrInterface() || funType.isInterfaceDefinition()) {
+      warnings.add(JSError.make(expr,NOT_A_CONSTRUCTOR,funType.toString()));
+      return analyzeCallNodeArgsFwdWhenError(expr,envAfterCallee);
+    }
+ else     if (funType.isAbstract()) {
+      warnings.add(JSError.make(expr,INSTANTIATE_ABSTRACT_CLASS,funType.toString()));
+      return analyzeCallNodeArgsFwdWhenError(expr,envAfterCallee);
+    }
   }
   int maxArity=funType.getMaxArity();
   int minArity=funType.getMinArity();
