@@ -1,0 +1,19 @@
+{
+  for (  String externName : nameDefinitionMultimap.keys()) {
+    for (    Definition def : new ArrayList<Definition>(nameDefinitionMultimap.get(externName))) {
+      if (def instanceof ExternalNameOnlyDefinition) {
+        Node node=def.getLValue();
+        if (!jsdocContainsDeclarations(node)) {
+          for (          Definition prevDef : nameDefinitionMultimap.get(externName)) {
+            if (prevDef != def && node.matchesQualifiedName(prevDef.getLValue())) {
+              nameDefinitionMultimap.remove(externName,def);
+              Preconditions.checkState(definitionNodeByDefinitionSite.containsKey(def.getLValue()));
+              definitionNodeByDefinitionSite.remove(def.getLValue());
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -13,34 +13,7 @@
         Definition unknownDef=new UnknownDefinition(def.getLValue(),true);
         def=unknownDef;
       }
-      if (node.isQualifiedName()) {
-        for (        Definition prevDef : new ArrayList<>(nameDefinitionMultimap.get(name))) {
-          if (prevDef instanceof ExternalNameOnlyDefinition && !jsdocContainsDeclarations(node)) {
-            if (node.matchesQualifiedName(prevDef.getLValue())) {
-              nameDefinitionMultimap.remove(name,prevDef);
-            }
-          }
-        }
-      }
       addDefinition(name,def,node,traversal);
-    }
-  }
-  if (parent != null && parent.isExprResult()) {
-    String name=getSimplifiedName(node);
-    if (name != null) {
-      boolean dropStub=false;
-      if (!jsdocContainsDeclarations(node) && node.isQualifiedName()) {
-        for (        Definition prevDef : nameDefinitionMultimap.get(name)) {
-          if (node.matchesQualifiedName(prevDef.getLValue())) {
-            dropStub=true;
-            break;
-          }
-        }
-      }
-      if (!dropStub) {
-        Definition definition=new ExternalNameOnlyDefinition(node);
-        addDefinition(name,definition,node,traversal);
-      }
     }
   }
 }
