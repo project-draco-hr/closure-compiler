@@ -54,9 +54,8 @@ return n;
 case BITNOT:
 try {
 double val=left.getDouble();
-if (val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE) {
-int intVal=(int)val;
-if (intVal == val) {
+if (Math.floor(val) == val) {
+int intVal=jsConvertDoubleToBits(val);
 Node notIntValNode=IR.number(~intVal);
 parent.replaceChild(n,notIntValNode);
 reportCodeChange();
@@ -64,11 +63,6 @@ return notIntValNode;
 }
  else {
 report(FRACTIONAL_BITWISE_OPERAND,left);
-return n;
-}
-}
- else {
-report(BITWISE_OPERAND_OUT_OF_RANGE,left);
 return n;
 }
 }

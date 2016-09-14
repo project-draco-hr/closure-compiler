@@ -3,10 +3,6 @@
     double result;
     double lval=left.getDouble();
     double rval=right.getDouble();
-    if (lval < Integer.MIN_VALUE) {
-      report(BITWISE_OPERAND_OUT_OF_RANGE,left);
-      return n;
-    }
     if (!(rval >= 0 && rval < 32)) {
       report(SHIFT_AMOUNT_OUT_OF_BOUNDS,n);
       return n;
@@ -16,37 +12,20 @@
       report(FRACTIONAL_BITWISE_OPERAND,right);
       return n;
     }
+    if (Math.floor(lval) != lval) {
+      report(FRACTIONAL_BITWISE_OPERAND,left);
+      return n;
+    }
+    int bits=jsConvertDoubleToBits(lval);
 switch (n.getToken()) {
 case LSH:
+      result=bits << rvalInt;
+    break;
 case RSH:
-      if (lval > Integer.MAX_VALUE) {
-        report(BITWISE_OPERAND_OUT_OF_RANGE,left);
-        return n;
-      }
-    int lvalInt=(int)lval;
-  if (lvalInt != lval) {
-    report(FRACTIONAL_BITWISE_OPERAND,left);
-    return n;
-  }
-if (n.getToken() == Token.LSH) {
-  result=lvalInt << rvalInt;
-}
- else {
-  result=lvalInt >> rvalInt;
-}
+  result=bits >> rvalInt;
 break;
 case URSH:
-long maxUint32=0xffffffffL;
-if (lval > maxUint32) {
-report(BITWISE_OPERAND_OUT_OF_RANGE,left);
-return n;
-}
-long lvalLong=(long)lval;
-if (lvalLong != lval) {
-report(FRACTIONAL_BITWISE_OPERAND,left);
-return n;
-}
-result=(lvalLong & maxUint32) >>> rvalInt;
+result=0xffffffffL & (bits >>> rvalInt);
 break;
 default :
 throw new AssertionError("Unknown shift operator: " + n.getToken());
