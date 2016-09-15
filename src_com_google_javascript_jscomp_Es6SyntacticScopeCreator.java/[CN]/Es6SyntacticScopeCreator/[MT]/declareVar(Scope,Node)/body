@@ -1,11 +1,12 @@
 {
   Preconditions.checkState(n.isName() || n.isStringKey(),"Invalid node for declareVar: %s",n);
   String name=n.getString();
-  if (s.getVar(name) != null && s.getVar(name).getNode() == n) {
+  Var v=s.getOwnSlot(name);
+  if (v != null && v.getNode() == n) {
     return;
   }
   CompilerInput input=compiler.getInput(inputId);
-  if (s.isDeclared(name,false) || (s.isLocal() && name.equals(ARGUMENTS))) {
+  if (v != null || isShadowingDisallowed(s,name) || (s.isLocal() && name.equals(ARGUMENTS))) {
     redeclarationHandler.onRedeclaration(s,name,n,input);
   }
  else {
