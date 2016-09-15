@@ -1,0 +1,25 @@
+{
+  String code=compiler.toSource();
+  if (outputWrapper == null) {
+    return code;
+  }
+  String marker;
+  int pos=outputWrapper.indexOf(OUTPUT_MARKER_JS_STRING);
+  if (pos != -1) {
+    code=SourceCodeEscapers.javascriptEscaper().escape(code);
+    marker=OUTPUT_MARKER_JS_STRING;
+  }
+ else {
+    pos=outputWrapper.indexOf(OUTPUT_MARKER);
+    if (pos == -1) {
+      return code;
+    }
+    marker=OUTPUT_MARKER;
+  }
+  String prefix=outputWrapper.substring(0,pos);
+  SourceMap sourceMap=compiler.getSourceMap();
+  if (sourceMap != null) {
+    sourceMap.setWrapperPrefix(prefix);
+  }
+  return prefix + code + outputWrapper.substring(pos + marker.length());
+}
