@@ -1,0 +1,8 @@
+{
+  String originalCode="goog.dom.classes.add(foo, /** @type {String} */ (bar));";
+  String expectedCode="goog.dom.classes.add(foo, /** @type {String} */ (bar), baz);";
+  Compiler compiler=getCompiler(originalCode);
+  Node root=compileToScriptRoot(compiler);
+  SuggestedFix fix=new SuggestedFix.Builder().insertArguments(root.getFirstFirstChild(),2,"baz").build();
+  assertChanges(fix,"",originalCode,expectedCode);
+}
