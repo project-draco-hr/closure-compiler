@@ -1,5 +1,10 @@
 {
-  EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv);
+  Node parent=expr.getParent();
+  JSType newSpecType=JSType.UNKNOWN;
+  if ((parent.isOr() || parent.isAnd()) && expr == parent.getFirstChild()) {
+    newSpecType=specializedType;
+  }
+  EnvTypePair pair=analyzeExprFwd(expr.getFirstChild(),inEnv,JSType.UNKNOWN,newSpecType);
   JSType fromType=pair.type;
   JSType toType=symbolTable.getCastType(expr);
   if (!fromType.isInterfaceInstance() && !toType.isInterfaceInstance() && !JSType.haveCommonSubtype(fromType,toType)&& !fromType.hasTypeVariable()) {
