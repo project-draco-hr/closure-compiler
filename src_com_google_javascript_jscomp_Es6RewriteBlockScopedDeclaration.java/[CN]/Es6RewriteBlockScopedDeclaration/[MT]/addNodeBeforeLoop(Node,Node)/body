@@ -1,14 +1,7 @@
 {
-  if (loopNode.getParent().isLabel()) {
-    Node innerMostLabel=loopNode.getParent();
-    Node outerMostLabel=innerMostLabel;
-    while (outerMostLabel.getParent().isLabel()) {
-      outerMostLabel=outerMostLabel.getParent();
-    }
-    innerMostLabel.replaceChild(loopNode,newNode);
-    outerMostLabel.getParent().addChildAfter(loopNode,outerMostLabel);
+  Node insertSpot=loopNode;
+  while (insertSpot.getParent().isLabel()) {
+    insertSpot=insertSpot.getParent();
   }
- else {
-    loopNode.getParent().addChildBefore(newNode,loopNode);
-  }
+  insertSpot.getParent().addChildBefore(newNode,insertSpot);
 }
