@@ -6,7 +6,7 @@
     return commonTypes.TOP;
   }
   if (lhs.isUnknown() || rhs.isUnknown()) {
-    return UNKNOWN;
+    return commonTypes.UNKNOWN;
   }
   if (lhs.isBottom()) {
     return rhs;
@@ -15,10 +15,10 @@
     return lhs;
   }
   if (lhs.hasTruthyMask() || lhs.hasFalsyMask() || rhs.hasTruthyMask()|| rhs.hasFalsyMask()) {
-    return UNKNOWN;
+    return commonTypes.UNKNOWN;
   }
   if (lhs.getTypeVar() != null && rhs.getTypeVar() != null && !lhs.getTypeVar().equals(rhs.getTypeVar())) {
-    return UNKNOWN;
+    return commonTypes.UNKNOWN;
   }
   int newMask=lhs.getMask() | rhs.getMask();
   ImmutableSet<ObjectType> newObjs=ObjectType.joinSets(lhs.getObjs(),rhs.getObjs());

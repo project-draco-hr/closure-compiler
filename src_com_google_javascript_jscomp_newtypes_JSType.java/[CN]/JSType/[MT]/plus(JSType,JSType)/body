@@ -1,9 +1,10 @@
 {
-  if (!lhs.isUnknown() && !lhs.isBottom() && lhs.isSubtypeOf(STRING) || !rhs.isUnknown() && !rhs.isBottom() && rhs.isSubtypeOf(STRING)) {
-    return STRING;
+  JSTypes commonTypes=lhs.commonTypes;
+  if (!lhs.isUnknown() && !lhs.isBottom() && lhs.isSubtypeOf(commonTypes.STRING) || !rhs.isUnknown() && !rhs.isBottom() && rhs.isSubtypeOf(commonTypes.STRING)) {
+    return commonTypes.STRING;
   }
   if (lhs.isUnknown() || lhs.isTop() || rhs.isUnknown()|| rhs.isTop()) {
-    return UNKNOWN;
+    return commonTypes.UNKNOWN;
   }
   int newtype=(lhs.getMask() | rhs.getMask()) & STRING_MASK;
   if ((lhs.getMask() & ~STRING_MASK) != 0 && (rhs.getMask() & ~STRING_MASK) != 0) {
