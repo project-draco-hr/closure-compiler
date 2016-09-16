@@ -10,7 +10,7 @@
     }
     Node updateLoopObject=IR.assign(IR.name(object.name),objectLitNextIteration);
     Node objectLit=IR.var(IR.name(object.name),IR.objectlit()).useSourceInfoFromForTree(loopNode);
-    loopNode.getParent().addChildBefore(objectLit,loopNode);
+    addNodeBeforeLoop(objectLit,loopNode);
     if (NodeUtil.isVanillaFor(loopNode)) {
       Node initializer=loopNode.getFirstChild();
       loopNode.replaceChild(initializer,IR.empty());
@@ -18,7 +18,7 @@
         if (!NodeUtil.isNameDeclaration(initializer)) {
           initializer=IR.exprResult(initializer).useSourceInfoFrom(initializer);
         }
-        loopNode.getParent().addChildBefore(initializer,loopNode);
+        addNodeBeforeLoop(initializer,loopNode);
       }
       Node increment=loopNode.getChildAtIndex(2);
       if (increment.isEmpty()) {
