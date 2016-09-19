@@ -15,7 +15,8 @@
     warnings.add(JSError.make(call,CANNOT_BIND_CTOR));
     return new EnvTypePair(env,UNKNOWN);
   }
-  if (NodeUtil.isGoogBind(call.getFirstChild()) && call.getChildCount() <= 2 || !NodeUtil.isGoogPartial(call.getFirstChild()) && call.getChildCount() == 1) {
+  int callChildCount=call.getChildCount();
+  if (NodeUtil.isGoogBind(call.getFirstChild()) && callChildCount <= 2 || !NodeUtil.isGoogPartial(call.getFirstChild()) && callChildCount == 1) {
     warnings.add(JSError.make(call,WRONG_ARGUMENT_COUNT,getReadableCalleeName(call.getFirstChild()),"0","1",""));
   }
   int maxArity=boundFunType.hasRestFormals() ? Integer.MAX_VALUE : boundFunType.getMaxArity();

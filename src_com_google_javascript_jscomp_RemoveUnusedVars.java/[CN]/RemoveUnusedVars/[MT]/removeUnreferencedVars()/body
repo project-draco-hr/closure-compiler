@@ -21,12 +21,12 @@
  else     if (parent != null && parent.isFor() && parent.getChildCount() < 4) {
     }
  else     if (toRemove.isVar() && nameNode.hasChildren() && NodeUtil.mayHaveSideEffects(nameNode.getFirstChild(),compiler)) {
-      if (toRemove.getChildCount() == 1) {
+      if (toRemove.hasOneChild()) {
         compiler.reportChangeToEnclosingScope(toRemove);
         parent.replaceChild(toRemove,IR.exprResult(nameNode.removeFirstChild()));
       }
     }
- else     if (toRemove.isVar() && toRemove.getChildCount() > 1) {
+ else     if (toRemove.isVar() && toRemove.hasMoreThanOneChild()) {
       compiler.reportChangeToEnclosingScope(toRemove);
       toRemove.removeChild(nameNode);
     }
