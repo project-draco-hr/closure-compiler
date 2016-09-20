@@ -1,18 +1,4 @@
 {
-  Compiler compiler=new Compiler();
-  BlackHoleErrorManager.silence(compiler);
-  CompilerOptions options=new CompilerOptions();
-  options.externExportsPath="externs.js";
-  options.declaredGlobalExternsOnWindow=false;
-  options.setCheckSymbols(true);
-  options.setCheckTypes(runCheckTypes);
-  List<SourceFile> inputs=ImmutableList.of(SourceFile.fromCode("testcode","var goog = {};" + "goog.exportSymbol = function(a, b) {}; " + "goog.exportProperty = function(a, b, c) {}; "+ js));
-  List<SourceFile> externFiles=ImmutableList.of(SourceFile.fromCode("externs",externs));
-  Result result=compiler.compile(externFiles,inputs,options);
-  if (!result.success) {
-    String msg="Errors:";
-    msg+=Joiner.on("\n").join(result.errors);
-    assertTrue(msg,result.success);
-  }
-  return result;
+  List<String> jsList=ImmutableList.of(js);
+  return compileAndExportExterns(jsList,externs);
 }
