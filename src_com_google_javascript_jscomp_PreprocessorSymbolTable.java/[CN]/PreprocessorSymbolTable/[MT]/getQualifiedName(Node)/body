@@ -1,0 +1,13 @@
+{
+  if (n.getBooleanProp(Node.IS_MODULE_NAME)) {
+    return n.getString();
+  }
+ else   if (n.isGetProp()) {
+    String left=getQualifiedName(n.getFirstChild());
+    if (left == null) {
+      return null;
+    }
+    return left + "." + n.getLastChild().getString();
+  }
+  return n.getQualifiedName();
+}
