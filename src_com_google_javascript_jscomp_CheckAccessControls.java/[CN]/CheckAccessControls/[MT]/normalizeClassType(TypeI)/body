@@ -5,11 +5,10 @@
  else   if (type.isConstructor() || type.isInterface()) {
     return type.toMaybeFunctionType().getInstanceType();
   }
- else   if (type.isPrototypeObject()) {
-    Preconditions.checkState(type instanceof ObjectType);
-    FunctionType owner=((ObjectType)type).getOwnerFunction();
-    if (owner.isConstructor()) {
-      return owner.getInstanceType();
+ else {
+    ObjectTypeI obj=type.toMaybeObjectType();
+    if (obj != null) {
+      return obj.normalizeObjectForCheckAccessControls();
     }
   }
   return type;
