@@ -2,18 +2,16 @@
   ImmutableSet.Builder<NominalType> builder=ImmutableSet.builder();
   for (  JSTypeExpression texp : (implementedIntfs ? jsdoc.getImplementedInterfaces() : jsdoc.getExtendedInterfaces())) {
     Node expRoot=texp.getRoot();
-    JSType interfaceType=getMaybeTypeFromComment(expRoot,registry,typeParameters);
-    if (interfaceType != null) {
-      NominalType nt=interfaceType.getNominalTypeIfSingletonObj();
-      if (nt != null && nt.isInterface()) {
-        builder.add(nt);
-      }
- else       if (implementedIntfs) {
-        warnings.add(JSError.make(expRoot,IMPLEMENTS_NON_INTERFACE,interfaceType.toString()));
-      }
+    JSType interfaceType=getTypeFromComment(expRoot,registry,typeParameters);
+    NominalType nt=interfaceType.getNominalTypeIfSingletonObj();
+    if (nt != null && nt.isInterface()) {
+      builder.add(nt);
+    }
+ else     if (implementedIntfs) {
+      warnings.add(JSError.make(expRoot,IMPLEMENTS_NON_INTERFACE,interfaceType.toString()));
+    }
  else {
-        warnings.add(JSError.make(expRoot,EXTENDS_NON_INTERFACE,interfaceType.toString()));
-      }
+      warnings.add(JSError.make(expRoot,EXTENDS_NON_INTERFACE,interfaceType.toString()));
     }
   }
   return builder.build();

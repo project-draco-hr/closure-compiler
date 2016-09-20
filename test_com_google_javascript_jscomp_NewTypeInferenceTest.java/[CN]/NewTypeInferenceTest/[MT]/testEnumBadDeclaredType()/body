@@ -1,7 +1,7 @@
 {
   typeCheck(LINE_JOINER.join("/** @enum {InexistentType} */","var E = { ONE : null };"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
   typeCheck(LINE_JOINER.join("/** @enum {*} */","var E = { ONE: 1, STR: '' };"),JSTypeCreatorFromJSDoc.ENUM_IS_TOP);
-  typeCheck(LINE_JOINER.join("/**"," * @template T"," * @param {T} x"," */","function f(x) {","  /** @enum {function(T):number} */","  var E = { ONE: x };","}"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
+  typeCheck(LINE_JOINER.join("/**"," * @template T"," * @param {T} x"," */","function f(x) {","  /** @enum {function(T):number} */","  var E = { ONE: /** @type {?} */ (x) };","}"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
   typeCheck(LINE_JOINER.join("/**"," * @template T"," * @param {T} x"," */","function f(x) {","  /** @enum {T} */","  var E1 = { ONE: 1 };","  /** @enum {function(E1):E1} */","  var E2 = { ONE: function(x) { return x; } };","}"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
   typeCheck(LINE_JOINER.join("/**"," * @template T"," * @param {T} x"," */","function f(x) {","  /** @typedef {T} */ var AliasT;","  /** @enum {T} */","  var E1 = { ONE: 1 };","  /** @enum {function(E1):T} */","  var E2 = { ONE: function(x) { return x; } };","}"),GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME,GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME,GlobalTypeInfo.UNRECOGNIZED_TYPE_NAME);
   typeCheck(LINE_JOINER.join("/** @enum {number|string} */","var E = { ONE: 1, STR: '' };"),JSTypeCreatorFromJSDoc.ENUM_IS_UNION);
