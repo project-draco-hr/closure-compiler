@@ -11,6 +11,9 @@
   if (options.getLanguageIn().isEs6OrHigher() && !options.skipTranspilationAndCrash) {
     TranspilationPasses.addEs6EarlyPasses(passes);
     TranspilationPasses.addEs6LatePasses(passes);
+    if (options.rewritePolyfills) {
+      TranspilationPasses.addRewritePolyfillPass(passes);
+    }
     passes.add(markTranspilationDone);
   }
   if (options.raiseToEs6Typed()) {
