@@ -125,9 +125,6 @@
     checks.add(checkGlobalNames);
   }
   checks.add(checkStrictMode);
-  if (options.getNewTypeInference()) {
-    addOldTypeCheckerPasses(checks,options);
-  }
   if (!options.getConformanceConfigs().isEmpty()) {
     checks.add(checkConformance);
   }
@@ -151,6 +148,9 @@
   }
   if (options.instrumentationTemplate != null || options.recordFunctionInformation) {
     checks.add(computeFunctionNames);
+  }
+  if (options.getNewTypeInference()) {
+    addOldTypeCheckerPasses(checks,options);
   }
   checks.add(createEmptyPass("afterStandardChecks"));
   assertAllOneTimePasses(checks);
