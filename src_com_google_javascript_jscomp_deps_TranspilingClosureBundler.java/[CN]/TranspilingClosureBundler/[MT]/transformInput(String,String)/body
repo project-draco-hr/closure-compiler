@@ -23,7 +23,11 @@
         StringBuilder source=new StringBuilder().append(compiler.toSource());
         StringBuilder sourceMap=new StringBuilder();
         compiler.getSourceMap().appendTo(sourceMap,path);
-        return source.append("\n//# sourceMappingURL=data:,").append(URLEncoder.encode(sourceMap.toString(),"UTF-8").replace("+","%20")).append("\n").toString();
+        sourceMapCache.put(path,sourceMap.toString());
+        if (inlineSourceMap) {
+          source.append("\n//# sourceMappingURL=data:,").append(URLEncoder.encode(sourceMap.toString(),"UTF-8").replace("+","%20"));
+        }
+        return source.append("\n").toString();
       }
     }
 );
