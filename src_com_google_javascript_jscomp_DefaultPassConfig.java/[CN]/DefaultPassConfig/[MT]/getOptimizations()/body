@@ -3,12 +3,14 @@
   if (options.skipNonTranspilationPasses) {
     return passes;
   }
-  passes.add(gatherExternProperties);
+  if (!options.getNewTypeInference()) {
+    passes.add(gatherExternProperties);
+  }
   passes.add(garbageCollectChecks);
   if (options.instrumentForCoverage) {
     passes.add(instrumentForCodeCoverage);
   }
-  if (options.runtimeTypeCheck) {
+  if (options.runtimeTypeCheck && !options.getNewTypeInference()) {
     passes.add(runtimeTypeCheck);
   }
   if (options.j2clPassMode.shouldAddJ2clPasses()) {

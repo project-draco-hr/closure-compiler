@@ -7,6 +7,14 @@
   this.varNameGen=new UniqueNameGenerator();
   this.funNameGen=new DefaultNameGenerator(ImmutableSet.<String>of(),"",null);
   this.commonTypes=JSTypes.init(inCompatibilityMode);
-  this.typeParser=new JSTypeCreatorFromJSDoc(this.commonTypes,this.convention,this.varNameGen,this.allPropertyNames);
+  Function<String,Void> callback=new Function<String,Void>(){
+    @Override public Void apply(    String pname){
+      allPropertyNames.add(pname);
+      externPropertyNames.add(pname);
+      return null;
+    }
+  }
+;
+  this.typeParser=new JSTypeCreatorFromJSDoc(this.commonTypes,this.convention,this.varNameGen,callback);
   this.allPropertyNames.add("prototype");
 }
