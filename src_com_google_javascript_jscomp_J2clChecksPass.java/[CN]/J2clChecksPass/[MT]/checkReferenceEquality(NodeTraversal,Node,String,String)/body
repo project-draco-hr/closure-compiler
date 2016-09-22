@@ -1,0 +1,11 @@
+{
+  if (n.getToken() == Token.SHEQ || n.getToken() == Token.EQ || n.getToken() == Token.SHNE || n.getToken() == Token.NE) {
+    JSType firstJsType=n.getFirstChild().getJSType();
+    JSType lastJsType=n.getLastChild().getJSType();
+    boolean hasType=isType(firstJsType,fileName) || isType(lastJsType,fileName);
+    boolean hasNullType=isNullType(firstJsType) || isNullType(lastJsType);
+    if (hasType && !hasNullType) {
+      compiler.report(t.makeError(n,J2CL_REFERENCE_EQUALITY,typeName));
+    }
+  }
+}
