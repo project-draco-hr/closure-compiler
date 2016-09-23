@@ -1,16 +1,13 @@
 {
 switch (n.getToken()) {
-case SCRIPT:
-    sortAndProcessExports();
-  break;
 case NAME:
 case GETPROP:
-String name=n.getQualifiedName();
-if (name == null) {
-return;
-}
+    String name=n.getQualifiedName();
+  if (name == null) {
+    return;
+  }
 if (parent.isAssign() || parent.isVar() || parent.isFunction()) {
-definitionMap.put(name,parent);
+  definitionMap.put(name,parent);
 }
 JSDocInfo jsdoc=NodeUtil.getBestJSDocInfo(n);
 if (jsdoc != null && jsdoc.isExport()) {
