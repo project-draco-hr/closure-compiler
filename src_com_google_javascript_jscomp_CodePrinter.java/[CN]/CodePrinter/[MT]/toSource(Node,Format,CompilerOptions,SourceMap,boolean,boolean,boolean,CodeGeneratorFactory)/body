@@ -3,7 +3,9 @@
   boolean createSourceMap=(sourceMap != null);
   MappedCodePrinter mcp=outputFormat == Format.COMPACT ? new CompactCodePrinter(lineBreak,options.preferLineBreakAtEndOfFile,options.lineLengthThreshold,createSourceMap,options.sourceMapDetailLevel) : new PrettyCodePrinter(options.lineLengthThreshold,createSourceMap,options.sourceMapDetailLevel);
   CodeGenerator cg=codeGeneratorFactory.getCodeGenerator(outputFormat,mcp);
-  cg.maybeTagAsExterns();
+  if (tagAsExterns) {
+    cg.tagAsExterns();
+  }
   if (tagAsStrict) {
     cg.tagAsStrict();
   }
