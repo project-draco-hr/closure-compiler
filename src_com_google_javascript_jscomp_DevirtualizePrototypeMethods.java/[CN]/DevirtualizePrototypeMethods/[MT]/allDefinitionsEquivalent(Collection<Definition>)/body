@@ -1,0 +1,19 @@
+{
+  if (definitions.size() <= 1) {
+    return true;
+  }
+  Definition first=null;
+  for (  Definition definition : definitions) {
+    if (definition.getRValue() == null) {
+      return false;
+    }
+    if (first == null) {
+      first=definition;
+      continue;
+    }
+    if (!compiler.areNodesEqualForInlining(first.getRValue(),definition.getRValue())) {
+      return false;
+    }
+  }
+  return true;
+}
