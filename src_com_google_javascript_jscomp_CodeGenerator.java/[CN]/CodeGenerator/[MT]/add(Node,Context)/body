@@ -84,14 +84,23 @@ break;
 case VAR:
 add("var ");
 addList(first,false,getContextForNoInOperator(context),",");
+if (n.getParent() == null || NodeUtil.isStatement(n)) {
+cc.endStatement();
+}
 break;
 case CONST:
 add("const ");
 addList(first,false,getContextForNoInOperator(context),",");
+if (n.getParent() == null || NodeUtil.isStatement(n)) {
+cc.endStatement();
+}
 break;
 case LET:
 add("let ");
 addList(first,false,getContextForNoInOperator(context),",");
+if (n.getParent() == null || NodeUtil.isStatement(n)) {
+cc.endStatement();
+}
 break;
 case LABEL_NAME:
 Preconditions.checkState(!n.getString().isEmpty());
@@ -425,9 +434,6 @@ cc.beginBlock();
 boolean preferLineBreaks=type == Token.SCRIPT || (type == Token.BLOCK && !preserveBlock && n.getParent() != null && n.getParent().isScript());
 for (Node c=first; c != null; c=c.getNext()) {
 add(c,Context.STATEMENT);
-if (NodeUtil.isNameDeclaration(c)) {
-cc.endStatement();
-}
 if (c.isFunction() || c.isClass()) {
 cc.maybeLineBreak();
 }
