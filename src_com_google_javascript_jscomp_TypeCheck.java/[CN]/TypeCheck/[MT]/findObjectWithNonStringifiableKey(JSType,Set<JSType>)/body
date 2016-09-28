@@ -1,10 +1,16 @@
 {
+  if (alreadyCheckedTypes.contains(type)) {
+    return null;
+  }
+ else {
+    alreadyCheckedTypes.add(type);
+  }
   if (isObjectTypeWithNonStringifiableKey(type)) {
     return type;
   }
   if (type.isUnionType()) {
     for (    JSType alternateType : type.toMaybeUnionType().getAlternates()) {
-      JSType result=findObjectWithNonStringifiableKey(alternateType);
+      JSType result=findObjectWithNonStringifiableKey(alternateType,alreadyCheckedTypes);
       if (result != null) {
         return result;
       }
@@ -12,7 +18,7 @@
   }
   if (type.isTemplatizedType()) {
     for (    JSType templateType : type.toMaybeTemplatizedType().getTemplateTypes()) {
-      JSType result=findObjectWithNonStringifiableKey(templateType);
+      JSType result=findObjectWithNonStringifiableKey(templateType,alreadyCheckedTypes);
       if (result != null) {
         return result;
       }
@@ -21,12 +27,12 @@
   if (type.isOrdinaryFunction()) {
     FunctionType function=type.toMaybeFunctionType();
     for (    Node parameter : function.getParameters()) {
-      JSType result=findObjectWithNonStringifiableKey(parameter.getJSType());
+      JSType result=findObjectWithNonStringifiableKey(parameter.getJSType(),alreadyCheckedTypes);
       if (result != null) {
         return result;
       }
     }
-    return findObjectWithNonStringifiableKey(function.getReturnType());
+    return findObjectWithNonStringifiableKey(function.getReturnType(),alreadyCheckedTypes);
   }
   return null;
 }
