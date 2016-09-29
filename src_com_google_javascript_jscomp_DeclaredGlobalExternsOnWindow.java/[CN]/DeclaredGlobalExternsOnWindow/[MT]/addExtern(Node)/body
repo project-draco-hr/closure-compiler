@@ -28,6 +28,12 @@
       if (NodeUtil.isNamespaceDecl(node)) {
         newNode=IR.assign(getprop,IR.name(name));
       }
+ else {
+        Node rhs=NodeUtil.getRValueOfLValue(node);
+        if (oldJSDocInfo.hasConstAnnotation() && rhs != null && rhs.isQualifiedName()) {
+          newNode=IR.assign(getprop,rhs.cloneNode());
+        }
+      }
       builder=JSDocInfoBuilder.copyFrom(oldJSDocInfo);
     }
     builder.recordSuppressions(ImmutableSet.of("const","duplicate"));
