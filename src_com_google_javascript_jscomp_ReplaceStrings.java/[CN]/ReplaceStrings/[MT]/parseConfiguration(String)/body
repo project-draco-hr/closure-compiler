@@ -1,6 +1,7 @@
 {
   int first=function.indexOf('(');
   int last=function.indexOf(')');
+  int colon=function.indexOf(EXCLUSION_PREFIX);
   Preconditions.checkState(first != -1 && last != -1);
   String name=function.substring(0,first);
   String params=function.substring(first + 1,last);
@@ -22,5 +23,5 @@
     }
   }
   Preconditions.checkState(!replacementParameters.isEmpty());
-  return new Config(name,replacementParameters);
+  return new Config(name,replacementParameters,colon == -1 ? ImmutableSet.<String>of() : ImmutableSet.copyOf(function.substring(colon + EXCLUSION_PREFIX.length()).split(",")));
 }

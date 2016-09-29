@@ -1,0 +1,15 @@
+{
+  Config config=functions.get(name);
+  if (config == null) {
+    name=name.replace('$','.');
+    config=functions.get(name);
+  }
+  if (config != null) {
+    for (    String excludedSuffix : config.excludedFilenameSuffixes) {
+      if (callsiteSourceFileName.endsWith(excludedSuffix)) {
+        return null;
+      }
+    }
+  }
+  return config;
+}
