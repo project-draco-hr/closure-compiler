@@ -1,0 +1,9 @@
+{
+  Matcher m=EARLY_REF.matcher(error.description);
+  if (m.matches()) {
+    String name=m.group(1);
+    Node stmt=NodeUtil.getEnclosingStatement(error.node);
+    return new SuggestedFix.Builder().attachMatchedNodeInfo(error.node,compiler).insertBefore(stmt,"var " + name + ";\n").build();
+  }
+  return null;
+}
