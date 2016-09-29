@@ -1,4 +1,5 @@
 {
   testErrorEs6(new String[]{LINE_JOINER.join("goog.module('p.A');","/** @constructor */ var A = function() {}","A.method = function() {}","exports = A"),LINE_JOINER.join("goog.module('p.C');","var {method} = goog.require('p.A');","function main() {","  method();","}")},ILLEGAL_DESTRUCTURING_IMPORT);
+  testErrorEs6(new String[]{LINE_JOINER.join("goog.module('p.A');","/** @constructor */ exports = class { static method() {} }"),LINE_JOINER.join("goog.module('p.C');","var {method} = goog.require('p.A');","function main() {","  method();","}")},ILLEGAL_DESTRUCTURING_IMPORT);
   testEs6(new String[]{LINE_JOINER.join("goog.provide('p.A');","/** @constructor */ p.A = function() {}","p.A.method = function() {}"),LINE_JOINER.join("goog.module('p.C');","var {method} = goog.require('p.A');","function main() {","  method();","}")},null);
 }
